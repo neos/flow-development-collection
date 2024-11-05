@@ -38,7 +38,7 @@ class AbstractExceptionHandlerTest extends UnitTestCase
         $exception = new \Exception('The Message', 12345);
 
         $mockThrowableStorage = $this->createMock(ThrowableStorageInterface::class);
-        $mockThrowableStorage->expects(self::once())->method('logThrowable')->with($exception)->willReturn('Exception got logged!');
+        $mockThrowableStorage->expects($this->once())->method('logThrowable')->with($exception)->willReturn('Exception got logged!');
 
         $mockLogger = $this->createMock(LoggerInterface::class);
 
@@ -82,7 +82,7 @@ class AbstractExceptionHandlerTest extends UnitTestCase
 
         /** @var ThrowableStorageInterface|\PHPUnit\Framework\MockObject\MockObject $mockThrowableStorage */
         $mockThrowableStorage = $this->getMockBuilder(ThrowableStorageInterface::class)->getMock();
-        $mockThrowableStorage->expects(self::never())->method('logThrowable');
+        $mockThrowableStorage->expects($this->never())->method('logThrowable');
 
         $exceptionHandler = $this->getMockForAbstractClass(AbstractExceptionHandler::class, [], '', false, true, true, ['echoExceptionCli']);
         /** @var AbstractExceptionHandler $exceptionHandler */

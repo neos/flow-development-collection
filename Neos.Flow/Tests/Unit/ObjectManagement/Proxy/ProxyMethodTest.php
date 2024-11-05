@@ -27,7 +27,7 @@ class ProxyMethodTest extends \Neos\Flow\Tests\UnitTestCase
         $mockReflectionService->method('hasMethod')->willReturn(true);
 
         /** @var MockObject|ProxyMethod $mockProxyMethod */
-        $mockProxyMethod = $this->getAccessibleMock(ProxyMethod::class, ['dummy'], [], '', false);
+        $mockProxyMethod = $this->getAccessibleMock(ProxyMethod::class, [], [], '', false);
         $mockProxyMethod->injectReflectionService($mockReflectionService);
         $mockCode =
             'namespace My; class ClassName { ' . chr(10) .
@@ -131,11 +131,11 @@ class ProxyMethodTest extends \Neos\Flow\Tests\UnitTestCase
         ];
 
         $mockReflectionService = $this->createMock(ReflectionService::class);
-        $mockReflectionService->expects(self::atLeastOnce())->method('getMethodParameters')->will(self::returnValue($methodParameters));
+        $mockReflectionService->expects($this->atLeastOnce())->method('getMethodParameters')->willReturn(($methodParameters));
 
         $expectedCode = '$arg1, array $arg2, \ArrayObject $arg3, $arg4 = \'foo\', $arg5 = true, array $arg6 = array(0 => true, \'foo\' => \'bar\', 1 => NULL, 3 => 1, 4 => 2.3)';
 
-        $builder = $this->getMockBuilder(ProxyMethod::class)->disableOriginalConstructor()->setMethods(['dummy'])->getMock();
+        $builder = $this->getMockBuilder(ProxyMethod::class)->disableOriginalConstructor()->onlyMethods([])->getMock();
         $builder->injectReflectionService($mockReflectionService);
 
         $actualCode = $builder->buildMethodParametersCode($className, 'foo', true);
@@ -155,7 +155,7 @@ class ProxyMethodTest extends \Neos\Flow\Tests\UnitTestCase
         ');
 
         $mockReflectionService = $this->createMock(ReflectionService::class);
-        $mockReflectionService->expects(self::atLeastOnce())->method('getMethodParameters')->will(self::returnValue([
+        $mockReflectionService->expects($this->atLeastOnce())->method('getMethodParameters')->willReturn(([
             'arg1' => [],
             'arg2' => [],
             'arg3' => [],
@@ -165,7 +165,7 @@ class ProxyMethodTest extends \Neos\Flow\Tests\UnitTestCase
 
         $expectedCode = '$arg1, $arg2, $arg3, $arg4, $arg5';
 
-        $builder = $this->getMockBuilder(ProxyMethod::class)->disableOriginalConstructor()->setMethods(['dummy'])->getMock();
+        $builder = $this->getMockBuilder(ProxyMethod::class)->disableOriginalConstructor()->onlyMethods([])->getMock();
         $builder->injectReflectionService($mockReflectionService);
 
         $actualCode = $builder->buildMethodParametersCode($className, 'foo', false);
@@ -177,7 +177,7 @@ class ProxyMethodTest extends \Neos\Flow\Tests\UnitTestCase
      */
     public function buildMethodParametersCodeReturnsAnEmptyStringIfTheClassNameIsNULL()
     {
-        $builder = $this->getMockBuilder(ProxyMethod::class)->disableOriginalConstructor()->setMethods(['dummy'])->getMock();
+        $builder = $this->getMockBuilder(ProxyMethod::class)->disableOriginalConstructor()->onlyMethods([])->getMock();
 
         $actualCode = $builder->buildMethodParametersCode(null, 'foo', true);
         self::assertSame('', $actualCode);

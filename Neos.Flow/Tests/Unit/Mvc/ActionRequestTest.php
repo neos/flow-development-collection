@@ -117,7 +117,7 @@ class ActionRequestTest extends UnitTestCase
         $mockDispatcher = $this->createMock(Dispatcher::class);
 
         $mockObjectManager = $this->createMock(ObjectManagerInterface::class);
-        $mockObjectManager->expects(self::any())->method('get')->will(self::returnValue($mockDispatcher));
+        $mockObjectManager->expects($this->any())->method('get')->willReturn(($mockDispatcher));
         $this->inject($this->actionRequest, 'objectManager', $mockObjectManager);
 
         self::assertFalse($this->actionRequest->isDispatched());
@@ -133,11 +133,11 @@ class ActionRequestTest extends UnitTestCase
     public function getControllerObjectNameReturnsObjectNameDerivedFromPreviouslySetControllerInformation()
     {
         $mockPackageManager = $this->createMock(PackageManager::class);
-        $mockPackageManager->expects(self::any())->method('getCaseSensitivePackageKey')->with('somepackage')->will(self::returnValue('SomePackage'));
+        $mockPackageManager->expects($this->any())->method('getCaseSensitivePackageKey')->with('somepackage')->willReturn(('SomePackage'));
 
         $mockObjectManager = $this->createMock(ObjectManagerInterface::class);
         $mockObjectManager->method('getCaseSensitiveObjectName')->with('SomePackage\Some\Subpackage\Controller\SomeControllerController')
-            ->will(self::returnValue('SomePackage\Some\SubPackage\Controller\SomeControllerController'));
+            ->willReturn(('SomePackage\Some\SubPackage\Controller\SomeControllerController'));
 
         $this->inject($this->actionRequest, 'objectManager', $mockObjectManager);
         $this->inject($this->actionRequest, 'packageManager', $mockPackageManager);
@@ -156,10 +156,10 @@ class ActionRequestTest extends UnitTestCase
     {
         $mockObjectManager = $this->createMock(ObjectManagerInterface::class);
         $mockObjectManager->method('getCaseSensitiveObjectName')->with('SomePackage\Some\Subpackage\Controller\SomeControllerController')
-            ->will(self::returnValue(null));
+            ->willReturn((null));
 
         $mockPackageManager = $this->createMock(PackageManager::class);
-        $mockPackageManager->expects(self::any())->method('getCaseSensitivePackageKey')->with('somepackage')->will(self::returnValue('SomePackage'));
+        $mockPackageManager->expects($this->any())->method('getCaseSensitivePackageKey')->with('somepackage')->willReturn(('SomePackage'));
 
         $this->inject($this->actionRequest, 'objectManager', $mockObjectManager);
         $this->inject($this->actionRequest, 'packageManager', $mockPackageManager);
@@ -229,8 +229,8 @@ class ActionRequestTest extends UnitTestCase
     public function setControllerObjectNameSplitsTheGivenObjectNameIntoItsParts($objectName, array $parts)
     {
         $mockObjectManager = $this->createMock(ObjectManagerInterface::class);
-        $mockObjectManager->expects(self::any())->method('getCaseSensitiveObjectName')->with($objectName)->will(self::returnValue($objectName));
-        $mockObjectManager->expects(self::any())->method('getPackageKeyByObjectName')->with($objectName)->will(self::returnValue($parts['controllerPackageKey']));
+        $mockObjectManager->expects($this->any())->method('getCaseSensitiveObjectName')->with($objectName)->willReturn(($objectName));
+        $mockObjectManager->expects($this->any())->method('getPackageKeyByObjectName')->with($objectName)->willReturn(($parts['controllerPackageKey']));
 
         $this->inject($this->actionRequest, 'objectManager', $mockObjectManager);
 
@@ -247,7 +247,7 @@ class ActionRequestTest extends UnitTestCase
     {
         $this->expectException(UnknownObjectException::class);
         $mockObjectManager = $this->createMock(ObjectManagerInterface::class);
-        $mockObjectManager->expects(self::any())->method('getCaseSensitiveObjectName')->will(self::returnValue(null));
+        $mockObjectManager->expects($this->any())->method('getCaseSensitiveObjectName')->willReturn((null));
 
         $this->inject($this->actionRequest, 'objectManager', $mockObjectManager);
 
@@ -260,8 +260,8 @@ class ActionRequestTest extends UnitTestCase
     public function getControllerNameExtractsTheControllerNameFromTheControllerObjectNameToAssureTheCorrectCase()
     {
         /** @var ActionRequest|\PHPUnit\Framework\MockObject\MockObject $actionRequest */
-        $actionRequest = $this->getMockBuilder(ActionRequest::class)->disableOriginalConstructor()->setMethods(['getControllerObjectName'])->getMock();
-        $actionRequest->expects(self::once())->method('getControllerObjectName')->will(self::returnValue('Neos\MyPackage\Controller\Foo\BarController'));
+        $actionRequest = $this->getMockBuilder(ActionRequest::class)->disableOriginalConstructor()->onlyMethods(['getControllerObjectName'])->getMock();
+        $actionRequest->expects($this->once())->method('getControllerObjectName')->willReturn(('Neos\MyPackage\Controller\Foo\BarController'));
 
         $actionRequest->setControllerName('foo\bar');
         self::assertEquals('Foo\Bar', $actionRequest->getControllerName());
@@ -273,8 +273,8 @@ class ActionRequestTest extends UnitTestCase
     public function getControllerNameReturnsTheUnknownCasesControllerNameIfNoControllerObjectNameCouldBeDetermined()
     {
         /** @var ActionRequest|\PHPUnit\Framework\MockObject\MockObject $actionRequest */
-        $actionRequest = $this->getMockBuilder(ActionRequest::class)->disableOriginalConstructor()->setMethods(['getControllerObjectName'])->getMock();
-        $actionRequest->expects(self::once())->method('getControllerObjectName')->will(self::returnValue(''));
+        $actionRequest = $this->getMockBuilder(ActionRequest::class)->disableOriginalConstructor()->onlyMethods(['getControllerObjectName'])->getMock();
+        $actionRequest->expects($this->once())->method('getControllerObjectName')->willReturn((''));
 
         $actionRequest->setControllerName('foo\bar');
         self::assertEquals('foo\bar', $actionRequest->getControllerName());
@@ -286,12 +286,12 @@ class ActionRequestTest extends UnitTestCase
     public function getControllerSubpackageKeyExtractsTheSubpackageKeyFromTheControllerObjectNameToAssureTheCorrectCase()
     {
         /** @var ActionRequest|\PHPUnit\Framework\MockObject\MockObject $actionRequest */
-        $actionRequest = $this->getMockBuilder(ActionRequest::class)->disableOriginalConstructor()->setMethods(['getControllerObjectName'])->getMock();
-        $actionRequest->expects(self::once())->method('getControllerObjectName')->will(self::returnValue('Neos\MyPackage\Some\SubPackage\Controller\Foo\BarController'));
+        $actionRequest = $this->getMockBuilder(ActionRequest::class)->disableOriginalConstructor()->onlyMethods(['getControllerObjectName'])->getMock();
+        $actionRequest->expects($this->once())->method('getControllerObjectName')->willReturn(('Neos\MyPackage\Some\SubPackage\Controller\Foo\BarController'));
 
         /** @var PackageManager|\PHPUnit\Framework\MockObject\MockObject $mockPackageManager */
         $mockPackageManager = $this->createMock(PackageManager::class);
-        $mockPackageManager->expects(self::any())->method('getCaseSensitivePackageKey')->with('neos.mypackage')->will(self::returnValue('Neos.MyPackage'));
+        $mockPackageManager->expects($this->any())->method('getCaseSensitivePackageKey')->with('neos.mypackage')->willReturn(('Neos.MyPackage'));
         $this->inject($actionRequest, 'packageManager', $mockPackageManager);
 
         $actionRequest->setControllerPackageKey('neos.mypackage');
@@ -305,12 +305,12 @@ class ActionRequestTest extends UnitTestCase
     public function getControllerSubpackageKeyReturnsNullIfNoSubpackageKeyIsSet()
     {
         /** @var ActionRequest|\PHPUnit\Framework\MockObject\MockObject $actionRequest */
-        $actionRequest = $this->getMockBuilder(ActionRequest::class)->disableOriginalConstructor()->setMethods(['getControllerObjectName'])->getMock();
-        $actionRequest->expects(self::any())->method('getControllerObjectName')->will(self::returnValue('Neos\MyPackage\Controller\Foo\BarController'));
+        $actionRequest = $this->getMockBuilder(ActionRequest::class)->disableOriginalConstructor()->onlyMethods(['getControllerObjectName'])->getMock();
+        $actionRequest->expects($this->any())->method('getControllerObjectName')->willReturn(('Neos\MyPackage\Controller\Foo\BarController'));
 
         /** @var PackageManager|\PHPUnit\Framework\MockObject\MockObject $mockPackageManager */
         $mockPackageManager = $this->createMock(PackageManager::class);
-        $mockPackageManager->expects(self::any())->method('getCaseSensitivePackageKey')->with('neos.mypackage')->will(self::returnValue('Neos.MyPackage'));
+        $mockPackageManager->expects($this->any())->method('getCaseSensitivePackageKey')->with('neos.mypackage')->willReturn(('Neos.MyPackage'));
         $this->inject($actionRequest, 'packageManager', $mockPackageManager);
 
         $actionRequest->setControllerPackageKey('neos.mypackage');
@@ -323,12 +323,12 @@ class ActionRequestTest extends UnitTestCase
     public function getControllerSubpackageKeyReturnsTheUnknownCasesPackageKeyIfNoControllerObjectNameCouldBeDetermined()
     {
         /** @var ActionRequest|\PHPUnit\Framework\MockObject\MockObject $actionRequest */
-        $actionRequest = $this->getMockBuilder(ActionRequest::class)->disableOriginalConstructor()->setMethods(['getControllerObjectName'])->getMock();
-        $actionRequest->expects(self::once())->method('getControllerObjectName')->will(self::returnValue(''));
+        $actionRequest = $this->getMockBuilder(ActionRequest::class)->disableOriginalConstructor()->onlyMethods(['getControllerObjectName'])->getMock();
+        $actionRequest->expects($this->once())->method('getControllerObjectName')->willReturn((''));
 
         /** @var PackageManager|\PHPUnit\Framework\MockObject\MockObject $mockPackageManager */
         $mockPackageManager = $this->createMock(PackageManager::class);
-        $mockPackageManager->expects(self::any())->method('getCaseSensitivePackageKey')->with('neos.mypackage')->will(self::returnValue(false));
+        $mockPackageManager->expects($this->any())->method('getCaseSensitivePackageKey')->with('neos.mypackage')->willReturn((false));
         $this->inject($actionRequest, 'packageManager', $mockPackageManager);
 
         $actionRequest->setControllerPackageKey('neos.mypackage');
@@ -365,8 +365,8 @@ class ActionRequestTest extends UnitTestCase
     public function theActionNameCanBeSetAndRetrieved()
     {
         /** @var ActionRequest|\PHPUnit\Framework\MockObject\MockObject $actionRequest */
-        $actionRequest = $this->getMockBuilder(ActionRequest::class)->disableOriginalConstructor()->setMethods(['getControllerObjectName'])->getMock();
-        $actionRequest->expects(self::once())->method('getControllerObjectName')->will(self::returnValue(''));
+        $actionRequest = $this->getMockBuilder(ActionRequest::class)->disableOriginalConstructor()->onlyMethods(['getControllerObjectName'])->getMock();
+        $actionRequest->expects($this->once())->method('getControllerObjectName')->willReturn((''));
 
         $actionRequest->setControllerActionName('theAction');
         self::assertEquals('theAction', $actionRequest->getControllerActionName());
@@ -410,13 +410,13 @@ class ActionRequestTest extends UnitTestCase
         $mockController = $this->createMock($mockControllerClassName, ['someGreatAction'], [], '', false);
 
         $mockObjectManager = $this->createMock(ObjectManagerInterface::class);
-        $mockObjectManager->expects(self::once())->method('getClassNameByObjectName')
+        $mockObjectManager->expects($this->once())->method('getClassNameByObjectName')
             ->with('Neos\Flow\MyControllerObjectName')
-            ->will(self::returnValue(get_class($mockController)));
+            ->willReturn((get_class($mockController)));
 
         /** @var ActionRequest|\PHPUnit\Framework\MockObject\MockObject $actionRequest */
         $actionRequest = $this->getAccessibleMock(ActionRequest::class, ['getControllerObjectName'], [], '', false);
-        $actionRequest->expects(self::once())->method('getControllerObjectName')->will(self::returnValue('Neos\Flow\MyControllerObjectName'));
+        $actionRequest->expects($this->once())->method('getControllerObjectName')->willReturn(('Neos\Flow\MyControllerObjectName'));
         $actionRequest->_set('objectManager', $mockObjectManager);
 
         $actionRequest->setControllerActionName('somegreat');
@@ -550,7 +550,7 @@ class ActionRequestTest extends UnitTestCase
         ];
 
         $mockHashService = $this->getMockBuilder(HashService::class)->getMock();
-        $mockHashService->expects(self::once())->method('validateAndStripHmac')->with($serializedArguments)->will(self::throwException(new InvalidHashException()));
+        $mockHashService->expects($this->once())->method('validateAndStripHmac')->with($serializedArguments)->will(self::throwException(new InvalidHashException()));
         $this->inject($this->actionRequest, 'hashService', $mockHashService);
 
         $this->actionRequest->setArgument('__referrer', $referrer);
@@ -564,10 +564,10 @@ class ActionRequestTest extends UnitTestCase
     public function setDispatchedEmitsSignalIfDispatched()
     {
         $mockDispatcher = $this->createMock(Dispatcher::class);
-        $mockDispatcher->expects(self::once())->method('dispatch')->with(ActionRequest::class, 'requestDispatched', [$this->actionRequest]);
+        $mockDispatcher->expects($this->once())->method('dispatch')->with(ActionRequest::class, 'requestDispatched', [$this->actionRequest]);
 
         $mockObjectManager = $this->createMock(ObjectManagerInterface::class);
-        $mockObjectManager->expects(self::any())->method('get')->will(self::returnValue($mockDispatcher));
+        $mockObjectManager->expects($this->any())->method('get')->willReturn(($mockDispatcher));
         $this->inject($this->actionRequest, 'objectManager', $mockObjectManager);
 
         $this->actionRequest->setDispatched(true);
@@ -579,7 +579,7 @@ class ActionRequestTest extends UnitTestCase
     public function setControllerPackageKeyWithLowercasePackageKeyResolvesCorrectly()
     {
         $mockPackageManager = $this->createMock(PackageManager::class);
-        $mockPackageManager->expects(self::any())->method('getCaseSensitivePackageKey')->with('acme.testpackage')->will(self::returnValue('Acme.Testpackage'));
+        $mockPackageManager->expects($this->any())->method('getCaseSensitivePackageKey')->with('acme.testpackage')->willReturn(('Acme.Testpackage'));
 
         $this->inject($this->actionRequest, 'packageManager', $mockPackageManager);
         $this->actionRequest->setControllerPackageKey('acme.testpackage');

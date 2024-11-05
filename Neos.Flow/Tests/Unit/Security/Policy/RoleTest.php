@@ -63,12 +63,12 @@ class RoleTest extends UnitTestCase
     public function setParentRolesMakesSureThatParentRolesDontContainDuplicates()
     {
         /** @var Role|\PHPUnit\Framework\MockObject\MockObject $role */
-        $role = $this->getAccessibleMock(Role::class, ['dummy'], ['Acme.Demo:Test']);
+        $role = $this->getAccessibleMock(Role::class, [], ['Acme.Demo:Test']);
 
         /** @var Role|\PHPUnit\Framework\MockObject\MockObject $parentRole1 */
-        $parentRole1 = $this->getAccessibleMock(Role::class, ['dummy'], ['Acme.Demo:Parent1']);
+        $parentRole1 = $this->getAccessibleMock(Role::class, [], ['Acme.Demo:Parent1']);
         /** @var Role|\PHPUnit\Framework\MockObject\MockObject $parentRole2 */
-        $parentRole2 = $this->getAccessibleMock(Role::class, ['dummy'], ['Acme.Demo:Parent2']);
+        $parentRole2 = $this->getAccessibleMock(Role::class, [], ['Acme.Demo:Parent2']);
 
         $parentRole2->addParentRole($parentRole1);
         $role->setParentRoles([$parentRole1, $parentRole2, $parentRole2, $parentRole1]);

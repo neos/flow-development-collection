@@ -58,7 +58,7 @@ class BootstrapTest extends UnitTestCase
     public function resolveRequestHandlerThrowsUsefulExceptionIfNoRequestHandlerFound()
     {
         $this->expectException(Exception::class);
-        $bootstrap = $this->getAccessibleMock(Bootstrap::class, ['dummy'], [], '', false);
+        $bootstrap = $this->getAccessibleMock(Bootstrap::class, [], [], '', false);
         $bootstrap->_call('resolveRequestHandler');
     }
 }

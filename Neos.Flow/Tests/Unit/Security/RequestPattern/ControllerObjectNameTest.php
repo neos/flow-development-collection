@@ -25,8 +25,8 @@ class ControllerObjectNameTest extends UnitTestCase
      */
     public function matchRequestReturnsTrueIfTheCurrentRequestMatchesTheControllerObjectNamePattern()
     {
-        $request = $this->getMockBuilder(ActionRequest::class)->disableOriginalConstructor()->setMethods(['getControllerObjectName'])->getMock();
-        $request->expects(self::once())->method('getControllerObjectName')->will(self::returnValue('Neos\Flow\Security\Controller\LoginController'));
+        $request = $this->getMockBuilder(ActionRequest::class)->disableOriginalConstructor()->onlyMethods(['getControllerObjectName'])->getMock();
+        $request->expects($this->once())->method('getControllerObjectName')->willReturn(('Neos\Flow\Security\Controller\LoginController'));
 
         $requestPattern = new ControllerObjectName(['controllerObjectNamePattern' => 'Neos\Flow\Security\.*']);
 
@@ -38,8 +38,8 @@ class ControllerObjectNameTest extends UnitTestCase
      */
     public function matchRequestReturnsFalseIfTheCurrentRequestDoesNotMatchTheControllerObjectNamePattern()
     {
-        $request = $this->getMockBuilder(ActionRequest::class)->disableOriginalConstructor()->setMethods(['getControllerObjectName'])->getMock();
-        $request->expects(self::once())->method('getControllerObjectName')->will(self::returnValue('Some\Package\Controller\SomeController'));
+        $request = $this->getMockBuilder(ActionRequest::class)->disableOriginalConstructor()->onlyMethods(['getControllerObjectName'])->getMock();
+        $request->expects($this->once())->method('getControllerObjectName')->willReturn(('Some\Package\Controller\SomeController'));
 
         $requestPattern = new ControllerObjectName(['controllerObjectNamePattern' => 'Neos\Flow\Security\.*']);
 

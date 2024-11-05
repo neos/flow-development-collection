@@ -66,21 +66,21 @@ class FileBasedSimpleKeyProviderTest extends UnitTestCase
     protected function setUp(): void
     {
         $this->mockRole = $this->getMockBuilder(Role::class)->disableOriginalConstructor()->getMock();
-        $this->mockRole->expects(self::any())->method('getIdentifier')->will(self::returnValue('Neos.Flow:TestRoleIdentifier'));
+        $this->mockRole->expects($this->any())->method('getIdentifier')->willReturn(('Neos.Flow:TestRoleIdentifier'));
 
         $this->mockPolicyService = $this->getMockBuilder(PolicyService::class)->disableOriginalConstructor()->getMock();
-        $this->mockPolicyService->expects(self::any())->method('getRole')->with('Neos.Flow:TestRoleIdentifier')->will(self::returnValue($this->mockRole));
+        $this->mockPolicyService->expects($this->any())->method('getRole')->with('Neos.Flow:TestRoleIdentifier')->willReturn(($this->mockRole));
 
         $this->mockHashService = $this->getMockBuilder(HashService::class)->disableOriginalConstructor()->getMock();
 
         $expectedPassword = $this->testKeyClearText;
         $expectedHashedPasswordAndSalt = $this->testKeyHashed;
-        $this->mockHashService->expects(self::any())->method('validatePassword')->will(self::returnCallBack(function ($password, $hashedPasswordAndSalt) use ($expectedPassword, $expectedHashedPasswordAndSalt) {
+        $this->mockHashService->expects($this->any())->method('validatePassword')->will(self::returnCallBack(function ($password, $hashedPasswordAndSalt) use ($expectedPassword, $expectedHashedPasswordAndSalt) {
             return $hashedPasswordAndSalt === $expectedHashedPasswordAndSalt && $password === $expectedPassword;
         }));
 
         $this->mockFileBasedSimpleKeyService = $this->getMockBuilder(FileBasedSimpleKeyService::class)->disableOriginalConstructor()->getMock();
-        $this->mockFileBasedSimpleKeyService->expects(self::any())->method('getKey')->with('testKey')->will(self::returnValue($this->testKeyHashed));
+        $this->mockFileBasedSimpleKeyService->expects($this->any())->method('getKey')->with('testKey')->willReturn(($this->testKeyHashed));
 
         $this->mockToken = $this->getMockBuilder(PasswordToken::class)->disableOriginalConstructor()->getMock();
     }
@@ -90,8 +90,8 @@ class FileBasedSimpleKeyProviderTest extends UnitTestCase
      */
     public function authenticatingAPasswordTokenChecksIfTheGivenClearTextPasswordMatchesThePersistedHashedPassword()
     {
-        $this->mockToken->expects(self::atLeastOnce())->method('getPassword')->will(self::returnValue($this->testKeyClearText));
-        $this->mockToken->expects(self::once())->method('setAuthenticationStatus')->with(TokenInterface::AUTHENTICATION_SUCCESSFUL);
+        $this->mockToken->expects($this->atLeastOnce())->method('getPassword')->willReturn(($this->testKeyClearText));
+        $this->mockToken->expects($this->once())->method('setAuthenticationStatus')->with(TokenInterface::AUTHENTICATION_SUCCESSFUL);
 
         $authenticationProvider = FileBasedSimpleKeyProvider::create('myProvider', ['keyName' => 'testKey', 'authenticateRoles' => ['Neos.Flow:TestRoleIdentifier']]);
         $this->inject($authenticationProvider, 'policyService', $this->mockPolicyService);
@@ -106,8 +106,8 @@ class FileBasedSimpleKeyProviderTest extends UnitTestCase
      */
     public function authenticationAddsAnAccountHoldingTheConfiguredRoles()
     {
-        $this->mockToken = $this->getMockBuilder(PasswordToken::class)->disableOriginalConstructor()->setMethods(['getPassword'])->getMock();
-        $this->mockToken->expects(self::atLeastOnce())->method('getPassword')->will(self::returnValue($this->testKeyClearText));
+        $this->mockToken = $this->getMockBuilder(PasswordToken::class)->disableOriginalConstructor()->onlyMethods(['getPassword'])->getMock();
+        $this->mockToken->expects($this->atLeastOnce())->method('getPassword')->willReturn(($this->testKeyClearText));
 
         $authenticationProvider = FileBasedSimpleKeyProvider::create('myProvider', ['keyName' => 'testKey', 'authenticateRoles' => ['Neos.Flow:TestRoleIdentifier']]);
         $this->inject($authenticationProvider, 'policyService', $this->mockPolicyService);
@@ -125,8 +125,8 @@ class FileBasedSimpleKeyProviderTest extends UnitTestCase
      */
     public function authenticationFailsWithWrongCredentialsInAPasswordToken()
     {
-        $this->mockToken->expects(self::atLeastOnce())->method('getPassword')->will(self::returnValue('wrong password'));
-        $this->mockToken->expects(self::once())->method('setAuthenticationStatus')->with(TokenInterface::WRONG_CREDENTIALS);
+        $this->mockToken->expects($this->atLeastOnce())->method('getPassword')->willReturn(('wrong password'));
+        $this->mockToken->expects($this->once())->method('setAuthenticationStatus')->with(TokenInterface::WRONG_CREDENTIALS);
 
         $authenticationProvider = FileBasedSimpleKeyProvider::create('myProvider', ['keyName' => 'testKey', 'authenticateRoles' => ['Neos.Flow:TestRoleIdentifier']]);
         $this->inject($authenticationProvider, 'policyService', $this->mockPolicyService);
@@ -141,8 +141,8 @@ class FileBasedSimpleKeyProviderTest extends UnitTestCase
      */
     public function authenticationIsSkippedIfNoCredentialsInAPasswordToken()
     {
-        $this->mockToken->expects(self::atLeastOnce())->method('getPassword')->will(self::returnValue(''));
-        $this->mockToken->expects(self::once())->method('setAuthenticationStatus')->with(TokenInterface::NO_CREDENTIALS_GIVEN);
+        $this->mockToken->expects($this->atLeastOnce())->method('getPassword')->willReturn((''));
+        $this->mockToken->expects($this->once())->method('setAuthenticationStatus')->with(TokenInterface::NO_CREDENTIALS_GIVEN);
 
         $authenticationProvider = FileBasedSimpleKeyProvider::create('myProvider', ['keyName' => 'testKey', 'authenticateRoles' => ['Neos.Flow:TestRoleIdentifier']]);
         $this->inject($authenticationProvider, 'policyService', $this->mockPolicyService);
@@ -180,9 +180,9 @@ class FileBasedSimpleKeyProviderTest extends UnitTestCase
     public function canAuthenticateReturnsTrueOnlyForAnTokenThatHasTheCorrectProviderNameSet()
     {
         $mockToken1 = $this->createMock(TokenInterface::class);
-        $mockToken1->expects(self::once())->method('getAuthenticationProviderName')->will(self::returnValue('myProvider'));
+        $mockToken1->expects($this->once())->method('getAuthenticationProviderName')->willReturn(('myProvider'));
         $mockToken2 = $this->createMock(TokenInterface::class);
-        $mockToken2->expects(self::once())->method('getAuthenticationProviderName')->will(self::returnValue('someOtherProvider'));
+        $mockToken2->expects($this->once())->method('getAuthenticationProviderName')->willReturn(('someOtherProvider'));
 
         $authenticationProvider = FileBasedSimpleKeyProvider::create('myProvider', []);
 

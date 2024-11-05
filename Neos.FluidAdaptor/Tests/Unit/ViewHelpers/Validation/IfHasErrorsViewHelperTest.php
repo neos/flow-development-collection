@@ -44,8 +44,8 @@ class IfHasErrorsViewHelperTest extends ViewHelperBaseTestcase
         $result = new Result;
         $result->addError(new Error('I am an error', 1386163707));
 
-        $this->request->expects(self::once())->method('getInternalArgument')->with('__submittedArgumentValidationResults')->will(self::returnValue($result));
-        $this->viewHelper->expects(self::once())->method('renderThenChild')->will(self::returnValue('ThenChild'));
+        $this->request->expects($this->once())->method('getInternalArgument')->with('__submittedArgumentValidationResults')->willReturn(($result));
+        $this->viewHelper->expects($this->once())->method('renderThenChild')->willReturn(('ThenChild'));
         self::assertEquals('ThenChild', $this->viewHelper->render());
     }
 
@@ -54,7 +54,7 @@ class IfHasErrorsViewHelperTest extends ViewHelperBaseTestcase
      */
     public function returnsAndRendersElseChildIfNoValidationResultsArePresentAtAll()
     {
-        $this->viewHelper->expects(self::once())->method('renderElseChild')->will(self::returnValue('ElseChild'));
+        $this->viewHelper->expects($this->once())->method('renderElseChild')->willReturn(('ElseChild'));
         self::assertEquals('ElseChild', $this->viewHelper->render());
     }
 
@@ -64,9 +64,9 @@ class IfHasErrorsViewHelperTest extends ViewHelperBaseTestcase
     public function queriesResultForPropertyIfPropertyPathIsGiven()
     {
         $resultMock = $this->createMock(\Neos\Error\Messages\Result::class);
-        $resultMock->expects(self::once())->method('forProperty')->with('foo.bar.baz')->will(self::returnValue(new Result()));
+        $resultMock->expects($this->once())->method('forProperty')->with('foo.bar.baz')->willReturn((new Result()));
 
-        $this->request->expects(self::once())->method('getInternalArgument')->with('__submittedArgumentValidationResults')->will(self::returnValue($resultMock));
+        $this->request->expects($this->once())->method('getInternalArgument')->with('__submittedArgumentValidationResults')->willReturn(($resultMock));
 
         $this->viewHelper->setArguments(['for' => 'foo.bar.baz']);
         $this->viewHelper->render();

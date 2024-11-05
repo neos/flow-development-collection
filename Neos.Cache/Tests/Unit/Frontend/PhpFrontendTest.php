@@ -32,10 +32,10 @@ class PhpFrontendTest extends BaseTestCase
     {
         $this->expectException(\InvalidArgumentException::class);
         $cache = $this->getMockBuilder(StringFrontend::class)
-            ->setMethods(['isValidEntryIdentifier'])
+            ->onlyMethods(['isValidEntryIdentifier'])
             ->disableOriginalConstructor()
             ->getMock();
-        $cache->expects(self::once())->method('isValidEntryIdentifier')->with('foo')->will(self::returnValue(false));
+        $cache->expects($this->once())->method('isValidEntryIdentifier')->with('foo')->willReturn(false);
         $cache->set('foo', 'bar');
     }
 
@@ -48,10 +48,10 @@ class PhpFrontendTest extends BaseTestCase
         $modifiedSourceCode = '<?php ' . $originalSourceCode . chr(10) . '#';
 
         $mockBackend = $this->createMock(PhpCapableBackendInterface::class);
-        $mockBackend->expects(self::once())->method('set')->with('Foo-Bar', $modifiedSourceCode, ['tags'], 1234);
+        $mockBackend->expects($this->once())->method('set')->with('Foo-Bar', $modifiedSourceCode, ['tags'], 1234);
 
         $cache = $this->getMockBuilder(PhpFrontend::class)
-            ->setMethods(null)
+            ->onlyMethods([])
             ->disableOriginalConstructor()
             ->getMock();
         $this->inject($cache, 'backend', $mockBackend);
@@ -65,7 +65,7 @@ class PhpFrontendTest extends BaseTestCase
     {
         $this->expectException(InvalidDataException::class);
         $cache = $this->getMockBuilder(PhpFrontend::class)
-            ->setMethods(null)
+            ->onlyMethods([])
             ->disableOriginalConstructor()
             ->getMock();
         $cache->set('Foo-Bar', []);
@@ -77,10 +77,10 @@ class PhpFrontendTest extends BaseTestCase
     public function requireOnceCallsTheBackendsRequireOnceMethod()
     {
         $mockBackend = $this->createMock(PhpCapableBackendInterface::class);
-        $mockBackend->expects(self::once())->method('requireOnce')->with('Foo-Bar')->will(self::returnValue('hello world!'));
+        $mockBackend->expects($this->once())->method('requireOnce')->with('Foo-Bar')->willReturn(('hello world!'));
 
         $cache = $this->getMockBuilder(PhpFrontend::class)
-            ->setMethods(null)
+            ->onlyMethods([])
             ->disableOriginalConstructor()
             ->getMock();
         $this->inject($cache, 'backend', $mockBackend);

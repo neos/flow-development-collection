@@ -106,7 +106,7 @@ class ScriptsTest extends UnitTestCase
         $bootstrap->setEarlyInstance(Dispatcher::class, $mockSignalSlotDispatcher);
         $bootstrap->setEarlyInstance(PackageManager::class, $mockPackageManager);
 
-        $mockPackageManager->expects(self::once())->method('injectSettings');
+        $mockPackageManager->expects($this->once())->method('injectSettings');
 
         Scripts::initializeConfiguration($bootstrap);
     }

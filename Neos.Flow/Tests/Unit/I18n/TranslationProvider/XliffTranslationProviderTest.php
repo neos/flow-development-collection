@@ -71,14 +71,14 @@ class XliffTranslationProviderTest extends UnitTestCase
     public function returnsTranslatedLabelWhenOriginalLabelProvided()
     {
         $fileAdapter = new I18n\Xliff\Model\FileAdapter($this->mockParsedXliffFile, $this->sampleLocale);
-        $this->mockFileProvider->expects(self::once())
+        $this->mockFileProvider->expects($this->once())
             ->method('getFile')
             ->with($this->samplePackageKey . ':' . $this->sampleSourceName, $this->sampleLocale)
             ->willReturn($fileAdapter);
 
-        $this->mockPluralsReader->expects(self::any())->method('getPluralForms')
+        $this->mockPluralsReader->expects($this->any())->method('getPluralForms')
             ->with($this->sampleLocale)
-            ->will(self::returnValue([I18n\Cldr\Reader\PluralsReader::RULE_ONE, I18n\Cldr\Reader\PluralsReader::RULE_OTHER]));
+            ->willReturn(([I18n\Cldr\Reader\PluralsReader::RULE_ONE, I18n\Cldr\Reader\PluralsReader::RULE_OTHER]));
 
         $translationProvider = new I18n\TranslationProvider\XliffTranslationProvider();
         $translationProvider->injectPluralsReader($this->mockPluralsReader);
@@ -94,14 +94,14 @@ class XliffTranslationProviderTest extends UnitTestCase
     public function returnsTranslatedLabelWhenLabelIdProvided()
     {
         $fileAdapter = new I18n\Xliff\Model\FileAdapter($this->mockParsedXliffFile, $this->sampleLocale);
-        $this->mockFileProvider->expects(self::once())
+        $this->mockFileProvider->expects($this->once())
             ->method('getFile')
             ->with($this->samplePackageKey . ':' . $this->sampleSourceName, $this->sampleLocale)
             ->willReturn($fileAdapter);
 
-        $this->mockPluralsReader->expects(self::any())->method('getPluralForms')
+        $this->mockPluralsReader->expects($this->any())->method('getPluralForms')
             ->with($this->sampleLocale)
-            ->will(self::returnValue([I18n\Cldr\Reader\PluralsReader::RULE_ONE, I18n\Cldr\Reader\PluralsReader::RULE_OTHER]));
+            ->willReturn(([I18n\Cldr\Reader\PluralsReader::RULE_ONE, I18n\Cldr\Reader\PluralsReader::RULE_OTHER]));
 
         $translationProvider = new I18n\TranslationProvider\XliffTranslationProvider();
         $translationProvider->injectPluralsReader($this->mockPluralsReader);
@@ -117,10 +117,10 @@ class XliffTranslationProviderTest extends UnitTestCase
     public function getTranslationByOriginalLabelThrowsExceptionWhenInvalidPluralFormProvided()
     {
         $this->expectException(I18n\TranslationProvider\Exception\InvalidPluralFormException::class);
-        $this->mockPluralsReader->expects(self::any())
+        $this->mockPluralsReader->expects($this->any())
             ->method('getPluralForms')
             ->with($this->sampleLocale)
-            ->will(self::returnValue([I18n\Cldr\Reader\PluralsReader::RULE_ONE, I18n\Cldr\Reader\PluralsReader::RULE_OTHER]));
+            ->willReturn(([I18n\Cldr\Reader\PluralsReader::RULE_ONE, I18n\Cldr\Reader\PluralsReader::RULE_OTHER]));
 
         $translationProvider = new I18n\TranslationProvider\XliffTranslationProvider();
         $translationProvider->injectPluralsReader($this->mockPluralsReader);
@@ -134,10 +134,10 @@ class XliffTranslationProviderTest extends UnitTestCase
     public function getTranslationByIdThrowsExceptionWhenInvalidPluralFormProvided()
     {
         $this->expectException(I18n\TranslationProvider\Exception\InvalidPluralFormException::class);
-        $this->mockPluralsReader->expects(self::any())
+        $this->mockPluralsReader->expects($this->any())
             ->method('getPluralForms')
             ->with($this->sampleLocale)
-            ->will(self::returnValue([I18n\Cldr\Reader\PluralsReader::RULE_ONE, I18n\Cldr\Reader\PluralsReader::RULE_OTHER]));
+            ->willReturn(([I18n\Cldr\Reader\PluralsReader::RULE_ONE, I18n\Cldr\Reader\PluralsReader::RULE_OTHER]));
 
         $translationProvider = new I18n\TranslationProvider\XliffTranslationProvider();
         $translationProvider->injectPluralsReader($this->mockPluralsReader);

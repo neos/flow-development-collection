@@ -99,7 +99,7 @@ Third line'
      */
     public function splitExceptionMessageTests($message, $expectedSubject, $expectedBody)
     {
-        $debugExceptionHandler = $this->getAccessibleMock(DebugExceptionHandler::class, ['dummy']);
+        $debugExceptionHandler = $this->getAccessibleMock(DebugExceptionHandler::class, []);
 
         $expectedResult = ['subject' => $expectedSubject, 'body' => $expectedBody];
         $actualResult = $debugExceptionHandler->_call('splitExceptionMessage', $message);

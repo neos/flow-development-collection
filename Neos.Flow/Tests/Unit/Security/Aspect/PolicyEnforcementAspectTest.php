@@ -61,8 +61,8 @@ class PolicyEnforcementAspectTest extends UnitTestCase
      */
     public function enforcePolicyPassesTheGivenJoinPointOverToThePolicyEnforcementInterceptor()
     {
-        $this->mockJoinPoint->expects(self::once())->method('getAdviceChain')->will(self::returnValue($this->mockAdviceChain));
-        $this->mockPolicyEnforcementInterceptor->expects(self::once())->method('setJoinPoint')->with($this->mockJoinPoint);
+        $this->mockJoinPoint->expects($this->once())->method('getAdviceChain')->willReturn(($this->mockAdviceChain));
+        $this->mockPolicyEnforcementInterceptor->expects($this->once())->method('setJoinPoint')->with($this->mockJoinPoint);
 
         $this->policyEnforcementAspect->enforcePolicy($this->mockJoinPoint);
     }
@@ -72,8 +72,8 @@ class PolicyEnforcementAspectTest extends UnitTestCase
      */
     public function enforcePolicyCallsThePolicyEnforcementInterceptorCorrectly()
     {
-        $this->mockJoinPoint->expects(self::once())->method('getAdviceChain')->will(self::returnValue($this->mockAdviceChain));
-        $this->mockPolicyEnforcementInterceptor->expects(self::once())->method('invoke');
+        $this->mockJoinPoint->expects($this->once())->method('getAdviceChain')->willReturn(($this->mockAdviceChain));
+        $this->mockPolicyEnforcementInterceptor->expects($this->once())->method('invoke');
 
         $this->policyEnforcementAspect->enforcePolicy($this->mockJoinPoint);
     }
@@ -84,8 +84,8 @@ class PolicyEnforcementAspectTest extends UnitTestCase
      */
     public function enforcePolicyCallsTheAdviceChainCorrectly()
     {
-        $this->mockAdviceChain->expects(self::once())->method('proceed')->with($this->mockJoinPoint);
-        $this->mockJoinPoint->expects(self::once())->method('getAdviceChain')->will(self::returnValue($this->mockAdviceChain));
+        $this->mockAdviceChain->expects($this->once())->method('proceed')->with($this->mockJoinPoint);
+        $this->mockJoinPoint->expects($this->once())->method('getAdviceChain')->willReturn(($this->mockAdviceChain));
 
         $this->policyEnforcementAspect->enforcePolicy($this->mockJoinPoint);
     }
@@ -98,9 +98,9 @@ class PolicyEnforcementAspectTest extends UnitTestCase
     {
         $someResult = 'blub';
 
-        $this->mockJoinPoint->expects(self::once())->method('getAdviceChain')->will(self::returnValue($this->mockAdviceChain));
-        $this->mockAdviceChain->expects(self::once())->method('proceed')->will(self::returnValue($someResult));
-        // $this->mockAfterInvocationInterceptor->expects(self::once())->method('invoke')->will(self::returnValue($someResult));
+        $this->mockJoinPoint->expects($this->once())->method('getAdviceChain')->willReturn(($this->mockAdviceChain));
+        $this->mockAdviceChain->expects($this->once())->method('proceed')->willReturn(($someResult));
+        // $this->mockAfterInvocationInterceptor->expects($this->once())->method('invoke')->willReturn(($someResult));
 
         self::assertEquals($someResult, $this->policyEnforcementAspect->enforcePolicy($this->mockJoinPoint));
     }
@@ -111,11 +111,11 @@ class PolicyEnforcementAspectTest extends UnitTestCase
      */
     public function enforcePolicyDoesNotInvokeInterceptorIfAuthorizationChecksAreDisabled()
     {
-        $this->mockAdviceChain->expects(self::once())->method('proceed')->with($this->mockJoinPoint);
-        $this->mockJoinPoint->expects(self::once())->method('getAdviceChain')->will(self::returnValue($this->mockAdviceChain));
+        $this->mockAdviceChain->expects($this->once())->method('proceed')->with($this->mockJoinPoint);
+        $this->mockJoinPoint->expects($this->once())->method('getAdviceChain')->willReturn(($this->mockAdviceChain));
 
-        $this->mockSecurityContext->expects(self::atLeastOnce())->method('areAuthorizationChecksDisabled')->will(self::returnValue(true));
-        $this->mockPolicyEnforcementInterceptor->expects(self::never())->method('invoke');
+        $this->mockSecurityContext->expects($this->atLeastOnce())->method('areAuthorizationChecksDisabled')->willReturn((true));
+        $this->mockPolicyEnforcementInterceptor->expects($this->never())->method('invoke');
         $this->policyEnforcementAspect->enforcePolicy($this->mockJoinPoint);
     }
 }

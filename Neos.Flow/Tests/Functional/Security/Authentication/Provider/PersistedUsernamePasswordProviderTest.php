@@ -50,7 +50,7 @@ class PersistedUsernamePasswordProviderTest extends FunctionalTestCase
         $this->accountFactory = new Security\AccountFactory();
         $this->accountRepository = new Security\AccountRepository();
 
-        $this->authenticationToken = $this->getAccessibleMock(Security\Authentication\Token\UsernamePassword::class, ['dummy']);
+        $this->authenticationToken = $this->getAccessibleMock(Security\Authentication\Token\UsernamePassword::class, []);
 
         $account = $this->accountFactory->createAccountWithPassword('username', 'password', [], 'myTestProvider');
         $this->accountRepository->add($account);

@@ -60,9 +60,9 @@ class DatetimeFormatterTest extends UnitTestCase
     public function formatMethodsAreChoosenCorrectly()
     {
         $formatter = $this->getAccessibleMock(I18n\Formatter\DatetimeFormatter::class, ['formatDate', 'formatTime', 'formatDateTime']);
-        $formatter->expects(self::once())->method('formatDateTime')->with($this->sampleDateTime, $this->sampleLocale, I18n\Cldr\Reader\DatesReader::FORMAT_LENGTH_DEFAULT)->willReturn('bar1');
-        $formatter->expects(self::once())->method('formatDate')->with($this->sampleDateTime, $this->sampleLocale, I18n\Cldr\Reader\DatesReader::FORMAT_LENGTH_DEFAULT)->willReturn('bar2');
-        $formatter->expects(self::once())->method('formatTime')->with($this->sampleDateTime, $this->sampleLocale, I18n\Cldr\Reader\DatesReader::FORMAT_LENGTH_FULL)->willReturn('bar3');
+        $formatter->expects($this->once())->method('formatDateTime')->with($this->sampleDateTime, $this->sampleLocale, I18n\Cldr\Reader\DatesReader::FORMAT_LENGTH_DEFAULT)->willReturn('bar1');
+        $formatter->expects($this->once())->method('formatDate')->with($this->sampleDateTime, $this->sampleLocale, I18n\Cldr\Reader\DatesReader::FORMAT_LENGTH_DEFAULT)->willReturn('bar2');
+        $formatter->expects($this->once())->method('formatTime')->with($this->sampleDateTime, $this->sampleLocale, I18n\Cldr\Reader\DatesReader::FORMAT_LENGTH_FULL)->willReturn('bar3');
 
         $result = $formatter->format($this->sampleDateTime, $this->sampleLocale);
         self::assertEquals('bar1', $result);
@@ -98,7 +98,7 @@ class DatetimeFormatterTest extends UnitTestCase
      */
     public function parsedFormatsAreUsedCorrectly(array $parsedFormat, $expectedResult)
     {
-        $formatter = $this->getAccessibleMock(I18n\Formatter\DatetimeFormatter::class, ['dummy']);
+        $formatter = $this->getAccessibleMock(I18n\Formatter\DatetimeFormatter::class, []);
 
         $result = $formatter->_call('doFormattingWithParsedFormat', $this->sampleDateTime, $parsedFormat, $this->sampleLocalizedLiterals);
         self::assertEquals($expectedResult, $result);
@@ -124,8 +124,8 @@ class DatetimeFormatterTest extends UnitTestCase
     public function formattingUsingCustomPatternWorks($format, array $parsedFormat, $expectedResult)
     {
         $mockDatesReader = $this->createMock(I18n\Cldr\Reader\DatesReader::class);
-        $mockDatesReader->expects(self::once())->method('parseCustomFormat')->with($format)->will(self::returnValue($parsedFormat));
-        $mockDatesReader->expects(self::once())->method('getLocalizedLiteralsForLocale')->with($this->sampleLocale)->will(self::returnValue($this->sampleLocalizedLiterals));
+        $mockDatesReader->expects($this->once())->method('parseCustomFormat')->with($format)->willReturn(($parsedFormat));
+        $mockDatesReader->expects($this->once())->method('getLocalizedLiteralsForLocale')->with($this->sampleLocale)->willReturn(($this->sampleLocalizedLiterals));
 
         $formatter = new I18n\Formatter\DatetimeFormatter();
         $formatter->injectDatesReader($mockDatesReader);
@@ -168,8 +168,8 @@ class DatetimeFormatterTest extends UnitTestCase
     {
         $formatLength = I18n\Cldr\Reader\DatesReader::FORMAT_LENGTH_FULL;
         $mockDatesReader = $this->createMock(I18n\Cldr\Reader\DatesReader::class);
-        $mockDatesReader->expects(self::once())->method('parseFormatFromCldr')->with($this->sampleLocale, $formatType, $formatLength)->will(self::returnValue($parsedFormat));
-        $mockDatesReader->expects(self::once())->method('getLocalizedLiteralsForLocale')->with($this->sampleLocale)->will(self::returnValue($this->sampleLocalizedLiterals));
+        $mockDatesReader->expects($this->once())->method('parseFormatFromCldr')->with($this->sampleLocale, $formatType, $formatLength)->willReturn(($parsedFormat));
+        $mockDatesReader->expects($this->once())->method('getLocalizedLiteralsForLocale')->with($this->sampleLocale)->willReturn(($this->sampleLocalizedLiterals));
 
         $formatter = new I18n\Formatter\DatetimeFormatter();
         $formatter->injectDatesReader($mockDatesReader);

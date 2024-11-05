@@ -36,10 +36,16 @@ class CldrModelTest extends UnitTestCase
         $sampleParsedFile3 = require(__DIR__ . '/../Fixtures/MockParsedCldrFile3.php');
 
         $mockCache = $this->getMockBuilder(VariableFrontend::class)->disableOriginalConstructor()->getMock();
-        $mockCache->expects(self::once())->method('has')->with(md5('foo;bar;baz'))->will(self::returnValue(false));
+        $mockCache->expects($this->once())->method('has')->with(md5('foo;bar;baz'))->willReturn((false));
 
         $mockCldrParser = $this->createMock(I18n\Cldr\CldrParser::class);
-        $mockCldrParser->expects(self::exactly(3))->method('getParsedData')->withConsecutive(['foo'], ['bar'], ['baz'])->willReturnOnConsecutiveCalls($sampleParsedFile1, $sampleParsedFile2, $sampleParsedFile3);
+        $mockCldrParser->expects($this->exactly(3))->method('getParsedData')->willReturnCallback(fn($argument) =>
+             match($argument) {
+                'foo' => $sampleParsedFile1,
+                'bar' => $sampleParsedFile2,
+                'baz' => $sampleParsedFile3,
+            }
+        );
 
         $this->model = new I18n\Cldr\CldrModel($samplePaths);
         $this->model->injectCache($mockCache);

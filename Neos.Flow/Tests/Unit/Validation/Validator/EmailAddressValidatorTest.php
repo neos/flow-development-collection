@@ -30,7 +30,7 @@ class EmailAddressValidatorTest extends AbstractValidatorTestcase
      */
     protected function getValidator($options = [])
     {
-        $validator = $this->getAccessibleMock($this->validatorClassName, ['dummy'], [$options], '', true);
+        $validator = $this->getAccessibleMock($this->validatorClassName, [], [$options], '', true);
 
         $emailValidator = new EmailValidator();
         $this->inject($validator, 'emailValidator', $emailValidator);

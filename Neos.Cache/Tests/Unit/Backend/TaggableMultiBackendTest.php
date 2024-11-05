@@ -22,9 +22,9 @@ class TaggableMultiBackendTest extends BaseTestCase
         $secondNullBackendMock = $mockBuilder->getMock();
         $thirdNullBackendMock = $mockBuilder->getMock();
 
-        $firstNullBackendMock->expects(self::once())->method('flushByTag')->with('foo')->willReturn(2);
-        $secondNullBackendMock->expects(self::once())->method('flushByTag')->with('foo')->willThrowException(new \RuntimeException());
-        $thirdNullBackendMock->expects(self::once())->method('flushByTag')->with('foo')->willReturn(3);
+        $firstNullBackendMock->expects($this->once())->method('flushByTag')->with('foo')->willReturn(2);
+        $secondNullBackendMock->expects($this->once())->method('flushByTag')->with('foo')->willThrowException(new \RuntimeException());
+        $thirdNullBackendMock->expects($this->once())->method('flushByTag')->with('foo')->willReturn(3);
 
         $multiBackend = new TaggableMultiBackend($this->getEnvironmentConfiguration(), []);
         $this->inject($multiBackend, 'backends', [$firstNullBackendMock, $secondNullBackendMock, $thirdNullBackendMock]);

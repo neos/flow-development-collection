@@ -48,7 +48,7 @@ class RsaWalletServicePhpTest extends UnitTestCase
         $settings['security']['cryptography']['RSAWalletServicePHP']['openSSLConfiguration']['private_key_bits'] = 1024;
         $settings['security']['cryptography']['RSAWalletServicePHP']['openSSLConfiguration']['private_key_type'] = OPENSSL_KEYTYPE_RSA;
 
-        $this->rsaWalletService = $this->getAccessibleMock(RsaWalletServicePhp::class, ['dummy']);
+        $this->rsaWalletService = $this->getAccessibleMock(RsaWalletServicePhp::class, []);
         $this->rsaWalletService->injectSettings($settings);
 
         $this->keyPairUuid = $this->rsaWalletService->generateNewKeypair();

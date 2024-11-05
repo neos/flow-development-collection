@@ -234,12 +234,12 @@ class MemcachedBackendTest extends BaseTestCase
         $backendOptions = ['servers' => ['localhost:11211']];
 
         $thisCache = $this->getMockBuilder(AbstractFrontend::class)->disableOriginalConstructor()->getMock();
-        $thisCache->expects(self::any())->method('getIdentifier')->will(self::returnValue('thisCache'));
+        $thisCache->expects($this->any())->method('getIdentifier')->willReturn(('thisCache'));
         $thisBackend = new MemcachedBackend($this->getEnvironmentConfiguration(), $backendOptions);
         $thisBackend->setCache($thisCache);
 
         $thatCache = $this->getMockBuilder(AbstractFrontend::class)->disableOriginalConstructor()->getMock();
-        $thatCache->expects(self::any())->method('getIdentifier')->will(self::returnValue('thatCache'));
+        $thatCache->expects($this->any())->method('getIdentifier')->willReturn(('thatCache'));
         $thatBackend = new MemcachedBackend($this->getEnvironmentConfiguration(), $backendOptions);
         $thatBackend->setCache($thatCache);
 

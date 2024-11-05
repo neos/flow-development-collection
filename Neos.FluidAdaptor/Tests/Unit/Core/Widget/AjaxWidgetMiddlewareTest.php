@@ -111,7 +111,7 @@ class AjaxWidgetMiddlewareTest extends UnitTestCase
         $this->mockAjaxWidgetContextHolder = $this->getMockBuilder(AjaxWidgetContextHolder::class)->getMock();
         $this->inject($this->ajaxWidgetMiddleware, 'ajaxWidgetContextHolder', $this->mockAjaxWidgetContextHolder);
 
-        $this->mockActionRequestFactory = $this->getMockBuilder(ActionRequestFactory::class)->disableOriginalConstructor()->setMethods(['prepareActionRequest'])->getMock();
+        $this->mockActionRequestFactory = $this->getMockBuilder(ActionRequestFactory::class)->disableOriginalConstructor()->onlyMethods(['prepareActionRequest'])->getMock();
 
         $this->inject($this->ajaxWidgetMiddleware, 'actionRequestFactory', $this->mockActionRequestFactory);
 
@@ -132,7 +132,7 @@ class AjaxWidgetMiddlewareTest extends UnitTestCase
     {
         $this->mockHttpRequest->method('getParsedBody')->willReturn([]);
 
-        $this->mockObjectManager->expects(self::never())->method('get');
+        $this->mockObjectManager->expects($this->never())->method('get');
 
         $this->ajaxWidgetMiddleware->process($this->mockHttpRequest, $this->mockRequestHandler);
     }
@@ -149,13 +149,13 @@ class AjaxWidgetMiddlewareTest extends UnitTestCase
         ]);
 
         $mockWidgetContext = $this->getMockBuilder(WidgetContext::class)->getMock();
-        $mockWidgetContext->expects(self::atLeastOnce())->method('getControllerObjectName')->willReturn($mockControllerObjectName);
-        $this->mockAjaxWidgetContextHolder->expects(self::atLeastOnce())->method('get')->with($mockWidgetId)->willReturn($mockWidgetContext);
+        $mockWidgetContext->expects($this->atLeastOnce())->method('getControllerObjectName')->willReturn($mockControllerObjectName);
+        $this->mockAjaxWidgetContextHolder->expects($this->atLeastOnce())->method('get')->with($mockWidgetId)->willReturn($mockWidgetContext);
         $mockActionRequest = $this->getMockBuilder(ActionRequest::class)->disableOriginalConstructor()->getMock();
         $this->mockActionRequestFactory->method('prepareActionRequest')->willReturn($mockActionRequest);
 
-        $mockActionRequest->expects(self::once())->method('setArguments')->with(['__widgetContext' =>  $mockWidgetContext, '__widgetId' => 'SomeWidgetId']);
-        $mockActionRequest->expects(self::once())->method('setControllerObjectName')->with($mockControllerObjectName);
+        $mockActionRequest->expects($this->once())->method('setArguments')->with(['__widgetContext' =>  $mockWidgetContext, '__widgetId' => 'SomeWidgetId']);
+        $mockActionRequest->expects($this->once())->method('setControllerObjectName')->with($mockControllerObjectName);
 
         $this->ajaxWidgetMiddleware->process($this->mockHttpRequest, $this->mockRequestHandler);
     }
@@ -167,17 +167,17 @@ class AjaxWidgetMiddlewareTest extends UnitTestCase
     {
         $mockWidgetId = 'SomeWidgetId';
         $mockControllerObjectName = 'SomeControllerObjectName';
-        $this->mockHttpRequest->expects(self::any())->method('getParsedBody')->willReturn([
+        $this->mockHttpRequest->expects($this->any())->method('getParsedBody')->willReturn([
             '__widgetId' => $mockWidgetId,
         ]);
 
         $mockWidgetContext = $this->getMockBuilder(WidgetContext::class)->getMock();
-        $mockWidgetContext->expects(self::atLeastOnce())->method('getControllerObjectName')->willReturn($mockControllerObjectName);
-        $this->mockAjaxWidgetContextHolder->expects(self::atLeastOnce())->method('get')->with($mockWidgetId)->willReturn($mockWidgetContext);
+        $mockWidgetContext->expects($this->atLeastOnce())->method('getControllerObjectName')->willReturn($mockControllerObjectName);
+        $this->mockAjaxWidgetContextHolder->expects($this->atLeastOnce())->method('get')->with($mockWidgetId)->willReturn($mockWidgetContext);
         $mockActionRequest = $this->getMockBuilder(ActionRequest::class)->disableOriginalConstructor()->getMock();
         $this->mockActionRequestFactory->method('prepareActionRequest')->willReturn($mockActionRequest);
 
-        $this->mockDispatcher->expects(self::once())->method('dispatch');
+        $this->mockDispatcher->expects($this->once())->method('dispatch');
 
         $this->ajaxWidgetMiddleware->process($this->mockHttpRequest, $this->mockRequestHandler);
     }
@@ -194,8 +194,8 @@ class AjaxWidgetMiddlewareTest extends UnitTestCase
         ]);
 
         $mockWidgetContext = $this->getMockBuilder(WidgetContext::class)->getMock();
-        $mockWidgetContext->expects(self::atLeastOnce())->method('getControllerObjectName')->willReturn($mockControllerObjectName);
-        $this->mockAjaxWidgetContextHolder->expects(self::atLeastOnce())->method('get')->with($mockWidgetId)->willReturn($mockWidgetContext);
+        $mockWidgetContext->expects($this->atLeastOnce())->method('getControllerObjectName')->willReturn($mockControllerObjectName);
+        $this->mockAjaxWidgetContextHolder->expects($this->atLeastOnce())->method('get')->with($mockWidgetId)->willReturn($mockWidgetContext);
         $mockActionRequest = $this->getMockBuilder(ActionRequest::class)->disableOriginalConstructor()->getMock();
         $this->mockActionRequestFactory->method('prepareActionRequest')->willReturn($mockActionRequest);
 
@@ -208,7 +208,7 @@ class AjaxWidgetMiddlewareTest extends UnitTestCase
      */
     public function extractWidgetContextDecodesSerializedWidgetContextIfPresent()
     {
-        $ajaxWidgetComponent = $this->getAccessibleMock(AjaxWidgetMiddleware::class, ['dummy']);
+        $ajaxWidgetComponent = $this->getAccessibleMock(AjaxWidgetMiddleware::class, []);
         $this->inject($ajaxWidgetComponent, 'hashService', $this->mockHashService);
 
         $mockWidgetContext = new WidgetContext();
@@ -219,7 +219,7 @@ class AjaxWidgetMiddlewareTest extends UnitTestCase
             '__widgetContext' => $mockSerializedWidgetContextWithHmac
         ]);
 
-        $this->mockHashService->expects(self::atLeastOnce())->method('validateAndStripHmac')->with($mockSerializedWidgetContextWithHmac)->willReturn($mockSerializedWidgetContext);
+        $this->mockHashService->expects($this->atLeastOnce())->method('validateAndStripHmac')->with($mockSerializedWidgetContextWithHmac)->willReturn($mockSerializedWidgetContext);
 
         $actualResult = $ajaxWidgetComponent->_call('extractWidgetContext', $this->mockHttpRequest);
         self::assertEquals($mockWidgetContext, $actualResult);

@@ -73,8 +73,8 @@ class CachePoolTest extends BaseTestCase
         new CachePool($identifier, $mockBackend);
     }
 
-    
-    
+
+
     /**
      * @test
      */
@@ -83,10 +83,10 @@ class CachePoolTest extends BaseTestCase
         $this->expectException(InvalidArgumentException::class);
         /** @var PsrFrontend|\PHPUnit\Framework\MockObject\MockObject $cache */
         $cache = $this->getMockBuilder(CachePool::class)
-            ->setMethods(['isValidEntryIdentifier'])
+            ->onlyMethods(['isValidEntryIdentifier'])
             ->disableOriginalConstructor()
             ->getMock();
-        $cache->expects(self::once())->method('isValidEntryIdentifier')->with('foo')->willReturn(false);
+        $cache->expects($this->once())->method('isValidEntryIdentifier')->with('foo')->willReturn(false);
         $cache->getItem('foo');
     }
 
@@ -98,7 +98,7 @@ class CachePoolTest extends BaseTestCase
         $theString = 'Just some value';
         $cacheItem = new CacheItem('PsrCacheTest', true, $theString);
         $backend = $this->prepareDefaultBackend();
-        $backend->expects(self::once())->method('set')->with(self::equalTo('PsrCacheTest'), self::equalTo(serialize($theString)));
+        $backend->expects($this->once())->method('set')->with(self::equalTo('PsrCacheTest'), self::equalTo(serialize($theString)));
 
         $cache = new CachePool('CachePool', $backend);
         $cache->save($cacheItem);
@@ -112,7 +112,7 @@ class CachePoolTest extends BaseTestCase
         $theArray = ['Just some value', 'and another one.'];
         $cacheItem = new CacheItem('PsrCacheTest', true, $theArray);
         $backend = $this->prepareDefaultBackend();
-        $backend->expects(self::once())->method('set')->with(self::equalTo('PsrCacheTest'), self::equalTo(serialize($theArray)));
+        $backend->expects($this->once())->method('set')->with(self::equalTo('PsrCacheTest'), self::equalTo(serialize($theArray)));
 
         $cache = new CachePool('CachePool', $backend);
         $cache->save($cacheItem);
@@ -129,7 +129,7 @@ class CachePoolTest extends BaseTestCase
         $cacheItem = new CacheItem('PsrCacheTest', true, $theString);
         $cacheItem->expiresAfter($theLifetime);
         $backend = $this->prepareDefaultBackend();
-        $backend->expects(self::once())->method('set')->with(self::equalTo('PsrCacheTest'), self::equalTo(serialize($theString)), self::equalTo([]), self::equalTo($theLifetime, 1));
+        $backend->expects($this->once())->method('set')->with(self::equalTo('PsrCacheTest'), self::equalTo(serialize($theString)), self::equalTo([]), self::equalTo($theLifetime, 1));
 
         $cache = new CachePool('CachePool', $backend);
         $cache->save($cacheItem);
@@ -142,7 +142,7 @@ class CachePoolTest extends BaseTestCase
     {
         $theString = 'Just some value';
         $backend = $this->prepareDefaultBackend();
-        $backend->expects(self::any())->method('get')->willReturn(serialize($theString));
+        $backend->expects($this->any())->method('get')->willReturn(serialize($theString));
 
         $cache = new CachePool('CachePool', $backend);
         self::assertEquals(true, $cache->getItem('PsrCacheTest')->isHit(), 'The item should have been a hit but is not');
@@ -155,7 +155,7 @@ class CachePoolTest extends BaseTestCase
     public function getItemFetchesFalseBooleanValueFromBackend()
     {
         $backend = $this->prepareDefaultBackend();
-        $backend->expects(self::once())->method('get')->willReturn(serialize(false));
+        $backend->expects($this->once())->method('get')->willReturn(serialize(false));
 
         $cache = new CachePool('CachePool', $backend);
         $retrievedItem = $cache->getItem('PsrCacheTest');
@@ -169,7 +169,7 @@ class CachePoolTest extends BaseTestCase
     public function hasItemReturnsResultFromBackend()
     {
         $backend = $this->prepareDefaultBackend();
-        $backend->expects(self::once())->method('has')->with(self::equalTo('PsrCacheTest'))->willReturn(true);
+        $backend->expects($this->once())->method('has')->with(self::equalTo('PsrCacheTest'))->willReturn(true);
 
         $cache = new CachePool('CachePool', $backend);
         self::assertTrue($cache->hasItem('PsrCacheTest'), 'hasItem() did not return true.');
@@ -183,7 +183,7 @@ class CachePoolTest extends BaseTestCase
         $cacheIdentifier = 'someCacheIdentifier';
         $backend = $this->prepareDefaultBackend();
 
-        $backend->expects(self::once())->method('remove')->with(self::equalTo($cacheIdentifier))->willReturn(true);
+        $backend->expects($this->once())->method('remove')->with(self::equalTo($cacheIdentifier))->willReturn(true);
 
         $cache = new CachePool('CachePool', $backend);
         self::assertTrue($cache->deleteItem($cacheIdentifier), 'deleteItem() did not return true');
@@ -195,7 +195,7 @@ class CachePoolTest extends BaseTestCase
     protected function prepareDefaultBackend()
     {
         return $this->getMockBuilder(AbstractBackend::class)
-            ->setMethods([
+            ->onlyMethods([
                 'get',
                 'set',
                 'has',

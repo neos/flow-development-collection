@@ -219,12 +219,12 @@ class PdoBackendTest extends BaseTestCase
     public function flushRemovesOnlyOwnEntries()
     {
         $thisCache = $this->getMockBuilder(FrontendInterface::class)->disableOriginalConstructor()->getMock();
-        $thisCache->expects(self::any())->method('getIdentifier')->will(self::returnValue('thisCache'));
+        $thisCache->expects($this->any())->method('getIdentifier')->willReturn(('thisCache'));
         $thisBackend = $this->setUpBackend();
         $thisBackend->setCache($thisCache);
 
         $thatCache = $this->getMockBuilder(FrontendInterface::class)->disableOriginalConstructor()->getMock();
-        $thatCache->expects(self::any())->method('getIdentifier')->will(self::returnValue('thatCache'));
+        $thatCache->expects($this->any())->method('getIdentifier')->willReturn(('thatCache'));
         $thatBackend = $this->setUpBackend();
         $thatBackend->setCache($thatCache);
 
@@ -340,7 +340,7 @@ class PdoBackendTest extends BaseTestCase
     {
         /** @var FrontendInterface|MockObject $mockCache */
         $mockCache = $this->getMockBuilder(FrontendInterface::class)->disableOriginalConstructor()->getMock();
-        $mockCache->expects(self::any())->method('getIdentifier')->will(self::returnValue('TestCache'));
+        $mockCache->expects($this->any())->method('getIdentifier')->willReturn(('TestCache'));
 
         $mockEnvironmentConfiguration = $this->getMockBuilder(EnvironmentConfiguration::class)->setConstructorArgs([
             __DIR__ . '~Testing',

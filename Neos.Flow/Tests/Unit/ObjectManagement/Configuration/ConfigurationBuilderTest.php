@@ -55,7 +55,7 @@ class ConfigurationBuilderTest extends UnitTestCase
         $objectConfiguration->setLifecycleShutdownMethodName('shutdownMethod');
         $objectConfiguration->setAutowiring(Configuration::AUTOWIRING_MODE_OFF);
 
-        $configurationBuilder = $this->getAccessibleMock(ConfigurationBuilder::class, ['dummy']);
+        $configurationBuilder = $this->getAccessibleMock(ConfigurationBuilder::class, []);
         $builtObjectConfiguration = $configurationBuilder->_call('parseConfigurationArray', 'TestObject', $configurationArray, __CLASS__);
         self::assertEquals($objectConfiguration, $builtObjectConfiguration, 'The manually created and the built object configuration don\'t match.');
     }
@@ -75,7 +75,7 @@ class ConfigurationBuilderTest extends UnitTestCase
         $objectConfiguration = new Configuration('TestObject', 'TestObject');
         $objectConfiguration->setArgument(new ConfigurationArgument(1, $argumentObjectConfiguration, ConfigurationArgument::ARGUMENT_TYPES_OBJECT));
 
-        $configurationBuilder = $this->getAccessibleMock(ConfigurationBuilder::class, ['dummy']);
+        $configurationBuilder = $this->getAccessibleMock(ConfigurationBuilder::class, []);
         $builtObjectConfiguration = $configurationBuilder->_call('parseConfigurationArray', 'TestObject', $configurationArray, __CLASS__);
         self::assertEquals($objectConfiguration, $builtObjectConfiguration);
     }
@@ -95,7 +95,7 @@ class ConfigurationBuilderTest extends UnitTestCase
         $objectConfiguration = new Configuration('TestObject', 'TestObject');
         $objectConfiguration->setProperty(new ConfigurationProperty('theProperty', $propertyObjectConfiguration, ConfigurationProperty::PROPERTY_TYPES_OBJECT));
 
-        $configurationBuilder = $this->getAccessibleMock(ConfigurationBuilder::class, ['dummy']);
+        $configurationBuilder = $this->getAccessibleMock(ConfigurationBuilder::class, []);
         $builtObjectConfiguration = $configurationBuilder->_call('parseConfigurationArray', 'TestObject', $configurationArray, __CLASS__);
         self::assertEquals($objectConfiguration, $builtObjectConfiguration);
     }
@@ -113,7 +113,7 @@ class ConfigurationBuilderTest extends UnitTestCase
         $objectConfiguration->setProperty(new ConfigurationProperty('straightValueProperty', ['foo' => 'bar', 'object' => 'nö']));
         $objectConfiguration->setArgument(new ConfigurationArgument(1, ['foo' => 'bar', 'object' => 'nö']));
 
-        $configurationBuilder = $this->getAccessibleMock(ConfigurationBuilder::class, ['dummy']);
+        $configurationBuilder = $this->getAccessibleMock(ConfigurationBuilder::class, []);
         $builtObjectConfiguration = $configurationBuilder->_call('parseConfigurationArray', 'TestObject', $configurationArray, __CLASS__);
         self::assertEquals($objectConfiguration, $builtObjectConfiguration);
     }
@@ -125,7 +125,7 @@ class ConfigurationBuilderTest extends UnitTestCase
     {
         $this->expectException(InvalidObjectConfigurationException::class);
         $configurationArray = ['scoopy' => 'prototype'];
-        $configurationBuilder = $this->getAccessibleMock(ConfigurationBuilder::class, ['dummy']);
+        $configurationBuilder = $this->getAccessibleMock(ConfigurationBuilder::class, []);
         $configurationBuilder->_call('parseConfigurationArray', 'TestObject', $configurationArray, __CLASS__);
     }
 
@@ -139,21 +139,21 @@ class ConfigurationBuilderTest extends UnitTestCase
         $configurationArray['arguments'][1]['setting'] = 'Neos.Foo.Bar';
         $configurationArray['properties']['someProperty']['setting'] = 'Neos.Bar.Baz';
 
-        $configurationBuilder = $this->getAccessibleMock(ConfigurationBuilder::class, ['dummy']);
+        $configurationBuilder = $this->getAccessibleMock(ConfigurationBuilder::class, []);
         $dummyObjectConfiguration = [$configurationBuilder->_call('parseConfigurationArray', __CLASS__, $configurationArray, __CLASS__)];
 
         $reflectionServiceMock = $this->createMock(ReflectionService::class);
         $reflectionServiceMock
-                ->expects(self::once())
+                ->expects($this->once())
                 ->method('getPropertyNamesByAnnotation')
                 ->with(__CLASS__, Flow\Inject::class)
-                ->will(self::returnValue(['dummyProperty']));
+                ->willReturn((['dummyProperty']));
 
         $reflectionServiceMock
-                ->expects(self::once())
+                ->expects($this->once())
                 ->method('isPropertyPrivate')
                 ->with(__CLASS__, 'dummyProperty')
-                ->will(self::returnValue(true));
+                ->willReturn((true));
 
         $configurationBuilder->injectReflectionService($reflectionServiceMock);
         $configurationBuilder->_callRef('autowireProperties', $dummyObjectConfiguration);
@@ -169,7 +169,7 @@ class ConfigurationBuilderTest extends UnitTestCase
         $configurationArray['properties']['someProperty']['object']['name'] = 'Foo';
         $configurationArray['properties']['someProperty']['object']['className'] = 'foobar';
 
-        $configurationBuilder = $this->getAccessibleMock(ConfigurationBuilder::class, ['dummy']);
+        $configurationBuilder = $this->getAccessibleMock(ConfigurationBuilder::class, []);
         $dummyObjectConfiguration = [$configurationBuilder->_call('parseConfigurationArray', 'Foo', $configurationArray, __CLASS__)];
 
         $configurationBuilder->_callRef('autowireProperties', $dummyObjectConfiguration);
@@ -184,7 +184,7 @@ class ConfigurationBuilderTest extends UnitTestCase
         $configurationArray['properties']['someProperty']['setting'] = 'Neos.Foo.Bar';
 
         /** @var ConfigurationBuilder $configurationBuilder */
-        $configurationBuilder = $this->getAccessibleMock(ConfigurationBuilder::class, null);
+        $configurationBuilder = $this->getAccessibleMock(ConfigurationBuilder::class, []);
         /** @var Configuration $builtObjectConfiguration */
         $builtObjectConfiguration = $configurationBuilder->_call('parseConfigurationArray', 'TestObject', $configurationArray, __CLASS__);
 
@@ -201,7 +201,7 @@ class ConfigurationBuilderTest extends UnitTestCase
         $configurationArray['arguments'][1]['setting'] = 'Neos.Foo.Bar';
 
         /** @var ConfigurationBuilder $configurationBuilder */
-        $configurationBuilder = $this->getAccessibleMock(ConfigurationBuilder::class, null);
+        $configurationBuilder = $this->getAccessibleMock(ConfigurationBuilder::class, []);
         /** @var Configuration $builtObjectConfiguration */
         $builtObjectConfiguration = $configurationBuilder->_call('parseConfigurationArray', 'TestObject', $configurationArray, __CLASS__);
 
@@ -219,7 +219,7 @@ class ConfigurationBuilderTest extends UnitTestCase
             'factoryObjectName' => 'TestFactory',
         ];
 
-        $configurationBuilder = $this->getAccessibleMock(ConfigurationBuilder::class, ['dummy']);
+        $configurationBuilder = $this->getAccessibleMock(ConfigurationBuilder::class, []);
         $dummyObjectConfiguration = [$configurationBuilder->_call('parseConfigurationArray', __CLASS__, $configurationArray)];
 
         $reflectionServiceMock = $this->createMock(ReflectionService::class);

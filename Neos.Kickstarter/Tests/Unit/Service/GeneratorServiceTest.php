@@ -22,7 +22,7 @@ class GeneratorServiceTest extends \Neos\Flow\Tests\UnitTestCase
      */
     public function normalizeFieldDefinitionsConvertsBoolTypeToBoolean()
     {
-        $service = $this->getAccessibleMock(\Neos\Kickstarter\Service\GeneratorService::class, array('dummy'));
+        $service = $this->getAccessibleMock(\Neos\Kickstarter\Service\GeneratorService::class);
         $fieldDefinitions = array(
             'field' => array(
                 'type' => 'bool'
@@ -37,7 +37,7 @@ class GeneratorServiceTest extends \Neos\Flow\Tests\UnitTestCase
      */
     public function normalizeFieldDefinitionsPrefixesGlobalClassesWithBackslash()
     {
-        $service = $this->getAccessibleMock(\Neos\Kickstarter\Service\GeneratorService::class, array('dummy'));
+        $service = $this->getAccessibleMock(\Neos\Kickstarter\Service\GeneratorService::class);
         $fieldDefinitions = array(
             'field' => array(
                 'type' => 'DateTime'
@@ -52,8 +52,8 @@ class GeneratorServiceTest extends \Neos\Flow\Tests\UnitTestCase
      */
     public function normalizeFieldDefinitionsPrefixesLocalTypesWithNamespaceIfNeeded()
     {
-        $uniqueClassName = uniqid('Class');
-        $service = $this->getAccessibleMock(\Neos\Kickstarter\Service\GeneratorService::class, array('dummy'));
+        $uniqueClassName = uniqid('Class', true);
+        $service = $this->getAccessibleMock(\Neos\Kickstarter\Service\GeneratorService::class);
         $fieldDefinitions = array(
             'field' => array(
                 'type' => $uniqueClassName

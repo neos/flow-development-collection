@@ -91,22 +91,22 @@ abstract class ViewHelperBaseTestcase extends \Neos\Flow\Tests\UnitTestCase
         $this->viewHelperVariableContainer->expects($this->any())->method('addOrUpdate')->will($this->returnCallback([$this, 'viewHelperVariableContainerAddOrUpdateCallback']));
         $this->templateVariableContainer = $this->createMock(TemplateVariableContainer::class);
         $this->uriBuilder = $this->createMock(\Neos\Flow\Mvc\Routing\UriBuilder::class);
-        $this->uriBuilder->expects($this->any())->method('reset')->will(self::returnValue($this->uriBuilder));
-        $this->uriBuilder->expects($this->any())->method('setArguments')->will(self::returnValue($this->uriBuilder));
-        $this->uriBuilder->expects($this->any())->method('setSection')->will(self::returnValue($this->uriBuilder));
-        $this->uriBuilder->expects($this->any())->method('setFormat')->will(self::returnValue($this->uriBuilder));
-        $this->uriBuilder->expects($this->any())->method('setCreateAbsoluteUri')->will(self::returnValue($this->uriBuilder));
-        $this->uriBuilder->expects($this->any())->method('setAddQueryString')->will(self::returnValue($this->uriBuilder));
-        $this->uriBuilder->expects($this->any())->method('setArgumentsToBeExcludedFromQueryString')->will(self::returnValue($this->uriBuilder));
+        $this->uriBuilder->expects($this->any())->method('reset')->willReturn(($this->uriBuilder));
+        $this->uriBuilder->expects($this->any())->method('setArguments')->willReturn(($this->uriBuilder));
+        $this->uriBuilder->expects($this->any())->method('setSection')->willReturn(($this->uriBuilder));
+        $this->uriBuilder->expects($this->any())->method('setFormat')->willReturn(($this->uriBuilder));
+        $this->uriBuilder->expects($this->any())->method('setCreateAbsoluteUri')->willReturn(($this->uriBuilder));
+        $this->uriBuilder->expects($this->any())->method('setAddQueryString')->willReturn(($this->uriBuilder));
+        $this->uriBuilder->expects($this->any())->method('setArgumentsToBeExcludedFromQueryString')->willReturn(($this->uriBuilder));
 
         $httpRequestFactory = new ServerRequestFactory(new UriFactory());
         $httpRequest = $httpRequestFactory->createServerRequest('GET', new Uri('http://localhost/foo'));
 
         $this->request = $this->getMockBuilder(\Neos\Flow\Mvc\ActionRequest::class)->disableOriginalConstructor()->getMock();
-        $this->request->expects($this->any())->method('isMainRequest')->will(self::returnValue(true));
+        $this->request->expects($this->any())->method('isMainRequest')->willReturn((true));
         $this->controllerContext = $this->getMockBuilder(\Neos\Flow\Mvc\Controller\ControllerContext::class)->disableOriginalConstructor()->getMock();
-        $this->controllerContext->expects($this->any())->method('getUriBuilder')->will(self::returnValue($this->uriBuilder));
-        $this->controllerContext->expects($this->any())->method('getRequest')->will(self::returnValue($this->request));
+        $this->controllerContext->expects($this->any())->method('getUriBuilder')->willReturn(($this->uriBuilder));
+        $this->controllerContext->expects($this->any())->method('getRequest')->willReturn(($this->request));
         $this->tagBuilder = $this->createMock(TagBuilder::class);
         $this->arguments = [];
         $this->renderingContext = new \Neos\FluidAdaptor\Core\Rendering\RenderingContext([]);

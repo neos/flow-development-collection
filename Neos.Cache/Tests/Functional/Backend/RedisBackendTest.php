@@ -64,7 +64,7 @@ class RedisBackendTest extends BaseTestCase
             ['hostname' => '127.0.0.1', 'database' => 0]
         );
         $this->cache = $this->createMock(FrontendInterface::class);
-        $this->cache->expects(self::any())->method('getIdentifier')->will(self::returnValue('TestCache'));
+        $this->cache->expects($this->any())->method('getIdentifier')->willReturn(('TestCache'));
         $this->backend->setCache($this->cache);
         $this->backend->flush();
     }

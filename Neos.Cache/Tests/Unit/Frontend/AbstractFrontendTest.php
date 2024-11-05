@@ -29,7 +29,7 @@ class AbstractFrontendTest extends BaseTestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->mockBackend = $this->getMockBuilder(AbstractBackend::class)->setMethods(['get', 'set', 'has', 'remove', 'findIdentifiersByTag', 'flush', 'flushByTag', 'collectGarbage'])->disableOriginalConstructor()->getMock();
+        $this->mockBackend = $this->getMockBuilder(AbstractBackend::class)->onlyMethods(['get', 'set', 'has', 'remove', 'flush', 'collectGarbage'])->disableOriginalConstructor()->getMock();
     }
 
     /**
@@ -65,11 +65,11 @@ class AbstractFrontendTest extends BaseTestCase
     {
         $identifier = 'someCacheIdentifier';
         $backend = $this->getMockBuilder(AbstractBackend::class)
-            ->setMethods(['get', 'set', 'has', 'remove', 'findIdentifiersByTag', 'flush', 'flushByTag', 'collectGarbage'])->disableOriginalConstructor()->getMock();
-        $backend->expects(self::once())->method('flush');
+            ->onlyMethods(['get', 'set', 'has', 'remove', 'findIdentifiersByTag', 'flush', 'flushByTag', 'collectGarbage'])->disableOriginalConstructor()->getMock();
+        $backend->expects($this->once())->method('flush');
 
         $cache = $this->getMockBuilder(StringFrontend::class)
-            ->setMethods(['__construct', 'get', 'set', 'has', 'remove', 'getByTag'])
+            ->onlyMethods(['__construct', 'get', 'set', 'has', 'remove', 'getByTag'])
             ->setConstructorArgs([$identifier, $backend])
             ->getMock();
         $cache->flush();
@@ -83,10 +83,10 @@ class AbstractFrontendTest extends BaseTestCase
         $this->expectException(\InvalidArgumentException::class);
         $identifier = 'someCacheIdentifier';
         $backend = $this->createMock(TaggableBackendInterface::class);
-        $backend->expects(self::never())->method('flushByTag');
+        $backend->expects($this->never())->method('flushByTag');
 
         $cache = $this->getMockBuilder(StringFrontend::class)
-            ->setMethods(['__construct', 'get', 'set', 'has', 'remove', 'getByTag'])
+            ->onlyMethods(['__construct', 'get', 'set', 'has', 'remove', 'getByTag'])
             ->setConstructorArgs([$identifier, $backend])
             ->getMock();
         $cache->flushByTag('SomeInvalid\Tag');
@@ -100,10 +100,10 @@ class AbstractFrontendTest extends BaseTestCase
         $tag = 'sometag';
         $identifier = 'someCacheIdentifier';
         $backend = $this->createMock(TaggableBackendInterface::class);
-        $backend->expects(self::once())->method('flushByTag')->with($tag);
+        $backend->expects($this->once())->method('flushByTag')->with($tag);
 
         $cache = $this->getMockBuilder(StringFrontend::class)
-            ->setMethods(['__construct', 'get', 'set', 'has', 'remove', 'getByTag'])
+            ->onlyMethods(['__construct', 'get', 'set', 'has', 'remove', 'getByTag'])
             ->setConstructorArgs([$identifier, $backend])
             ->getMock();
         $cache->flushByTag($tag);
@@ -116,13 +116,13 @@ class AbstractFrontendTest extends BaseTestCase
     {
         $identifier = 'someCacheIdentifier';
         $backend = $this->getMockBuilder(AbstractBackend::class)
-            ->setMethods(['get', 'set', 'has', 'remove', 'findIdentifiersByTag', 'flush', 'flushByTag', 'collectGarbage'])
+            ->onlyMethods(['get', 'set', 'has', 'remove', 'findIdentifiersByTag', 'flush', 'flushByTag', 'collectGarbage'])
             ->disableOriginalConstructor()
             ->getMock();
-        $backend->expects(self::once())->method('collectGarbage');
+        $backend->expects($this->once())->method('collectGarbage');
 
         $cache = $this->getMockBuilder(StringFrontend::class)
-            ->setMethods(['__construct', 'get', 'set', 'has', 'remove', 'getByTag'])
+            ->onlyMethods(['__construct', 'get', 'set', 'has', 'remove', 'getByTag'])
             ->setConstructorArgs([$identifier, $backend])
             ->getMock();
         $cache->collectGarbage();
@@ -137,7 +137,7 @@ class AbstractFrontendTest extends BaseTestCase
         $backend = $this->createMock(AbstractBackend::class);
 
         $cache = $this->getMockBuilder(StringFrontend::class)
-            ->setMethods(['__construct', 'get', 'set', 'has', 'remove', 'getByTag'])
+            ->onlyMethods(['__construct', 'get', 'set', 'has', 'remove', 'getByTag'])
             ->setConstructorArgs([$identifier, $backend])
             ->getMock();
 
@@ -154,7 +154,7 @@ class AbstractFrontendTest extends BaseTestCase
         $identifier = 'someCacheIdentifier';
         $backend = $this->createMock(AbstractBackend::class);
         $cache = $this->getMockBuilder(StringFrontend::class)
-            ->setMethods(['__construct', 'get', 'set', 'has', 'remove', 'getByTag'])
+            ->onlyMethods(['__construct', 'get', 'set', 'has', 'remove', 'getByTag'])
             ->setConstructorArgs([$identifier, $backend])
             ->getMock();
 
@@ -171,7 +171,7 @@ class AbstractFrontendTest extends BaseTestCase
         $identifier = 'someCacheIdentifier';
         $backend = $this->createMock(AbstractBackend::class);
         $cache = $this->getMockBuilder(StringFrontend::class)
-            ->setMethods(['__construct', 'get', 'set', 'has', 'remove', 'getByTag'])
+            ->onlyMethods(['__construct', 'get', 'set', 'has', 'remove', 'getByTag'])
             ->setConstructorArgs([$identifier, $backend])
             ->getMock();
 
@@ -188,7 +188,7 @@ class AbstractFrontendTest extends BaseTestCase
         $identifier = 'someCacheIdentifier';
         $backend = $this->createMock(AbstractBackend::class);
         $cache = $this->getMockBuilder(StringFrontend::class)
-            ->setMethods(['__construct', 'get', 'set', 'has', 'remove', 'getByTag'])
+            ->onlyMethods(['__construct', 'get', 'set', 'has', 'remove', 'getByTag'])
             ->setConstructorArgs([$identifier, $backend])
             ->getMock();
 

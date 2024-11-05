@@ -30,15 +30,15 @@ class TemplatePathsTest extends UnitTestCase
 
         $httpRequest = new ServerRequest('GET', new Uri('http://robertlemke.com/blog'));
         $mockRequest = $this->createMock(ActionRequest::class, [], [$httpRequest]);
-        $mockRequest->expects(self::any())->method('getControllerPackageKey')->will(self::returnValue($packageKey));
-        $mockRequest->expects(self::any())->method('getControllerSubPackageKey')->will(self::returnValue($subPackageKey));
-        $mockRequest->expects(self::any())->method('getControllerName')->will(self::returnValue($controllerName));
-        $mockRequest->expects(self::any())->method('getControllerObjectName')->will(self::returnValue($controllerObjectName));
-        $mockRequest->expects(self::any())->method('getFormat')->will(self::returnValue($format));
+        $mockRequest->expects($this->any())->method('getControllerPackageKey')->willReturn(($packageKey));
+        $mockRequest->expects($this->any())->method('getControllerSubPackageKey')->willReturn(($subPackageKey));
+        $mockRequest->expects($this->any())->method('getControllerName')->willReturn(($controllerName));
+        $mockRequest->expects($this->any())->method('getControllerObjectName')->willReturn(($controllerObjectName));
+        $mockRequest->expects($this->any())->method('getFormat')->willReturn(($format));
 
         /** @var $mockControllerContext ControllerContext */
         $mockControllerContext = $this->createMock(ControllerContext::class, ['getRequest'], [], '', false);
-        $mockControllerContext->expects(self::any())->method('getRequest')->will(self::returnValue($mockRequest));
+        $mockControllerContext->expects($this->any())->method('getRequest')->willReturn(($mockRequest));
 
         return $mockControllerContext;
     }
@@ -477,7 +477,7 @@ class TemplatePathsTest extends UnitTestCase
         }
 
         /** @var TemplatePaths $templatePaths */
-        $templatePaths = $this->getAccessibleMock(TemplatePaths::class, ['dummy'], [$options], '', true);
+        $templatePaths = $this->getAccessibleMock(TemplatePaths::class, [], [$options], '', true);
         $patternReplacementVariables = [
             'packageKey' => $package,
             'subPackageKey' => $subPackage,
@@ -499,7 +499,7 @@ class TemplatePathsTest extends UnitTestCase
         ];
 
         /** @var TemplatePaths $templatePaths */
-        $templatePaths = $this->getAccessibleMock(TemplatePaths::class, null, [$options], '', true);
+        $templatePaths = $this->getAccessibleMock(TemplatePaths::class, [], [$options], '', true);
 
         $expected = ['Resources/Private/Templates/My/@action.html'];
         $actual = $templatePaths->_call('expandGenericPathPattern', '@templateRoot/Templates/@subpackage/@controller/@action.@format', [
@@ -520,7 +520,7 @@ class TemplatePathsTest extends UnitTestCase
         ];
 
         /** @var TemplatePaths $templatePaths */
-        $templatePaths = $this->getAccessibleMock(TemplatePaths::class, null, [$options], '', true);
+        $templatePaths = $this->getAccessibleMock(TemplatePaths::class, [], [$options], '', true);
 
         $actual = $templatePaths->_call('expandGenericPathPattern', '@templateRoot/Templates/@subpackage/@controller/@action.@format', [
             'subPackageKey' => 'MySubPackage',
@@ -544,7 +544,7 @@ class TemplatePathsTest extends UnitTestCase
         ];
 
         /** @var TemplatePaths $templatePaths */
-        $templatePaths = $this->getAccessibleMock(TemplatePaths::class, null, [$options], '', true);
+        $templatePaths = $this->getAccessibleMock(TemplatePaths::class, [], [$options], '', true);
 
         $actual = $templatePaths->_call('expandGenericPathPattern', '@templateRoot/Templates/@subpackage/@controller/@action.@format', [
             'subPackageKey' => 'MySubPackage',
@@ -569,7 +569,7 @@ class TemplatePathsTest extends UnitTestCase
         ];
 
         /** @var TemplatePaths $templatePaths */
-        $templatePaths = $this->getAccessibleMock(TemplatePaths::class, null, [$options], '', true);
+        $templatePaths = $this->getAccessibleMock(TemplatePaths::class, [], [$options], '', true);
 
         $actual = $templatePaths->_call('expandGenericPathPattern', '@templateRoot/Templates/@subpackage/@controller/@action.@format', [
             'subPackageKey' => 'MySubPackage',
@@ -606,7 +606,7 @@ class TemplatePathsTest extends UnitTestCase
         $templatePaths = $this->getAccessibleMock(TemplatePaths::class, ['expandGenericPathPattern'], [[
             'partialPathAndFilenamePattern' => '@partialRoot/@subpackage/@partial.@format'
         ]], '', true);
-        $templatePaths->expects(self::once())->method('expandGenericPathPattern')->with('@partialRoot/@subpackage/@partial.@format', ['partial' => 'SomePartial', 'format' => 'html'], true, true)->will(self::returnValue($paths));
+        $templatePaths->expects($this->once())->method('expandGenericPathPattern')->with('@partialRoot/@subpackage/@partial.@format', ['partial' => 'SomePartial', 'format' => 'html'], true, true)->willReturn(($paths));
 
         self::assertSame('contentsOfSomePartial', $templatePaths->getPartialSource('SomePartial'));
     }
@@ -632,11 +632,11 @@ class TemplatePathsTest extends UnitTestCase
             ]
         ], '', true);
 
-        $templatePaths->expects(self::once())->method('expandGenericPathPattern')->with('@templateRoot/@subpackage/@controller/@action.@format', [
+        $templatePaths->expects($this->once())->method('expandGenericPathPattern')->with('@templateRoot/@subpackage/@controller/@action.@format', [
             'controllerName' => '',
             'action' => 'MyCoolAction',
             'format' => 'html'
-        ], false, false)->will(self::returnValue($paths));
+        ], false, false)->willReturn(($paths));
 
         self::assertSame('contentsOfMyCoolAction', $templatePaths->getTemplateSource('', 'myCoolAction'));
     }
@@ -659,11 +659,11 @@ class TemplatePathsTest extends UnitTestCase
             ]
         ], '', true);
 
-        $templatePaths->expects(self::once())->method('expandGenericPathPattern')->with('@templateRoot/@subpackage/@controller/@action.@format', [
+        $templatePaths->expects($this->once())->method('expandGenericPathPattern')->with('@templateRoot/@subpackage/@controller/@action.@format', [
             'controllerName' => '',
             'action' => 'MyCoolAction',
             'format' => 'html'
-        ], false, false)->will(self::returnValue($paths));
+        ], false, false)->willReturn(($paths));
 
         $templatePaths->getTemplateSource('', 'myCoolAction');
     }
@@ -687,11 +687,11 @@ class TemplatePathsTest extends UnitTestCase
             ]
         ], '', true);
 
-        $templatePaths->expects(self::once())->method('expandGenericPathPattern')->with('@templateRoot/@subpackage/@controller/@action.@format', [
+        $templatePaths->expects($this->once())->method('expandGenericPathPattern')->with('@templateRoot/@subpackage/@controller/@action.@format', [
             'controllerName' => '',
             'action' => 'MyCoolAction',
             'format' => 'html'
-        ], false, false)->will(self::returnValue($paths));
+        ], false, false)->willReturn(($paths));
 
         $templatePaths->getTemplateSource('', 'myCoolAction');
     }
@@ -705,7 +705,7 @@ class TemplatePathsTest extends UnitTestCase
         mkdir('vfs://MyTemplates');
         file_put_contents('vfs://MyTemplates/MyCoolAction.html', 'contentsOfMyCoolAction');
 
-        $templatePaths = $this->getAccessibleMock(TemplatePaths::class, ['dummy'], [['templatePathAndFilename' => 'vfs://MyTemplates/MyCoolAction.html']]);
+        $templatePaths = $this->getAccessibleMock(TemplatePaths::class, [], [['templatePathAndFilename' => 'vfs://MyTemplates/MyCoolAction.html']]);
 
         self::assertSame('contentsOfMyCoolAction', $templatePaths->_call('getTemplateSource'));
     }
@@ -729,10 +729,10 @@ class TemplatePathsTest extends UnitTestCase
             ]
         ], '', true);
 
-        $templatePaths->expects(self::once())->method('expandGenericPathPattern')->with('@layoutRoot/@layout.@format', [
+        $templatePaths->expects($this->once())->method('expandGenericPathPattern')->with('@layoutRoot/@layout.@format', [
             'layout' => 'Default',
             'format' => 'html'
-        ], true, true)->will(self::returnValue($paths));
+        ], true, true)->willReturn(($paths));
 
         $templatePaths->getLayoutSource();
     }
@@ -757,10 +757,10 @@ class TemplatePathsTest extends UnitTestCase
             ]
         ], '', true);
 
-        $templatePaths->expects(self::once())->method('expandGenericPathPattern')->with('@layoutRoot/@layout.@format', [
+        $templatePaths->expects($this->once())->method('expandGenericPathPattern')->with('@layoutRoot/@layout.@format', [
             'layout' => 'SomeLayout',
             'format' => 'html'
-        ], true, true)->will(self::returnValue($paths));
+        ], true, true)->willReturn(($paths));
 
         $templatePaths->getLayoutSource('SomeLayout');
     }
@@ -784,10 +784,10 @@ class TemplatePathsTest extends UnitTestCase
             ]
         ], '', true);
 
-        $templatePaths->expects(self::once())->method('expandGenericPathPattern')->with('@partialRoot/@subpackage/@partial.@format', [
+        $templatePaths->expects($this->once())->method('expandGenericPathPattern')->with('@partialRoot/@subpackage/@partial.@format', [
             'partial' => 'SomePartial',
             'format' => 'html'
-        ], true, true)->will(self::returnValue($paths));
+        ], true, true)->willReturn(($paths));
 
         $templatePaths->getPartialSource('SomePartial');
     }
@@ -812,10 +812,10 @@ class TemplatePathsTest extends UnitTestCase
             ]
         ], '', true);
 
-        $templatePaths->expects(self::once())->method('expandGenericPathPattern')->with('@partialRoot/@subpackage/@partial.@format', [
+        $templatePaths->expects($this->once())->method('expandGenericPathPattern')->with('@partialRoot/@subpackage/@partial.@format', [
             'partial' => 'SomePartial',
             'format' => 'html'
-        ], true, true)->will(self::returnValue($paths));
+        ], true, true)->willReturn(($paths));
 
         $templatePaths->getPartialSource('SomePartial');
     }

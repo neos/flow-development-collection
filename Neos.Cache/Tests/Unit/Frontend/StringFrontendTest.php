@@ -33,10 +33,10 @@ class StringFrontendTest extends BaseTestCase
     {
         $this->expectException(\InvalidArgumentException::class);
         $cache = $this->getMockBuilder(StringFrontend::class)
-            ->setMethods(['isValidEntryIdentifier'])
+            ->onlyMethods(['isValidEntryIdentifier'])
             ->disableOriginalConstructor()
             ->getMock();
-        $cache->expects(self::once())->method('isValidEntryIdentifier')->with('foo')->will(self::returnValue(false));
+        $cache->expects($this->once())->method('isValidEntryIdentifier')->with('foo')->willReturn((false));
         $cache->set('foo', 'bar');
     }
 
@@ -47,7 +47,7 @@ class StringFrontendTest extends BaseTestCase
     {
         $theString = 'Just some value';
         $backend = $this->prepareDefaultBackend();
-        $backend->expects(self::once())->method('set')->with(self::equalTo('StringCacheTest'), self::equalTo($theString));
+        $backend->expects($this->once())->method('set')->with(self::equalTo('StringCacheTest'), self::equalTo($theString));
 
         $cache = new StringFrontend('StringFrontend', $backend);
         $cache->set('StringCacheTest', $theString);
@@ -62,7 +62,7 @@ class StringFrontendTest extends BaseTestCase
         $theLifetime = 1234;
         $backend = $this->prepareDefaultBackend();
 
-        $backend->expects(self::once())->method('set')->with(self::equalTo('StringCacheTest'), self::equalTo($theString), self::equalTo([]), self::equalTo($theLifetime));
+        $backend->expects($this->once())->method('set')->with(self::equalTo('StringCacheTest'), self::equalTo($theString), self::equalTo([]), self::equalTo($theLifetime));
 
         $cache = new StringFrontend('StringFrontend', $backend);
         $cache->set('StringCacheTest', $theString, [], $theLifetime);
@@ -87,7 +87,7 @@ class StringFrontendTest extends BaseTestCase
     {
         $backend = $this->prepareDefaultBackend();
 
-        $backend->expects(self::once())->method('get')->will(self::returnValue('Just some value'));
+        $backend->expects($this->once())->method('get')->willReturn(('Just some value'));
 
         $cache = new StringFrontend('StringFrontend', $backend);
         self::assertEquals('Just some value', $cache->get('StringCacheTest'), 'The returned value was not the expected string.');
@@ -99,7 +99,7 @@ class StringFrontendTest extends BaseTestCase
     public function hasReturnsResultFromBackend()
     {
         $backend = $this->prepareDefaultBackend();
-        $backend->expects(self::once())->method('has')->with(self::equalTo('StringCacheTest'))->will(self::returnValue(true));
+        $backend->expects($this->once())->method('has')->with(self::equalTo('StringCacheTest'))->willReturn((true));
 
         $cache = new StringFrontend('StringFrontend', $backend);
         self::assertTrue($cache->has('StringCacheTest'), 'has() did not return true.');
@@ -113,7 +113,7 @@ class StringFrontendTest extends BaseTestCase
         $cacheIdentifier = 'someCacheIdentifier';
         $backend = $this->prepareDefaultBackend();
 
-        $backend->expects(self::once())->method('remove')->with(self::equalTo($cacheIdentifier))->will(self::returnValue(true));
+        $backend->expects($this->once())->method('remove')->with(self::equalTo($cacheIdentifier))->willReturn((true));
 
         $cache = new StringFrontend('StringFrontend', $backend);
         self::assertTrue($cache->remove($cacheIdentifier), 'remove() did not return true');
@@ -126,7 +126,7 @@ class StringFrontendTest extends BaseTestCase
     {
         $this->expectException(\InvalidArgumentException::class);
         $backend = $this->createMock(TaggableBackendInterface::class);
-        $backend->expects(self::never())->method('findIdentifiersByTag');
+        $backend->expects($this->never())->method('findIdentifiersByTag');
 
         $cache = new StringFrontend('StringFrontend', $backend);
         $cache->getByTag('SomeInvalid\Tag');
@@ -153,8 +153,8 @@ class StringFrontendTest extends BaseTestCase
         $entries = ['one' => 'one value', 'two' => 'two value'];
         $backend = $this->prepareTaggableBackend();
 
-        $backend->expects(self::once())->method('findIdentifiersByTag')->with(self::equalTo($tag))->will(self::returnValue($identifiers));
-        $backend->expects(self::exactly(2))->method('get')->will($this->onConsecutiveCalls('one value', 'two value'));
+        $backend->expects($this->once())->method('findIdentifiersByTag')->with(self::equalTo($tag))->willReturn(($identifiers));
+        $backend->expects($this->exactly(2))->method('get')->will($this->onConsecutiveCalls('one value', 'two value'));
 
         $cache = new StringFrontend('StringFrontend', $backend);
         self::assertEquals($entries, $cache->getByTag($tag), 'Did not receive the expected entries');
@@ -167,7 +167,7 @@ class StringFrontendTest extends BaseTestCase
     protected function prepareDefaultBackend(array $methods = ['get', 'set', 'has', 'remove', 'findIdentifiersByTag', 'flush', 'flushByTag', 'collectGarbage'])
     {
         return $this->getMockBuilder(AbstractBackend::class)
-            ->setMethods($methods)
+            ->onlyMethods($methods)
             ->disableOriginalConstructor()
             ->getMock();
     }
@@ -179,7 +179,7 @@ class StringFrontendTest extends BaseTestCase
     protected function prepareTaggableBackend(array $methods = ['get', 'set', 'has', 'remove', 'findIdentifiersByTag', 'flush', 'flushByTag', 'collectGarbage'])
     {
         return $this->getMockBuilder(NullBackend::class)
-            ->setMethods($methods)
+            ->onlyMethods($methods)
             ->disableOriginalConstructor()
             ->getMock();
     }

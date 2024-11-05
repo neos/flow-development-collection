@@ -102,16 +102,16 @@ class SessionTest extends UnitTestCase
         $this->httpResponse = new Response();
 
         $mockRequestHandler = $this->createMock(RequestHandler::class);
-        $mockRequestHandler->expects(self::any())->method('getHttpRequest')->will(self::returnValue($this->httpRequest));
-        $mockRequestHandler->expects(self::any())->method('getHttpResponse')->will(self::returnValue($this->httpResponse));
+        $mockRequestHandler->expects($this->any())->method('getHttpRequest')->willReturn(($this->httpRequest));
+        $mockRequestHandler->expects($this->any())->method('getHttpResponse')->willReturn(($this->httpResponse));
 
         $this->mockBootstrap = $this->createMock(Bootstrap::class);
-        $this->mockBootstrap->expects(self::any())->method('getActiveRequestHandler')->will(self::returnValue($mockRequestHandler));
+        $this->mockBootstrap->expects($this->any())->method('getActiveRequestHandler')->willReturn(($mockRequestHandler));
 
         $this->mockSecurityContext = $this->createMock(Context::class);
 
         $this->mockObjectManager = $this->createMock(ObjectManagerInterface::class);
-        $this->mockObjectManager->expects(self::any())->method('get')->with(Context::class)->will(self::returnValue($this->mockSecurityContext));
+        $this->mockObjectManager->expects($this->any())->method('get')->with(Context::class)->willReturn(($this->mockSecurityContext));
     }
 
     /**
@@ -510,7 +510,7 @@ class SessionTest extends UnitTestCase
         $storageCache = $this->createCache('Storage');
 
         /** @var Session $session */
-        $session = $this->getAccessibleMock(Session::class, ['dummy']);
+        $session = $this->getAccessibleMock(Session::class, []);
         $this->inject($session, 'objectManager', $this->mockObjectManager);
         $this->inject($session, 'settings', $this->settings);
         $this->inject($session, 'metaDataCache', $metaDataCache);
@@ -809,8 +809,8 @@ class SessionTest extends UnitTestCase
         $token->setAuthenticationStatus(TokenInterface::AUTHENTICATION_SUCCESSFUL);
         $token->setAccount($account);
 
-        $this->mockSecurityContext->expects(self::any())->method('isInitialized')->will(self::returnValue(true));
-        $this->mockSecurityContext->expects(self::any())->method('getAuthenticationTokens')->will(self::returnValue([$token]));
+        $this->mockSecurityContext->expects($this->any())->method('isInitialized')->willReturn((true));
+        $this->mockSecurityContext->expects($this->any())->method('getAuthenticationTokens')->willReturn(([$token]));
 
         $sessionCookie = $session->getSessionCookie();
         $session->close();
@@ -941,7 +941,7 @@ class SessionTest extends UnitTestCase
     public function autoExpireRemovesAllSessionDataOfTheExpiredSession()
     {
         /** @var Session $session */
-        $session = $this->getAccessibleMock(Session::class, ['dummy']);
+        $session = $this->getAccessibleMock(Session::class, []);
         $this->inject($session, 'objectManager', $this->mockObjectManager);
         $this->inject($session, 'settings', $this->settings);
 
@@ -1018,7 +1018,7 @@ class SessionTest extends UnitTestCase
         // Create a second session which should remove the first expired session
         // implicitly by calling autoExpire()
         /** @var Session $session */
-        $session = $this->getAccessibleMock(Session::class, ['dummy']);
+        $session = $this->getAccessibleMock(Session::class, []);
         $this->inject($session, 'objectManager', $this->mockObjectManager);
         $this->inject($session, 'metaDataCache', $this->createCache('Meta'));
         $this->inject($session, 'storageCache', $this->createCache('Storage'));
@@ -1051,7 +1051,7 @@ class SessionTest extends UnitTestCase
     public function collectGarbageIsForwardedToTheSessionManager()
     {
         $mockSessionManager = $this->createMock(SessionManager::class);
-        $mockSessionManager->expects(self::once())->method('collectGarbage')->will(self::returnValue(5));
+        $mockSessionManager->expects($this->once())->method('collectGarbage')->willReturn((5));
 
         $session = new Session();
         $this->inject($session, 'sessionManager', $mockSessionManager);

@@ -63,15 +63,15 @@ class PackageManagerTest extends UnitTestCase
         ComposerUtility::flushCaches();
         vfsStream::setup('Test');
         $this->mockBootstrap = $this->getMockBuilder(Bootstrap::class)->disableOriginalConstructor()->getMock();
-        $this->mockBootstrap->expects(self::any())->method('getSignalSlotDispatcher')->will(self::returnValue($this->createMock(Dispatcher::class)));
+        $this->mockBootstrap->expects($this->any())->method('getSignalSlotDispatcher')->willReturn(($this->createMock(Dispatcher::class)));
 
         $this->mockApplicationContext = $this->getMockBuilder(ApplicationContext::class)->disableOriginalConstructor()->getMock();
-        $this->mockBootstrap->expects(self::any())->method('getContext')->will(self::returnValue($this->mockApplicationContext));
+        $this->mockBootstrap->expects($this->any())->method('getContext')->willReturn(($this->mockApplicationContext));
 
         $mockObjectManager = $this->createMock(ObjectManagerInterface::class);
-        $this->mockBootstrap->expects(self::any())->method('getObjectManager')->will(self::returnValue($mockObjectManager));
+        $this->mockBootstrap->expects($this->any())->method('getObjectManager')->willReturn(($mockObjectManager));
         $mockReflectionService = $this->createMock(ReflectionService::class);
-        $mockObjectManager->expects(self::any())->method('get')->with(ReflectionService::class)->will(self::returnValue($mockReflectionService));
+        $mockObjectManager->expects($this->any())->method('get')->with(ReflectionService::class)->willReturn(($mockReflectionService));
 
         mkdir('vfs://Test/Packages/Application', 0700, true);
         mkdir('vfs://Test/Configuration');
@@ -139,7 +139,7 @@ class PackageManagerTest extends UnitTestCase
      */
     public function getCaseSensitivePackageKeyReturnsTheUpperCamelCaseVersionOfAGivenPackageKeyIfThePackageIsRegistered()
     {
-        $packageManager = $this->getAccessibleMock(PackageManager::class, ['dummy'], ['', '']);
+        $packageManager = $this->getAccessibleMock(PackageManager::class, [], ['', '']);
         $packageManager->_set('packageKeys', ['acme.testpackage' => 'Acme.TestPackage']);
         self::assertEquals('Acme.TestPackage', $packageManager->getCaseSensitivePackageKey('acme.testpackage'));
     }
@@ -467,7 +467,7 @@ class PackageManagerTest extends UnitTestCase
      */
     public function createPackageEmitsPackageStatesUpdatedSignal()
     {
-        $this->mockDispatcher->expects(self::once())->method('dispatch')->with(PackageManager::class, 'packageStatesUpdated');
+        $this->mockDispatcher->expects($this->once())->method('dispatch')->with(PackageManager::class, 'packageStatesUpdated');
         $this->packageManager->createPackage('Some.Package', [], 'vfs://Test/Packages/Application');
     }
 
@@ -476,13 +476,13 @@ class PackageManagerTest extends UnitTestCase
      */
     public function freezePackageEmitsPackageStatesUpdatedSignal()
     {
-        $this->mockApplicationContext->expects(self::atLeastOnce())->method('isDevelopment')->will(self::returnValue(true));
+        $this->mockApplicationContext->expects($this->atLeastOnce())->method('isDevelopment')->willReturn((true));
 
         $this->packageManager->createPackage('Some.Package', [
             'name' => 'some/package'
         ], 'vfs://Test/Packages/Application');
 
-        $this->mockDispatcher->expects(self::once())->method('dispatch')->with(PackageManager::class, 'packageStatesUpdated');
+        $this->mockDispatcher->expects($this->once())->method('dispatch')->with(PackageManager::class, 'packageStatesUpdated');
         $this->packageManager->freezePackage('Some.Package');
     }
 
@@ -491,7 +491,7 @@ class PackageManagerTest extends UnitTestCase
      */
     public function unfreezePackageEmitsPackageStatesUpdatedSignal()
     {
-        $this->mockApplicationContext->expects(self::atLeastOnce())->method('isDevelopment')->will(self::returnValue(true));
+        $this->mockApplicationContext->expects($this->atLeastOnce())->method('isDevelopment')->willReturn((true));
 
         $this->packageManager->createPackage('Some.Package', [
             'name' => 'some/package',
@@ -499,7 +499,7 @@ class PackageManagerTest extends UnitTestCase
         ], 'vfs://Test/Packages/Application');
         $this->packageManager->freezePackage('Some.Package');
 
-        $this->mockDispatcher->expects(self::once())->method('dispatch')->with(PackageManager::class, 'packageStatesUpdated');
+        $this->mockDispatcher->expects($this->once())->method('dispatch')->with(PackageManager::class, 'packageStatesUpdated');
         $this->packageManager->unfreezePackage('Some.Package');
     }
 }

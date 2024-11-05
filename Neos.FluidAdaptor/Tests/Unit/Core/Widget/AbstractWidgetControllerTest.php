@@ -31,7 +31,7 @@ class AbstractWidgetControllerTest extends UnitTestCase
         $this->expectException(WidgetContextNotFoundException::class);
         /** @var \Neos\Flow\Mvc\ActionRequest $mockActionRequest */
         $mockActionRequest = $this->createMock(\Neos\Flow\Mvc\ActionRequest::class);
-        $mockActionRequest->expects(self::atLeastOnce())->method('getInternalArgument')->with('__widgetContext')->will(self::returnValue(null));
+        $mockActionRequest->expects($this->atLeastOnce())->method('getInternalArgument')->with('__widgetContext')->willReturn((null));
         $response = new ActionResponse();
 
         /** @var \Neos\FluidAdaptor\Core\Widget\AbstractWidgetController $abstractWidgetController */
@@ -49,14 +49,14 @@ class AbstractWidgetControllerTest extends UnitTestCase
         $mockResponse = new ActionResponse();
 
         $httpRequest = new ServerRequest('GET', new Uri('http://localhost'));
-        $mockActionRequest->expects(self::any())->method('getHttpRequest')->will(self::returnValue($httpRequest));
+        $mockActionRequest->expects($this->any())->method('getHttpRequest')->willReturn(($httpRequest));
 
         $expectedWidgetConfiguration = ['foo' => uniqid()];
 
         $widgetContext = new WidgetContext();
         $widgetContext->setAjaxWidgetConfiguration($expectedWidgetConfiguration);
 
-        $mockActionRequest->expects(self::atLeastOnce())->method('getInternalArgument')->with('__widgetContext')->will(self::returnValue($widgetContext));
+        $mockActionRequest->expects($this->atLeastOnce())->method('getInternalArgument')->with('__widgetContext')->willReturn(($widgetContext));
 
         $abstractWidgetController = $this->getAccessibleMock(\Neos\FluidAdaptor\Core\Widget\AbstractWidgetController::class, ['resolveActionMethodName', 'initializeActionMethodArguments', 'initializeActionMethodValidators', 'mapRequestArgumentsToControllerArguments', 'detectFormat', 'resolveView', 'callActionMethod']);
         $abstractWidgetController->method('resolveActionMethodName')->willReturn('indexAction');

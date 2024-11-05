@@ -45,12 +45,12 @@ class DetectorTest extends UnitTestCase
         };
 
         $mockLocaleCollection = $this->createMock(I18n\LocaleCollection::class);
-        $mockLocaleCollection->expects(self::any())->method('findBestMatchingLocale')->will(self::returnCallBack($findBestMatchingLocaleCallback));
+        $mockLocaleCollection->expects($this->any())->method('findBestMatchingLocale')->will(self::returnCallBack($findBestMatchingLocaleCallback));
 
         $mockLocalizationService = $this->createMock(I18n\Service::class);
-        $mockLocalizationService->expects(self::any())->method('getConfiguration')->will(self::returnValue(new I18n\Configuration('sv_SE')));
+        $mockLocalizationService->expects($this->any())->method('getConfiguration')->willReturn((new I18n\Configuration('sv_SE')));
 
-        $this->detector = $this->getAccessibleMock(I18n\Detector::class, ['dummy']);
+        $this->detector = $this->getAccessibleMock(I18n\Detector::class, []);
         $this->detector->_set('localeBasePath', 'vfs://Foo/');
         $this->detector->injectLocaleCollection($mockLocaleCollection);
         $this->detector->injectLocalizationService($mockLocalizationService);

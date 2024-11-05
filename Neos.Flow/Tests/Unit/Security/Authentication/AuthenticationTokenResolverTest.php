@@ -28,7 +28,7 @@ class AuthenticationTokenResolverTest extends UnitTestCase
     {
         $this->expectException(NoAuthenticationTokenFoundException::class);
         $mockObjectManager = $this->getMockBuilder(ObjectManager::class)->disableOriginalConstructor()->getMock();
-        $mockObjectManager->expects(self::any())->method('getClassNameByObjectName')->will(self::returnValue(false));
+        $mockObjectManager->expects($this->any())->method('getClassNameByObjectName')->willReturn((false));
 
         $providerResolver = new AuthenticationTokenResolver($mockObjectManager);
 
@@ -53,7 +53,7 @@ class AuthenticationTokenResolverTest extends UnitTestCase
         };
 
         $mockObjectManager = $this->getMockBuilder(ObjectManager::class)->disableOriginalConstructor()->getMock();
-        $mockObjectManager->expects(self::any())->method('getClassNameByObjectName')->will(self::returnCallBack($getCaseSensitiveObjectNameCallback));
+        $mockObjectManager->expects($this->any())->method('getClassNameByObjectName')->will(self::returnCallBack($getCaseSensitiveObjectNameCallback));
 
         $providerResolver = new AuthenticationTokenResolver($mockObjectManager);
         $providerClass = $providerResolver->resolveTokenClass('ValidShortName');
@@ -67,7 +67,7 @@ class AuthenticationTokenResolverTest extends UnitTestCase
     public function resolveTokenReturnsTheCorrectTokenForACompleteClassName()
     {
         $mockObjectManager = $this->getMockBuilder(ObjectManager::class)->disableOriginalConstructor()->getMock();
-        $mockObjectManager->expects(self::any())->method('getClassNameByObjectName')->with('existingTokenClass')->will(self::returnValue('existingTokenClass'));
+        $mockObjectManager->expects($this->any())->method('getClassNameByObjectName')->with('existingTokenClass')->willReturn(('existingTokenClass'));
 
         $providerResolver = new AuthenticationTokenResolver($mockObjectManager);
         $providerClass = $providerResolver->resolveTokenClass('existingTokenClass');

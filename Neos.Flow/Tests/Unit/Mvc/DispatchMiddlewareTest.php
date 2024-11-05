@@ -79,7 +79,7 @@ class DispatchMiddlewareTest extends UnitTestCase
     public function processDispatchesTheRequest()
     {
         $this->mockHttpRequest->method('getQueryParams')->willReturn([]);
-        $this->mockDispatcher->expects(self::once())->method('dispatch')->with($this->mockActionRequest);
+        $this->mockDispatcher->expects($this->once())->method('dispatch')->with($this->mockActionRequest);
 
         $response = $this->dispatchMiddleware->process($this->mockHttpRequest, $this->mockRequestHandler);
         self::assertInstanceOf(ResponseInterface::class, $response);

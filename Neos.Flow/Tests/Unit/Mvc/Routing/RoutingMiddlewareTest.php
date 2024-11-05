@@ -91,8 +91,8 @@ class RoutingMiddlewareTest extends UnitTestCase
         $mockMatchResults = ['someRouterMatchResults'];
         $routeContext = new RouteContext($this->mockHttpRequest, RouteParameters::createEmpty());
 
-        $this->mockRouter->expects(self::atLeastOnce())->method('route')->with($routeContext)->willReturn($mockMatchResults);
-        $this->mockHttpRequest->expects(self::atLeastOnce())->method('withAttribute')->with(ServerRequestAttributes::ROUTING_RESULTS, $mockMatchResults);
+        $this->mockRouter->expects($this->atLeastOnce())->method('route')->with($routeContext)->willReturn($mockMatchResults);
+        $this->mockHttpRequest->expects($this->atLeastOnce())->method('withAttribute')->with(ServerRequestAttributes::ROUTING_RESULTS, $mockMatchResults);
 
         $this->routingMiddleware->process($this->mockHttpRequest, $this->mockRequestHandler);
     }

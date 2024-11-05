@@ -49,8 +49,8 @@ class LockManagerTest extends UnitTestCase
         $this->mockLockFile = vfsStream::newFile(md5(FLOW_PATH_ROOT) . '_Flow.lock')->at($this->mockLockDirectory);
         $this->mockLockFlagFile = vfsStream::newFile(md5(FLOW_PATH_ROOT) . '_FlowIsLocked')->at($this->mockLockDirectory);
 
-        $this->lockManager = $this->getMockBuilder(LockManager::class)->setMethods(['getLockPath', 'doExit'])->disableOriginalConstructor()->getMock();
-        $this->lockManager->expects(self::atLeastOnce())->method('getLockPath')->will(self::returnValue($this->mockLockDirectory->url() . '/'));
+        $this->lockManager = $this->getMockBuilder(LockManager::class)->onlyMethods(['getLockPath', 'doExit'])->disableOriginalConstructor()->getMock();
+        $this->lockManager->expects($this->atLeastOnce())->method('getLockPath')->willReturn(($this->mockLockDirectory->url() . '/'));
         $this->lockManager->__construct();
     }
 
@@ -100,7 +100,7 @@ class LockManagerTest extends UnitTestCase
      */
     public function exitIfSiteLockedExitsIfSiteIsLocked()
     {
-        $this->lockManager->expects(self::once())->method('doExit');
+        $this->lockManager->expects($this->once())->method('doExit');
         $this->lockManager->exitIfSiteLocked();
     }
 
@@ -110,7 +110,7 @@ class LockManagerTest extends UnitTestCase
     public function exitIfSiteLockedDoesNotExitIfSiteIsNotLocked()
     {
         $this->lockManager->unlockSite();
-        $this->lockManager->expects(self::never())->method('doExit');
+        $this->lockManager->expects($this->never())->method('doExit');
         $this->lockManager->exitIfSiteLocked();
     }
 
@@ -145,7 +145,7 @@ class LockManagerTest extends UnitTestCase
     {
         $mockLockResource = fopen($this->mockLockFile->url(), 'w+');
         $this->mockLockFile->lock($mockLockResource, LOCK_EX | LOCK_NB);
-        $this->lockManager->expects(self::once())->method('doExit');
+        $this->lockManager->expects($this->once())->method('doExit');
         $this->lockManager->lockSiteOrExit();
     }
 
@@ -154,7 +154,7 @@ class LockManagerTest extends UnitTestCase
      */
     public function lockSiteOrExitDoesNotExitIfSiteIsNotLocked()
     {
-        $this->lockManager->expects(self::never())->method('doExit');
+        $this->lockManager->expects($this->never())->method('doExit');
         $this->lockManager->lockSiteOrExit();
     }
 

@@ -220,8 +220,8 @@ class ProtectedContextTest extends UnitTestCase
      */
     protected function createEvaluator()
     {
-        $stringFrontendMock = $this->getMockBuilder(StringFrontend::class)->setMethods([])->disableOriginalConstructor()->getMock();
-        $stringFrontendMock->expects(self::any())->method('get')->willReturn(false);
+        $stringFrontendMock = $this->getMockBuilder(StringFrontend::class)->onlyMethods([])->disableOriginalConstructor()->getMock();
+        $stringFrontendMock->expects($this->any())->method('get')->willReturn(false);
 
         $evaluator = new CompilingEvaluator();
         $evaluator->injectExpressionCache($stringFrontendMock);

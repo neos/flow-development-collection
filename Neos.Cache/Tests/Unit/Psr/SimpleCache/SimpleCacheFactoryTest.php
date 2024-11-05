@@ -26,7 +26,7 @@ class SimpleCacheFactoryTest extends BaseTestCase
         vfsStream::setup('Temporary/Directory/');
 
         $this->mockEnvironmentConfiguration = $this->getMockBuilder(EnvironmentConfiguration::class)
-            ->setMethods(null)
+            ->onlyMethods([])
             ->setConstructorArgs([
                 __DIR__ . '~Testing',
                 'vfs://Temporary/Directory/',

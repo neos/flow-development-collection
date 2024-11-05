@@ -49,10 +49,10 @@ class IdentifierViewHelperTest extends ViewHelperBaseTestcase
     {
         $object = new \stdClass();
         $this->mockPersistenceManager
-            ->expects(self::atLeastOnce())
+            ->expects($this->atLeastOnce())
             ->method('getIdentifierByObject')
             ->with($object)
-            ->will(self::returnValue('6f487e40-4483-11de-8a39-0800200c9a66'));
+            ->willReturn(('6f487e40-4483-11de-8a39-0800200c9a66'));
 
         $expectedResult = '6f487e40-4483-11de-8a39-0800200c9a66';
 
@@ -69,15 +69,15 @@ class IdentifierViewHelperTest extends ViewHelperBaseTestcase
     {
         $object = new \stdClass();
         $this->viewHelper
-            ->expects(self::once())
+            ->expects($this->once())
             ->method('renderChildren')
-            ->will(self::returnValue($object));
+            ->willReturn(($object));
 
         $this->mockPersistenceManager
-            ->expects(self::once())
+            ->expects($this->once())
             ->method('getIdentifierByObject')
             ->with($object)
-            ->will(self::returnValue('b59292c5-1a28-4b36-8615-10d3c5b3a4d8'));
+            ->willReturn(('b59292c5-1a28-4b36-8615-10d3c5b3a4d8'));
 
         $this->viewHelper = $this->prepareArguments($this->viewHelper, []);
         self::assertEquals('b59292c5-1a28-4b36-8615-10d3c5b3a4d8', $this->viewHelper->render());
@@ -89,9 +89,9 @@ class IdentifierViewHelperTest extends ViewHelperBaseTestcase
     public function renderReturnsNullIfGivenValueIsNull()
     {
         $this->viewHelper
-            ->expects(self::once())
+            ->expects($this->once())
             ->method('renderChildren')
-            ->will(self::returnValue(null));
+            ->willReturn((null));
 
         $this->viewHelper = $this->prepareArguments($this->viewHelper, []);
         self::assertEquals(null, $this->viewHelper->render());

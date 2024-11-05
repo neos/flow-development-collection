@@ -101,9 +101,9 @@ class PersistentObjectConverterTest extends UnitTestCase
     public function canConvertFromReturnsTrueIfClassIsTaggedWithEntityOrValueObject($isEntity, $isValueObject, $expected)
     {
         if ($isEntity) {
-            $this->mockReflectionService->expects(self::once())->method('isClassAnnotatedWith')->with('TheTargetType', Flow\Entity::class)->will(self::returnValue($isEntity));
+            $this->mockReflectionService->expects($this->once())->method('isClassAnnotatedWith')->with('TheTargetType', Flow\Entity::class)->willReturn(($isEntity));
         } else {
-            $this->mockReflectionService->expects(self::atLeast(2))->method('isClassAnnotatedWith')->withConsecutive(['TheTargetType', Flow\Entity::class], ['TheTargetType', Flow\ValueObject::class])->willReturnOnConsecutiveCalls($isEntity, $isValueObject);
+            $this->mockReflectionService->expects($this->atLeast(2))->method('isClassAnnotatedWith')->withConsecutive(['TheTargetType', Flow\Entity::class], ['TheTargetType', Flow\ValueObject::class])->willReturnOnConsecutiveCalls($isEntity, $isValueObject);
         }
 
         self::assertEquals($expected, $this->converter->canConvertFrom('myInputData', 'TheTargetType'));
@@ -132,10 +132,10 @@ class PersistentObjectConverterTest extends UnitTestCase
     public function getTypeOfChildPropertyShouldUseReflectionServiceToDetermineType()
     {
         $mockSchema = $this->getMockBuilder(ClassSchema::class)->disableOriginalConstructor()->getMock();
-        $this->mockReflectionService->expects(self::any())->method('getClassSchema')->with('TheTargetType')->will(self::returnValue($mockSchema));
+        $this->mockReflectionService->expects($this->any())->method('getClassSchema')->with('TheTargetType')->willReturn(($mockSchema));
 
-        $mockSchema->expects(self::any())->method('hasProperty')->with('thePropertyName')->will(self::returnValue(true));
-        $mockSchema->expects(self::any())->method('getProperty')->with('thePropertyName')->will(self::returnValue([
+        $mockSchema->expects($this->any())->method('hasProperty')->with('thePropertyName')->willReturn((true));
+        $mockSchema->expects($this->any())->method('getProperty')->with('thePropertyName')->willReturn(([
             'type' => 'TheTypeOfSubObject',
             'elementType' => null
         ]));
@@ -148,7 +148,7 @@ class PersistentObjectConverterTest extends UnitTestCase
      */
     public function getTypeOfChildPropertyShouldUseConfiguredTypeIfItWasSet()
     {
-        $this->mockReflectionService->expects(self::never())->method('getClassSchema');
+        $this->mockReflectionService->expects($this->never())->method('getClassSchema');
 
         $configuration = $this->buildConfiguration([]);
         $configuration->forProperty('thePropertyName')->setTypeConverterOption(PersistentObjectConverter::class, PersistentObjectConverter::CONFIGURATION_TARGET_TYPE, 'Foo\Bar');
@@ -161,25 +161,25 @@ class PersistentObjectConverterTest extends UnitTestCase
     public function getTypeOfChildPropertyShouldConsiderSetters()
     {
         $mockSchema = $this->getMockBuilder(ClassSchema::class)->disableOriginalConstructor()->getMock();
-        $this->mockReflectionService->expects(self::any())->method('getClassSchema')->with('TheTargetType')->will(self::returnValue($mockSchema));
+        $this->mockReflectionService->expects($this->any())->method('getClassSchema')->with('TheTargetType')->willReturn(($mockSchema));
 
-        $mockSchema->expects(self::any())->method('hasProperty')->with('virtualPropertyName')->will(self::returnValue(false));
+        $mockSchema->expects($this->any())->method('hasProperty')->with('virtualPropertyName')->willReturn((false));
 
-        $this->mockReflectionService->expects(self::any())->method('hasMethod')->with('TheTargetType', 'setVirtualPropertyName')->will(self::returnValue(true));
-        $this->mockReflectionService->expects(self::any())->method('getMethodParameters')->will($this->returnValueMap([
+        $this->mockReflectionService->expects($this->any())->method('hasMethod')->with('TheTargetType', 'setVirtualPropertyName')->willReturn((true));
+        $this->mockReflectionService->expects($this->any())->method('getMethodParameters')->will($this->returnValueMap([
             ['TheTargetType', '__construct', []],
             ['TheTargetType', 'setVirtualPropertyName', [['type' => 'TheTypeOfSubObject']]]
         ]));
 
-        $this->mockReflectionService->expects(self::any())->method('hasMethod')->with('TheTargetType', 'setVirtualPropertyName')->will(self::returnValue(true));
+        $this->mockReflectionService->expects($this->any())->method('hasMethod')->with('TheTargetType', 'setVirtualPropertyName')->willReturn((true));
         $this->mockReflectionService
-            ->expects(self::exactly(2))
+            ->expects($this->exactly(2))
             ->method('getMethodParameters')
             ->withConsecutive(
                 [self::equalTo('TheTargetType'), self::equalTo('__construct')],
                 [self::equalTo('TheTargetType'), self::equalTo('setVirtualPropertyName')]
             )
-            ->will(self::returnValue([
+            ->willReturn(([
                 ['type' => 'TheTypeOfSubObject']
             ]));
         $configuration = $this->buildConfiguration([]);
@@ -192,12 +192,12 @@ class PersistentObjectConverterTest extends UnitTestCase
     public function getTypeOfChildPropertyShouldConsiderConstructors()
     {
         $mockSchema = $this->getMockBuilder(ClassSchema::class)->disableOriginalConstructor()->getMock();
-        $this->mockReflectionService->expects(self::any())->method('getClassSchema')->with('TheTargetType')->will(self::returnValue($mockSchema));
+        $this->mockReflectionService->expects($this->any())->method('getClassSchema')->with('TheTargetType')->willReturn(($mockSchema));
         $this->mockReflectionService
-            ->expects(self::exactly(1))
+            ->expects($this->exactly(1))
             ->method('getMethodParameters')
             ->with('TheTargetType', '__construct')
-            ->will(self::returnValue([
+            ->willReturn(([
                 'anotherProperty' => ['type' => 'string']
             ]));
 
@@ -214,7 +214,7 @@ class PersistentObjectConverterTest extends UnitTestCase
         $identifier = '550e8400-e29b-11d4-a716-446655440000';
         $object = new \stdClass();
 
-        $this->mockPersistenceManager->expects(self::once())->method('getObjectByIdentifier')->with($identifier)->will(self::returnValue($object));
+        $this->mockPersistenceManager->expects($this->once())->method('getObjectByIdentifier')->with($identifier)->willReturn(($object));
         self::assertSame($object, $this->converter->convertFrom($identifier, 'MySpecialType'));
     }
 
@@ -226,7 +226,7 @@ class PersistentObjectConverterTest extends UnitTestCase
         $identifier = 'someIdentifier';
         $object = new \stdClass();
 
-        $this->mockPersistenceManager->expects(self::once())->method('getObjectByIdentifier')->with($identifier)->will(self::returnValue($object));
+        $this->mockPersistenceManager->expects($this->once())->method('getObjectByIdentifier')->with($identifier)->willReturn(($object));
         self::assertSame($object, $this->converter->convertFrom($identifier, 'MySpecialType'));
     }
 
@@ -241,7 +241,7 @@ class PersistentObjectConverterTest extends UnitTestCase
         $source = [
             '__identity' => $identifier
         ];
-        $this->mockPersistenceManager->expects(self::once())->method('getObjectByIdentifier')->with($identifier)->will(self::returnValue($object));
+        $this->mockPersistenceManager->expects($this->once())->method('getObjectByIdentifier')->with($identifier)->willReturn(($object));
         self::assertSame($object, $this->converter->convertFrom($source, 'MySpecialType'));
     }
 
@@ -259,7 +259,7 @@ class PersistentObjectConverterTest extends UnitTestCase
             '__identity' => $identifier,
             'foo' => 'bar'
         ];
-        $this->mockPersistenceManager->expects(self::once())->method('getObjectByIdentifier')->with($identifier)->will(self::returnValue($object));
+        $this->mockPersistenceManager->expects($this->once())->method('getObjectByIdentifier')->with($identifier)->willReturn(($object));
         $this->converter->convertFrom($source, 'MySpecialType', ['foo' => 'bar']);
     }
 
@@ -276,7 +276,7 @@ class PersistentObjectConverterTest extends UnitTestCase
             '__identity' => $identifier,
             'foo' => 'bar'
         ];
-        $this->mockPersistenceManager->expects(self::once())->method('getObjectByIdentifier')->with($identifier)->will(self::returnValue(null));
+        $this->mockPersistenceManager->expects($this->once())->method('getObjectByIdentifier')->with($identifier)->willReturn((null));
         $actualResult = $this->converter->convertFrom($source, 'MySpecialType', ['foo' => 'bar']);
 
         self::assertInstanceOf(TargetNotFoundError::class, $actualResult);
@@ -300,22 +300,22 @@ class PersistentObjectConverterTest extends UnitTestCase
      */
     protected function setUpMockQuery($numberOfResults, $howOftenIsGetFirstCalled)
     {
-        $mockClassSchema = $this->createMock(ClassSchema::class, [], ['Dummy']);
-        $mockClassSchema->expects(self::once())->method('getIdentityProperties')->will(self::returnValue(['key1' => 'someType']));
-        $this->mockReflectionService->expects(self::once())->method('getClassSchema')->with('SomeType')->will(self::returnValue($mockClassSchema));
+        $mockClassSchema = $this->createMock(ClassSchema::class, [], []);
+        $mockClassSchema->expects($this->once())->method('getIdentityProperties')->willReturn((['key1' => 'someType']));
+        $this->mockReflectionService->expects($this->once())->method('getClassSchema')->with('SomeType')->willReturn(($mockClassSchema));
 
         $mockConstraint = $this->getMockBuilder(Persistence\Generic\Qom\Comparison::class)->disableOriginalConstructor()->getMock();
 
         $mockObject = new \stdClass();
         $mockQuery = $this->createMock(Persistence\QueryInterface::class);
         $mockQueryResult = $this->createMock(Persistence\QueryResultInterface::class);
-        $mockQueryResult->expects(self::once())->method('count')->will(self::returnValue($numberOfResults));
-        $mockQueryResult->expects($howOftenIsGetFirstCalled)->method('getFirst')->will(self::returnValue($mockObject));
-        $mockQuery->expects(self::once())->method('equals')->with('key1', 'value1')->will(self::returnValue($mockConstraint));
-        $mockQuery->expects(self::once())->method('matching')->with($mockConstraint)->will(self::returnValue($mockQuery));
-        $mockQuery->expects(self::once())->method('execute')->will(self::returnValue($mockQueryResult));
+        $mockQueryResult->expects($this->once())->method('count')->willReturn(($numberOfResults));
+        $mockQueryResult->expects($howOftenIsGetFirstCalled)->method('getFirst')->willReturn(($mockObject));
+        $mockQuery->expects($this->once())->method('equals')->with('key1', 'value1')->willReturn(($mockConstraint));
+        $mockQuery->expects($this->once())->method('matching')->with($mockConstraint)->willReturn(($mockQuery));
+        $mockQuery->expects($this->once())->method('execute')->willReturn(($mockQueryResult));
 
-        $this->mockPersistenceManager->expects(self::once())->method('createQueryForType')->with('SomeType')->will(self::returnValue($mockQuery));
+        $this->mockPersistenceManager->expects($this->once())->method('createQueryForType')->with('SomeType')->willReturn(($mockQuery));
 
         return $mockObject;
     }
@@ -325,7 +325,7 @@ class PersistentObjectConverterTest extends UnitTestCase
      */
     public function convertFromShouldReturnFirstMatchingObjectIfMultipleIdentityPropertiesExist()
     {
-        $mockObject = $this->setupMockQuery(1, self::once());
+        $mockObject = $this->setupMockQuery(1, $this->once());
 
         $source = [
             '__identity' => ['key1' => 'value1', 'key2' => 'value2']
@@ -339,7 +339,7 @@ class PersistentObjectConverterTest extends UnitTestCase
      */
     public function convertFromShouldReturnTargetNotFoundErrorIfNoMatchingObjectWasFound()
     {
-        $this->setupMockQuery(0, self::never());
+        $this->setupMockQuery(0, $this->never());
 
         $source = [
             '__identity' => ['key1' => 'value1', 'key2' => 'value2']
@@ -366,7 +366,7 @@ class PersistentObjectConverterTest extends UnitTestCase
     public function convertFromShouldThrowExceptionIfMoreThanOneObjectWasFound()
     {
         $this->expectException(DuplicateObjectException::class);
-        $this->setupMockQuery(2, self::never());
+        $this->setupMockQuery(2, $this->never());
 
         $source = [
             '__identity' => ['key1' => 'value1', 'key2' => 'value2']
@@ -400,8 +400,8 @@ class PersistentObjectConverterTest extends UnitTestCase
         $expectedObject = new ClassWithSetters();
         $expectedObject->property1 = 'bar';
 
-        $this->mockReflectionService->expects(self::once())->method('hasMethod')->with(ClassWithSetters::class, '__construct')->will(self::returnValue(false));
-        $this->mockObjectManager->expects(self::once())->method('getClassNameByObjectName')->with(ClassWithSetters::class)->will(self::returnValue(ClassWithSetters::class));
+        $this->mockReflectionService->expects($this->once())->method('hasMethod')->with(ClassWithSetters::class, '__construct')->willReturn((false));
+        $this->mockObjectManager->expects($this->once())->method('getClassNameByObjectName')->with(ClassWithSetters::class)->willReturn((ClassWithSetters::class));
         $configuration = $this->buildConfiguration([PersistentObjectConverter::CONFIGURATION_CREATION_ALLOWED => true]);
         $result = $this->converter->convertFrom($source, ClassWithSetters::class, $convertedChildProperties, $configuration);
         self::assertEquals($expectedObject, $result);
@@ -421,8 +421,8 @@ class PersistentObjectConverterTest extends UnitTestCase
             'propertyNotExisting' => 'bar'
         ];
 
-        $this->mockReflectionService->expects(self::once())->method('hasMethod')->with(ClassWithSetters::class, '__construct')->will(self::returnValue(false));
-        $this->mockObjectManager->expects(self::once())->method('getClassNameByObjectName')->with(ClassWithSetters::class)->will(self::returnValue(ClassWithSetters::class));
+        $this->mockReflectionService->expects($this->once())->method('hasMethod')->with(ClassWithSetters::class, '__construct')->willReturn((false));
+        $this->mockObjectManager->expects($this->once())->method('getClassNameByObjectName')->with(ClassWithSetters::class)->willReturn((ClassWithSetters::class));
         $configuration = $this->buildConfiguration([PersistentObjectConverter::CONFIGURATION_CREATION_ALLOWED => true]);
         $result = $this->converter->convertFrom($source, ClassWithSetters::class, $convertedChildProperties, $configuration);
         self::assertSame($object, $result);
@@ -443,11 +443,11 @@ class PersistentObjectConverterTest extends UnitTestCase
         $expectedObject = new ClassWithSettersAndConstructor('param1');
         $expectedObject->setProperty2('bar');
 
-        $this->mockReflectionService->expects(self::once())->method('hasMethod')->with(ClassWithSettersAndConstructor::class, '__construct')->will(self::returnValue(true));
-        $this->mockReflectionService->expects(self::once())->method('getMethodParameters')->with(ClassWithSettersAndConstructor::class, '__construct')->will(self::returnValue([
+        $this->mockReflectionService->expects($this->once())->method('hasMethod')->with(ClassWithSettersAndConstructor::class, '__construct')->willReturn((true));
+        $this->mockReflectionService->expects($this->once())->method('getMethodParameters')->with(ClassWithSettersAndConstructor::class, '__construct')->willReturn(([
             'property1' => ['optional' => false]
         ]));
-        $this->mockObjectManager->expects(self::once())->method('getClassNameByObjectName')->with(ClassWithSettersAndConstructor::class)->will(self::returnValue(ClassWithSettersAndConstructor::class));
+        $this->mockObjectManager->expects($this->once())->method('getClassNameByObjectName')->with(ClassWithSettersAndConstructor::class)->willReturn((ClassWithSettersAndConstructor::class));
         $configuration = $this->buildConfiguration([PersistentObjectConverter::CONFIGURATION_CREATION_ALLOWED => true]);
         $result = $this->converter->convertFrom($source, ClassWithSettersAndConstructor::class, $convertedChildProperties, $configuration);
         self::assertEquals($expectedObject, $result);
@@ -464,11 +464,11 @@ class PersistentObjectConverterTest extends UnitTestCase
         ];
         $expectedObject = new ClassWithSettersAndConstructor('thisIsTheDefaultValue');
 
-        $this->mockReflectionService->expects(self::once())->method('hasMethod')->with(ClassWithSettersAndConstructor::class, '__construct')->will(self::returnValue(true));
-        $this->mockReflectionService->expects(self::once())->method('getMethodParameters')->with(ClassWithSettersAndConstructor::class, '__construct')->will(self::returnValue([
+        $this->mockReflectionService->expects($this->once())->method('hasMethod')->with(ClassWithSettersAndConstructor::class, '__construct')->willReturn((true));
+        $this->mockReflectionService->expects($this->once())->method('getMethodParameters')->with(ClassWithSettersAndConstructor::class, '__construct')->willReturn(([
             'property1' => ['optional' => true, 'defaultValue' => 'thisIsTheDefaultValue']
         ]));
-        $this->mockObjectManager->expects(self::once())->method('getClassNameByObjectName')->with(ClassWithSettersAndConstructor::class)->will(self::returnValue(ClassWithSettersAndConstructor::class));
+        $this->mockObjectManager->expects($this->once())->method('getClassNameByObjectName')->with(ClassWithSettersAndConstructor::class)->willReturn((ClassWithSettersAndConstructor::class));
         $configuration = $this->buildConfiguration([PersistentObjectConverter::CONFIGURATION_CREATION_ALLOWED => true]);
         $result = $this->converter->convertFrom($source, ClassWithSettersAndConstructor::class, [], $configuration);
         self::assertEquals($expectedObject, $result);
@@ -488,11 +488,11 @@ class PersistentObjectConverterTest extends UnitTestCase
             'property2' => 'bar'
         ];
 
-        $this->mockReflectionService->expects(self::once())->method('hasMethod')->with(ClassWithSettersAndConstructor::class, '__construct')->will(self::returnValue(true));
-        $this->mockReflectionService->expects(self::once())->method('getMethodParameters')->with(ClassWithSettersAndConstructor::class, '__construct')->will(self::returnValue([
+        $this->mockReflectionService->expects($this->once())->method('hasMethod')->with(ClassWithSettersAndConstructor::class, '__construct')->willReturn((true));
+        $this->mockReflectionService->expects($this->once())->method('getMethodParameters')->with(ClassWithSettersAndConstructor::class, '__construct')->willReturn(([
             'property1' => ['optional' => false, 'type' => null]
         ]));
-        $this->mockObjectManager->expects(self::once())->method('getClassNameByObjectName')->with(ClassWithSettersAndConstructor::class)->will(self::returnValue(ClassWithSettersAndConstructor::class));
+        $this->mockObjectManager->expects($this->once())->method('getClassNameByObjectName')->with(ClassWithSettersAndConstructor::class)->willReturn((ClassWithSettersAndConstructor::class));
         $configuration = $this->buildConfiguration([PersistentObjectConverter::CONFIGURATION_CREATION_ALLOWED => true]);
         $result = $this->converter->convertFrom($source, ClassWithSettersAndConstructor::class, $convertedChildProperties, $configuration);
         self::assertSame($object, $result);

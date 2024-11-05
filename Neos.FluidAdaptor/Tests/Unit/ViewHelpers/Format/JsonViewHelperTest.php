@@ -28,7 +28,7 @@ class JsonViewHelperTest extends ViewHelperBaseTestcase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->viewHelper = $this->getMockBuilder(\Neos\FluidAdaptor\ViewHelpers\Format\JsonViewHelper::class)->setMethods(['renderChildren'])->getMock();
+        $this->viewHelper = $this->getMockBuilder(\Neos\FluidAdaptor\ViewHelpers\Format\JsonViewHelper::class)->onlyMethods(['renderChildren'])->getMock();
         $this->injectDependenciesIntoViewHelper($this->viewHelper);
     }
 
@@ -38,9 +38,9 @@ class JsonViewHelperTest extends ViewHelperBaseTestcase
     public function viewHelperConvertsSimpleAssociativeArrayGivenAsChildren()
     {
         $this->viewHelper
-                ->expects(self::once())
+                ->expects($this->once())
                 ->method('renderChildren')
-                ->will(self::returnValue(['foo' => 'bar']));
+                ->willReturn((['foo' => 'bar']));
 
         $this->viewHelper = $this->prepareArguments($this->viewHelper, []);
         $actualResult = $this->viewHelper->render();
@@ -53,7 +53,7 @@ class JsonViewHelperTest extends ViewHelperBaseTestcase
     public function viewHelperConvertsSimpleAssociativeArrayGivenAsDataArgument()
     {
         $this->viewHelper
-                ->expects(self::never())
+                ->expects($this->never())
                 ->method('renderChildren');
 
         $this->viewHelper = $this->prepareArguments($this->viewHelper, ['value' => ['foo' => 'bar']]);
@@ -67,9 +67,9 @@ class JsonViewHelperTest extends ViewHelperBaseTestcase
     public function viewHelperOutputsArrayOnIndexedArrayInputAndObjectIfSetSo()
     {
         $this->viewHelper
-                ->expects(self::any())
+                ->expects($this->any())
                 ->method('renderChildren')
-                ->will(self::returnValue(['foo', 'bar', 42]));
+                ->willReturn((['foo', 'bar', 42]));
         $this->viewHelper = $this->prepareArguments($this->viewHelper, []);
         self::assertEquals('["foo","bar",42]', $this->viewHelper->render());
 

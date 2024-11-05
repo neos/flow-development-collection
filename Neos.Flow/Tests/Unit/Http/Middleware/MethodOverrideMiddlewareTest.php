@@ -61,8 +61,8 @@ class MethodOverrideMiddlewareTest extends UnitTestCase
     {
         $mockRequest = $this->prepareMockRequest($method, $headers, $parsedBody);
         $mockAlteredRequest = $this->getMockBuilder(ServerRequestInterface::class)->disableOriginalConstructor()->getMock();
-        $mockRequest->expects(self::once())->method('withMethod')->with($expectedMethod)->willReturn($mockAlteredRequest);
-        $this->mockRequestHandler->expects(self::once())->method('handle')->willReturnCallback(function ($request) use ($mockAlteredRequest) {
+        $mockRequest->expects($this->once())->method('withMethod')->with($expectedMethod)->willReturn($mockAlteredRequest);
+        $this->mockRequestHandler->expects($this->once())->method('handle')->willReturnCallback(function ($request) use ($mockAlteredRequest) {
             self::assertSame($request, $mockAlteredRequest);
             return $this->mockResponse;
         });
@@ -84,8 +84,8 @@ class MethodOverrideMiddlewareTest extends UnitTestCase
     public function process_nonMatchingRequests(string $method, array $headers, array $parsedBody): void
     {
         $mockRequest = $this->prepareMockRequest($method, $headers, $parsedBody);
-        $mockRequest->expects(self::never())->method('withMethod');
-        $this->mockRequestHandler->expects(self::once())->method('handle')->willReturnCallback(function ($request) use ($mockRequest) {
+        $mockRequest->expects($this->never())->method('withMethod');
+        $this->mockRequestHandler->expects($this->once())->method('handle')->willReturnCallback(function ($request) use ($mockRequest) {
             self::assertSame($request, $mockRequest);
             return $this->mockResponse;
         });

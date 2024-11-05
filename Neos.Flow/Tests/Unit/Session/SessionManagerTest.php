@@ -97,16 +97,16 @@ class SessionManagerTest extends UnitTestCase
         $this->httpResponse = new Response();
 
         $mockRequestHandler = $this->createMock(RequestHandler::class);
-        $mockRequestHandler->expects(self::any())->method('getHttpRequest')->will(self::returnValue($this->httpRequest));
-        $mockRequestHandler->expects(self::any())->method('getHttpResponse')->will(self::returnValue($this->httpResponse));
+        $mockRequestHandler->expects($this->any())->method('getHttpRequest')->willReturn(($this->httpRequest));
+        $mockRequestHandler->expects($this->any())->method('getHttpResponse')->willReturn(($this->httpResponse));
 
         $this->mockBootstrap = $this->createMock(Bootstrap::class);
-        $this->mockBootstrap->expects(self::any())->method('getActiveRequestHandler')->will(self::returnValue($mockRequestHandler));
+        $this->mockBootstrap->expects($this->any())->method('getActiveRequestHandler')->willReturn(($mockRequestHandler));
 
         $this->mockSecurityContext = $this->createMock(Context::class);
 
         $this->mockObjectManager = $this->createMock(ObjectManagerInterface::class);
-        $this->mockObjectManager->expects(self::any())->method('get')->with(Context::class)->will(self::returnValue($this->mockSecurityContext));
+        $this->mockObjectManager->expects($this->any())->method('get')->with(Context::class)->willReturn(($this->mockSecurityContext));
     }
 
     /**

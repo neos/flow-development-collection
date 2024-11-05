@@ -50,7 +50,7 @@ class FileSystemTargetTest extends UnitTestCase
 
     protected function provideBaseUri(UriInterface $uri)
     {
-        $this->mockBaseUriProvider->expects(self::any())->method('getConfiguredBaseUriOrFallbackToCurrentRequest')->willReturn($uri);
+        $this->mockBaseUriProvider->expects($this->any())->method('getConfiguredBaseUriOrFallbackToCurrentRequest')->willReturn($uri);
     }
 
     /**
@@ -104,7 +104,7 @@ class FileSystemTargetTest extends UnitTestCase
     public function getPublicStaticResourceUriThrowsExceptionIfBaseUriCantBeResolved()
     {
         $this->expectException(\Neos\Flow\Http\Exception::class);
-        $this->mockBaseUriProvider->expects(self::any())->method('getConfiguredBaseUriOrFallbackToCurrentRequest')->willThrowException(new \Neos\Flow\Http\Exception('Test mock exception'));
+        $this->mockBaseUriProvider->expects($this->any())->method('getConfiguredBaseUriOrFallbackToCurrentRequest')->willThrowException(new \Neos\Flow\Http\Exception('Test mock exception'));
 
         $this->fileSystemTarget->getPublicStaticResourceUri('some/path/SomeFilename.jpg');
     }
@@ -140,9 +140,9 @@ class FileSystemTargetTest extends UnitTestCase
         $this->inject($this->fileSystemTarget, 'baseUri', $baseUri);
         /** @var PersistentResource|\PHPUnit\Framework\MockObject\MockObject $mockResource */
         $mockResource = $this->getMockBuilder(PersistentResource::class)->disableOriginalConstructor()->getMock();
-        $mockResource->expects(self::any())->method('getRelativePublicationPath')->will(self::returnValue($relativePublicationPath));
-        $mockResource->expects(self::any())->method('getFilename')->will(self::returnValue($filename));
-        $mockResource->expects(self::any())->method('getSha1')->will(self::returnValue($sha1));
+        $mockResource->expects($this->any())->method('getRelativePublicationPath')->willReturn(($relativePublicationPath));
+        $mockResource->expects($this->any())->method('getFilename')->willReturn(($filename));
+        $mockResource->expects($this->any())->method('getSha1')->willReturn(($sha1));
 
         self::assertSame($expectedResult, $this->fileSystemTarget->getPublicPersistentResourceUri($mockResource));
     }
@@ -166,7 +166,7 @@ class FileSystemTargetTest extends UnitTestCase
     public function getPublicPersistentResourceUriThrowsExceptionIfBaseUriCantBeResolved()
     {
         $this->expectException(\Neos\Flow\Http\Exception::class);
-        $this->mockBaseUriProvider->expects(self::any())->method('getConfiguredBaseUriOrFallbackToCurrentRequest')->willThrowException(new \Neos\Flow\Http\Exception('Test mock exception'));
+        $this->mockBaseUriProvider->expects($this->any())->method('getConfiguredBaseUriOrFallbackToCurrentRequest')->willThrowException(new \Neos\Flow\Http\Exception('Test mock exception'));
 
         /** @var PersistentResource|\PHPUnit\Framework\MockObject\MockObject $mockResource */
         $mockResource = $this->getMockBuilder(PersistentResource::class)->disableOriginalConstructor()->getMock();

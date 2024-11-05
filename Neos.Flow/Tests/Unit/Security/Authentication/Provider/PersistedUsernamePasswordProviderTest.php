@@ -72,11 +72,11 @@ class PersistedUsernamePasswordProviderTest extends UnitTestCase
         $this->mockPrecomposedHashProvider->method('getPrecomposedHash')->willReturn('bcrypt=>$2a$14$mYqRRlg5V2yUDy1bd9vt3Oq8Fa9d508WWazFWE5tcpTGn3G145RAm');
 
         $this->mockSecurityContext = $this->createMock(Security\Context::class);
-        $this->mockSecurityContext->expects(self::any())->method('withoutAuthorizationChecks')->will(self::returnCallBack(function ($callback) {
+        $this->mockSecurityContext->expects($this->any())->method('withoutAuthorizationChecks')->will(self::returnCallBack(function ($callback) {
             return $callback->__invoke();
         }));
 
-        $this->persistedUsernamePasswordProvider = $this->getAccessibleMock(Security\Authentication\Provider\PersistedUsernamePasswordProvider::class, ['dummy'], [], '', false);
+        $this->persistedUsernamePasswordProvider = $this->getAccessibleMock(Security\Authentication\Provider\PersistedUsernamePasswordProvider::class, [], [], '', false);
         $this->persistedUsernamePasswordProvider->_set('name', 'myProvider');
         $this->persistedUsernamePasswordProvider->_set('options', []);
         $this->persistedUsernamePasswordProvider->_set('hashService', $this->mockHashService);
@@ -91,21 +91,21 @@ class PersistedUsernamePasswordProviderTest extends UnitTestCase
      */
     public function authenticatingAnUsernamePasswordTokenChecksIfTheGivenClearTextPasswordMatchesThePersistedHashedPassword()
     {
-        $this->mockHashService->expects(self::once())->method('validatePassword')->with('password', '8bf0abbb93000e2e47f0e0a80721e834,80f117a78cff75f3f73793fd02aa9086')->will(self::returnValue(true));
+        $this->mockHashService->expects($this->once())->method('validatePassword')->with('password', '8bf0abbb93000e2e47f0e0a80721e834,80f117a78cff75f3f73793fd02aa9086')->willReturn((true));
 
-        $this->mockAccount->expects(self::once())->method('getCredentialsSource')->will(self::returnValue('8bf0abbb93000e2e47f0e0a80721e834,80f117a78cff75f3f73793fd02aa9086'));
+        $this->mockAccount->expects($this->once())->method('getCredentialsSource')->willReturn(('8bf0abbb93000e2e47f0e0a80721e834,80f117a78cff75f3f73793fd02aa9086'));
 
-        $this->mockAccountRepository->expects(self::once())->method('findActiveByAccountIdentifierAndAuthenticationProviderName')->with('admin', 'myProvider')->will(self::returnValue($this->mockAccount));
+        $this->mockAccountRepository->expects($this->once())->method('findActiveByAccountIdentifierAndAuthenticationProviderName')->with('admin', 'myProvider')->willReturn(($this->mockAccount));
 
-        $this->mockToken->expects(self::atLeastOnce())->method('getUsername')->will(self::returnValue('admin'));
-        $this->mockToken->expects(self::atLeastOnce())->method('getPassword')->will(self::returnValue('password'));
+        $this->mockToken->expects($this->atLeastOnce())->method('getUsername')->willReturn(('admin'));
+        $this->mockToken->expects($this->atLeastOnce())->method('getPassword')->willReturn(('password'));
 
         $lastAuthenticationStatus = null;
         $this->mockToken->method('setAuthenticationStatus')->willReturnCallback(static function ($status) use (&$lastAuthenticationStatus) {
             $lastAuthenticationStatus = $status;
         });
 
-        $this->mockToken->expects(self::once())->method('setAccount')->with($this->mockAccount);
+        $this->mockToken->expects($this->once())->method('setAccount')->with($this->mockAccount);
 
         $this->persistedUsernamePasswordProvider->authenticate($this->mockToken);
         self::assertSame(\Neos\Flow\Security\Authentication\TokenInterface::AUTHENTICATION_SUCCESSFUL, $lastAuthenticationStatus);
@@ -116,16 +116,16 @@ class PersistedUsernamePasswordProviderTest extends UnitTestCase
      */
     public function authenticatingAndUsernamePasswordTokenRespectsTheConfiguredLookupProviderName()
     {
-        $this->mockHashService->expects(self::once())->method('validatePassword')->with('password', '8bf0abbb93000e2e47f0e0a80721e834,80f117a78cff75f3f73793fd02aa9086')->will(self::returnValue(true));
+        $this->mockHashService->expects($this->once())->method('validatePassword')->with('password', '8bf0abbb93000e2e47f0e0a80721e834,80f117a78cff75f3f73793fd02aa9086')->willReturn((true));
 
-        $this->mockAccount->expects(self::once())->method('getCredentialsSource')->will(self::returnValue('8bf0abbb93000e2e47f0e0a80721e834,80f117a78cff75f3f73793fd02aa9086'));
+        $this->mockAccount->expects($this->once())->method('getCredentialsSource')->willReturn(('8bf0abbb93000e2e47f0e0a80721e834,80f117a78cff75f3f73793fd02aa9086'));
 
-        $this->mockAccountRepository->expects(self::once())->method('findActiveByAccountIdentifierAndAuthenticationProviderName')->with('admin', 'customLookupName')->will(self::returnValue($this->mockAccount));
+        $this->mockAccountRepository->expects($this->once())->method('findActiveByAccountIdentifierAndAuthenticationProviderName')->with('admin', 'customLookupName')->willReturn(($this->mockAccount));
 
-        $this->mockToken->expects(self::atLeastOnce())->method('getUsername')->will(self::returnValue('admin'));
-        $this->mockToken->expects(self::atLeastOnce())->method('getPassword')->will(self::returnValue('password'));
+        $this->mockToken->expects($this->atLeastOnce())->method('getUsername')->willReturn(('admin'));
+        $this->mockToken->expects($this->atLeastOnce())->method('getPassword')->willReturn(('password'));
 
-        $this->mockToken->expects(self::once())->method('setAccount')->with($this->mockAccount);
+        $this->mockToken->expects($this->once())->method('setAccount')->with($this->mockAccount);
 
         $persistedUsernamePasswordProvider = PersistedUsernamePasswordProvider::create('providerName', ['lookupProviderName' => 'customLookupName']);
         $this->inject($persistedUsernamePasswordProvider, 'hashService', $this->mockHashService);
@@ -142,9 +142,9 @@ class PersistedUsernamePasswordProviderTest extends UnitTestCase
      */
     public function authenticatingAnUsernamePasswordTokenFetchesAccountWithDisabledAuthorization()
     {
-        $this->mockToken->expects(self::atLeastOnce())->method('getUsername')->will(self::returnValue('admin'));
-        $this->mockToken->expects(self::atLeastOnce())->method('getPassword')->will(self::returnValue('password'));
-        $this->mockSecurityContext->expects(self::once())->method('withoutAuthorizationChecks');
+        $this->mockToken->expects($this->atLeastOnce())->method('getUsername')->willReturn(('admin'));
+        $this->mockToken->expects($this->atLeastOnce())->method('getPassword')->willReturn(('password'));
+        $this->mockSecurityContext->expects($this->once())->method('withoutAuthorizationChecks');
         $this->persistedUsernamePasswordProvider->authenticate($this->mockToken);
     }
 
@@ -153,14 +153,14 @@ class PersistedUsernamePasswordProviderTest extends UnitTestCase
      */
     public function authenticationFailsWithWrongCredentialsInAnUsernamePasswordToken()
     {
-        $this->mockHashService->expects(self::once())->method('validatePassword')->with('wrong password', '8bf0abbb93000e2e47f0e0a80721e834,80f117a78cff75f3f73793fd02aa9086')->will(self::returnValue(false));
+        $this->mockHashService->expects($this->once())->method('validatePassword')->with('wrong password', '8bf0abbb93000e2e47f0e0a80721e834,80f117a78cff75f3f73793fd02aa9086')->willReturn((false));
 
-        $this->mockAccount->expects(self::once())->method('getCredentialsSource')->will(self::returnValue('8bf0abbb93000e2e47f0e0a80721e834,80f117a78cff75f3f73793fd02aa9086'));
+        $this->mockAccount->expects($this->once())->method('getCredentialsSource')->willReturn(('8bf0abbb93000e2e47f0e0a80721e834,80f117a78cff75f3f73793fd02aa9086'));
 
-        $this->mockAccountRepository->expects(self::once())->method('findActiveByAccountIdentifierAndAuthenticationProviderName')->with('admin', 'myProvider')->will(self::returnValue($this->mockAccount));
+        $this->mockAccountRepository->expects($this->once())->method('findActiveByAccountIdentifierAndAuthenticationProviderName')->with('admin', 'myProvider')->willReturn(($this->mockAccount));
 
-        $this->mockToken->expects(self::atLeastOnce())->method('getUsername')->will(self::returnValue('admin'));
-        $this->mockToken->expects(self::atLeastOnce())->method('getPassword')->will(self::returnValue('wrong password'));
+        $this->mockToken->expects($this->atLeastOnce())->method('getUsername')->willReturn(('admin'));
+        $this->mockToken->expects($this->atLeastOnce())->method('getPassword')->willReturn(('wrong password'));
 
         $lastAuthenticationStatus = null;
         $this->mockToken->method('setAuthenticationStatus')->willReturnCallback(static function ($status) use (&$lastAuthenticationStatus) {
@@ -190,9 +190,9 @@ class PersistedUsernamePasswordProviderTest extends UnitTestCase
     public function canAuthenticateReturnsTrueOnlyForAnTokenThatHasTheCorrectProviderNameSet()
     {
         $mockToken1 = $this->createMock(Security\Authentication\TokenInterface::class);
-        $mockToken1->expects(self::once())->method('getAuthenticationProviderName')->will(self::returnValue('myProvider'));
+        $mockToken1->expects($this->once())->method('getAuthenticationProviderName')->willReturn(('myProvider'));
         $mockToken2 = $this->createMock(Security\Authentication\TokenInterface::class);
-        $mockToken2->expects(self::once())->method('getAuthenticationProviderName')->will(self::returnValue('someOtherProvider'));
+        $mockToken2->expects($this->once())->method('getAuthenticationProviderName')->willReturn(('someOtherProvider'));
 
         $usernamePasswordProvider = Security\Authentication\Provider\PersistedUsernamePasswordProvider::create('myProvider', []);
 

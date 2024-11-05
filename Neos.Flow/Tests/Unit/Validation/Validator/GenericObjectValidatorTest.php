@@ -87,10 +87,10 @@ class GenericObjectValidatorTest extends AbstractValidatorTestcase
     public function validateChecksAllPropertiesForWhichAPropertyValidatorExists($mockObject, $validationResultForFoo, $validationResultForBar, $errors)
     {
         $validatorForFoo = $this->createMock(ValidatorInterface::class);
-        $validatorForFoo->expects(self::once())->method('validate')->with('foovalue')->will(self::returnValue($validationResultForFoo));
+        $validatorForFoo->expects($this->once())->method('validate')->with('foovalue')->willReturn(($validationResultForFoo));
 
         $validatorForBar = $this->createMock(ValidatorInterface::class);
-        $validatorForBar->expects(self::once())->method('validate')->with('barvalue')->will(self::returnValue($validationResultForBar));
+        $validatorForBar->expects($this->once())->method('validate')->with('barvalue')->willReturn(($validationResultForBar));
 
         $this->validator->addPropertyValidator('foo', $validatorForFoo);
         $this->validator->addPropertyValidator('bar', $validatorForBar);
@@ -143,7 +143,7 @@ class GenericObjectValidatorTest extends AbstractValidatorTestcase
         $result = new Error\Result();
         $result->addError($error);
         $mockUuidValidator = $this->createMock(ValidatorInterface::class);
-        $mockUuidValidator->expects(self::any())->method('validate')->with(0xF)->will(self::returnValue($result));
+        $mockUuidValidator->expects($this->any())->method('validate')->with(0xF)->willReturn(($result));
         $bValidator->addPropertyValidator('uuid', $mockUuidValidator);
 
         self::assertSame(['b.uuid' => [$error]], $aValidator->validate($A)->getFlattenedErrors());
@@ -173,7 +173,7 @@ class GenericObjectValidatorTest extends AbstractValidatorTestcase
         $result1 = new Error\Result();
         $result1->addError($error1);
         $mockUuidValidator = $this->createMock(ValidatorInterface::class);
-        $mockUuidValidator->expects(self::any())->method('validate')->with(0xF)->will(self::returnValue($result1));
+        $mockUuidValidator->expects($this->any())->method('validate')->with(0xF)->willReturn(($result1));
         $aValidator->addPropertyValidator('uuid', $mockUuidValidator);
         $bValidator->addPropertyValidator('uuid', $mockUuidValidator);
 
@@ -190,8 +190,8 @@ class GenericObjectValidatorTest extends AbstractValidatorTestcase
         $object = new $className();
 
         $integerValidator = $this->getAccessibleMock(IntegerValidator::class);
-        $matcher = self::any();
-        $integerValidator->expects($matcher)->method('validate')->with(1)->will(self::returnValue(new Error\Result()));
+        $matcher = $this->any();
+        $integerValidator->expects($matcher)->method('validate')->with(1)->willReturn((new Error\Result()));
 
         $validator = $this->getValidator();
         $validator->addPropertyValidator('integer', $integerValidator);

@@ -24,10 +24,10 @@ class AjaxWidgetContextHolderTest extends \Neos\Flow\Tests\UnitTestCase
      */
     public function storeSetsTheAjaxWidgetIdentifierInContext()
     {
-        $ajaxWidgetContextHolder = $this->getAccessibleMock(\Neos\FluidAdaptor\Core\Widget\AjaxWidgetContextHolder::class, ['dummy']);
+        $ajaxWidgetContextHolder = $this->getAccessibleMock(\Neos\FluidAdaptor\Core\Widget\AjaxWidgetContextHolder::class, []);
 
         $widgetContext = $this->createMock(\Neos\FluidAdaptor\Core\Widget\WidgetContext::class, ['setAjaxWidgetIdentifier']);
-        $widgetContext->expects(self::once())->method('setAjaxWidgetIdentifier');
+        $widgetContext->expects($this->once())->method('setAjaxWidgetIdentifier');
 
         $ajaxWidgetContextHolder->store($widgetContext);
     }
@@ -37,11 +37,11 @@ class AjaxWidgetContextHolderTest extends \Neos\Flow\Tests\UnitTestCase
      */
     public function storedWidgetContextCanBeRetrievedAgain()
     {
-        $ajaxWidgetContextHolder = $this->getAccessibleMock(\Neos\FluidAdaptor\Core\Widget\AjaxWidgetContextHolder::class, ['dummy']);
+        $ajaxWidgetContextHolder = $this->getAccessibleMock(\Neos\FluidAdaptor\Core\Widget\AjaxWidgetContextHolder::class, []);
 
         $widgetContext = $this->createMock(\Neos\FluidAdaptor\Core\Widget\WidgetContext::class, ['setAjaxWidgetIdentifier']);
         $widgetContextId = null;
-        $widgetContext->expects(self::once())->method('setAjaxWidgetIdentifier')->willReturnCallback(function ($identifier) use (&$widgetContextId) {
+        $widgetContext->expects($this->once())->method('setAjaxWidgetIdentifier')->willReturnCallback(function ($identifier) use (&$widgetContextId) {
             $widgetContextId = $identifier;
         });
         $ajaxWidgetContextHolder->store($widgetContext);

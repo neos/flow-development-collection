@@ -43,7 +43,7 @@ class FlowAnnotationDriverTest extends UnitTestCase
     public function testInferTableNameFromClassName($className, $tableName)
     {
         $driver = $this->getAccessibleMock(FlowAnnotationDriver::class, ['getMaxIdentifierLength']);
-        $driver->expects(self::any())->method('getMaxIdentifierLength')->will(self::returnValue(64));
+        $driver->expects($this->any())->method('getMaxIdentifierLength')->willReturn((64));
         self::assertEquals($tableName, $driver->inferTableNameFromClassName($className));
     }
 
@@ -72,7 +72,7 @@ class FlowAnnotationDriverTest extends UnitTestCase
     public function testInferJoinTableNameFromClassAndPropertyName($maxIdentifierLength, $className, $propertyName, $expectedTableName)
     {
         $driver = $this->getAccessibleMock(FlowAnnotationDriver::class, ['getMaxIdentifierLength']);
-        $driver->expects(self::any())->method('getMaxIdentifierLength')->will(self::returnValue($maxIdentifierLength));
+        $driver->expects($this->any())->method('getMaxIdentifierLength')->willReturn(($maxIdentifierLength));
 
         $actualTableName = $driver->_call('inferJoinTableNameFromClassAndPropertyName', $className, $propertyName);
         self::assertEquals($expectedTableName, $actualTableName);
@@ -85,13 +85,13 @@ class FlowAnnotationDriverTest extends UnitTestCase
     public function getMaxIdentifierLengthAsksDoctrineForValue()
     {
         $mockDatabasePlatform = $this->getMockForAbstractClass('Doctrine\DBAL\Platforms\AbstractPlatform', [], '', true, true, true, ['getMaxIdentifierLength']);
-        $mockDatabasePlatform->expects(self::atLeastOnce())->method('getMaxIdentifierLength')->will(self::returnValue(2048));
+        $mockDatabasePlatform->expects($this->atLeastOnce())->method('getMaxIdentifierLength')->willReturn((2048));
         $mockConnection = $this->getMockBuilder('Doctrine\DBAL\Connection')->disableOriginalConstructor()->getMock();
-        $mockConnection->expects(self::atLeastOnce())->method('getDatabasePlatform')->will(self::returnValue($mockDatabasePlatform));
+        $mockConnection->expects($this->atLeastOnce())->method('getDatabasePlatform')->willReturn(($mockDatabasePlatform));
         $mockEntityManager = $this->getMockBuilder('Doctrine\ORM\EntityManager')->disableOriginalConstructor()->getMock();
-        $mockEntityManager->expects(self::atLeastOnce())->method('getConnection')->will(self::returnValue($mockConnection));
+        $mockEntityManager->expects($this->atLeastOnce())->method('getConnection')->willReturn(($mockConnection));
 
-        $driver = $this->getAccessibleMock(FlowAnnotationDriver::class, ['dummy']);
+        $driver = $this->getAccessibleMock(FlowAnnotationDriver::class, []);
         $driver->_set('entityManager', $mockEntityManager);
         self::assertEquals(2048, $driver->_call('getMaxIdentifierLength'));
     }

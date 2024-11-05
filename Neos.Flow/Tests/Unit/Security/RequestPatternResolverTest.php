@@ -28,7 +28,7 @@ class RequestPatternResolverTest extends UnitTestCase
     {
         $this->expectException(NoRequestPatternFoundException::class);
         $mockObjectManager = $this->getMockBuilder(ObjectManager::class)->disableOriginalConstructor()->getMock();
-        $mockObjectManager->expects(self::any())->method('getClassNameByObjectName')->will(self::returnValue(false));
+        $mockObjectManager->expects($this->any())->method('getClassNameByObjectName')->willReturn((false));
 
         $requestPatternResolver = new RequestPatternResolver($mockObjectManager);
 
@@ -53,7 +53,7 @@ class RequestPatternResolverTest extends UnitTestCase
         };
 
         $mockObjectManager = $this->getMockBuilder(ObjectManager::class)->disableOriginalConstructor()->getMock();
-        $mockObjectManager->expects(self::any())->method('getClassNameByObjectName')->will(self::returnCallBack($getCaseSensitiveObjectNameCallback));
+        $mockObjectManager->expects($this->any())->method('getClassNameByObjectName')->will(self::returnCallBack($getCaseSensitiveObjectNameCallback));
 
         $requestPatternResolver = new RequestPatternResolver($mockObjectManager);
         $requestPatternClass = $requestPatternResolver->resolveRequestPatternClass('ValidShortName');
@@ -67,7 +67,7 @@ class RequestPatternResolverTest extends UnitTestCase
     public function resolveRequestPatternReturnsTheCorrectRequestPatternForACompleteClassName()
     {
         $mockObjectManager = $this->getMockBuilder(ObjectManager::class)->disableOriginalConstructor()->getMock();
-        $mockObjectManager->expects(self::any())->method('getClassNameByObjectName')->with('ExistingRequestPatternClass')->will(self::returnValue('ExistingRequestPatternClass'));
+        $mockObjectManager->expects($this->any())->method('getClassNameByObjectName')->with('ExistingRequestPatternClass')->willReturn(('ExistingRequestPatternClass'));
 
         $requestPatternResolver = new RequestPatternResolver($mockObjectManager);
         $requestPatternClass = $requestPatternResolver->resolveRequestPatternClass('ExistingRequestPatternClass');

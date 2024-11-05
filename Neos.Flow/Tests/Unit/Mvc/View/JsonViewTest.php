@@ -41,10 +41,10 @@ class JsonViewTest extends UnitTestCase
      */
     protected function setUp(): void
     {
-        $this->view = $this->getMockBuilder(Mvc\View\JsonView::class)->setMethods(['loadConfigurationFromYamlFile'])->getMock();
+        $this->view = $this->getMockBuilder(Mvc\View\JsonView::class)->onlyMethods([])->getMock();
         $this->controllerContext = $this->getMockBuilder(Mvc\Controller\ControllerContext::class)->disableOriginalConstructor()->getMock();
         $this->response = new Mvc\ActionResponse();
-        $this->controllerContext->expects(self::any())->method('getResponse')->will(self::returnValue($this->response));
+        $this->controllerContext->expects($this->any())->method('getResponse')->willReturn(($this->response));
         $this->view->setControllerContext($this->controllerContext);
     }
 
@@ -105,10 +105,10 @@ class JsonViewTest extends UnitTestCase
 
         $properties = ['foo' => 'bar', 'prohibited' => 'xxx'];
         $nestedObject = $this->createMock(Fixtures\NestedTestObject::class);
-        $nestedObject->expects(self::any())->method('getName')->will(self::returnValue('name'));
-        $nestedObject->expects(self::any())->method('getPath')->will(self::returnValue('path'));
-        $nestedObject->expects(self::any())->method('getProperties')->will(self::returnValue($properties));
-        $nestedObject->expects(self::never())->method('getOther');
+        $nestedObject->expects($this->any())->method('getName')->willReturn(('name'));
+        $nestedObject->expects($this->any())->method('getPath')->willReturn(('path'));
+        $nestedObject->expects($this->any())->method('getProperties')->willReturn(($properties));
+        $nestedObject->expects($this->never())->method('getOther');
         $object = $nestedObject;
         $configuration = [
             '_only' => ['name', 'path', 'properties'],
@@ -151,7 +151,7 @@ class JsonViewTest extends UnitTestCase
      */
     public function testTransformValue($object, $configuration, $expected, $description)
     {
-        $jsonView = $this->getAccessibleMock(Mvc\View\JsonView::class, ['dummy'], [], '');
+        $jsonView = $this->getAccessibleMock(Mvc\View\JsonView::class, [], [], '');
 
         $actual = $jsonView->_call('transformValue', $object, $configuration);
 
@@ -194,11 +194,11 @@ class JsonViewTest extends UnitTestCase
      */
     public function testTransformValueWithObjectIdentifierExposure($object, $configuration, $expected, $dummyIdentifier, $description)
     {
-        $persistenceManagerMock = $this->getMockBuilder(PersistenceManager::class)->setMethods(['getIdentifierByObject'])->getMock();
-        $jsonView = $this->getAccessibleMock(Mvc\View\JsonView::class, ['dummy'], [], '', false);
+        $persistenceManagerMock = $this->getMockBuilder(PersistenceManager::class)->onlyMethods(['getIdentifierByObject'])->getMock();
+        $jsonView = $this->getAccessibleMock(Mvc\View\JsonView::class, [], [], '', false);
         $jsonView->_set('persistenceManager', $persistenceManagerMock);
 
-        $persistenceManagerMock->expects(self::once())->method('getIdentifierByObject')->with($object->value1)->will(self::returnValue($dummyIdentifier));
+        $persistenceManagerMock->expects($this->once())->method('getIdentifierByObject')->with($object->value1)->willReturn(($dummyIdentifier));
 
         $actual = $jsonView->_call('transformValue', $object, $configuration);
 
@@ -255,7 +255,7 @@ class JsonViewTest extends UnitTestCase
             ]
         ];
 
-        $jsonView = $this->getAccessibleMock(Mvc\View\JsonView::class, ['dummy'], [], '', false);
+        $jsonView = $this->getAccessibleMock(Mvc\View\JsonView::class, [], [], '', false);
         $actual = $jsonView->_call('transformValue', $object, $configuration);
         self::assertEquals($expected, $actual);
     }
@@ -265,7 +265,7 @@ class JsonViewTest extends UnitTestCase
      */
     public function renderSetsContentTypeHeader()
     {
-        $this->response->expects(self::once())->method('setHeader')->with('Content-Type', 'application/json');
+        $this->response->expects($this->once())->method('setHeader')->with('Content-Type', 'application/json');
 
         $this->view->render();
     }
@@ -434,8 +434,8 @@ class JsonViewTest extends UnitTestCase
      */
     public function renderTransformsJsonSerializableValues()
     {
-        $value = $this->getMockBuilder('JsonSerializable')->setMethods(['jsonSerialize'])->getMock();
-        $value->expects(self::any())->method('jsonSerialize')->will(self::returnValue(['name' => 'Foo', 'age' => 42]));
+        $value = $this->getMockBuilder('JsonSerializable')->onlyMethods(['jsonSerialize'])->getMock();
+        $value->expects($this->any())->method('jsonSerialize')->willReturn((['name' => 'Foo', 'age' => 42]));
 
         $this->view->assign('value', $value);
         $this->view->setConfiguration([

@@ -34,7 +34,7 @@ class ReflectionServiceTest extends UnitTestCase
 
     protected function setUp(): void
     {
-        $this->reflectionService = $this->getAccessibleMock(ReflectionService::class, null);
+        $this->reflectionService = $this->getAccessibleMock(ReflectionService::class);
 
         $this->mockAnnotationReader = $this->getMockBuilder('Doctrine\Common\Annotations\Reader')->disableOriginalConstructor()->getMock();
         $this->mockAnnotationReader->method('getClassAnnotations')->willReturn([]);

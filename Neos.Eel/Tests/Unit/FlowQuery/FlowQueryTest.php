@@ -644,11 +644,11 @@ class FlowQueryTest extends UnitTestCase
      */
     protected function createFlowQuery(array $elements)
     {
-        $flowQuery = $this->getAccessibleMock(FlowQuery::class, ['dummy'], [$elements]);
+        $flowQuery = $this->getAccessibleMock(FlowQuery::class, [], [$elements]);
 
         // Set up mock persistence manager to return dummy object identifiers
         $this->mockPersistenceManager = $this->createMock(PersistenceManagerInterface::class);
-        $this->mockPersistenceManager->expects(self::any())->method('getIdentifierByObject')->will(self::returnCallBack(function ($object) {
+        $this->mockPersistenceManager->expects($this->any())->method('getIdentifierByObject')->will(self::returnCallBack(function ($object) {
             if (isset($object->__identity)) {
                 return $object->__identity;
             }
@@ -656,7 +656,7 @@ class FlowQueryTest extends UnitTestCase
 
         $mockPersistenceManager = $this->mockPersistenceManager;
         $objectManager = $this->createMock(ObjectManagerInterface::class);
-        $objectManager->expects(self::any())->method('get')->will(self::returnCallBack(function ($className) use ($mockPersistenceManager) {
+        $objectManager->expects($this->any())->method('get')->will(self::returnCallBack(function ($className) use ($mockPersistenceManager) {
             $instance = new $className;
             // Special case to inject the mock persistence manager into the filter operation
             if ($className === Operations\Object\FilterOperation::class) {
@@ -665,7 +665,7 @@ class FlowQueryTest extends UnitTestCase
             return $instance;
         }));
 
-        $operationResolver = $this->getAccessibleMock(OperationResolver::class, ['dummy']);
+        $operationResolver = $this->getAccessibleMock(OperationResolver::class, []);
         $operationResolver->_set('objectManager', $objectManager);
 
         $operationResolver->_set('finalOperationNames', [

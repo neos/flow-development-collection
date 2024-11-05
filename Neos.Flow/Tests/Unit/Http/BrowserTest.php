@@ -47,10 +47,10 @@ class BrowserTest extends UnitTestCase
     {
         $requestEngine = $this->createMock(Client\RequestEngineInterface::class);
         $requestEngine
-            ->expects(self::once())
+            ->expects($this->once())
             ->method('sendRequest')
             ->with($this->isInstanceOf(RequestInterface::class))
-            ->will(self::returnValue(new Response()));
+            ->willReturn((new Response()));
         $this->browser->setRequestEngine($requestEngine);
         $this->browser->request('http://localhost/foo');
     }
@@ -62,7 +62,7 @@ class BrowserTest extends UnitTestCase
     {
         $requestEngine = $this->createMock(Client\RequestEngineInterface::class);
         $requestEngine
-            ->expects(self::any())
+            ->expects($this->any())
             ->method('sendRequest')
             ->willReturn(new Response());
         $this->browser->setRequestEngine($requestEngine);
@@ -84,9 +84,9 @@ class BrowserTest extends UnitTestCase
     {
         $requestEngine = $this->createMock(Client\RequestEngineInterface::class);
         $requestEngine
-            ->expects(self::once())
+            ->expects($this->once())
             ->method('sendRequest')
-            ->will(self::returnValue(new Response()));
+            ->willReturn((new Response()));
         $this->browser->setRequestEngine($requestEngine);
 
         $this->browser->addAutomaticRequestHeader('X-Test-Header', 'Acme');
@@ -133,9 +133,9 @@ class BrowserTest extends UnitTestCase
 
         $requestEngine = $this->createMock(Client\RequestEngineInterface::class);
         $requestEngine
-            ->expects(self::once())
+            ->expects($this->once())
             ->method('sendRequest')
-            ->will(self::returnValue($twoZeroOneResponse));
+            ->willReturn(($twoZeroOneResponse));
 
         $this->browser->setRequestEngine($requestEngine);
         $actual = $this->browser->request('http://localhost/createSomeResource');
@@ -157,7 +157,7 @@ class BrowserTest extends UnitTestCase
         $requestEngine = $this->createMock(Client\RequestEngineInterface::class);
         for ($i=0; $i<=3; $i++) {
             $requestEngine
-                ->expects(self::exactly(count($wildResponses)))
+                ->expects($this->exactly(count($wildResponses)))
                 ->method('sendRequest')
                 ->willReturnOnConsecutiveCalls(...$wildResponses);
         }
@@ -178,7 +178,7 @@ class BrowserTest extends UnitTestCase
             $responses[] = new Response(301, ['Location' => 'http://localhost/this/willLead/you/knowhere/' . $i]);
         }
         $requestEngine
-            ->expects(self::exactly(count($responses)))
+            ->expects($this->exactly(count($responses)))
             ->method('sendRequest')
             ->willReturnOnConsecutiveCalls(...$responses);
 

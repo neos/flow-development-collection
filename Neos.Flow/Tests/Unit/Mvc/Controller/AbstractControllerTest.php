@@ -168,10 +168,10 @@ class AbstractControllerTest extends UnitTestCase
         $this->inject($controller, 'persistenceManager', $mockPersistenceManager);
         $controller->_call('initializeController', $this->mockActionRequest, $this->actionResponse);
 
-        $this->mockActionRequest->expects(self::atLeastOnce())->method('setControllerActionName')->with('theTarget');
-        $this->mockActionRequest->expects(self::atLeastOnce())->method('setControllerName')->with('Bar');
-        $this->mockActionRequest->expects(self::atLeastOnce())->method('setControllerPackageKey')->with('MyPackage');
-        $this->mockActionRequest->expects(self::atLeastOnce())->method('setArguments')->with(['foo' => 'bar']);
+        $this->mockActionRequest->expects($this->atLeastOnce())->method('setControllerActionName')->with('theTarget');
+        $this->mockActionRequest->expects($this->atLeastOnce())->method('setControllerName')->with('Bar');
+        $this->mockActionRequest->expects($this->atLeastOnce())->method('setControllerPackageKey')->with('MyPackage');
+        $this->mockActionRequest->expects($this->atLeastOnce())->method('setArguments')->with(['foo' => 'bar']);
 
         try {
             $controller->_call('forward', 'theTarget', 'Bar', 'MyPackage', ['foo' => 'bar']);
@@ -221,10 +221,10 @@ class AbstractControllerTest extends UnitTestCase
         $this->inject($controller, 'persistenceManager', $mockPersistenceManager);
         $controller->_call('initializeController', $this->mockActionRequest, $this->actionResponse);
 
-        $this->mockActionRequest->expects(self::atLeastOnce())->method('setControllerActionName')->with('theTarget');
-        $this->mockActionRequest->expects(self::atLeastOnce())->method('setControllerName')->with('Bar');
-        $this->mockActionRequest->expects(self::atLeastOnce())->method('setControllerPackageKey')->with('MyPackage');
-        $this->mockActionRequest->expects(self::atLeastOnce())->method('setControllerSubpackageKey')->with('MySubPackage');
+        $this->mockActionRequest->expects($this->atLeastOnce())->method('setControllerActionName')->with('theTarget');
+        $this->mockActionRequest->expects($this->atLeastOnce())->method('setControllerName')->with('Bar');
+        $this->mockActionRequest->expects($this->atLeastOnce())->method('setControllerPackageKey')->with('MyPackage');
+        $this->mockActionRequest->expects($this->atLeastOnce())->method('setControllerSubpackageKey')->with('MySubPackage');
 
         try {
             $controller->_call('forward', 'theTarget', 'Bar', 'MyPackage\MySubPackage', ['foo' => 'bar']);
@@ -244,10 +244,10 @@ class AbstractControllerTest extends UnitTestCase
         $this->inject($controller, 'persistenceManager', $mockPersistenceManager);
         $controller->_call('initializeController', $this->mockActionRequest, $this->actionResponse);
 
-        $this->mockActionRequest->expects(self::atLeastOnce())->method('setControllerActionName')->with('theTarget');
-        $this->mockActionRequest->expects(self::atLeastOnce())->method('setControllerName')->with('Bar');
-        $this->mockActionRequest->expects(self::atLeastOnce())->method('setControllerPackageKey')->with('MyPackage');
-        $this->mockActionRequest->expects(self::atLeastOnce())->method('setControllerSubpackageKey')->with(null);
+        $this->mockActionRequest->expects($this->atLeastOnce())->method('setControllerActionName')->with('theTarget');
+        $this->mockActionRequest->expects($this->atLeastOnce())->method('setControllerName')->with('Bar');
+        $this->mockActionRequest->expects($this->atLeastOnce())->method('setControllerPackageKey')->with('MyPackage');
+        $this->mockActionRequest->expects($this->atLeastOnce())->method('setControllerSubpackageKey')->with(null);
 
         try {
             $controller->_call('forward', 'theTarget', 'Bar', 'MyPackage', ['foo' => 'bar']);
@@ -264,13 +264,13 @@ class AbstractControllerTest extends UnitTestCase
         $convertedArguments = ['foo' => 'bar', 'bar' => ['someObject' => ['__identity' => 'x']]];
 
         $mockPersistenceManager = $this->createMock(PersistenceManagerInterface::class);
-        $mockPersistenceManager->expects(self::once())->method('convertObjectsToIdentityArrays')->with($originalArguments)->willReturn($convertedArguments);
+        $mockPersistenceManager->expects($this->once())->method('convertObjectsToIdentityArrays')->with($originalArguments)->willReturn($convertedArguments);
 
         $controller = $this->getAccessibleMock(AbstractController::class, ['processRequest']);
         $this->inject($controller, 'persistenceManager', $mockPersistenceManager);
         $controller->_call('initializeController', $this->mockActionRequest, $this->actionResponse);
 
-        $this->mockActionRequest->expects(self::atLeastOnce())->method('setArguments')->with($convertedArguments);
+        $this->mockActionRequest->expects($this->atLeastOnce())->method('setArguments')->with($convertedArguments);
 
         try {
             $controller->_call('forward', 'other', 'Bar', 'MyPackage', $originalArguments);
@@ -286,17 +286,17 @@ class AbstractControllerTest extends UnitTestCase
         $arguments = ['foo' => 'bar'];
 
         $mockUriBuilder = $this->createMock(UriBuilder::class);
-        $mockUriBuilder->expects(self::once())->method('reset')->willReturn($mockUriBuilder);
-        $mockUriBuilder->expects(self::once())->method('setFormat')->with('doc')->willReturn($mockUriBuilder);
-        $mockUriBuilder->expects(self::once())->method('setCreateAbsoluteUri')->willReturn($mockUriBuilder);
-        $mockUriBuilder->expects(self::once())->method('uriFor')->with('show', $arguments, 'Stuff', 'Super', 'Duper\Package')->willReturn('the uri');
+        $mockUriBuilder->expects($this->once())->method('reset')->willReturn($mockUriBuilder);
+        $mockUriBuilder->expects($this->once())->method('setFormat')->with('doc')->willReturn($mockUriBuilder);
+        $mockUriBuilder->expects($this->once())->method('setCreateAbsoluteUri')->willReturn($mockUriBuilder);
+        $mockUriBuilder->expects($this->once())->method('uriFor')->with('show', $arguments, 'Stuff', 'Super', 'Duper\Package')->willReturn('the uri');
 
         $controller = $this->getAccessibleMock(AbstractController::class, ['processRequest', 'redirectToUri']);
         //$this->inject($controller, 'flashMessageContainer', new FlashMessageContainer());
         $controller->_call('initializeController', $this->mockActionRequest, $this->actionResponse);
         $this->inject($controller, 'uriBuilder', $mockUriBuilder);
 
-        $controller->expects(self::once())->method('redirectToUri')->with('the uri');
+        $controller->expects($this->once())->method('redirectToUri')->with('the uri');
         $controller->_call('redirect', 'show', 'Stuff', 'Super\Duper\Package', $arguments, 0, 303, 'doc');
     }
 
@@ -307,19 +307,19 @@ class AbstractControllerTest extends UnitTestCase
     {
         $arguments = ['foo' => 'bar'];
 
-        $this->mockActionRequest->expects(self::atLeastOnce())->method('getFormat')->willReturn('json');
+        $this->mockActionRequest->expects($this->atLeastOnce())->method('getFormat')->willReturn('json');
 
         $mockUriBuilder = $this->createMock(UriBuilder::class);
-        $mockUriBuilder->expects(self::once())->method('reset')->willReturn($mockUriBuilder);
-        $mockUriBuilder->expects(self::once())->method('setFormat')->with('json')->willReturn($mockUriBuilder);
-        $mockUriBuilder->expects(self::once())->method('setCreateAbsoluteUri')->willReturn($mockUriBuilder);
-        $mockUriBuilder->expects(self::once())->method('uriFor')->with('show', $arguments, 'Stuff', 'Super', null)->willReturn('the uri');
+        $mockUriBuilder->expects($this->once())->method('reset')->willReturn($mockUriBuilder);
+        $mockUriBuilder->expects($this->once())->method('setFormat')->with('json')->willReturn($mockUriBuilder);
+        $mockUriBuilder->expects($this->once())->method('setCreateAbsoluteUri')->willReturn($mockUriBuilder);
+        $mockUriBuilder->expects($this->once())->method('uriFor')->with('show', $arguments, 'Stuff', 'Super', null)->willReturn('the uri');
 
         $controller = $this->getAccessibleMock(AbstractController::class, ['processRequest', 'redirectToUri']);
         $controller->_call('initializeController', $this->mockActionRequest, $this->actionResponse);
         $this->inject($controller, 'uriBuilder', $mockUriBuilder);
 
-        $controller->expects(self::once())->method('redirectToUri')->with('the uri');
+        $controller->expects($this->once())->method('redirectToUri')->with('the uri');
         $controller->_call('redirect', 'show', 'Stuff', 'Super', $arguments);
     }
 
@@ -441,8 +441,8 @@ class AbstractControllerTest extends UnitTestCase
      */
     public function mapRequestArgumentsToControllerArgumentsDoesJustThat()
     {
-        $mockPropertyMapper = $this->getMockBuilder(PropertyMapper::class)->disableOriginalConstructor()->setMethods(['convert'])->getMock();
-        $mockPropertyMapper->expects(self::atLeastOnce())->method('convert')->will($this->returnArgument(0));
+        $mockPropertyMapper = $this->getMockBuilder(PropertyMapper::class)->disableOriginalConstructor()->onlyMethods(['convert'])->getMock();
+        $mockPropertyMapper->expects($this->atLeastOnce())->method('convert')->will($this->returnArgument(0));
 
         $controllerArguments = new Arguments();
         $controllerArguments->addNewArgument('foo', 'string', true);
@@ -456,8 +456,8 @@ class AbstractControllerTest extends UnitTestCase
         $controller->_call('initializeController', $this->mockActionRequest, $this->actionResponse);
         $controller->_set('arguments', $controllerArguments);
 
-        $this->mockActionRequest->expects(self::atLeast(2))->method('hasArgument')->withConsecutive(['foo'], ['baz'])->willReturn(true);
-        $this->mockActionRequest->expects(self::atLeast(2))->method('getArgument')->withConsecutive(['foo'], ['baz'])->willReturnOnConsecutiveCalls('bar', 'quux');
+        $this->mockActionRequest->expects($this->atLeast(2))->method('hasArgument')->withConsecutive(['foo'], ['baz'])->willReturn(true);
+        $this->mockActionRequest->expects($this->atLeast(2))->method('getArgument')->withConsecutive(['foo'], ['baz'])->willReturnOnConsecutiveCalls('bar', 'quux');
 
         $controller->_call('mapRequestArgumentsToControllerArguments');
         self::assertEquals('bar', $controllerArguments['foo']->getValue());
@@ -470,8 +470,8 @@ class AbstractControllerTest extends UnitTestCase
     public function mapRequestArgumentsToControllerArgumentsThrowsExceptionIfRequiredArgumentWasNotSet()
     {
         $this->expectException(RequiredArgumentMissingException::class);
-        $mockPropertyMapper = $this->getMockBuilder(PropertyMapper::class)->disableOriginalConstructor()->setMethods(['convert'])->getMock();
-        $mockPropertyMapper->expects(self::atLeastOnce())->method('convert')->will($this->returnArgument(0));
+        $mockPropertyMapper = $this->getMockBuilder(PropertyMapper::class)->disableOriginalConstructor()->onlyMethods(['convert'])->getMock();
+        $mockPropertyMapper->expects($this->atLeastOnce())->method('convert')->will($this->returnArgument(0));
 
         $controllerArguments = new Arguments();
         $controllerArguments->addNewArgument('foo', 'string', true);
@@ -485,8 +485,8 @@ class AbstractControllerTest extends UnitTestCase
         $controller->_call('initializeController', $this->mockActionRequest, $this->actionResponse);
         $controller->_set('arguments', $controllerArguments);
 
-        $this->mockActionRequest->expects(self::exactly(2))->method('hasArgument')->withConsecutive(['foo'], ['baz'])->willReturnOnConsecutiveCalls(true, false);
-        $this->mockActionRequest->expects(self::once())->method('getArgument')->with('foo')->willReturn('bar');
+        $this->mockActionRequest->expects($this->exactly(2))->method('hasArgument')->withConsecutive(['foo'], ['baz'])->willReturnOnConsecutiveCalls(true, false);
+        $this->mockActionRequest->expects($this->once())->method('getArgument')->with('foo')->willReturn('bar');
 
         $controller->_call('mapRequestArgumentsToControllerArguments');
     }

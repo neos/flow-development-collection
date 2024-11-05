@@ -138,13 +138,13 @@ class ArgumentTest extends UnitTestCase
      */
     public function setValueUsesMatchingInstanceAsIs()
     {
-        $this->mockPropertyMapper->expects(self::never())->method('convert');
+        $this->mockPropertyMapper->expects($this->never())->method('convert');
         $this->objectArgument->setValue(new \DateTime());
     }
 
     protected function setupPropertyMapperAndSetValue()
     {
-        $this->mockPropertyMapper->expects(self::once())->method('convert')->with('someRawValue', 'string', $this->mockConfiguration)->willReturn('convertedValue');
+        $this->mockPropertyMapper->expects($this->once())->method('convert')->with('someRawValue', 'string', $this->mockConfiguration)->willReturn('convertedValue');
         return $this->simpleValueArgument->setValue('someRawValue');
     }
 
@@ -164,7 +164,7 @@ class ArgumentTest extends UnitTestCase
     {
         self::assertSame($this->simpleValueArgument, $this->setupPropertyMapperAndSetValue());
     }
-    
+
     /**
      * @test
      */
@@ -175,7 +175,7 @@ class ArgumentTest extends UnitTestCase
         $mockValidator = $this->createMock(ValidatorInterface::class);
         $validationMessages = new FlowError\Result();
         $validationMessages->addError($error);
-        $mockValidator->expects(self::once())->method('validate')->with('convertedValue')->willReturn($validationMessages);
+        $mockValidator->expects($this->once())->method('validate')->with('convertedValue')->willReturn($validationMessages);
 
         $this->simpleValueArgument->setValidator($mockValidator);
         $this->setupPropertyMapperAndSetValue();
@@ -192,7 +192,7 @@ class ArgumentTest extends UnitTestCase
         $mockValidator = $this->createMock(ValidatorInterface::class);
         $validationMessages = new FlowError\Result();
         $validationMessages->addError($error);
-        $mockValidator->expects(self::once())->method('validate')->with('convertedValue')->willReturn($validationMessages);
+        $mockValidator->expects($this->once())->method('validate')->with('convertedValue')->willReturn($validationMessages);
 
         $this->setupPropertyMapperAndSetValue();
         $this->simpleValueArgument->setValidator($mockValidator);

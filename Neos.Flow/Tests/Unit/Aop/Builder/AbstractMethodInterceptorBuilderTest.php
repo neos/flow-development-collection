@@ -79,7 +79,7 @@ class AbstractMethodInterceptorBuilderTest extends UnitTestCase
         ];
 
         $mockReflectionService = $this->getMockBuilder(ReflectionService::class)->disableOriginalConstructor()->getMock();
-        $mockReflectionService->expects(self::any())->method('getMethodParameters')->with($className, 'foo')->will(self::returnValue($methodParameters));
+        $mockReflectionService->expects($this->any())->method('getMethodParameters')->with($className, 'foo')->willReturn(($methodParameters));
 
         $expectedCode = "
                 \$methodArguments = [];
@@ -160,9 +160,9 @@ class AbstractMethodInterceptorBuilderTest extends UnitTestCase
         ];
 
         $mockReflectionService = $this->getMockBuilder(ReflectionService::class)->disableOriginalConstructor()->getMock();
-        $mockReflectionService->expects(self::any())->method('getMethodParameters')->with($className, '__construct')->will(self::returnValue($methodParameters));
+        $mockReflectionService->expects($this->any())->method('getMethodParameters')->with($className, '__construct')->willReturn(($methodParameters));
 
-        $builder = $this->getAccessibleMock(AdvicedConstructorInterceptorBuilder::class, ['dummy'], [], '', false);
+        $builder = $this->getAccessibleMock(AdvicedConstructorInterceptorBuilder::class, [], [], '', false);
         $builder->injectReflectionService($mockReflectionService);
 
         $expectedCode = '$this->Flow_Aop_Proxy_originalConstructorArguments[\'arg1\'], $this->Flow_Aop_Proxy_originalConstructorArguments[\'arg2\'], $this->Flow_Aop_Proxy_originalConstructorArguments[\'arg3\'], $this->Flow_Aop_Proxy_originalConstructorArguments[\'arg4\'], $this->Flow_Aop_Proxy_originalConstructorArguments[\'arg5\']';

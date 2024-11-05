@@ -34,7 +34,7 @@ abstract class AbstractValidatorTestcase extends UnitTestCase
 
     protected function getValidator($options = [])
     {
-        return $this->getAccessibleMock($this->validatorClassName, ['dummy'], [$options], '', true);
+        return $this->getAccessibleMock($this->validatorClassName, [], [$options], '', true);
     }
 
     protected function validatorOptions($options)

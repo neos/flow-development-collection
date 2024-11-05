@@ -141,7 +141,7 @@ class StringLengthValidatorTest extends AbstractValidatorTestcase
     public function stringLengthValidatorThrowsAnExceptionIfMinLengthIsGreaterThanMaxLength()
     {
         $this->expectException(InvalidValidationOptionsException::class);
-        $this->validator = $this->getMockBuilder(StringLengthValidator::class)->disableOriginalConstructor()->setMethods(['addError'])->getMock();
+        $this->validator = $this->getMockBuilder(StringLengthValidator::class)->disableOriginalConstructor()->onlyMethods(['addError'])->getMock();
         $this->validatorOptions(['minimum' => 101, 'maximum' => 100]);
         $this->validator->validate('1234567890');
     }
@@ -161,7 +161,7 @@ class StringLengthValidatorTest extends AbstractValidatorTestcase
      */
     public function stringLengthValidatorCanHandleAnObjectWithAToStringMethod()
     {
-        $this->validator = $this->getMockBuilder(StringLengthValidator::class)->disableOriginalConstructor()->setMethods(['addError'])->getMock();
+        $this->validator = $this->getMockBuilder(StringLengthValidator::class)->disableOriginalConstructor()->onlyMethods(['addError'])->getMock();
         $this->validatorOptions(['minimum' => 5, 'maximum' => 100]);
 
         $className = 'TestClass' . md5(uniqid(mt_rand(), true));
@@ -183,7 +183,7 @@ class StringLengthValidatorTest extends AbstractValidatorTestcase
      */
     public function validateReturnsErrorsIfTheGivenObjectCanNotBeConvertedToAString()
     {
-        $this->validator = $this->getMockBuilder(StringLengthValidator::class)->disableOriginalConstructor()->setMethods(['addError'])->getMock();
+        $this->validator = $this->getMockBuilder(StringLengthValidator::class)->disableOriginalConstructor()->onlyMethods(['addError'])->getMock();
         $this->validatorOptions(['minimum' => 5, 'maximum' => 100]);
 
         $className = 'TestClass' . md5(uniqid(mt_rand(), true));

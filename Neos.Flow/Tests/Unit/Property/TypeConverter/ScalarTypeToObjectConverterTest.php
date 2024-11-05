@@ -41,7 +41,7 @@ class ScalarTypeToObjectConverterTest extends UnitTestCase
         parent::setUp();
 
         $this->reflectionMock = $this->createMock(ReflectionService::class);
-        $this->reflectionMock->expects(self::any())
+        $this->reflectionMock->expects($this->any())
             ->method('isClassAnnotatedWith')
             ->willReturn(false);
     }
@@ -83,7 +83,7 @@ class ScalarTypeToObjectConverterTest extends UnitTestCase
     {
         $converter = new ScalarTypeToObjectConverter();
 
-        $this->reflectionMock->expects(self::once())
+        $this->reflectionMock->expects($this->once())
             ->method('getMethodParameters')
             ->willReturn([[
                 'type' => 'bool'
@@ -100,7 +100,7 @@ class ScalarTypeToObjectConverterTest extends UnitTestCase
     {
         $converter = new ScalarTypeToObjectConverter();
 
-        $this->reflectionMock->expects(self::once())
+        $this->reflectionMock->expects($this->once())
             ->method('getMethodParameters')
             ->willReturn([[
                 'type' => 'int'
@@ -117,7 +117,7 @@ class ScalarTypeToObjectConverterTest extends UnitTestCase
     {
         $converter = new ScalarTypeToObjectConverter();
 
-        $this->reflectionMock->expects(self::once())
+        $this->reflectionMock->expects($this->once())
             ->method('getMethodParameters')
             ->willReturn([[
                 'type' => 'float'

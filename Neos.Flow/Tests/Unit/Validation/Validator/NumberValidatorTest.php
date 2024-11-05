@@ -69,7 +69,7 @@ class NumberValidatorTest extends AbstractValidatorTestcase
     {
         $sampleInvalidNumber = 'this is not a number';
 
-        $this->mockNumberParser->expects(self::once())->method('parseDecimalNumber', $sampleInvalidNumber)->will(self::returnValue(false));
+        $this->mockNumberParser->expects($this->once())->method('parseDecimalNumber', $sampleInvalidNumber)->willReturn((false));
 
         $this->validatorOptions(['locale' => $this->sampleLocale]);
         $this->inject($this->validator, 'numberParser', $this->mockNumberParser);
@@ -84,7 +84,7 @@ class NumberValidatorTest extends AbstractValidatorTestcase
     {
         $sampleInvalidNumber = 'this is not a number';
 
-        $this->mockNumberParser->expects(self::once())->method('parsePercentNumber', $sampleInvalidNumber)->will(self::returnValue(false));
+        $this->mockNumberParser->expects($this->once())->method('parsePercentNumber', $sampleInvalidNumber)->willReturn((false));
 
         $this->validatorOptions(['locale' => 'en_GB', 'formatLength' => NumbersReader::FORMAT_LENGTH_DEFAULT, 'formatType' => NumbersReader::FORMAT_TYPE_PERCENT]);
         $this->inject($this->validator, 'numberParser', $this->mockNumberParser);

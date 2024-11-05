@@ -38,7 +38,7 @@ class CldrRepositoryTest extends UnitTestCase
     {
         vfsStream::setup('Foo');
 
-        $this->repository = $this->getAccessibleMock(I18n\Cldr\CldrRepository::class, ['dummy']);
+        $this->repository = $this->getAccessibleMock(I18n\Cldr\CldrRepository::class, []);
         $this->repository->_set('cldrBasePath', 'vfs://Foo/');
 
         $this->dummyLocale = new I18n\Locale('en');

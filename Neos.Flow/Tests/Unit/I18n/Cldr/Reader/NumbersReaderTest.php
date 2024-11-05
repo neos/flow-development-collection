@@ -66,18 +66,18 @@ class NumbersReaderTest extends UnitTestCase
     public function formatIsCorrectlyReadFromCldr(): void
     {
         $mockModel = $this->createMock(I18n\Cldr\CldrModel::class);
-        $mockModel->expects(self::once())->method('getElement')->with('numbers/decimalFormats/decimalFormatLength/decimalFormat/pattern')->willReturn('mockFormatString');
+        $mockModel->expects($this->once())->method('getElement')->with('numbers/decimalFormats/decimalFormatLength/decimalFormat/pattern')->willReturn('mockFormatString');
 
         $mockRepository = $this->createMock(I18n\Cldr\CldrRepository::class);
-        $mockRepository->expects(self::once())->method('getModelForLocale')->with($this->sampleLocale)->willReturn($mockModel);
+        $mockRepository->expects($this->once())->method('getModelForLocale')->with($this->sampleLocale)->willReturn($mockModel);
 
         $mockCache = $this->getMockBuilder(VariableFrontend::class)->disableOriginalConstructor()->getMock();
-        $mockCache->expects(self::atLeast(3))->method('has')->withConsecutive(['parsedFormats'], ['parsedFormatsIndices'], ['localizedSymbols'])->willReturn(true);
-        $mockCache->expects(self::atLeast(3))->method('get')->withConsecutive(['parsedFormats'], ['parsedFormatsIndices'], ['localizedSymbols'])->willReturn([]);
-        $mockCache->expects(self::atLeast(3))->method('set')->withConsecutive(['parsedFormats'], ['parsedFormatsIndices'], ['localizedSymbols']);
+        $mockCache->expects($this->atLeast(3))->method('has')->withConsecutive(['parsedFormats'], ['parsedFormatsIndices'], ['localizedSymbols'])->willReturn(true);
+        $mockCache->expects($this->atLeast(3))->method('get')->withConsecutive(['parsedFormats'], ['parsedFormatsIndices'], ['localizedSymbols'])->willReturn([]);
+        $mockCache->expects($this->atLeast(3))->method('set')->withConsecutive(['parsedFormats'], ['parsedFormatsIndices'], ['localizedSymbols']);
 
         $reader = $this->getAccessibleMock(I18n\Cldr\Reader\NumbersReader::class, ['parseFormat']);
-        $reader->expects(self::once())->method('parseFormat')->with('mockFormatString')->willReturn(['mockParsedFormat']);
+        $reader->expects($this->once())->method('parseFormat')->with('mockFormatString')->willReturn(['mockParsedFormat']);
         $reader->injectCldrRepository($mockRepository);
         $reader->injectCache($mockCache);
         $reader->initializeObject();
@@ -111,7 +111,7 @@ class NumbersReaderTest extends UnitTestCase
      */
     public function formatStringsAreParsedCorrectly(string $format, array $expectedResult): void
     {
-        $reader = $this->getAccessibleMock(I18n\Cldr\Reader\NumbersReader::class, ['dummy']);
+        $reader = $this->getAccessibleMock(I18n\Cldr\Reader\NumbersReader::class, []);
 
         $result = $reader->_call('parseFormat', $format);
         self::assertEquals($expectedResult, $result);
@@ -141,7 +141,7 @@ class NumbersReaderTest extends UnitTestCase
     public function throwsExceptionWhenUnsupportedFormatsEncountered(string $format): void
     {
         $this->expectException(I18n\Cldr\Reader\Exception\UnsupportedNumberFormatException::class);
-        $reader = $this->getAccessibleMock(I18n\Cldr\Reader\NumbersReader::class, ['dummy']);
+        $reader = $this->getAccessibleMock(I18n\Cldr\Reader\NumbersReader::class, []);
 
         $reader->_call('parseFormat', $format);
     }

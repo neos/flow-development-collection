@@ -117,7 +117,7 @@ class FileBackendTest extends UnitTestCase
         file_put_contents($logFileUrl, 'twentybytesofcontent');
 
         /** @var FileBackend $backend */
-        $backend = $this->getAccessibleMock(FileBackend::class, ['dummy'], [['logFileUrl' => $logFileUrl]]);
+        $backend = $this->getAccessibleMock(FileBackend::class, [], [['logFileUrl' => $logFileUrl]]);
         $backend->_set('maximumLogFileSize', 10);
         $backend->setLogFilesToKeep(1);
         $backend->open();

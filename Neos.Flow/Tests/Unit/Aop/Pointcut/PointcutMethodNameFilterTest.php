@@ -34,7 +34,7 @@ class PointcutMethodNameFilterTest extends UnitTestCase
         );
         /** @var ReflectionService|\PHPUnit\Framework\MockObject\MockObject $mockReflectionService */
         $mockReflectionService = $this->createMock(ReflectionService::class);
-        $mockReflectionService->expects(self::any())->method('isMethodFinal')->with($className, 'someFinalMethod')->will(self::returnValue(true));
+        $mockReflectionService->expects($this->any())->method('isMethodFinal')->with($className, 'someFinalMethod')->willReturn((true));
         $methodNameFilter = new Aop\Pointcut\PointcutMethodNameFilter('someFinalMethod');
         $methodNameFilter->injectReflectionService($mockReflectionService);
         self::assertTrue($methodNameFilter->matches($className, 'someFinalMethod', $className, 1));
@@ -55,9 +55,9 @@ class PointcutMethodNameFilterTest extends UnitTestCase
         );
 
         $mockReflectionService = $this->createMock(ReflectionService::class);
-        $mockReflectionService->expects(self::atLeastOnce())->method('isMethodPublic')->will($this->onConsecutiveCalls(true, false, false, true));
-        $mockReflectionService->expects(self::atLeastOnce())->method('isMethodProtected')->will($this->onConsecutiveCalls(false, true, false, false));
-        $mockReflectionService->expects(self::atLeastOnce())->method('getMethodParameters')->will(self::returnValue([]));
+        $mockReflectionService->expects($this->atLeastOnce())->method('isMethodPublic')->will($this->onConsecutiveCalls(true, false, false, true));
+        $mockReflectionService->expects($this->atLeastOnce())->method('isMethodProtected')->will($this->onConsecutiveCalls(false, true, false, false));
+        $mockReflectionService->expects($this->atLeastOnce())->method('getMethodParameters')->willReturn(([]));
 
         $methodNameFilter = new Aop\Pointcut\PointcutMethodNameFilter('some.*', 'public');
         $methodNameFilter->injectReflectionService($mockReflectionService);
@@ -89,14 +89,14 @@ class PointcutMethodNameFilterTest extends UnitTestCase
         );
 
         $mockReflectionService = $this->createMock(ReflectionService::class);
-        $mockReflectionService->expects(self::exactly(3))->method('getMethodParameters')->will($this->onConsecutiveCalls(
+        $mockReflectionService->expects($this->exactly(3))->method('getMethodParameters')->will($this->onConsecutiveCalls(
             ['arg1' => []],
             ['arg1' => [], 'arg2' => []],
             ['arg1' => [], 'arg2' => [], 'arg3' => []]
         ));
 
-        $mockSystemLogger = $this->getMockBuilder(LoggerInterface::class)->setMethods([])->getMock();
-        $mockSystemLogger->expects(self::once())->method('notice')->with(self::equalTo(
+        $mockSystemLogger = $this->getMockBuilder(LoggerInterface::class)->onlyMethods([])->getMock();
+        $mockSystemLogger->expects($this->once())->method('notice')->with(self::equalTo(
             'The argument "arg2" declared in pointcut does not exist in method ' . $className . '->somePublicMethod'
         ));
 

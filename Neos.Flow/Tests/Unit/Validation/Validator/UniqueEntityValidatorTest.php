@@ -43,7 +43,7 @@ class UniqueEntityValidatorTest extends AbstractValidatorTestcase
         $this->classSchema = $this->getMockBuilder(ClassSchema::class)->disableOriginalConstructor()->getMock();
 
         $this->reflectionService = $this->createMock(ReflectionService::class);
-        $this->reflectionService->expects(self::any())->method('getClassSchema')->will(self::returnValue($this->classSchema));
+        $this->reflectionService->expects($this->any())->method('getClassSchema')->willReturn(($this->classSchema));
         $this->inject($this->validator, 'reflectionService', $this->reflectionService);
     }
 
@@ -64,7 +64,7 @@ class UniqueEntityValidatorTest extends AbstractValidatorTestcase
     {
         $this->expectException(InvalidValidationOptionsException::class);
         $this->expectExceptionCode(1358454284);
-        $this->classSchema->expects(self::once())->method('getModelType')->will(self::returnValue(null));
+        $this->classSchema->expects($this->once())->method('getModelType')->willReturn((null));
 
         $this->validator->validate(new \stdClass());
     }
@@ -76,7 +76,7 @@ class UniqueEntityValidatorTest extends AbstractValidatorTestcase
     {
         $this->expectException(InvalidValidationOptionsException::class);
         $this->expectExceptionCode(1358454284);
-        $this->classSchema->expects(self::once())->method('getModelType')->will(self::returnValue(ClassSchema::MODELTYPE_VALUEOBJECT));
+        $this->classSchema->expects($this->once())->method('getModelType')->willReturn((ClassSchema::MODELTYPE_VALUEOBJECT));
 
         $this->validator->validate(new \stdClass());
     }
@@ -91,10 +91,10 @@ class UniqueEntityValidatorTest extends AbstractValidatorTestcase
         $this->prepareMockExpectations();
         $this->inject($this->validator, 'options', ['identityProperties' => ['propertyWhichDoesntExist']]);
         $this->classSchema
-            ->expects(self::once())
+            ->expects($this->once())
             ->method('hasProperty')
             ->with('propertyWhichDoesntExist')
-            ->will(self::returnValue(false));
+            ->willReturn((false));
 
         $this->validator->validate(new \StdClass());
     }
@@ -108,9 +108,9 @@ class UniqueEntityValidatorTest extends AbstractValidatorTestcase
         $this->expectExceptionCode(1358459831);
         $this->prepareMockExpectations();
         $this->classSchema
-            ->expects(self::once())
+            ->expects($this->once())
             ->method('getIdentityProperties')
-            ->will(self::returnValue([]));
+            ->willReturn(([]));
 
         $this->validator->validate(new \StdClass());
     }
@@ -124,14 +124,14 @@ class UniqueEntityValidatorTest extends AbstractValidatorTestcase
         $this->expectExceptionCode(1358501745);
         $this->prepareMockExpectations();
         $this->classSchema
-            ->expects(self::once())
+            ->expects($this->once())
             ->method('getIdentityProperties')
-            ->will(self::returnValue(['foo']));
+            ->willReturn((['foo']));
         $this->reflectionService
-            ->expects(self::once())
+            ->expects($this->once())
             ->method('getPropertyNamesByAnnotation')
             ->with('FooClass', 'Doctrine\ORM\Mapping\Id')
-            ->will(self::returnValue(['dummy array', 'with more than', 'one count']));
+            ->willReturn((['dummy array', 'with more than', 'one count']));
 
         $this->validator->validate(new \StdClass());
     }
@@ -140,10 +140,10 @@ class UniqueEntityValidatorTest extends AbstractValidatorTestcase
      */
     protected function prepareMockExpectations()
     {
-        $this->classSchema->expects(self::once())->method('getModelType')->will(self::returnValue(ClassSchema::MODELTYPE_ENTITY));
+        $this->classSchema->expects($this->once())->method('getModelType')->willReturn((ClassSchema::MODELTYPE_ENTITY));
         $this->classSchema
-            ->expects(self::any())
+            ->expects($this->any())
             ->method('getClassName')
-            ->will(self::returnValue('FooClass'));
+            ->willReturn(('FooClass'));
     }
 }

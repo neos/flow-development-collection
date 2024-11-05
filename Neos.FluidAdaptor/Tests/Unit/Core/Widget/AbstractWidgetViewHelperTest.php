@@ -56,7 +56,7 @@ class AbstractWidgetViewHelperTest extends \Neos\Flow\Tests\UnitTestCase
      */
     protected function setUp(): void
     {
-        $this->viewHelper = $this->getAccessibleMock(\Neos\FluidAdaptor\Core\Widget\AbstractWidgetViewHelper::class, ['validateArguments', 'initialize', 'callRenderMethod', 'getWidgetConfiguration', 'getRenderingContext']);
+        $this->viewHelper = $this->getAccessibleMock(\Neos\FluidAdaptor\Core\Widget\AbstractWidgetViewHelper::class, ['validateArguments', 'initialize', 'callRenderMethod', 'getWidgetConfiguration']);
 
         $this->ajaxWidgetContextHolder = $this->createMock(\Neos\FluidAdaptor\Core\Widget\AjaxWidgetContextHolder::class);
         $this->viewHelper->injectAjaxWidgetContextHolder($this->ajaxWidgetContextHolder);
@@ -65,7 +65,7 @@ class AbstractWidgetViewHelperTest extends \Neos\Flow\Tests\UnitTestCase
         $this->viewHelper->injectWidgetContext($this->widgetContext);
 
         $this->objectManager = $this->createMock(\Neos\Flow\ObjectManagement\ObjectManagerInterface::class);
-        $this->objectManager->expects(self::any())->method('get')->with(\Neos\FluidAdaptor\Core\Widget\WidgetContext::class)->will(self::returnValue($this->widgetContext));
+        $this->objectManager->expects($this->any())->method('get')->with(\Neos\FluidAdaptor\Core\Widget\WidgetContext::class)->willReturn(($this->widgetContext));
         $this->viewHelper->injectObjectManager($this->objectManager);
 
         $this->controllerContext = $this->getMockBuilder(\Neos\Flow\Mvc\Controller\ControllerContext::class)->disableOriginalConstructor()->getMock();
@@ -89,7 +89,7 @@ class AbstractWidgetViewHelperTest extends \Neos\Flow\Tests\UnitTestCase
     {
         $this->viewHelper->_set('ajaxWidget', true);
         $this->viewHelper->_set('storeConfigurationInSession', false);
-        $this->ajaxWidgetContextHolder->expects(self::never())->method('store');
+        $this->ajaxWidgetContextHolder->expects($this->never())->method('store');
 
         $this->callViewHelper();
     }
@@ -100,7 +100,7 @@ class AbstractWidgetViewHelperTest extends \Neos\Flow\Tests\UnitTestCase
     public function initializeArgumentsAndRenderStoresTheWidgetContextIfInAjaxMode()
     {
         $this->viewHelper->_set('ajaxWidget', true);
-        $this->ajaxWidgetContextHolder->expects(self::once())->method('store')->with($this->widgetContext);
+        $this->ajaxWidgetContextHolder->expects($this->once())->method('store')->with($this->widgetContext);
 
         $this->callViewHelper();
     }
@@ -112,17 +112,17 @@ class AbstractWidgetViewHelperTest extends \Neos\Flow\Tests\UnitTestCase
      */
     public function callViewHelper()
     {
-        $this->viewHelper->expects(self::any())->method('getWidgetConfiguration')->will(self::returnValue(['Some Widget Configuration']));
-        $this->widgetContext->expects(self::once())->method('setNonAjaxWidgetConfiguration')->with(['Some Widget Configuration']);
+        $this->viewHelper->expects($this->any())->method('getWidgetConfiguration')->willReturn((['Some Widget Configuration']));
+        $this->widgetContext->expects($this->once())->method('setNonAjaxWidgetConfiguration')->with(['Some Widget Configuration']);
 
-        $this->widgetContext->expects(self::once())->method('setWidgetIdentifier')->with(strtolower(str_replace('\\', '-', get_class($this->viewHelper))));
+        $this->widgetContext->expects($this->once())->method('setWidgetIdentifier')->with(strtolower(str_replace('\\', '-', get_class($this->viewHelper))));
 
         $this->viewHelper->_set('controller', new \stdClass());
-        $this->widgetContext->expects(self::once())->method('setControllerObjectName')->with('stdClass');
+        $this->widgetContext->expects($this->once())->method('setControllerObjectName')->with('stdClass');
 
-        $this->viewHelper->expects(self::once())->method('validateArguments');
-        $this->viewHelper->expects(self::once())->method('initialize');
-        $this->viewHelper->expects(self::once())->method('callRenderMethod')->will(self::returnValue('renderedResult'));
+        $this->viewHelper->expects($this->once())->method('validateArguments');
+        $this->viewHelper->expects($this->once())->method('initialize');
+        $this->viewHelper->expects($this->once())->method('callRenderMethod')->willReturn(('renderedResult'));
         $output = $this->viewHelper->initializeArgumentsAndRender(['arg1' => 'val1']);
         self::assertEquals('renderedResult', $output);
     }

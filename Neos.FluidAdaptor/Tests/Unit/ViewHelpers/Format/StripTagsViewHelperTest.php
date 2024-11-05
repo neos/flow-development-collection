@@ -32,7 +32,7 @@ class StripTagsViewHelperTest extends ViewHelperBaseTestcase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->viewHelper = $this->getMockBuilder(\Neos\FluidAdaptor\ViewHelpers\Format\StripTagsViewHelper::class)->setMethods(['buildRenderChildrenClosure', 'renderChildren'])->getMock();
+        $this->viewHelper = $this->getMockBuilder(\Neos\FluidAdaptor\ViewHelpers\Format\StripTagsViewHelper::class)->onlyMethods(['buildRenderChildrenClosure', 'renderChildren'])->getMock();
         $this->injectDependenciesIntoViewHelper($this->viewHelper);
     }
 
@@ -50,7 +50,7 @@ class StripTagsViewHelperTest extends ViewHelperBaseTestcase
     public function renderUsesValueAsSourceIfSpecified()
     {
         $string = 'Some string';
-        $this->viewHelper->expects(self::any())->method('buildRenderChildrenClosure')->willReturn(function () {
+        $this->viewHelper->expects($this->any())->method('buildRenderChildrenClosure')->willReturn(function () {
             throw new \Exception('rendderChildrenClosure was invoked but should not have been');
         });
         $this->viewHelper = $this->prepareArguments($this->viewHelper, ['value' => $string]);
@@ -64,7 +64,7 @@ class StripTagsViewHelperTest extends ViewHelperBaseTestcase
     public function renderUsesChildnodesAsSourceIfSpecified()
     {
         $string = 'Some string';
-        $this->viewHelper->expects(self::once())->method('renderChildren')->willReturn($string);
+        $this->viewHelper->expects($this->once())->method('renderChildren')->willReturn($string);
         $this->viewHelper = $this->prepareArguments($this->viewHelper, []);
         $actualResult = $this->viewHelper->render();
         self::assertEquals($string, $actualResult);
@@ -90,7 +90,7 @@ class StripTagsViewHelperTest extends ViewHelperBaseTestcase
      */
     public function renderCorrectlyConvertsIntoPlaintext($source, $expectedResult)
     {
-        $this->viewHelper->expects(self::any())->method('buildRenderChildrenClosure')->willReturn(function () {
+        $this->viewHelper->expects($this->any())->method('buildRenderChildrenClosure')->willReturn(function () {
             throw new \Exception('rendderChildrenClosure was invoked but should not have been');
         });
         $this->viewHelper = $this->prepareArguments($this->viewHelper, ['value' => $source]);
@@ -104,7 +104,7 @@ class StripTagsViewHelperTest extends ViewHelperBaseTestcase
     public function renderReturnsUnmodifiedSourceIfItIsANumber()
     {
         $source = 123.45;
-        $this->viewHelper->expects(self::any())->method('buildRenderChildrenClosure')->willReturn(function () {
+        $this->viewHelper->expects($this->any())->method('buildRenderChildrenClosure')->willReturn(function () {
             throw new \Exception('rendderChildrenClosure was invoked but should not have been');
         });
         $this->viewHelper = $this->prepareArguments($this->viewHelper, ['value' => $source]);
@@ -119,7 +119,7 @@ class StripTagsViewHelperTest extends ViewHelperBaseTestcase
     {
         $user = new UserWithToString('Xaver <b>Cross-Site</b>');
         $expectedResult = 'Xaver Cross-Site';
-        $this->viewHelper->expects(self::any())->method('buildRenderChildrenClosure')->willReturn(function () {
+        $this->viewHelper->expects($this->any())->method('buildRenderChildrenClosure')->willReturn(function () {
             throw new \Exception('renderChildrenClosure was invoked but should not have been');
         });
         $this->viewHelper = $this->prepareArguments($this->viewHelper, ['value' => $user]);
@@ -134,7 +134,7 @@ class StripTagsViewHelperTest extends ViewHelperBaseTestcase
     {
         $this->expectException(\InvalidArgumentException::class);
         $user = new UserWithoutToString('Xaver <b>Cross-Site</b>');
-        $this->viewHelper->expects(self::any())->method('buildRenderChildrenClosure')->willReturn(function () {
+        $this->viewHelper->expects($this->any())->method('buildRenderChildrenClosure')->willReturn(function () {
             throw new \Exception('renderChildrenClosure was invoked but should not have been');
         });
         $this->viewHelper = $this->prepareArguments($this->viewHelper, ['value' => $user]);

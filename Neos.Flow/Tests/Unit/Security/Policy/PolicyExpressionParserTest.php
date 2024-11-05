@@ -26,7 +26,7 @@ class PolicyExpressionParserTest extends UnitTestCase
     public function parseMethodThrowsAnExceptionIfAnotherPrivilegeTargetIsReferencedInAnExpression()
     {
         $this->expectException(InvalidPointcutExpressionException::class);
-        $parser = $this->getMockBuilder(MethodTargetExpressionParser::class)->setMethods(['parseDesignatorMethod'])->getMock();
+        $parser = $this->getMockBuilder(MethodTargetExpressionParser::class)->onlyMethods(['parseDesignatorMethod'])->getMock();
         $parser->parse('method(TYPO3\TestPackage\BasicClass->setSomeProperty()) || privilegeTarget2', 'FunctionTests');
     }
 }

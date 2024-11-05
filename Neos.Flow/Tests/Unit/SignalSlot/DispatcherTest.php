@@ -29,8 +29,9 @@ class DispatcherTest extends UnitTestCase
      */
     public function connectAllowsForConnectingASlotWithASignal(): void
     {
-        $mockSignal = $this->getMockBuilder('stdClass')->setMethods(['emitSomeSignal'])->getMock();
-        $mockSlot = $this->getMockBuilder('stdClass')->setMethods(['someSlotMethod'])->getMock();
+
+        $mockSignal = $this->getMockBuilder('stdClass')->onlyMethods(['emitSomeSignal'])->getMock();
+        $mockSlot = $this->getMockBuilder('stdClass')->onlyMethods(['someSlotMethod'])->getMock();
 
         $dispatcher = new Dispatcher();
         $dispatcher->connect(get_class($mockSignal), 'someSignal', get_class($mockSlot), 'someSlotMethod', false);
@@ -46,8 +47,8 @@ class DispatcherTest extends UnitTestCase
      */
     public function connectAlsoAcceptsObjectsInPlaceOfTheClassName(): void
     {
-        $mockSignal = $this->getMockBuilder('stdClass')->setMethods(['emitSomeSignal'])->getMock();
-        $mockSlot = $this->getMockBuilder('stdClass')->setMethods(['someSlotMethod'])->getMock();
+        $mockSignal = $this->getMockBuilder('stdClass')->onlyMethods(['emitSomeSignal'])->getMock();
+        $mockSlot = $this->getMockBuilder('stdClass')->onlyMethods(['someSlotMethod'])->getMock();
 
         $dispatcher = new Dispatcher();
         $dispatcher->connect(get_class($mockSignal), 'someSignal', $mockSlot, 'someSlotMethod', false);
@@ -63,7 +64,7 @@ class DispatcherTest extends UnitTestCase
      */
     public function connectAlsoAcceptsClosuresActingAsASlot(): void
     {
-        $mockSignal = $this->getMockBuilder('stdClass')->setMethods(['emitSomeSignal'])->getMock();
+        $mockSignal = $this->getMockBuilder('stdClass')->onlyMethods(['emitSomeSignal'])->getMock();
         $mockSlot = function () {
         };
 
@@ -81,8 +82,8 @@ class DispatcherTest extends UnitTestCase
      */
     public function wireAllowsForConnectingASlotWithASignal(): void
     {
-        $mockSignal = $this->getMockBuilder('stdClass')->setMethods(['emitSomeSignal'])->getMock();
-        $mockSlot = $this->getMockBuilder('stdClass')->setMethods(['someSlotMethod'])->getMock();
+        $mockSignal = $this->getMockBuilder('stdClass')->onlyMethods(['emitSomeSignal'])->getMock();
+        $mockSlot = $this->getMockBuilder('stdClass')->onlyMethods(['someSlotMethod'])->getMock();
 
         $dispatcher = new Dispatcher();
         $dispatcher->wire(get_class($mockSignal), 'someSignal', get_class($mockSlot), 'someSlotMethod', false);
@@ -98,8 +99,8 @@ class DispatcherTest extends UnitTestCase
      */
     public function wireAlsoAcceptsObjectsInPlaceOfTheClassName(): void
     {
-        $mockSignal = $this->getMockBuilder('stdClass')->setMethods(['emitSomeSignal'])->getMock();
-        $mockSlot = $this->getMockBuilder('stdClass')->setMethods(['someSlotMethod'])->getMock();
+        $mockSignal = $this->getMockBuilder('stdClass')->onlyMethods(['emitSomeSignal'])->getMock();
+        $mockSlot = $this->getMockBuilder('stdClass')->onlyMethods(['someSlotMethod'])->getMock();
 
         $dispatcher = new Dispatcher();
         $dispatcher->wire(get_class($mockSignal), 'someSignal', $mockSlot, 'someSlotMethod', false);
@@ -115,7 +116,7 @@ class DispatcherTest extends UnitTestCase
      */
     public function wireAlsoAcceptsClosuresActingAsASlot(): void
     {
-        $mockSignal = $this->getMockBuilder('stdClass')->setMethods(['emitSomeSignal'])->getMock();
+        $mockSignal = $this->getMockBuilder('stdClass')->onlyMethods(['emitSomeSignal'])->getMock();
         $mockSlot = function () {
         };
 
@@ -223,8 +224,8 @@ class DispatcherTest extends UnitTestCase
         $mockSlot = new $slotClassName();
 
         $mockObjectManager = $this->createMock(ObjectManagerInterface::class);
-        $mockObjectManager->expects(self::once())->method('isRegistered')->with($slotClassName)->willReturn(true);
-        $mockObjectManager->expects(self::once())->method('get')->with($slotClassName)->willReturn($mockSlot);
+        $mockObjectManager->expects($this->once())->method('isRegistered')->with($slotClassName)->willReturn(true);
+        $mockObjectManager->expects($this->once())->method('get')->with($slotClassName)->willReturn($mockSlot);
 
         $dispatcher = new Dispatcher();
         $dispatcher->injectObjectManager($mockObjectManager);
@@ -241,7 +242,7 @@ class DispatcherTest extends UnitTestCase
     {
         $this->expectException(InvalidSlotException::class);
         $mockObjectManager = $this->createMock(ObjectManagerInterface::class);
-        $mockObjectManager->expects(self::once())->method('isRegistered')->with('NonExistingClassName')->willReturn(false);
+        $mockObjectManager->expects($this->once())->method('isRegistered')->with('NonExistingClassName')->willReturn(false);
 
         $dispatcher = new Dispatcher();
         $dispatcher->injectObjectManager($mockObjectManager);
@@ -260,8 +261,8 @@ class DispatcherTest extends UnitTestCase
         $mockSlot = new $slotClassName();
 
         $mockObjectManager = $this->createMock(ObjectManagerInterface::class);
-        $mockObjectManager->expects(self::once())->method('isRegistered')->with($slotClassName)->willReturn(true);
-        $mockObjectManager->expects(self::once())->method('get')->with($slotClassName)->willReturn($mockSlot);
+        $mockObjectManager->expects($this->once())->method('isRegistered')->with($slotClassName)->willReturn(true);
+        $mockObjectManager->expects($this->once())->method('get')->with($slotClassName)->willReturn($mockSlot);
 
         $dispatcher = new Dispatcher();
         $dispatcher->injectObjectManager($mockObjectManager);

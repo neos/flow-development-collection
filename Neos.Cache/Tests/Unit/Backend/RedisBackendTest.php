@@ -78,7 +78,7 @@ class RedisBackendTest extends BaseTestCase
      */
     public function findIdentifiersByTagInvokesRedis(): void
     {
-        $this->redis->expects(self::once())
+        $this->redis->expects($this->once())
             ->method('sMembers')
             ->with('d41d8cd98f00b204e9800998ecf8427e:Foo_Cache:tag:some_tag')
             ->willReturn(['entry_1', 'entry_2']);
@@ -94,14 +94,14 @@ class RedisBackendTest extends BaseTestCase
         $this->redis->method('exec')
             ->willReturn($this->redis);
 
-        $this->redis->expects(self::once())
+        $this->redis->expects($this->once())
             ->method('keys')
             ->willReturn(['entry_1', 'entry_2']);
 
-        $this->redis->expects(self::exactly(2))
+        $this->redis->expects($this->exactly(2))
             ->method('persist');
 
-        $this->redis->expects(self::once())
+        $this->redis->expects($this->once())
             ->method('set')
             ->with('d41d8cd98f00b204e9800998ecf8427e:Foo_Cache:frozen', true);
 
@@ -120,7 +120,7 @@ class RedisBackendTest extends BaseTestCase
         $this->redis->method('multi')
             ->willReturn($this->redis);
 
-        $this->redis->expects(self::once())
+        $this->redis->expects($this->once())
             ->method('set')
             ->with($this->anything(), $this->anything(), $expected)
             ->willReturn($this->redis);
@@ -140,7 +140,7 @@ class RedisBackendTest extends BaseTestCase
         $this->redis->method('multi')
             ->willReturn($this->redis);
 
-        $this->redis->expects(self::once())
+        $this->redis->expects($this->once())
             ->method('set')
             ->with($this->anything(), $this->anything(), $expected)
             ->willReturn($this->redis);
@@ -156,7 +156,7 @@ class RedisBackendTest extends BaseTestCase
         $this->redis->method('multi')
             ->willReturn($this->redis);
 
-        $this->redis->expects(self::once())
+        $this->redis->expects($this->once())
             ->method('set')
             ->with('d41d8cd98f00b204e9800998ecf8427e:Foo_Cache:entry:entry_1', 'foo')
             ->willReturn($this->redis);
@@ -169,7 +169,7 @@ class RedisBackendTest extends BaseTestCase
      */
     public function getInvokesRedis(): void
     {
-        $this->redis->expects(self::once())
+        $this->redis->expects($this->once())
             ->method('get')
             ->with('d41d8cd98f00b204e9800998ecf8427e:Foo_Cache:entry:foo')
             ->willReturn('bar');
@@ -182,7 +182,7 @@ class RedisBackendTest extends BaseTestCase
      */
     public function hasInvokesRedis(): void
     {
-        $this->redis->expects(self::once())
+        $this->redis->expects($this->once())
             ->method('exists')
             ->with('d41d8cd98f00b204e9800998ecf8427e:Foo_Cache:entry:foo')
             ->willReturn(true);
@@ -199,7 +199,7 @@ class RedisBackendTest extends BaseTestCase
     {
         $this->expectException(\RuntimeException::class);
         $this->inject($this->backend, 'frozen', null);
-        $this->redis->expects(self::once())
+        $this->redis->expects($this->once())
             ->method('exists')
             ->with('d41d8cd98f00b204e9800998ecf8427e:Foo_Cache:frozen')
             ->willReturn(true);
@@ -216,7 +216,7 @@ class RedisBackendTest extends BaseTestCase
     {
         $this->expectException(\RuntimeException::class);
         $this->inject($this->backend, 'frozen', null);
-        $this->redis->expects(self::once())
+        $this->redis->expects($this->once())
             ->method('exists')
             ->with('d41d8cd98f00b204e9800998ecf8427e:Foo_Cache:frozen')
             ->willReturn(true);

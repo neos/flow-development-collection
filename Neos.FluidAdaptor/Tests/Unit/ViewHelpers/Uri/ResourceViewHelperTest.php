@@ -53,7 +53,7 @@ class ResourceViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\V
         $this->mockI18nService = $this->createMock(Service::class);
         $this->mockResourceManager = $this->createMock(ResourceManager::class);
         $this->objectManagerMock = $this->getMockBuilder(ObjectManagerInterface::class)->getMock();
-        $this->objectManagerMock->expects(self::any())->method('get')->will($this->returnValueMap([
+        $this->objectManagerMock->expects($this->any())->method('get')->will($this->returnValueMap([
             [Service::class, $this->mockI18nService],
             [ResourceManager::class, $this->mockResourceManager]
         ]));
@@ -67,8 +67,8 @@ class ResourceViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\V
      */
     public function renderUsesCurrentControllerPackageKeyToBuildTheResourceUri()
     {
-        $this->mockResourceManager->expects(self::atLeastOnce())->method('getPublicPackageResourceUri')->with('ThePackageKey', 'Styles/Main.css')->will(self::returnValue('TheCorrectResourceUri'));
-        $this->request->expects(self::atLeastOnce())->method('getControllerPackageKey')->will(self::returnValue('ThePackageKey'));
+        $this->mockResourceManager->expects($this->atLeastOnce())->method('getPublicPackageResourceUri')->with('ThePackageKey', 'Styles/Main.css')->willReturn(('TheCorrectResourceUri'));
+        $this->request->expects($this->atLeastOnce())->method('getControllerPackageKey')->willReturn(('ThePackageKey'));
         $this->viewHelper = $this->prepareArguments($this->viewHelper, [
             'path' => 'Styles/Main.css',
             'package' => null,
@@ -84,7 +84,7 @@ class ResourceViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\V
      */
     public function renderUsesCustomPackageKeyIfSpecified()
     {
-        $this->mockResourceManager->expects(self::atLeastOnce())->method('getPublicPackageResourceUri')->with('ThePackageKey', 'Styles/Main.css')->will(self::returnValue('TheCorrectResourceUri'));
+        $this->mockResourceManager->expects($this->atLeastOnce())->method('getPublicPackageResourceUri')->with('ThePackageKey', 'Styles/Main.css')->willReturn(('TheCorrectResourceUri'));
         $this->viewHelper = $this->prepareArguments($this->viewHelper, [
             'path' => 'Styles/Main.css',
             'package' => 'ThePackageKey',
@@ -101,7 +101,7 @@ class ResourceViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\V
     public function renderUsesProvidedPersistentResourceInsteadOfPackageAndPath()
     {
         $resource = new PersistentResource();
-        $this->mockResourceManager->expects(self::atLeastOnce())->method('getPublicPersistentResourceUri')->with($resource)->will(self::returnValue('TheCorrectResourceUri'));
+        $this->mockResourceManager->expects($this->atLeastOnce())->method('getPublicPersistentResourceUri')->with($resource)->willReturn(('TheCorrectResourceUri'));
         $this->viewHelper = $this->prepareArguments($this->viewHelper, [
             'path' => null,
             'package' => null,
@@ -118,7 +118,7 @@ class ResourceViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\V
     public function renderCreatesASpecialBrokenResourceUriIfTheResourceCouldNotBePublished()
     {
         $resource = new PersistentResource();
-        $this->mockResourceManager->expects(self::atLeastOnce())->method('getPublicPersistentResourceUri')->with($resource)->will(self::returnValue(false));
+        $this->mockResourceManager->expects($this->atLeastOnce())->method('getPublicPersistentResourceUri')->with($resource)->willReturn((false));
         $this->viewHelper = $this->prepareArguments($this->viewHelper, [
             'path' => null,
             'package' => null,
@@ -134,8 +134,8 @@ class ResourceViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\V
      */
     public function renderLocalizesResource()
     {
-        $this->mockI18nService->expects(self::once())->method('getLocalizedFilename')->with('resource://ThePackageKey/Public/Styles/Main.css')->will(self::returnValue(['resource://ThePackageKey/Public/Styles/Main.css.de', new Locale('de')]));
-        $this->mockResourceManager->expects(self::atLeastOnce())->method('getPublicPackageResourceUri')->with('ThePackageKey', 'Styles/Main.css.de')->will(self::returnValue('TheCorrectResourceUri'));
+        $this->mockI18nService->expects($this->once())->method('getLocalizedFilename')->with('resource://ThePackageKey/Public/Styles/Main.css')->willReturn((['resource://ThePackageKey/Public/Styles/Main.css.de', new Locale('de')]));
+        $this->mockResourceManager->expects($this->atLeastOnce())->method('getPublicPackageResourceUri')->with('ThePackageKey', 'Styles/Main.css.de')->willReturn(('TheCorrectResourceUri'));
         $this->viewHelper = $this->prepareArguments($this->viewHelper, [
             'path' => 'Styles/Main.css',
             'package' => 'ThePackageKey'
@@ -150,16 +150,16 @@ class ResourceViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\V
     public function renderLocalizesResourceGivenAsResourceUri()
     {
         $this->mockResourceManager
-            ->expects(self::once())
+            ->expects($this->once())
             ->method('getPackageAndPathByPublicPath')
             ->with('resource://ThePackageKey/Public/Styles/Main.css')
-            ->will(self::returnValue(['ThePackageKey', 'Styles/Main.css']));
+            ->willReturn((['ThePackageKey', 'Styles/Main.css']));
         $this->mockI18nService
-            ->expects(self::once())
+            ->expects($this->once())
             ->method('getLocalizedFilename')
             ->with('resource://ThePackageKey/Public/Styles/Main.css')
-            ->will(self::returnValue(['resource://ThePackageKey/Public/Styles/Main.de.css', new Locale('de')]));
-        $this->mockResourceManager->expects(self::atLeastOnce())->method('getPublicPackageResourceUri')->with('ThePackageKey', 'Styles/Main.de.css')->will(self::returnValue('TheCorrectResourceUri'));
+            ->willReturn((['resource://ThePackageKey/Public/Styles/Main.de.css', new Locale('de')]));
+        $this->mockResourceManager->expects($this->atLeastOnce())->method('getPublicPackageResourceUri')->with('ThePackageKey', 'Styles/Main.de.css')->willReturn(('TheCorrectResourceUri'));
         $this->viewHelper = $this->prepareArguments($this->viewHelper, [
             'path' => 'resource://ThePackageKey/Public/Styles/Main.css',
             'package' => null,
@@ -175,7 +175,7 @@ class ResourceViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\V
      */
     public function renderSkipsLocalizationIfRequested()
     {
-        $this->mockI18nService->expects(self::never())->method('getLocalizedFilename');
+        $this->mockI18nService->expects($this->never())->method('getLocalizedFilename');
         $this->viewHelper = $this->prepareArguments($this->viewHelper, [
             'path' => 'foo',
             'package' => 'SomePackage',
@@ -190,7 +190,7 @@ class ResourceViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\V
      */
     public function renderSkipsLocalizationForResourcesGivenAsResourceUriIfRequested()
     {
-        $this->mockI18nService->expects(self::never())->method('getLocalizedFilename');
+        $this->mockI18nService->expects($this->never())->method('getLocalizedFilename');
         $this->viewHelper = $this->prepareArguments($this->viewHelper, [
             'path' => 'resource://SomePackage/Public/Images/foo.jpg',
             'package' => null,
@@ -221,7 +221,7 @@ class ResourceViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\V
     {
         $this->expectException(InvalidVariableException::class);
         $this->mockResourceManager
-            ->expects(self::once())
+            ->expects($this->once())
             ->method('getPackageAndPathByPublicPath')
             ->with('resource://Some.Package/Private/foobar.txt')
             ->willThrowException(new Exception());

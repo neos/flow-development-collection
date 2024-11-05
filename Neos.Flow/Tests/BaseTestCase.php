@@ -11,6 +11,8 @@ namespace Neos\Flow\Tests;
  * source code.
  */
 
+use PHPUnit\Framework\TestCase;
+
 /**
  * The mother of all test cases.
  *
@@ -19,7 +21,7 @@ namespace Neos\Flow\Tests;
  *
  * @api
  */
-abstract class BaseTestCase extends \PHPUnit\Framework\TestCase
+abstract class BaseTestCase extends TestCase
 {
     /**
      * @var array
@@ -50,10 +52,10 @@ abstract class BaseTestCase extends \PHPUnit\Framework\TestCase
      * @return \PHPUnit\Framework\MockObject\MockObject
      * @api
      */
-    protected function getAccessibleMock($originalClassName, $methods = [], array $arguments = [], $mockClassName = '', $callOriginalConstructor = true, $callOriginalClone = true, $callAutoload = true, $cloneArguments = false, $callOriginalMethods = false, $proxyTarget = null)
+    protected function getAccessibleMock(string $originalClassName, array $methods = [], array $arguments = [], $mockClassName = '', $callOriginalConstructor = true, $callOriginalClone = true, $callAutoload = true, $cloneArguments = false, $callOriginalMethods = false, $proxyTarget = null)
     {
         $mockBuilder = $this->getMockBuilder($this->buildAccessibleProxy($originalClassName));
-        $mockBuilder->setMethods($methods)->setConstructorArgs($arguments)->setMockClassName($mockClassName);
+        $mockBuilder->onlyMethods($methods)->setConstructorArgs($arguments)->setMockClassName($mockClassName);
         if ($callOriginalConstructor === false) {
             $mockBuilder->disableOriginalConstructor();
         }

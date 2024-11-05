@@ -59,17 +59,17 @@ class ViewConfigurationManagerTest extends \Neos\Flow\Tests\UnitTestCase
 
         // caching is deactivated
         $this->mockCache = $this->getMockBuilder(VariableFrontend::class)->disableOriginalConstructor()->getMock();
-        $this->mockCache->expects(self::any())->method('get')->will(self::returnValue(false));
+        $this->mockCache->expects($this->any())->method('get')->willReturn((false));
         $this->inject($this->viewConfigurationManager, 'cache', $this->mockCache);
 
         // a dummy request is prepared
         $this->mockActionRequest = $this->getMockBuilder(ActionRequest::class)->disableOriginalConstructor()->getMock();
-        $this->mockActionRequest->expects(self::any())->method('getControllerPackageKey')->will(self::returnValue('Neos.Flow'));
-        $this->mockActionRequest->expects(self::any())->method('getControllerSubpackageKey')->will(self::returnValue(''));
-        $this->mockActionRequest->expects(self::any())->method('getControllerName')->will(self::returnValue('Standard'));
-        $this->mockActionRequest->expects(self::any())->method('getControllerActionName')->will(self::returnValue('index'));
-        $this->mockActionRequest->expects(self::any())->method('getFormat')->will(self::returnValue('html'));
-        $this->mockActionRequest->expects(self::any())->method('getParentRequest')->will(self::returnValue(null));
+        $this->mockActionRequest->expects($this->any())->method('getControllerPackageKey')->willReturn(('Neos.Flow'));
+        $this->mockActionRequest->expects($this->any())->method('getControllerSubpackageKey')->willReturn((''));
+        $this->mockActionRequest->expects($this->any())->method('getControllerName')->willReturn(('Standard'));
+        $this->mockActionRequest->expects($this->any())->method('getControllerActionName')->willReturn(('index'));
+        $this->mockActionRequest->expects($this->any())->method('getFormat')->willReturn(('html'));
+        $this->mockActionRequest->expects($this->any())->method('getParentRequest')->willReturn((null));
     }
 
     /**
@@ -89,7 +89,7 @@ class ViewConfigurationManagerTest extends \Neos\Flow\Tests\UnitTestCase
 
         $viewConfigurations = [$notMatchingConfiguration, $matchingConfiguration];
 
-        $this->mockConfigurationManager->expects(self::any())->method('getConfiguration')->with('Views')->will(self::returnValue($viewConfigurations));
+        $this->mockConfigurationManager->expects($this->any())->method('getConfiguration')->with('Views')->willReturn(($viewConfigurations));
         $calculatedConfiguration = $this->viewConfigurationManager->getViewConfiguration($this->mockActionRequest);
 
         self::assertEquals($calculatedConfiguration, $matchingConfiguration);
@@ -117,7 +117,7 @@ class ViewConfigurationManagerTest extends \Neos\Flow\Tests\UnitTestCase
 
         $viewConfigurations = [$notMatchingConfiguration, $matchingConfigurationOne, $matchingConfigurationTwo];
 
-        $this->mockConfigurationManager->expects(self::any())->method('getConfiguration')->with('Views')->will(self::returnValue($viewConfigurations));
+        $this->mockConfigurationManager->expects($this->any())->method('getConfiguration')->with('Views')->willReturn(($viewConfigurations));
         $calculatedConfiguration = $this->viewConfigurationManager->getViewConfiguration($this->mockActionRequest);
 
         self::assertEquals($calculatedConfiguration, $matchingConfigurationTwo);
@@ -128,8 +128,8 @@ class ViewConfigurationManagerTest extends \Neos\Flow\Tests\UnitTestCase
      */
     protected function createEvaluator()
     {
-        $stringFrontendMock = $this->getMockBuilder(StringFrontend::class)->setMethods([])->disableOriginalConstructor()->getMock();
-        $stringFrontendMock->expects(self::any())->method('get')->willReturn(false);
+        $stringFrontendMock = $this->getMockBuilder(StringFrontend::class)->onlyMethods([])->disableOriginalConstructor()->getMock();
+        $stringFrontendMock->expects($this->any())->method('get')->willReturn(false);
 
         $evaluator = new CompilingEvaluator();
         $evaluator->injectExpressionCache($stringFrontendMock);

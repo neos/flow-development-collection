@@ -46,7 +46,7 @@ class WebRedirectTest extends UnitTestCase
     public function startAuthenticationSetsTheCorrectValuesInTheResponseObjectIfUriIsSpecified()
     {
         $baseUriProviderMock = $this->createMock(BaseUriProvider::class);
-        $baseUriProviderMock->expects(self::any())->method('getConfiguredBaseUriOrFallbackToCurrentRequest')->willReturn(new Uri('http://robertlemke.com/'));
+        $baseUriProviderMock->expects($this->any())->method('getConfiguredBaseUriOrFallbackToCurrentRequest')->willReturn(new Uri('http://robertlemke.com/'));
 
         $request = new ServerRequest('GET', new Uri('http://robertlemke.com/admin'));
         $response = new Response();
@@ -99,7 +99,7 @@ class WebRedirectTest extends UnitTestCase
         $request = new ServerRequest('GET', new Uri('http://robertlemke.com/admin'));
         $response = new Response();
 
-        $entryPoint = $this->getAccessibleMock(WebRedirect::class, ['dummy']);
+        $entryPoint = $this->getAccessibleMock(WebRedirect::class, []);
         $routeValues = [
             '@package' => 'SomePackage',
             '@subpackage' => 'SomeSubPackage',
@@ -111,8 +111,8 @@ class WebRedirectTest extends UnitTestCase
         $entryPoint->setOptions(['routeValues' => $routeValues]);
 
         $mockUriBuilder = $this->createMock(UriBuilder::class);
-        $mockUriBuilder->expects(self::once())->method('setCreateAbsoluteUri')->with(true)->will(self::returnValue($mockUriBuilder));
-        $mockUriBuilder->expects(self::once())->method('uriFor')->with('someAction', ['otherArguments' => ['foo' => 'bar'], '@format' => 'someFormat'], 'SomeController', 'SomePackage', 'SomeSubPackage')->will(self::returnValue('http://resolved/redirect/uri'));
+        $mockUriBuilder->expects($this->once())->method('setCreateAbsoluteUri')->with(true)->willReturn(($mockUriBuilder));
+        $mockUriBuilder->expects($this->once())->method('uriFor')->with('someAction', ['otherArguments' => ['foo' => 'bar'], '@format' => 'someFormat'], 'SomeController', 'SomePackage', 'SomeSubPackage')->willReturn(('http://resolved/redirect/uri'));
         $entryPoint->_set('uriBuilder', $mockUriBuilder);
 
         $response = $entryPoint->startAuthentication($request, $response);

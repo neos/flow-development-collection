@@ -41,7 +41,7 @@ class PersistenceMagicAspectTest extends UnitTestCase
      */
     protected function setUp(): void
     {
-        $this->persistenceMagicAspect = $this->getAccessibleMock(PersistenceMagicAspect::class, ['dummy'], []);
+        $this->persistenceMagicAspect = $this->getAccessibleMock(PersistenceMagicAspect::class, [], []);
 
         $this->mockPersistenceManager = $this->createMock(PersistenceManagerInterface::class);
         $this->persistenceMagicAspect->_set('persistenceManager', $this->mockPersistenceManager);
@@ -56,7 +56,7 @@ class PersistenceMagicAspectTest extends UnitTestCase
     public function cloneObjectMarksTheObjectAsCloned()
     {
         $object = new \stdClass();
-        $this->mockJoinPoint->expects(self::any())->method('getProxy')->will(self::returnValue($object));
+        $this->mockJoinPoint->expects($this->any())->method('getProxy')->willReturn(($object));
 
         $this->persistenceMagicAspect->cloneObject($this->mockJoinPoint);
         self::assertTrue($object->Flow_Persistence_clone);
@@ -72,8 +72,8 @@ class PersistenceMagicAspectTest extends UnitTestCase
         eval('class ' . $className . ' implements \Neos\Flow\Persistence\Aspect\PersistenceMagicInterface { public $Persistence_Object_Identifier = NULL; }');
         $object = new $className();
 
-        $this->mockJoinPoint->expects(self::atLeastOnce())->method('getProxy')->will(self::returnValue($object));
-        $this->mockPersistenceManager->expects(self::atLeastOnce())->method('registerNewObject')->with($object);
+        $this->mockJoinPoint->expects($this->atLeastOnce())->method('getProxy')->willReturn(($object));
+        $this->mockPersistenceManager->expects($this->atLeastOnce())->method('registerNewObject')->with($object);
         $this->persistenceMagicAspect->generateUuid($this->mockJoinPoint);
 
         self::assertEquals(36, strlen($object->Persistence_Object_Identifier));
