@@ -21,6 +21,8 @@ use Neos\Flow\Security\Authentication\TokenInterface;
 use Neos\Flow\Configuration\Exception\InvalidConfigurationTypeException;
 use Neos\Flow\Security\Policy\Role;
 use Neos\Flow\Mvc\ActionRequest;
+use Neos\Flow\Security\Policy\RoleId;
+use Neos\Flow\Security\Policy\RoleIds;
 use Neos\Flow\Session\SessionManagerInterface;
 use Neos\Flow\Utility\Algorithms;
 use Neos\Utility\TypeHandling;
@@ -390,7 +392,9 @@ class Context
      *
      * The "Neos.Flow:Everybody" roles is always returned.
      *
-     * @return Role[]
+     * Consider using {@see self::getExpandedRoleIds()} instead
+     *
+     * @return array<string, Role>
      * @throws Exception
      * @throws Exception\NoSuchRoleException
      * @throws InvalidConfigurationTypeException
@@ -405,18 +409,18 @@ class Context
             return $this->roles;
         }
 
-        $this->roles = ['Neos.Flow:Everybody' => $this->policyService->getRole('Neos.Flow:Everybody')];
+        $this->roles = [RoleId::everybody()->value => $this->policyService->getRole(RoleId::everybody())];
 
         $authenticatedTokens = array_filter($this->getAuthenticationTokens(), static function (TokenInterface $token) {
             return $token->isAuthenticated();
         });
 
         if (empty($authenticatedTokens)) {
-            $this->roles['Neos.Flow:Anonymous'] = $this->policyService->getRole('Neos.Flow:Anonymous');
+            $this->roles[RoleId::anonymous()->value] = $this->policyService->getRole(RoleId::anonymous());
             return $this->roles;
         }
 
-        $this->roles['Neos.Flow:AuthenticatedUser'] = $this->policyService->getRole('Neos.Flow:AuthenticatedUser');
+        $this->roles[RoleId::authenticatedUser()->value] = $this->policyService->getRole(RoleId::authenticatedUser());
 
         foreach ($authenticatedTokens as $token) {
             $account = $token->getAccount();
@@ -428,6 +432,22 @@ class Context
         }
 
         return $this->roles;
+    }
+
+    /**
+     * Returns the role ids of all authenticated accounts, including inherited roles.
+     *
+     * If no authenticated roles could be found the "Anonymous" role is returned.
+     *
+     * The "Neos.Flow:Everybody" roles is always returned.
+     **/
+    public function getExpandedRoleIds(): RoleIds
+    {
+        try {
+            return RoleIds::fromArray(array_keys($this->getRoles()));
+        } catch (InvalidConfigurationTypeException | Exception\NoSuchRoleException | Exception $e) {
+            throw new \RuntimeException(sprintf('Failed to get ids of authenticated accounts: %s', $e->getMessage()), 1731337723, $e);
+        }
     }
 
     /**

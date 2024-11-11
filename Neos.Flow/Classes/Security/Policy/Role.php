@@ -21,28 +21,10 @@ use Neos\Flow\Security\Authorization\Privilege\PrivilegeInterface;
  */
 class Role
 {
-    private const ROLE_IDENTIFIER_PATTERN = '/^(\w+(?:\.\w+)*)\:(\w+)$/';   // Vendor(.Package)?:RoleName
-
     /**
      * The identifier of this role
-     *
-     * @var string
      */
-    protected $identifier;
-
-    /**
-     * The name of this role (without package key)
-     *
-     * @var string
-     */
-    protected $name;
-
-    /**
-     * The package key this role belongs to (extracted from the identifier)
-     *
-     * @var string
-     */
-    protected $packageKey;
+    protected RoleId $id;
 
     /**
      * Whether or not the role is "abstract", meaning it can't be assigned to accounts directly but only serves as a "template role" for other roles to inherit from
@@ -84,13 +66,8 @@ class Role
      */
     public function __construct(string $identifier, array $parentRoles = [], string $label = '', string $description = '')
     {
-        if (preg_match(self::ROLE_IDENTIFIER_PATTERN, $identifier, $matches) !== 1) {
-            throw new \InvalidArgumentException('The role identifier must follow the pattern "Vendor.Package:RoleName", but "' . $identifier . '" was given. Please check the code or policy configuration creating or defining this role.', 1365446549);
-        }
-        $this->identifier = $identifier;
-        $this->packageKey = $matches[1];
-        $this->name = $matches[2];
-        $this->label = $label ?: $matches[2];
+        $this->id = RoleId::fromString($identifier);
+        $this->label = $label ?: $this->id->getName();
         $this->description = $description;
         $this->parentRoles = $parentRoles;
     }
@@ -98,31 +75,39 @@ class Role
     /**
      * Returns the fully qualified identifier of this role
      *
+     * @deprecated with Flow 9.0 – use {@see self::getId()} instead
      * @return string
      */
     public function getIdentifier(): string
     {
-        return $this->identifier;
+        return $this->id->value;
+    }
+
+    public function getId(): RoleId
+    {
+        return $this->id;
     }
 
     /**
      * The key of the package that defines this role.
      *
      * @return string
+     * @deprecated with Neos 9.0 – use {@see RoleId::getPackageKey()} instead
      */
     public function getPackageKey(): string
     {
-        return $this->packageKey;
+        return $this->id->getPackageKey();
     }
 
     /**
      * The name of this role, being the identifier without the package key.
      *
      * @return string
+     * @deprecated with Neos 9.0 – use {@see RoleId::getName()} instead
      */
     public function getName(): string
     {
-        return $this->name;
+        return $this->id->getName();
     }
 
     /**

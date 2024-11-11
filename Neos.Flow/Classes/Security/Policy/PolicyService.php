@@ -215,13 +215,16 @@ class PolicyService
     /**
      * Checks if a role exists
      *
-     * @param string $roleIdentifier The role identifier, format: (<PackageKey>:)<Role>
+     * @param RoleId|string $roleIdentifier The role identifier, format: (<PackageKey>:)<Role>
      * @return bool
      * @throws InvalidConfigurationTypeException
      * @throws SecurityException
      */
-    public function hasRole(string $roleIdentifier): bool
+    public function hasRole(RoleId|string $roleIdentifier): bool
     {
+        if ($roleIdentifier instanceof RoleId) {
+            $roleIdentifier = $roleIdentifier->value;
+        }
         $this->initialize();
         return isset($this->roles[$roleIdentifier]);
     }
@@ -229,14 +232,17 @@ class PolicyService
     /**
      * Returns a Role object configured in the PolicyService
      *
-     * @param string $roleIdentifier The role identifier of the role, format: (<PackageKey>:)<Role>
+     * @param RoleId|string $roleIdentifier The role identifier of the role, format: (<PackageKey>:)<Role>
      * @return Role
      * @throws InvalidConfigurationTypeException
      * @throws NoSuchRoleException
      * @throws SecurityException
      */
-    public function getRole(string $roleIdentifier): Role
+    public function getRole(RoleId|string $roleIdentifier): Role
     {
+        if ($roleIdentifier instanceof RoleId) {
+            $roleIdentifier = $roleIdentifier->value;
+        }
         if ($this->hasRole($roleIdentifier)) {
             return $this->roles[$roleIdentifier];
         }
