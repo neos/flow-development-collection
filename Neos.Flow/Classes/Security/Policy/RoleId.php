@@ -73,5 +73,4 @@ final readonly class RoleId
     {
         return $other->value === $this->value;
     }
-
 }
