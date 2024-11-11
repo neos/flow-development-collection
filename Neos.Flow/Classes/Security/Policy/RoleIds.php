@@ -8,7 +8,6 @@ namespace Neos\Flow\Security\Policy;
  */
 final readonly class RoleIds implements \IteratorAggregate, \Countable
 {
-
     /**
      * array<RoleId>
      */

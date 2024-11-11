@@ -25,8 +25,7 @@ final readonly class RoleId
 
     private function __construct(
         public string $value,
-    )
-    {
+    ) {
         if (preg_match(self::ROLE_IDENTIFIER_PATTERN, $value, $matches) !== 1) {
             throw new \InvalidArgumentException('The role id must follow the pattern "Vendor.Package:RoleName", but "' . $value . '" was given. Please check the code or policy configuration creating or defining this role.', 1365446549);
         }
