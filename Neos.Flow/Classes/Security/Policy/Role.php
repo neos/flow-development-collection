@@ -269,7 +269,7 @@ class Role
      */
     public function __toString()
     {
-        return $this->identifier;
+        return $this->id->value;
     }
 
     /**
