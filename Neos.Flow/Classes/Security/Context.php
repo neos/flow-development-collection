@@ -409,18 +409,18 @@ class Context
             return $this->roles;
         }
 
-        $this->roles = [RoleId::everybody()->value => $this->policyService->getRole(RoleId::everybody())];
+        $this->roles = [RoleId::everybody()->value => $this->policyService->getRole(RoleId::everybody()->value)];
 
         $authenticatedTokens = array_filter($this->getAuthenticationTokens(), static function (TokenInterface $token) {
             return $token->isAuthenticated();
         });
 
         if (empty($authenticatedTokens)) {
-            $this->roles[RoleId::anonymous()->value] = $this->policyService->getRole(RoleId::anonymous());
+            $this->roles[RoleId::anonymous()->value] = $this->policyService->getRole(RoleId::anonymous()->value);
             return $this->roles;
         }
 
-        $this->roles[RoleId::authenticatedUser()->value] = $this->policyService->getRole(RoleId::authenticatedUser());
+        $this->roles[RoleId::authenticatedUser()->value] = $this->policyService->getRole(RoleId::authenticatedUser()->value);
 
         foreach ($authenticatedTokens as $token) {
             $account = $token->getAccount();
