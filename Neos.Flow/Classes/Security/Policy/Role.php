@@ -59,14 +59,17 @@ class Role
     protected $privileges = [];
 
     /**
-     * @param string $identifier The fully qualified identifier of this role (Vendor.Package:Role)
+     * @param RoleId|string $id The fully qualified identifier of this role (Vendor.Package:Role)
      * @param Role[] $parentRoles
      * @param string $label A label for this role
      * @param string $description A description on this role
      */
-    public function __construct(string $identifier, array $parentRoles = [], string $label = '', string $description = '')
+    public function __construct(RoleId|string $id, array $parentRoles = [], string $label = '', string $description = '')
     {
-        $this->id = RoleId::fromString($identifier);
+        if (is_string($id)) {
+            $id = RoleId::fromString($id);
+        }
+        $this->id = $id;
         $this->label = $label ?: $this->id->getName();
         $this->description = $description;
         $this->parentRoles = $parentRoles;

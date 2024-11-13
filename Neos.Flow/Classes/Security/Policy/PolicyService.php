@@ -108,14 +108,15 @@ class PolicyService
         $privilegeTargetsForEverybody = $this->privilegeTargets;
 
         $this->roles = [];
-        $everybodyRole = new Role('Neos.Flow:Everybody', [], (string)($this->policyConfiguration['roles']['Neos.Flow:Everybody']['label'] ?? ''), (string)($this->policyConfiguration['roles']['Neos.Flow:Everybody']['description'] ?? ''));
+        $everybodyRole = new Role(RoleId::everybody(), [], (string)($this->policyConfiguration['roles']['Neos.Flow:Everybody']['label'] ?? ''), (string)($this->policyConfiguration['roles']['Neos.Flow:Everybody']['description'] ?? ''));
         $everybodyRole->setAbstract(true);
         if (isset($this->policyConfiguration['roles'])) {
-            foreach ($this->policyConfiguration['roles'] as $roleIdentifier => $roleConfiguration) {
-                if ($roleIdentifier === 'Neos.Flow:Everybody') {
+            foreach ($this->policyConfiguration['roles'] as $roleIdString => $roleConfiguration) {
+                $roleId = RoleId::fromString($roleIdString);
+                if ($roleId->equals(RoleId::everybody())) {
                     $role = $everybodyRole;
                 } else {
-                    $role = new Role($roleIdentifier, [], (string)($roleConfiguration['label'] ?? ''), (string)($roleConfiguration['description'] ?? ''));
+                    $role = new Role($roleId, [], (string)($roleConfiguration['label'] ?? ''), (string)($roleConfiguration['description'] ?? ''));
                     $role->setAbstract((bool)($roleConfiguration['abstract'] ?? false));
                 }
 
@@ -123,27 +124,27 @@ class PolicyService
                     foreach ($roleConfiguration['privileges'] as $privilegeConfiguration) {
                         $privilegeTargetIdentifier = $privilegeConfiguration['privilegeTarget'];
                         if (!isset($this->privilegeTargets[$privilegeTargetIdentifier])) {
-                            throw new SecurityException(sprintf('privilege target "%s", referenced in role configuration "%s" is not defined!', $privilegeTargetIdentifier, $roleIdentifier), 1395869320);
+                            throw new SecurityException(sprintf('privilege target "%s", referenced in role configuration "%s" is not defined!', $privilegeTargetIdentifier, $roleId->value), 1395869320);
                         }
                         $privilegeTarget = $this->privilegeTargets[$privilegeTargetIdentifier];
                         if (!isset($privilegeConfiguration['permission'])) {
-                            throw new SecurityException(sprintf('No permission set for privilegeTarget "%s" in Role "%s"', $privilegeTargetIdentifier, $roleIdentifier), 1395869331);
+                            throw new SecurityException(sprintf('No permission set for privilegeTarget "%s" in Role "%s"', $privilegeTargetIdentifier, $roleId->value), 1395869331);
                         }
                         $privilegeParameters = $privilegeConfiguration['parameters'] ?? [];
                         try {
                             $privilege = $privilegeTarget->createPrivilege($privilegeConfiguration['permission'], $privilegeParameters);
                         } catch (\Exception $exception) {
-                            throw new SecurityException(sprintf('Error for privilegeTarget "%s" in Role "%s": %s', $privilegeTargetIdentifier, $roleIdentifier, $exception->getMessage()), 1401886654, $exception);
+                            throw new SecurityException(sprintf('Error for privilegeTarget "%s" in Role "%s": %s', $privilegeTargetIdentifier, $roleId->value, $exception->getMessage()), 1401886654, $exception);
                         }
                         $role->addPrivilege($privilege);
 
-                        if ($roleIdentifier === 'Neos.Flow:Everybody') {
+                        if ($roleId->equals(RoleId::everybody())) {
                             unset($privilegeTargetsForEverybody[$privilegeTargetIdentifier]);
                         }
                     }
                 }
 
-                $this->roles[$roleIdentifier] = $role;
+                $this->roles[$roleId->value] = $role;
             }
         }
 
