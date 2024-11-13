@@ -13,9 +13,6 @@ final readonly class RoleIds implements \IteratorAggregate, \Countable
      */
     private array $roleIds;
 
-    /**
-     * @param array<RoleId> $roleIds
-     */
     private function __construct(
         RoleId ...$roleIds
     ) {
