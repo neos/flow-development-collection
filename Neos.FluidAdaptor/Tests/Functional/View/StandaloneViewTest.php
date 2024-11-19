@@ -15,8 +15,8 @@ use Neos\Flow\Cache\CacheManager;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Tests\FunctionalTestCase;
 use Neos\FluidAdaptor\Core\ViewHelper\Exception\WrongEnctypeException;
-use Neos\FluidAdaptor\Tests\Functional\View\Fixtures\View\StandaloneView;
 use Neos\FluidAdaptor\View\Exception\InvalidTemplateResourceException;
+use Neos\FluidAdaptor\View\StandaloneView;
 use Psr\Http\Message\ServerRequestFactoryInterface;
 use TYPO3Fluid\Fluid\Core\Parser\UnknownNamespaceException;
 
@@ -26,26 +26,6 @@ use TYPO3Fluid\Fluid\Core\Parser\UnknownNamespaceException;
 class StandaloneViewTest extends FunctionalTestCase
 {
     /**
-     * @var string
-     */
-    protected $standaloneViewNonce = '42';
-
-    /**
-     * Every testcase should run *twice*. First, it is run in *uncached* way, second,
-     * it is run *cached*. To make sure that the first run is always uncached, the
-     * $standaloneViewNonce is initialized to some random value which is used inside
-     * an overridden version of StandaloneView::createIdentifierForFile.
-     */
-    public function runBare(): void
-    {
-        $this->standaloneViewNonce = uniqid('', true);
-        parent::runBare();
-        $numberOfAssertions = $this->getNumAssertions();
-        parent::runBare();
-        $this->addToAssertionCount($numberOfAssertions);
-    }
-
-    /**
      * @test
      */
     public function inlineTemplateIsEvaluatedCorrectly(): void
@@ -53,7 +33,7 @@ class StandaloneViewTest extends FunctionalTestCase
         $httpRequest = $this->objectManager->get(ServerRequestFactoryInterface::class)->createServerRequest('GET', 'http://localhost');
         $actionRequest = ActionRequest::fromHttpRequest($httpRequest);
 
-        $standaloneView = new StandaloneView($actionRequest, $this->standaloneViewNonce);
+        $standaloneView = new StandaloneView($actionRequest);
         $standaloneView->assign('foo', 'bar');
         $standaloneView->setTemplateSource('This is my cool {foo} template!');
 
@@ -70,7 +50,7 @@ class StandaloneViewTest extends FunctionalTestCase
         $httpRequest = $this->objectManager->get(ServerRequestFactoryInterface::class)->createServerRequest('GET', 'http://localhost');
         $actionRequest = ActionRequest::fromHttpRequest($httpRequest);
 
-        $standaloneView = new StandaloneView($actionRequest, $this->standaloneViewNonce);
+        $standaloneView = new StandaloneView($actionRequest);
         $standaloneView->assign('foo', 'bar');
         $standaloneView->setTemplateSource('Around stuff... <f:section name="innerSection">test {foo}</f:section> after it');
 
@@ -88,7 +68,7 @@ class StandaloneViewTest extends FunctionalTestCase
         $httpRequest = $this->objectManager->get(ServerRequestFactoryInterface::class)->createServerRequest('GET', 'http://localhost');
         $actionRequest = ActionRequest::fromHttpRequest($httpRequest);
 
-        $standaloneView = new StandaloneView($actionRequest, $this->standaloneViewNonce);
+        $standaloneView = new StandaloneView($actionRequest);
         $standaloneView->render();
     }
 
@@ -101,7 +81,7 @@ class StandaloneViewTest extends FunctionalTestCase
         $httpRequest = $this->objectManager->get(ServerRequestFactoryInterface::class)->createServerRequest('GET', 'http://localhost');
         $actionRequest = ActionRequest::fromHttpRequest($httpRequest);
 
-        $standaloneView = new StandaloneView($actionRequest, $this->standaloneViewNonce);
+        $standaloneView = new StandaloneView($actionRequest);
         $standaloneView->setTemplatePathAndFilename(__DIR__ . '/Fixtures/NonExistingTemplate.txt');
         $standaloneView->render();
     }
@@ -115,7 +95,7 @@ class StandaloneViewTest extends FunctionalTestCase
         $httpRequest = $this->objectManager->get(ServerRequestFactoryInterface::class)->createServerRequest('GET', 'http://localhost');
         $actionRequest = ActionRequest::fromHttpRequest($httpRequest);
 
-        $standaloneView = new StandaloneView($actionRequest, $this->standaloneViewNonce);
+        $standaloneView = new StandaloneView($actionRequest);
         $standaloneView->setTemplatePathAndFilename(__DIR__ . '/Fixtures/TestTemplateWithFormUpload.txt');
         $standaloneView->render();
     }
@@ -129,7 +109,7 @@ class StandaloneViewTest extends FunctionalTestCase
         $httpRequest = $this->objectManager->get(ServerRequestFactoryInterface::class)->createServerRequest('GET', 'http://localhost');
         $actionRequest = ActionRequest::fromHttpRequest($httpRequest);
 
-        $standaloneView = new StandaloneView($actionRequest, $this->standaloneViewNonce);
+        $standaloneView = new StandaloneView($actionRequest);
         $standaloneView->setTemplatePathAndFilename(__DIR__ . '/Fixtures');
         $standaloneView->render();
     }
@@ -142,7 +122,7 @@ class StandaloneViewTest extends FunctionalTestCase
         $httpRequest = $this->objectManager->get(ServerRequestFactoryInterface::class)->createServerRequest('GET', 'http://localhost');
         $actionRequest = ActionRequest::fromHttpRequest($httpRequest);
 
-        $standaloneView = new StandaloneView($actionRequest, $this->standaloneViewNonce);
+        $standaloneView = new StandaloneView($actionRequest);
         $standaloneView->assign('name', 'Karsten');
         $standaloneView->assign('name', 'Robert');
         $standaloneView->setTemplatePathAndFilename(__DIR__ . '/Fixtures/TestTemplate.txt');
@@ -157,7 +137,7 @@ class StandaloneViewTest extends FunctionalTestCase
      */
     public function variablesAreEscapedByDefault(): void
     {
-        $standaloneView = new StandaloneView(null, $this->standaloneViewNonce);
+        $standaloneView = new StandaloneView(null);
         $standaloneView->assign('name', 'Sebastian <script>alert("dangerous");</script>');
         $standaloneView->setTemplateSource('Hello {name}.');
 
@@ -171,7 +151,7 @@ class StandaloneViewTest extends FunctionalTestCase
      */
     public function variablesAreNotEscapedIfEscapingIsDisabled(): void
     {
-        $standaloneView = new StandaloneView(null, $this->standaloneViewNonce);
+        $standaloneView = new StandaloneView(null);
         $standaloneView->assign('name', 'Sebastian <script>alert("dangerous");</script>');
         $standaloneView->setTemplateSource('{escapingEnabled=false}Hello {name}.');
 
@@ -185,7 +165,7 @@ class StandaloneViewTest extends FunctionalTestCase
      */
     public function variablesCanBeNested()
     {
-        $standaloneView = new StandaloneView(null, $this->standaloneViewNonce);
+        $standaloneView = new StandaloneView(null);
         $standaloneView->assign('type', 'thing');
         $standaloneView->assign('flavor', 'yellow');
         $standaloneView->assign('config', ['thing' => ['value' => ['yellow' => 'Okayish']]]);
@@ -205,7 +185,7 @@ class StandaloneViewTest extends FunctionalTestCase
         $actionRequest = ActionRequest::fromHttpRequest($httpRequest);
         $actionRequest->setFormat('txt');
 
-        $standaloneView = new StandaloneView($actionRequest, $this->standaloneViewNonce);
+        $standaloneView = new StandaloneView($actionRequest);
         $standaloneView->setTemplatePathAndFilename(__DIR__ . '/Fixtures/TestTemplateWithPartial.txt');
 
         $expected = 'This is a test template. Hello Robert.';
@@ -222,7 +202,7 @@ class StandaloneViewTest extends FunctionalTestCase
         $actionRequest = ActionRequest::fromHttpRequest($httpRequest);
         $actionRequest->setFormat('txt');
 
-        $standaloneView = new StandaloneView($actionRequest, $this->standaloneViewNonce);
+        $standaloneView = new StandaloneView($actionRequest);
         $standaloneView->setTemplatePathAndFilename(__DIR__ . '/Fixtures/TestTemplateWithPartial.txt');
         $standaloneView->setPartialRootPath(__DIR__ . '/Fixtures/SpecialPartialsDirectory');
 
@@ -240,7 +220,7 @@ class StandaloneViewTest extends FunctionalTestCase
         $actionRequest = ActionRequest::fromHttpRequest($httpRequest);
         $actionRequest->setFormat('txt');
 
-        $standaloneView = new StandaloneView($actionRequest, $this->standaloneViewNonce);
+        $standaloneView = new StandaloneView($actionRequest);
         $standaloneView->setTemplatePathAndFilename(__DIR__ . '/Fixtures/TestTemplateWithLayout.txt');
 
         $expected = 'Hey HEY HO';
@@ -256,7 +236,7 @@ class StandaloneViewTest extends FunctionalTestCase
         $httpRequest = $this->objectManager->get(ServerRequestFactoryInterface::class)->createServerRequest('GET', 'http://localhost');
         $actionRequest = ActionRequest::fromHttpRequest($httpRequest);
         $actionRequest->setFormat('txt');
-        $standaloneView = new StandaloneView($actionRequest, $this->standaloneViewNonce);
+        $standaloneView = new StandaloneView($actionRequest);
         $standaloneView->setTemplatePathAndFilename(__DIR__ . '/Fixtures/TestTemplateWithLayout.txt');
         $standaloneView->setLayoutRootPath(__DIR__ . '/Fixtures/SpecialLayouts');
 
@@ -274,7 +254,7 @@ class StandaloneViewTest extends FunctionalTestCase
         $httpRequest = $this->objectManager->get(ServerRequestFactoryInterface::class)->createServerRequest('GET', 'http://localhost');
         $actionRequest = ActionRequest::fromHttpRequest($httpRequest);
         $actionRequest->setFormat('txt');
-        $standaloneView = new Fixtures\View\StandaloneView($actionRequest, $this->standaloneViewNonce);
+        $standaloneView = new StandaloneView($actionRequest);
         $standaloneView->setTemplatePathAndFilename(__DIR__ . '/Fixtures/TestTemplateWithUnknownViewHelper.txt');
         $standaloneView->setLayoutRootPath(__DIR__ . '/Fixtures/SpecialLayouts');
 
@@ -289,7 +269,7 @@ class StandaloneViewTest extends FunctionalTestCase
         $httpRequest = $this->objectManager->get(ServerRequestFactoryInterface::class)->createServerRequest('GET', 'http://localhost');
         $actionRequest = ActionRequest::fromHttpRequest($httpRequest);
         $actionRequest->setFormat('txt');
-        $standaloneView = new Fixtures\View\StandaloneView($actionRequest, $this->standaloneViewNonce);
+        $standaloneView = new StandaloneView($actionRequest);
         $standaloneView->setTemplatePathAndFilename(__DIR__ . '/Fixtures/TestTemplateWithCustomNamespaces.txt');
         $standaloneView->setLayoutRootPath(__DIR__ . '/Fixtures/SpecialLayouts');
 
@@ -312,7 +292,7 @@ class StandaloneViewTest extends FunctionalTestCase
         $actionRequest = ActionRequest::fromHttpRequest($httpRequest);
         $actionRequest->setFormat('html');
 
-        $standaloneView = new StandaloneView($actionRequest, $this->standaloneViewNonce);
+        $standaloneView = new StandaloneView($actionRequest);
         $standaloneView->assign('hack', '<h1>HACK</h1>');
         $standaloneView->setTemplatePathAndFilename(__DIR__ . '/Fixtures/NestedRenderingConfiguration/TemplateWithSection.txt');
 
@@ -324,7 +304,7 @@ class StandaloneViewTest extends FunctionalTestCase
         $templateCache = $this->objectManager->get(CacheManager::class)->getCache('Fluid_TemplateCache');
         $templateCache->remove($partialCacheIdentifier);
 
-        $standaloneView = new StandaloneView($actionRequest, $this->standaloneViewNonce);
+        $standaloneView = new StandaloneView($actionRequest);
         $standaloneView->assign('hack', '<h1>HACK</h1>');
         $standaloneView->setTemplatePathAndFilename(__DIR__ . '/Fixtures/NestedRenderingConfiguration/TemplateWithSection.txt');
 
@@ -366,7 +346,7 @@ class StandaloneViewTest extends FunctionalTestCase
         $httpRequest = $this->objectManager->get(ServerRequestFactoryInterface::class)->createServerRequest('GET', 'http://localhost');
         $actionRequest = ActionRequest::fromHttpRequest($httpRequest);
 
-        $standaloneView = new StandaloneView($actionRequest, $this->standaloneViewNonce);
+        $standaloneView = new StandaloneView($actionRequest);
         $standaloneView->assign('name', 'Karsten');
         $standaloneView->assign('name', 'Robert');
         $standaloneView->setTemplatePathAndFilename(__DIR__ . '/Fixtures/TestTemplateWithFormField.txt');
