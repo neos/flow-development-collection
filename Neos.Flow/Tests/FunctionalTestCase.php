@@ -148,7 +148,7 @@ abstract class FunctionalTestCase extends \Neos\Flow\Tests\BaseTestCase
         self::$bootstrap->getObjectManager()->forgetInstance(\Neos\Flow\ResourceManagement\ResourceManager::class);
         $session = $this->objectManager->get(\Neos\Flow\Session\SessionInterface::class);
         if ($session->isStarted()) {
-            $session->destroy(sprintf('assure that session is fresh, in setUp() method of functional test %s.', get_class($this) . '::' . $this->getName()));
+            $session->destroy(sprintf('assure that session is fresh, in setUp() method of functional test class %s.', $this::class));
         }
 
         $privilegeManager = $this->objectManager->get(\Neos\Flow\Security\Authorization\TestingPrivilegeManager::class);
