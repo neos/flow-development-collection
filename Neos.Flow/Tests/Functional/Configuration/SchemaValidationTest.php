@@ -25,29 +25,19 @@ use Symfony\Component\Yaml\Yaml;
  */
 class SchemaValidationTest extends FunctionalTestCase
 {
-    /**
-     * @var array<string>
-     */
-    protected $schemaPackageKeys = ['Neos.Flow', 'Neos.FluidAdaptor', 'Neos.Eel', 'Neos.Kickstart'];
+    protected static array $schemaPackageKeys = ['Neos.Flow', 'Neos.FluidAdaptor', 'Neos.Eel', 'Neos.Kickstart'];
 
     /**
      * The schema-schema yaml
-     *
-     * @var string
      */
-    protected $schemaSchemaResource = 'resource://Neos.Flow/Private/Schema/Schema.schema.yaml';
+    protected string $schemaSchemaResource = 'resource://Neos.Flow/Private/Schema/Schema.schema.yaml';
 
     /**
      * The parsed schema-schema
-     *
-     * @var array
      */
-    protected $schemaSchema;
+    protected array $schemaSchema;
 
-    /**
-     * @var SchemaValidator
-     */
-    protected $schemaValidator;
+    protected SchemaValidator $schemaValidator;
 
     protected function setUp(): void
     {
@@ -56,19 +46,17 @@ class SchemaValidationTest extends FunctionalTestCase
         $this->schemaSchema = Yaml::parseFile($this->schemaSchemaResource);
     }
 
-    /**
-     * @return array
-     */
-    public function schemaFilesAreValidDataProvider()
+    public static function schemaFilesAreValidDataProvider(): array
     {
         $bootstrap = Bootstrap::$staticObjectManager->get(Bootstrap::class);
         $objectManager = $bootstrap->getObjectManager();
         $packageManager = $objectManager->get(PackageManager::class);
 
         $activePackages = $packageManager->getAvailablePackages();
+        $schemaPackages = [];
         foreach ($activePackages as $package) {
             $packageKey = $package->getPackageKey();
-            if (in_array($packageKey, $this->schemaPackageKeys)) {
+            if (in_array($packageKey, self::$schemaPackageKeys, true)) {
                 $schemaPackages[] = $package;
             }
         }
@@ -92,7 +80,7 @@ class SchemaValidationTest extends FunctionalTestCase
      * @test
      * @dataProvider schemaFilesAreValidDataProvider
      */
-    public function schemaFilesAreValid($schemaFile)
+    public function schemaFilesAreValid(string $schemaFile): void
     {
         $schema = Yaml::parseFile($schemaFile);
         $result = $this->schemaValidator->validate($schema, $this->schemaSchema);

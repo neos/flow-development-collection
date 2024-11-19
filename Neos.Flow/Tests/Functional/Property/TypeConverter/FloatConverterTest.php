@@ -32,13 +32,13 @@ class FloatConverterTest extends FunctionalTestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->converter = $this->objectManager->get(\Neos\Flow\Property\TypeConverter\FloatConverter::class);
+        $this->converter = $this->objectManager->get(FloatConverter::class);
     }
 
     /**
      * @return array Signature: string $locale, string $source, float $expectedResult
      */
-    public function localeParsingDataProvider()
+    public static function localeParsingDataProvider(): array
     {
         return [
             ['de', '13,20', 13.2],
@@ -47,19 +47,15 @@ class FloatConverterTest extends FunctionalTestCase
 
             ['en', '14.42', 14.42],
             ['en', '10,423.58', 10423.58],
-            ['en', '10,42358', 1042358],
+            ['en', '10,42358', (float)1042358],
         ];
     }
 
     /**
      * @test
      * @dataProvider localeParsingDataProvider
-     *
-     * @param Locale|string $locale
-     * @param $source
-     * @param $expectedResult
      */
-    public function convertFromUsingVariousLocalesParsesFloatCorrectly($locale, $source, $expectedResult)
+    public function convertFromUsingVariousLocalesParsesFloatCorrectly(string $locale, string $source, float $expectedResult): void
     {
         $configuration = new PropertyMappingConfiguration();
         $configuration->setTypeConverterOption(FloatConverter::class, 'locale', $locale);
@@ -71,7 +67,7 @@ class FloatConverterTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function convertFromReturnsErrorIfFormatIsInvalid()
+    public function convertFromReturnsErrorIfFormatIsInvalid(): void
     {
         $configuration = new PropertyMappingConfiguration();
         $configuration->setTypeConverterOption(FloatConverter::class, 'locale', 'de');
@@ -85,7 +81,7 @@ class FloatConverterTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function convertFromThrowsExceptionIfLocaleIsInvalid()
+    public function convertFromThrowsExceptionIfLocaleIsInvalid(): void
     {
         $this->expectException(InvalidLocaleIdentifierException::class);
         $configuration = new PropertyMappingConfiguration();
@@ -97,7 +93,7 @@ class FloatConverterTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function convertFromDoesntUseLocaleParserIfNoConfigurationGiven()
+    public function convertFromDoesntUseLocaleParserIfNoConfigurationGiven(): void
     {
         self::assertEquals(84, $this->converter->convertFrom('84.000', 'float'));
         self::assertEquals(84.42, $this->converter->convertFrom('84.42', 'float'));

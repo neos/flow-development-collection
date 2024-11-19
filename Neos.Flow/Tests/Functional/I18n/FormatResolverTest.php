@@ -21,10 +21,7 @@ use Neos\Flow\I18n;
  */
 class FormatResolverTest extends FunctionalTestCase
 {
-    /**
-     * @var FormatResolver
-     */
-    protected $formatResolver;
+    protected FormatResolver $formatResolver;
 
     /**
      * Initialize dependencies
@@ -35,10 +32,7 @@ class FormatResolverTest extends FunctionalTestCase
         $this->formatResolver = $this->objectManager->get(FormatResolver::class);
     }
 
-    /**
-     * @return array
-     */
-    public function placeholderAndDateValues(): array
+    public static function placeholderAndDateValues(): array
     {
         $date = new \DateTime('@1322228231');
         return [
@@ -52,12 +46,6 @@ class FormatResolverTest extends FunctionalTestCase
     /**
      * @test
      * @dataProvider placeholderAndDateValues
-     * @param string $stringWithPlaceholders
-     * @param array $arguments
-     * @param I18n\Locale $locale
-     * @param string $expected
-     * @throws I18n\Exception\IndexOutOfBoundsException
-     * @throws I18n\Exception\InvalidFormatPlaceholderException
      */
     public function formatResolverWithDatetimeReplacesCorrectValues(string  $stringWithPlaceholders, array $arguments, I18n\Locale $locale, string $expected): void
     {

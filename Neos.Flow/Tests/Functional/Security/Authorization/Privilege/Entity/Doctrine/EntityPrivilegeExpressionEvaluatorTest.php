@@ -23,14 +23,8 @@ use Neos\Flow\Tests\Functional\Security\Fixtures;
 
 class EntityPrivilegeExpressionEvaluatorTest extends FunctionalTestCase
 {
-    /**
-     * @var boolean
-     */
     protected static $testablePersistenceEnabled = true;
 
-    /**
-     * @return void
-     */
     protected function setUp(): void
     {
         parent::setUp();
@@ -39,12 +33,7 @@ class EntityPrivilegeExpressionEvaluatorTest extends FunctionalTestCase
         }
     }
 
-    /**
-     * Data provider for expressions
-     *
-     * @return array
-     */
-    public function expressions()
+    public static function expressions(): array
     {
         return [
             [
@@ -62,10 +51,8 @@ class EntityPrivilegeExpressionEvaluatorTest extends FunctionalTestCase
     /**
      * @test
      * @dataProvider expressions
-     *
-     * @param $expression
      */
-    public function evaluatingSomeExpressionWorks($expression, $expectedSqlCode)
+    public function evaluatingSomeExpressionWorks(string $expression, string $expectedSqlCode): void
     {
         $context = new Eel\Context(new ConditionGenerator());
 
@@ -82,7 +69,7 @@ class EntityPrivilegeExpressionEvaluatorTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function propertyContainsExpressionGeneratesExpectedSqlFilterForOneToMany()
+    public function propertyContainsExpressionGeneratesExpectedSqlFilterForOneToMany(): void
     {
         $context = new Eel\Context(new ConditionGenerator());
 
@@ -102,7 +89,7 @@ class EntityPrivilegeExpressionEvaluatorTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function propertyContainsExpressionGeneratesExpectedSqlFilterForManyToMany()
+    public function propertyContainsExpressionGeneratesExpectedSqlFilterForManyToMany(): void
     {
         $context = new Eel\Context(new ConditionGenerator());
 

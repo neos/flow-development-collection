@@ -16,10 +16,7 @@ use Neos\Flow\Tests\FunctionalTestCase;
 
 class LogEnvironmentTest extends FunctionalTestCase
 {
-    /**
-     * @return array
-     */
-    public function fromMethodNameDataProvider(): array
+    public static function fromMethodNameDataProvider(): array
     {
         return [
             'packageKeyCanBeDetermined' => [
@@ -48,13 +45,9 @@ class LogEnvironmentTest extends FunctionalTestCase
 
     /**
      * @test
-     *
-     * @param $method
-     * @param $expected
-     *
      * @dataProvider fromMethodNameDataProvider
      */
-    public function fromMethodName($method, $expected)
+    public function fromMethodName(string $method, array $expected): void
     {
         $actual = LogEnvironment::fromMethodName($method);
         self::assertEquals($expected, $actual);

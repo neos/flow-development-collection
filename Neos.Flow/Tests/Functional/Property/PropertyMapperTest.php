@@ -46,7 +46,7 @@ class PropertyMapperTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function domainObjectWithSimplePropertiesCanBeCreated()
+    public function domainObjectWithSimplePropertiesCanBeCreated(): void
     {
         $source = [
             'name' => 'Robert Skaarhoj',
@@ -63,7 +63,7 @@ class PropertyMapperTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function domainObjectWithVirtualPropertiesCanBeCreated()
+    public function domainObjectWithVirtualPropertiesCanBeCreated(): void
     {
         $source = [
             'name' => 'Robert Skaarhoj',
@@ -80,7 +80,7 @@ class PropertyMapperTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function simpleObjectWithSimplePropertiesCanBeCreated()
+    public function simpleObjectWithSimplePropertiesCanBeCreated(): void
     {
         $source = [
             'name' => 'Christopher',
@@ -98,7 +98,7 @@ class PropertyMapperTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function valueobjectCanBeMapped()
+    public function valueobjectCanBeMapped(): void
     {
         $source = [
             '__identity' => 'abcdefghijkl',
@@ -114,7 +114,7 @@ class PropertyMapperTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function embeddedValueobjectCanBeMapped()
+    public function embeddedValueobjectCanBeMapped(): void
     {
         $source = [
             'name' => 'Christopher',
@@ -129,7 +129,7 @@ class PropertyMapperTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function integerCanBeMappedToString()
+    public function integerCanBeMappedToString(): void
     {
         $source = [
             'name' => 42,
@@ -144,7 +144,7 @@ class PropertyMapperTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function targetTypeForEntityCanBeOverriddenIfConfigured()
+    public function targetTypeForEntityCanBeOverriddenIfConfigured(): void
     {
         $source = [
             '__type' => Fixtures\TestEntitySubclass::class,
@@ -162,7 +162,7 @@ class PropertyMapperTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function overriddenTargetTypeForEntityMustBeASubclass()
+    public function overriddenTargetTypeForEntityMustBeASubclass(): void
     {
         $this->expectException(Exception::class);
         $source = [
@@ -179,7 +179,7 @@ class PropertyMapperTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function targetTypeForSimpleObjectCanBeOverriddenIfConfigured()
+    public function targetTypeForSimpleObjectCanBeOverriddenIfConfigured(): void
     {
         $source = [
             '__type' => Fixtures\TestSubclass::class,
@@ -196,7 +196,7 @@ class PropertyMapperTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function overriddenTargetTypeForSimpleObjectMustBeASubclass()
+    public function overriddenTargetTypeForSimpleObjectMustBeASubclass(): void
     {
         $this->expectException(Exception::class);
         $source = [
@@ -213,7 +213,7 @@ class PropertyMapperTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function mappingPersistentEntityOnlyChangesModifiedProperties()
+    public function mappingPersistentEntityOnlyChangesModifiedProperties(): void
     {
         $entityIdentity = $this->createTestEntity();
 
@@ -231,7 +231,7 @@ class PropertyMapperTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function mappingPersistentEntityAllowsToSetValueToNull()
+    public function mappingPersistentEntityAllowsToSetValueToNull(): void
     {
         $entityIdentity = $this->createTestEntity();
 
@@ -249,7 +249,7 @@ class PropertyMapperTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function mappingOfPropertiesWithUnqualifiedInterfaceName()
+    public function mappingOfPropertiesWithUnqualifiedInterfaceName(): void
     {
         $relatedEntity = new Fixtures\TestEntity();
 
@@ -266,7 +266,7 @@ class PropertyMapperTest extends FunctionalTestCase
      *
      * @test
      */
-    public function ifTargetObjectTypeIsPassedAsArgumentDoNotConvertIt()
+    public function ifTargetObjectTypeIsPassedAsArgumentDoNotConvertIt(): void
     {
         $entity = new Fixtures\TestEntity();
         $entity->setName('Egon Olsen');
@@ -280,7 +280,7 @@ class PropertyMapperTest extends FunctionalTestCase
      *
      * @test
      */
-    public function ifTargetObjectTypeIsPassedRecursivelyDoNotConvertIt()
+    public function ifTargetObjectTypeIsPassedRecursivelyDoNotConvertIt(): void
     {
         $entity = new Fixtures\TestEntity();
         $entity->setName('Egon Olsen');
@@ -295,7 +295,7 @@ class PropertyMapperTest extends FunctionalTestCase
      *
      * @test
      */
-    public function skipPropertyIfTypeConverterReturnsNullForChildPropertyType()
+    public function skipPropertyIfTypeConverterReturnsNullForChildPropertyType(): void
     {
         $source = [
             'name' => 'Smilla',
@@ -315,7 +315,7 @@ class PropertyMapperTest extends FunctionalTestCase
      *
      * @return string identifier of newly created entity
      */
-    protected function createTestEntity()
+    protected function createTestEntity(): string
     {
         $entity = new Fixtures\TestEntity();
         $entity->setName('Egon Olsen');
@@ -335,7 +335,7 @@ class PropertyMapperTest extends FunctionalTestCase
      *
      * @test
      */
-    public function mappingToFieldsFromSubclassWorksIfTargetTypeIsOverridden()
+    public function mappingToFieldsFromSubclassWorksIfTargetTypeIsOverridden(): void
     {
         $source = [
             '__type' => Fixtures\TestEntitySubclassWithNewField::class,
@@ -353,7 +353,7 @@ class PropertyMapperTest extends FunctionalTestCase
      * @test
      * @dataProvider invalidTypeConverterConfigurationsForOverridingTargetTypes
      */
-    public function mappingToFieldsFromSubclassThrowsExceptionIfTypeConverterOptionIsInvalidOrNotSet(PropertyMappingConfigurationInterface $configuration = null)
+    public function mappingToFieldsFromSubclassThrowsExceptionIfTypeConverterOptionIsInvalidOrNotSet(PropertyMappingConfigurationInterface $configuration = null): void
     {
         $this->expectException(Exception::class);
         $source = [
@@ -369,7 +369,7 @@ class PropertyMapperTest extends FunctionalTestCase
      *
      * @return array
      */
-    public function invalidTypeConverterConfigurationsForOverridingTargetTypes()
+    public static function invalidTypeConverterConfigurationsForOverridingTargetTypes(): array
     {
         $configurationWithNoSetting = new PropertyMappingConfiguration();
 
@@ -386,7 +386,7 @@ class PropertyMapperTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function convertFromShouldThrowExceptionIfGivenSourceTypeIsNotATargetType()
+    public function convertFromShouldThrowExceptionIfGivenSourceTypeIsNotATargetType(): void
     {
         $this->expectException(Exception::class);
         $source = [
@@ -405,7 +405,7 @@ class PropertyMapperTest extends FunctionalTestCase
      *
      * @test
      */
-    public function convertedAccountRolesCanBeSet()
+    public function convertedAccountRolesCanBeSet(): void
     {
         $source = [
             'accountIdentifier' => 'someAccountIdentifier',
@@ -429,7 +429,7 @@ class PropertyMapperTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function persistentEntityCanBeSerializedToIdentifierUsingObjectSource()
+    public function persistentEntityCanBeSerializedToIdentifierUsingObjectSource(): void
     {
         $entity = new Fixtures\TestEntity();
         $entity->setName('Egon Olsen');
@@ -452,7 +452,7 @@ class PropertyMapperTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function getTargetPropertyNameShouldReturnTheUnmodifiedPropertyNameWithoutConfiguration()
+    public function getTargetPropertyNameShouldReturnTheUnmodifiedPropertyNameWithoutConfiguration(): void
     {
         $defaultConfiguration = $this->propertyMapper->buildPropertyMappingConfiguration();
         self::assertTrue($defaultConfiguration->getConfigurationValue(\Neos\Flow\Property\TypeConverter\PersistentObjectConverter::class, \Neos\Flow\Property\TypeConverter\PersistentObjectConverter::CONFIGURATION_CREATION_ALLOWED));
@@ -465,7 +465,7 @@ class PropertyMapperTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function foo()
+    public function foo(): void
     {
         $actualResult = $this->propertyMapper->convert(true, 'int');
         self::assertSame(42, $actualResult);
@@ -474,7 +474,7 @@ class PropertyMapperTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function collectionPropertyWithMissingElementTypeThrowsHelpfulException()
+    public function collectionPropertyWithMissingElementTypeThrowsHelpfulException(): void
     {
         $this->expectException(Exception::class);
         $this->expectExceptionMessageMatches('/The annotated collection property "0" is missing an element type/');

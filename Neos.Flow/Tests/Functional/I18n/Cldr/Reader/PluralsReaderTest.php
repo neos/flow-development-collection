@@ -19,10 +19,7 @@ use Neos\Flow\I18n;
 
 class PluralsReaderTest extends FunctionalTestCase
 {
-    /**
-     * @var PluralsReader
-     */
-    protected $pluralsReader;
+    protected PluralsReader $pluralsReader;
 
     protected function setUp(): void
     {
@@ -36,7 +33,7 @@ class PluralsReaderTest extends FunctionalTestCase
      *
      * @return array
      */
-    public function quantities(): array
+    public static function quantities(): array
     {
         return [
             [
@@ -66,15 +63,11 @@ class PluralsReaderTest extends FunctionalTestCase
     /**
      * @test
      * @dataProvider quantities
-     * @param string $localeName
-     * @param array $quantities
-     * @throws I18n\Exception\InvalidLocaleIdentifierException
      */
     public function returnsCorrectPluralForm(string $localeName, array $quantities): void
     {
         $locale = new I18n\Locale($localeName);
-        foreach ($quantities as $value) {
-            list($quantity, $pluralForm) = $value;
+        foreach ($quantities as [$quantity, $pluralForm]) {
             $result = $this->pluralsReader->getPluralForm($quantity, $locale);
             self::assertEquals($pluralForm, $result);
         }

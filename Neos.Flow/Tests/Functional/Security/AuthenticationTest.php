@@ -121,7 +121,7 @@ class AuthenticationTest extends FunctionalTestCase
      */
     public function theInterceptedRequestIsStoredInASessionForLaterRetrieval()
     {
-        $this->markTestIncomplete();
+        $this->markTestIncomplete('Needs to be implemented');
 
         // At this time, we can't really test this case because the security context
         // does not contain any authentication tokens or a properly configured entry

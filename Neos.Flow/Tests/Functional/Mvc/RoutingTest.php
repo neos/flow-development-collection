@@ -33,10 +33,7 @@ use Psr\Http\Message\ServerRequestInterface;
  */
 class RoutingTest extends FunctionalTestCase
 {
-    /**
-     * @var ServerRequestFactoryInterface
-     */
-    protected $serverRequestFactory;
+    protected ServerRequestFactoryInterface $serverRequestFactory;
 
     /**
      * Validate that test routes are loaded
@@ -57,15 +54,9 @@ class RoutingTest extends FunctionalTestCase
 
         if (!$foundRoute) {
             self::markTestSkipped('In this distribution the Flow routes are not included into the global configuration.');
-            return;
         }
     }
 
-    /**
-     * @param ServerRequestInterface $httpRequest
-     * @param array $matchResults
-     * @return ActionRequest
-     */
     protected function createActionRequest(ServerRequestInterface $httpRequest, array $matchResults = null): ActionRequest
     {
         $actionRequest = ActionRequest::fromHttpRequest($httpRequest);
@@ -80,7 +71,7 @@ class RoutingTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function httpMethodsAreRespectedForGetRequests()
+    public function httpMethodsAreRespectedForGetRequests(): void
     {
         $requestUri = 'http://localhost/neos/flow/test/httpmethods';
         $request = $this->serverRequestFactory->createServerRequest('GET', new Uri($requestUri));
@@ -93,7 +84,7 @@ class RoutingTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function httpMethodsAreRespectedForPostRequests()
+    public function httpMethodsAreRespectedForPostRequests(): void
     {
         $requestUri = 'http://localhost/neos/flow/test/httpmethods';
         $request = $this->serverRequestFactory->createServerRequest('POST', new Uri($requestUri));
@@ -103,12 +94,7 @@ class RoutingTest extends FunctionalTestCase
         self::assertEquals('second', $actionRequest->getControllerActionName());
     }
 
-    /**
-     * Data provider for routeTests()
-     *
-     * @return array
-     */
-    public function routeTestsDataProvider(): array
+    public static function routeTestsDataProvider(): array
     {
         return [
             // non existing route is not matched:
@@ -196,19 +182,15 @@ class RoutingTest extends FunctionalTestCase
     }
 
     /**
-     * @param string $requestUri request URI
-     * @param string $expectedMatchingRouteName expected route
-     * @param string $expectedControllerObjectName expected controller object name
-     * @param array $expectedArguments expected request arguments after routing or NULL if this should not be checked
      * @test
      * @dataProvider routeTestsDataProvider
      */
-    public function routeTests($requestUri, $expectedMatchingRouteName, $expectedControllerObjectName = null, array $expectedArguments = null)
+    public function routeTests(string $requestUri, ?string $expectedMatchingRouteName, ?string $expectedControllerObjectName = null, ?array $expectedArguments = null): void
     {
         $request = $this->serverRequestFactory->createServerRequest('GET', new Uri($requestUri));
         try {
             $matchResults = $this->router->route(new RouteContext($request, RouteParameters::createEmpty()));
-        } catch (NoMatchingRouteException $exception) {
+        } catch (NoMatchingRouteException) {
             $matchResults = null;
         }
         $actionRequest = $this->createActionRequest($request, $matchResults);
@@ -230,12 +212,7 @@ class RoutingTest extends FunctionalTestCase
         }
     }
 
-    /**
-     * Data provider for resolveTests()
-     *
-     * @return array
-     */
-    public function resolveTestsDataProvider(): array
+    public static function resolveTestsDataProvider(): array
     {
         $defaults = ['@package' => 'Neos.Flow', '@subpackage' => 'Tests\Functional\Mvc\Fixtures', '@controller' => 'RoutingTestA'];
         return [
@@ -285,35 +262,23 @@ class RoutingTest extends FunctionalTestCase
     }
 
     /**
-     * @param array $routeValues route values to resolve
-     * @param string $expectedResolvedRouteName expected route
-     * @param string $expectedResolvedUriPath expected matching URI
      * @test
      * @dataProvider resolveTestsDataProvider
      */
-    public function resolveTests(array $routeValues, $expectedResolvedRouteName, $expectedResolvedUriPath = null)
+    public function resolveTests(array $routeValues, string $expectedResolvedRouteName, ?string $expectedResolvedUriPath = null): void
     {
         $baseUri = new Uri('http://localhost');
         $resolvedUriPath = $this->router->resolve(new ResolveContext($baseUri, $routeValues, false, '', RouteParameters::createEmpty()));
         $resolvedRoute = $this->router->getLastResolvedRoute();
-        if ($expectedResolvedRouteName === null) {
-            if ($resolvedRoute !== null) {
-                self::fail('Expected no route to resolve but route "' . $resolvedRoute->getName() . '" resolved');
-            }
+        if ($resolvedRoute === null) {
+            self::fail('Expected route "' . $expectedResolvedRouteName . '" to resolve');
         } else {
-            if ($resolvedRoute === null) {
-                self::fail('Expected route "' . $expectedResolvedRouteName . '" to resolve');
-            } else {
-                self::assertEquals('Neos.Flow :: Functional Test: ' . $expectedResolvedRouteName, $resolvedRoute->getName());
-            }
+            self::assertEquals('Neos.Flow :: Functional Test: ' . $expectedResolvedRouteName, $resolvedRoute->getName());
         }
         self::assertEquals($expectedResolvedUriPath, $resolvedUriPath);
     }
 
-    /**
-     * @return array
-     */
-    public function requestMethodAcceptArray(): array
+    public static function requestMethodAcceptArray(): array
     {
         return [
             ['GET', 404],
@@ -327,7 +292,7 @@ class RoutingTest extends FunctionalTestCase
      * @test
      * @dataProvider requestMethodAcceptArray
      */
-    public function routesWithoutRequestedHttpMethodConfiguredResultInA404($requestMethod, $expectedStatus)
+    public function routesWithoutRequestedHttpMethodConfiguredResultInA404(string $requestMethod, int $expectedStatus): void
     {
         $this->registerRoute(
             'HTTP Method Test',
@@ -350,7 +315,7 @@ class RoutingTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function routerInitializesRoutesIfNotInjectedExplicitly()
+    public function routerInitializesRoutesIfNotInjectedExplicitly(): void
     {
         $routeValues = [
             '@package' => 'Neos.Flow',
@@ -368,7 +333,7 @@ class RoutingTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function uriPathPrefixIsRespectedInRoute()
+    public function uriPathPrefixIsRespectedInRoute(): void
     {
         $routeValues = [
             '@package' => 'Neos.Flow',
@@ -386,7 +351,7 @@ class RoutingTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function explicitlySpecifiedRoutesOverruleConfiguredRoutes()
+    public function explicitlySpecifiedRoutesOverruleConfiguredRoutes(): void
     {
         $routeValues = [
             '@package' => 'Neos.Flow',
@@ -413,6 +378,6 @@ class RoutingTest extends FunctionalTestCase
         self::assertSame('/custom/uri/pattern', (string)$actualResult);
 
         // reset router configuration for following tests
-        $this->router->setRoutesConfiguration(null);
+        $this->router->setRoutesConfiguration();
     }
 }

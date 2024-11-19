@@ -20,24 +20,15 @@ use Neos\Flow\Tests\FunctionalTestCase;
  */
 class TranslatorTest extends FunctionalTestCase
 {
-    /**
-     * @var I18n\Translator
-     */
-    protected $translator;
+    protected I18n\Translator $translator;
 
-    /**
-     * Initialize dependencies
-     */
     protected function setUp(): void
     {
         parent::setUp();
         $this->translator = $this->objectManager->get(I18n\Translator::class);
     }
 
-    /**
-     * @return array
-     */
-    public function idAndLocaleForTranslation()
+    public static function idAndLocaleForTranslation(): array
     {
         return [
             ['authentication.username', new I18n\Locale('en'), 'Username'],
@@ -51,16 +42,13 @@ class TranslatorTest extends FunctionalTestCase
      * @test
      * @dataProvider idAndLocaleForTranslation
      */
-    public function simpleTranslationByIdWorks($id, $locale, $translation)
+    public function simpleTranslationByIdWorks($id, $locale, $translation): void
     {
         $result = $this->translator->translateById($id, [], null, $locale, 'Main', 'Neos.Flow');
         self::assertEquals($translation, $result);
     }
 
-    /**
-     * @return array
-     */
-    public function labelAndLocaleForTranslation()
+    public static function labelAndLocaleForTranslation(): array
     {
         return [
             ['Update', new I18n\Locale('en'), 'Update'],
@@ -72,16 +60,13 @@ class TranslatorTest extends FunctionalTestCase
      * @test
      * @dataProvider labelAndLocaleForTranslation
      */
-    public function simpleTranslationByLabelWorks($label, $locale, $translation)
+    public function simpleTranslationByLabelWorks($label, $locale, $translation): void
     {
         $result = $this->translator->translateByOriginalLabel($label, [], null, $locale, 'Main', 'Neos.Flow');
         self::assertEquals($translation, $result);
     }
 
-    /**
-     * @return array
-     */
-    public function labelAndArgumentsForTranslation()
+    public static function labelAndArgumentsForTranslation(): array
     {
         return [
             ['The given value is expected to be {0}.', ['foo'], 'The given value is expected to be foo.'],
@@ -93,7 +78,7 @@ class TranslatorTest extends FunctionalTestCase
      * @test
      * @dataProvider labelAndArgumentsForTranslation
      */
-    public function translationByLabelUsesPlaceholders($label, $arguments, $translation)
+    public function translationByLabelUsesPlaceholders($label, $arguments, $translation): void
     {
         $result = $this->translator->translateByOriginalLabel($label, $arguments, null, new I18n\Locale('en'), 'ValidationErrors', 'Neos.Flow');
         self::assertEquals($translation, $result);
@@ -102,7 +87,7 @@ class TranslatorTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function translationByIdReturnsNullOnFailure()
+    public function translationByIdReturnsNullOnFailure(): void
     {
         $result = $this->translator->translateById('non-existing-id');
         self::assertNull($result);
