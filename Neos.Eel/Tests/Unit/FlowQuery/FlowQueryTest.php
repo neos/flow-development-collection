@@ -33,7 +33,7 @@ class FlowQueryTest extends UnitTestCase
     /**
      * @test
      */
-    public function constructWithFlowQueryIsIdempotent()
+    public function constructWithFlowQueryIsIdempotent(): void
     {
         $flowQuery = new FlowQuery(['a', 'b', 'c']);
         $wrappedQuery = new FlowQuery($flowQuery);
@@ -44,7 +44,7 @@ class FlowQueryTest extends UnitTestCase
     /**
      * @test
      */
-    public function firstReturnsFirstObject()
+    public function firstReturnsFirstObject(): void
     {
         $myObject = new \stdClass();
         $myObject2 = new \stdClass();
@@ -58,7 +58,7 @@ class FlowQueryTest extends UnitTestCase
     /**
      * @test
      */
-    public function lastReturnsLastObject()
+    public function lastReturnsLastObject(): void
     {
         $myObject = new \stdClass();
         $myObject2 = new \stdClass();
@@ -72,7 +72,7 @@ class FlowQueryTest extends UnitTestCase
     /**
      * @test
      */
-    public function sliceReturnsSlicedObject()
+    public function sliceReturnsSlicedObject(): void
     {
         $myObject = new \stdClass();
         $myObject2 = new \stdClass();
@@ -91,7 +91,7 @@ class FlowQueryTest extends UnitTestCase
     /**
      * @test
      */
-    public function filterOperationFiltersArrays()
+    public function filterOperationFiltersArrays(): void
     {
         $myObject = new \stdClass();
         $myObject->arrayProperty = ['foo','bar','baz'];
@@ -196,7 +196,7 @@ class FlowQueryTest extends UnitTestCase
     /**
      * @return array
      */
-    public function dataProviderForFilter()
+    public static function dataProviderForFilter(): array
     {
         $myObject = new \stdClass();
         $myObject->myProperty = 'asdf';
@@ -440,32 +440,32 @@ class FlowQueryTest extends UnitTestCase
      * @dataProvider dataProviderForFilter
      * @test
      */
-    public function filterCanFilterObjects($sourceObjects, $filterString, $expected)
+    public function filterCanFilterObjects($sourceObjects, $filter, $expectedResult): void
     {
         $query = $this->createFlowQuery($sourceObjects);
-        $filter = $query->filter($filterString);
-        self::assertInstanceOf(FlowQuery::class, $filter);
-        self::assertSame($expected, iterator_to_array($filter));
+        $filterObject = $query->filter($filter);
+        self::assertInstanceOf(FlowQuery::class, $filterObject);
+        self::assertSame($expectedResult, iterator_to_array($filterObject));
     }
 
     /**
      * @dataProvider dataProviderForFilter
      * @test
      */
-    public function isCanFilterObjects($sourceObjects, $filterString, $expectedResultArray)
+    public function isCanFilterObjects($sourceObjects, $filter, $expectedResult): void
     {
         $query = $this->createFlowQuery($sourceObjects);
-        self::assertSame(count($expectedResultArray) > 0, $query->is($filterString));
+        self::assertSame(count($expectedResult) > 0, $query->is($filter));
     }
 
     /**
      * @dataProvider dataProviderForFilter
      * @test
      */
-    public function countReturnsCorrectNumber($sourceObjects, $filterString, $expectedResultArray)
+    public function countReturnsCorrectNumber($sourceObjects, $filter, $expectedResult): void
     {
         $query = $this->createFlowQuery($sourceObjects);
-        self::assertSame(count($expectedResultArray), $query->filter($filterString)->count());
+        self::assertSame(count($expectedResult), $query->filter($filter)->count());
         self::assertSame(count($sourceObjects), $query->count());
         self::assertSame(count($sourceObjects), count($query));
     }
@@ -473,7 +473,7 @@ class FlowQueryTest extends UnitTestCase
     /**
      * @test
      */
-    public function filterOperationFiltersNumbersCorrectly()
+    public function filterOperationFiltersNumbersCorrectly(): void
     {
         $myObject = new \stdClass();
         $myObject->stringProperty = '1foo bar baz2';
@@ -502,7 +502,7 @@ class FlowQueryTest extends UnitTestCase
     /**
      * @return array
      */
-    public function dataProviderForChildrenAndFilterAndProperty()
+    public static function dataProviderForChildrenAndFilterAndProperty(): array
     {
         $person1 = new \stdClass();
         $person1->name = 'Kasper Skaarhoj';
@@ -585,7 +585,7 @@ class FlowQueryTest extends UnitTestCase
      * @dataProvider dataProviderForChildrenAndFilterAndProperty
      * @test
      */
-    public function childrenAndFilterAndPropertyWorks($sourceObjects, array $expressions, $expectedResult, $isFinal = false)
+    public function childrenAndFilterAndPropertyWorks($sourceObjects, array $expressions, $expectedResult, $isFinal = false): void
     {
         $query = $this->createFlowQuery($sourceObjects);
         foreach ($expressions as $expression) {
@@ -601,7 +601,7 @@ class FlowQueryTest extends UnitTestCase
     /**
      * @return array
      */
-    public function dataProviderForErrorQueries()
+    public static function dataProviderForErrorQueries(): array
     {
         return [
             ['$query->children()'],
@@ -625,7 +625,7 @@ class FlowQueryTest extends UnitTestCase
      * @dataProvider dataProviderForErrorQueries
      * @test
      */
-    public function errorQueriesThrowError($expression)
+    public function errorQueriesThrowError($expression): void
     {
         $this->expectException(FizzleException::class);
 
@@ -642,28 +642,28 @@ class FlowQueryTest extends UnitTestCase
      * @param array $elements
      * @return FlowQuery
      */
-    protected function createFlowQuery(array $elements)
+    protected function createFlowQuery(array $elements): FlowQuery
     {
         $flowQuery = $this->getAccessibleMock(FlowQuery::class, [], [$elements]);
 
         // Set up mock persistence manager to return dummy object identifiers
         $this->mockPersistenceManager = $this->createMock(PersistenceManagerInterface::class);
-        $this->mockPersistenceManager->expects($this->any())->method('getIdentifierByObject')->will(self::returnCallBack(function ($object) {
+        $this->mockPersistenceManager->expects($this->any())->method('getIdentifierByObject')->willReturnCallBack(function ($object) {
             if (isset($object->__identity)) {
                 return $object->__identity;
             }
-        }));
+        });
 
         $mockPersistenceManager = $this->mockPersistenceManager;
         $objectManager = $this->createMock(ObjectManagerInterface::class);
-        $objectManager->expects($this->any())->method('get')->will(self::returnCallBack(function ($className) use ($mockPersistenceManager) {
+        $objectManager->expects($this->any())->method('get')->willReturnCallBack(function ($className) use ($mockPersistenceManager) {
             $instance = new $className;
             // Special case to inject the mock persistence manager into the filter operation
             if ($className === Operations\Object\FilterOperation::class) {
                 ObjectAccess::setProperty($instance, 'persistenceManager', $mockPersistenceManager, true);
             }
             return $instance;
-        }));
+        });
 
         $operationResolver = $this->getAccessibleMock(OperationResolver::class, []);
         $operationResolver->_set('objectManager', $objectManager);

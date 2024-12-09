@@ -11,6 +11,7 @@ namespace Neos\Eel\Tests\Unit\FlowQuery\Operations;
  * source code.
  */
 
+use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Eel\FlowQuery\Operations\SliceOperation;
 
 /**
@@ -18,7 +19,7 @@ use Neos\Eel\FlowQuery\Operations\SliceOperation;
  */
 class SliceOperationTest extends \Neos\Flow\Tests\UnitTestCase
 {
-    public function sliceExamples()
+    public static function sliceExamples(): array
     {
         return [
             'no argument' => [['a', 'b', 'c'], [], ['a', 'b', 'c']],
@@ -38,7 +39,7 @@ class SliceOperationTest extends \Neos\Flow\Tests\UnitTestCase
      */
     public function evaluateSetsTheCorrectPartOfTheContextArray($value, $arguments, $expected)
     {
-        $flowQuery = new \Neos\Eel\FlowQuery\FlowQuery($value);
+        $flowQuery = new FlowQuery($value);
 
         $operation = new SliceOperation();
         $operation->evaluate($flowQuery, $arguments);

@@ -15,6 +15,7 @@ use Neos\Eel\Context;
 use Neos\Eel\EelEvaluatorInterface;
 use Neos\Eel\EvaluationException;
 use Neos\Eel\ParserException;
+use Neos\Eel\Tests\Unit\Fixtures\TestObject;
 use Neos\Flow\Tests\UnitTestCase;
 
 /**
@@ -24,10 +25,7 @@ use Neos\Flow\Tests\UnitTestCase;
  */
 abstract class AbstractEvaluatorTest extends UnitTestCase
 {
-    /**
-     * @return array
-     */
-    public function integerLiterals()
+    public static function integerLiterals(): array
     {
         $c = new Context();
         return [
@@ -42,10 +40,7 @@ abstract class AbstractEvaluatorTest extends UnitTestCase
         ];
     }
 
-    /**
-     * @return array
-     */
-    public function floatLiterals()
+    public static function floatLiterals(): array
     {
         $c = new Context();
         return [
@@ -55,10 +50,7 @@ abstract class AbstractEvaluatorTest extends UnitTestCase
         ];
     }
 
-    /**
-     * @return array
-     */
-    public function stringLiterals()
+    public static function stringLiterals(): array
     {
         $c = new Context();
         return [
@@ -77,10 +69,7 @@ abstract class AbstractEvaluatorTest extends UnitTestCase
         ];
     }
 
-    /**
-     * @return array
-     */
-    public function stringConcatenations()
+    public static function stringConcatenations(): array
     {
         $c = new Context(['foo' => 'bar']);
         return [
@@ -95,10 +84,7 @@ abstract class AbstractEvaluatorTest extends UnitTestCase
         ];
     }
 
-    /**
-     * @return array
-     */
-    public function notExpressions()
+    public static function notExpressions(): array
     {
         $c = new Context();
         return [
@@ -113,10 +99,7 @@ abstract class AbstractEvaluatorTest extends UnitTestCase
         ];
     }
 
-    /**
-     * @return array
-     */
-    public function comparisonExpressions()
+    public static function comparisonExpressions(): array
     {
         $c = new Context([
             'answer' => 42
@@ -148,10 +131,7 @@ abstract class AbstractEvaluatorTest extends UnitTestCase
         ];
     }
 
-    /**
-     * @return array
-     */
-    public function calculationExpressions()
+    public static function calculationExpressions(): array
     {
         $c = new Context([
             'answer' => 42,
@@ -176,10 +156,7 @@ abstract class AbstractEvaluatorTest extends UnitTestCase
         ];
     }
 
-    /**
-     * @return array
-     */
-    public function combinedExpressions()
+    public static function combinedExpressions(): array
     {
         $c = new Context();
         return [
@@ -192,10 +169,7 @@ abstract class AbstractEvaluatorTest extends UnitTestCase
         ];
     }
 
-    /**
-     * @return array
-     */
-    public function booleanExpressions()
+    public static function booleanExpressions(): array
     {
         $c = new Context([
             'trueVar' => true,
@@ -230,10 +204,7 @@ abstract class AbstractEvaluatorTest extends UnitTestCase
         ];
     }
 
-    /**
-     * @return array
-     */
-    public function objectPathOnArrayExpressions()
+    public static function objectPathOnArrayExpressions(): array
     {
         // Wrap a value inside a context
         $c = new Context([
@@ -266,10 +237,7 @@ abstract class AbstractEvaluatorTest extends UnitTestCase
         ];
     }
 
-    /**
-     * @return array
-     */
-    public function objectPathOnObjectExpressions()
+    public static function objectPathOnObjectExpressions(): array
     {
         $obj = new Fixtures\TestObject();
         $obj->setProperty('Test');
@@ -290,10 +258,7 @@ abstract class AbstractEvaluatorTest extends UnitTestCase
         ];
     }
 
-    /**
-     * @return array
-     */
-    public function methodCallExpressions()
+    public static function methodCallExpressions(): array
     {
         // Wrap an array with functions inside a context
         $contextArray = [
@@ -305,7 +270,7 @@ abstract class AbstractEvaluatorTest extends UnitTestCase
             },
             'funcs' => [
                 'dup' => function ($array) {
-                    return array_map(function ($item) {
+                    return array_map(static function ($item) {
                         return $item * 2;
                     }, $array);
                 }
@@ -343,10 +308,7 @@ abstract class AbstractEvaluatorTest extends UnitTestCase
         ];
     }
 
-    /**
-     * @return array
-     */
-    public function arrayLiteralExpressions()
+    public static function arrayLiteralExpressions(): array
     {
         $c = new Context([
             'test' => function ($string) {
@@ -377,10 +339,7 @@ abstract class AbstractEvaluatorTest extends UnitTestCase
         ];
     }
 
-    /**
-     * @return array
-     */
-    public function objectLiteralExpressions()
+    public static function objectLiteralExpressions(): array
     {
         $c = new Context([
         ]);
@@ -403,10 +362,7 @@ abstract class AbstractEvaluatorTest extends UnitTestCase
         ];
     }
 
-    /**
-     * @return array
-     */
-    public function conditionalOperatorExpressions()
+    public static function conditionalOperatorExpressions(): array
     {
         $c = new Context([
             'answer' => 42,
@@ -430,12 +386,8 @@ abstract class AbstractEvaluatorTest extends UnitTestCase
     /**
      * @test
      * @dataProvider integerLiterals
-     *
-     * @param string $expression
-     * @param Context $context
-     * @param mixed $result
      */
-    public function integerLiteralsCanBeParsed($expression, $context, $result)
+    public function integerLiteralsCanBeParsed(string $expression, Context $context, mixed $result): void
     {
         $this->assertEvaluated($result, $expression, $context);
     }
@@ -443,12 +395,8 @@ abstract class AbstractEvaluatorTest extends UnitTestCase
     /**
      * @test
      * @dataProvider floatLiterals
-     *
-     * @param string $expression
-     * @param Context $context
-     * @param mixed $result
      */
-    public function floatLiteralsCanBeParsed($expression, $context, $result)
+    public function floatLiteralsCanBeParsed(string $expression, Context $context, mixed $result): void
     {
         $this->assertEvaluated($result, $expression, $context);
     }
@@ -456,12 +404,8 @@ abstract class AbstractEvaluatorTest extends UnitTestCase
     /**
      * @test
      * @dataProvider stringLiterals
-     *
-     * @param string $expression
-     * @param Context $context
-     * @param mixed $result
      */
-    public function stringLiteralsCanBeParsed($expression, $context, $result)
+    public function stringLiteralsCanBeParsed(string $expression, Context $context, mixed $result): void
     {
         $this->assertEvaluated($result, $expression, $context);
     }
@@ -469,12 +413,8 @@ abstract class AbstractEvaluatorTest extends UnitTestCase
     /**
      * @test
      * @dataProvider stringConcatenations
-     *
-     * @param string $expression
-     * @param Context $context
-     * @param mixed $result
      */
-    public function stringConcatenationsCanBeParsed($expression, $context, $result)
+    public function stringConcatenationsCanBeParsed(string $expression, Context $context, mixed $result): void
     {
         $this->assertEvaluated($result, $expression, $context);
     }
@@ -482,12 +422,8 @@ abstract class AbstractEvaluatorTest extends UnitTestCase
     /**
      * @test
      * @dataProvider notExpressions
-     *
-     * @param string $expression
-     * @param Context $context
-     * @param mixed $result
      */
-    public function notExpressionsCanBeParsed($expression, $context, $result)
+    public function notExpressionsCanBeParsed(string $expression, Context $context, mixed $result): void
     {
         $this->assertEvaluated($result, $expression, $context);
     }
@@ -495,12 +431,8 @@ abstract class AbstractEvaluatorTest extends UnitTestCase
     /**
      * @test
      * @dataProvider comparisonExpressions
-     *
-     * @param string $expression
-     * @param Context $context
-     * @param mixed $result
      */
-    public function comparisonExpressionsCanBeParsed($expression, $context, $result)
+    public function comparisonExpressionsCanBeParsed(string $expression, Context $context, mixed $result): void
     {
         $this->assertEvaluated($result, $expression, $context);
     }
@@ -508,12 +440,8 @@ abstract class AbstractEvaluatorTest extends UnitTestCase
     /**
      * @test
      * @dataProvider calculationExpressions
-     *
-     * @param string $expression
-     * @param Context $context
-     * @param mixed $result
      */
-    public function calculationExpressionsCanBeParsed($expression, $context, $result)
+    public function calculationExpressionsCanBeParsed(string $expression, Context $context, mixed $result): void
     {
         $this->assertEvaluated($result, $expression, $context);
     }
@@ -521,12 +449,8 @@ abstract class AbstractEvaluatorTest extends UnitTestCase
     /**
      * @test
      * @dataProvider combinedExpressions
-     *
-     * @param string $expression
-     * @param Context $context
-     * @param mixed $result
      */
-    public function combinedExpressionsCanBeParsed($expression, $context, $result)
+    public function combinedExpressionsCanBeParsed(string $expression, Context $context, mixed $result): void
     {
         $this->assertEvaluated($result, $expression, $context);
     }
@@ -534,12 +458,8 @@ abstract class AbstractEvaluatorTest extends UnitTestCase
     /**
      * @test
      * @dataProvider objectPathOnArrayExpressions
-     *
-     * @param string $expression
-     * @param Context $context
-     * @param mixed $result
      */
-    public function objectPathOnArrayExpressionsCanBeParsed($expression, $context, $result)
+    public function objectPathOnArrayExpressionsCanBeParsed(string $expression, Context $context, mixed $result): void
     {
         $this->assertEvaluated($result, $expression, $context);
     }
@@ -547,12 +467,8 @@ abstract class AbstractEvaluatorTest extends UnitTestCase
     /**
      * @test
      * @dataProvider objectPathOnObjectExpressions
-     *
-     * @param string $expression
-     * @param Context $context
-     * @param mixed $result
      */
-    public function objectPathOnObjectExpressionsCanBeParsed($expression, $context, $result)
+    public function objectPathOnObjectExpressionsCanBeParsed(string $expression, Context $context, mixed $result): void
     {
         $this->assertEvaluated($result, $expression, $context);
     }
@@ -560,12 +476,8 @@ abstract class AbstractEvaluatorTest extends UnitTestCase
     /**
      * @test
      * @dataProvider methodCallExpressions
-     *
-     * @param string $expression
-     * @param Context $context
-     * @param mixed $result
      */
-    public function methodCallExpressionsCanBeParsed($expression, $context, $result)
+    public function methodCallExpressionsCanBeParsed(string $expression, Context $context, mixed $result): void
     {
         $this->assertEvaluated($result, $expression, $context);
     }
@@ -573,7 +485,7 @@ abstract class AbstractEvaluatorTest extends UnitTestCase
     /**
      * @test
      */
-    public function methodCallOfUndefinedFunctionThrowsException()
+    public function methodCallOfUndefinedFunctionThrowsException(): void
     {
         $this->expectException(EvaluationException::class);
         $c = new Context([
@@ -589,10 +501,10 @@ abstract class AbstractEvaluatorTest extends UnitTestCase
     /**
      * @test
      */
-    public function methodCallOfUnknownMethodThrowsException()
+    public function methodCallOfUnknownMethodThrowsException(): void
     {
         $this->expectException(EvaluationException::class);
-        $o = new \Neos\Eel\Tests\Unit\Fixtures\TestObject();
+        $o = new TestObject();
 
         $c = new Context([
             'context' => $o
@@ -603,12 +515,8 @@ abstract class AbstractEvaluatorTest extends UnitTestCase
     /**
      * @test
      * @dataProvider booleanExpressions
-     *
-     * @param string $expression
-     * @param Context $context
-     * @param mixed $result
      */
-    public function booleanExpressionsCanBeParsed($expression, $context, $result)
+    public function booleanExpressionsCanBeParsed(string $expression, Context $context, mixed $result): void
     {
         $this->assertEvaluated($result, $expression, $context);
     }
@@ -616,12 +524,8 @@ abstract class AbstractEvaluatorTest extends UnitTestCase
     /**
      * @test
      * @dataProvider arrayLiteralExpressions
-     *
-     * @param string $expression
-     * @param Context $context
-     * @param mixed $result
      */
-    public function arrayLiteralsCanBeParsed($expression, $context, $result)
+    public function arrayLiteralsCanBeParsed(string $expression, Context $context, mixed $result): void
     {
         $this->assertEvaluated($result, $expression, $context);
     }
@@ -629,12 +533,8 @@ abstract class AbstractEvaluatorTest extends UnitTestCase
     /**
      * @test
      * @dataProvider objectLiteralExpressions
-     *
-     * @param string $expression
-     * @param Context $context
-     * @param mixed $result
      */
-    public function objectLiteralsCanBeParsed($expression, $context, $result)
+    public function objectLiteralsCanBeParsed(string $expression, Context $context, mixed $result): void
     {
         $this->assertEvaluated($result, $expression, $context);
     }
@@ -642,20 +542,13 @@ abstract class AbstractEvaluatorTest extends UnitTestCase
     /**
      * @test
      * @dataProvider conditionalOperatorExpressions
-     *
-     * @param string $expression
-     * @param Context $context
-     * @param mixed $result
      */
-    public function conditionalOperatorsCanBeParsed($expression, $context, $result)
+    public function conditionalOperatorsCanBeParsed(string $expression, Context $context, mixed $result): void
     {
         $this->assertEvaluated($result, $expression, $context);
     }
 
-    /**
-     * @return array
-     */
-    public function invalidExpressions()
+    public static function invalidExpressions(): array
     {
         return [
             // Completely insane expression
@@ -674,7 +567,7 @@ abstract class AbstractEvaluatorTest extends UnitTestCase
      * @test
      * @dataProvider invalidExpressions
      */
-    public function invalidExpressionsThrowExceptions($expression)
+    public function invalidExpressionsThrowExceptions(string $expression): void
     {
         $this->expectException(ParserException::class);
         $this->assertEvaluated(false, $expression, new Context());
@@ -683,7 +576,7 @@ abstract class AbstractEvaluatorTest extends UnitTestCase
     /**
      * @test
      */
-    public function expressionStartingWithWhitespaceWorkAsExpected()
+    public function expressionStartingWithWhitespaceWorkAsExpected(): void
     {
         $context = new Context(['variable' => 1]);
         $this->assertEvaluated(1, ' variable', $context);
@@ -692,7 +585,7 @@ abstract class AbstractEvaluatorTest extends UnitTestCase
     /**
      * @test
      */
-    public function expressionEndingWithWhitespaceWorkAsExpected()
+    public function expressionEndingWithWhitespaceWorkAsExpected(): void
     {
         $context = new Context(['variable' => 1]);
         $this->assertEvaluated(1, 'variable ', $context);
@@ -702,12 +595,8 @@ abstract class AbstractEvaluatorTest extends UnitTestCase
      * Assert that the expression is evaluated to the expected result
      * under the given context. It also ensures that the Eel expression is
      * recognized using the predefined regular expression.
-     *
-     * @param mixed $expected
-     * @param string $expression
-     * @param Context $context
      */
-    protected function assertEvaluated($expected, $expression, $context)
+    protected function assertEvaluated(mixed $expected, string $expression, Context $context): void
     {
         $evaluator = $this->createEvaluator();
         self::assertSame($expected, $evaluator->evaluate($expression, $context));

@@ -12,6 +12,7 @@ namespace Neos\Error\Messages\Tests\Unit;
  */
 
 use Neos\Error\Messages\Result;
+use PHPUnit\Framework\MockObject\MockObject;
 
 /**
  * Testcase for the Error Container object
@@ -29,7 +30,7 @@ class ResultTest extends \PHPUnit\Framework\TestCase
         $this->result = new Result();
     }
 
-    public function dataTypes()
+    public static function dataTypes(): array
     {
         return [
             ['Error', 'Errors'],
@@ -38,7 +39,7 @@ class ResultTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
-    protected function getMockMessage(string $type)
+    protected function getMockMessage(string $type): MockObject
     {
         return $this->getMockBuilder('Neos\Error\Messages\\' . $type)->disableOriginalConstructor()->getMock();
     }

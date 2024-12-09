@@ -15,6 +15,7 @@ use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Reflection\ReflectionService;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Flow\I18n;
+use PHPUnit\Framework\MockObject\MockObject;
 
 /**
  * Testcase for the FormatResolver
@@ -37,11 +38,30 @@ class FormatResolverTest extends UnitTestCase
     /**
      * @test
      */
-    public function placeholdersAreResolvedCorrectly()
+    public function placeholdersAreResolvedCorrectly(): void
     {
+        $matcher = $this->exactly(2);
         $mockNumberFormatter = $this->createMock(I18n\Formatter\NumberFormatter::class);
-        $mockNumberFormatter->method('format')->withConsecutive([1, $this->sampleLocale], [2, $this->sampleLocale, ['percent']])->willReturnOnConsecutiveCalls('1.0', '200%');
+        $mockNumberFormatter->expects($matcher)->method('format')
+            ->willReturnCallback(
+                function (mixed $value, I18n\Locale $locale, array $styleProperties = []) use ($matcher): string {
+                    if ($matcher->numberOfInvocations() === 1) {
+                        $this->assertSame(1, $value);
+                        $this->assertSame($this->sampleLocale, $locale);
+                        return '1.0';
+                    }
+                    if ($matcher->numberOfInvocations() === 2) {
+                        $this->assertSame(2, $value);
+                        $this->assertSame($this->sampleLocale, $locale);
+                        $this->assertSame(['percent'], $styleProperties);
+                        return '200%';
+                    }
 
+                    return 'unexpected invocation';
+                }
+            );
+
+        /** @var MockObject|I18n\FormatResolver $formatResolver */
         $formatResolver = $this->getAccessibleMock(I18n\FormatResolver::class, ['getFormatter']);
         $formatResolver->expects($this->exactly(2))->method('getFormatter')->with('number')->willReturn(($mockNumberFormatter));
 
@@ -55,7 +75,7 @@ class FormatResolverTest extends UnitTestCase
     /**
      * @test
      */
-    public function returnsStringCastedArgumentWhenFormatterNameIsNotSet()
+    public function returnsStringCastedArgumentWhenFormatterNameIsNotSet(): void
     {
         $formatResolver = new I18n\FormatResolver();
         $result = $formatResolver->resolvePlaceholders('{0}', [123], $this->sampleLocale);
@@ -65,7 +85,7 @@ class FormatResolverTest extends UnitTestCase
     /**
      * @test
      */
-    public function throwsExceptionWhenInvalidPlaceholderEncountered()
+    public function throwsExceptionWhenInvalidPlaceholderEncountered(): void
     {
         $this->expectException(I18n\Exception\InvalidFormatPlaceholderException::class);
         $formatResolver = new I18n\FormatResolver();
@@ -75,7 +95,7 @@ class FormatResolverTest extends UnitTestCase
     /**
      * @test
      */
-    public function throwsExceptionWhenInsufficientNumberOfArgumentsProvided()
+    public function throwsExceptionWhenInsufficientNumberOfArgumentsProvided(): void
     {
         $this->expectException(I18n\Exception\IndexOutOfBoundsException::class);
         $formatResolver = new I18n\FormatResolver();
@@ -85,13 +105,24 @@ class FormatResolverTest extends UnitTestCase
     /**
      * @test
      */
-    public function throwsExceptionWhenFormatterDoesNotExist()
+    public function throwsExceptionWhenFormatterDoesNotExist(): void
     {
         $this->expectException(I18n\Exception\UnknownFormatterException::class);
+        $matcher = $this->exactly(2);
         $mockObjectManager = $this->createMock(ObjectManagerInterface::class);
         $mockObjectManager
+            ->expects($matcher)
             ->method('isRegistered')
-            ->withConsecutive(['foo'], ['Neos\Flow\I18n\Formatter\FooFormatter'])
+            ->willReturnCallback(
+                function (string $objectName) use ($matcher) {
+                    if ($matcher->numberOfInvocations() === 1) {
+                        $this->assertSame('foo', $objectName);
+                    }
+                    if ($matcher->numberOfInvocations() === 2) {
+                        $this->assertSame('Neos\Flow\I18n\Formatter\FooFormatter', $objectName);
+                    }
+                }
+            )
             ->willReturn(false);
 
         $formatResolver = new I18n\FormatResolver();
@@ -103,7 +134,7 @@ class FormatResolverTest extends UnitTestCase
     /**
      * @test
      */
-    public function throwsExceptionWhenFormatterDoesNotImplementFormatterInterface()
+    public function throwsExceptionWhenFormatterDoesNotImplementFormatterInterface(): void
     {
         $this->expectException(I18n\Exception\InvalidFormatterException::class);
         $mockObjectManager = $this->createMock(ObjectManagerInterface::class);
@@ -129,7 +160,7 @@ class FormatResolverTest extends UnitTestCase
     /**
      * @test
      */
-    public function fullyQualifiedFormatterIsCorrectlyBeingUsed()
+    public function fullyQualifiedFormatterIsCorrectlyBeingUsed(): void
     {
         $mockFormatter = $this->createMock(I18n\Formatter\FormatterInterface::class);
         $mockFormatter->expects($this->once())
@@ -166,7 +197,7 @@ class FormatResolverTest extends UnitTestCase
     /**
      * @test
      */
-    public function fullyQualifiedFormatterWithLowercaseVendorNameIsCorrectlyBeingUsed()
+    public function fullyQualifiedFormatterWithLowercaseVendorNameIsCorrectlyBeingUsed(): void
     {
         $mockFormatter = $this->createMock(I18n\Formatter\FormatterInterface::class);
         $mockFormatter->expects($this->once())
@@ -203,7 +234,7 @@ class FormatResolverTest extends UnitTestCase
     /**
      * @test
      */
-    public function namedPlaceholdersAreResolvedCorrectly()
+    public function namedPlaceholdersAreResolvedCorrectly(): void
     {
         $formatResolver = $this->getMockBuilder(I18n\FormatResolver::class)->onlyMethods([])->getMock();
 

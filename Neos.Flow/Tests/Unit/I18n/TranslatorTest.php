@@ -134,10 +134,10 @@ class TranslatorTest extends UnitTestCase
             ->expects($this->exactly(2))
             ->method('getTranslationByOriginalLabel')
             ->with('original label', $this->isInstanceOf(I18n\Locale::class), null, 'source', 'packageKey')
-            ->will($this->returnValueMap([
+            ->willReturnMap([
                 ['original label', $this->defaultLocale, null, 'source', 'packageKey', false],
                 ['original label', $this->defaultLocaleChain['en'], null, 'source', 'packageKey', 'translated label'],
-            ]))
+            ])
         ;
 
         $this->translator->injectTranslationProvider($mockTranslationProvider);
@@ -175,10 +175,10 @@ class TranslatorTest extends UnitTestCase
             ->expects($this->exactly(2))
             ->method('getTranslationById')
             ->with('id', $this->isInstanceOf(I18n\Locale::class), null, 'source', 'packageKey')
-            ->will($this->returnValueMap([
+            ->willReturnMap([
                 ['id', $this->defaultLocale, null, 'source', 'packageKey', false],
                 ['id', $this->defaultLocaleChain['en'], null, 'source', 'packageKey', 'translatedId'],
-            ]))
+            ])
         ;
 
         $this->translator->injectTranslationProvider($mockTranslationProvider);
@@ -206,7 +206,7 @@ class TranslatorTest extends UnitTestCase
      */
     public function translateByOriginalLabelReturnsTranslationIfOneNumericArgumentIsGiven()
     {
-        $mockTranslationProvider = $this->getAccessibleMock(XliffTranslationProvider::class);
+        $mockTranslationProvider = $this->getAccessibleMock(XliffTranslationProvider::class, ['getTranslationByOriginalLabel']);
         $mockTranslationProvider->expects($this->once())->method('getTranslationByOriginalLabel')->with('Untranslated label', $this->defaultLocale, null, 'source', 'packageKey')->willReturn(('Translated label'));
 
         $mockFormatResolver = $this->createMock(I18n\FormatResolver::class);
@@ -228,7 +228,7 @@ class TranslatorTest extends UnitTestCase
      */
     public function translateByIdReturnsTranslationIfOneNumericArgumentIsGiven()
     {
-        $mockTranslationProvider = $this->getAccessibleMock(XliffTranslationProvider::class);
+        $mockTranslationProvider = $this->getAccessibleMock(XliffTranslationProvider::class, ['getTranslationById']);
         $mockTranslationProvider->expects($this->once())->method('getTranslationById')->with('id', $this->defaultLocale, null, 'source', 'packageKey')->willReturn(('Translated label'));
 
         $mockFormatResolver = $this->createMock(I18n\FormatResolver::class);
@@ -248,7 +248,7 @@ class TranslatorTest extends UnitTestCase
     /**
      * @return array
      */
-    public function translateByOriginalLabelDataProvider()
+    public static function translateByOriginalLabelDataProvider()
     {
         return [
             ['originalLabel' => 'Some label', 'translatedLabel' => 'Translated label', 'expectedResult' => 'Translated label'],
@@ -281,7 +281,7 @@ class TranslatorTest extends UnitTestCase
     /**
      * @return array
      */
-    public function translateByIdDataProvider()
+    public static function translateByIdDataProvider()
     {
         return [
             ['id' => 'some.id', 'translatedId' => 'Translated id', 'expectedResult' => 'Translated id'],

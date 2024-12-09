@@ -17,7 +17,7 @@ use Neos\Eel\Utility;
 
 class EelExpressionRecognizerTest extends \Neos\Flow\Tests\UnitTestCase
 {
-    public function wrappedEelExpressionProvider()
+    public static function wrappedEelExpressionProvider(): \Generator
     {
         yield "simple" => [
             "wrapped" => '${foo + bar}',
@@ -52,7 +52,7 @@ class EelExpressionRecognizerTest extends \Neos\Flow\Tests\UnitTestCase
      * @test
      * @dataProvider wrappedEelExpressionProvider
      */
-    public function unwrapEelExpression(string $wrapped, string $unwrapped)
+    public function unwrapEelExpression(string $wrapped, string $unwrapped): void
     {
         self::assertEquals(
             Utility::parseEelExpression($wrapped),
@@ -60,7 +60,7 @@ class EelExpressionRecognizerTest extends \Neos\Flow\Tests\UnitTestCase
         );
     }
 
-    public function notAnExpressionProvider()
+    public static function notAnExpressionProvider(): \Generator
     {
         yield "missing object brace" => [
             '${{foo: {}}',
@@ -87,7 +87,7 @@ class EelExpressionRecognizerTest extends \Neos\Flow\Tests\UnitTestCase
      * @test
      * @dataProvider notAnExpressionProvider
      */
-    public function notAnExpression(string $expression)
+    public function notAnExpression(string $expression): void
     {
         self::assertNull(
             Utility::parseEelExpression($expression)
@@ -95,11 +95,11 @@ class EelExpressionRecognizerTest extends \Neos\Flow\Tests\UnitTestCase
     }
 
     /** @test */
-    public function leftOpenEelDoesntResultInCatastrophicBacktracking()
+    public function leftOpenEelDoesntResultInCatastrophicBacktracking(): void
     {
         $malformedExpression = '${abc abc abc abc abc abc abc abc abc abc abc ...';
         $return = preg_match(Package::EelExpressionRecognizer, $malformedExpression);
-        self::assertNotSame(false, $return, "Regex not efficient");
-        self::assertEquals($return, 0, "Regex should not match");
+        self::assertNotFalse($return, "Regex not efficient");
+        self::assertEquals(0, $return, "Regex should not match");
     }
 }

@@ -14,16 +14,14 @@ namespace Neos\Eel\Tests\Unit;
 use Neos\Cache\Frontend\StringFrontend;
 use Neos\Eel\Context;
 use Neos\Eel\CompilingEvaluator;
+use PHPUnit\Framework\MockObject\MockObject;
 
 /**
  * Compiling evaluator test
  */
 class CompilingEvaluatorTest extends AbstractEvaluatorTest
 {
-    /**
-     * @return array
-     */
-    public function arrowFunctionExpressions()
+    public static function arrowFunctionExpressions(): array
     {
         $c = new Context([
             'items' => [1, 2, 3, 4],
@@ -52,12 +50,8 @@ class CompilingEvaluatorTest extends AbstractEvaluatorTest
     /**
      * @test
      * @dataProvider arrowFunctionExpressions
-     *
-     * @param string $expression
-     * @param Context $context
-     * @param mixed $result
      */
-    public function arrowFunctionsCanBeParsed($expression, $context, $result)
+    public function arrowFunctionsCanBeParsed(string $expression, Context $context, mixed $result): void
     {
         $this->assertEvaluated($result, $expression, $context);
     }
@@ -65,10 +59,10 @@ class CompilingEvaluatorTest extends AbstractEvaluatorTest
     /**
      * @return CompilingEvaluator
      */
-    protected function createEvaluator()
+    protected function createEvaluator(): CompilingEvaluator
     {
-        $stringFrontendMock = $this->getMockBuilder(StringFrontend::class)->onlyMethods([])->disableOriginalConstructor()->getMock();
-        $stringFrontendMock->expects($this->any())->method('get')->willReturn(false);
+        $stringFrontendMock = $this->getMockBuilder(StringFrontend::class)->onlyMethods(['get'])->disableOriginalConstructor()->getMock();
+        $stringFrontendMock->method('get')->willReturn(false);
 
         $evaluator = new CompilingEvaluator();
         $evaluator->injectExpressionCache($stringFrontendMock);
@@ -78,7 +72,7 @@ class CompilingEvaluatorTest extends AbstractEvaluatorTest
     /**
      * @test
      */
-    public function doubleQuotedStringLiteralVariablesAreEscaped()
+    public function doubleQuotedStringLiteralVariablesAreEscaped(): void
     {
         $context = new Context('hidden');
         $this->assertEvaluated('some {$context->unwrap()} string with \'quoted stuff\'', '"some {$context->unwrap()} string with \'quoted stuff\'"', $context);
@@ -88,16 +82,13 @@ class CompilingEvaluatorTest extends AbstractEvaluatorTest
      * Assert that the expression is evaluated to the expected result
      * under the given context. It also ensures that the Eel expression is
      * recognized using the predefined regular expression.
-     *
-     * @param mixed $expected
-     * @param string $expression
-     * @param Context $context
      */
-    protected function assertEvaluated($expected, $expression, $context)
+    protected function assertEvaluated(mixed $expected, string $expression, Context $context): void
     {
-        $stringFrontendMock = $this->getMockBuilder(StringFrontend::class)->onlyMethods([])->disableOriginalConstructor()->getMock();
-        $stringFrontendMock->expects($this->any())->method('get')->willReturn(false);
+        $stringFrontendMock = $this->getMockBuilder(StringFrontend::class)->onlyMethods(['get', 'set'])->disableOriginalConstructor()->getMock();
+        $stringFrontendMock->method('get')->willReturn(false);
 
+        /** @var CompilingEvaluator|MockObject $evaluator */
         $evaluator = $this->getAccessibleMock(CompilingEvaluator::class, []);
         $evaluator->injectExpressionCache($stringFrontendMock);
         // note, this is not a public method. We should expect expressions coming in here to be trimmed already.

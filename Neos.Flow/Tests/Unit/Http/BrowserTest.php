@@ -107,17 +107,17 @@ class BrowserTest extends UnitTestCase
         $secondResponse = new Response(202);
 
         $requestEngine = $this->createMock(Client\RequestEngineInterface::class);
-        $requestEngine
-            ->method('sendRequest')
-            ->withConsecutive([
-                self::callback(function (ServerRequestInterface $request) use ($initialUri) {
-                    return (string)$request->getUri() === (string)$initialUri;
-                })
-            ], [
-                self::callback(function (ServerRequestInterface $request) use ($redirectUri) {
-                    return (string)$request->getUri() === (string)$redirectUri;
-                })
-            ])->willReturnOnConsecutiveCalls($firstResponse, $secondResponse);
+        $matcher = $this->exactly(2);
+        $requestEngine->expects($matcher)->method('sendRequest')
+            ->willReturnCallback(function (ServerRequestInterface $request) use ($matcher, $initialUri, $redirectUri, $firstResponse, $secondResponse) {
+                if ($matcher->numberOfInvocations() === 1 && (string)$request->getUri() === (string)$initialUri) {
+                    return $firstResponse;
+                }
+                if ($matcher->numberOfInvocations() === 2 && (string)$request->getUri() === (string)$redirectUri) {
+                    return $secondResponse;
+                }
+                return null;
+            });
 
         $this->browser->setRequestEngine($requestEngine);
         $actual = $this->browser->request($initialUri);

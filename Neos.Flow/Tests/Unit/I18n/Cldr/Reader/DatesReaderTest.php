@@ -15,6 +15,7 @@ use Neos\Cache\Frontend\VariableFrontend;
 use Neos\Flow\I18n;
 use Neos\Flow\Tests\UnitTestCase;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\Rule\InvocationOrder;
 
 /**
  * Testcase for the DatesReader
@@ -39,21 +40,42 @@ class DatesReaderTest extends UnitTestCase
     /**
      * Setting cache expectations is partially same for many tests, so it's been
      * extracted to this method.
-     *
-     * @param MockObject $mockCache
-     * @return array
      */
-    public function createCacheExpectations(MockObject $mockCache)
+    public function createCacheExpectations(MockObject $mockCache): void
     {
-        $mockCache->expects($this->atLeast(3))->method('has')->withConsecutive(['parsedFormats'], ['parsedFormatsIndices'], ['localizedLiterals'])->willReturn(true);
-        $mockCache->expects($this->atLeast(3))->method('get')->withConsecutive(['parsedFormats'], ['parsedFormatsIndices'], ['localizedLiterals'])->willReturn([]);
-        $mockCache->expects($this->atLeast(3))->method('set')->withConsecutive(['parsedFormats'], ['parsedFormatsIndices'], ['localizedLiterals']);
+        $callback = function (InvocationOrder $matcher, mixed $returnValue) {
+            return function (string $id) use ($matcher, $returnValue) {
+                if ($matcher->numberOfInvocations() === 1) {
+                    $this->assertSame('parsedFormats', $id);
+                }
+                if ($matcher->numberOfInvocations() === 2) {
+                    $this->assertSame('parsedFormatsIndices', $id);
+                }
+                if ($matcher->numberOfInvocations() === 3) {
+                    $this->assertSame('localizedLiterals', $id);
+                }
+
+                return $returnValue;
+            };
+        };
+
+        $matcher = $this->atLeast(3);
+        $mockCache->expects($matcher)->method('has')
+        ->willReturnCallback($callback($matcher, true));
+
+        $matcher = $this->atLeast(3);
+        $mockCache->expects($matcher)->method('get')
+        ->willReturnCallback($callback($matcher, []));
+
+        $matcher = $this->atLeast(3);
+        $mockCache->expects($matcher)->method('set')
+        ->willReturnCallback($callback($matcher, null));
     }
 
     /**
      * @test
      */
-    public function formatIsCorrectlyReadFromCldr()
+    public function formatIsCorrectlyReadFromCldr(): void
     {
         $mockModel = $this->getAccessibleMock(I18n\Cldr\CldrModel::class, ['getRawArray', 'getElement'], [[]]);
         $mockModel->expects($this->once())->method('getElement')->with('dates/calendars/calendar[@type="gregorian"]/dateFormats/dateFormatLength[@type="medium"]/dateFormat/pattern')->willReturn(('mockFormatString'));
@@ -64,6 +86,7 @@ class DatesReaderTest extends UnitTestCase
         $mockCache = $this->getMockBuilder(VariableFrontend::class)->disableOriginalConstructor()->getMock();
         $this->createCacheExpectations($mockCache);
 
+        /** @var MockObject|I18n\Cldr\Reader\DatesReader $reader */
         $reader = $this->getAccessibleMock(I18n\Cldr\Reader\DatesReader::class, ['parseFormat']);
         $reader->expects($this->once())->method('parseFormat')->with('mockFormatString')->willReturn((['mockParsedFormat']));
         $reader->injectCldrRepository($mockRepository);
@@ -79,20 +102,29 @@ class DatesReaderTest extends UnitTestCase
     /**
      * @test
      */
-    public function dateTimeFormatIsParsedCorrectly()
+    public function dateTimeFormatIsParsedCorrectly(): void
     {
+        $matcher = $this->exactly(3);
         $mockModel = $this->getAccessibleMock(I18n\Cldr\CldrModel::class, ['getElement'], [[]]);
-        $mockModel->expects(
-            $this->exactly(3)
-        )->method('getElement')->withConsecutive(
-            ['dates/calendars/calendar[@type="gregorian"]/dateTimeFormats/dateTimeFormatLength[@type="full"]/dateTimeFormat/pattern'],
-            ['dates/calendars/calendar[@type="gregorian"]/dateFormats/dateFormatLength[@type="full"]/dateFormat/pattern'],
-            ['dates/calendars/calendar[@type="gregorian"]/timeFormats/timeFormatLength[@type="full"]/timeFormat/pattern']
-        )->willReturnOnConsecutiveCalls(
-            'foo {0} {1} bar',
-            'dMy',
-            'hms'
-        );
+        $mockModel->expects($matcher)->method('getElement')
+            ->willReturnCallback(
+                function (string $path) use ($matcher): string {
+                    if ($matcher->numberOfInvocations() === 1) {
+                        $this->assertSame('dates/calendars/calendar[@type="gregorian"]/dateTimeFormats/dateTimeFormatLength[@type="full"]/dateTimeFormat/pattern', $path);
+                        return 'foo {0} {1} bar';
+                    }
+                    if ($matcher->numberOfInvocations() === 2) {
+                        $this->assertSame('dates/calendars/calendar[@type="gregorian"]/dateFormats/dateFormatLength[@type="full"]/dateFormat/pattern', $path);
+                        return 'dMy';
+                    }
+                    if ($matcher->numberOfInvocations() === 3) {
+                        $this->assertSame('dates/calendars/calendar[@type="gregorian"]/timeFormats/timeFormatLength[@type="full"]/timeFormat/pattern', $path);
+                        return 'hms';
+                    }
+
+                    return 'unexpected invocation';
+                }
+            );
 
         $mockRepository = $this->createMock(I18n\Cldr\CldrRepository::class);
         $mockRepository->expects($this->exactly(3))->method('getModelForLocale')->with($this->sampleLocale)->willReturn(($mockModel));
@@ -113,9 +145,9 @@ class DatesReaderTest extends UnitTestCase
     /**
      * @test
      */
-    public function localizedLiteralsAreCorrectlyReadFromCldr()
+    public function localizedLiteralsAreCorrectlyReadFromCldr(): void
     {
-        $getRawArrayCallback = function () {
+        $getRawArrayCallback = static function () {
             $args = func_get_args();
             $mockDatesCldrData = require(__DIR__ . '/../../Fixtures/MockDatesParsedCldrData.php');
 
@@ -123,9 +155,9 @@ class DatesReaderTest extends UnitTestCase
             // Eras have different XML structure than other literals so they have to be handled differently
             if ($lastPartOfPath === 'eras') {
                 return $mockDatesCldrData['eras'];
-            } else {
-                return $mockDatesCldrData[$lastPartOfPath];
             }
+
+            return $mockDatesCldrData[$lastPartOfPath];
         };
 
         $mockModel = $this->getAccessibleMock(I18n\Cldr\CldrModel::class, ['getRawArray'], [[]]);
@@ -157,7 +189,7 @@ class DatesReaderTest extends UnitTestCase
      *
      * @return array
      */
-    public function formatStringsAndParsedFormats()
+    public static function formatStringsAndParsedFormats(): array
     {
         return [
             ['yyyy.MM.dd G', ['yyyy', ['.'], 'MM', ['.'], 'dd', [' '], 'G']],
@@ -174,7 +206,7 @@ class DatesReaderTest extends UnitTestCase
      * @test
      * @dataProvider formatStringsAndParsedFormats
      */
-    public function formatStringsAreParsedCorrectly($format, $expectedResult)
+    public function formatStringsAreParsedCorrectly($format, $expectedResult): void
     {
         $reader = $this->getAccessibleMock(I18n\Cldr\Reader\DatesReader::class, []);
 

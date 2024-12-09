@@ -23,7 +23,7 @@ class MathHelperTest extends \Neos\Flow\Tests\UnitTestCase
      */
     const NAN = 'NAN';
 
-    public function roundExamples()
+    public static function roundExamples(): array
     {
         return [
             'round with default precision' => [123.4567, null, 123],
@@ -39,7 +39,7 @@ class MathHelperTest extends \Neos\Flow\Tests\UnitTestCase
      * @test
      * @dataProvider roundExamples
      */
-    public function roundWorks($value, $precision, $expected)
+    public function roundWorks($value, $precision, $expected): void
     {
         $helper = new MathHelper();
         $result = $helper->round($value, $precision);
@@ -50,7 +50,7 @@ class MathHelperTest extends \Neos\Flow\Tests\UnitTestCase
         }
     }
 
-    public function constantsExamples()
+    public static function constantsExamples(): array
     {
         return [
             'E' => ['Math.E', 2.718],
@@ -68,7 +68,7 @@ class MathHelperTest extends \Neos\Flow\Tests\UnitTestCase
      * @test
      * @dataProvider constantsExamples
      */
-    public function constantsWorks($method, $expected)
+    public function constantsWorks($method, $expected): void
     {
         $helper = new MathHelper();
         $evaluator = new \Neos\Eel\InterpretedEvaluator();
@@ -79,7 +79,7 @@ class MathHelperTest extends \Neos\Flow\Tests\UnitTestCase
         self::assertEqualsWithDelta($expected, $result, 0.001, 'Rounded value did not match');
     }
 
-    public function trigonometricExamples()
+    public static function trigonometricExamples(): array
     {
         return [
             'acos(x)' => ['Math.acos(-1)', 3.14159],
@@ -102,7 +102,7 @@ class MathHelperTest extends \Neos\Flow\Tests\UnitTestCase
      * @test
      * @dataProvider trigonometricExamples
      */
-    public function trigonometricFunctionsWork($method, $expected)
+    public function trigonometricFunctionsWork($method, $expected): void
     {
         $helper = new MathHelper();
         $evaluator = new \Neos\Eel\InterpretedEvaluator();
@@ -113,7 +113,7 @@ class MathHelperTest extends \Neos\Flow\Tests\UnitTestCase
         self::assertEqualsWithDelta($expected, $result, 0.001, 'Rounded value did not match');
     }
 
-    public function variousExamples()
+    public static function variousExamples(): array
     {
         return [
             'abs("-1")' => ['Math.abs("-1")', 1],
@@ -202,7 +202,7 @@ class MathHelperTest extends \Neos\Flow\Tests\UnitTestCase
      * @test
      * @dataProvider variousExamples
      */
-    public function variousFunctionsWork($method, $expected)
+    public function variousFunctionsWork($method, $expected): void
     {
         $helper = new MathHelper();
         $evaluator = new \Neos\Eel\InterpretedEvaluator();
@@ -217,7 +217,7 @@ class MathHelperTest extends \Neos\Flow\Tests\UnitTestCase
         }
     }
 
-    public function finiteAndNanExamples()
+    public static function finiteAndNanExamples(): array
     {
         return [
             'isFinite(42)' => ['isFinite', 42, true],
@@ -245,7 +245,7 @@ class MathHelperTest extends \Neos\Flow\Tests\UnitTestCase
      * @test
      * @dataProvider finiteAndNanExamples
      */
-    public function finiteAndNanFunctionsWork($method, $value, $expected)
+    public function finiteAndNanFunctionsWork($method, $value, $expected): void
     {
         $helper = new MathHelper();
         $result = $helper->$method($value);
@@ -256,7 +256,7 @@ class MathHelperTest extends \Neos\Flow\Tests\UnitTestCase
     /**
      * @test
      */
-    public function randomReturnsARandomResultFromZeroToOneExclusive()
+    public function randomReturnsARandomResultFromZeroToOneExclusive(): void
     {
         $helper = new MathHelper();
         $r1 = $helper->random();
@@ -275,7 +275,7 @@ class MathHelperTest extends \Neos\Flow\Tests\UnitTestCase
     /**
      * @test
      */
-    public function randomIntReturnsARandomResultFromMinToMaxExclusive()
+    public function randomIntReturnsARandomResultFromMinToMaxExclusive(): void
     {
         $helper = new MathHelper();
         $min = 10;

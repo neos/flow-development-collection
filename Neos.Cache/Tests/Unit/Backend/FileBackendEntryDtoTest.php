@@ -13,7 +13,7 @@ class FileBackendEntryDtoTest extends BaseTestCase
 {
     /**
      */
-    public function validEntryConstructorParameters()
+    public static function validEntryConstructorParameters(): array
     {
         return [
             ['data', [], 0],
@@ -29,13 +29,8 @@ class FileBackendEntryDtoTest extends BaseTestCase
     /**
      * @dataProvider validEntryConstructorParameters
      * @test
-     *
-     * @param string $data
-     * @param array $tags
-     * @param int $expiryTime
-     * @return void
      */
-    public function canBeCreatedWithConstructor($data, $tags, $expiryTime)
+    public function canBeCreatedWithConstructor(string $data, array $tags, int $expiryTime): void
     {
         $entryDto = new FileBackendEntryDto($data, $tags, $expiryTime);
         self::assertInstanceOf(FileBackendEntryDto::class, $entryDto);
@@ -44,13 +39,8 @@ class FileBackendEntryDtoTest extends BaseTestCase
     /**
      * @dataProvider validEntryConstructorParameters
      * @test
-     *
-     * @param $data
-     * @param $tags
-     * @param $expiryTime
-     * @return void
      */
-    public function gettersReturnDataProvidedToConstructor($data, $tags, $expiryTime)
+    public function gettersReturnDataProvidedToConstructor(string $data, array $tags, int $expiryTime): void
     {
         $entryDto = new FileBackendEntryDto($data, $tags, $expiryTime);
         self::assertEquals($data, $entryDto->getData());
@@ -60,9 +50,8 @@ class FileBackendEntryDtoTest extends BaseTestCase
 
     /**
      * @test
-     * @return void
      */
-    public function isExpiredReturnsFalseIfExpiryTimeIsInFuture()
+    public function isExpiredReturnsFalseIfExpiryTimeIsInFuture(): void
     {
         $entryDto = new FileBackendEntryDto('data', [], time() + 10);
         self::assertFalse($entryDto->isExpired());
@@ -70,9 +59,8 @@ class FileBackendEntryDtoTest extends BaseTestCase
 
     /**
      * @test
-     * @return void
      */
-    public function isExpiredReturnsTrueIfExpiryTimeIsInPast()
+    public function isExpiredReturnsTrueIfExpiryTimeIsInPast(): void
     {
         $entryDto = new FileBackendEntryDto('data', [], time() - 10);
         self::assertTrue($entryDto->isExpired());
@@ -81,9 +69,8 @@ class FileBackendEntryDtoTest extends BaseTestCase
     /**
      * @dataProvider validEntryConstructorParameters
      * @test
-     * @return void
      */
-    public function isIdempotent($data, $tags, $expiryTime)
+    public function isIdempotent(string $data, array $tags, int $expiryTime): void
     {
         $entryDto = new FileBackendEntryDto($data, $tags, $expiryTime);
         $entryString = (string)$entryDto;

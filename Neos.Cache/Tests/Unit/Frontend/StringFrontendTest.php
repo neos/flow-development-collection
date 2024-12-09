@@ -164,7 +164,7 @@ class StringFrontendTest extends BaseTestCase
      * @param array $methods
      * @return AbstractBackend|\PHPUnit\Framework\MockObject\MockObject
      */
-    protected function prepareDefaultBackend(array $methods = ['get', 'set', 'has', 'remove', 'findIdentifiersByTag', 'flush', 'flushByTag', 'collectGarbage'])
+    protected function prepareDefaultBackend(array $methods = ['get', 'set', 'has', 'remove', 'flush', 'collectGarbage'])
     {
         return $this->getMockBuilder(AbstractBackend::class)
             ->onlyMethods($methods)

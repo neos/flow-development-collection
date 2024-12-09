@@ -77,7 +77,7 @@ class RequestBuilderTest extends UnitTestCase
      *
      * @test
      */
-    public function cliAccessWithPackageControllerAndActionNameBuildsCorrectRequest()
+    public function cliAccessWithPackageControllerAndActionNameBuildsCorrectRequest(): void
     {
         $this->mockCommandManager->expects($this->once())->method('getCommandMethodParameters')->willReturn(([]));
 
@@ -89,7 +89,7 @@ class RequestBuilderTest extends UnitTestCase
     /**
      * @test
      */
-    public function ifCommandCantBeResolvedTheHelpScreenIsShown()
+    public function ifCommandCantBeResolvedTheHelpScreenIsShown(): void
     {
         // The following call is only made to satisfy PHPUnit. For some weird reason PHPUnit complains that the
         // mocked method ("getObjectNameByClassName") does not exist _if the mock object is not used_.
@@ -109,7 +109,7 @@ class RequestBuilderTest extends UnitTestCase
      *
      * @test
      */
-    public function cliAccessWithPackageControllerActionAndArgumentsBuildsCorrectRequest()
+    public function cliAccessWithPackageControllerActionAndArgumentsBuildsCorrectRequest(): void
     {
         $methodParameters = [
             'testArgument' => ['optional' => false, 'type' => 'string'],
@@ -129,7 +129,7 @@ class RequestBuilderTest extends UnitTestCase
      *
      * @test
      */
-    public function checkIfCliAccesWithPackageControllerActionAndArgumentsToleratesSpaces()
+    public function checkIfCliAccesWithPackageControllerActionAndArgumentsToleratesSpaces(): void
     {
         $methodParameters = [
             'testArgument' => ['optional' => false, 'type' => 'string'],
@@ -155,7 +155,7 @@ class RequestBuilderTest extends UnitTestCase
      *
      * @test
      */
-    public function CliAccesWithShortArgumentsBuildsCorrectRequest()
+    public function CliAccesWithShortArgumentsBuildsCorrectRequest(): void
     {
         $methodParameters = [
             'a' => ['optional' => false, 'type' => 'string'],
@@ -179,7 +179,7 @@ class RequestBuilderTest extends UnitTestCase
      *
      * @test
      */
-    public function CliAccesWithArgumentsWithAndWithoutValuesBuildsCorrectRequest()
+    public function CliAccesWithArgumentsWithAndWithoutValuesBuildsCorrectRequest(): void
     {
         $methodParameters = [
             'testArgument' => ['optional' => false, 'type' => 'string'],
@@ -228,7 +228,7 @@ class RequestBuilderTest extends UnitTestCase
     /**
      * @test
      */
-    public function argumentWithValueSeparatedByEqualSignBuildsCorrectRequest()
+    public function argumentWithValueSeparatedByEqualSignBuildsCorrectRequest(): void
     {
         $methodParameters = [
             'testArgument' => ['optional' => false, 'type' => 'string']
@@ -243,7 +243,7 @@ class RequestBuilderTest extends UnitTestCase
     /**
      * @test
      */
-    public function insteadOfNamedArgumentsTheArgumentsCanBePassedUnnamedInTheCorrectOrder()
+    public function insteadOfNamedArgumentsTheArgumentsCanBePassedUnnamedInTheCorrectOrder(): void
     {
         $methodParameters = [
             'testArgument1' => ['optional' => false, 'type' => 'string'],
@@ -263,7 +263,7 @@ class RequestBuilderTest extends UnitTestCase
     /**
      * @test
      */
-    public function argumentsAreDetectedAfterOptions()
+    public function argumentsAreDetectedAfterOptions(): void
     {
         $methodParameters = [
             'some' => ['optional' => true, 'type' => 'boolean'],
@@ -283,7 +283,7 @@ class RequestBuilderTest extends UnitTestCase
     /**
      * @test
      */
-    public function exceedingArgumentsMayBeSpecified()
+    public function exceedingArgumentsMayBeSpecified(): void
     {
         $methodParameters = [
             'testArgument1' => ['optional' => false, 'type' => 'string'],
@@ -301,7 +301,7 @@ class RequestBuilderTest extends UnitTestCase
     /**
      * @test
      */
-    public function ifNamedArgumentsAreUsedAllRequiredArgumentsMustBeNamed()
+    public function ifNamedArgumentsAreUsedAllRequiredArgumentsMustBeNamed(): void
     {
         $this->expectException(InvalidArgumentMixingException::class);
         $methodParameters = [
@@ -316,7 +316,7 @@ class RequestBuilderTest extends UnitTestCase
     /**
      * @test
      */
-    public function ifUnnamedArgumentsAreUsedAllRequiredArgumentsMustBeUnnamed()
+    public function ifUnnamedArgumentsAreUsedAllRequiredArgumentsMustBeUnnamed(): void
     {
         $this->expectException(InvalidArgumentMixingException::class);
         $methodParameters = [
@@ -331,7 +331,7 @@ class RequestBuilderTest extends UnitTestCase
     /**
      * @test
      */
-    public function booleanOptionsAreConsideredEvenIfAnUnnamedArgumentFollows()
+    public function booleanOptionsAreConsideredEvenIfAnUnnamedArgumentFollows(): void
     {
         $methodParameters = [
             'requiredArgument1' => ['optional' => false, 'type' => 'string'],
@@ -349,7 +349,7 @@ class RequestBuilderTest extends UnitTestCase
     /**
      * @test
      */
-    public function optionsAreNotMappedToCommandArgumentsIfTheyAreUnnamed()
+    public function optionsAreNotMappedToCommandArgumentsIfTheyAreUnnamed(): void
     {
         $methodParameters = [
             'requiredArgument1' => ['optional' => false, 'type' => 'string'],
@@ -367,7 +367,7 @@ class RequestBuilderTest extends UnitTestCase
     /**
      * @test
      */
-    public function afterAllRequiredArgumentsUnnamedParametersAreStoredAsExceedingArguments()
+    public function afterAllRequiredArgumentsUnnamedParametersAreStoredAsExceedingArguments(): void
     {
         $methodParameters = [
             'requiredArgument1' => ['optional' => false, 'type' => 'string'],
@@ -385,7 +385,7 @@ class RequestBuilderTest extends UnitTestCase
     /**
      * @test
      */
-    public function booleanOptionsCanHaveOnlyCertainValuesIfTheValueIsAssignedWithoutEqualSign()
+    public function booleanOptionsCanHaveOnlyCertainValuesIfTheValueIsAssignedWithoutEqualSign(): void
     {
         $methodParameters = [
             'b1' => ['optional' => true, 'type' => 'boolean'],
@@ -408,7 +408,7 @@ class RequestBuilderTest extends UnitTestCase
      *
      * @return array
      */
-    public function quotedValues()
+    public static function quotedValues(): array
     {
         return [
             ["'value with spaces'", 'value with spaces'],
@@ -428,7 +428,7 @@ class RequestBuilderTest extends UnitTestCase
      * @test
      * @dataProvider quotedValues
      */
-    public function quotedArgumentValuesAreCorrectlyParsedWhenPassingTheCommandAsString($quotedArgument, $expectedResult)
+    public function quotedArgumentValuesAreCorrectlyParsedWhenPassingTheCommandAsString($quotedArgument, $expectedResult): void
     {
         $methodParameters = [
             'requiredArgument1' => ['optional' => false, 'type' => 'string'],
@@ -447,7 +447,7 @@ class RequestBuilderTest extends UnitTestCase
      *
      * @return array
      */
-    public function arrayCliArgumentValues()
+    public static function arrayCliArgumentValues(): array
     {
         return [
             [
@@ -472,7 +472,7 @@ class RequestBuilderTest extends UnitTestCase
      * @test
      * @dataProvider arrayCliArgumentValues
      */
-    public function arrayArgumentIsParsedCorrectly(string $cliArguments, array $expectedArguments, array $epectedExceedingArguments)
+    public function arrayArgumentIsParsedCorrectly(string $cliArguments, array $expectedArguments, array $epectedExceedingArguments): void
     {
         $methodParameters = [
             'a1' => ['optional' => false, 'type' => 'array'],

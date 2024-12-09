@@ -23,7 +23,7 @@ class ContextTest extends \Neos\Flow\Tests\UnitTestCase
      *
      * @return array
      */
-    public function simpleValues()
+    public static function simpleValues(): array
     {
         return [
             ['Test', 'Test'],
@@ -41,7 +41,7 @@ class ContextTest extends \Neos\Flow\Tests\UnitTestCase
      * @param mixed $value
      * @param mixed $expectedUnwrappedValue
      */
-    public function unwrapSimpleValues($value, $expectedUnwrappedValue)
+    public function unwrapSimpleValues($value, $expectedUnwrappedValue): void
     {
         $context = new Context($value);
         $unwrappedValue = $context->unwrap();
@@ -53,7 +53,7 @@ class ContextTest extends \Neos\Flow\Tests\UnitTestCase
      *
      * @return array
      */
-    public function arrayValues()
+    public static function arrayValues(): array
     {
         return [
             [[], []],
@@ -71,7 +71,7 @@ class ContextTest extends \Neos\Flow\Tests\UnitTestCase
      * @param mixed $value
      * @param mixed $expectedUnwrappedValue
      */
-    public function unwrapArrayValues($value, $expectedUnwrappedValue)
+    public function unwrapArrayValues($value, $expectedUnwrappedValue): void
     {
         $context = new Context($value);
         $unwrappedValue = $context->unwrap();
@@ -83,7 +83,7 @@ class ContextTest extends \Neos\Flow\Tests\UnitTestCase
      *
      * @return array
      */
-    public function arrayGetValues()
+    public static function arrayGetValues(): array
     {
         return [
             [[], 'foo', null],
@@ -102,7 +102,7 @@ class ContextTest extends \Neos\Flow\Tests\UnitTestCase
      * @param string $path
      * @param mixed $expectedGetValue
      */
-    public function getValueByPathForArrayValues($value, $path, $expectedGetValue)
+    public function getValueByPathForArrayValues($value, $path, $expectedGetValue): void
     {
         $context = new Context($value);
         $getValue = $context->get($path);
@@ -114,7 +114,7 @@ class ContextTest extends \Neos\Flow\Tests\UnitTestCase
      *
      * @return array
      */
-    public function objectGetValues()
+    public static function objectGetValues(): array
     {
         $simpleObject = new \stdClass();
         $simpleObject->foo = 'bar';
@@ -139,7 +139,7 @@ class ContextTest extends \Neos\Flow\Tests\UnitTestCase
      * @param string $path
      * @param mixed $expectedGetValue
      */
-    public function getValueByPathForObjectValues($value, $path, $expectedGetValue)
+    public function getValueByPathForObjectValues($value, $path, $expectedGetValue): void
     {
         $context = new Context($value);
         $getValue = $context->get($path);

@@ -20,7 +20,7 @@ use Neos\Flow\Tests\UnitTestCase;
  */
 class StringHelperTest extends UnitTestCase
 {
-    public function substrExamples()
+    public static function substrExamples(): array
     {
         return [
             'positive start and length lower count' => ['Hello, World!', 7, 5, 'World'],
@@ -46,7 +46,7 @@ class StringHelperTest extends UnitTestCase
         self::assertSame($expected, $result);
     }
 
-    public function substringExamples()
+    public static function substringExamples(): array
     {
         return [
             'start equals end' => ['Hello, World!', 7, 7, ''],
@@ -71,7 +71,7 @@ class StringHelperTest extends UnitTestCase
         self::assertSame($expected, $result);
     }
 
-    public function charAtExamples()
+    public static function charAtExamples(): array
     {
         return [
             'index in string' => ['Hello, World!', 5, ','],
@@ -92,7 +92,7 @@ class StringHelperTest extends UnitTestCase
         self::assertSame($expected, $result);
     }
 
-    public function endsWithExamples()
+    public static function endsWithExamples(): array
     {
         return [
             'search matched' => ['To be, or not to be, that is the question.', 'question.', null, true],
@@ -113,7 +113,7 @@ class StringHelperTest extends UnitTestCase
         self::assertSame($expected, $result);
     }
 
-    public function chrExamples()
+    public static function chrExamples(): array
     {
         return [
             ['value' => 65, 'expected' => 'A'],
@@ -133,7 +133,7 @@ class StringHelperTest extends UnitTestCase
         self::assertSame($expected, $result);
     }
 
-    public function ordExamples()
+    public static function ordExamples(): array
     {
         return [
             ['value' => 'A', 'expected' => 65],
@@ -154,7 +154,7 @@ class StringHelperTest extends UnitTestCase
         self::assertSame($expected, $result);
     }
 
-    public function indexOfExamples()
+    public static function indexOfExamples(): array
     {
         return [
             'match at start' => ['Blue Whale', 'Blue', null, 0],
@@ -181,7 +181,7 @@ class StringHelperTest extends UnitTestCase
         self::assertSame($expected, $result);
     }
 
-    public function lastIndexOfExamples()
+    public static function lastIndexOfExamples(): array
     {
         return [
             'match last occurence' => ['canal', 'a', null, 3],
@@ -203,7 +203,7 @@ class StringHelperTest extends UnitTestCase
         self::assertSame($expected, $result);
     }
 
-    public function pregMatchExamples()
+    public static function pregMatchExamples(): array
     {
         return [
             'matches' => ['For more information, see Chapter 3.4.5.1', '/(chapter \d+(\.\d)*)/i', ['Chapter 3.4.5.1', 'Chapter 3.4.5.1', '.1']]
@@ -221,7 +221,7 @@ class StringHelperTest extends UnitTestCase
         self::assertSame($expected, $result);
     }
 
-    public function pregMatchAllExamples()
+    public static function pregMatchAllExamples(): array
     {
         return [
             'matches' => ['<hr id="icon-one" /><hr id="icon-two" />', '/id="icon-(.+?)"/', [['id="icon-one"', 'id="icon-two"'],['one','two']]]
@@ -239,7 +239,7 @@ class StringHelperTest extends UnitTestCase
         self::assertSame($expected, $result);
     }
 
-    public function pregReplaceExamples()
+    public static function pregReplaceExamples(): array
     {
         return [
             'replace non-alphanumeric characters' => ['Some.String with sp:cial characters', '/[[:^alnum:]]/', '-', null, 'Some-String-with-sp-cial-characters'],
@@ -261,7 +261,7 @@ class StringHelperTest extends UnitTestCase
         self::assertSame($expected, $result);
     }
 
-    public function pregSplitExamples()
+    public static function pregSplitExamples(): array
     {
         return [
             'matches' => ['foo bar   baz', '/\s+/', -1, ['foo', 'bar', 'baz']],
@@ -280,7 +280,7 @@ class StringHelperTest extends UnitTestCase
         self::assertSame($expected, $result);
     }
 
-    public function replaceExamples()
+    public static function replaceExamples(): array
     {
         return [
             'replace' => ['canal', 'ana', 'oo', 'cool'],
@@ -302,7 +302,7 @@ class StringHelperTest extends UnitTestCase
     }
 
 
-    public function splitExamples()
+    public static function splitExamples(): array
     {
         return [
             'split' => ['My hovercraft is full of eels', ' ', null, ['My', 'hovercraft', 'is', 'full', 'of', 'eels']],
@@ -323,7 +323,7 @@ class StringHelperTest extends UnitTestCase
         self::assertSame($expected, $result);
     }
 
-    public function startsWithExamples()
+    public static function startsWithExamples(): array
     {
         return [
             'search matched' => ['To be, or not to be, that is the question.', 'To be', null, true],
@@ -345,7 +345,7 @@ class StringHelperTest extends UnitTestCase
         self::assertSame($expected, $result);
     }
 
-    public function firstLetterToUpperCaseExamples()
+    public static function firstLetterToUpperCaseExamples(): array
     {
         return [
             'lowercase' => ['foo', 'Foo'],
@@ -364,7 +364,7 @@ class StringHelperTest extends UnitTestCase
         self::assertSame($expected, $result);
     }
 
-    public function firstLetterToLowerCaseExamples()
+    public static function firstLetterToLowerCaseExamples(): array
     {
         return [
             'lowercase' => ['foo', 'foo'],
@@ -383,7 +383,7 @@ class StringHelperTest extends UnitTestCase
         self::assertSame($expected, $result);
     }
 
-    public function toLowerCaseExamples()
+    public static function toLowerCaseExamples(): array
     {
         return [
             'lowercase' => ['Foo bAr BaZ', 'foo bar baz']
@@ -401,7 +401,7 @@ class StringHelperTest extends UnitTestCase
         self::assertSame($expected, $result);
     }
 
-    public function toUpperCaseExamples()
+    public static function toUpperCaseExamples(): array
     {
         return [
             'uppercase' => ['Foo bAr BaZ', 'FOO BAR BAZ']
@@ -419,7 +419,7 @@ class StringHelperTest extends UnitTestCase
         self::assertSame($expected, $result);
     }
 
-    public function isBlankExamples()
+    public static function isBlankExamples(): array
     {
         return [
             'string with whitespace' => ['  	', true],
@@ -440,7 +440,7 @@ class StringHelperTest extends UnitTestCase
         self::assertSame($expected, $result);
     }
 
-    public function trimExamples()
+    public static function trimExamples(): array
     {
         return [
             'string with whitespace' => ['  	', null, ''],
@@ -461,7 +461,7 @@ class StringHelperTest extends UnitTestCase
         self::assertSame($expected, $result);
     }
 
-    public function typeConversionExamples()
+    public static function typeConversionExamples(): array
     {
         return [
             'string numeric value' => ['toString', 42, '42'],
@@ -495,7 +495,7 @@ class StringHelperTest extends UnitTestCase
         self::assertSame($expected, $result);
     }
 
-    public function stripTagsExamples()
+    public static function stripTagsExamples(): array
     {
         return [
             'strip tags' => ['<a href="#">here</a>', null, 'here'],
@@ -535,7 +535,7 @@ class StringHelperTest extends UnitTestCase
         self::assertSame('%26foo%7Cbar', $result);
     }
 
-    public function htmlSpecialCharsExamples()
+    public static function htmlSpecialCharsExamples(): array
     {
         return [
             'encode entities' => ['Foo &amp; Bar', false, 'Foo &amp;amp; Bar'],
@@ -554,7 +554,7 @@ class StringHelperTest extends UnitTestCase
         self::assertSame($expected, $result);
     }
 
-    public function cropExamples()
+    public static function cropExamples(): array
     {
         return [
             'standard options' => [
@@ -626,7 +626,7 @@ class StringHelperTest extends UnitTestCase
         self::assertSame('063b3d108bed9f88fa618c6046de0dccadcf3158', $result);
     }
 
-    public function lengthExamples()
+    public static function lengthExamples(): array
     {
         return [
             'null' => [null, 0],
@@ -647,7 +647,7 @@ class StringHelperTest extends UnitTestCase
         self::assertSame($expected, $result);
     }
 
-    public function wordCountExamples()
+    public static function wordCountExamples(): array
     {
         return [
             'null' => [null, 0],
@@ -672,7 +672,7 @@ class StringHelperTest extends UnitTestCase
         self::assertSame($expected, $result);
     }
 
-    public function base64encodeEncodesDataProvider()
+    public static function base64encodeEncodesDataProvider(): array
     {
         return [
             'empty string' => ['input' => '', 'expectedResult' => ''],
@@ -695,7 +695,7 @@ class StringHelperTest extends UnitTestCase
         self::assertSame($expectedResult, $helper->base64encode($input));
     }
 
-    public function base64decodeEncodesDataProvider()
+    public static function base64decodeEncodesDataProvider(): array
     {
         return [
             'empty string' => ['input' => '', 'expectedResult' => ''],

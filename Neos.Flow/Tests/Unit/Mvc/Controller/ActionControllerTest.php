@@ -59,11 +59,11 @@ class ActionControllerTest extends UnitTestCase
         $this->actionController = $this->getAccessibleMock(ActionController::class, []);
 
         $this->mockRequest = $this->getMockBuilder(Mvc\ActionRequest::class)->disableOriginalConstructor()->getMock();
-        $this->mockRequest->expects($this->any())->method('getControllerPackageKey')->willReturn(('Some.Package'));
-        $this->mockRequest->expects($this->any())->method('getControllerSubpackageKey')->willReturn(('Subpackage'));
-        $this->mockRequest->expects($this->any())->method('getFormat')->willReturn(('theFormat'));
-        $this->mockRequest->expects($this->any())->method('getControllerName')->willReturn(('TheController'));
-        $this->mockRequest->expects($this->any())->method('getControllerActionName')->willReturn(('theAction'));
+        $this->mockRequest->method('getControllerPackageKey')->willReturn(('Some.Package'));
+        $this->mockRequest->method('getControllerSubpackageKey')->willReturn(('Subpackage'));
+        $this->mockRequest->method('getFormat')->willReturn(('theFormat'));
+        $this->mockRequest->method('getControllerName')->willReturn(('TheController'));
+        $this->mockRequest->method('getControllerActionName')->willReturn(('theAction'));
         $this->inject($this->actionController, 'request', $this->mockRequest);
 
         $this->mockObjectManager = $this->createMock(ObjectManagerInterface::class);
@@ -79,7 +79,7 @@ class ActionControllerTest extends UnitTestCase
     /**
      * @test
      */
-    public function resolveViewObjectNameReturnsObjectNameOfCustomViewWithFormatSuffixIfItExists()
+    public function resolveViewObjectNameReturnsObjectNameOfCustomViewWithFormatSuffixIfItExists(): void
     {
         $this->mockObjectManager->expects($this->once())->method('getCaseSensitiveObjectName')->with('some\package\subpackage\view\thecontroller\theactiontheformat')->willReturn(('ResolvedObjectName'));
 
@@ -89,13 +89,21 @@ class ActionControllerTest extends UnitTestCase
     /**
      * @test
      */
-    public function resolveViewObjectNameReturnsObjectNameOfCustomViewWithoutFormatSuffixIfItExists()
+    public function resolveViewObjectNameReturnsObjectNameOfCustomViewWithoutFormatSuffixIfItExists(): void
     {
-        $this->mockObjectManager->expects($this->exactly(2))->method('getCaseSensitiveObjectName')
-            ->withConsecutive(
-                ['some\package\subpackage\view\thecontroller\theactiontheformat'],
-                ['some\package\subpackage\view\thecontroller\theaction']
-            )->willReturnOnConsecutiveCalls(null, 'ResolvedObjectName');
+        $matcher = $this->exactly(2);
+        $this->mockObjectManager->expects($matcher)->method('getCaseSensitiveObjectName')
+            ->willReturnCallback(function ($name) use ($matcher) {
+                if ($matcher->numberOfInvocations() === 1) {
+                    $this->assertSame('some\package\subpackage\view\thecontroller\theactiontheformat', $name);
+                    return null;
+                }
+                if ($matcher->numberOfInvocations() === 2) {
+                    $this->assertSame('some\package\subpackage\view\thecontroller\theaction', $name);
+                    return 'ResolvedObjectName';
+                }
+                return 'unexpected invocation';
+            });
 
         self::assertSame('ResolvedObjectName', $this->actionController->_call('resolveViewObjectName'));
     }
@@ -103,14 +111,20 @@ class ActionControllerTest extends UnitTestCase
     /**
      * @test
      */
-    public function resolveViewObjectNameRespectsViewFormatToObjectNameMap()
+    public function resolveViewObjectNameRespectsViewFormatToObjectNameMap(): void
     {
         $this->actionController->_set('viewFormatToObjectNameMap', ['html' => 'Foo', 'theFormat' => 'Some\Custom\View\Object\Name']);
-        $this->mockObjectManager->expects($this->exactly(2))->method('getCaseSensitiveObjectName')
-            ->withConsecutive(
-                ['some\package\subpackage\view\thecontroller\theactiontheformat'],
-                ['some\package\subpackage\view\thecontroller\theaction']
-            )->willReturn(null);
+        $matcher = $this->exactly(2);
+        $this->mockObjectManager->expects($matcher)->method('getCaseSensitiveObjectName')
+            ->willReturnCallback(function ($name) use ($matcher) {
+                if ($matcher->numberOfInvocations() === 1) {
+                    $this->assertSame('some\package\subpackage\view\thecontroller\theactiontheformat', $name);
+                }
+                if ($matcher->numberOfInvocations() === 2) {
+                    $this->assertSame('some\package\subpackage\view\thecontroller\theaction', $name);
+                }
+                return null;
+            });
 
         self::assertSame('Some\Custom\View\Object\Name', $this->actionController->_call('resolveViewObjectName'));
     }
@@ -118,7 +132,7 @@ class ActionControllerTest extends UnitTestCase
     /**
      * @test
      */
-    public function resolveViewReturnsViewResolvedByResolveViewObjectName()
+    public function resolveViewReturnsViewResolvedByResolveViewObjectName(): void
     {
         $this->mockObjectManager->expects($this->atLeastOnce())->method('getCaseSensitiveObjectName')->with('some\package\subpackage\view\thecontroller\theactiontheformat')->willReturn((SimpleTemplateView::class));
         self::assertInstanceOf(SimpleTemplateView::class, $this->actionController->_call('resolveView'));
@@ -127,9 +141,9 @@ class ActionControllerTest extends UnitTestCase
     /**
      * @test
      */
-    public function resolveViewReturnsDefaultViewIfNoViewObjectNameCouldBeResolved()
+    public function resolveViewReturnsDefaultViewIfNoViewObjectNameCouldBeResolved(): void
     {
-        $this->mockObjectManager->expects($this->any())->method('getCaseSensitiveObjectName')->willReturn((null));
+        $this->mockObjectManager->method('getCaseSensitiveObjectName')->willReturn((null));
         $this->actionController->_set('defaultViewObjectName', SimpleTemplateView::class);
         self::assertInstanceOf(SimpleTemplateView::class, $this->actionController->_call('resolveView'));
     }
@@ -137,7 +151,7 @@ class ActionControllerTest extends UnitTestCase
     /**
      * @test
      */
-    public function processRequestThrowsExceptionIfRequestedActionIsNotCallable()
+    public function processRequestThrowsExceptionIfRequestedActionIsNotCallable(): void
     {
         $this->expectException(Mvc\Exception\NoSuchActionException::class);
         $this->actionController = new ActionController();
@@ -146,12 +160,12 @@ class ActionControllerTest extends UnitTestCase
         $this->inject($this->actionController, 'controllerContext', $this->mockControllerContext);
 
         $mockRequest = $this->getMockBuilder(Mvc\ActionRequest::class)->disableOriginalConstructor()->getMock();
-        $mockRequest->expects($this->any())->method('getControllerActionName')->willReturn(('nonExisting'));
+        $mockRequest->method('getControllerActionName')->willReturn(('nonExisting'));
 
         $this->inject($this->actionController, 'arguments', new Arguments([]));
 
         $mockHttpRequest = $this->getMockBuilder(ServerRequestInterface::class)->disableOriginalConstructor()->getMock();
-        $mockRequest->expects($this->any())->method('getHttpRequest')->willReturn(($mockHttpRequest));
+        $mockRequest->method('getHttpRequest')->willReturn(($mockHttpRequest));
 
         $mockResponse = new Mvc\ActionResponse;
 
@@ -161,7 +175,7 @@ class ActionControllerTest extends UnitTestCase
     /**
      * @test
      */
-    public function processRequestThrowsExceptionIfRequestedActionIsNotPublic()
+    public function processRequestThrowsExceptionIfRequestedActionIsNotPublic(): void
     {
         $this->expectException(Mvc\Exception\InvalidActionVisibilityException::class);
         $this->actionController = new ActionController();
@@ -171,10 +185,10 @@ class ActionControllerTest extends UnitTestCase
         $this->inject($this->actionController, 'arguments', new Arguments([]));
 
         $mockRequest = $this->getMockBuilder(Mvc\ActionRequest::class)->disableOriginalConstructor()->getMock();
-        $mockRequest->expects($this->any())->method('getControllerActionName')->willReturn(('initialize'));
+        $mockRequest->method('getControllerActionName')->willReturn(('initialize'));
 
         $mockReflectionService = $this->getMockBuilder(ReflectionService::class)->disableOriginalConstructor()->getMock();
-        $mockReflectionService->expects($this->any())->method('isMethodPublic')->will(self::returnCallBack(function ($className, $methodName) {
+        $mockReflectionService->method('isMethodPublic')->will($this->returnCallBack(function ($className, $methodName) {
             if ($methodName === 'initializeAction') {
                 return false;
             } else {
@@ -182,16 +196,16 @@ class ActionControllerTest extends UnitTestCase
             }
         }));
 
-        $this->mockObjectManager->expects($this->any())->method('get')->will(self::returnCallBack(function ($classname) use ($mockReflectionService) {
+        $this->mockObjectManager->method('get')->willReturnCallBack(function ($classname) use ($mockReflectionService) {
             if ($classname === ReflectionService::class) {
-                self::returnValue($mockReflectionService);
+                return $mockReflectionService;
             }
 
             return $this->createMock($classname);
-        }));
+        });
 
         $mockHttpRequest = $this->getMockBuilder(ServerRequestInterface::class)->disableOriginalConstructor()->getMock();
-        $mockRequest->expects($this->any())->method('getHttpRequest')->willReturn(($mockHttpRequest));
+        $mockRequest->method('getHttpRequest')->willReturn(($mockHttpRequest));
 
         $mockResponse = new Mvc\ActionResponse;
 
@@ -201,7 +215,7 @@ class ActionControllerTest extends UnitTestCase
     /**
      * @test
      */
-    public function processRequestInjectsControllerContextToView()
+    public function processRequestInjectsControllerContextToView(): void
     {
         $this->actionController = $this->getAccessibleMock(ActionController::class, ['resolveActionMethodName', 'initializeActionMethodArguments', 'initializeActionMethodValidators', 'resolveView', 'callActionMethod', 'initializeController']);
         $this->actionController->method('resolveActionMethodName')->willReturn('indexAction');
@@ -216,7 +230,7 @@ class ActionControllerTest extends UnitTestCase
         $this->inject($this->actionController, 'mvcPropertyMappingConfigurationService', $mockMvcPropertyMappingConfigurationService);
 
         $mockHttpRequest = $this->getMockBuilder(ServerRequestInterface::class)->disableOriginalConstructor()->getMock();
-        $this->mockRequest->expects($this->any())->method('getHttpRequest')->willReturn(($mockHttpRequest));
+        $this->mockRequest->method('getHttpRequest')->willReturn(($mockHttpRequest));
 
         $mockResponse = new Mvc\ActionResponse;
         $mockResponse->setContentType('text/plain');
@@ -233,7 +247,7 @@ class ActionControllerTest extends UnitTestCase
     /**
      * @test
      */
-    public function processRequestInjectsSettingsToView()
+    public function processRequestInjectsSettingsToView(): void
     {
         $this->actionController = $this->getAccessibleMock(ActionController::class, ['resolveActionMethodName', 'initializeActionMethodArguments', 'initializeActionMethodValidators', 'resolveView', 'callActionMethod']);
         $this->actionController->method('resolveActionMethodName')->willReturn('indexAction');
@@ -248,7 +262,7 @@ class ActionControllerTest extends UnitTestCase
         $this->inject($this->actionController, 'mvcPropertyMappingConfigurationService', $mockMvcPropertyMappingConfigurationService);
 
         $mockHttpRequest = $this->getMockBuilder(ServerRequestInterface::class)->disableOriginalConstructor()->getMock();
-        $this->mockRequest->expects($this->any())->method('getHttpRequest')->willReturn(($mockHttpRequest));
+        $this->mockRequest->method('getHttpRequest')->willReturn(($mockHttpRequest));
 
         $mockResponse = new Mvc\ActionResponse;
 
@@ -260,7 +274,7 @@ class ActionControllerTest extends UnitTestCase
         $this->actionController->processRequest($this->mockRequest, $mockResponse);
     }
 
-    public function supportedAndRequestedMediaTypes()
+    public static function supportedAndRequestedMediaTypes(): array
     {
         return [
             // supported, Accept header, expected
@@ -275,7 +289,7 @@ class ActionControllerTest extends UnitTestCase
      * @test
      * @dataProvider supportedAndRequestedMediaTypes
      */
-    public function processRequestSetsNegotiatedContentTypeOnResponse($supportedMediaTypes, $acceptHeader, $expected)
+    public function processRequestSetsNegotiatedContentTypeOnResponse($supportedMediaTypes, $acceptHeader, $expected): void
     {
         $this->actionController = $this->getAccessibleMock(ActionController::class, ['resolveActionMethodName', 'initializeActionMethodArguments', 'initializeActionMethodValidators', 'resolveView', 'callActionMethod']);
         $this->actionController->method('resolveActionMethodName')->willReturn('indexAction');
@@ -300,7 +314,7 @@ class ActionControllerTest extends UnitTestCase
      * @test
      * @dataProvider supportedAndRequestedMediaTypes
      */
-    public function processRequestUsesContentTypeFromActionResponse($supportedMediaTypes, $acceptHeader, $expected)
+    public function processRequestUsesContentTypeFromActionResponse($supportedMediaTypes, $acceptHeader, $expected): void
     {
         $this->actionController = $this->getAccessibleMock(ActionController::class, ['resolveActionMethodName', 'initializeActionMethodArguments', 'initializeActionMethodValidators', 'resolveView', 'callActionMethod']);
         $this->actionController->method('resolveActionMethodName')->willReturn('indexAction');
@@ -326,7 +340,7 @@ class ActionControllerTest extends UnitTestCase
      * @test
      * @dataProvider supportedAndRequestedMediaTypes
      */
-    public function processRequestUsesContentTypeFromRenderedView($supportedMediaTypes, $acceptHeader, $expected)
+    public function processRequestUsesContentTypeFromRenderedView($supportedMediaTypes, $acceptHeader, $expected): void
     {
         $this->actionController = $this->getAccessibleMock(ActionController::class, ['resolveActionMethodName', 'theActionAction', 'initializeActionMethodArguments', 'initializeActionMethodValidators', 'resolveView']);
         $this->actionController->method('resolveActionMethodName')->willReturn('theActionAction');
@@ -357,15 +371,15 @@ class ActionControllerTest extends UnitTestCase
     /**
      * @test
      */
-    public function resolveViewThrowsExceptionIfResolvedViewDoesNotImplementViewInterface()
+    public function resolveViewThrowsExceptionIfResolvedViewDoesNotImplementViewInterface(): void
     {
         $this->expectException(Mvc\Exception\ViewNotFoundException::class);
-        $this->mockObjectManager->expects($this->any())->method('getCaseSensitiveObjectName')->willReturn((null));
+        $this->mockObjectManager->method('getCaseSensitiveObjectName')->willReturn((null));
         $this->actionController->_set('defaultViewObjectName', 'ViewDefaultObjectName');
         $this->actionController->_call('resolveView');
     }
 
-    public function ignoredValidationArgumentsProvider()
+    public static function ignoredValidationArgumentsProvider(): array
     {
         return [
             [false, false],
@@ -377,12 +391,12 @@ class ActionControllerTest extends UnitTestCase
      * @test
      * @dataProvider ignoredValidationArgumentsProvider
      */
-    public function initializeActionMethodValidatorsDoesNotAddValidatorForIgnoredArgumentsWithoutEvaluation($evaluateIgnoredValidationArgument, $setValidatorShouldBeCalled)
+    public function initializeActionMethodValidatorsDoesNotAddValidatorForIgnoredArgumentsWithoutEvaluation($evaluateIgnoredValidationArgument, $setValidatorShouldBeCalled): void
     {
         $this->actionController = $this->getAccessibleMock(ActionController::class, ['getInformationNeededForInitializeActionMethodValidators']);
 
         $mockArgument = $this->getMockBuilder(Mvc\Controller\Argument::class)->disableOriginalConstructor()->getMock();
-        $mockArgument->expects($this->any())->method('getName')->willReturn(('node'));
+        $mockArgument->method('getName')->willReturn(('node'));
         $arguments = new Arguments();
         $arguments['node'] = $mockArgument;
 
@@ -400,7 +414,7 @@ class ActionControllerTest extends UnitTestCase
             'node' => $mockValidator
         ];
 
-        $this->actionController->expects($this->any())->method('getInformationNeededForInitializeActionMethodValidators')->willReturn(([[], [], [], $ignoredValidationArguments]));
+        $this->actionController->method('getInformationNeededForInitializeActionMethodValidators')->willReturn(([[], [], [], $ignoredValidationArguments]));
 
         $this->inject($this->actionController, 'actionMethodName', 'showAction');
         $this->inject($this->actionController, 'arguments', $arguments);
@@ -408,8 +422,8 @@ class ActionControllerTest extends UnitTestCase
         $this->inject($this->actionController, 'objectManager', $this->mockObjectManager);
 
         $mockValidatorResolver = $this->createMock(ValidatorResolver::class);
-        $mockValidatorResolver->expects($this->any())->method('getBaseValidatorConjunction')->willReturn(($this->getMockBuilder(ConjunctionValidator::class)->getMock()));
-        $mockValidatorResolver->expects($this->any())->method('buildMethodArgumentsValidatorConjunctions')->willReturn(($parameterValidators));
+        $mockValidatorResolver->method('getBaseValidatorConjunction')->willReturn(($this->getMockBuilder(ConjunctionValidator::class)->getMock()));
+        $mockValidatorResolver->method('buildMethodArgumentsValidatorConjunctions')->willReturn(($parameterValidators));
         $this->inject($this->actionController, 'validatorResolver', $mockValidatorResolver);
 
         if ($setValidatorShouldBeCalled) {

@@ -17,6 +17,7 @@ use Neos\Cache\Psr\Cache\CachePool;
 use Neos\Cache\Psr\Cache\CacheItem;
 use Neos\Cache\Psr\InvalidArgumentException;
 use Neos\Cache\Tests\BaseTestCase;
+use PHPUnit\Framework\MockObject\MockObject;
 
 /**
  * Testcase for the PSR-6 cache frontend
@@ -24,7 +25,7 @@ use Neos\Cache\Tests\BaseTestCase;
  */
 class CachePoolTest extends BaseTestCase
 {
-    public function validIdentifiersDataProvider(): array
+    public static function validIdentifiersDataProvider(): array
     {
         return [
             ['short'],
@@ -52,7 +53,7 @@ class CachePoolTest extends BaseTestCase
         self::assertInstanceOf(CachePool::class, $cachePool);
     }
 
-    public function invalidIdentifiersDataProvider(): array
+    public static function invalidIdentifiersDataProvider(): array
     {
         return [
             [''],
@@ -78,10 +79,10 @@ class CachePoolTest extends BaseTestCase
     /**
      * @test
      */
-    public function getItemChecksIfTheIdentifierIsValid()
+    public function getItemChecksIfTheIdentifierIsValid(): void
     {
         $this->expectException(InvalidArgumentException::class);
-        /** @var PsrFrontend|\PHPUnit\Framework\MockObject\MockObject $cache */
+        /** @var CachePool|MockObject $cache */
         $cache = $this->getMockBuilder(CachePool::class)
             ->onlyMethods(['isValidEntryIdentifier'])
             ->disableOriginalConstructor()
@@ -93,7 +94,7 @@ class CachePoolTest extends BaseTestCase
     /**
      * @test
      */
-    public function savePassesSerializedStringToBackend()
+    public function savePassesSerializedStringToBackend(): void
     {
         $theString = 'Just some value';
         $cacheItem = new CacheItem('PsrCacheTest', true, $theString);
@@ -107,7 +108,7 @@ class CachePoolTest extends BaseTestCase
     /**
      * @test
      */
-    public function savePassesSerializedArrayToBackend()
+    public function savePassesSerializedArrayToBackend(): void
     {
         $theArray = ['Just some value', 'and another one.'];
         $cacheItem = new CacheItem('PsrCacheTest', true, $theArray);
@@ -121,7 +122,7 @@ class CachePoolTest extends BaseTestCase
     /**
      * @test
      */
-    public function savePassesLifetimeToBackend()
+    public function savePassesLifetimeToBackend(): void
     {
         // Note that this test can fail due to fraction of second problems in the calculation of lifetime vs. expiration date.
         $theString = 'Just some value';
@@ -138,7 +139,7 @@ class CachePoolTest extends BaseTestCase
     /**
      * @test
      */
-    public function getItemFetchesValueFromBackend()
+    public function getItemFetchesValueFromBackend(): void
     {
         $theString = 'Just some value';
         $backend = $this->prepareDefaultBackend();
@@ -152,7 +153,7 @@ class CachePoolTest extends BaseTestCase
     /**
      * @test
      */
-    public function getItemFetchesFalseBooleanValueFromBackend()
+    public function getItemFetchesFalseBooleanValueFromBackend(): void
     {
         $backend = $this->prepareDefaultBackend();
         $backend->expects($this->once())->method('get')->willReturn(serialize(false));
@@ -166,7 +167,7 @@ class CachePoolTest extends BaseTestCase
     /**
      * @test
      */
-    public function hasItemReturnsResultFromBackend()
+    public function hasItemReturnsResultFromBackend(): void
     {
         $backend = $this->prepareDefaultBackend();
         $backend->expects($this->once())->method('has')->with(self::equalTo('PsrCacheTest'))->willReturn(true);
@@ -178,7 +179,7 @@ class CachePoolTest extends BaseTestCase
     /**
      * @test
      */
-    public function deleteItemCallsBackend()
+    public function deleteItemCallsBackend(): void
     {
         $cacheIdentifier = 'someCacheIdentifier';
         $backend = $this->prepareDefaultBackend();
@@ -190,7 +191,7 @@ class CachePoolTest extends BaseTestCase
     }
 
     /**
-     * @return AbstractBackend|\PHPUnit\Framework\MockObject\MockObject
+     * @return AbstractBackend|MockObject
      */
     protected function prepareDefaultBackend()
     {
@@ -200,9 +201,7 @@ class CachePoolTest extends BaseTestCase
                 'set',
                 'has',
                 'remove',
-                'findIdentifiersByTag',
                 'flush',
-                'flushByTag',
                 'collectGarbage'
             ])
             ->disableOriginalConstructor()

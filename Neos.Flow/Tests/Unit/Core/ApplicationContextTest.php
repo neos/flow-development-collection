@@ -25,7 +25,7 @@ class ApplicationContextTest extends UnitTestCase
      *
      * @return array
      */
-    public function allowedContexts()
+    public static function allowedContexts(): array
     {
         return [
             ['Production'],
@@ -42,7 +42,7 @@ class ApplicationContextTest extends UnitTestCase
      * @test
      * @dataProvider allowedContexts
      */
-    public function contextStringCanBeSetInConstructorAndReadByCallingToString($allowedContext)
+    public function contextStringCanBeSetInConstructorAndReadByCallingToString($allowedContext): void
     {
         $context = new ApplicationContext($allowedContext);
         self::assertSame($allowedContext, (string)$context);
@@ -53,7 +53,7 @@ class ApplicationContextTest extends UnitTestCase
      *
      * @return array
      */
-    public function forbiddenContexts()
+    public static function forbiddenContexts(): array
     {
         return [
             ['MySpecialContexz'],
@@ -67,7 +67,7 @@ class ApplicationContextTest extends UnitTestCase
      * @test
      * @dataProvider forbiddenContexts
      */
-    public function constructorThrowsExceptionIfMainContextIsForbidden($forbiddenContext)
+    public function constructorThrowsExceptionIfMainContextIsForbidden($forbiddenContext): void
     {
         $this->expectException(Exception::class);
         new ApplicationContext($forbiddenContext);
@@ -78,7 +78,7 @@ class ApplicationContextTest extends UnitTestCase
      *
      * @return array
      */
-    public function isMethods()
+    public static function isMethods(): array
     {
         return [
             'Development' => [
@@ -132,7 +132,7 @@ class ApplicationContextTest extends UnitTestCase
      * @test
      * @dataProvider isMethods
      */
-    public function contextMethodsReturnTheCorrectValues($contextName, $isDevelopment, $isProduction, $isTesting, $parentContext)
+    public function contextMethodsReturnTheCorrectValues($contextName, $isDevelopment, $isProduction, $isTesting, $parentContext): void
     {
         $context = new ApplicationContext($contextName);
         self::assertSame($isDevelopment, $context->isDevelopment());
@@ -144,7 +144,7 @@ class ApplicationContextTest extends UnitTestCase
     /**
      * @test
      */
-    public function parentContextIsConnectedRecursively()
+    public function parentContextIsConnectedRecursively(): void
     {
         $context = new ApplicationContext('Production/Foo/Bar');
         $parentContext = $context->getParent();
@@ -154,7 +154,7 @@ class ApplicationContextTest extends UnitTestCase
         self::assertSame('Production', (string) $rootContext);
     }
 
-    public function getHierarchyDataProvider(): array
+    public static function getHierarchyDataProvider(): array
     {
         return [
             ['contextString' => 'Development', 'expectedResult' => ['Development']],

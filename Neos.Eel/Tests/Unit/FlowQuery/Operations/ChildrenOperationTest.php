@@ -11,6 +11,7 @@ namespace Neos\Eel\Tests\Unit\FlowQuery\Operations;
  * source code.
  */
 
+use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Eel\FlowQuery\Operations\Object\ChildrenOperation;
 
 /**
@@ -18,7 +19,7 @@ use Neos\Eel\FlowQuery\Operations\Object\ChildrenOperation;
  */
 class ChildrenOperationTest extends \Neos\Flow\Tests\UnitTestCase
 {
-    public function childrenExamples()
+    public static function childrenExamples(): array
     {
         $object1 = (object) ['a' => 'b'];
         $object2 = (object) ['c' => 'd'];
@@ -42,7 +43,7 @@ class ChildrenOperationTest extends \Neos\Flow\Tests\UnitTestCase
      */
     public function evaluateSetsTheCorrectPartOfTheContextArray($value, $arguments, $expected)
     {
-        $flowQuery = new \Neos\Eel\FlowQuery\FlowQuery($value);
+        $flowQuery = new FlowQuery($value);
 
         $operation = new ChildrenOperation();
         $operation->evaluate($flowQuery, $arguments);

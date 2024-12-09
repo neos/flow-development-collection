@@ -241,7 +241,7 @@ class VariableFrontendTest extends BaseTestCase
     protected function prepareDefaultBackend()
     {
         return $this->getMockBuilder(AbstractBackend::class)
-            ->onlyMethods(['get', 'set', 'has', 'remove', 'findIdentifiersByTag', 'flush', 'flushByTag', 'collectGarbage'])
+            ->onlyMethods(['get', 'set', 'has', 'remove', 'flush', 'collectGarbage'])
             ->disableOriginalConstructor()
             ->getMock();
     }

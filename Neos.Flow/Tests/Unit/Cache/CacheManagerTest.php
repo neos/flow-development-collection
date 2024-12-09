@@ -18,6 +18,7 @@ use Neos\Flow\Configuration\ConfigurationManager;
 use Neos\Flow\Monitor\ChangeDetectionStrategy\ChangeDetectionStrategyInterface;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Flow\Utility\Environment;
+use PHPUnit\Framework\MockObject\MockObject;
 use Psr\Log\LoggerInterface;
 use Psr\Cache\CacheItemPoolInterface;
 use Psr\SimpleCache\CacheInterface;
@@ -53,7 +54,7 @@ class CacheManagerTest extends UnitTestCase
         $this->cacheManager = new CacheManager();
 
         $this->mockEnvironment = $this->getMockBuilder(Environment::class)->disableOriginalConstructor()->getMock();
-        $this->mockEnvironment->expects($this->any())->method('getPathToTemporaryDirectory')->willReturn(('vfs://Foo/'));
+        $this->mockEnvironment->method('getPathToTemporaryDirectory')->willReturn(('vfs://Foo/'));
         $this->cacheManager->injectEnvironment($this->mockEnvironment);
 
         $this->mockSystemLogger = $this->createMock(LoggerInterface::class);
@@ -66,12 +67,12 @@ class CacheManagerTest extends UnitTestCase
      * Creates a mock cache with the given $cacheIdentifier and registers it with the cache manager
      *
      * @param $cacheIdentifier
-     * @return Cache\Frontend\FrontendInterface
+     * @return Cache\Frontend\FrontendInterface|MockObject
      */
-    protected function registerCache($cacheIdentifier)
+    protected function registerCache($cacheIdentifier): Cache\Frontend\FrontendInterface
     {
         $cache = $this->createMock(Cache\Frontend\FrontendInterface::class);
-        $cache->expects($this->any())->method('getIdentifier')->willReturn(($cacheIdentifier));
+        $cache->method('getIdentifier')->willReturn(($cacheIdentifier));
         $this->cacheManager->registerCache($cache);
 
         return $cache;
@@ -80,7 +81,7 @@ class CacheManagerTest extends UnitTestCase
     /**
      * @test
      */
-    public function managerThrowsExceptionOnCacheRegistrationWithAlreadyExistingIdentifier()
+    public function managerThrowsExceptionOnCacheRegistrationWithAlreadyExistingIdentifier(): void
     {
         $this->expectException(Cache\Exception\DuplicateIdentifierException::class);
         $cache1 = $this->getMockBuilder(Cache\Frontend\AbstractFrontend::class)->disableOriginalConstructor()->getMock();
@@ -96,7 +97,7 @@ class CacheManagerTest extends UnitTestCase
     /**
      * @test
      */
-    public function managerReturnsThePreviouslyRegisteredCached()
+    public function managerReturnsThePreviouslyRegisteredCached(): void
     {
         $cache1 = $this->getMockBuilder(Cache\Frontend\AbstractFrontend::class)->disableOriginalConstructor()->getMock();
         $cache1->expects($this->atLeastOnce())->method('getIdentifier')->willReturn(('cache1'));
@@ -119,7 +120,7 @@ class CacheManagerTest extends UnitTestCase
     /**
      * @test
      */
-    public function getCacheThrowsExceptionForNonExistingIdentifier()
+    public function getCacheThrowsExceptionForNonExistingIdentifier(): void
     {
         $this->expectException(Cache\Exception\NoSuchCacheException::class);
         $cache = $this->getMockBuilder(Cache\Frontend\AbstractFrontend::class)->disableOriginalConstructor()->getMock();
@@ -134,7 +135,7 @@ class CacheManagerTest extends UnitTestCase
     /**
      * @test
      */
-    public function getCacheItemPoolThrowsExceptionForNonExistingIdentifier()
+    public function getCacheItemPoolThrowsExceptionForNonExistingIdentifier(): void
     {
         $this->expectException(Cache\Exception\NoSuchCacheException::class);
         $cache = $this->getMockBuilder(Cache\Frontend\AbstractFrontend::class)->disableOriginalConstructor()->getMock();
@@ -149,7 +150,7 @@ class CacheManagerTest extends UnitTestCase
     /**
      * @test
      */
-    public function getSimpleCacheThrowsExceptionForNonExistingIdentifier()
+    public function getSimpleCacheThrowsExceptionForNonExistingIdentifier(): void
     {
         $this->expectException(Cache\Exception\NoSuchCacheException::class);
         $cache = $this->getMockBuilder(Cache\Frontend\AbstractFrontend::class)->disableOriginalConstructor()->getMock();
@@ -164,7 +165,7 @@ class CacheManagerTest extends UnitTestCase
     /**
      * @test
      */
-    public function hasCacheReturnsCorrectResult()
+    public function hasCacheReturnsCorrectResult(): void
     {
         $cache1 = $this->getMockBuilder(Cache\Frontend\AbstractFrontend::class)->disableOriginalConstructor()->getMock();
         $cache1->expects($this->atLeastOnce())->method('getIdentifier')->willReturn(('cache1'));
@@ -177,7 +178,7 @@ class CacheManagerTest extends UnitTestCase
     /**
      * @test
      */
-    public function isCachePersistentReturnsCorrectResult()
+    public function isCachePersistentReturnsCorrectResult(): void
     {
         $cache1 = $this->getMockBuilder(Cache\Frontend\AbstractFrontend::class)->disableOriginalConstructor()->getMock();
         $cache1->expects($this->atLeastOnce())->method('getIdentifier')->willReturn(('cache1'));
@@ -194,7 +195,7 @@ class CacheManagerTest extends UnitTestCase
     /**
      * @test
      */
-    public function flushCachesByTagCallsTheFlushByTagMethodOfAllRegisteredCaches()
+    public function flushCachesByTagCallsTheFlushByTagMethodOfAllRegisteredCaches(): void
     {
         $cache1 = $this->getMockBuilder(Cache\Frontend\AbstractFrontend::class)->disableOriginalConstructor()->getMock();
         $cache1->expects($this->atLeastOnce())->method('getIdentifier')->willReturn(('cache1'));
@@ -217,7 +218,7 @@ class CacheManagerTest extends UnitTestCase
     /**
      * @test
      */
-    public function flushCachesCallsTheFlushMethodOfAllRegisteredCaches()
+    public function flushCachesCallsTheFlushMethodOfAllRegisteredCaches(): void
     {
         $cache1 = $this->getMockBuilder(Cache\Frontend\AbstractFrontend::class)->disableOriginalConstructor()->getMock();
         $cache1->expects($this->atLeastOnce())->method('getIdentifier')->willReturn(('cache1'));
@@ -240,7 +241,7 @@ class CacheManagerTest extends UnitTestCase
     /**
      * @test
      */
-    public function flushCachesCallsTheFlushConfigurationCacheMethodOfConfigurationManager()
+    public function flushCachesCallsTheFlushConfigurationCacheMethodOfConfigurationManager(): void
     {
         $this->mockConfigurationManager->expects($this->once())->method('flushConfigurationCache');
 
@@ -250,7 +251,7 @@ class CacheManagerTest extends UnitTestCase
     /**
      * @test
      */
-    public function flushCachesDeletesAvailableProxyClassesFile()
+    public function flushCachesDeletesAvailableProxyClassesFile(): void
     {
         file_put_contents('vfs://Foo/AvailableProxyClasses.php', '// dummy');
         $this->cacheManager->flushCaches();
@@ -260,7 +261,7 @@ class CacheManagerTest extends UnitTestCase
     /**
      * @test
      */
-    public function flushConfigurationCachesByChangedFilesFlushesConfigurationCache()
+    public function flushConfigurationCachesByChangedFilesFlushesConfigurationCache(): void
     {
         $this->registerCache('Flow_Object_Classes');
         $this->registerCache('Flow_Object_Configuration');
@@ -273,7 +274,7 @@ class CacheManagerTest extends UnitTestCase
     /**
      * @test
      */
-    public function flushSystemCachesByChangedFilesWithChangedClassFileRemovesCacheEntryFromObjectClassesCache()
+    public function flushSystemCachesByChangedFilesWithChangedClassFileRemovesCacheEntryFromObjectClassesCache(): void
     {
         $objectClassCache = $this->registerCache('Flow_Object_Classes');
         $objectConfigurationCache = $this->registerCache('Flow_Object_Configuration');
@@ -290,7 +291,7 @@ class CacheManagerTest extends UnitTestCase
     /**
      * @test
      */
-    public function flushSystemCachesByChangedFilesWithChangedTestFileRemovesCacheEntryFromObjectClassesCache()
+    public function flushSystemCachesByChangedFilesWithChangedTestFileRemovesCacheEntryFromObjectClassesCache(): void
     {
         $objectClassCache = $this->registerCache('Flow_Object_Classes');
         $objectConfigurationCache = $this->registerCache('Flow_Object_Configuration');
@@ -307,7 +308,7 @@ class CacheManagerTest extends UnitTestCase
     /**
      * @test
      */
-    public function flushSystemCachesByChangedFilesDoesNotFlushPolicyCacheIfNoPolicyFileHasBeenModified()
+    public function flushSystemCachesByChangedFilesDoesNotFlushPolicyCacheIfNoPolicyFileHasBeenModified(): void
     {
         $this->registerCache('Flow_Object_Classes');
         $this->registerCache('Flow_Object_Configuration');
@@ -322,7 +323,7 @@ class CacheManagerTest extends UnitTestCase
     /**
      * @test
      */
-    public function flushSystemCachesByChangedFilesFlushesPolicyAndDoctrineCachesIfAPolicyFileHasBeenModified()
+    public function flushSystemCachesByChangedFilesFlushesPolicyAndDoctrineCachesIfAPolicyFileHasBeenModified(): void
     {
         $this->registerCache('Flow_Object_Classes');
         $this->registerCache('Flow_Object_Configuration');
@@ -348,7 +349,7 @@ class CacheManagerTest extends UnitTestCase
     /**
      * @test
      */
-    public function flushSystemCachesByChangedFilesDoesNotFlushRoutingCacheIfNoRoutesFileHasBeenModified()
+    public function flushSystemCachesByChangedFilesDoesNotFlushRoutingCacheIfNoRoutesFileHasBeenModified(): void
     {
         $this->registerCache('Flow_Object_Classes');
         $this->registerCache('Flow_Object_Configuration');
@@ -366,7 +367,7 @@ class CacheManagerTest extends UnitTestCase
     /**
      * @test
      */
-    public function flushSystemCachesByChangedFilesFlushesRoutingCacheIfARoutesFileHasBeenModified()
+    public function flushSystemCachesByChangedFilesFlushesRoutingCacheIfARoutesFileHasBeenModified(): void
     {
         $this->registerCache('Flow_Object_Classes');
         $this->registerCache('Flow_Object_Configuration');
@@ -386,7 +387,7 @@ class CacheManagerTest extends UnitTestCase
     /**
      * @test
      */
-    public function flushSystemCachesByChangedFilesFlushesRoutingCacheIfACustomSubRoutesFileHasBeenModified()
+    public function flushSystemCachesByChangedFilesFlushesRoutingCacheIfACustomSubRoutesFileHasBeenModified(): void
     {
         $this->registerCache('Flow_Object_Classes');
         $this->registerCache('Flow_Object_Configuration');
@@ -405,7 +406,7 @@ class CacheManagerTest extends UnitTestCase
     /**
      * @return array
      */
-    public function configurationFileChangesNeedAopProxyClassesRebuild()
+    public static function configurationFileChangesNeedAopProxyClassesRebuild(): array
     {
         return [
             ['A/Different/Package/Configuration/Routes.yaml', false],
@@ -421,7 +422,7 @@ class CacheManagerTest extends UnitTestCase
      * @test
      * @dataProvider configurationFileChangesNeedAopProxyClassesRebuild
      */
-    public function flushSystemCachesByChangedFilesTriggersAopProxyClassRebuildIfNeeded($changedFile, $needsAopProxyClassRebuild)
+    public function flushSystemCachesByChangedFilesTriggersAopProxyClassRebuildIfNeeded($changedFile, $needsAopProxyClassRebuild): void
     {
         $this->registerCache('Flow_Security_Authorization_Privilege_Method');
         $this->registerCache('Flow_Mvc_Routing_Route');
@@ -436,7 +437,14 @@ class CacheManagerTest extends UnitTestCase
 
         if ($needsAopProxyClassRebuild) {
             $objectClassesCache->expects($this->once())->method('flush');
-            $objectConfigurationCache->method('remove')->withConsecutive(['allAspectClassesUpToDate'], ['allCompiledCodeUpToDate']);
+            $matcher = $this->atLeast(2);
+            $objectConfigurationCache->expects($matcher)->method('remove')
+                ->willReturnCallback(function (string $value) use ($matcher) {
+                    return match ($matcher->numberOfInvocations()) {
+                        1 => $value === 'allAspectClassesUpToDate',
+                        2 => $value === 'allCompiledCodeUpToDate',
+                    };
+                });
         } else {
             $objectClassesCache->expects($this->never())->method('flush');
             $objectConfigurationCache->expects($this->never())->method('remove')->with('allAspectClassesUpToDate');
@@ -451,7 +459,7 @@ class CacheManagerTest extends UnitTestCase
     /**
      * @test
      */
-    public function flushSystemCachesByChangedFilesDoesNotFlushI18nCacheIfNoTranslationFileHasBeenModified()
+    public function flushSystemCachesByChangedFilesDoesNotFlushI18nCacheIfNoTranslationFileHasBeenModified(): void
     {
         $this->registerCache('Flow_Object_Classes');
         $this->registerCache('Flow_Object_Configuration');
@@ -467,7 +475,7 @@ class CacheManagerTest extends UnitTestCase
     /**
      * @test
      */
-    public function flushSystemCachesByChangedFilesFlushesI18nCacheIfATranslationFileHasBeenModified()
+    public function flushSystemCachesByChangedFilesFlushesI18nCacheIfATranslationFileHasBeenModified(): void
     {
         $this->registerCache('Flow_Object_Classes');
         $this->registerCache('Flow_Object_Configuration');

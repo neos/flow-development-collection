@@ -31,21 +31,87 @@ class FileSizeValidatorTest extends AbstractValidatorTestcase
         ]);
     }
 
-    protected function createResourceMetaDataInterfaceMock(int $filesize): ResourceMetaDataInterface
+    protected static function createResourceMetaDataInterfaceMock(int $filesize): ResourceMetaDataInterface
     {
-        $mock = $this->createMock(ResourceMetaDataInterface::class);
-        $mock->expects($this->once())->method('getFileSize')->willReturn($filesize);
-        return $mock;
+        return new class ($filesize) implements ResourceMetaDataInterface {
+            public function __construct(protected int $filesize)
+            {
+            }
+            public function setFilename($filename)
+            {
+            }
+
+            public function getFilename()
+            {
+            }
+
+            public function getFileSize()
+            {
+                return $this->filesize;
+            }
+
+            public function setFileSize($fileSize)
+            {
+            }
+
+            public function setRelativePublicationPath($path)
+            {
+            }
+
+            public function getRelativePublicationPath()
+            {
+            }
+
+            public function getMediaType()
+            {
+            }
+
+            public function getSha1()
+            {
+            }
+
+            public function setSha1($sha1)
+            {
+            }
+
+        };
     }
 
-    protected function createUploadedFileInterfaceMock(string $filesize): UploadedFileInterface
+    protected static function createUploadedFileInterfaceMock(string $filesize): UploadedFileInterface
     {
-        $mock = $this->createMock(UploadedFileInterface::class);
-        $mock->expects($this->once())->method('getSize')->willReturn($filesize);
-        return $mock;
+        return new class ($filesize) implements UploadedFileInterface {
+            public function __construct(protected int $filesize)
+            {
+            }
+
+            public function getStream()
+            {
+            }
+
+            public function moveTo(string $targetPath)
+            {
+            }
+
+            public function getSize()
+            {
+                return $this->filesize;
+            }
+
+            public function getError()
+            {
+            }
+
+            public function getClientFilename()
+            {
+            }
+
+            public function getClientMediaType()
+            {
+            }
+        };
     }
 
-    public function emptyItems(): array
+    public static function emptyItems(): array
     {
         return [
             [null],
@@ -62,15 +128,15 @@ class FileSizeValidatorTest extends AbstractValidatorTestcase
         self::assertFalse($this->validator->validate($item)->hasErrors());
     }
 
-    public function itemsWithAllowedSize(): array
+    public static function itemsWithAllowedSize(): array
     {
         return [
-            [$this->createResourceMetaDataInterfaceMock(200)],
-            [$this->createResourceMetaDataInterfaceMock(800)],
-            [$this->createResourceMetaDataInterfaceMock(1000)],
-            [$this->createUploadedFileInterfaceMock(200)],
-            [$this->createUploadedFileInterfaceMock(800)],
-            [$this->createUploadedFileInterfaceMock(1000)]
+            [self::createResourceMetaDataInterfaceMock(200)],
+            [self::createResourceMetaDataInterfaceMock(800)],
+            [self::createResourceMetaDataInterfaceMock(1000)],
+            [self::createUploadedFileInterfaceMock(200)],
+            [self::createUploadedFileInterfaceMock(800)],
+            [self::createUploadedFileInterfaceMock(1000)]
         ];
     }
 
@@ -83,13 +149,13 @@ class FileSizeValidatorTest extends AbstractValidatorTestcase
         self::assertFalse($this->validator->validate($item)->hasErrors());
     }
 
-    public function itemsWithLargerThanAllowedSize(): array
+    public static function itemsWithLargerThanAllowedSize(): array
     {
         return [
-            [$this->createResourceMetaDataInterfaceMock(1001)],
-            [$this->createResourceMetaDataInterfaceMock(PHP_INT_MAX)],
-            [$this->createUploadedFileInterfaceMock(1001)],
-            [$this->createUploadedFileInterfaceMock(PHP_INT_MAX)]
+            [self::createResourceMetaDataInterfaceMock(1001)],
+            [self::createResourceMetaDataInterfaceMock(PHP_INT_MAX)],
+            [self::createUploadedFileInterfaceMock(1001)],
+            [self::createUploadedFileInterfaceMock(PHP_INT_MAX)]
         ];
     }
 
@@ -102,13 +168,13 @@ class FileSizeValidatorTest extends AbstractValidatorTestcase
         self::assertTrue($this->validator->validate($item)->hasErrors());
     }
 
-    public function itemsWithSmallerThanAllowedSize(): array
+    public static function itemsWithSmallerThanAllowedSize(): array
     {
         return [
-            [$this->createResourceMetaDataInterfaceMock(199)],
-            [$this->createResourceMetaDataInterfaceMock(0)],
-            [$this->createUploadedFileInterfaceMock(199)],
-            [$this->createUploadedFileInterfaceMock(0)]
+            [self::createResourceMetaDataInterfaceMock(199)],
+            [self::createResourceMetaDataInterfaceMock(0)],
+            [self::createUploadedFileInterfaceMock(199)],
+            [self::createUploadedFileInterfaceMock(0)]
         ];
     }
 

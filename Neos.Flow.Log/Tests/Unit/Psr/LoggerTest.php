@@ -24,7 +24,7 @@ class LoggerTest extends UnitTestCase
     /**
      * @return array
      */
-    public function logLevelDataSource()
+    public static function logLevelDataSource(): array
     {
         return [
             [LogLevel::EMERGENCY, LOG_EMERG, false],
@@ -48,7 +48,7 @@ class LoggerTest extends UnitTestCase
      * @param bool $willError
      * @throws \ReflectionException
      */
-    public function logAcceptsOnlyValidLogLevels($psrLogLevel, $legacyLogLevel, $willError)
+    public function logAcceptsOnlyValidLogLevels($psrLogLevel, $legacyLogLevel, $willError): void
     {
         $mockBackend = $this->createMock(BackendInterface::class);
         if (!$willError) {
@@ -72,7 +72,7 @@ class LoggerTest extends UnitTestCase
      * @param bool $willError
      * @throws \ReflectionException
      */
-    public function levelSpecificMethodsAreSupported($psrLogLevel, $legacyLogLevel, $willError)
+    public function levelSpecificMethodsAreSupported($psrLogLevel, $legacyLogLevel, $willError): void
     {
         $mockBackend = $this->createMock(BackendInterface::class);
         $mockBackend->expects($this->once())->method('append')->with('some message', $legacyLogLevel);
@@ -89,7 +89,7 @@ class LoggerTest extends UnitTestCase
     /**
      * @test
      */
-    public function logSupportsContext()
+    public function logSupportsContext(): void
     {
         $message = 'some message';
         $context = ['something' => 123, 'else' => true];

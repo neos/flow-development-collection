@@ -21,7 +21,7 @@ class MediaTypesTest extends \PHPUnit\Framework\TestCase
     /**
      * Data Provider
      */
-    public function filenamesAndMediaTypes()
+    public static function filenamesAndMediaTypes(): array
     {
         return [
             ['', 'application/octet-stream'],
@@ -40,7 +40,7 @@ class MediaTypesTest extends \PHPUnit\Framework\TestCase
      * @test
      * @dataProvider filenamesAndMediaTypes
      */
-    public function getMediaTypeFromFilenameMapsFilenameOrExtensionToMediaType(string $filename, string $expectedMediaType)
+    public function getMediaTypeFromFilenameMapsFilenameOrExtensionToMediaType(string $filename, string $expectedMediaType): void
     {
         self::assertSame($expectedMediaType, MediaTypes::getMediaTypeFromFilename($filename));
     }
@@ -48,7 +48,7 @@ class MediaTypesTest extends \PHPUnit\Framework\TestCase
     /**
      * Data Provider
      */
-    public function filesAndMediaTypes()
+    public static function filesAndMediaTypes(): array
     {
         return [
             ['', 'application/octet-stream'],
@@ -61,7 +61,7 @@ class MediaTypesTest extends \PHPUnit\Framework\TestCase
      * @test
      * @dataProvider filesAndMediaTypes
      */
-    public function getMediaTypeFromFileContent(string $filename, string $expectedMediaType)
+    public function getMediaTypeFromFileContent(string $filename, string $expectedMediaType): void
     {
         $filePath = __DIR__ . '/Fixtures/' . $filename;
         $fileContent = is_file($filePath) ? file_get_contents($filePath) : '';
@@ -71,7 +71,7 @@ class MediaTypesTest extends \PHPUnit\Framework\TestCase
     /**
      * Data Provider
      */
-    public function mediaTypesAndFilenames()
+    public static function mediaTypesAndFilenames(): array
     {
         return [
             ['foo/bar', []],
@@ -85,7 +85,7 @@ class MediaTypesTest extends \PHPUnit\Framework\TestCase
      * @test
      * @dataProvider mediaTypesAndFilenames
      */
-    public function getFilenameExtensionFromMediaTypeReturnsFirstFileExtensionFoundForThatMediaType(string $mediaType, array $filenameExtensions)
+    public function getFilenameExtensionFromMediaTypeReturnsFirstFileExtensionFoundForThatMediaType(string $mediaType, array $filenameExtensions): void
     {
         self::assertSame(($filenameExtensions === [] ? '' : $filenameExtensions[0]), MediaTypes::getFilenameExtensionFromMediaType($mediaType));
     }
@@ -94,7 +94,7 @@ class MediaTypesTest extends \PHPUnit\Framework\TestCase
      * @test
      * @dataProvider mediaTypesAndFilenames
      */
-    public function getFilenameExtensionsFromMediaTypeReturnsAllFileExtensionForThatMediaType(string $mediaType, array $filenameExtensions)
+    public function getFilenameExtensionsFromMediaTypeReturnsAllFileExtensionForThatMediaType(string $mediaType, array $filenameExtensions): void
     {
         self::assertSame($filenameExtensions, MediaTypes::getFilenameExtensionsFromMediaType($mediaType));
     }
@@ -103,7 +103,7 @@ class MediaTypesTest extends \PHPUnit\Framework\TestCase
     /**
      * Data provider with media types and their parsed counterparts
      */
-    public function mediaTypesAndParsedPieces()
+    public static function mediaTypesAndParsedPieces(): array
     {
         return [
             ['text/html', ['type' => 'text', 'subtype' => 'html', 'parameters' => []]],
@@ -116,7 +116,7 @@ class MediaTypesTest extends \PHPUnit\Framework\TestCase
      * @test
      * @dataProvider mediaTypesAndParsedPieces
      */
-    public function parseMediaTypeReturnsAssociativeArrayWithIndividualPartsOfTheMediaType(string $mediaType, array $expectedPieces)
+    public function parseMediaTypeReturnsAssociativeArrayWithIndividualPartsOfTheMediaType(string $mediaType, array $expectedPieces): void
     {
         $actualPieces = MediaTypes::parseMediaType($mediaType);
         self::assertSame($expectedPieces, $actualPieces);
@@ -125,7 +125,7 @@ class MediaTypesTest extends \PHPUnit\Framework\TestCase
     /**
      * Data provider
      */
-    public function mediaRangesAndMatchingOrNonMatchingMediaTypes()
+    public static function mediaRangesAndMatchingOrNonMatchingMediaTypes(): array
     {
         return [
             ['invalid', 'text/html', false],
@@ -146,7 +146,7 @@ class MediaTypesTest extends \PHPUnit\Framework\TestCase
      * @test
      * @dataProvider mediaRangesAndMatchingOrNonMatchingMediaTypes
      */
-    public function mediaRangeMatchesChecksIfTheGivenMediaRangeMatchesTheGivenMediaType(string $mediaRange, string $mediaType, bool $expectedResult)
+    public function mediaRangeMatchesChecksIfTheGivenMediaRangeMatchesTheGivenMediaType(string $mediaRange, string $mediaType, bool $expectedResult): void
     {
         $actualResult = MediaTypes::mediaRangeMatches($mediaRange, $mediaType);
         self::assertSame($expectedResult, $actualResult);
@@ -155,7 +155,7 @@ class MediaTypesTest extends \PHPUnit\Framework\TestCase
     /**
      * Data provider with media types and their trimmed versions
      */
-    public function mediaTypesWithAndWithoutParameters()
+    public static function mediaTypesWithAndWithoutParameters(): array
     {
         return [
             ['text/html', 'text/html'],
@@ -170,7 +170,7 @@ class MediaTypesTest extends \PHPUnit\Framework\TestCase
      * @test
      * @dataProvider mediaTypesWithAndWithoutParameters
      */
-    public function trimMediaTypeReturnsJustTheTypeAndSubTypeWithoutParameters(string $mediaType, string $expectedResult = null)
+    public function trimMediaTypeReturnsJustTheTypeAndSubTypeWithoutParameters(string $mediaType, string $expectedResult = null): void
     {
         $actualResult = MediaTypes::trimMediaType($mediaType);
         self::assertSame($expectedResult, $actualResult);
