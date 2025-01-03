@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Cli;
 
 /*
@@ -140,7 +141,7 @@ class ConsoleOutput
      * @param array $headers
      * @param string $headerTitle
      */
-    public function outputTable(array $rows, array $headers = null, string $headerTitle = null): void
+    public function outputTable(array $rows, array $headers = null, ?string $headerTitle = null): void
     {
         $table = $this->getTable();
         if ($headers !== null) {
@@ -164,7 +165,7 @@ class ConsoleOutput
      * @return integer|string|array Either the value for indexed arrays, the key for associative arrays or an array for multiple selections
      * @throws \InvalidArgumentException
      */
-    public function select($question, array $choices, $default = null, bool $multiSelect = false, int $attempts = null)
+    public function select($question, array $choices, $default = null, bool $multiSelect = false, ?int $attempts = null)
     {
         $question = new ChoiceQuestion($this->combineQuestion($question), $choices, $default);
         $question
@@ -183,7 +184,7 @@ class ConsoleOutput
      * @return mixed The user answer
      * @throws \RuntimeException If there is no data to read in the input stream
      */
-    public function ask($question, string $default = null)
+    public function ask($question, ?string $default = null)
     {
         $question = new Question($this->combineQuestion($question), $default);
 
@@ -251,7 +252,7 @@ class ConsoleOutput
      * @return mixed The response
      * @throws \Exception When any of the validators return an error
      */
-    public function askAndValidate($question, callable $validator, int $attempts = null, string $default = null)
+    public function askAndValidate($question, callable $validator, int $attempts = null, ?string $default = null)
     {
         $question = new Question($this->combineQuestion($question), $default);
         $question
@@ -276,7 +277,7 @@ class ConsoleOutput
      * @throws \Exception When any of the validators return an error
      * @throws \RuntimeException In case the fallback is deactivated and the response can not be hidden
      */
-    public function askHiddenResponseAndValidate($question, callable $validator, int $attempts = null, bool $fallback = true)
+    public function askHiddenResponseAndValidate($question, callable $validator, ?int $attempts = null, bool $fallback = true)
     {
         $question = new Question($this->combineQuestion($question));
         $question
@@ -294,7 +295,7 @@ class ConsoleOutput
      * @param integer $max Maximum steps. If NULL an indeterminate progress bar is rendered
      * @return void
      */
-    public function progressStart(int $max = null): void
+    public function progressStart(?int $max = null): void
     {
         $this->getProgressBar()->start($max);
     }
@@ -361,7 +362,7 @@ class ConsoleOutput
     /**
      * @return InputInterface
      */
-    public function getInput():InputInterface
+    public function getInput(): InputInterface
     {
         return $this->input;
     }

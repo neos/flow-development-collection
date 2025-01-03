@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Neos\FluidAdaptor\Command;
@@ -45,7 +46,7 @@ class DocumentationCommandController extends CommandController
      * @param string $xsdDomain Domain used in the XSD schema (for example "http://yourdomain.org"). Defaults to "https://neos.io".
      * @return void
      */
-    public function generateXsdCommand(string $phpNamespace, string $xsdNamespace = null, string $targetFile = null, string $xsdDomain = ''): void
+    public function generateXsdCommand(string $phpNamespace, string $xsdNamespace = null, ?string $targetFile = null, string $xsdDomain = ''): void
     {
         $xsdDomain = trim($xsdDomain);
         $parsedDomain = parse_url($xsdDomain);

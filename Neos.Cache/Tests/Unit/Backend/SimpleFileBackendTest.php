@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Cache\Tests\Unit\Backend;
 
 include_once(__DIR__ . '/../../BaseTestCase.php');
@@ -61,7 +62,7 @@ class SimpleFileBackendTest extends BaseTestCase
      * @param FrontendInterface $mockCacheFrontend
      * @return SimpleFileBackend
      */
-    protected function getSimpleFileBackend(array $options = [], FrontendInterface $mockCacheFrontend = null)
+    protected function getSimpleFileBackend(array $options = [], ?FrontendInterface $mockCacheFrontend = null)
     {
         $simpleFileBackend = new SimpleFileBackend($this->mockEnvironmentConfiguration, $options);
 

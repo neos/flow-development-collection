@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Command;
 
 /*
@@ -64,7 +65,7 @@ class ConfigurationCommandController extends CommandController
      * @param string $path path to subconfiguration separated by "." like "Neos.Flow"
      * @return void
      */
-    public function showCommand(string $type = 'Settings', string $path = null)
+    public function showCommand(string $type = 'Settings', ?string $path = null)
     {
         $availableConfigurationTypes = $this->configurationManager->getAvailableConfigurationTypes();
         if (in_array($type, $availableConfigurationTypes)) {
@@ -125,7 +126,7 @@ class ConfigurationCommandController extends CommandController
      * @param boolean $verbose if true, output more verbose information on the schema files which were used
      * @return void
      */
-    public function validateCommand(string $type = null, string $path = null, bool $verbose = false)
+    public function validateCommand(string $type = null, ?string $path = null, bool $verbose = false)
     {
         if ($type === null) {
             $this->outputLine('Validating <b>all</b> configuration');
@@ -188,7 +189,7 @@ class ConfigurationCommandController extends CommandController
      * @param string $yaml YAML file to create a schema for
      * @return void
      */
-    public function generateSchemaCommand(string $type = null, string $path = null, string $yaml = null)
+    public function generateSchemaCommand(string $type = null, string $path = null, ?string $yaml = null)
     {
         $data = null;
         if ($yaml !== null && is_file($yaml) && is_readable($yaml)) {

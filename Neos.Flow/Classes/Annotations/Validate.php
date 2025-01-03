@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Annotations;
 
 /*
@@ -20,7 +21,7 @@ use Doctrine\Common\Annotations\Annotation\NamedArgumentConstructor;
  * @NamedArgumentConstructor
  * @Target({"METHOD", "PROPERTY"})
  */
-#[\Attribute(\Attribute::TARGET_METHOD|\Attribute::TARGET_PROPERTY|\Attribute::IS_REPEATABLE)]
+#[\Attribute(\Attribute::TARGET_METHOD | \Attribute::TARGET_PROPERTY | \Attribute::IS_REPEATABLE)]
 final class Validate
 {
     /**
@@ -47,7 +48,7 @@ final class Validate
      */
     public $validationGroups = ['Default'];
 
-    public function __construct(?string $argumentName = null, string $type = null, array $options = [], ?array $validationGroups = null)
+    public function __construct(?string $argumentName = null, ?string $type = null, array $options = [], ?array $validationGroups = null)
     {
         $this->type = $type;
 

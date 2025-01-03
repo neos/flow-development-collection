@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Tests\Functional\Command;
 
 /*
@@ -45,7 +46,7 @@ class TableNodeConverter extends AbstractTypeConverter
      * @return TableNode
      * @api
      */
-    public function convertFrom($source, $targetType, array $convertedChildProperties = [], PropertyMappingConfigurationInterface $configuration = null)
+    public function convertFrom($source, $targetType, array $convertedChildProperties = [], ?PropertyMappingConfigurationInterface $configuration = null)
     {
         return new TableNode(json_decode($source, true));
     }

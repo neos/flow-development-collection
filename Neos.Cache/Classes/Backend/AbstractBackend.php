@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Neos\Cache\Backend;
@@ -61,7 +62,7 @@ abstract class AbstractBackend implements BackendInterface
      * @param array $options Configuration options - depends on the actual backend
      * @api
      */
-    public function __construct(EnvironmentConfiguration $environmentConfiguration = null, array $options = [])
+    public function __construct(?EnvironmentConfiguration $environmentConfiguration = null, array $options = [])
     {
         $this->environmentConfiguration = $environmentConfiguration;
 
@@ -144,7 +145,7 @@ abstract class AbstractBackend implements BackendInterface
      * @param integer $lifetime The lifetime in seconds
      * @return \DateTime The expiry time
      */
-    protected function calculateExpiryTime(int $lifetime = null): \DateTime
+    protected function calculateExpiryTime(?int $lifetime = null): \DateTime
     {
         if ($lifetime === self::UNLIMITED_LIFETIME || ($lifetime === null && $this->defaultLifetime === self::UNLIMITED_LIFETIME)) {
             return new \DateTime(self::DATETIME_EXPIRYTIME_UNLIMITED, new \DateTimeZone('UTC'));

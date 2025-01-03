@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Property;
 
 /*
@@ -49,7 +50,7 @@ interface TypeConverterInterface
      * @return string
      * @api
      */
-    public function getTargetTypeForSource($source, $originalTargetType, PropertyMappingConfigurationInterface $configuration = null);
+    public function getTargetTypeForSource($source, $originalTargetType, ?PropertyMappingConfigurationInterface $configuration = null);
 
     /**
      * Return the priority of this TypeConverter. TypeConverters with a high priority are chosen before low priority.
@@ -110,5 +111,5 @@ interface TypeConverterInterface
      * @throws Exception\TypeConverterException thrown in case a developer error occurred
      * @api
      */
-    public function convertFrom($source, $targetType, array $convertedChildProperties = [], PropertyMappingConfigurationInterface $configuration = null);
+    public function convertFrom($source, $targetType, array $convertedChildProperties = [], ?PropertyMappingConfigurationInterface $configuration = null);
 }

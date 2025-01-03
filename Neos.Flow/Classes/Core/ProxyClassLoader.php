@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Core;
 
 /*
@@ -106,7 +107,7 @@ class ProxyClassLoader
      * @param ApplicationContext $context
      * @return void
      */
-    public function initializeAvailableProxyClasses(ApplicationContext $context = null)
+    public function initializeAvailableProxyClasses(?ApplicationContext $context = null)
     {
         if ($context === null) {
             return;

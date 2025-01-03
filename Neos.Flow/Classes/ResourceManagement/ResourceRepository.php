@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\ResourceManagement;
 
 /*
@@ -144,7 +145,7 @@ class ResourceRepository extends Repository
      * @param callable $callback
      * @return \Generator
      */
-    public function iterate(IterableResult $iterator, callable $callback = null)
+    public function iterate(IterableResult $iterator, ?callable $callback = null)
     {
         $iteration = 0;
         foreach ($iterator as $object) {

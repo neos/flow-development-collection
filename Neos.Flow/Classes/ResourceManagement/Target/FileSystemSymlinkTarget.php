@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\ResourceManagement\Target;
 
 /*
@@ -35,7 +36,7 @@ class FileSystemSymlinkTarget extends FileSystemTarget
      * @param callable $callback Function called after each resource publishing
      * @return void
      */
-    public function publishCollection(CollectionInterface $collection, callable $callback = null)
+    public function publishCollection(CollectionInterface $collection, ?callable $callback = null)
     {
         $storage = $collection->getStorage();
         if ($storage instanceof PackageStorage) {
@@ -141,7 +142,7 @@ class FileSystemSymlinkTarget extends FileSystemTarget
     protected function setOption($key, $value)
     {
         if ($key === 'relativeSymlinks') {
-            $this->relativeSymlinks = (boolean)$value;
+            $this->relativeSymlinks = (bool)$value;
             return true;
         }
 

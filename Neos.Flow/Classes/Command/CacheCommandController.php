@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Command;
 
 /*
@@ -430,7 +431,7 @@ class CacheCommandController extends CommandController
      * @return void
      * @throws NoSuchCacheException
      */
-    public function collectGarbageCommand(string $cacheIdentifier = null): void
+    public function collectGarbageCommand(?string $cacheIdentifier = null): void
     {
         if ($cacheIdentifier !== null) {
             $cache = $this->cacheManager->getCache($cacheIdentifier);

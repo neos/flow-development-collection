@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Command;
 
 /*
@@ -257,7 +258,7 @@ class CoreCommandController extends CommandController
      * @return void
      * @see neos.flow:doctrine:migrate
      */
-    public function migrateCommand(string $package, bool $status = false, string $packagesPath = null, string $version = null, bool $verbose = false, bool $force = false)
+    public function migrateCommand(string $package, bool $status = false, string $packagesPath = null, ?string $version = null, bool $verbose = false, bool $force = false)
     {
         // This command will never be really called. It rather acts as a stub for rendering the
         // documentation for this command. In reality, the "flow" command line script will already

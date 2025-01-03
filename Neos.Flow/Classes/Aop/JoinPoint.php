@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Aop;
 
 /*
@@ -74,7 +75,7 @@ class JoinPoint implements JoinPointInterface
      * @param mixed $result The result of the method invocations (only used for After Returning advices)
      * @param \Exception $exception The exception thrown (only used for After Throwing advices)
      */
-    public function __construct($proxy, string $className, string $methodName, array $methodArguments, Advice\AdviceChain $adviceChain = null, $result = null, \Exception $exception = null)
+    public function __construct($proxy, string $className, string $methodName, array $methodArguments, Advice\AdviceChain $adviceChain = null, $result = null, ?\Exception $exception = null)
     {
         $this->proxy = $proxy;
         $this->className = $className;

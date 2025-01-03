@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Http\Helper;
 
 /*
@@ -68,7 +69,7 @@ abstract class UploadedFilesHelper
      * @param string $collectionName
      * @return FlowUploadedFile
      */
-    protected static function upcastUploadedFile(UploadedFileInterface $uploadedFile, $originallySubmittedResource = null, string $collectionName = null): FlowUploadedFile
+    protected static function upcastUploadedFile(UploadedFileInterface $uploadedFile, $originallySubmittedResource = null, ?string $collectionName = null): FlowUploadedFile
     {
         // If upload failed, just accessing the stream will throwin guzzle
         $stream = $uploadedFile->getError() === UPLOAD_ERR_OK ? $uploadedFile->getStream() : Utils::streamFor(null);
@@ -128,7 +129,7 @@ abstract class UploadedFilesHelper
      * @param string $firstLevelFieldName
      * @return array An array of paths (as arrays) in the format ["key1", "key2", "key3"] ...
      */
-    protected static function calculateFieldPathsAsArray(array $structure, string $firstLevelFieldName = null): array
+    protected static function calculateFieldPathsAsArray(array $structure, ?string $firstLevelFieldName = null): array
     {
         $fieldPaths = [];
         foreach ($structure as $key => $subStructure) {

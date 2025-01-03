@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Tests\Unit\Configuration;
 
 /*
@@ -326,25 +327,42 @@ class ConfigurationManagerTest extends UnitTestCase
         ];
 
         switch ($filenameAndPath) {
-            case 'Flow/Configuration/Settings': return $settingsFlow;
-            case 'Flow/Configuration/SomeContext/Settings': return [];
-            case 'Flow/Configuration/Testing/Settings': return $settingsFlowTesting;
-            case 'Flow/Configuration/Testing/System1/Settings': return $settingsFlowTestingSystem1;
+            case 'Flow/Configuration/Settings':
+                return $settingsFlow;
+            case 'Flow/Configuration/SomeContext/Settings':
+                return [];
+            case 'Flow/Configuration/Testing/Settings':
+                return $settingsFlowTesting;
+            case 'Flow/Configuration/Testing/System1/Settings':
+                return $settingsFlowTestingSystem1;
 
-            case 'PackageA/Configuration/Settings': return $settingsA;
-            case 'PackageA/Configuration/SomeContext/Settings': return [];
-            case 'PackageA/Configuration/Testing/Settings': return $settingsATesting;
-            case 'PackageB/Configuration/Settings': return $settingsB;
-            case 'PackageB/Configuration/SomeContext/Settings': return [];
-            case 'PackageB/Configuration/Testing/Settings': return [];
-            case 'PackageC/Configuration/Settings': return $settingsC;
-            case 'PackageC/Configuration/SomeContext/Settings': return [];
-            case 'PackageC/Configuration/Testing/Settings': return [];
+            case 'PackageA/Configuration/Settings':
+                return $settingsA;
+            case 'PackageA/Configuration/SomeContext/Settings':
+                return [];
+            case 'PackageA/Configuration/Testing/Settings':
+                return $settingsATesting;
+            case 'PackageB/Configuration/Settings':
+                return $settingsB;
+            case 'PackageB/Configuration/SomeContext/Settings':
+                return [];
+            case 'PackageB/Configuration/Testing/Settings':
+                return [];
+            case 'PackageC/Configuration/Settings':
+                return $settingsC;
+            case 'PackageC/Configuration/SomeContext/Settings':
+                return [];
+            case 'PackageC/Configuration/Testing/Settings':
+                return [];
 
-            case FLOW_PATH_CONFIGURATION . 'Settings': return $globalSettings;
-            case FLOW_PATH_CONFIGURATION . 'SomeContext/Settings': return [];
-            case FLOW_PATH_CONFIGURATION . 'Testing/Settings': return [];
-            case FLOW_PATH_CONFIGURATION . 'Testing/System1/Settings': return [];
+            case FLOW_PATH_CONFIGURATION . 'Settings':
+                return $globalSettings;
+            case FLOW_PATH_CONFIGURATION . 'SomeContext/Settings':
+                return [];
+            case FLOW_PATH_CONFIGURATION . 'Testing/Settings':
+                return [];
+            case FLOW_PATH_CONFIGURATION . 'Testing/System1/Settings':
+                return [];
             default:
                 throw new \Exception('Unexpected filename: ' . $filenameAndPath);
         }
@@ -456,12 +474,18 @@ class ConfigurationManagerTest extends UnitTestCase
         ];
 
         switch ($filenameAndPath) {
-            case 'Flow/Configuration/Objects': return $packageObjects;
-            case 'Flow/Configuration/Testing/Objects': return $packageContextObjects;
-            case 'Flow/Configuration/Testing/System1/Objects': return $packageSubContextObjects;
-            case FLOW_PATH_CONFIGURATION . 'Objects': return $globalObjects;
-            case FLOW_PATH_CONFIGURATION . 'Testing/Objects': return $globalContextObjects;
-            case FLOW_PATH_CONFIGURATION . 'Testing/System1/Objects': return $globalSubContextObjects;
+            case 'Flow/Configuration/Objects':
+                return $packageObjects;
+            case 'Flow/Configuration/Testing/Objects':
+                return $packageContextObjects;
+            case 'Flow/Configuration/Testing/System1/Objects':
+                return $packageSubContextObjects;
+            case FLOW_PATH_CONFIGURATION . 'Objects':
+                return $globalObjects;
+            case FLOW_PATH_CONFIGURATION . 'Testing/Objects':
+                return $globalContextObjects;
+            case FLOW_PATH_CONFIGURATION . 'Testing/System1/Objects':
+                return $globalSubContextObjects;
             default:
                 throw new \Exception('Unexpected filename: ' . $filenameAndPath);
         }
@@ -568,12 +592,18 @@ class ConfigurationManagerTest extends UnitTestCase
         ];
 
         switch ($filenameAndPath) {
-            case 'Flow/Configuration/Caches': return $packageCaches;
-            case 'Flow/Configuration/Testing/Caches': return $packageContextCaches;
-            case 'Flow/Configuration/Testing/System1/Caches': return $packageSubContextCaches;
-            case FLOW_PATH_CONFIGURATION . 'Caches': return $globalCaches;
-            case FLOW_PATH_CONFIGURATION . 'Testing/Caches': return $globalContextCaches;
-            case FLOW_PATH_CONFIGURATION . 'Testing/System1/Caches': return $globalSubContextCaches;
+            case 'Flow/Configuration/Caches':
+                return $packageCaches;
+            case 'Flow/Configuration/Testing/Caches':
+                return $packageContextCaches;
+            case 'Flow/Configuration/Testing/System1/Caches':
+                return $packageSubContextCaches;
+            case FLOW_PATH_CONFIGURATION . 'Caches':
+                return $globalCaches;
+            case FLOW_PATH_CONFIGURATION . 'Testing/Caches':
+                return $globalContextCaches;
+            case FLOW_PATH_CONFIGURATION . 'Testing/System1/Caches':
+                return $globalSubContextCaches;
             default:
                 throw new \Exception('Unexpected filename: ' . $filenameAndPath);
         }
@@ -993,12 +1023,18 @@ class ConfigurationManagerTest extends UnitTestCase
         ];
 
         switch ($filenameAndPath) {
-            case 'Flow/Configuration/Routes': return $packageRoutes;
-            case 'Flow/Configuration/Testing/Routes': return $packageContextRoutes;
-            case 'Flow/Configuration/Testing/System1/Routes': return $packageSubContextRoutes;
-            case FLOW_PATH_CONFIGURATION . 'Routes': return $globalRoutes;
-            case FLOW_PATH_CONFIGURATION . 'Testing/Routes': return $globalContextRoutes;
-            case FLOW_PATH_CONFIGURATION . 'Testing/System1/Routes': return $globalSubContextRoutes;
+            case 'Flow/Configuration/Routes':
+                return $packageRoutes;
+            case 'Flow/Configuration/Testing/Routes':
+                return $packageContextRoutes;
+            case 'Flow/Configuration/Testing/System1/Routes':
+                return $packageSubContextRoutes;
+            case FLOW_PATH_CONFIGURATION . 'Routes':
+                return $globalRoutes;
+            case FLOW_PATH_CONFIGURATION . 'Testing/Routes':
+                return $globalContextRoutes;
+            case FLOW_PATH_CONFIGURATION . 'Testing/System1/Routes':
+                return $globalSubContextRoutes;
             default:
                 throw new \Exception('Unexpected filename: ' . $filenameAndPath);
         }
@@ -1243,15 +1279,23 @@ class ConfigurationManagerTest extends UnitTestCase
         ];
 
         switch ($filenameAndPath) {
-            case 'Flow/Configuration/Routes.SomeSuffix': return $packageRoutes;
-            case 'Flow/Configuration/Testing/Routes.SomeSuffix': return [];
-            case FLOW_PATH_CONFIGURATION . 'Routes': return $globalRoutes;
-            case FLOW_PATH_CONFIGURATION . 'Testing/Routes': return [];
+            case 'Flow/Configuration/Routes.SomeSuffix':
+                return $packageRoutes;
+            case 'Flow/Configuration/Testing/Routes.SomeSuffix':
+                return [];
+            case FLOW_PATH_CONFIGURATION . 'Routes':
+                return $globalRoutes;
+            case FLOW_PATH_CONFIGURATION . 'Testing/Routes':
+                return [];
 
-            case 'Flow/Configuration/Settings': return [];
-            case 'Flow/Configuration/Testing/Settings': return [];
-            case FLOW_PATH_CONFIGURATION . 'Settings': return $globalSettings;
-            case FLOW_PATH_CONFIGURATION . 'Testing/Settings': return [];
+            case 'Flow/Configuration/Settings':
+                return [];
+            case 'Flow/Configuration/Testing/Settings':
+                return [];
+            case FLOW_PATH_CONFIGURATION . 'Settings':
+                return $globalSettings;
+            case FLOW_PATH_CONFIGURATION . 'Testing/Settings':
+                return [];
             default:
                 throw new \Exception('Unexpected filename: ' . $filenameAndPath);
         }
@@ -1493,18 +1537,19 @@ class ConfigurationManagerTest extends UnitTestCase
                         ],
                     ],
                 ],
-            ], [
+            ],
+            [
                 'name' => 'Fallback',
                 'uriPattern' => '',
                 'defaults' => [
                     '@controller' => 'Standard',
                     '@action' => 'redirect',
                     '--posts-paginator' => [
-                      '@package' => '',
-                      '@subpackage' => '',
-                      '@controller' => '',
-                      '@action' => '<someOtherVariable>',
-                      'currentPage' => '1'
+                        '@package' => '',
+                        '@subpackage' => '',
+                        '@controller' => '',
+                        '@action' => '<someOtherVariable>',
+                        'currentPage' => '1'
                     ]
                 ],
             ]
@@ -1526,7 +1571,8 @@ class ConfigurationManagerTest extends UnitTestCase
                         ],
                     ],
                 ],
-            ], [
+            ],
+            [
                 'name' => 'Welcome :: Fallback',
                 'uriPattern' => 'welcome',
                 'defaults' => [
@@ -1700,12 +1746,18 @@ class ConfigurationManagerTest extends UnitTestCase
         ];
 
         switch ($filenameAndPath) {
-            case 'Flow/Configuration/Views': return $packageViewConfigurations;
-            case 'Flow/Configuration/Testing/Views': return $packageContextViewConfigurations;
-            case 'Flow/Configuration/Testing/System1/Views': return $packageSubContextViewConfigurations;
-            case FLOW_PATH_CONFIGURATION . 'Views': return $globalViewConfigurations;
-            case FLOW_PATH_CONFIGURATION . 'Testing/Views': return $globalContextViewConfigurations;
-            case FLOW_PATH_CONFIGURATION . 'Testing/System1/Views': return $globalSubContextViewConfigurations;
+            case 'Flow/Configuration/Views':
+                return $packageViewConfigurations;
+            case 'Flow/Configuration/Testing/Views':
+                return $packageContextViewConfigurations;
+            case 'Flow/Configuration/Testing/System1/Views':
+                return $packageSubContextViewConfigurations;
+            case FLOW_PATH_CONFIGURATION . 'Views':
+                return $globalViewConfigurations;
+            case FLOW_PATH_CONFIGURATION . 'Testing/Views':
+                return $globalContextViewConfigurations;
+            case FLOW_PATH_CONFIGURATION . 'Testing/System1/Views':
+                return $globalSubContextViewConfigurations;
             default:
                 throw new \Exception('Unexpected filename: ' . $filenameAndPath);
         }
@@ -1784,7 +1836,7 @@ class ConfigurationManagerTest extends UnitTestCase
      * @param array $methods
      * @return ConfigurationManager|MockObject
      */
-    protected function getAccessibleConfigurationManager(array $methods = [], ApplicationContext $customContext = null)
+    protected function getAccessibleConfigurationManager(array $methods = [], ?ApplicationContext $customContext = null)
     {
         return $this->getAccessibleMock(ConfigurationManager::class, $methods, [$customContext ?? $this->mockContext]);
     }

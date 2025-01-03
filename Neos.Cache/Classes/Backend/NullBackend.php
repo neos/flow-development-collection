@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Neos\Cache\Backend;
@@ -31,7 +32,7 @@ class NullBackend extends AbstractCacheBackend implements PhpCapableBackendInter
      * @param mixed $propertyValue
      * @return boolean TRUE
      */
-    protected function setProperty(string $propertyName, $propertyValue) : bool
+    protected function setProperty(string $propertyName, $propertyValue): bool
     {
         return true;
     }
@@ -46,7 +47,7 @@ class NullBackend extends AbstractCacheBackend implements PhpCapableBackendInter
      * @return void
      * @api
      */
-    public function set(string $entryIdentifier, string $data, array $tags = [], int $lifetime = null): void
+    public function set(string $entryIdentifier, string $data, array $tags = [], ?int $lifetime = null): void
     {
     }
 

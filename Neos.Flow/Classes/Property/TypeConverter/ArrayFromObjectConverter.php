@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Property\TypeConverter;
 
 /*
@@ -95,7 +96,7 @@ class ArrayFromObjectConverter extends AbstractTypeConverter
      * @return mixed|Error the target type, or an error object if a user-error occurred
      * @api
      */
-    public function convertFrom($source, $targetType, array $convertedChildProperties = [], PropertyMappingConfigurationInterface $configuration = null)
+    public function convertFrom($source, $targetType, array $convertedChildProperties = [], ?PropertyMappingConfigurationInterface $configuration = null)
     {
         $properties = ObjectAccess::getGettableProperties($source);
         if ($source instanceof DoctrineProxy) {

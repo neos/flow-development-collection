@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Neos\Flow\Configuration;
@@ -288,7 +289,7 @@ class ConfigurationManager
      * @return mixed The configuration or NULL if the configuration doesn't exist
      * @throws Exception\InvalidConfigurationTypeException on invalid configuration types
      */
-    public function getConfiguration(string $configurationType, string $configurationPath = null)
+    public function getConfiguration(string $configurationType, ?string $configurationPath = null)
     {
         if (empty($this->configurations[$configurationType])) {
             $this->loadConfiguration($configurationType, $this->packages);
@@ -468,7 +469,7 @@ class ConfigurationManager
      *
      * @param string $cachePathAndFilename The file to save the cache
      */
-    protected function writeConfigurationCacheFile(string $cachePathAndFilename, string $configurationType = null): void
+    protected function writeConfigurationCacheFile(string $cachePathAndFilename, ?string $configurationType = null): void
     {
         if (!file_exists(dirname($cachePathAndFilename))) {
             Files::createDirectoryRecursively(dirname($cachePathAndFilename));

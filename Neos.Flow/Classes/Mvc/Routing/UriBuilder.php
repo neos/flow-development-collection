@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Mvc\Routing;
 
 /*
@@ -187,7 +188,7 @@ class UriBuilder
      */
     public function setCreateAbsoluteUri($createAbsoluteUri)
     {
-        $this->createAbsoluteUri = (boolean)$createAbsoluteUri;
+        $this->createAbsoluteUri = (bool)$createAbsoluteUri;
         return $this;
     }
 
@@ -209,7 +210,7 @@ class UriBuilder
      */
     public function setAddQueryString($addQueryString)
     {
-        $this->addQueryString = (boolean)$addQueryString;
+        $this->addQueryString = (bool)$addQueryString;
         return $this;
     }
 
@@ -289,7 +290,7 @@ class UriBuilder
      * @throws Exception\MissingActionNameException if $actionName parameter is empty
      * @throws \Neos\Flow\Http\Exception
      */
-    public function uriFor(string $actionName, array $controllerArguments = [], string $controllerName = null, string $packageKey = null, string $subPackageKey = null)
+    public function uriFor(string $actionName, array $controllerArguments = [], string $controllerName = null, string $packageKey = null, ?string $subPackageKey = null)
     {
         if (empty($actionName)) {
             throw new Exception\MissingActionNameException('The URI Builder could not build a URI linking to an action controller because no action name was specified. Please check the stack trace to see which code or template was requesting the link and check the arguments passed to the URI Builder.', 1354629891);

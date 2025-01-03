@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Property\TypeConverter;
 
 /*
@@ -159,7 +160,7 @@ class PersistentObjectConverter extends ObjectConverter
      * @return object|TargetNotFoundError the converted entity/value object or an instance of TargetNotFoundError if the object could not be resolved
      * @throws \InvalidArgumentException|InvalidTargetException
      */
-    public function convertFrom($source, $targetType, array $convertedChildProperties = [], PropertyMappingConfigurationInterface $configuration = null)
+    public function convertFrom($source, $targetType, array $convertedChildProperties = [], ?PropertyMappingConfigurationInterface $configuration = null)
     {
         /** @var class-string $targetType */
         if (is_array($source)) {
@@ -230,7 +231,7 @@ class PersistentObjectConverter extends ObjectConverter
      * @return object|TargetNotFoundError
      * @throws InvalidPropertyMappingConfigurationException
      */
-    protected function handleArrayData(array $source, $targetType, array &$convertedChildProperties, PropertyMappingConfigurationInterface $configuration = null)
+    protected function handleArrayData(array $source, $targetType, array &$convertedChildProperties, ?PropertyMappingConfigurationInterface $configuration = null)
     {
         if (!isset($source['__identity'])) {
             if ($this->reflectionService->isClassAnnotatedWith($targetType, ValueObject::class) === true) {

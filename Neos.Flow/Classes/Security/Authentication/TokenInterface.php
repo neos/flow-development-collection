@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Security\Authentication;
 
 /*
@@ -10,6 +11,7 @@ namespace Neos\Flow\Security\Authentication;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Security\Account;
 use Neos\Flow\Security\RequestPatternInterface;
@@ -149,7 +151,7 @@ interface TokenInterface
      * @param Account $account An account object
      * @return void
      */
-    public function setAccount(Account $account = null);
+    public function setAccount(?Account $account = null);
 
     /**
      * Returns a string representation of the token for logging purposes.

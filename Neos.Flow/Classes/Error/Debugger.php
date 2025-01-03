@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Error;
 
 /*
@@ -606,7 +607,7 @@ use Neos\Flow\Error\Debugger;
  * @return void|string if $return is true, the variable dump is returned. By default, the dump is directly displayed, and nothing is returned.
  * @api
  */
-function var_dump($variable, string $title = null, bool $return = false, bool $plaintext = null)
+function var_dump($variable, string $title = null, bool $return = false, ?bool $plaintext = null)
 {
     if ($plaintext === null) {
         $plaintext = (FLOW_SAPITYPE === 'CLI');

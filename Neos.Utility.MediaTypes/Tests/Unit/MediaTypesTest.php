@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Utility\MediaTypes\Tests\Unit;
 
 /*
@@ -170,7 +171,7 @@ class MediaTypesTest extends \PHPUnit\Framework\TestCase
      * @test
      * @dataProvider mediaTypesWithAndWithoutParameters
      */
-    public function trimMediaTypeReturnsJustTheTypeAndSubTypeWithoutParameters(string $mediaType, string $expectedResult = null)
+    public function trimMediaTypeReturnsJustTheTypeAndSubTypeWithoutParameters(string $mediaType, ?string $expectedResult = null)
     {
         $actualResult = MediaTypes::trimMediaType($mediaType);
         self::assertSame($expectedResult, $actualResult);

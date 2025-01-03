@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Tests\Functional\Security\Fixtures\Controller;
 
 /*
@@ -26,7 +27,7 @@ class UsernamePasswordTestController extends AbstractAuthenticationController
      * @param ActionRequest $originalRequest
      * @return string
      */
-    public function onAuthenticationSuccess(ActionRequest $originalRequest = null)
+    public function onAuthenticationSuccess(?ActionRequest $originalRequest = null)
     {
         if ($originalRequest !== null) {
             $this->redirectToRequest($originalRequest);
@@ -42,7 +43,7 @@ class UsernamePasswordTestController extends AbstractAuthenticationController
      * @param AuthenticationRequiredException $exception
      * @throws FlowException
      */
-    public function onAuthenticationFailure(AuthenticationRequiredException $exception = null)
+    public function onAuthenticationFailure(?AuthenticationRequiredException $exception = null)
     {
         throw new FlowException('UsernamePasswordTestController failure!', 27);
     }

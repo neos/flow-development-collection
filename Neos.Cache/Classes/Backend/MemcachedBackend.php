@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Neos\Cache\Backend;
@@ -199,7 +200,7 @@ class MemcachedBackend extends IndependentAbstractBackend implements TaggableBac
      * @throws \InvalidArgumentException if the identifier is not valid or the final memcached key is longer than 250 characters
      * @api
      */
-    public function set(string $entryIdentifier, string $data, array $tags = [], int $lifetime = null): void
+    public function set(string $entryIdentifier, string $data, array $tags = [], ?int $lifetime = null): void
     {
         if (strlen($this->getPrefixedIdentifier($entryIdentifier)) > 250) {
             throw new \InvalidArgumentException('Could not set value. Key more than 250 characters (' . $this->getPrefixedIdentifier($entryIdentifier) . ').', 1232969508);

@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Neos\Cache\Backend;
@@ -145,7 +146,7 @@ class SimpleFileBackend extends IndependentAbstractBackend implements PhpCapable
      * @throws \InvalidArgumentException
      * @api
      */
-    public function set(string $entryIdentifier, string $data, array $tags = [], int $lifetime = null): void
+    public function set(string $entryIdentifier, string $data, array $tags = [], ?int $lifetime = null): void
     {
         if ($entryIdentifier !== basename($entryIdentifier)) {
             throw new \InvalidArgumentException('The specified entry identifier must not contain a path segment.', 1334756735);
@@ -493,7 +494,7 @@ class SimpleFileBackend extends IndependentAbstractBackend implements PhpCapable
      * @param int|null $maxlen
      * @return string|false The contents of the cache file or false on error
      */
-    protected function readCacheFile(string $cacheEntryPathAndFilename, int $offset = 0, int $maxlen = null)
+    protected function readCacheFile(string $cacheEntryPathAndFilename, int $offset = 0, ?int $maxlen = null)
     {
         for ($i = 0; $i < 3; $i++) {
             $data = false;

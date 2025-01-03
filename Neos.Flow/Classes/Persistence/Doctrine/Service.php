@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Neos\Flow\Persistence\Doctrine;
@@ -196,7 +197,7 @@ class Service
      * @param int|null $maxResult
      * @return mixed
      */
-    public function runDql(string $dql, int $hydrationMode = \Doctrine\ORM\Query::HYDRATE_OBJECT, int $firstResult = null, int $maxResult = null)
+    public function runDql(string $dql, int $hydrationMode = \Doctrine\ORM\Query::HYDRATE_OBJECT, int $firstResult = null, ?int $maxResult = null)
     {
         $query = $this->entityManager->createQuery($dql);
         if ($firstResult !== null) {
@@ -306,7 +307,7 @@ class Service
      * @return string
      * @throws DBALException
      */
-    public function executeMigrations(string $version = 'latest', string $outputPathAndFilename = null, $dryRun = false, $quiet = false): string
+    public function executeMigrations(string $version = 'latest', ?string $outputPathAndFilename = null, $dryRun = false, $quiet = false): string
     {
         $this->initializeMetadataStorage();
 
@@ -413,7 +414,7 @@ class Service
      * @return string
      * @throws DBALException
      */
-    public function executeMigration(string $version, string $direction = 'up', string $outputPathAndFilename = null, bool $dryRun = false): string
+    public function executeMigration(string $version, string $direction = 'up', ?string $outputPathAndFilename = null, bool $dryRun = false): string
     {
         $this->initializeMetadataStorage();
 
@@ -604,7 +605,7 @@ class Service
      * @return array Path to the new file
      * @throws DBALException
      */
-    public function generateMigration(bool $diffAgainstCurrent = true, string $filterExpression = null): array
+    public function generateMigration(bool $diffAgainstCurrent = true, ?string $filterExpression = null): array
     {
         $fqcn = $this->getDependencyFactory()->getClassNameGenerator()->generateClassName(self::DOCTRINE_MIGRATIONSNAMESPACE);
 

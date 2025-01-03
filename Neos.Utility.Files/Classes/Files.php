@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Utility;
 
 /*
@@ -86,7 +87,7 @@ abstract class Files
      * @return array Filenames including full path
      * @api
      */
-    public static function readDirectoryRecursively(string $path, string $suffix = null, bool $returnRealPath = false, bool $returnDotFiles = false): array
+    public static function readDirectoryRecursively(string $path, ?string $suffix = null, bool $returnRealPath = false, bool $returnDotFiles = false): array
     {
         return iterator_to_array(self::getRecursiveDirectoryGenerator($path, $suffix, $returnRealPath, $returnDotFiles));
     }
@@ -99,7 +100,7 @@ abstract class Files
      * @return \Generator
      * @throws FilesException
      */
-    public static function getRecursiveDirectoryGenerator(string $path, string $suffix = null, bool $returnRealPath = false, bool $returnDotFiles = false)
+    public static function getRecursiveDirectoryGenerator(string $path, ?string $suffix = null, bool $returnRealPath = false, bool $returnDotFiles = false)
     {
         if (!is_dir($path)) {
             throw new FilesException('"' . $path . '" is no directory.', 1207253462);
@@ -177,7 +178,7 @@ abstract class Files
      * @api
      * @throws FilesException
      */
-    public static function removeEmptyDirectoriesOnPath(string $path, string $basePath = null)
+    public static function removeEmptyDirectoriesOnPath(string $path, ?string $basePath = null)
     {
         if ($basePath !== null) {
             $basePath = rtrim($basePath, '/');
@@ -204,7 +205,7 @@ abstract class Files
                 // PHP 8 throws for rmdir even with a shutup operator set. To ensure the loop gets correctly ended in PHP 8 and below, an additional FilesException is used.
                 break;
             }
-            $path = substr($path, 0, -(strlen($currentSegment) + 1));
+            $path = substr($path, 0, - (strlen($currentSegment) + 1));
         }
     }
 
@@ -444,7 +445,7 @@ abstract class Files
      * @param string $thousandsSeparator thousands separator of the resulting string
      * @return string the size string, e.g. "1,024 MB"
      */
-    public static function bytesToSizeString($bytes, int $decimals = null, string $decimalSeparator = null, string $thousandsSeparator = null): string
+    public static function bytesToSizeString($bytes, ?int $decimals = null, ?string $decimalSeparator = null, ?string $thousandsSeparator = null): string
     {
         if (!is_int($bytes) && !is_float($bytes)) {
             if (is_numeric($bytes)) {

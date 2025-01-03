@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Package;
 
 /*
@@ -236,7 +237,8 @@ class PackageManager
         if ($this->bootstrap->getContext()->isDevelopment()) {
             /** @var PackageInterface $package */
             foreach ($this->packages as $packageKey => $package) {
-                if (isset($this->packageStatesConfiguration['packages'][$package->getComposerName()]['frozen']) &&
+                if (
+                    isset($this->packageStatesConfiguration['packages'][$package->getComposerName()]['frozen']) &&
                     $this->packageStatesConfiguration['packages'][$package->getComposerName()]['frozen'] === true
                 ) {
                     $frozenPackages[$packageKey] = $package;
@@ -331,7 +333,8 @@ class PackageManager
             $composerManifestRepositories = ComposerUtility::getComposerManifest(FLOW_PATH_ROOT, 'repositories');
             if (is_array($composerManifestRepositories)) {
                 foreach ($composerManifestRepositories as $repository) {
-                    if (is_array($repository) &&
+                    if (
+                        is_array($repository) &&
                         isset($repository['type']) && $repository['type'] === 'path' &&
                         isset($repository['url']) && substr($repository['url'], 0, 2) === './' && substr($repository['url'], -2) === '/*'
                     ) {
@@ -362,7 +365,8 @@ class PackageManager
                 FlowPackageInterface::DIRECTORY_RESOURCES,
                 FlowPackageInterface::DIRECTORY_TESTS_UNIT,
                 FlowPackageInterface::DIRECTORY_TESTS_FUNCTIONAL,
-            ] as $path) {
+            ] as $path
+        ) {
             Files::createDirectoryRecursively(Files::concatenatePaths([$packagePath, $path]));
         }
 
@@ -881,7 +885,7 @@ class PackageManager
      * @param string $autoloadNamespace
      * @return string
      */
-    protected function derivePackageKey(string $composerName, string $packageType = null, string $packagePath = '', string $autoloadNamespace = null): string
+    protected function derivePackageKey(string $composerName, string $packageType = null, string $packagePath = '', ?string $autoloadNamespace = null): string
     {
         $packageKey = '';
 

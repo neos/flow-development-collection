@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Mvc\Routing\Fixtures;
 
 /*
@@ -30,7 +31,7 @@ class MockRoutePartHandler extends DynamicRoutePart
      */
     private $resolveValueClosure;
 
-    public function __construct(\Closure $matchValueClosure = null, \Closure $resolveValueClosure = null)
+    public function __construct(\Closure $matchValueClosure = null, ?\Closure $resolveValueClosure = null)
     {
         $this->matchValueClosure = $matchValueClosure;
         $this->resolveValueClosure = $resolveValueClosure;

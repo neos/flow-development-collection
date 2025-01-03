@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Neos\Cache\Backend;
@@ -109,7 +110,7 @@ class RedisBackend extends IndependentAbstractBackend implements TaggableBackend
      * @throws CacheException
      * @api
      */
-    public function set(string $entryIdentifier, string $data, array $tags = [], int $lifetime = null): void
+    public function set(string $entryIdentifier, string $data, array $tags = [], ?int $lifetime = null): void
     {
         if ($this->isFrozen()) {
             throw new \RuntimeException(sprintf('Cannot add or modify cache entry because the backend of cache "%s" is frozen.', $this->cacheIdentifier), 1323344192);
@@ -493,7 +494,7 @@ class RedisBackend extends IndependentAbstractBackend implements TaggableBackend
         $this->batchSize = (int)$batchSize;
     }
 
-    public function setRedis(\Redis $redis = null): void
+    public function setRedis(?\Redis $redis = null): void
     {
         if ($redis !== null) {
             $this->redis = $redis;

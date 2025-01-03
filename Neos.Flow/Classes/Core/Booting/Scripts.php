@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Core\Booting;
 
 /*
@@ -135,9 +136,11 @@ class Scripts
      */
     public static function forceFlushCachesIfNecessary(Bootstrap $bootstrap)
     {
-        if (!isset($_SERVER['argv']) || !isset($_SERVER['argv'][1]) || !isset($_SERVER['argv'][2])
+        if (
+            !isset($_SERVER['argv']) || !isset($_SERVER['argv'][1]) || !isset($_SERVER['argv'][2])
             || !in_array($_SERVER['argv'][1], ['neos.flow:cache:flush', 'flow:cache:flush'])
-            || !in_array($_SERVER['argv'][2], ['--force', '-f'])) {
+            || !in_array($_SERVER['argv'][2], ['--force', '-f'])
+        ) {
             return;
         }
 
@@ -637,7 +640,7 @@ class Scripts
      * @param string $filenamePattern Optional pattern for filenames to consider for file monitoring (regular expression). @see FileMonitor::monitorDirectory()
      * @return void
      */
-    protected static function monitorDirectoryIfItExists(FileMonitor $fileMonitor, string $path, string $filenamePattern = null)
+    protected static function monitorDirectoryIfItExists(FileMonitor $fileMonitor, string $path, ?string $filenamePattern = null)
     {
         if (is_dir($path)) {
             $fileMonitor->monitorDirectory($path, $filenamePattern);
@@ -901,9 +904,9 @@ class Scripts
         if (strcmp($realPhpBinary, $configuredPhpBinaryPathAndFilename) !== 0) {
             throw new Exception\SubProcessException(sprintf(
                 'You are running the Flow CLI with a PHP binary different from the one Flow is configured to use internally. ' .
-                'Flow has been run with "%s", while the PHP version Flow is configured to use for subrequests is "%s". Make sure to configure Flow to ' .
-                'use the same PHP binary by setting the "Neos.Flow.core.phpBinaryPathAndFilename" configuration option to "%s". Flush the ' .
-                'caches by removing the folder Data/Temporary before running ./flow again.',
+                    'Flow has been run with "%s", while the PHP version Flow is configured to use for subrequests is "%s". Make sure to configure Flow to ' .
+                    'use the same PHP binary by setting the "Neos.Flow.core.phpBinaryPathAndFilename" configuration option to "%s". Flush the ' .
+                    'caches by removing the folder Data/Temporary before running ./flow again.',
                 $realPhpBinary,
                 $configuredPhpBinaryPathAndFilename,
                 $realPhpBinary
@@ -963,9 +966,9 @@ class Scripts
         if (!$versionsAlmostEqual($phpInformation['version'], PHP_VERSION)) {
             throw new FlowException(sprintf(
                 'You are executing Neos/Flow with a PHP version different from the one Flow is configured to use internally. ' .
-                'Flow is running with with PHP "%s", while the PHP version Flow is configured to use for subrequests is "%s". Make sure to configure Flow to ' .
-                'use the same PHP version by setting the "Neos.Flow.core.phpBinaryPathAndFilename" configuration option to a PHP-CLI binary of the version ' .
-                '%s. Flush the caches by removing the folder Data/Temporary before executing Flow/Neos again.',
+                    'Flow is running with with PHP "%s", while the PHP version Flow is configured to use for subrequests is "%s". Make sure to configure Flow to ' .
+                    'use the same PHP version by setting the "Neos.Flow.core.phpBinaryPathAndFilename" configuration option to a PHP-CLI binary of the version ' .
+                    '%s. Flush the caches by removing the folder Data/Temporary before executing Flow/Neos again.',
                 PHP_VERSION,
                 $phpInformation['version'],
                 PHP_VERSION

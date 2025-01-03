@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 
@@ -42,7 +43,7 @@ interface BackendInterface
      * @return void
      * @api
      */
-    public function append(string $message, int $severity = LOG_INFO, $additionalData = null, string $packageKey = null, string $className = null, string $methodName = null): void;
+    public function append(string $message, int $severity = LOG_INFO, $additionalData = null, string $packageKey = null, string $className = null, ?string $methodName = null): void;
 
     /**
      * Carries out all actions necessary to cleanly close the logging backend, such as

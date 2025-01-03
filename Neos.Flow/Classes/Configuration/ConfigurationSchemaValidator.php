@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Configuration;
 
 /*
@@ -70,7 +71,7 @@ class ConfigurationSchemaValidator
      * @return \Neos\Error\Messages\Result the result of the validation
      * @throws Exception\SchemaValidationException
      */
-    public function validate(string $configurationType = null, string $path = null, array &$loadedSchemaFiles = []): Result
+    public function validate(string $configurationType = null, ?string $path = null, array &$loadedSchemaFiles = []): Result
     {
         if ($configurationType === null) {
             $configurationTypes = $this->configurationManager->getAvailableConfigurationTypes();
@@ -95,11 +96,11 @@ class ConfigurationSchemaValidator
      * @return \Neos\Error\Messages\Result
      * @throws Exception\SchemaValidationException
      */
-    protected function validateSingleType(string $configurationType, string $path = null, array&$loadedSchemaFiles = []): Result
+    protected function validateSingleType(string $configurationType, ?string $path = null, array &$loadedSchemaFiles = []): Result
     {
         $availableConfigurationTypes = $this->configurationManager->getAvailableConfigurationTypes();
         if (in_array($configurationType, $availableConfigurationTypes) === false) {
-            $message = (string)$this->translator->translateById('configuration.anErrorOccurredDuringValidationOfTheConfiguration.body', [$configurationType,implode('", "', $availableConfigurationTypes)], null, null, 'Main', 'Neos.Flow');
+            $message = (string)$this->translator->translateById('configuration.anErrorOccurredDuringValidationOfTheConfiguration.body', [$configurationType, implode('", "', $availableConfigurationTypes)], null, null, 'Main', 'Neos.Flow');
             throw new Exception\SchemaValidationException(
                 $message,
                 1364984886
@@ -134,7 +135,7 @@ class ConfigurationSchemaValidator
         }
 
         if (count($schemaFileInfos) === 0) {
-            throw new Exception\SchemaValidationException('No schema files found for configuration type "' . $configurationType . '"' . ($path !== null ? ' and path "' . $path . '".': '.'), 1364985056);
+            throw new Exception\SchemaValidationException('No schema files found for configuration type "' . $configurationType . '"' . ($path !== null ? ' and path "' . $path . '".' : '.'), 1364985056);
         }
 
         $result = new Result();

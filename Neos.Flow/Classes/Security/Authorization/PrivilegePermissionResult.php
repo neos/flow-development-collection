@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Security\Authorization;
 
 use Neos\Flow\Security\Authorization\Privilege\Parameter\PrivilegeParameterInterface;
@@ -47,7 +48,7 @@ class PrivilegePermissionResult
      * @param PrivilegeInterface $privilege
      * @return PrivilegePermissionResult
      */
-    public function withPrivilege(PrivilegeInterface $privilege = null): PrivilegePermissionResult
+    public function withPrivilege(?PrivilegeInterface $privilege = null): PrivilegePermissionResult
     {
         $newResult = clone $this;
         if ($privilege === null) {

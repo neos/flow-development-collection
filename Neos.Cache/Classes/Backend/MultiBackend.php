@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Neos\Cache\Backend;
@@ -41,7 +42,7 @@ class MultiBackend extends AbstractBackend
     protected ?LoggerInterface $logger = null;
     protected ?ThrowableStorageInterface $throwableStorage = null;
 
-    public function __construct(EnvironmentConfiguration $environmentConfiguration = null, array $options = [])
+    public function __construct(?EnvironmentConfiguration $environmentConfiguration = null, array $options = [])
     {
         parent::__construct($environmentConfiguration, $options);
 
@@ -96,7 +97,7 @@ class MultiBackend extends AbstractBackend
     /**
      * @throws Throwable
      */
-    public function set(string $entryIdentifier, string $data, array $tags = [], int $lifetime = null): void
+    public function set(string $entryIdentifier, string $data, array $tags = [], ?int $lifetime = null): void
     {
         $this->prepareBackends();
         foreach ($this->backends as $backend) {

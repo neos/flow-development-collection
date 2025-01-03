@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Property\TypeConverter;
 
 /*
@@ -100,7 +101,7 @@ class StringConverter extends AbstractTypeConverter
      * @throws InvalidPropertyMappingConfigurationException
      * @api
      */
-    public function convertFrom($source, $targetType, array $convertedChildProperties = [], PropertyMappingConfigurationInterface $configuration = null)
+    public function convertFrom($source, $targetType, array $convertedChildProperties = [], ?PropertyMappingConfigurationInterface $configuration = null)
     {
         if ($source instanceof \DateTimeInterface) {
             $dateFormat = $this->getDateFormat($configuration);
@@ -131,7 +132,7 @@ class StringConverter extends AbstractTypeConverter
      * @return string
      * @throws InvalidPropertyMappingConfigurationException
      */
-    protected function getDateFormat(PropertyMappingConfigurationInterface $configuration = null)
+    protected function getDateFormat(?PropertyMappingConfigurationInterface $configuration = null)
     {
         if ($configuration === null) {
             return self::DEFAULT_DATE_FORMAT;
@@ -156,7 +157,7 @@ class StringConverter extends AbstractTypeConverter
      * @return string
      * @throws InvalidPropertyMappingConfigurationException
      */
-    protected function getCsvDelimiter(PropertyMappingConfigurationInterface $configuration = null)
+    protected function getCsvDelimiter(?PropertyMappingConfigurationInterface $configuration = null)
     {
         if ($configuration === null) {
             return self::DEFAULT_CSV_DELIMITER;
@@ -181,7 +182,7 @@ class StringConverter extends AbstractTypeConverter
      * @return string
      * @throws InvalidPropertyMappingConfigurationException
      */
-    protected function getArrayFormat(PropertyMappingConfigurationInterface $configuration = null)
+    protected function getArrayFormat(?PropertyMappingConfigurationInterface $configuration = null)
     {
         if ($configuration === null) {
             return self::DEFAULT_ARRAY_FORMAT;

@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Neos\Flow\Property\TypeConverter;
@@ -51,7 +52,7 @@ class ArrayObjectConverter extends AbstractTypeConverter
      * @throws InvalidSourceException
      * @api
      */
-    public function convertFrom($source, $targetType, array $convertedChildProperties = [], PropertyMappingConfigurationInterface $configuration = null): array
+    public function convertFrom($source, $targetType, array $convertedChildProperties = [], ?PropertyMappingConfigurationInterface $configuration = null): array
     {
         if (!($source instanceof \ArrayObject)) {
             throw new InvalidSourceException('Source was not an instance of ArrayObject.', 1648456200);

@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Neos\Cache\Frontend;
@@ -56,7 +57,7 @@ interface FrontendInterface
      * @return void
      * @api
      */
-    public function set(string $entryIdentifier, $data, array $tags = [], int $lifetime = null);
+    public function set(string $entryIdentifier, $data, array $tags = [], ?int $lifetime = null);
 
     /**
      * Finds and returns data from the cache.

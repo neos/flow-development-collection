@@ -74,7 +74,7 @@ You may also want to override ``onAuthenticationFailure()`` to react on login pr
 		 * @param ActionRequest $originalRequest The request that was intercepted by the security framework, null if there was none
 		 * @return string
 		 */
-		protected function onAuthenticationSuccess(ActionRequest $originalRequest = null) {
+		protected function onAuthenticationSuccess(?ActionRequest $originalRequest = null) {
 			if ($originalRequest !== null) {
 				$this->redirectToRequest($originalRequest);
 			}

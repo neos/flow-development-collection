@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Property\TypeConverter;
 
 /*
@@ -56,7 +57,7 @@ class PersistentObjectSerializer extends AbstractTypeConverter
      * @param PropertyMappingConfigurationInterface|null $configuration
      * @return mixed The identifier for the object if it is known, or NULL
      */
-    public function convertFrom($source, $targetType, array $convertedChildProperties = [], PropertyMappingConfigurationInterface $configuration = null)
+    public function convertFrom($source, $targetType, array $convertedChildProperties = [], ?PropertyMappingConfigurationInterface $configuration = null)
     {
         return $this->persistenceManager->getIdentifierByObject($source);
     }

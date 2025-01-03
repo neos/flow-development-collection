@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Persistence\Doctrine;
 
 /*
@@ -69,7 +70,7 @@ class ArrayTypeConverter extends AbstractTypeConverter
      * @throws TypeConverterException thrown in case a developer error occurred
      * @api
      */
-    public function convertFrom($source, $targetType, array $convertedChildProperties = [], PropertyMappingConfigurationInterface $configuration = null)
+    public function convertFrom($source, $targetType, array $convertedChildProperties = [], ?PropertyMappingConfigurationInterface $configuration = null)
     {
         $result = [];
         $convertElements = $configuration->getConfigurationValue(ArrayTypeConverter::class, self::CONFIGURATION_CONVERT_ELEMENTS);

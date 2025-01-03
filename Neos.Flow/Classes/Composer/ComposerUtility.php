@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Composer;
 
 /*
@@ -43,7 +44,7 @@ class ComposerUtility
      * @param string $configurationPath Optional. Only return the part of the manifest indexed by configurationPath
      * @return array|mixed
      */
-    public static function getComposerManifest(string $manifestPath, string $configurationPath = null)
+    public static function getComposerManifest(string $manifestPath, ?string $configurationPath = null)
     {
         $composerManifest = static::readComposerManifest($manifestPath);
         if ($composerManifest === null) {

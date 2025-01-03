@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Validation;
 
 /*
@@ -160,7 +161,7 @@ class ValidatorResolver
      * @throws Exception\InvalidTypeHintException
      * @throws Exception\InvalidValidationOptionsException
      */
-    public function buildMethodArgumentsValidatorConjunctions($className, $methodName, array $methodParameters = null, array $methodValidateAnnotations = null)
+    public function buildMethodArgumentsValidatorConjunctions($className, $methodName, array $methodParameters = null, ?array $methodValidateAnnotations = null)
     {
         $validatorConjunctions = [];
 
@@ -320,10 +321,12 @@ class ValidatorResolver
                 if ($this->reflectionService->isPropertyAnnotatedWith($targetClassName, $classPropertyName, Flow\IgnoreValidation::class)) {
                     continue;
                 }
-                if ($classSchema !== null
+                if (
+                    $classSchema !== null
                     && $classSchema->hasProperty($classPropertyName)
                     && $classSchema->isPropertyTransient($classPropertyName)
-                    && $validationGroups === ['Persistence', 'Default']) {
+                    && $validationGroups === ['Persistence', 'Default']
+                ) {
                     continue;
                 }
 

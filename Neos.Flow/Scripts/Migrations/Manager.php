@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Core\Migrations;
 
 /*
@@ -331,7 +332,7 @@ class Manager
      * @param string $eventIdentifier one of the EVENT_* constants
      * @param array $eventData optional arguments to be passed to the handler closure
      */
-    protected function triggerEvent($eventIdentifier, array $eventData = null)
+    protected function triggerEvent($eventIdentifier, ?array $eventData = null)
     {
         if (!isset($this->eventCallbacks[$eventIdentifier])) {
             return;

@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Security;
 
 use Neos\Flow\Annotations as Flow;
@@ -92,7 +93,7 @@ class SessionDataContainer
      *
      * @param ActionRequest $interceptedRequest
      */
-    public function setInterceptedRequest(ActionRequest $interceptedRequest = null): void
+    public function setInterceptedRequest(?ActionRequest $interceptedRequest = null): void
     {
         $this->interceptedRequest = $interceptedRequest;
     }

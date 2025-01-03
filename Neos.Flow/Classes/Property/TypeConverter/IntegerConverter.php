@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Property\TypeConverter;
 
 /*
@@ -52,7 +53,7 @@ class IntegerConverter extends AbstractTypeConverter
      * @return integer|Error
      * @api
      */
-    public function convertFrom($source, $targetType, array $convertedChildProperties = [], PropertyMappingConfigurationInterface $configuration = null)
+    public function convertFrom($source, $targetType, array $convertedChildProperties = [], ?PropertyMappingConfigurationInterface $configuration = null)
     {
         if ($source instanceof \DateTimeInterface) {
             return $source->format('U');
@@ -65,6 +66,6 @@ class IntegerConverter extends AbstractTypeConverter
         if (!is_numeric($source)) {
             return new Error('"%s" is not numeric.', 1332933658, [$source]);
         }
-        return (integer)$source;
+        return (int)$source;
     }
 }

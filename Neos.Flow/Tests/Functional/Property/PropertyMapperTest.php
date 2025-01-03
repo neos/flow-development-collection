@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Tests\Functional\Property;
 
 /*
@@ -353,7 +354,7 @@ class PropertyMapperTest extends FunctionalTestCase
      * @test
      * @dataProvider invalidTypeConverterConfigurationsForOverridingTargetTypes
      */
-    public function mappingToFieldsFromSubclassThrowsExceptionIfTypeConverterOptionIsInvalidOrNotSet(PropertyMappingConfigurationInterface $configuration = null)
+    public function mappingToFieldsFromSubclassThrowsExceptionIfTypeConverterOptionIsInvalidOrNotSet(?PropertyMappingConfigurationInterface $configuration = null)
     {
         $this->expectException(Exception::class);
         $source = [

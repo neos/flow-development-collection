@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\I18n;
 
 /*
@@ -98,7 +99,7 @@ class FormatResolver
      * @throws Exception\IndexOutOfBoundsException When trying to format nonexistent value
      * @api
      */
-    public function resolvePlaceholders($textWithPlaceholders, array $arguments, Locale $locale = null)
+    public function resolvePlaceholders($textWithPlaceholders, array $arguments, ?Locale $locale = null)
     {
         if ($locale === null) {
             $locale = $this->localizationService->getConfiguration()->getDefaultLocale();

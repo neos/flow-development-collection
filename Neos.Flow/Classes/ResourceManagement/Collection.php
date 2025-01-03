@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\ResourceManagement;
 
 /*
@@ -155,7 +156,7 @@ class Collection implements CollectionInterface
      * @param callable $callback Function called after each object
      * @return \Generator<StorageObject>
      */
-    public function getObjects(callable $callback = null)
+    public function getObjects(?callable $callback = null)
     {
         if ($this->storage instanceof PackageStorage && $this->pathPatterns !== []) {
             foreach ($this->pathPatterns as $pathPattern) {

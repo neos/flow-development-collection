@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Property\TypeConverter;
 
 /*
@@ -180,7 +181,7 @@ class ObjectConverter extends AbstractTypeConverter
      * @throws InvalidDataTypeException
      * @throws InvalidPropertyMappingConfigurationException
      */
-    public function convertFrom($source, $targetType, array $convertedChildProperties = [], PropertyMappingConfigurationInterface $configuration = null)
+    public function convertFrom($source, $targetType, array $convertedChildProperties = [], ?PropertyMappingConfigurationInterface $configuration = null)
     {
         $object = $this->buildObject($convertedChildProperties, $targetType);
         foreach ($convertedChildProperties as $propertyName => $propertyValue) {
@@ -210,7 +211,7 @@ class ObjectConverter extends AbstractTypeConverter
      * @throws InvalidPropertyMappingConfigurationException
      * @throws \InvalidArgumentException
      */
-    public function getTargetTypeForSource($source, $originalTargetType, PropertyMappingConfigurationInterface $configuration = null)
+    public function getTargetTypeForSource($source, $originalTargetType, ?PropertyMappingConfigurationInterface $configuration = null)
     {
         $targetType = $originalTargetType;
 

@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Property\TypeConverter;
 
 /*
@@ -121,7 +122,7 @@ class DateTimeConverter extends AbstractTypeConverter
      * @throws InvalidPropertyMappingConfigurationException
      * @throws TypeConverterException
      */
-    public function convertFrom($source, $targetType, array $convertedChildProperties = [], PropertyMappingConfigurationInterface $configuration = null)
+    public function convertFrom($source, $targetType, array $convertedChildProperties = [], ?PropertyMappingConfigurationInterface $configuration = null)
     {
         $dateFormat = $this->getDefaultDateFormat($configuration);
         $isFormatSpecified = false;
@@ -197,7 +198,7 @@ class DateTimeConverter extends AbstractTypeConverter
      * @return string
      * @throws InvalidPropertyMappingConfigurationException
      */
-    protected function getDefaultDateFormat(PropertyMappingConfigurationInterface $configuration = null)
+    protected function getDefaultDateFormat(?PropertyMappingConfigurationInterface $configuration = null)
     {
         if ($configuration === null) {
             return self::DEFAULT_DATE_FORMAT;
@@ -220,9 +221,9 @@ class DateTimeConverter extends AbstractTypeConverter
      */
     protected function overrideTime(\DateTimeInterface $date, array $source)
     {
-        $hour = isset($source['hour']) ? (integer)$source['hour'] : 0;
-        $minute = isset($source['minute']) ? (integer)$source['minute'] : 0;
-        $second = isset($source['second']) ? (integer)$source['second'] : 0;
+        $hour = isset($source['hour']) ? (int)$source['hour'] : 0;
+        $minute = isset($source['minute']) ? (int)$source['minute'] : 0;
+        $second = isset($source['second']) ? (int)$source['second'] : 0;
         if ($date instanceof \DateTime || $date instanceof \DateTimeImmutable) {
             $date = $date->setTime($hour, $minute, $second);
         }

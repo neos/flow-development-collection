@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Tests\Unit\Http\Middleware;
 
 /*
@@ -357,7 +358,7 @@ class SecurityEntryPointMiddlewareTest extends UnitTestCase
      * @test
      * @dataProvider processMergesArgumentsWithRoutingMatchResultsDataProvider()
      */
-    public function processMergesArgumentsWithRoutingMatchResults(array $requestArguments, array $requestBodyArguments, array $routingMatchResults = null, array $expectedArguments)
+    public function processMergesArgumentsWithRoutingMatchResults(array $requestArguments, array $requestBodyArguments, ?array $routingMatchResults = null, array $expectedArguments)
     {
         $this->mockActionRequest->expects(self::once())->method('setArguments')->with($expectedArguments);
         $this->buildMockHttpRequest($requestArguments, $requestBodyArguments);

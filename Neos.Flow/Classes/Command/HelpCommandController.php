@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Command;
 
 /*
@@ -82,7 +83,7 @@ class HelpCommandController extends CommandController
      * @return void
      * @throws StopActionException
      */
-    public function helpCommand(string $commandIdentifier = null)
+    public function helpCommand(?string $commandIdentifier = null)
     {
         $exceedingArguments = $this->request->getExceedingArguments();
         if (count($exceedingArguments) > 0 && $commandIdentifier === null) {

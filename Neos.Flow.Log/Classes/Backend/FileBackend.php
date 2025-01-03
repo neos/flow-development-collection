@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Neos\Flow\Log\Backend;
@@ -228,7 +229,7 @@ class FileBackend extends AbstractBackend
      * @return void
      * @api
      */
-    public function append(string $message, int $severity = LOG_INFO, $additionalData = null, string $packageKey = null, string $className = null, string $methodName = null): void
+    public function append(string $message, int $severity = LOG_INFO, $additionalData = null, string $packageKey = null, string $className = null, ?string $methodName = null): void
     {
         if ($severity > $this->severityThreshold) {
             return;

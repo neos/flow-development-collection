@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Neos\Cache\Frontend;
@@ -37,7 +38,7 @@ class StringFrontend extends AbstractFrontend
      * @throws \Neos\Cache\Exception
      * @api
      */
-    public function set(string $entryIdentifier, $string, array $tags = [], int $lifetime = null)
+    public function set(string $entryIdentifier, $string, array $tags = [], ?int $lifetime = null)
     {
         if (!$this->isValidEntryIdentifier($entryIdentifier)) {
             throw new \InvalidArgumentException('"' . $entryIdentifier . '" is not a valid cache entry identifier.', 1233057566);

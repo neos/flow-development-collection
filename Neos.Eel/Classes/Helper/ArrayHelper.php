@@ -562,7 +562,7 @@ class ArrayHelper implements ProtectedContextAwareInterface
      * @param callable $callback Callback for testing if an element should be included in the result, current value and key will be passed as arguments
      * @return array The array with elements where callback returned true
      */
-    public function filter(iterable $array, callable $callback = null): array
+    public function filter(iterable $array, ?callable $callback = null): array
     {
         if ($array instanceof \Traversable) {
             $array = iterator_to_array($array);

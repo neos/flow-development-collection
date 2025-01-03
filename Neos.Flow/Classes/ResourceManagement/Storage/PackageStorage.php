@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\ResourceManagement\Storage;
 
 /*
@@ -45,7 +46,7 @@ class PackageStorage extends FileSystemStorage
      * @param callable $callback Function called after each iteration
      * @return \Generator<StorageObject>
      */
-    public function getObjects(callable $callback = null)
+    public function getObjects(?callable $callback = null)
     {
         return $this->getObjectsByPathPattern('*');
     }
@@ -57,7 +58,7 @@ class PackageStorage extends FileSystemStorage
      * @param callable $callback Function called after each object
      * @return \Generator<StorageObject>
      */
-    public function getObjectsByPathPattern($pattern, callable $callback = null)
+    public function getObjectsByPathPattern($pattern, ?callable $callback = null)
     {
         $directories = [];
 

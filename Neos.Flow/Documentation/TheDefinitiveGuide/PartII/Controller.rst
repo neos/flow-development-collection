@@ -52,7 +52,7 @@ The kickstarter created a very basic command controller containing only one comm
 		 * @param string $requiredArgument This argument is required
 		 * @param string $optionalArgument This argument is optional
 		 */
-		public function exampleCommand(string $requiredArgument, string $optionalArgument = null): void
+		public function exampleCommand(string $requiredArgument, ?string $optionalArgument = null): void
 		{
 			$this->outputLine('You called the example command and passed "%s" as the first argument.', array($requiredArgument));
 		}

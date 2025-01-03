@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Persistence;
 
 /*
@@ -10,6 +11,7 @@ namespace Neos\Flow\Persistence;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+
 use Neos\Flow\Persistence\Exception\UnknownObjectException;
 
 /**
@@ -99,7 +101,7 @@ interface PersistenceManagerInterface
      * @return object|null The object for the identifier if it is known, or NULL
      * @api
      */
-    public function getObjectByIdentifier($identifier, string $objectType = null, bool $useLazyLoading = false);
+    public function getObjectByIdentifier($identifier, ?string $objectType = null, bool $useLazyLoading = false);
 
     /**
      * Converts the given object into an array containing the identity of the domain object.

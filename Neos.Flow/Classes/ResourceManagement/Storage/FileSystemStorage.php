@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\ResourceManagement\Storage;
 
 /*
@@ -133,7 +134,7 @@ class FileSystemStorage implements StorageInterface
      * @param callable|null $callback Function called after each iteration
      * @return \Generator<StorageObject>
      */
-    public function getObjects(callable $callback = null)
+    public function getObjects(?callable $callback = null)
     {
         foreach ($this->resourceManager->getCollectionsByStorage($this) as $collection) {
             yield from $this->getObjectsByCollection($collection, $callback);
@@ -147,7 +148,7 @@ class FileSystemStorage implements StorageInterface
      * @param callable|null $callback Function called after each iteration
      * @return \Generator<StorageObject>
      */
-    public function getObjectsByCollection(CollectionInterface $collection, callable $callback = null)
+    public function getObjectsByCollection(CollectionInterface $collection, ?callable $callback = null)
     {
         $iterator = $this->resourceRepository->findByCollectionNameIterator($collection->getName());
         $iteration = 0;

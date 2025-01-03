@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Persistence\Doctrine;
 
 /*
@@ -201,7 +202,7 @@ class PersistenceManager extends AbstractPersistenceManager
      * @throws ORMException
      * @api
      */
-    public function getObjectByIdentifier($identifier, string $objectType = null, bool $useLazyLoading = false)
+    public function getObjectByIdentifier($identifier, ?string $objectType = null, bool $useLazyLoading = false)
     {
         if ($objectType === null) {
             throw new \RuntimeException('Using only the identifier is not supported by Doctrine 2. Give classname as well or use repository to query identifier.', 1296646103);

@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Security;
 
 /*
@@ -222,7 +223,7 @@ class DummyContext extends Context
      * @return void
      * @Flow\Session(autoStart=true)
      */
-    public function setInterceptedRequest(ActionRequest $interceptedRequest = null)
+    public function setInterceptedRequest(?ActionRequest $interceptedRequest = null)
     {
         $this->interceptedRequest = $interceptedRequest;
     }

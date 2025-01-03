@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Package;
 
 /*
@@ -32,7 +33,7 @@ class PackageFactory
      * @return PackageInterface|PackageKeyAwareInterface
      * @throws Exception\CorruptPackageException
      */
-    public function create($packagesBasePath, $packagePath, $packageKey, $composerName, array $autoloadConfiguration = [], array $packageClassInformation = null)
+    public function create($packagesBasePath, $packagePath, $packageKey, $composerName, array $autoloadConfiguration = [], ?array $packageClassInformation = null)
     {
         $absolutePackagePath = Files::concatenatePaths([$packagesBasePath, $packagePath]) . '/';
 

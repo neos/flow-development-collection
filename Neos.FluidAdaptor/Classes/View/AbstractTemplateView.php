@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\FluidAdaptor\View;
 
 /*
@@ -123,7 +124,7 @@ abstract class AbstractTemplateView extends \TYPO3Fluid\Fluid\View\AbstractTempl
      * @param array $options
      * @throws Exception
      */
-    public function __construct(array $options = null)
+    public function __construct(?array $options = null)
     {
         if ($options === null) {
             $options = [];

@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Command;
 
 /*
@@ -78,7 +79,7 @@ class ResourceCommandController extends CommandController
      * @param string $collection If specified, only resources of this collection are published. Example: 'persistent'
      * @return void
      */
-    public function publishCommand(string $collection = null)
+    public function publishCommand(?string $collection = null)
     {
         try {
             if ($collection === null) {
@@ -213,9 +214,11 @@ class ResourceCommandController extends CommandController
         $relatedAssets = new \SplObjectStorage();
         $relatedThumbnails = new \SplObjectStorage();
         $iterator = $this->resourceRepository->findAllIterator();
-        foreach ($this->resourceRepository->iterate($iterator, function ($iteration) {
-            $this->clearState($iteration);
-        }) as $resource) {
+        foreach (
+            $this->resourceRepository->iterate($iterator, function ($iteration) {
+                $this->clearState($iteration);
+            }) as $resource
+        ) {
             $this->output->progressAdvance(1);
             /* @var PersistentResource $resource */
             $stream = $resource->getStream();

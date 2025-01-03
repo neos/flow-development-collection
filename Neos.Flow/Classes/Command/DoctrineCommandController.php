@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Command;
 
 /*
@@ -144,7 +145,7 @@ class DoctrineCommandController extends CommandController
      * @see neos.flow:doctrine:update
      * @see neos.flow:doctrine:migrate
      */
-    public function createCommand(string $output = null): void
+    public function createCommand(?string $output = null): void
     {
         if (!$this->isDatabaseConfigured()) {
             $this->outputLine('Database schema creation has been SKIPPED, the driver and host backend options are not set in /Configuration/Settings.yaml.');
@@ -173,7 +174,7 @@ class DoctrineCommandController extends CommandController
      * @see neos.flow:doctrine:create
      * @see neos.flow:doctrine:migrate
      */
-    public function updateCommand(bool $unsafeMode = false, string $output = null): void
+    public function updateCommand(bool $unsafeMode = false, ?string $output = null): void
     {
         if (!$this->isDatabaseConfigured()) {
             $this->outputLine('Database schema update has been SKIPPED, the driver and host backend options are not set in /Configuration/Settings.yaml.');
@@ -202,7 +203,7 @@ class DoctrineCommandController extends CommandController
      * @throws \Doctrine\ORM\ORMException
      * @see neos.flow:doctrine:validate
      */
-    public function entityStatusCommand(bool $dumpMappingData = false, string $entityClassName = null): void
+    public function entityStatusCommand(bool $dumpMappingData = false, ?string $entityClassName = null): void
     {
         $info = $this->doctrineService->getEntityStatus();
 
@@ -255,7 +256,7 @@ class DoctrineCommandController extends CommandController
      * @return void
      * @throws StopCommandException
      */
-    public function dqlCommand(int $depth = 3, string $hydrationMode = 'array', int $offset = null, int $limit = null): void
+    public function dqlCommand(int $depth = 3, string $hydrationMode = 'array', int $offset = null, ?int $limit = null): void
     {
         if (!$this->isDatabaseConfigured()) {
             $this->outputLine('DQL query is not possible, the driver and host backend options are not set in /Configuration/Settings.yaml.');
@@ -316,7 +317,7 @@ class DoctrineCommandController extends CommandController
      * @see neos.flow:doctrine:migrationgenerate
      * @see neos.flow:doctrine:migrationversion
      */
-    public function migrateCommand(string $version = 'latest', string $output = null, bool $dryRun = false, bool $quiet = false): void
+    public function migrateCommand(string $version = 'latest', ?string $output = null, bool $dryRun = false, bool $quiet = false): void
     {
         if (!$this->isDatabaseConfigured()) {
             $this->outputLine('Doctrine migration not possible, the driver and host backend options are not set in /Configuration/Settings.yaml.');
@@ -363,7 +364,7 @@ class DoctrineCommandController extends CommandController
      * @see neos.flow:doctrine:migrationgenerate
      * @see neos.flow:doctrine:migrationversion
      */
-    public function migrationExecuteCommand(string $version, string $direction = 'up', string $output = null, bool $dryRun = false): void
+    public function migrationExecuteCommand(string $version, string $direction = 'up', ?string $output = null, bool $dryRun = false): void
     {
         if (!$this->isDatabaseConfigured()) {
             $this->outputLine('Doctrine migration not possible, the driver and host backend options are not set in /Configuration/Settings.yaml.');
@@ -448,7 +449,7 @@ class DoctrineCommandController extends CommandController
      * @see neos.flow:doctrine:migrationexecute
      * @see neos.flow:doctrine:migrationversion
      */
-    public function migrationGenerateCommand(bool $diffAgainstCurrent = true, string $filterExpression = null, bool $force = false): void
+    public function migrationGenerateCommand(bool $diffAgainstCurrent = true, ?string $filterExpression = null, bool $force = false): void
     {
         if (!$this->isDatabaseConfigured()) {
             $this->outputLine('Doctrine migration generation has been SKIPPED, the driver and host backend options are not set in /Configuration/Settings.yaml.');

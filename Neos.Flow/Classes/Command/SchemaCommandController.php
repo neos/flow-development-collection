@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Command;
 
 /*
@@ -46,7 +47,7 @@ class SchemaCommandController extends CommandController
      * @param boolean $verbose if true, output more verbose information on the schema files which were used
      * @return void
      */
-    public function validateCommand(string $configurationFile = null, string $schemaFile = 'resource://Neos.Flow/Private/Schema/Schema.schema.yaml', bool $verbose = false)
+    public function validateCommand(?string $configurationFile = null, string $schemaFile = 'resource://Neos.Flow/Private/Schema/Schema.schema.yaml', bool $verbose = false)
     {
         $this->outputLine('Validating <b>' . $configurationFile . '</b> with schema  <b>' . $schemaFile . '</b>');
         $this->outputLine();

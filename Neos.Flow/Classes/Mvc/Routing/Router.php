@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Mvc\Routing;
 
 /*
@@ -100,7 +101,7 @@ class Router implements RouterInterface
      * @param array $routesConfiguration The routes configuration or NULL if it should be fetched from configuration
      * @return void
      */
-    public function setRoutesConfiguration(array $routesConfiguration = null)
+    public function setRoutesConfiguration(?array $routesConfiguration = null)
     {
         $this->routesConfiguration = $routesConfiguration;
         $this->routesCreated = false;

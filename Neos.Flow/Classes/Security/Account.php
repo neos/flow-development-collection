@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Security;
 
 /*
@@ -314,7 +315,7 @@ class Account
      * @return void
      * @api
      */
-    public function setExpirationDate(\DateTime $expirationDate = null)
+    public function setExpirationDate(?\DateTime $expirationDate = null)
     {
         $this->expirationDate = $expirationDate;
     }

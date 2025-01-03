@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Neos\Flow\Command;
@@ -168,7 +169,7 @@ class RoutingCommandController extends CommandController
      * @return void
      * @throws StopCommandException | InvalidRoutePartValueException
      */
-    public function resolveCommand(string $package, string $controller = null, string $action = null, string $format = null, string $subpackage = null, string $additionalArguments = null, string $parameters = null, string $baseUri = null, bool $forceAbsoluteUri = null): void
+    public function resolveCommand(string $package, string $controller = null, string $action = null, string $format = null, string $subpackage = null, string $additionalArguments = null, string $parameters = null, string $baseUri = null, ?bool $forceAbsoluteUri = null): void
     {
         $routeValues = [
             '@package' => $package,
@@ -266,7 +267,7 @@ class RoutingCommandController extends CommandController
      * @param string|null $parameters Route parameters as JSON string. Make sure to specify this option as described in the description in order to prevent parsing issues
      * @throws InvalidRoutePartValueException | StopCommandException
      */
-    public function matchCommand(string $uri, string $method = null, string $parameters = null): void
+    public function matchCommand(string $uri, string $method = null, ?string $parameters = null): void
     {
         $method = $method ?? 'GET';
         $requestUri = new Uri($uri);

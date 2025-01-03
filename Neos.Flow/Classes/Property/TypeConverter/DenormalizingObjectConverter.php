@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Property\TypeConverter;
 
 /*
@@ -40,7 +41,7 @@ final class DenormalizingObjectConverter implements TypeConverterInterface
      * @return string
      * @api
      */
-    public function getTargetTypeForSource($source, $originalTargetType, PropertyMappingConfigurationInterface $configuration = null)
+    public function getTargetTypeForSource($source, $originalTargetType, ?PropertyMappingConfigurationInterface $configuration = null)
     {
         return $originalTargetType;
     }
@@ -107,8 +108,7 @@ final class DenormalizingObjectConverter implements TypeConverterInterface
             || self::canConvertFromSourceType('string', $targetType)
             || self::canConvertFromSourceType('boolean', $targetType)
             || self::canConvertFromSourceType('integer', $targetType)
-            || self::canConvertFromSourceType('double', $targetType)
-        ;
+            || self::canConvertFromSourceType('double', $targetType);
     }
 
     /**
@@ -142,7 +142,7 @@ final class DenormalizingObjectConverter implements TypeConverterInterface
      * @throws TypeConverterException thrown in case a developer error occurred
      * @api
      */
-    public function convertFrom($source, $targetType, array $convertedChildProperties = [], PropertyMappingConfigurationInterface $configuration = null)
+    public function convertFrom($source, $targetType, array $convertedChildProperties = [], ?PropertyMappingConfigurationInterface $configuration = null)
     {
         return self::convertFromSource($source, $targetType);
     }

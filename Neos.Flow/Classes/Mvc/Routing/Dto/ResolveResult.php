@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Mvc\Routing\Dto;
 
 /*
@@ -53,7 +54,7 @@ final class ResolveResult
      * @param UriConstraints $uriConstraints
      * @param RouteTags $tags
      */
-    public function __construct(string $resolvedValue, UriConstraints $uriConstraints = null, RouteTags $tags = null, RouteLifetime $lifetime = null)
+    public function __construct(string $resolvedValue, UriConstraints $uriConstraints = null, RouteTags $tags = null, ?RouteLifetime $lifetime = null)
     {
         $this->resolvedValue = $resolvedValue;
         $this->uriConstraints = $uriConstraints;

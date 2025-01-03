@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Neos\Flow\Log\Backend;
@@ -29,7 +30,7 @@ class JsonFileBackend extends FileBackend
      * @param string $methodName Name of the method triggering the log (determined automatically if not specified)
      * @return void
      */
-    public function append(string $message, int $severity = LOG_INFO, $additionalData = null, string $packageKey = null, string $className = null, string $methodName = null): void
+    public function append(string $message, int $severity = LOG_INFO, $additionalData = null, string $packageKey = null, string $className = null, ?string $methodName = null): void
     {
 
         if ($severity > $this->severityThreshold) {

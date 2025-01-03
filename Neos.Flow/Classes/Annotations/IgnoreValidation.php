@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Annotations;
 
 /*
@@ -23,7 +24,7 @@ use Doctrine\Common\Annotations\Annotation\NamedArgumentConstructor;
  * @NamedArgumentConstructor
  * @Target({"METHOD", "PROPERTY"})
  */
-#[\Attribute(\Attribute::TARGET_METHOD|\Attribute::TARGET_PROPERTY|\Attribute::IS_REPEATABLE)]
+#[\Attribute(\Attribute::TARGET_METHOD | \Attribute::TARGET_PROPERTY | \Attribute::IS_REPEATABLE)]
 final class IgnoreValidation
 {
     /**
@@ -38,7 +39,7 @@ final class IgnoreValidation
      */
     public $evaluate = false;
 
-    public function __construct(string $argumentName = null, bool $evaluate = false)
+    public function __construct(?string $argumentName = null, bool $evaluate = false)
     {
         $this->argumentName = $argumentName ? ltrim($argumentName, '$') : null;
         $this->evaluate = $evaluate;

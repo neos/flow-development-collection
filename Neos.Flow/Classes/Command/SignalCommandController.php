@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Neos\Flow\Command;
@@ -37,7 +38,7 @@ class SignalCommandController extends CommandController
      * @param string $methodName if specified, only signals matching the given method name will be shown. This is only useful in conjunction with the "--class-name" option.
      * @return void
      */
-    public function listConnectedCommand(string $className = null, string $methodName = null): void
+    public function listConnectedCommand(string $className = null, ?string $methodName = null): void
     {
         $this->outputFormatted('<b>Connected signals with their slots.</b>');
         $this->outputLine();

@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Utility\Unicode;
 
 /*
@@ -46,7 +47,7 @@ abstract class Functions
      * @return string The processed string
      * @api
      */
-    public static function substr(string $string, int $start, int $length = null)
+    public static function substr(string $string, int $start, ?int $length = null)
     {
         if ($length === 0) {
             return '';
@@ -158,7 +159,7 @@ abstract class Functions
      * @return string|array
      * @api
      */
-    public static function pathinfo(string $path, int $options = null)
+    public static function pathinfo(string $path, ?int $options = null)
     {
         $currentLocale = setlocale(LC_CTYPE, 0);
         // Before we have a setting for setlocale, his should suffice for pathinfo
@@ -203,7 +204,7 @@ abstract class Functions
             $components['host'] = $componentsFromUrl['host'];
         }
         if (array_key_exists('port', $componentsFromUrl)) {
-            $components['port'] = (integer)$componentsFromUrl['port'];
+            $components['port'] = (int)$componentsFromUrl['port'];
         } else {
             unset($components['port']);
         }

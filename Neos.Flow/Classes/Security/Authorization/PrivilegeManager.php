@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Security\Authorization;
 
 /*
@@ -154,7 +155,7 @@ class PrivilegeManager implements PrivilegeManagerInterface
      * @param PrivilegeInterface|null $privilege
      * @return PrivilegePermissionResult
      */
-    protected function applyPrivilegeToResult(PrivilegePermissionResult $result, PrivilegeInterface $privilege = null): PrivilegePermissionResult
+    protected function applyPrivilegeToResult(PrivilegePermissionResult $result, ?PrivilegeInterface $privilege = null): PrivilegePermissionResult
     {
         return $result->withPrivilege($privilege);
     }
