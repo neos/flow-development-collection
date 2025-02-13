@@ -12,9 +12,11 @@ namespace Neos\Flow\ResourceManagement;
  */
 
 use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Http\BaseUriProvider;
 use Neos\Flow\Log\Utility\LogEnvironment;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
+use Neos\Flow\ResourceManagement\Target\AbsoluteBaseUriAwareTarget;
 use Neos\Utility\ObjectAccess;
 use Neos\Flow\ResourceManagement\Storage\StorageInterface;
 use Neos\Flow\ResourceManagement\Storage\WritableStorageInterface;
@@ -63,6 +65,12 @@ class ResourceManager
      * @var PersistenceManagerInterface
      */
     protected $persistenceManager;
+
+    /**
+     * @Flow\Inject
+     * @var BaseUriProvider
+     */
+    protected $baseUriProvider;
 
     /**
      * @var array
@@ -382,7 +390,9 @@ class ResourceManager
         }
         /** @var TargetInterface $target */
         $target = $this->collections[$resource->getCollectionName()]->getTarget();
-
+        if ($target instanceof AbsoluteBaseUriAwareTarget) {
+            $target->setAbsoluteBaseUri($this->baseUriProvider->getConfiguredBaseUriOrFallbackToCurrentRequest());
+        }
         return $target->getPublicPersistentResourceUri($resource);
     }
 
@@ -409,7 +419,9 @@ class ResourceManager
         if ($resource === null) {
             throw new Exception(sprintf('Could not determine persistent resource URI for "%s" because no PersistentResource object with that SHA1 hash could be found.', $resourceHash), 1375347691);
         }
-
+        if ($target instanceof AbsoluteBaseUriAwareTarget) {
+            $target->setAbsoluteBaseUri($this->baseUriProvider->getConfiguredBaseUriOrFallbackToCurrentRequest());
+        }
         return $target->getPublicPersistentResourceUri($resource);
     }
 
@@ -428,6 +440,9 @@ class ResourceManager
 
         /** @var TargetInterface $target */
         $target = $this->collections[self::DEFAULT_STATIC_COLLECTION_NAME]->getTarget();
+        if ($target instanceof AbsoluteBaseUriAwareTarget) {
+            $target->setAbsoluteBaseUri($this->baseUriProvider->getConfiguredBaseUriOrFallbackToCurrentRequest());
+        }
         return $target->getPublicStaticResourceUri($packageKey . '/' . $relativePathAndFilename);
     }
 
