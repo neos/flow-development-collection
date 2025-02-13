@@ -24,6 +24,7 @@ use Neos\Flow\ResourceManagement\Target\TargetInterface;
 use Neos\Flow\Utility\Algorithms;
 use Neos\Flow\Utility\Environment;
 use Neos\Utility\Unicode\Functions as UnicodeFunctions;
+use Psr\Http\Message\UriInterface;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -381,7 +382,7 @@ class ResourceManager
      * @return string|false A URI as a string or false if the collection of the resource is not found
      * @api
      */
-    public function getPublicPersistentResourceUri(PersistentResource $resource)
+    public function getPublicPersistentResourceUri(PersistentResource $resource, ?UriInterface $baseUri = null)
     {
         $this->initialize();
 
@@ -391,7 +392,7 @@ class ResourceManager
         /** @var TargetInterface $target */
         $target = $this->collections[$resource->getCollectionName()]->getTarget();
         if ($target instanceof AbsoluteBaseUriAwareTarget) {
-            $target->setAbsoluteBaseUri($this->baseUriProvider->getConfiguredBaseUriOrFallbackToCurrentRequest());
+            $target->setAbsoluteBaseUri($baseUri ?? $this->baseUriProvider->getConfiguredBaseUriOrFallbackToCurrentRequest());
         }
         return $target->getPublicPersistentResourceUri($resource);
     }
@@ -406,7 +407,7 @@ class ResourceManager
      * @throws Exception
      * @api
      */
-    public function getPublicPersistentResourceUriByHash($resourceHash, $collectionName = self::DEFAULT_PERSISTENT_COLLECTION_NAME)
+    public function getPublicPersistentResourceUriByHash($resourceHash, $collectionName = self::DEFAULT_PERSISTENT_COLLECTION_NAME, ?UriInterface $baseUri = null)
     {
         $this->initialize();
 
@@ -420,7 +421,7 @@ class ResourceManager
             throw new Exception(sprintf('Could not determine persistent resource URI for "%s" because no PersistentResource object with that SHA1 hash could be found.', $resourceHash), 1375347691);
         }
         if ($target instanceof AbsoluteBaseUriAwareTarget) {
-            $target->setAbsoluteBaseUri($this->baseUriProvider->getConfiguredBaseUriOrFallbackToCurrentRequest());
+            $target->setAbsoluteBaseUri($baseUri ?? $this->baseUriProvider->getConfiguredBaseUriOrFallbackToCurrentRequest());
         }
         return $target->getPublicPersistentResourceUri($resource);
     }
@@ -434,14 +435,14 @@ class ResourceManager
      * @return string
      * @api
      */
-    public function getPublicPackageResourceUri($packageKey, $relativePathAndFilename)
+    public function getPublicPackageResourceUri($packageKey, $relativePathAndFilename, ?UriInterface $baseUri = null)
     {
         $this->initialize();
 
         /** @var TargetInterface $target */
         $target = $this->collections[self::DEFAULT_STATIC_COLLECTION_NAME]->getTarget();
         if ($target instanceof AbsoluteBaseUriAwareTarget) {
-            $target->setAbsoluteBaseUri($this->baseUriProvider->getConfiguredBaseUriOrFallbackToCurrentRequest());
+            $target->setAbsoluteBaseUri($baseUri ?? $this->baseUriProvider->getConfiguredBaseUriOrFallbackToCurrentRequest());
         }
         return $target->getPublicStaticResourceUri($packageKey . '/' . $relativePathAndFilename);
     }
@@ -453,11 +454,11 @@ class ResourceManager
      * @return string
      * @api
      */
-    public function getPublicPackageResourceUriByPath($path)
+    public function getPublicPackageResourceUriByPath($path, ?UriInterface $baseUri = null)
     {
         $this->initialize();
         list($packageKey, $relativePathAndFilename) = $this->getPackageAndPathByPublicPath($path);
-        return $this->getPublicPackageResourceUri($packageKey, $relativePathAndFilename);
+        return $this->getPublicPackageResourceUri($packageKey, $relativePathAndFilename, $baseUri);
     }
 
     /**
