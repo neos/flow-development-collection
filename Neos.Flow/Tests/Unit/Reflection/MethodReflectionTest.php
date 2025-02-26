@@ -12,6 +12,7 @@ namespace Neos\Flow\Tests\Unit\Reflection;
  */
 
 use Neos\Flow\Reflection;
+use Neos\Flow\Tests\Unit\Reflection\Fixture\ClassWithAnnotatedMethod;
 use Neos\Flow\Tests\UnitTestCase;
 
 /**
@@ -43,5 +44,29 @@ class MethodReflectionTest extends UnitTestCase
             self::assertInstanceOf(Reflection\ParameterReflection::class, $parameter);
             self::assertEquals(__CLASS__, $parameter->getDeclaringClass()->getName());
         }
+    }
+
+    public function classAndMethodWithAnnotations()
+    {
+        return [
+            [ClassWithAnnotatedMethod::class, 'methodWithTag', ['skipcsrfprotection' => []]],
+            [ClassWithAnnotatedMethod::class, 'methodWithTagAndComment', ['skipcsrfprotection' => ['Some comment']]],
+            [ClassWithAnnotatedMethod::class, 'methodWithAnnotation', ['flow\skipcsrfprotection' => []]],
+            [ClassWithAnnotatedMethod::class, 'methodWithAnnotationAndComment', ['flow\skipcsrfprotection' => ['Some comment']]],
+            [ClassWithAnnotatedMethod::class, 'methodWithAnnotationArgument', ['flow\validate' => ['foo']]],
+            [ClassWithAnnotatedMethod::class, 'methodWithAnnotationArgumentAndComment', ['flow\validate' => ['foo']]],
+            [ClassWithAnnotatedMethod::class, 'methodWithMultipleAnnotationArguments', ['flow\ignorevalidation' => ['argumentName="foo", evaluate=true']]],
+            [ClassWithAnnotatedMethod::class, 'methodWithMultipleAnnotationArgumentsAndComment', ['flow\ignorevalidation' => ['argumentName="foo", evaluate=true']]],
+        ];
+    }
+
+    /**
+     * @test
+     * @dataProvider classAndMethodWithAnnotations
+     */
+    public function commentsAfterAnnotationShouldBeIgnored($class, $method, $expected)
+    {
+        $method = new Reflection\MethodReflection($class, $method);
+        self::assertEquals($expected, $method->getTagsValues());
     }
 }
