@@ -87,7 +87,7 @@ class ConfigurationBuilder
                     continue;
                 }
 
-                if (enum_exists($classOrInterfaceName)) {
+                if (method_exist('enum_exists') && enum_exists($classOrInterfaceName)) {
                     continue;
                 }
 
