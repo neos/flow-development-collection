@@ -874,9 +874,9 @@ class Scripts
         $output = [];
         exec(join(' ', $command), $output, $result);
 
-        if ($result === 0 && count($output) === 1) {
+        if ($result === 0 && $output !== []) {
             // Resolve any wrapper
-            $configuredPhpBinaryPathAndFilename = $output[0];
+            $configuredPhpBinaryPathAndFilename = end($output); // Last entry, skip possible emitted deprecations
         } else {
             // Resolve any symlinks that the configured php might be pointing to
             $configuredPhpBinaryPathAndFilename = realpath($phpBinaryPathAndFilename);
@@ -896,7 +896,7 @@ class Scripts
             // bypass with exec open_basedir restriction
             $output = [];
             exec(PHP_BINARY . ' -r "echo realpath(PHP_BINARY);"', $output);
-            $realPhpBinary = $output[0];
+            $realPhpBinary = end($output); // Last entry, skip possible emitted deprecations
         }
         if (strcmp($realPhpBinary, $configuredPhpBinaryPathAndFilename) !== 0) {
             throw new Exception\SubProcessException(sprintf(
