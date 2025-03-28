@@ -944,7 +944,8 @@ class Scripts
 
         exec(join(' ', $command), $output, $result);
 
-        $phpInformation = json_decode($output[0] ?? '{}', true) ?: [];
+        $resultWithJson = end($output); // For multiple lines use the last line, to skip possible emitted deprecations
+        $phpInformation = $resultWithJson ? json_decode($resultWithJson, true) : false;
 
         if ($result !== 0 || ($phpInformation['sapi'] ?? null) !== 'cli') {
             throw new Exception\SubProcessException(sprintf('PHP binary might not exist or is not suitable for cli usage. Command `%s` didnt succeed.', $phpCommand), 1689676967447);
