@@ -30,7 +30,7 @@ Neos:
         dbal:
           mappingTypes:
             'flow_json_array':
-              dbType: 'json'
+              dbType: 'flow_json_array'
               className: 'Neos\Flow\Persistence\Doctrine\DataTypes\JsonArrayType'
 
         # Doctrine ORM Lifecycle events and their subscribers and listeners.
