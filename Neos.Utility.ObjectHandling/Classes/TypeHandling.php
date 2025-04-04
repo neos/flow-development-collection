@@ -31,16 +31,16 @@ abstract class TypeHandling
     const LITERAL_TYPE_PATTERN = '/^(?:integer|int|float|double|boolean|bool|string)$/';
 
     /**
-     * @var array
+     * @var array<int,string|class-string<\Traversable<mixed>>>
      */
-    protected static $collectionTypes = ['array', \Traversable::class];
+    protected static array $collectionTypes = ['array', \Traversable::class];
 
     /**
      * Returns an array with type information, including element type for
      * collection types (array, SplObjectStorage, ...)
      *
      * @param string $type Type of the property (see PARSE_TYPE_PATTERN)
-     * @return array An array with information about the type
+     * @return array{type: string, elementType: ?string, nullable: bool} An array with information about the type
      * @throws InvalidTypeException
      */
     public static function parseType(string $type): array
@@ -52,7 +52,7 @@ abstract class TypeHandling
 
         $typeWithoutNull = self::stripNullableType($type);
         $isNullable = $typeWithoutNull !== $type || $type === 'null';
-        $type = self::normalizeType($matches['type']);
+        $type = self::normalizeType($matches['type'] ?? '');
         $elementType = isset($matches['elementType']) ? self::normalizeType($matches['elementType']) : null;
 
         if ($elementType !== null && !self::isCollectionType($type)) {
@@ -116,7 +116,7 @@ abstract class TypeHandling
     /**
      * Returns true if the $type is a collection type.
      *
-     * @param string $type
+     * @param string|class-string<object> $type
      * @return boolean
      */
     public static function isCollectionType(string $type): bool
@@ -127,8 +127,11 @@ abstract class TypeHandling
 
         if (class_exists($type) === true || interface_exists($type) === true) {
             foreach (self::$collectionTypes as $collectionType) {
-                if (is_subclass_of($type, $collectionType) === true) {
-                    return true;
+                if (class_exists($collectionType)) {
+                    /** @var class-string<\Traversable<mixed>> $collectionType */
+                    if (is_subclass_of($type, $collectionType) === true) {
+                        return true;
+                    }
                 }
             }
         }
@@ -185,16 +188,15 @@ abstract class TypeHandling
         if (stripos($type, 'null') === false) {
             return $type;
         }
-        return preg_replace('/(\\|null|null\\|)/i', '', $type);
+        return preg_replace('/(\\|null|null\\|)/i', '', $type) ?: '';
     }
 
     /**
      * Return simple type or class for object
      *
      * @param mixed $value
-     * @return string
      */
-    public static function getTypeForValue($value): string
+    public static function getTypeForValue($value): string|false
     {
         if (is_object($value)) {
             if ($value instanceof Proxy) {
