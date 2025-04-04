@@ -32,7 +32,7 @@ abstract class Files
         if (strpos($path, ':') === false) {
             return str_replace(['//', '\\'], '/', $path);
         }
-        return preg_replace('/^([a-z]{2,}):\//', '$1://', str_replace(['//', '\\'], '/', $path));
+        return preg_replace('/^([a-z]{2,}):\//', '$1://', str_replace(['//', '\\'], '/', $path)) ?: '';
     }
 
     /**
@@ -53,7 +53,7 @@ abstract class Files
      * Note: trailing slashes will be removed, leading slashes won't.
      * Usage: concatenatePaths(array('dir1/dir2', 'dir3', 'file'))
      *
-     * @param array $paths the file paths to be combined. Last array element may include the filename.
+     * @param array<int,string> $paths the file paths to be combined. Last array element may include the filename.
      * @return string concatenated path without trailing slash.
      * @see getUnixStylePath()
      * @api
@@ -80,10 +80,10 @@ abstract class Files
      * directories.
      *
      * @param string $path Path to the directory which shall be read
-     * @param string $suffix If specified, only filenames with this extension are returned (eg. ".php" or "foo.bar")
+     * @param ?string $suffix If specified, only filenames with this extension are returned (eg. ".php" or "foo.bar")
      * @param boolean $returnRealPath If turned on, all paths are resolved by calling realpath()
      * @param boolean $returnDotFiles If turned on, also files beginning with a dot will be returned
-     * @return array Filenames including full path
+     * @return array<int,string> Filenames including full path
      * @api
      */
     public static function readDirectoryRecursively(string $path, ?string $suffix = null, bool $returnRealPath = false, bool $returnDotFiles = false): array
@@ -122,7 +122,7 @@ abstract class Files
                     if (is_dir($pathAndFilename)) {
                         array_push($directories, self::getNormalizedPath($pathAndFilename));
                     } elseif ($suffix === null || strpos(strrev($filename), strrev($suffix)) === 0) {
-                        yield static::getUnixStylePath(($returnRealPath === true) ? realpath($pathAndFilename) : $pathAndFilename);
+                        yield static::getUnixStylePath(($returnRealPath === true) ? realpath($pathAndFilename) ?: '' : $pathAndFilename);
                     }
                 }
                 closedir($handle);
@@ -153,6 +153,9 @@ abstract class Files
         } else {
             $directoryIterator = new \RecursiveDirectoryIterator($path);
             foreach ($directoryIterator as $fileInfo) {
+                if (is_string($fileInfo)) {
+                    continue;
+                }
                 if (!$fileInfo->isDir()) {
                     if (self::unlink($fileInfo->getPathname()) !== true) {
                         throw new FilesException('Could not unlink file "' . $fileInfo->getPathname() . '".', 1169047619);
@@ -322,14 +325,12 @@ abstract class Files
      */
     public static function getFileContents(string $pathAndFilename, int $flags = 0, $context = null, int $offset = 0, int $maximumLength = -1)
     {
-        if ($flags === true) {
-            $flags = FILE_USE_INCLUDE_PATH;
-        }
+        $useIncludePath = ($flags & FILE_USE_INCLUDE_PATH) === 1;
         try {
             if ($maximumLength > -1) {
-                $content = file_get_contents($pathAndFilename, $flags, $context, $offset, $maximumLength);
+                $content = file_get_contents($pathAndFilename, $useIncludePath, $context, $offset, $maximumLength);
             } else {
-                $content = file_get_contents($pathAndFilename, $flags, $context, $offset);
+                $content = file_get_contents($pathAndFilename, $useIncludePath, $context, $offset);
             }
         } catch (ErrorException $ignoredException) {
             $content = false;
@@ -386,7 +387,7 @@ abstract class Files
             return false;
         }
         $normalizedPathAndFilename = strtolower(rtrim(self::getUnixStylePath($pathAndFilename), '/'));
-        $normalizedTargetPathAndFilename = strtolower(self::getUnixStylePath(realpath($pathAndFilename)));
+        $normalizedTargetPathAndFilename = strtolower(self::getUnixStylePath(realpath($pathAndFilename) ?: ''));
         if ($normalizedTargetPathAndFilename === '') {
             return false;
         }
@@ -431,20 +432,19 @@ abstract class Files
     /**
      * Supported file size units for the byte conversion functions below
      *
-     * @var array
+     * @var array<string>
      */
-    protected static $sizeUnits = ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
+    protected static array $sizeUnits = ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
 
     /**
      * Converts an integer with a byte count into human-readable form
      *
-     * @param float|integer $bytes
-     * @param integer $decimals number of decimal places in the resulting string
-     * @param string $decimalSeparator decimal separator of the resulting string
-     * @param string $thousandsSeparator thousands separator of the resulting string
+     * @param integer|null $decimals number of decimal places in the resulting string
+     * @param string|null $decimalSeparator decimal separator of the resulting string
+     * @param string|null $thousandsSeparator thousands separator of the resulting string
      * @return string the size string, e.g. "1,024 MB"
      */
-    public static function bytesToSizeString($bytes, ?int $decimals = null, ?string $decimalSeparator = null, ?string $thousandsSeparator = null): string
+    public static function bytesToSizeString(float|int|string $bytes, ?int $decimals = null, ?string $decimalSeparator = null, ?string $thousandsSeparator = null): string
     {
         if (!is_int($bytes) && !is_float($bytes)) {
             if (is_numeric($bytes)) {
@@ -502,7 +502,7 @@ abstract class Files
         if ($pow === false) {
             throw new FilesException(sprintf('Unknown file size unit "%s"', $matches['unit']), 1417695299);
         }
-        return $size * pow(2, (10 * $pow));
+        return $size * pow(2, (10 * (int)$pow));
     }
 
     /**
