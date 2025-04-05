@@ -29,7 +29,7 @@ class NamespaceDetectionTemplateProcessor extends FluidNamespaceDetectionTemplat
     /**
      * Extension of the default pattern for dynamic tags including namespaces with uppercase letters.
      */
-    public static $EXTENDED_SPLIT_PATTERN_TEMPLATE_DYNAMICTAGS = '/
+    public static string $EXTENDED_SPLIT_PATTERN_TEMPLATE_DYNAMICTAGS = '/
 		(
 			(?: <\/?                                      # Start dynamic tags
 					(?:(?:[a-zA-Z0-9\\.]*):[a-zA-Z0-9\\.]+)  # A tag consists of the namespace prefix and word characters
@@ -75,7 +75,7 @@ class NamespaceDetectionTemplateProcessor extends FluidNamespaceDetectionTemplat
      */
     public function protectCDataSectionsFromParser(string $templateSource)
     {
-        $parts = preg_split('/(\<\!\[CDATA\[|\]\]\>)/', $templateSource, -1, PREG_SPLIT_DELIM_CAPTURE);
+        $parts = preg_split('/(\<\!\[CDATA\[|\]\]\>)/', $templateSource, -1, PREG_SPLIT_DELIM_CAPTURE) ?: [];
         $balance = 0;
         $content = '';
         $resultingParts = [];
@@ -127,7 +127,7 @@ class NamespaceDetectionTemplateProcessor extends FluidNamespaceDetectionTemplat
     public function throwExceptionsForUnhandledNamespaces(string $templateSource): void
     {
         $viewHelperResolver = $this->renderingContext->getViewHelperResolver();
-        $splitTemplate = preg_split(static::$EXTENDED_SPLIT_PATTERN_TEMPLATE_DYNAMICTAGS, $templateSource, -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
+        $splitTemplate = preg_split(static::$EXTENDED_SPLIT_PATTERN_TEMPLATE_DYNAMICTAGS, $templateSource, -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY) ?: [];
         foreach ($splitTemplate as $templateElement) {
             if (preg_match(Patterns::$SCAN_PATTERN_TEMPLATE_VIEWHELPERTAG, $templateElement, $matchedVariables) > 0) {
                 if (!$viewHelperResolver->isNamespaceValidOrIgnored($matchedVariables['NamespaceIdentifier'])) {
@@ -148,11 +148,9 @@ class NamespaceDetectionTemplateProcessor extends FluidNamespaceDetectionTemplat
             foreach ($sections as $section) {
                 if (preg_match(Patterns::$SCAN_PATTERN_SHORTHANDSYNTAX_OBJECTACCESSORS, $section, $matchedVariables) > 0) {
                     preg_match_all(Patterns::$SPLIT_PATTERN_SHORTHANDSYNTAX_VIEWHELPER, $section, $shorthandViewHelpers, PREG_SET_ORDER);
-                    if (is_array($shorthandViewHelpers) === true) {
-                        foreach ($shorthandViewHelpers as $shorthandViewHelper) {
-                            if (!$viewHelperResolver->isNamespaceValidOrIgnored($shorthandViewHelper['NamespaceIdentifier'])) {
-                                throw new UnknownNamespaceException('Unknown Namespace: ' . $shorthandViewHelper['NamespaceIdentifier']);
-                            }
+                    foreach ($shorthandViewHelpers as $shorthandViewHelper) {
+                        if (!$viewHelperResolver->isNamespaceValidOrIgnored($shorthandViewHelper['NamespaceIdentifier'])) {
+                            throw new UnknownNamespaceException('Unknown Namespace: ' . $shorthandViewHelper['NamespaceIdentifier']);
                         }
                     }
                 }

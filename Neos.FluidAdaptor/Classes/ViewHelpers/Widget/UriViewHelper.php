@@ -104,7 +104,7 @@ class UriViewHelper extends AbstractViewHelper
         } else {
             $arguments['__widgetId'] = $widgetContext->getAjaxWidgetIdentifier();
         }
-        return '?' . http_build_query($arguments, null, '&');
+        return '?' . http_build_query(data: $arguments, arg_separator: '&');
     }
 
     /**

@@ -52,7 +52,7 @@ class TemplatePaths extends \TYPO3Fluid\Fluid\View\TemplatePaths
     ];
 
     /**
-     * @var array
+     * @var array<string,mixed>
      */
     protected $options = [];
 
@@ -61,6 +61,9 @@ class TemplatePaths extends \TYPO3Fluid\Fluid\View\TemplatePaths
      */
     protected $packageManager;
 
+    /**
+     * @param array<string,mixed> $options
+     */
     public function __construct(array $options = [])
     {
         foreach ($options as $optionName => $optionValue) {
@@ -71,7 +74,7 @@ class TemplatePaths extends \TYPO3Fluid\Fluid\View\TemplatePaths
     /**
      * @param PackageManager $packageManager
      */
-    public function injectPackageManager(PackageManager $packageManager)
+    public function injectPackageManager(PackageManager $packageManager): void
     {
         $this->packageManager = $packageManager;
     }
@@ -87,7 +90,7 @@ class TemplatePaths extends \TYPO3Fluid\Fluid\View\TemplatePaths
     /**
      * @param string $templateRootPathPattern
      */
-    public function setTemplateRootPathPattern(string $templateRootPathPattern)
+    public function setTemplateRootPathPattern(string $templateRootPathPattern): void
     {
         $this->templateRootPathPattern = $templateRootPathPattern;
     }
@@ -95,7 +98,7 @@ class TemplatePaths extends \TYPO3Fluid\Fluid\View\TemplatePaths
     /**
      * @param string $layoutRootPathPattern
      */
-    public function setLayoutRootPathPattern(string $layoutRootPathPattern)
+    public function setLayoutRootPathPattern(string $layoutRootPathPattern): void
     {
         $this->layoutRootPathPattern = $layoutRootPathPattern;
     }
@@ -103,7 +106,7 @@ class TemplatePaths extends \TYPO3Fluid\Fluid\View\TemplatePaths
     /**
      * @param string $partialRootPathPattern
      */
-    public function setPartialRootPathPattern(string $partialRootPathPattern)
+    public function setPartialRootPathPattern(string $partialRootPathPattern): void
     {
         $this->partialRootPathPattern = $partialRootPathPattern;
     }
@@ -111,7 +114,7 @@ class TemplatePaths extends \TYPO3Fluid\Fluid\View\TemplatePaths
     /**
      * @param string $templateRootPath
      */
-    public function setTemplateRootPath($templateRootPath)
+    public function setTemplateRootPath($templateRootPath): void
     {
         $this->templateRootPaths = [$templateRootPath];
     }
@@ -119,7 +122,7 @@ class TemplatePaths extends \TYPO3Fluid\Fluid\View\TemplatePaths
     /**
      * Resolves the template root to be used inside other paths.
      *
-     * @return array Path(s) to template root directory
+     * @return array<string> Path(s) to template root directory
      */
     public function getTemplateRootPaths()
     {
@@ -140,7 +143,7 @@ class TemplatePaths extends \TYPO3Fluid\Fluid\View\TemplatePaths
     }
 
     /**
-     * @return array
+     * @return array<string>
      */
     public function getLayoutRootPaths()
     {
@@ -160,7 +163,10 @@ class TemplatePaths extends \TYPO3Fluid\Fluid\View\TemplatePaths
         return [$layoutRootPath];
     }
 
-    public function getPartialRootPaths()
+    /**
+     * @return array<string>
+     */
+    public function getPartialRootPaths(): array
     {
         if ($this->partialRootPaths !== []) {
             return $this->partialRootPaths;
@@ -181,7 +187,7 @@ class TemplatePaths extends \TYPO3Fluid\Fluid\View\TemplatePaths
     /**
      * @param string $layoutRootPath
      */
-    public function setLayoutRootPath($layoutRootPath)
+    public function setLayoutRootPath($layoutRootPath): void
     {
         $this->layoutRootPaths = [$layoutRootPath];
     }
@@ -189,7 +195,7 @@ class TemplatePaths extends \TYPO3Fluid\Fluid\View\TemplatePaths
     /**
      * @param string $partialRootPath
      */
-    public function setPartialRootPath($partialRootPath)
+    public function setPartialRootPath($partialRootPath): void
     {
         $this->partialRootPaths = [$partialRootPath];
     }
@@ -205,7 +211,7 @@ class TemplatePaths extends \TYPO3Fluid\Fluid\View\TemplatePaths
     /**
      * @param string[] $patternReplacementVariables
      */
-    public function setPatternReplacementVariables($patternReplacementVariables)
+    public function setPatternReplacementVariables($patternReplacementVariables): void
     {
         $this->patternReplacementVariables = $patternReplacementVariables;
     }
@@ -389,10 +395,10 @@ class TemplatePaths extends \TYPO3Fluid\Fluid\View\TemplatePaths
      * replaced by the current request format, and once with ."@format" stripped off.
      *
      * @param string $pattern Pattern to be resolved
-     * @param array $patternReplacementVariables The variables to replace in the pattern
+     * @param array<string,mixed> $patternReplacementVariables The variables to replace in the pattern
      * @param boolean $bubbleControllerAndSubpackage if true, then we successively split off parts from "@controller" and "@subpackage" until both are empty.
      * @param boolean $formatIsOptional if true, then half of the resulting strings will have ."@format" stripped off, and the other half will have it.
-     * @return array unix style paths
+     * @return array<mixed> unix style paths
      */
     protected function expandGenericPathPattern($pattern, array $patternReplacementVariables, $bubbleControllerAndSubpackage, $formatIsOptional)
     {
@@ -426,10 +432,10 @@ class TemplatePaths extends \TYPO3Fluid\Fluid\View\TemplatePaths
     }
 
     /**
-     * @param array $paths
+     * @param array<mixed> $paths
      * @param string $variableName
      * @param string $variableValue
-     * @return array
+     * @return array<mixed>
      */
     protected function replacePatternVariable($paths, $variableName, $variableValue)
     {
@@ -441,11 +447,11 @@ class TemplatePaths extends \TYPO3Fluid\Fluid\View\TemplatePaths
     }
 
     /**
-     * @param array $paths
+     * @param array<string> $paths
      * @param string $controllerName
      * @param string $subPackageKey
      * @param bool $bubbleControllerAndSubpackage
-     * @return array
+     * @return array<string>
      */
     protected function expandSubPackageAndController(array $paths, string $controllerName, string $subPackageKey = '', bool $bubbleControllerAndSubpackage = false): array
     {
@@ -460,7 +466,7 @@ class TemplatePaths extends \TYPO3Fluid\Fluid\View\TemplatePaths
         $numberOfSubpackageParts = count($subpackageKeyParts);
         $subpackageReplacements = [];
         for ($i = 0; $i <= $numberOfSubpackageParts; $i++) {
-            $subpackageReplacements[] = implode('/', ($i < 0 ? $subpackageKeyParts : array_slice($subpackageKeyParts, $i)));
+            $subpackageReplacements[] = implode('/', array_slice($subpackageKeyParts, $i));
         }
         $paths = $this->expandPatterns($paths, '@subpackage', $subpackageReplacements);
 
@@ -476,10 +482,10 @@ class TemplatePaths extends \TYPO3Fluid\Fluid\View\TemplatePaths
      * Expands the given $patterns by adding an array element for each $replacement
      * replacing occurrences of $search.
      *
-     * @param array $patterns
+     * @param array<string> $patterns
      * @param string $search
-     * @param array $replacements
-     * @return array
+     * @param array<string> $replacements
+     * @return array<int,string>
      */
     protected function expandPatterns(array $patterns, string $search, array $replacements): array
     {

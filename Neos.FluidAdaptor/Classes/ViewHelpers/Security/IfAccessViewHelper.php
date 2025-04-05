@@ -57,7 +57,7 @@ class IfAccessViewHelper extends AbstractConditionViewHelper
     /**
      * Initializes the "then" and "else" arguments
      */
-    public function initializeArguments()
+    public function initializeArguments(): void
     {
         parent::initializeArguments();
         $this->registerArgument('privilegeTarget', 'string', 'Condition expression conforming to Fluid boolean rules', true);
@@ -80,9 +80,9 @@ class IfAccessViewHelper extends AbstractConditionViewHelper
     }
 
     /**
-     * @param array $arguments
+     * @param array<string,mixed> $arguments
      * @param \Closure $renderChildrenClosure
-     * @param RenderingContextInterface $renderingContext
+     * @param FlowAwareRenderingContextInterface&RenderingContextInterface $renderingContext
      * @return mixed
      */
     public static function renderStatic(array $arguments, \Closure $renderChildrenClosure, RenderingContextInterface $renderingContext)
@@ -91,28 +91,30 @@ class IfAccessViewHelper extends AbstractConditionViewHelper
     }
 
     /**
-     * @param array|null $arguments
+     * @param array<string,mixed>|null $arguments
      * @param FlowAwareRenderingContextInterface&RenderingContextInterface $renderingContext
      * @return boolean
      */
     protected static function evaluateCondition($arguments, RenderingContextInterface $renderingContext)
     {
         $objectManager = $renderingContext->getObjectManager();
-        /** @var Context $securityContext */
         $securityContext = $objectManager->get(Context::class);
 
-        if ($securityContext !== null && !$securityContext->canBeInitialized()) {
+        if (!$securityContext->canBeInitialized()) {
             return false;
         }
         $privilegeManager = static::getPrivilegeManager($renderingContext);
-        return $privilegeManager->isPrivilegeTargetGranted($arguments['privilegeTarget'], $arguments['parameters'] ?? []);
+        $privilegeTarget = $arguments['privilegeTarget'] ?? null;
+        if (!is_string($privilegeTarget)) {
+            throw new \Exception('Missing privilegeTarget argument.', 1743848049);
+        }
+        return $privilegeManager->isPrivilegeTargetGranted($privilegeTarget, $arguments['parameters'] ?? []);
     }
 
     /**
-     * @param RenderingContext $renderingContext
      * @return PrivilegeManagerInterface
      */
-    protected static function getPrivilegeManager(RenderingContext $renderingContext)
+    protected static function getPrivilegeManager(FlowAwareRenderingContextInterface $renderingContext)
     {
         $objectManager = $renderingContext->getObjectManager();
         return $objectManager->get(PrivilegeManagerInterface::class);

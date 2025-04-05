@@ -200,7 +200,7 @@ class SelectViewHelper extends AbstractFormFieldViewHelper
     /**
      * Render the option tags.
      *
-     * @param array $options the options for the form.
+     * @param array<mixed> $options the options for the form.
      * @return string rendered tags.
      */
     protected function renderOptionTags($options)
@@ -227,7 +227,7 @@ class SelectViewHelper extends AbstractFormFieldViewHelper
     /**
      * Render the option tags.
      *
-     * @return array an associative array of options, key will be the value of the option tag
+     * @return array<string,mixed> an associative array of options, key will be the value of the option tag
      * @throws ViewHelper\Exception
      */
     protected function getOptions()
@@ -354,6 +354,7 @@ class SelectViewHelper extends AbstractFormFieldViewHelper
             } elseif ($this->persistenceManager->getIdentifierByObject($valueElement) !== null) {
                 return $this->persistenceManager->getIdentifierByObject($valueElement);
             } else {
+                /** @phpstan-ignore cast.string (we'll try anyway -.-) */
                 return (string)$valueElement;
             }
         } else {
