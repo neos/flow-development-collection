@@ -41,6 +41,7 @@ trait StreamFactoryTrait
 
     /**
      * @inheritDoc
+     * @param resource $resource
      */
     public function createStreamFromResource($resource): StreamInterface
     {
