@@ -25,7 +25,7 @@ class ConsoleBackend extends AbstractBackend
 {
     /**
      * An array of severity labels, indexed by their integer constant
-     * @var array
+     * @var array<int,string>
      */
     protected $severityLabels;
 
@@ -61,10 +61,11 @@ class ConsoleBackend extends AbstractBackend
             LOG_DEBUG => 'DEBUG    ',
         ];
 
-        $this->streamHandle = fopen('php://' . $this->streamName, 'w');
-        if (!is_resource($this->streamHandle)) {
+        $streamHandle = fopen('php://' . $this->streamName, 'w');
+        if (!is_resource($streamHandle)) {
             throw new CouldNotOpenResourceException('Could not open stream "' . $this->streamName . '" for write access.', 1310986609);
         }
+        $this->streamHandle = $streamHandle;
     }
 
     /**

@@ -40,7 +40,7 @@ class AnsiConsoleBackend extends ConsoleBackend
     const END = "\033[0m";
 
     /**
-     * @var array
+     * @var array<string,string>
      */
     protected $tagFormats = [];
 
@@ -75,12 +75,7 @@ class AnsiConsoleBackend extends ConsoleBackend
     /**
      * Appends the given message along with the additional information into the log.
      *
-     * @param string $message
-     * @param int $severity
-     * @param array $additionalData
-     * @param string $packageKey
-     * @param string $className
-     * @param string $methodName
+     * @param array<mixed>|null $additionalData
      * @return void
      */
     public function append(string $message, int $severity = LOG_INFO, $additionalData = null, ?string $packageKey = null, ?string $className = null, ?string $methodName = null): void
@@ -118,7 +113,7 @@ class AnsiConsoleBackend extends ConsoleBackend
                 } else {
                     return str_replace('|', $matches[3], $format);
                 }
-            }, $output);
+            }, $output) ?: '';
         } while ($lastOutput !== $output);
         return $output;
     }
@@ -126,7 +121,7 @@ class AnsiConsoleBackend extends ConsoleBackend
     /**
      * @param boolean $disableAnsi
      */
-    public function setDisableAnsi($disableAnsi)
+    public function setDisableAnsi($disableAnsi): void
     {
         $this->disableAnsi = $disableAnsi;
     }

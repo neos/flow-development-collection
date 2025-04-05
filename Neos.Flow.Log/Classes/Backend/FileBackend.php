@@ -27,7 +27,7 @@ class FileBackend extends AbstractBackend
 {
     /**
      * An array of severity labels, indexed by their integer constant
-     * @var array
+     * @var array<int,string>
      */
     protected $severityLabels;
 

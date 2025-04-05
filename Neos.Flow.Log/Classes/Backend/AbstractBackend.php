@@ -42,7 +42,7 @@ abstract class AbstractBackend implements BackendInterface
      */
     public function __construct($options = [])
     {
-        if (is_array($options) || $options instanceof \ArrayAccess) {
+        if (is_iterable($options)) {
             foreach ($options as $optionKey => $optionValue) {
                 $methodName = 'set' . ucfirst($optionKey);
                 if (method_exists($this, $methodName)) {
