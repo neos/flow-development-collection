@@ -74,7 +74,7 @@ class RenderChildrenViewHelper extends AbstractViewHelper
         $widgetChildNodes = $this->getWidgetChildNodes();
 
         $this->addArgumentsToTemplateVariableContainer($this->arguments['arguments']);
-        $output = $widgetChildNodes->evaluate($renderingContext);
+        $output = $widgetChildNodes?->evaluate($renderingContext) ?: '';
         $this->removeArgumentsFromTemplateVariableContainer($this->arguments['arguments']);
 
         return $output;
@@ -97,10 +97,10 @@ class RenderChildrenViewHelper extends AbstractViewHelper
     }
 
     /**
-     * @return RootNode
+     * @return ?RootNode
      * @throws WidgetContextNotFoundException
      */
-    protected function getWidgetChildNodes(): RootNode
+    protected function getWidgetChildNodes(): ?RootNode
     {
         return $this->getWidgetContext()->getViewHelperChildNodes();
     }
@@ -123,7 +123,7 @@ class RenderChildrenViewHelper extends AbstractViewHelper
     /**
      * Add the given arguments to the TemplateVariableContainer of the widget.
      *
-     * @param array $arguments
+     * @param array<string,mixed> $arguments
      * @return void
      * @throws RenderingContextNotFoundException
      * @throws WidgetContextNotFoundException
@@ -139,7 +139,7 @@ class RenderChildrenViewHelper extends AbstractViewHelper
     /**
      * Remove the given arguments from the TemplateVariableContainer of the widget.
      *
-     * @param array $arguments
+     * @param array<string,mixed> $arguments
      * @return void
      * @throws RenderingContextNotFoundException
      * @throws WidgetContextNotFoundException

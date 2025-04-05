@@ -26,7 +26,7 @@ class PaginateController extends AbstractWidgetController
     protected $objects;
 
     /**
-     * @var array
+     * @var array<string,mixed>
      */
     protected $configuration = ['itemsPerPage' => 10, 'insertAbove' => false, 'insertBelow' => true, 'maximumNumberOfLinks' => 99];
 
@@ -130,16 +130,24 @@ class PaginateController extends AbstractWidgetController
     }
 
     /**
-     * Returns an array with the keys "pages", "current", "numberOfPages", "nextPage" & "previousPage"
-     *
-     * @return array
+     * @return array{
+     *     pages: list<array{number: int, isCurrent: bool}>,
+     *     current: int,
+     *     numberOfPages: int,
+     *     displayRangeStart: float,
+     *     displayRangeEnd: float,
+     *     hasLessPages: bool,
+     *     hasMorePages: bool,
+     *     nextPage?: int,
+     *     previousPage?: int,
+     * }
      */
     protected function buildPagination()
     {
         $this->calculateDisplayRange();
         $pages = [];
         for ($i = $this->displayRangeStart; $i <= $this->displayRangeEnd; $i++) {
-            $pages[] = ['number' => $i, 'isCurrent' => ($i === $this->currentPage)];
+            $pages[] = ['number' => (int)$i, 'isCurrent' => ($i == $this->currentPage)];
         }
         $pagination = [
             'pages' => $pages,

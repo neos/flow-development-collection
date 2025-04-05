@@ -30,7 +30,7 @@ class AjaxWidgetContextHolder
      * An array $ajaxWidgetIdentifier => $widgetContext
      * which stores the widget context.
      *
-     * @var array
+     * @var array<string,WidgetContext>
      */
     protected $widgetContexts = [];
 

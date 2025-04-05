@@ -35,18 +35,17 @@ class ResourceUriNode extends ViewHelperNode
     protected $viewHelperResolver;
 
     /**
-     * @var string
+     * @var class-string<ResourceViewHelper>
      */
     protected $viewHelperClassName = ResourceViewHelper::class;
 
     /**
      * @param ViewHelperResolver $viewHelperResolver
      */
-    public function injectViewHelperResolver(ViewHelperResolver $viewHelperResolver)
+    public function injectViewHelperResolver(ViewHelperResolver $viewHelperResolver): void
     {
         $this->viewHelperResolver = $viewHelperResolver;
         $this->uninitializedViewHelper = $this->viewHelperResolver->createViewHelperInstanceFromClassName($this->viewHelperClassName);
-        /** @phpstan-ignore-next-line we use internal api */
         $this->uninitializedViewHelper->setViewHelperNode($this);
         $this->argumentDefinitions = $this->viewHelperResolver->getArgumentDefinitionsForViewHelper($this->uninitializedViewHelper);
     }

@@ -98,7 +98,11 @@ class CheckboxViewHelper extends AbstractFormFieldViewHelper
             if ($checked === null) {
                 $checked = false;
                 foreach ($propertyValue as $value) {
-                    if (TypeHandling::isSimpleType(TypeHandling::getTypeForValue($value))) {
+                    $typeForValue = TypeHandling::getTypeForValue($value);
+                    if ($typeForValue === false) {
+                        continue;
+                    }
+                    if (TypeHandling::isSimpleType($typeForValue)) {
                         $checked = $valueAttribute === $value;
                     } else {
                         // assume an entity

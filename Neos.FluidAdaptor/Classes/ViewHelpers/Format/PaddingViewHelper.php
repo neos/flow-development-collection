@@ -79,7 +79,7 @@ class PaddingViewHelper extends AbstractViewHelper
     /**
      * Applies str_pad() on the specified value.
      *
-     * @param array $arguments
+     * @param array<string,mixed> $arguments
      * @param \Closure $renderChildrenClosure
      * @param RenderingContextInterface $renderingContext
      * @return string

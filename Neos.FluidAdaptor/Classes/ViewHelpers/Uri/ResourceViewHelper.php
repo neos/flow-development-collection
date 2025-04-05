@@ -100,7 +100,7 @@ class ResourceViewHelper extends AbstractViewHelper
     }
 
     /**
-     * @param array $arguments
+     * @param array<string,mixed> $arguments
      * @param \Closure $renderChildrenClosure
      * @param FlowAwareRenderingContextInterface&RenderingContextInterface $renderingContext
      * @return string

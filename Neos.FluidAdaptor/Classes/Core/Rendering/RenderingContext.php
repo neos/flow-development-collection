@@ -25,6 +25,7 @@ use Neos\FluidAdaptor\Core\ViewHelper\TemplateVariableContainer;
 use Neos\FluidAdaptor\Core\ViewHelper\ViewHelperResolver;
 use Neos\FluidAdaptor\View\TemplatePaths;
 use TYPO3Fluid\Fluid\Core\Parser\Configuration;
+use TYPO3Fluid\Fluid\Core\Parser\SyntaxTree\Expression\AbstractExpressionNode;
 use TYPO3Fluid\Fluid\Core\Parser\SyntaxTree\Expression\CastingExpressionNode;
 use TYPO3Fluid\Fluid\Core\Parser\SyntaxTree\Expression\MathExpressionNode;
 use TYPO3Fluid\Fluid\Core\Parser\SyntaxTree\Expression\TernaryExpressionNode;
@@ -42,7 +43,7 @@ class RenderingContext extends FluidRenderingContext implements FlowAwareRenderi
      * which will be consulted when an expression does not match
      * any built-in parser expression types.
      *
-     * @var array
+     * @var array<class-string<AbstractExpressionNode>>
      */
     protected $expressionNodeTypes = [
         LegacyNamespaceExpressionNode::class,
@@ -81,7 +82,7 @@ class RenderingContext extends FluidRenderingContext implements FlowAwareRenderi
     /**
      * RenderingContext constructor.
      *
-     * @param array $options
+     * @param array<string,mixed> $options
      */
     public function __construct(array $options = [])
     {
@@ -100,7 +101,7 @@ class RenderingContext extends FluidRenderingContext implements FlowAwareRenderi
     /**
      * @param ObjectManagerInterface $objectManager
      */
-    public function injectObjectManager(ObjectManagerInterface $objectManager)
+    public function injectObjectManager(ObjectManagerInterface $objectManager): void
     {
         $this->objectManager = $objectManager;
     }
@@ -116,11 +117,11 @@ class RenderingContext extends FluidRenderingContext implements FlowAwareRenderi
     /**
      * @param ControllerContext $controllerContext
      */
-    public function setControllerContext($controllerContext)
+    public function setControllerContext($controllerContext): void
     {
         $this->controllerContext = $controllerContext;
         $request = $controllerContext->getRequest();
-        if (!$this->templatePaths instanceof TemplatePaths || !$request instanceof ActionRequest) {
+        if (!$this->templatePaths instanceof TemplatePaths) {
             return;
         }
 

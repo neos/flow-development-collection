@@ -84,7 +84,6 @@ abstract class AbstractFormFieldViewHelper extends AbstractFormViewHelper
             $name = $this->arguments['name'];
         }
         if ($this->hasArgument('value')) {
-            /** @var object $value */
             $value = $this->arguments['value'];
             $multiple = $this->hasArgument('multiple') && $this->arguments['multiple'] === true;
             if (!$multiple
@@ -223,7 +222,7 @@ abstract class AbstractFormFieldViewHelper extends AbstractFormViewHelper
 
             return $formObjectName . '.' . $this->arguments['property'];
         }
-        return rtrim(preg_replace('/(\]\[|\[|\])/', '.', $this->getNameWithoutPrefix()), '.');
+        return rtrim(preg_replace('/(\]\[|\[|\])/', '.', $this->getNameWithoutPrefix()) ?: '', '.');
     }
 
     /**
