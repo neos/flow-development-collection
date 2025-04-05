@@ -49,7 +49,7 @@ class KickstartCommandController extends CommandController
      * @param string $packageType Optional package type, e.g. "neos-plugin"
      * @see neos.flow:package:create
      */
-    public function packageCommand($packageKey, $packageType = PackageInterface::DEFAULT_COMPOSER_TYPE)
+    public function packageCommand($packageKey, $packageType = PackageInterface::DEFAULT_COMPOSER_TYPE): void
     {
         $this->validatePackageKey($packageKey);
 
@@ -101,7 +101,7 @@ class KickstartCommandController extends CommandController
      * @param boolean $force Overwrite any existing controller or template code. Regardless of this flag, the package, model and repository will never be overwritten.
      * @see neos.kickstarter:kickstart:commandcontroller
      */
-    public function actionControllerCommand($packageKey, $controllerName, $generateActions = false, $generateTemplates = true, $generateFusion = false, $generateRelated = false, $force = false)
+    public function actionControllerCommand($packageKey, $controllerName, $generateActions = false, $generateTemplates = true, $generateFusion = false, $generateRelated = false, $force = false): void
     {
         $subpackageName = '';
         if (strpos($packageKey, '/') !== false) {
@@ -195,7 +195,7 @@ class KickstartCommandController extends CommandController
      * @param boolean $force Overwrite any existing controller.
      * @see neos.kickstarter:kickstart:actioncontroller
      */
-    public function commandControllerCommand($packageKey, $controllerName, $force = false)
+    public function commandControllerCommand($packageKey, $controllerName, $force = false): void
     {
         $this->validatePackageKey($packageKey);
         if (!$this->packageManager->isPackageAvailable($packageKey)) {
@@ -222,7 +222,7 @@ class KickstartCommandController extends CommandController
      * @param boolean $force Overwrite any existing model.
      * @see neos.kickstarter:kickstart:repository
      */
-    public function modelCommand($packageKey, $modelName, $force = false)
+    public function modelCommand($packageKey, $modelName, $force = false): void
     {
         $this->validatePackageKey($packageKey);
         if (!$this->packageManager->isPackageAvailable($packageKey)) {
@@ -264,7 +264,7 @@ class KickstartCommandController extends CommandController
      * @param boolean $force Overwrite any existing repository.
      * @see neos.kickstarter:kickstart:model
      */
-    public function repositoryCommand($packageKey, $modelName, $force = false)
+    public function repositoryCommand($packageKey, $modelName, $force = false): void
     {
         $this->validatePackageKey($packageKey);
         if (!$this->packageManager->isPackageAvailable($packageKey)) {
@@ -283,7 +283,7 @@ class KickstartCommandController extends CommandController
      *
      * @param string $packageKey The package key of the package for the documentation
      */
-    public function documentationCommand($packageKey)
+    public function documentationCommand($packageKey): void
     {
         $this->validatePackageKey($packageKey);
         if (!$this->packageManager->isPackageAvailable($packageKey)) {
@@ -303,7 +303,7 @@ class KickstartCommandController extends CommandController
      *
      * @param string $packageKey The package key of the package for the translation
      * @param string $sourceLanguageKey The language key of the default language
-     * @param array $targetLanguageKeys Comma separated language keys for the target translations
+     * @param array<string> $targetLanguageKeys Comma separated language keys for the target translations
      * @return void
      */
     public function translationCommand($packageKey, $sourceLanguageKey, array $targetLanguageKeys = [])
@@ -339,7 +339,7 @@ class KickstartCommandController extends CommandController
      * @param string $modelName
      * @see http://www.php.net/manual/en/reserved.keywords.php
      */
-    protected function validateModelName($modelName)
+    protected function validateModelName($modelName): void
     {
         if (Validation::isReservedKeyword($modelName)) {
             $this->outputLine('The name of the model cannot be one of the reserved words of PHP!');
