@@ -31,7 +31,7 @@ class FileExtensionValidator extends AbstractValidator
      * 2 => type
      * 3 => required (boolean, optional)
      *
-     * @var array
+     * @var array<string,mixed>
      */
     protected $supportedOptions = [
         'allowedExtensions' => [[], 'Array of allowed file extensions', 'array', true]
@@ -58,9 +58,9 @@ class FileExtensionValidator extends AbstractValidator
             return;
         }
 
-        $fileExtension =  pathinfo((string)$filename, PATHINFO_EXTENSION);
+        $fileExtension = pathinfo((string)$filename, PATHINFO_EXTENSION);
 
-        if ($fileExtension === null || $fileExtension === '') {
+        if ($fileExtension === '') {
             $this->addError('The file has no file extension.', 1677934932);
             return;
         }

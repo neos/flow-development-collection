@@ -23,7 +23,7 @@ use Neos\Flow\I18n;
 class DateTimeValidator extends AbstractValidator
 {
     /**
-     * @var array
+     * @var array<string,mixed>
      */
     protected $supportedOptions = [
         'locale' => [null, 'The locale to use for date parsing', 'string|Locale'],
