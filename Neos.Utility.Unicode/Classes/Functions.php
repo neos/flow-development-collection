@@ -155,7 +155,7 @@ abstract class Functions
      *
      * @param string $path
      * @param integer|null $options Optional, one of PATHINFO_DIRNAME, PATHINFO_BASENAME, PATHINFO_EXTENSION or PATHINFO_FILENAME.
-     * @return string|array{dirname: string, basename: string, extension: string, filename: string}
+     * @return ($options is null ? array{dirname: string, basename: string, extension: string, filename: string} : string)
      * @api
      */
     public static function pathinfo(string $path, ?int $options = null): string|array

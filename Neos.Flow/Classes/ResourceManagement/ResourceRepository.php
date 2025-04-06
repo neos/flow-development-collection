@@ -48,12 +48,12 @@ class ResourceRepository extends Repository
     protected $persistenceManager;
 
     /**
-     * @var \SplObjectStorage|PersistentResource[]
+     * @var \SplObjectStorage<PersistentResource,mixed>
      */
     protected $removedResources;
 
     /**
-     * @var \SplObjectStorage|PersistentResource[]
+     * @var \SplObjectStorage<PersistentResource,mixed>
      */
     protected $addedResources;
 
@@ -73,6 +73,9 @@ class ResourceRepository extends Repository
      */
     public function add($object): void
     {
+        if (!$object instanceof PersistentResource) {
+            throw new \Exception('Can only add objects of type PersistentResource', 1743969457);
+        }
         $this->persistenceManager->allowObject($object);
         if ($this->removedResources->contains($object)) {
             $this->removedResources->detach($object);
@@ -91,6 +94,9 @@ class ResourceRepository extends Repository
      */
     public function remove($object): void
     {
+        if (!$object instanceof PersistentResource) {
+            throw new \Exception('Can only remove objects of type PersistentResource', 1743969438);
+        }
         // Intercept a second call for the same PersistentResource object because it might cause an endless loop caused by
         // the ResourceManager's deleteResource() method which also calls this remove() function:
         if (!$this->removedResources->contains($object)) {
@@ -188,7 +194,7 @@ class ResourceRepository extends Repository
      * Find all resources with the same SHA1 hash
      *
      * @param string $sha1Hash
-     * @return array
+     * @return array<PersistentResource>
      */
     public function findBySha1($sha1Hash)
     {
@@ -209,7 +215,7 @@ class ResourceRepository extends Repository
      *
      * @param string $sha1Hash
      * @param string $collectionName
-     * @return array
+     * @return array<PersistentResource>
      */
     public function findBySha1AndCollectionName($sha1Hash, $collectionName)
     {
@@ -261,16 +267,15 @@ class ResourceRepository extends Repository
      * Find one resource by SHA1
      *
      * @param string $sha1Hash
-     * @return PersistentResource
+     * @return ?PersistentResource
      */
     public function findOneBySha1($sha1Hash)
     {
         $query = $this->createQuery();
         $query->matching($query->equals('sha1', $sha1Hash))->setLimit(1);
-        /** @var PersistentResource $resource */
+        /** @var ?PersistentResource $resource */
         $resource = $query->execute()->getFirst();
         if ($resource === null) {
-            /** @var PersistentResource $importedResource */
             foreach ($this->addedResources as $importedResource) {
                 if ($importedResource->getSha1() === $sha1Hash) {
                     return $importedResource;
@@ -282,7 +287,7 @@ class ResourceRepository extends Repository
     }
 
     /**
-     * @return \SplObjectStorage
+     * @return \SplObjectStorage<PersistentResource,mixed>
      */
     public function getAddedResources()
     {

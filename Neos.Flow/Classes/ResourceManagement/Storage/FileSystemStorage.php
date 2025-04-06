@@ -59,7 +59,7 @@ class FileSystemStorage implements StorageInterface
      * Constructor
      *
      * @param string $name Name of this storage instance, according to the resource settings
-     * @param array $options Options for this storage
+     * @param array<string,mixed> $options Options for this storage
      * @throws Exception
      */
     public function __construct($name, array $options = [])

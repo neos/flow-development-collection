@@ -80,5 +80,5 @@ interface ResourceMetaDataInterface
      * @param string $sha1 The sha1 hash
      * @return void
      */
-    public function setSha1($sha1);
+    public function setSha1(string $sha1);
 }

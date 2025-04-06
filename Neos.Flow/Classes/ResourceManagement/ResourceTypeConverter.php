@@ -119,7 +119,7 @@ class ResourceTypeConverter extends AbstractTypeConverter
     protected $logger;
 
     /**
-     * @var array
+     * @var array<string,PersistentResource>
      */
     protected $convertedResources = [];
 
@@ -144,9 +144,9 @@ class ResourceTypeConverter extends AbstractTypeConverter
      * Note that $source['error'] will also be present if a file was successfully
      * uploaded. In that case its value will be \UPLOAD_ERR_OK.
      *
-     * @param array|string|UploadedFileInterface $source The upload info (expected keys: error, name, tmp_name), the hash or an UploadedFile
+     * @param array<string,mixed>|string|UploadedFileInterface $source The upload info (expected keys: error, name, tmp_name), the hash or an UploadedFile
      * @param string $targetType
-     * @param array $convertedChildProperties
+     * @param array<mixed> $convertedChildProperties
      * @param PropertyMappingConfigurationInterface|null $configuration
      * @return PersistentResource|null|FlowError if the input format is not supported or could not be converted for other reasons
      * @throws Exception
@@ -177,7 +177,7 @@ class ResourceTypeConverter extends AbstractTypeConverter
     }
 
     /**
-     * @param array $source
+     * @param array<string,mixed> $source
      * @param PropertyMappingConfigurationInterface|null $configuration
      * @return PersistentResource|null|FlowError
      */
@@ -219,7 +219,7 @@ class ResourceTypeConverter extends AbstractTypeConverter
     }
 
     /**
-     * @param array $source
+     * @param array<string,mixed> $source
      * @param PropertyMappingConfigurationInterface|null $configuration
      * @return PersistentResource|FlowError
      * @throws Exception
@@ -256,12 +256,13 @@ class ResourceTypeConverter extends AbstractTypeConverter
             if (isset($source['data']) && isset($source['filename'])) {
                 $resource = $this->resourceManager->importResourceFromContent(base64_decode($source['data']), $source['filename'], $collectionName, $givenResourceIdentity);
             } elseif ($hash !== null) {
-                $resource = $this->resourceManager->importResource($configuration->getConfigurationValue(ResourceTypeConverter::class, self::CONFIGURATION_RESOURCE_LOAD_PATH) . '/' . $hash, $collectionName, $givenResourceIdentity);
-                if (is_array($source) && isset($source['filename'])) {
-                    $resource->setFilename($source['filename']);
+                $resource = $this->resourceManager->importResource($configuration?->getConfigurationValue(ResourceTypeConverter::class, self::CONFIGURATION_RESOURCE_LOAD_PATH) . '/' . $hash, $collectionName, $givenResourceIdentity);
+                $filename = $source['filename'] ?? null;
+                if (is_string($filename)) {
+                    $resource->setFilename($filename);
                 }
             }
-            if ($hash !== null && $resource->getSha1() !== $hash) {
+            if ($hash !== null && $resource?->getSha1() !== $hash) {
                 throw new Exception\InvalidResourceDataException('The source SHA1 did not match the SHA1 of the imported resource.', 1482248149);
             }
         }
@@ -297,7 +298,7 @@ class ResourceTypeConverter extends AbstractTypeConverter
             case \UPLOAD_ERR_PARTIAL:
                 return new FlowError(Files::getUploadErrorMessage($source->getError()), 1264440823);
             default:
-                $this->logger->error(sprintf('A server error occurred while converting an uploaded resource: "%s"', Files::getUploadErrorMessage($source['error'])), LogEnvironment::fromMethodName(__METHOD__));
+                $this->logger->error(sprintf('A server error occurred while converting an uploaded resource: "%s"', Files::getUploadErrorMessage($source->getError())), LogEnvironment::fromMethodName(__METHOD__));
 
                 return new FlowError('An error occurred while uploading. Please try again or contact the administrator if the problem remains', 1340193849);
         }
@@ -307,8 +308,15 @@ class ResourceTypeConverter extends AbstractTypeConverter
         }
 
         try {
-            $resource = $this->resourceManager->importResource($source->getStream()->detach(), $this->getCollectionName($source, $configuration));
-            $resource->setFilename($source->getClientFilename());
+            $sourceForImport = $source->getStream()->detach();
+            if ($sourceForImport === null) {
+                throw new \Exception('Failed to detach resource from stream', 1743967911);
+            }
+            $resource = $this->resourceManager->importResource($sourceForImport, $this->getCollectionName($source, $configuration));
+            $filename = $source->getClientFilename();
+            if ($filename !== null) {
+                $resource->setFilename($filename);
+            }
             $this->convertedResources[spl_object_hash($source)] = $resource;
             return $resource;
         } catch (\Exception $exception) {
@@ -324,7 +332,7 @@ class ResourceTypeConverter extends AbstractTypeConverter
      * The propertyMappingConfiguration CONFIGURATION_COLLECTION_NAME will directly override the default. Then if CONFIGURATION_ALLOW_COLLECTION_OVERRIDE is true
      * and __collectionName is in the $source this will finally be the value.
      *
-     * @param array|UploadedFileInterface $source
+     * @param array<string,mixed>|UploadedFileInterface $source
      * @param PropertyMappingConfigurationInterface|null $configuration
      * @return string
      * @throws InvalidPropertyMappingConfigurationException

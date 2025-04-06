@@ -65,7 +65,7 @@ class ResourceManager
     protected $persistenceManager;
 
     /**
-     * @var array
+     * @var array<string,mixed>
      */
     protected $settings;
 
@@ -98,7 +98,7 @@ class ResourceManager
     /**
      * Injects the settings of this package
      *
-     * @param array $settings
+     * @param array<string,mixed> $settings
      * @return void
      */
     public function injectSettings(array $settings)
@@ -156,7 +156,6 @@ class ResourceManager
             throw new Exception(sprintf('Tried to import a file into the resource collection "%s" but no such collection exists. Please check your settings and the code which triggered the import.', $collectionName), 1375196643);
         }
 
-        /* @var CollectionInterface $collection */
         $collection = $this->collections[$collectionName];
 
         try {
@@ -165,15 +164,17 @@ class ResourceManager
                 ObjectAccess::setProperty($resource, 'Persistence_Object_Identifier', $forcedPersistenceObjectIdentifier, true);
             }
             if (!is_resource($source)) {
+                /** @var string $source */
                 $pathInfo = UnicodeFunctions::pathinfo($source);
+                /** @var PersistentResource $resource */
                 $resource->setFilename($pathInfo['basename']);
             }
         } catch (Exception $exception) {
             throw new Exception(sprintf('Importing a file into the resource collection "%s" failed: %s', $collectionName, $exception->getMessage()), 1375197120, $exception);
         }
-
+        /** @var PersistentResource $resource */
         $this->resourceRepository->add($resource);
-        $this->logger->debug(sprintf('Successfully imported file "%s" into the resource collection "%s" (storage: %s, a %s. SHA1: %s)', $source, $collectionName, $collection->getStorage()->getName(), get_class($collection), $resource->getSha1()));
+        $this->logger->debug(sprintf('Successfully imported file into the resource collection "%s" (storage: %s, a %s. SHA1: %s)', $collectionName, $collection->getStorage()->getName(), get_class($collection), $resource->getSha1()));
         return $resource;
     }
 
@@ -195,18 +196,14 @@ class ResourceManager
      * @throws Exception
      * @api
      */
-    public function importResourceFromContent($content, $filename, $collectionName = ResourceManager::DEFAULT_PERSISTENT_COLLECTION_NAME, $forcedPersistenceObjectIdentifier = null)
+    public function importResourceFromContent(string $content, $filename, $collectionName = ResourceManager::DEFAULT_PERSISTENT_COLLECTION_NAME, $forcedPersistenceObjectIdentifier = null)
     {
-        if (!is_string($content)) {
-            throw new Exception(sprintf('Tried to import content into the resource collection "%s" but the given content was a %s instead of a string.', $collectionName, gettype($content)), 1380878115);
-        }
         $this->initialize();
 
         if (!isset($this->collections[$collectionName])) {
             throw new Exception(sprintf('Tried to import a file into the resource collection "%s" but no such collection exists. Please check your settings and the code which triggered the import.', $collectionName), 1380878131);
         }
 
-        /* @var CollectionInterface $collection */
         $collection = $this->collections[$collectionName];
 
         try {
@@ -219,6 +216,7 @@ class ResourceManager
             throw new Exception(sprintf('Importing content into the resource collection "%s" failed: %s', $collectionName, $exception->getMessage()), 1381156155, $exception);
         }
 
+        /** @var PersistentResource $resource */
         $this->resourceRepository->add($resource);
         $this->logger->debug(sprintf('Successfully imported content into the resource collection "%s" (storage: %s, a %s. SHA1: %s)', $collectionName, $collection->getStorage()->getName(), get_class($collection->getStorage()), $resource->getSha1()));
 
@@ -232,7 +230,7 @@ class ResourceManager
      * On a successful import this method returns a PersistentResource object representing
      * the newly imported persistent resource.
      *
-     * @param array $uploadInfo An array detailing the resource to import (expected keys: name, tmp_name)
+     * @param array<string,mixed> $uploadInfo An array detailing the resource to import (expected keys: name, tmp_name)
      * @param string $collectionName Name of the collection this uploaded resource should be added to
      * @return PersistentResource A resource object representing the imported resource
      * @throws Exception
@@ -303,7 +301,7 @@ class ResourceManager
      * $resource2 => array('originalFilename' => 'Bar.txt'),
      * ...
      *
-     * @return \SplObjectStorage
+     * @return \SplObjectStorage<PersistentResource,mixed>
      * @api
      */
     public function getImportedResources()
@@ -449,7 +447,7 @@ class ResourceManager
      * Return the package key and the relative path and filename from the given resource path
      *
      * @param string $path The ressource path, like resource://Your.Package/Public/Image/Dummy.png
-     * @return array The array contains two value, first the packageKey followed by the relativePathAndFilename
+     * @return array{0: string, 1: string} The array contains two value, first the packageKey followed by the relativePathAndFilename
      * @throws Exception
      * @api
      */
@@ -554,7 +552,10 @@ class ResourceManager
             if (!class_exists($storageDefinition['storage'])) {
                 throw new Exception(sprintf('The configuration for the resource storage "%s" defined in your settings has not defined a valid "storage" option. Please check the configuration syntax and make sure that the specified class "%s" really exists.', $storageName, $storageDefinition['storage']), 1361467212);
             }
-            $options = (isset($storageDefinition['storageOptions']) ? $storageDefinition['storageOptions'] : []);
+            if (!is_subclass_of($storageDefinition['storage'], StorageInterface::class)) {
+                throw new Exception('Configured storage ' . $storageDefinition['storage'] . ' does not implement the required ' . StorageInterface::class, 1743970047);
+            }
+            $options = ($storageDefinition['storageOptions'] ?? []);
             $this->storages[$storageName] = new $storageDefinition['storage']($storageName, $options);
         }
     }
@@ -574,7 +575,10 @@ class ResourceManager
             if (!class_exists($targetDefinition['target'])) {
                 throw new Exception(sprintf('The configuration for the resource target "%s" defined in your settings has not defined a valid "target" option. Please check the configuration syntax and make sure that the specified class "%s" really exists.', $targetName, $targetDefinition['target']), 1361467839);
             }
-            $options = (isset($targetDefinition['targetOptions']) ? $targetDefinition['targetOptions'] : []);
+            if (!is_subclass_of($targetDefinition['target'], TargetInterface::class)) {
+                throw new Exception('Configured resource target ' . $targetDefinition['target'] . ' does not implement the required ' . TargetInterface::class, 1743969958);
+            }
+            $options = $targetDefinition['targetOptions'] ?? [];
             $this->targets[$targetName] = new $targetDefinition['target']($targetName, $options);
         }
     }
@@ -612,21 +616,24 @@ class ResourceManager
      * Prepare an uploaded file to be imported as resource object. Will check the validity of the file,
      * move it outside of upload folder if open_basedir is enabled and check the filename.
      *
-     * @param array $uploadInfo
-     * @return array Array of string with the two keys "filepath" (the path to get the filecontent from) and "filename" the filename of the originally uploaded file.
+     * @param array<string,mixed> $uploadInfo
+     * @return array{filepath: string, filename: string} Array of string with the two keys "filepath" (the path to get the filecontent from) and "filename" the filename of the originally uploaded file.
      * @throws Exception
      */
     protected function prepareUploadedFileForImport(array $uploadInfo)
     {
         $openBasedirEnabled = (boolean)ini_get('open_basedir');
-        $temporaryTargetPathAndFilename = $uploadInfo['tmp_name'];
+        $temporaryTargetPathAndFilename = $uploadInfo['tmp_name'] ?? null;
+        if (!is_string($temporaryTargetPathAndFilename)) {
+            throw new \Exception('String tmp_name required', 1743969722);
+        }
         $pathInfo = UnicodeFunctions::pathinfo($uploadInfo['name']);
 
         if (!is_uploaded_file($temporaryTargetPathAndFilename)) {
             throw new Exception('The given upload file "' . strip_tags($pathInfo['basename']) . '" was not uploaded through PHP. As it could pose a security risk it cannot be imported.', 1422461503);
         }
 
-        if (isset($pathInfo['extension']) && array_key_exists(strtolower($pathInfo['extension']), $this->settings['extensionsBlockedFromUpload']) && $this->settings['extensionsBlockedFromUpload'][strtolower($pathInfo['extension'])] === true) {
+        if (array_key_exists(strtolower($pathInfo['extension']), $this->settings['extensionsBlockedFromUpload']) && $this->settings['extensionsBlockedFromUpload'][strtolower($pathInfo['extension'])] === true) {
             throw new Exception('The extension of the given upload file "' . strip_tags($pathInfo['basename']) . '" is excluded. As it could pose a security risk it cannot be imported.', 1447148472);
         }
 
@@ -645,7 +652,7 @@ class ResourceManager
 
         return [
             'filepath' => $temporaryTargetPathAndFilename,
-            'filename' => $pathInfo['basename']
+            'filename' => $pathInfo['basename'],
         ];
     }
 }
