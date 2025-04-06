@@ -36,7 +36,7 @@ class Algorithms
      */
     public static function generateUUID(): string
     {
-        if (is_callable('uuid_create')) {
+        if (function_exists('uuid_create')) {
             return strtolower(uuid_create(UUID_TYPE_RANDOM));
         }
 
