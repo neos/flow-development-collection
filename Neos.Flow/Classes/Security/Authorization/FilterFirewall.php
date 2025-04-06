@@ -72,7 +72,7 @@ class FilterFirewall implements FirewallInterface
     /**
      * Injects the configuration settings
      *
-     * @param array $settings
+     * @param array<string,mixed> $settings
      * @return void
      */
     public function injectSettings(array $settings)
@@ -101,7 +101,7 @@ class FilterFirewall implements FirewallInterface
     }
 
     /**
-     * @param array $filterConfiguration
+     * @param array<string,mixed> $filterConfiguration
      * @return RequestFilter
      * @throws \Neos\Flow\Security\Exception\NoInterceptorFoundException
      * @throws \Neos\Flow\Security\Exception\NoRequestPatternFoundException

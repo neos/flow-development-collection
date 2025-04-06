@@ -30,7 +30,7 @@ class AccountRepository extends Repository
     const ENTITY_CLASSNAME = Account::class;
 
     /**
-     * @var array
+     * @var array<string,string>
      */
     protected $defaultOrderings = ['creationDate' => QueryInterface::ORDER_DESCENDING];
 
@@ -51,6 +51,9 @@ class AccountRepository extends Repository
      */
     public function remove($object): void
     {
+        if (!$object instanceof Account) {
+            throw new \InvalidArgumentException('Can only remove account objects.', 1743961393);
+        }
         parent::remove($object);
 
         // destroy the sessions for the account to be removed
@@ -67,12 +70,14 @@ class AccountRepository extends Repository
     public function findByAccountIdentifierAndAuthenticationProviderName($accountIdentifier, $authenticationProviderName)
     {
         $query = $this->createQuery();
-        return $query->matching(
+        $result = $query->matching(
             $query->logicalAnd(
                 $query->equals('accountIdentifier', $accountIdentifier),
                 $query->equals('authenticationProviderName', $authenticationProviderName)
             )
         )->execute()->getFirst();
+
+        return $result instanceof Account ? $result : null;
     }
 
     /**
@@ -85,7 +90,7 @@ class AccountRepository extends Repository
     public function findActiveByAccountIdentifierAndAuthenticationProviderName($accountIdentifier, $authenticationProviderName)
     {
         $query = $this->createQuery();
-        return $query->matching(
+        $result = $query->matching(
             $query->logicalAnd(
                 $query->equals('accountIdentifier', $accountIdentifier),
                 $query->equals('authenticationProviderName', $authenticationProviderName),
@@ -95,5 +100,7 @@ class AccountRepository extends Repository
                 )
             )
         )->execute()->getFirst();
+
+        return $result instanceof Account ? $result : null;
     }
 }

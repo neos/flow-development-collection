@@ -28,17 +28,17 @@ class HashService
 {
     /**
      * A private, unique key used for encryption tasks
-     * @var string
+     * @var string|false|null
      */
     protected $encryptionKey = null;
 
     /**
-     * @var array
+     * @var array<string,PasswordHashingStrategyInterface>
      */
     protected $passwordHashingStrategies = [];
 
     /**
-     * @var array
+     * @var array<string,mixed>
      */
     protected $strategySettings;
 
@@ -57,7 +57,7 @@ class HashService
     /**
      * Injects the settings of the package this controller belongs to.
      *
-     * @param array $settings Settings container of the current package
+     * @param array<string,mixed> $settings Settings container of the current package
      * @return void
      */
     public function injectSettings(array $settings)
@@ -72,12 +72,8 @@ class HashService
      * @return string The hash of the string
      * @throws InvalidArgumentForHashGenerationException if something else than a string was given as parameter
      */
-    public function generateHmac($string)
+    public function generateHmac(string $string): string
     {
-        if (!is_string($string)) {
-            throw new InvalidArgumentForHashGenerationException('A hash can only be generated for a string, but "' . gettype($string) . '" was given.', 1255069587);
-        }
-
         return hash_hmac('sha1', $string, $this->getEncryptionKey());
     }
 
@@ -121,11 +117,8 @@ class HashService
      * @throws InvalidHashException if the hash did not fit to the data.
      * @todo Mark as API once it is more stable
      */
-    public function validateAndStripHmac($string)
+    public function validateAndStripHmac(string $string): string
     {
-        if (!is_string($string)) {
-            throw new InvalidArgumentForHashGenerationException('A hash can only be validated for a string, but "' . gettype($string) . '" was given.', 1320829762);
-        }
         if (strlen($string) < 40) {
             throw new InvalidArgumentForHashGenerationException('A hashed string must contain at least 40 characters, the given string was only ' . strlen($string) . ' characters long.', 1320830276);
         }
@@ -188,12 +181,19 @@ class HashService
             }
             $strategyIdentifier = $this->strategySettings['default'];
         }
+        if (!is_string($strategyIdentifier)) {
+            throw new \Exception('Invalid strategy identifier', 1743877483);
+        }
 
         if (!isset($this->strategySettings[$strategyIdentifier])) {
             throw new MissingConfigurationException('No hashing strategy with identifier "' . $strategyIdentifier . '" configured', 1320758776);
         }
         $strategyObjectName = $this->strategySettings[$strategyIdentifier];
-        $this->passwordHashingStrategies[$strategyIdentifier] = $this->objectManager->get($strategyObjectName);
+        $strategy = $this->objectManager->get($strategyObjectName);
+        if (!$strategy instanceof PasswordHashingStrategyInterface) {
+            throw new \Exception('Invalid password hashing strategy', 1743877416);
+        }
+        $this->passwordHashingStrategies[$strategyIdentifier] = $strategy;
         return [$this->passwordHashingStrategies[$strategyIdentifier], $strategyIdentifier];
     }
 

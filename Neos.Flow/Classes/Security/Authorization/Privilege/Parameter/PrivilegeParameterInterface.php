@@ -41,7 +41,7 @@ interface PrivilegeParameterInterface
     public function getValue();
 
     /**
-     * @return array|null
+     * @return array<mixed>|null
      */
     public function getPossibleValues();
 

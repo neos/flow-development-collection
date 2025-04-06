@@ -102,7 +102,7 @@ interface TokenInterface
     /**
      * Sets request patterns
      *
-     * @param array $requestPatterns Array of \Neos\Flow\Security\RequestPatternInterface to be set
+     * @param array<RequestPatternInterface> $requestPatterns Array of \Neos\Flow\Security\RequestPatternInterface to be set
      * @return void
      * @see hasRequestPattern()
      */
@@ -139,14 +139,14 @@ interface TokenInterface
     /**
      * Returns the account if one is authenticated, NULL otherwise.
      *
-     * @return Account An account object
+     * @return ?Account An account object
      */
     public function getAccount();
 
     /**
      * Set the (authenticated) account
      *
-     * @param Account $account An account object
+     * @param ?Account $account An account object
      * @return void
      */
     public function setAccount(?Account $account = null);

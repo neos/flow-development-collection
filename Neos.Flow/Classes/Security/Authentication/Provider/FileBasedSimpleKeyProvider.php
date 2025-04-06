@@ -66,7 +66,7 @@ class FileBasedSimpleKeyProvider extends AbstractProvider
     /**
      * Returns the class names of the tokens this provider can authenticate.
      *
-     * @return array
+     * @return array<class-string<TokenInterface>>
      */
     public function getTokenClassNames()
     {
@@ -106,7 +106,8 @@ class FileBasedSimpleKeyProvider extends AbstractProvider
      */
     protected function validateCredentials(PasswordTokenInterface $authenticationToken): void
     {
-        if (!$this->hashService->validatePassword($authenticationToken->getPassword(), $this->fileBasedSimpleKeyService->getKey($this->options['keyName']))) {
+        $key = $this->fileBasedSimpleKeyService->getKey($this->options['keyName']);
+        if (!$this->hashService->validatePassword($authenticationToken->getPassword(),$key)) {
             $authenticationToken->setAuthenticationStatus(TokenInterface::WRONG_CREDENTIALS);
             return;
         }

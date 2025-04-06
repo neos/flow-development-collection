@@ -23,10 +23,10 @@ use Neos\Eel\ParserException;
 class EntityPrivilegeExpressionParser extends CompilingEelParser
 {
     /**
-     * @param array $result
-     * @param array $sub
+     * @param array<string,mixed> $result
+     * @param array<string,mixed> $sub
      */
-    public function NotExpression_exp(&$result, $sub)
+    public function NotExpression_exp(&$result, $sub): void
     {
         if (!isset($result['code'])) {
             $result['code'] = '$context';
@@ -35,29 +35,29 @@ class EntityPrivilegeExpressionParser extends CompilingEelParser
     }
 
     /**
-     * @param array $result
-     * @param array $sub
+     * @param array<string,mixed> $result
+     * @param array<string,mixed> $sub
      */
-    public function Disjunction_rgt(&$result, $sub)
+    public function Disjunction_rgt(&$result, $sub): void
     {
         $result['code'] = '$context->callAndWrap(\'disjunction\', array(' . $this->unwrapExpression($result['code']) . ', ' . $this->unwrapExpression($sub['code']) . '))';
     }
 
     /**
-     * @param array $result
-     * @param array $sub
+     * @param array<string,mixed> $result
+     * @param array<string,mixed> $sub
      */
-    public function Conjunction_rgt(&$result, $sub)
+    public function Conjunction_rgt(&$result, $sub): void
     {
         $result['code'] = '$context->callAndWrap(\'conjunction\', array(' . $this->unwrapExpression($result['code']) . ', ' . $this->unwrapExpression($sub['code']) . '))';
     }
 
     /**
-     * @param array $result
-     * @param array $sub
+     * @param array<string,mixed> $result
+     * @param array<string,mixed> $sub
      * @throws ParserException
      */
-    public function Comparison_rgt(&$result, $sub)
+    public function Comparison_rgt(&$result, $sub): void
     {
         $lval = $result['code'];
         $rval = $sub['code'];

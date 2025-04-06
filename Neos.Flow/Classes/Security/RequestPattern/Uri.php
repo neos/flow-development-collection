@@ -21,14 +21,14 @@ use Neos\Flow\Security\RequestPatternInterface;
 class Uri implements RequestPatternInterface
 {
     /**
-     * @var array
+     * @var array<string,string>
      */
     protected $options;
 
     /**
      * Expects options in the form array('uriPattern' => '<URI pattern>')
      *
-     * @param array $options
+     * @param array<string,string> $options
      */
     public function __construct(array $options)
     {

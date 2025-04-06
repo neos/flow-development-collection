@@ -21,7 +21,7 @@ interface AuthenticationProviderInterface
      * Constructs an instance with the given name and options.
      *
      * @param string $name
-     * @param array $options
+     * @param array<mixed> $options
      * @return self
      */
     public static function create(string $name, array $options);
@@ -37,7 +37,7 @@ interface AuthenticationProviderInterface
     /**
      * Returns the classnames of the tokens this provider is responsible for.
      *
-     * @return array The classname of the token this provider is responsible for
+     * @return array<class-string<TokenInterface>> The classname of the token this provider is responsible for
      */
     public function getTokenClassNames();
 

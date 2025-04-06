@@ -34,7 +34,7 @@ class TestingProvider extends AbstractProvider
     /**
      * Returns the class names of the tokens this provider can authenticate.
      *
-     * @return array
+     * @return array<class-string<TokenInterface>>
      */
     public function getTokenClassNames()
     {
