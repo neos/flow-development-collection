@@ -62,7 +62,7 @@ class FileSystemSymlinkTarget extends FileSystemTarget
     {
         $extension = strtolower(pathinfo($relativeTargetPathAndFilename, PATHINFO_EXTENSION));
         if ($extension !== '' && array_key_exists($extension, $this->excludedExtensions) && $this->excludedExtensions[$extension] === true) {
-            throw new TargetException(sprintf('Could not publish "%s" into resource publishing target "%s" because the filename extension "%s" is excluded.', $sourceStream, $this->name, $extension), 1447152230);
+            throw new TargetException(sprintf('Could not publish resource into publishing target "%s" because the filename extension "%s" is excluded.', $this->name, $extension), 1447152230);
         }
 
         $streamMetaData = stream_get_meta_data($sourceStream);
@@ -151,6 +151,9 @@ class FileSystemSymlinkTarget extends FileSystemTarget
         return parent::setOption($key, $value);
     }
 
+    /**
+     * @return array{0: bool, 1: ?\Exception}
+     */
     private function publish(string $targetPathAndFilename, string $sourcePathAndFilename): array
     {
         $exception = null;

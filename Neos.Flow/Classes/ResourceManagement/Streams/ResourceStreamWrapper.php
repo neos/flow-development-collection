@@ -88,7 +88,7 @@ class ResourceStreamWrapper implements StreamWrapperInterface
      * This method is called in response to opendir().
      *
      * @param string $path Specifies the URL that was passed to opendir().
-     * @param int $options Whether or not to enforce safe_mode (0x04).
+     * @param int $options Whether to enforce safe_mode (0x04).
      * @return boolean true on success or false on failure.
      */
     public function openDirectory($path, $options)
@@ -97,7 +97,7 @@ class ResourceStreamWrapper implements StreamWrapperInterface
         if (!is_string($resourceUriOrStream)) {
             return false;
         }
-        $handle = ($resourceUriOrStream !== false) ? opendir($resourceUriOrStream) : false;
+        $handle = opendir($resourceUriOrStream);
         if ($handle !== false) {
             $this->handle = $handle;
             return true;
@@ -110,7 +110,7 @@ class ResourceStreamWrapper implements StreamWrapperInterface
      *
      * This method is called in response to readdir().
      *
-     * @return string Should return string representing the next filename, or false if there is no next file.
+     * @return string|false Should return string representing the next filename, or false if there is no next file.
      */
     public function readDirectory()
     {
@@ -148,7 +148,7 @@ class ResourceStreamWrapper implements StreamWrapperInterface
     {
         $resourceUriOrStream = $this->evaluateResourcePath($path, false);
         if (is_string($resourceUriOrStream)) {
-            return mkdir($resourceUriOrStream, $mode, $options&STREAM_MKDIR_RECURSIVE);
+            return mkdir($resourceUriOrStream, $mode, (bool)($options&STREAM_MKDIR_RECURSIVE));
         }
         return false;
     }
@@ -309,10 +309,11 @@ class ResourceStreamWrapper implements StreamWrapperInterface
             $this->handle = $resourceUriOrStream;
             return true;
         }
-
+        /** @var string|false $resourceUriOrStream */
         $handle = ($resourceUriOrStream !== false) ? fopen($resourceUriOrStream, $mode) : false;
         if ($handle !== false) {
             $this->handle = $handle;
+            /** @var string $resourceUriOrStream */
             $openedPathAndFilename = $resourceUriOrStream;
             return true;
         }
@@ -328,10 +329,13 @@ class ResourceStreamWrapper implements StreamWrapperInterface
      * number of bytes that were successfully read).
      *
      * @param integer $count How many bytes of data from the current position should be returned.
-     * @return string If there are less than count bytes available, return as many as are available. If no more data is available, return either false or an empty string.
+     * @return string|false If there are less than count bytes available, return as many as are available. If no more data is available, return either false or an empty string.
      */
     public function read($count)
     {
+        if ($count < 1) {
+            throw new \Exception('Cannot read less than one byte', 1743964166);
+        }
         return fread($this->handle, $count);
     }
 
@@ -392,7 +396,7 @@ class ResourceStreamWrapper implements StreamWrapperInterface
      *
      * This method is called in response to ftell().
      *
-     * @return int Should return the current position of the stream.
+     * @return int|false Should return the current position of the stream.
      */
     public function tell()
     {
@@ -411,7 +415,7 @@ class ResourceStreamWrapper implements StreamWrapperInterface
      * bytes that were successfully written.
      *
      * @param string $data Should be stored into the underlying stream.
-     * @return int Should return the number of bytes that were successfully stored, or 0 if none could be stored.
+     * @return int|false Should return the number of bytes that were successfully stored, or 0 if none could be stored.
      */
     public function write($data)
     {
@@ -441,7 +445,7 @@ class ResourceStreamWrapper implements StreamWrapperInterface
      *
      * This method is called in response to fstat().
      *
-     * @return array See http://php.net/stat
+     * @return array<int|string, int>|false See http://php.net/stat
      */
     public function resourceStat()
     {
@@ -472,14 +476,18 @@ class ResourceStreamWrapper implements StreamWrapperInterface
      *
      * @param string $path The file path or URL to stat. Note that in the case of a URL, it must be a :// delimited URL. Other URL forms are not supported.
      * @param integer $flags Holds additional flags set by the streams API.
-     * @return array Should return as many elements as stat() does. Unknown or unavailable values should be set to a rational value (usually 0).
+     * @return array<int|string, int>|false Should return as many elements as stat() does. Unknown or unavailable values should be set to a rational value (usually 0).
      */
     public function pathStat($path, $flags)
     {
         $evaluatedResourcePath = $this->evaluateResourcePath($path);
+        if ($evaluatedResourcePath === false) {
+            return false;
+        }
         if (is_resource($evaluatedResourcePath)) {
             return @fstat($evaluatedResourcePath);
         }
+        /** @var string $evaluatedResourcePath */
         return @stat($evaluatedResourcePath);
     }
 
@@ -489,7 +497,7 @@ class ResourceStreamWrapper implements StreamWrapperInterface
      *
      * @param string $requestedPath
      * @param boolean $checkForExistence Whether a (non-hash) path should be checked for existence before being returned
-     * @return mixed The full path and filename or false if the file doesn't exist
+     * @return string|resource|false The full path and filename or false if the file doesn't exist
      * @throws \InvalidArgumentException|ResourceException
      */
     protected function evaluateResourcePath($requestedPath, $checkForExistence = true)
@@ -507,7 +515,7 @@ class ResourceStreamWrapper implements StreamWrapperInterface
 
         if (strpos($resourceUriWithoutScheme, '/') === false && preg_match('/^[0-9a-f]{40}$/i', $resourceUriWithoutScheme) === 1) {
             $resource = $this->resourceManager->getResourceBySha1($resourceUriWithoutScheme);
-            return $this->resourceManager->getStreamByResource($resource);
+            return $resource ? $this->resourceManager->getStreamByResource($resource) : false;
         }
 
         list($packageName, $path) = explode('/', $resourceUriWithoutScheme, 2);

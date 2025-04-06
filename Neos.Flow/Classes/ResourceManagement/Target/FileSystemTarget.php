@@ -33,7 +33,7 @@ use Psr\Log\LoggerInterface;
 class FileSystemTarget implements TargetInterface
 {
     /**
-     * @var array
+     * @var array<string,mixed>
      */
     protected $options = [];
 
@@ -83,7 +83,7 @@ class FileSystemTarget implements TargetInterface
     /**
      * A list of extensions that are excluded and must not be published by this target.
      *
-     * @var array
+     * @var array<string,bool>
      */
     protected $excludedExtensions = [];
 
@@ -115,7 +115,7 @@ class FileSystemTarget implements TargetInterface
      * Constructor
      *
      * @param string $name Name of this target instance, according to the resource settings
-     * @param array $options Options for this target
+     * @param array<string,mixed> $options Options for this target
      */
     public function __construct($name, array $options = [])
     {
@@ -217,8 +217,9 @@ class FileSystemTarget implements TargetInterface
         $this->checkAndRemovePackageSymlinks($storage);
         $iteration = 0;
         foreach ($collection->getObjects() as $object) {
-            $sourceStream = $object->getStream();
-            if ($sourceStream === false) {
+            try {
+                $sourceStream = $object->getStream();
+            } catch (\Exception) {
                 $this->handleMissingData($object, $collection);
                 continue;
             }
@@ -255,7 +256,7 @@ class FileSystemTarget implements TargetInterface
      * @param ResourceMetaDataInterface $resource
      * @param CollectionInterface $collection
      */
-    protected function handleMissingData(ResourceMetaDataInterface $resource, CollectionInterface $collection)
+    protected function handleMissingData(ResourceMetaDataInterface $resource, CollectionInterface $collection): void
     {
         $message = sprintf('Could not publish resource %s with SHA1 hash %s of collection %s because there seems to be no corresponding data in the storage.', $resource->getFilename(), $resource->getSha1(), $collection->getName());
         $this->messageCollector->append($message);
@@ -323,16 +324,16 @@ class FileSystemTarget implements TargetInterface
     protected function publishFile($sourceStream, $relativeTargetPathAndFilename)
     {
         $pathInfo = UnicodeFunctions::pathinfo($relativeTargetPathAndFilename);
-        if (isset($pathInfo['extension']) && array_key_exists(strtolower($pathInfo['extension']), $this->excludedExtensions) && $this->excludedExtensions[strtolower($pathInfo['extension'])] === true) {
-            throw new TargetException(sprintf('Could not publish "%s" into resource publishing target "%s" because the filename extension "%s" is excluded.', $sourceStream, $this->name, strtolower($pathInfo['extension'])), 1447148472);
+        if (array_key_exists(strtolower($pathInfo['extension']), $this->excludedExtensions) && $this->excludedExtensions[strtolower($pathInfo['extension'])] === true) {
+            throw new TargetException(sprintf('Could not publish resource into publishing target "%s" because the filename extension "%s" is excluded.', $this->name, strtolower($pathInfo['extension'])), 1447148472);
         }
 
         $targetPathAndFilename = $this->path . $relativeTargetPathAndFilename;
         $streamMetaData = stream_get_meta_data($sourceStream);
-        $sourcePathAndFilename = $streamMetaData['uri'] ?? null;
+        $sourcePathAndFilename = $streamMetaData['uri'];
 
         if (@fstat($sourceStream) === false) {
-            throw new TargetException(sprintf('Could not publish "%s" into resource publishing target "%s" because the source file is not accessible (file stat failed).', $sourceStream, $this->name), 1375258499);
+            throw new TargetException(sprintf('Could not publish resource into publishing target "%s" because the source file is not accessible (file stat failed).', $this->name), 1375258499);
         }
 
         // If you switch from FileSystemSymlinkTarget than we need to remove the symlink before trying to write the file
@@ -346,7 +347,7 @@ class FileSystemTarget implements TargetInterface
         }
 
         if (!is_writable(dirname($targetPathAndFilename))) {
-            throw new Exception(sprintf('Could not publish "%s" into resource publishing target "%s" because the target file "%s" is not writable.', $sourceStream, $this->name, $targetPathAndFilename), 1428917322);
+            throw new Exception(sprintf('Could not publish resource into publishing target "%s" because the target file "%s" is not writable.', $this->name, $targetPathAndFilename), 1428917322);
         }
 
         try {
@@ -361,7 +362,7 @@ class FileSystemTarget implements TargetInterface
             $result = false;
         }
         if ($result === false) {
-            throw new TargetException(sprintf('Could not publish "%s" into resource publishing target "%s" because the source file could not be copied to the target location "%s".', $sourceStream, $this->name, $targetPathAndFilename), 1375258399, ($exception ?? null));
+            throw new TargetException(sprintf('Could not publish resource into publishing target "%s" because the source file could not be copied to the target location "%s".', $this->name, $targetPathAndFilename), 1375258399, ($exception ?? null));
         }
 
         $this->logger->debug(sprintf('FileSystemTarget: Published file. (target: %s, file: %s)', $this->name, $relativeTargetPathAndFilename));

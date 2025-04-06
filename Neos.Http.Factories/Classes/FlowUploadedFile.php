@@ -14,12 +14,12 @@ class FlowUploadedFile extends UploadedFile
      * This is either the persistent identifier of a previously submitted resource file
      * or an array with the "__identity" key set to the persistent identifier.
      *
-     * @var array{__identity: string}|string
+     * @var array{__identity: string}|string|null
      */
     protected $originallySubmittedResource;
 
     /**
-     * @var string
+     * @var ?string
      */
     protected $collectionName;
 
@@ -27,7 +27,7 @@ class FlowUploadedFile extends UploadedFile
      * This is either the persistent identifier of a previously submitted resource file
      * or an array with the "__identity" key set to the persistent identifier.
      *
-     * @return array{__identity: string}|string
+     * @return array{__identity: string}|string|null
      */
     public function getOriginallySubmittedResource()
     {
@@ -48,7 +48,7 @@ class FlowUploadedFile extends UploadedFile
     }
 
     /**
-     * @return string
+     * @return ?string
      */
     public function getCollectionName()
     {

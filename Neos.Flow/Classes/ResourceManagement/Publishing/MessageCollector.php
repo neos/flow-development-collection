@@ -35,7 +35,7 @@ class MessageCollector
     ];
 
     /**
-     * @var \SplObjectStorage
+     * @var \SplObjectStorage<Message,mixed>
      */
     protected $messages;
 

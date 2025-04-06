@@ -98,7 +98,7 @@ class StorageObject implements ResourceMetaDataInterface
     public function setFilename($filename)
     {
         $pathInfo = UnicodeFunctions::pathinfo($filename);
-        $extension = (isset($pathInfo['extension']) ? '.' . strtolower($pathInfo['extension']) : '');
+        $extension = '.' . strtolower($pathInfo['extension']);
         $this->filename = $pathInfo['filename'] . $extension;
         $this->mediaType = MediaTypes::getMediaTypeFromFilename($this->filename);
     }
@@ -201,7 +201,11 @@ class StorageObject implements ResourceMetaDataInterface
     public function getStream()
     {
         if ($this->stream instanceof \Closure) {
-            $this->stream = $this->stream->__invoke();
+            $resource = $this->stream->__invoke();
+            if (!is_resource($resource)) {
+                throw new \Exception('Failed to resolve resource from closure', 1743962813);
+            }
+            $this->stream = $resource;
         }
         if (is_resource($this->stream)) {
             $meta = stream_get_meta_data($this->stream);

@@ -57,12 +57,16 @@ class WritableFileSystemStorage extends FileSystemStorage implements WritableSto
         if (is_resource($source)) {
             try {
                 $target = fopen($temporaryTargetPathAndFilename, 'wb');
+                if ($target === false) {
+                    throw new \Exception('Failed to open ' . $temporaryTargetPathAndFilename, 1743964877);
+                }
                 stream_copy_to_stream($source, $target);
                 fclose($target);
             } catch (\Exception $exception) {
                 throw new StorageException(sprintf('Could import the content stream to temporary file "%s".', $temporaryTargetPathAndFilename), 1380880079);
             }
         } else {
+            /** @var string $source */
             if (copy($source, $temporaryTargetPathAndFilename) === false) {
                 throw new StorageException(sprintf('Could not copy the file from "%s" to temporary file "%s".', $source, $temporaryTargetPathAndFilename), 1375198876);
             }
@@ -130,6 +134,9 @@ class WritableFileSystemStorage extends FileSystemStorage implements WritableSto
     {
         $this->fixFilePermissions($temporaryPathAndFileName);
         $sha1Hash = sha1_file($temporaryPathAndFileName);
+        if ($sha1Hash === false) {
+            throw new \Exception('Failed to resolve sha1 hash for ' . $temporaryPathAndFileName);
+        }
         $targetPathAndFilename = $this->getStoragePathAndFilenameByHash($sha1Hash);
 
         if (!is_file($targetPathAndFilename)) {
@@ -139,7 +146,10 @@ class WritableFileSystemStorage extends FileSystemStorage implements WritableSto
         }
 
         $resource = new PersistentResource();
-        $resource->setFileSize(filesize($targetPathAndFilename));
+        $fileSize = filesize($targetPathAndFilename);
+        if ($fileSize !== false) {
+            $resource->setFileSize($fileSize);
+        }
         $resource->setCollectionName($collectionName);
         $resource->setSha1($sha1Hash);
 

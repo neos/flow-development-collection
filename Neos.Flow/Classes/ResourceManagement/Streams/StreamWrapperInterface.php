@@ -335,7 +335,7 @@ interface StreamWrapperInterface
      *
      * This method is called in response to fstat().
      *
-     * @return array See http://php.net/stat
+     * @return array<string,int> See http://php.net/stat
      * @api
      */
     public function resourceStat();
@@ -359,7 +359,7 @@ interface StreamWrapperInterface
      *
      * @param string $path The file path or URL to stat. Note that in the case of a URL, it must be a :// delimited URL. Other URL forms are not supported.
      * @param integer $flags Holds additional flags set by the streams API.
-     * @return array Should return as many elements as stat() does. Unknown or unavailable values should be set to a rational value (usually 0).
+     * @return array<int|string, int>|false Should return as many elements as stat() does. Unknown or unavailable values should be set to a rational value (usually 0).
      * @api
      */
     public function pathStat($path, $flags);
