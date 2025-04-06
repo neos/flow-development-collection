@@ -51,7 +51,7 @@ interface SessionManagerInterface
      * Returns all sessions which are tagged by the specified tag.
      *
      * @param string $tag A valid Cache Frontend tag
-     * @return array A collection of Session objects or an empty array if tag did not match
+     * @return array<SessionInterface> A collection of Session objects or an empty array if tag did not match
      * @api
      */
     public function getSessionsByTag(string $tag): array;
