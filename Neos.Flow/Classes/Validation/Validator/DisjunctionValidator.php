@@ -28,7 +28,7 @@ class DisjunctionValidator extends AbstractCompositeValidator
      * Errors are only returned if all validators failed.
      *
      * @param mixed $value The value that should be validated
-     * @return ErrorResult
+     * @return ErrorResult|null
      * @api
      */
     public function validate($value)

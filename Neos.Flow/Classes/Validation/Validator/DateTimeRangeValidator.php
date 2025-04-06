@@ -21,7 +21,7 @@ use Neos\Flow\Validation\Exception\InvalidValidationOptionsException;
 class DateTimeRangeValidator extends AbstractValidator
 {
     /**
-     * @var array
+     * @var array<string,mixed>
      */
     protected $supportedOptions = [
         'latestDate' => [null, 'The latest date to accept', 'string'],

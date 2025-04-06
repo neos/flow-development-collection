@@ -31,7 +31,7 @@ class FileSizeValidator extends AbstractValidator
      * 2 => type
      * 3 => required (boolean, optional)
      *
-     * @var array
+     * @var array<string,mixed>
      */
     protected $supportedOptions = [
         'minimum' => [null, 'Minimum allowed filesize in bytes', 'integer', false],

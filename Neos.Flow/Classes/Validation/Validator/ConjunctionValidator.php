@@ -25,7 +25,7 @@ class ConjunctionValidator extends AbstractCompositeValidator
      * Every validator has to be valid, to make the whole conjunction valid.
      *
      * @param mixed $value The value that should be validated
-     * @return ErrorResult
+     * @return ErrorResult|null
      * @api
      */
     public function validate($value)
