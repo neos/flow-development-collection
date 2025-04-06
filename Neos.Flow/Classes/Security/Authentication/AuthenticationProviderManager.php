@@ -51,7 +51,7 @@ class AuthenticationProviderManager implements AuthenticationManagerInterface
      * Injected configuration for providers.
      * Will be null'd again after building the object instances.
      *
-     * @var array|null
+     * @var array<mixed>|null
      */
     protected $providerConfigurations;
 
@@ -81,7 +81,7 @@ class AuthenticationProviderManager implements AuthenticationManagerInterface
     /**
      * Inject the settings and does a fresh build of tokens based on the injected settings
      *
-     * @param array $settings The settings
+     * @param array<string,mixed> $settings The settings
      * @return void
      * @throws Exception
      */
@@ -206,7 +206,10 @@ class AuthenticationProviderManager implements AuthenticationManagerInterface
             } catch (AuthenticationRequiredException $exception) {
             }
         }
-        return $this->isAuthenticated;
+
+        return $this->isAuthenticated !== null
+            ? $this->isAuthenticated
+            : false;
     }
 
     /**

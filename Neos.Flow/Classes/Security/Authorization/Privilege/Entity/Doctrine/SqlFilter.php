@@ -40,7 +40,7 @@ class SqlFilter extends DoctrineSqlFilter
     /**
      * Gets the SQL query part to add to a query.
      *
-     * @param ClassMetadata $targetEntity Metadata object for the target entity to be filtered
+     * @param ClassMetadata<object> $targetEntity Metadata object for the target entity to be filtered
      * @param string $targetTableAlias The target table alias used in the current query
      * @return string The constraint SQL if there is available, empty string otherwise
      */

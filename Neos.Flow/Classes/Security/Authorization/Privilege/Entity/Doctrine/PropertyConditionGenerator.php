@@ -11,7 +11,7 @@ namespace Neos\Flow\Security\Authorization\Privilege\Entity\Doctrine;
  * source code.
  */
 
-use Doctrine\ORM\Mapping\ClassMetadataInfo;
+use Doctrine\ORM\Mapping\ClassMetadata as ORMClassMetadata;
 use Doctrine\Persistence\Mapping\ClassMetadata;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Mapping\QuoteStrategy;
@@ -45,7 +45,7 @@ class PropertyConditionGenerator implements SqlGeneratorInterface
     protected $operator;
 
     /**
-     * @var string|array
+     * @var string|array<string,string|object|null>
      */
     protected $operandDefinition;
 
@@ -58,7 +58,7 @@ class PropertyConditionGenerator implements SqlGeneratorInterface
      * Array of registered global objects that can be accessed as operands
      *
      * @Flow\InjectConfiguration("aop.globalObjects")
-     * @var array
+     * @var array<string,string>
      */
     protected $globalObjects = [];
 
@@ -95,7 +95,7 @@ class PropertyConditionGenerator implements SqlGeneratorInterface
     /**
      * Raw parameter values
      *
-     * @var array
+     * @var array<mixed>
      */
     protected $parameters = [];
 
@@ -108,7 +108,7 @@ class PropertyConditionGenerator implements SqlGeneratorInterface
     }
 
     /**
-     * @param string|array $operandDefinition
+     * @param string|array<string> $operandDefinition
      * @return PropertyConditionGenerator the current instance to allow for method chaining
      */
     public function equals($operandDefinition)
@@ -120,7 +120,7 @@ class PropertyConditionGenerator implements SqlGeneratorInterface
     }
 
     /**
-     * @param string|array $operandDefinition
+     * @param string|array<string> $operandDefinition
      * @return PropertyConditionGenerator the current instance to allow for method chaining
      */
     public function notEquals($operandDefinition)
@@ -204,6 +204,9 @@ class PropertyConditionGenerator implements SqlGeneratorInterface
         if (is_array($this->operand) === false && ($this->operand instanceof \Traversable) === false) {
             throw new InvalidPolicyException(sprintf('The "in" operator needs an array as operand! Got: "%s"', $this->operand), 1416313526);
         }
+        if (!is_array($this->operandDefinition)) {
+            throw new \Exception('Cannot assign iterable operands to non-array operand definition', 1743959938);
+        }
         foreach ($this->operand as $iterator => $singleOperandValueDefinition) {
             $this->operandDefinition['inOperandValue' . $iterator] = $singleOperandValueDefinition;
         }
@@ -230,15 +233,16 @@ class PropertyConditionGenerator implements SqlGeneratorInterface
 
     /**
      * @param DoctrineSqlFilter $sqlFilter
-     * @param ClassMetadata $targetEntity
+     * @param ORMClassMetadata<object> $targetEntity
      * @param string $targetTableAlias
      * @return string
      * @throws InvalidQueryRewritingConstraintException
      * @throws \Exception
      */
-    public function getSql(DoctrineSqlFilter $sqlFilter, ClassMetadata $targetEntity, $targetTableAlias)
+    public function getSql(DoctrineSqlFilter $sqlFilter, ORMClassMetadata $targetEntity, $targetTableAlias)
     {
-        $targetEntityPropertyName = (strpos($this->path, '.') ? substr($this->path, 0, strpos($this->path, '.')) : $this->path);
+        $pivot = strpos($this->path, '.');
+        $targetEntityPropertyName = ($pivot ? substr($this->path, 0, $pivot) : $this->path);
         $quoteStrategy = $this->entityManager->getConfiguration()->getQuoteStrategy();
 
         if ($targetEntity->hasAssociation($targetEntityPropertyName) === false) {
@@ -248,7 +252,11 @@ class PropertyConditionGenerator implements SqlGeneratorInterface
         } elseif ($targetEntity->isSingleValuedAssociation($targetEntityPropertyName) === true && $targetEntity->isAssociationInverseSide($targetEntityPropertyName) === false) {
             return $this->getSqlForManyToOneAndOneToOneRelationsWithPropertyPath($sqlFilter, $quoteStrategy, $targetEntity, $targetTableAlias, $targetEntityPropertyName);
         } elseif ($targetEntity->isSingleValuedAssociation($targetEntityPropertyName) === true && $targetEntity->isAssociationInverseSide($targetEntityPropertyName) === true) {
-            throw new InvalidQueryRewritingConstraintException('Single valued properties from the inverse side are not supported in a content security constraint path! Got: "' . $this->path . ' ' . $this->operator . ' ' . $this->operandDefinition . '"', 1416397754);
+            throw new InvalidQueryRewritingConstraintException(
+                'Single valued properties from the inverse side are not supported in a content security constraint path! Got: "'
+                    . $this->path . ' ' . $this->operator . ' ' . json_encode($this->operandDefinition) . '"'
+                , 1416397754
+            );
         } elseif ($targetEntity->isCollectionValuedAssociation($targetEntityPropertyName) === true) {
             return $this->getSqlForPropertyContains($sqlFilter, $quoteStrategy, $targetEntity, $targetTableAlias, $targetEntityPropertyName);
         }
@@ -259,17 +267,21 @@ class PropertyConditionGenerator implements SqlGeneratorInterface
     /**
      * @param DoctrineSqlFilter $sqlFilter
      * @param QuoteStrategy $quoteStrategy
-     * @param ClassMetadataInfo $targetEntity
+     * @param ORMClassMetadata<object> $targetEntity
      * @param string $targetTableAlias
      * @param string $targetEntityPropertyName
      * @return string
      * @throws InvalidQueryRewritingConstraintException
      * @throws \Exception
      */
-    protected function getSqlForPropertyContains(DoctrineSqlFilter $sqlFilter, QuoteStrategy $quoteStrategy, ClassMetadata $targetEntity, string $targetTableAlias, string $targetEntityPropertyName): string
+    protected function getSqlForPropertyContains(DoctrineSqlFilter $sqlFilter, QuoteStrategy $quoteStrategy, ORMClassMetadata $targetEntity, string $targetTableAlias, string $targetEntityPropertyName): string
     {
         if ($this->operator !== 'contains') {
-            throw new InvalidQueryRewritingConstraintException('Multivalued properties are not supported in a content security constraint path unless the "contains" operation is used! Got: "' . $this->path . ' ' . $this->operator . ' ' . $this->operandDefinition . '"', 1416397655);
+            throw new InvalidQueryRewritingConstraintException(
+                'Multivalued properties are not supported in a content security constraint path unless the "contains" operation is used! Got: "'
+                    . $this->path . ' ' . $this->operator . ' ' . json_encode($this->operandDefinition) . '"',
+                1416397655
+            );
         }
 
         if (is_array($this->operandDefinition)) {
@@ -303,9 +315,6 @@ class PropertyConditionGenerator implements SqlGeneratorInterface
             $subQuerySql = 'SELECT ' . $reverseColumn . ' FROM ' . $associationMapping['joinTable']['name'] . ' WHERE ' . $joinColumn . ' = ' . $parameterValue;
         } else {
             $associationTargetClass = $targetEntity->getAssociationTargetClass($targetEntityPropertyName);
-            if ($associationTargetClass === null) {
-                throw new \InvalidArgumentException("Association name expected, '" . $targetEntityPropertyName . "' is not an association.", 1629871077);
-            }
             $subselectQuery = new Query($associationTargetClass);
             $rootAliases = $subselectQuery->getQueryBuilder()->getRootAliases();
             $primaryRootAlias = reset($rootAliases);
@@ -314,6 +323,9 @@ class PropertyConditionGenerator implements SqlGeneratorInterface
             $subselectQuery->getQueryBuilder()->select('IDENTITY(' . $primaryRootAlias . '.' . $associationMapping['mappedBy'] . ')');
             $subQuerySql = $subselectQuery->getSql();
         }
+        if (is_array($subQuerySql)) {
+            throw new \Exception('invalid sub query, must not be an array', 1743931303);
+        }
 
         return $targetTableAlias . '.' . $identityColumnName . ' IN (' . $subQuerySql . ')';
     }
@@ -321,14 +333,14 @@ class PropertyConditionGenerator implements SqlGeneratorInterface
     /**
      * @param DoctrineSqlFilter $sqlFilter
      * @param QuoteStrategy $quoteStrategy
-     * @param ClassMetadata $targetEntity
+     * @param ORMClassMetadata<object> $targetEntity
      * @param string $targetTableAlias
      * @param string $targetEntityPropertyName
      * @return string
      * @throws InvalidQueryRewritingConstraintException
      * @throws \Exception
      */
-    protected function getSqlForSimpleProperty(DoctrineSqlFilter $sqlFilter, QuoteStrategy $quoteStrategy, ClassMetadata $targetEntity, $targetTableAlias, $targetEntityPropertyName)
+    protected function getSqlForSimpleProperty(DoctrineSqlFilter $sqlFilter, QuoteStrategy $quoteStrategy, ORMClassMetadata $targetEntity, $targetTableAlias, $targetEntityPropertyName)
     {
         $quotedColumnName = $quoteStrategy->getColumnName($targetEntityPropertyName, $targetEntity, $this->entityManager->getConnection()->getDatabasePlatform());
         $propertyPointer = $targetTableAlias . '.' . $quotedColumnName;
@@ -346,35 +358,43 @@ class PropertyConditionGenerator implements SqlGeneratorInterface
     /**
      * @param DoctrineSqlFilter $sqlFilter
      * @param QuoteStrategy $quoteStrategy
-     * @param ClassMetadataInfo $targetEntity
+     * @param ORMClassMetadata<object> $targetEntity
      * @param string $targetTableAlias
      * @param string $targetEntityPropertyName
      * @return string
      * @throws InvalidQueryRewritingConstraintException
      * @throws \Exception
      */
-    protected function getSqlForManyToOneAndOneToOneRelationsWithoutPropertyPath(DoctrineSqlFilter $sqlFilter, QuoteStrategy $quoteStrategy, ClassMetadata $targetEntity, $targetTableAlias, $targetEntityPropertyName)
+    protected function getSqlForManyToOneAndOneToOneRelationsWithoutPropertyPath(DoctrineSqlFilter $sqlFilter, QuoteStrategy $quoteStrategy, ORMClassMetadata $targetEntity, $targetTableAlias, $targetEntityPropertyName)
     {
         $associationMapping = $targetEntity->getAssociationMapping($targetEntityPropertyName);
 
         $constraints = [];
-        foreach ($associationMapping['joinColumns'] as $joinColumn) {
+        foreach ($associationMapping['joinColumns'] ?? [] as $joinColumn) {
             $quotedColumnName = $quoteStrategy->getJoinColumnName($joinColumn, $targetEntity, $this->entityManager->getConnection()->getDatabasePlatform());
             $propertyPointer = $targetTableAlias . '.' . $quotedColumnName;
 
-            $operandAlias = $this->operandDefinition;
-            if (is_array($this->operandDefinition)) {
-                $operandAlias = key($this->operandDefinition);
-            }
+            $operandAlias = is_array($this->operandDefinition)
+                ? key($this->operandDefinition)
+                : $this->operandDefinition;
+
             $currentReferencedOperandName = $operandAlias . $joinColumn['referencedColumnName'];
             if (is_object($this->operand)) {
-                $operandMetadataInfo = $this->entityManager->getClassMetadata(TypeHandling::getTypeForValue($this->operand));
+                $type = TypeHandling::getTypeForValue($this->operand);
+                if ($type === false) {
+                    throw new \Exception('Could not resolve type for ' . get_debug_type($this->operand), 1743930563);
+                }
+                $operandMetadataInfo = $this->entityManager->getClassMetadata($type);
                 $currentReferencedValueOfOperand = $operandMetadataInfo->getFieldValue($this->operand, $operandMetadataInfo->getFieldForColumn($joinColumn['referencedColumnName']));
                 $this->setParameter($sqlFilter, $currentReferencedOperandName, $currentReferencedValueOfOperand, $associationMapping['type']);
             } elseif (is_array($this->operandDefinition)) {
                 foreach ($this->operandDefinition as $operandIterator => $singleOperandValue) {
                     if (is_object($singleOperandValue)) {
-                        $operandMetadataInfo = $this->entityManager->getClassMetadata(TypeHandling::getTypeForValue($singleOperandValue));
+                        $type = TypeHandling::getTypeForValue($singleOperandValue);
+                        if ($type === false) {
+                            throw new \Exception('Could not resolve type for ' . get_debug_type($singleOperandValue), 1743930566);
+                        }
+                        $operandMetadataInfo = $this->entityManager->getClassMetadata($type);
                         $currentReferencedValueOfOperand = $operandMetadataInfo->getFieldValue($singleOperandValue, $operandMetadataInfo->getFieldForColumn($joinColumn['referencedColumnName']));
                         $this->setParameter($sqlFilter, $operandIterator, $currentReferencedValueOfOperand, $associationMapping['type']);
                     } elseif ($singleOperandValue === null) {
@@ -391,7 +411,7 @@ class PropertyConditionGenerator implements SqlGeneratorInterface
     /**
      * @param DoctrineSqlFilter $sqlFilter
      * @param QuoteStrategy $quoteStrategy
-     * @param ClassMetadataInfo $targetEntity
+     * @param ORMClassMetadata<object> $targetEntity
      * @param string $targetTableAlias
      * @param string $targetEntityPropertyName
      * @return string
@@ -405,19 +425,22 @@ class PropertyConditionGenerator implements SqlGeneratorInterface
         $associationMapping = $targetEntity->getAssociationMapping($targetEntityPropertyName);
 
         $subselectConstraintQueries = [];
-        foreach ($associationMapping['joinColumns'] as $joinColumn) {
+        foreach ($associationMapping['joinColumns'] ?? [] as $joinColumn) {
             $rootAliases = $subselectQuery->getQueryBuilder()->getRootAliases();
             $subselectQuery->getQueryBuilder()->select($rootAliases[0] . '.' . $targetEntity->getFieldForColumn($joinColumn['referencedColumnName']));
             $subselectSql = $subselectQuery->getSql();
+            if (is_array($subselectSql)) {
+                $subselectSql = implode(' ', $subselectSql);
+            }
             foreach ($subselectQuery->getParameters() as $parameter) {
                 $parameterValue = $parameter->getValue();
                 if (is_object($parameterValue)) {
                     $parameterValue = $this->persistenceManager->getIdentifierByObject($parameter->getValue());
                 }
-                $subselectSql = preg_replace('/\?/', $this->entityManager->getConnection()->quote($parameterValue, $parameter->getType()), $subselectSql, 1);
+                $subselectSql = preg_replace('/\?/', $this->entityManager->getConnection()->quote($parameterValue, $parameter->getType()), $subselectSql ?: '', 1);
             }
             $quotedColumnName = $quoteStrategy->getJoinColumnName($joinColumn, $targetEntity, $this->entityManager->getConnection()->getDatabasePlatform());
-            $subselectIdentifier = 'subselect' . md5($subselectSql);
+            $subselectIdentifier = 'subselect' . md5($subselectSql ?: '');
             $subselectConstraintQueries[] = $targetTableAlias . '.' . $quotedColumnName . ' IN (SELECT ' . $subselectIdentifier . '.' . $joinColumn['referencedColumnName'] . '_0 FROM (' . $subselectSql . ') AS ' . $subselectIdentifier . ' ) ';
         }
 
@@ -425,7 +448,7 @@ class PropertyConditionGenerator implements SqlGeneratorInterface
     }
 
     /**
-     * @param ClassMetadata $targetEntity
+     * @param ClassMetadata<object> $targetEntity
      * @param string $targetEntityPropertyName
      * @return Query
      */
@@ -494,6 +517,9 @@ class PropertyConditionGenerator implements SqlGeneratorInterface
                 }
                 $parameter = implode(',', $parameters);
             } elseif (!($this->getRawParameterValue($operandDefinition) === null || ($this->operator === 'in' && $this->getRawParameterValue($operandDefinition) === []))) {
+                if (!is_string($operandDefinition)) {
+                    throw new \Exception('SQL filter parameters must be of type string, ' . get_debug_type($operandDefinition) . ' given.', 1743929393);
+                }
                 $parameter = $sqlFilter->getParameter($operandDefinition);
             }
         } catch (\InvalidArgumentException $exception) {
@@ -567,11 +593,12 @@ class PropertyConditionGenerator implements SqlGeneratorInterface
      * @param DoctrineSqlFilter $sqlFilter
      * @param mixed $name
      * @param mixed $value
-     * @param string $type
+     * @param string|int|null $type
      * @return void
      */
     protected function setParameter(DoctrineSqlFilter $sqlFilter, $name, $value, $type = null)
     {
+        /** @phpstan-ignore argument.type (currently, doctrine also can handle integers) */
         $sqlFilter->setParameter($name, $value, $type);
         $this->parameters[$name] = $value;
     }

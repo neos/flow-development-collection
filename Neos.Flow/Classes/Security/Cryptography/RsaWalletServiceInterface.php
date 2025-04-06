@@ -54,7 +54,7 @@ interface RsaWalletServiceInterface
      * @return OpenSslRsaKey The public key
      * @throws InvalidKeyPairIdException If the given fingerprint identifies no valid key pair
      */
-    public function getPublicKey($fingerprint);
+    public function getPublicKey(string $fingerprint): OpenSslRsaKey;
 
     /**
      * Decrypts the given cypher with the private key identified by the given fingerprint
@@ -67,7 +67,7 @@ interface RsaWalletServiceInterface
      * @throws InvalidKeyPairIdException If the given fingerprint identifies no valid keypair
      * @throws DecryptionNotAllowedException If the given fingerprint identifies a keypair for encrypted passwords
      */
-    public function decrypt($cypher, $fingerprint);
+    public function decrypt(string $cypher, string $fingerprint): string;
 
     /**
      * Signs the given plaintext with the private key identified by the given fingerprint
@@ -77,7 +77,7 @@ interface RsaWalletServiceInterface
      * @return string The signature of the given plaintext
      * @throws InvalidKeyPairIdException If the given fingerprint identifies no valid keypair
      */
-    public function sign($plaintext, $fingerprint);
+    public function sign(string $plaintext, string $fingerprint): string;
 
     /**
      * Checks whether the given signature is valid for the given plaintext
@@ -88,7 +88,7 @@ interface RsaWalletServiceInterface
      * @param string $fingerprint The fingerprint to identify to correct public key
      * @return boolean true if the signature is correct for the given plaintext and public key
      */
-    public function verifySignature($plaintext, $signature, $fingerprint);
+    public function verifySignature(string $plaintext, string $signature, string $fingerprint): bool;
 
     /**
      * Encrypts the given plaintext with the public key identified by the given fingerprint
@@ -109,14 +109,12 @@ interface RsaWalletServiceInterface
      * @param string $fingerprint The fingerprint to identify to correct private key
      * @return boolean true if the password is correct
      */
-    public function checkRSAEncryptedPassword($encryptedPassword, $passwordHash, $salt, $fingerprint);
+    public function checkRSAEncryptedPassword(string $encryptedPassword, string $passwordHash, string $salt, string $fingerprint): bool;
 
     /**
      * Destroys the keypair identified by the given fingerprint
      *
-     * @param string $fingerprint The fingerprint
-     * @return void
      * @throws InvalidKeyPairIdException If the given fingerprint identifies no valid key pair
      */
-    public function destroyKeypair($fingerprint);
+    public function destroyKeypair(string $fingerprint): void;
 }

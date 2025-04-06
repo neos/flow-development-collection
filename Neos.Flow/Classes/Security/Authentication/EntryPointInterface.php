@@ -22,7 +22,7 @@ interface EntryPointInterface
     /**
      * Sets the options array
      *
-     * @param array $options An array of configuration options
+     * @param array<mixed> $options An array of configuration options
      * @return void
      */
     public function setOptions(array $options);
@@ -30,7 +30,7 @@ interface EntryPointInterface
     /**
      * Returns the options array
      *
-     * @return array An array of configuration options
+     * @return array<mixed> An array of configuration options
      */
     public function getOptions();
 

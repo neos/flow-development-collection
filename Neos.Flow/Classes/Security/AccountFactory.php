@@ -37,7 +37,7 @@ class AccountFactory
      *
      * @param string $identifier Identifier of the account, must be unique
      * @param string $password The clear text password
-     * @param array $roleIdentifiers Optionally an array of role identifiers to assign to the new account
+     * @param array<string> $roleIdentifiers Optionally an array of role identifiers to assign to the new account
      * @param string $authenticationProviderName Optional name of the authentication provider the account is affiliated with
      * @param string $passwordHashingStrategy Optional password hashing strategy to use for the password
      * @return Account A new account, not yet added to the account repository

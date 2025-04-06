@@ -45,7 +45,7 @@ class FileBasedSimpleKeyService
     protected $hashService;
 
     /**
-     * @param array $settings
+     * @param array<string,mixed> $settings
      * @return void
      */
     public function injectSettings(array $settings)
@@ -116,7 +116,7 @@ class FileBasedSimpleKeyService
      * Returns a key by its name
      *
      * @param string $name
-     * @return boolean
+     * @return string
      * @throws SecurityException
      */
     public function getKey($name)

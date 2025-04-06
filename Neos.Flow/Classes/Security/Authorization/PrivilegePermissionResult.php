@@ -25,7 +25,7 @@ class PrivilegePermissionResult
     protected $abstains = 0;
 
     /**
-     * @var array
+     * @var array<int,string>
      */
     protected $effectivePrivilegeIdentifiersWithPermission = [];
 
@@ -101,7 +101,7 @@ class PrivilegePermissionResult
     }
 
     /**
-     * @return array
+     * @return array<int,string>
      */
     public function getEffectivePrivilegeIdentifiersWithPermission(): array
     {

@@ -34,7 +34,7 @@ class MethodPrivilegePointcutFilter implements PointcutFilterInterface
     protected $filters = null;
 
     /**
-     * @var array
+     * @var array<mixed>
      */
     protected $methodPermissions = [];
 
@@ -131,7 +131,7 @@ class MethodPrivilegePointcutFilter implements PointcutFilterInterface
     /**
      * Returns runtime evaluations for the pointcut.
      *
-     * @return array Runtime evaluations
+     * @return array<mixed> Runtime evaluations
      */
     public function getRuntimeEvaluationsDefinition(): array
     {

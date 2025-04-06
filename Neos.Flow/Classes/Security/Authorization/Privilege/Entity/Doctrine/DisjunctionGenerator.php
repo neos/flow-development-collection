@@ -11,7 +11,7 @@ namespace Neos\Flow\Security\Authorization\Privilege\Entity\Doctrine;
  * source code.
  */
 
-use Doctrine\Persistence\Mapping\ClassMetadata;
+use Doctrine\ORM\Mapping\ClassMetadata;
 use Doctrine\ORM\Query\Filter\SQLFilter as DoctrineSqlFilter;
 use Neos\Flow\Annotations as Flow;
 
@@ -35,14 +35,13 @@ class DisjunctionGenerator implements SqlGeneratorInterface
 
     /**
      * @param DoctrineSqlFilter $sqlFilter
-     * @param ClassMetaData $targetEntity Metadata object for the target entity to create the constraint for
+     * @param ClassMetaData<object> $targetEntity Metadata object for the target entity to create the constraint for
      * @param string $targetTableAlias The target table alias used in the current query
      * @return string
      */
     public function getSql(DoctrineSqlFilter $sqlFilter, ClassMetadata $targetEntity, $targetTableAlias)
     {
         $sql = '';
-        /** @var SqlGeneratorInterface $expression */
         foreach ($this->expressions as $expression) {
             $sql .= ($sql !== '' ? ' OR ' : '') . $expression->getSql($sqlFilter, $targetEntity, $targetTableAlias);
         }
