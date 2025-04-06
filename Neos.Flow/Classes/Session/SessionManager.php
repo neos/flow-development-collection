@@ -27,6 +27,10 @@ use Neos\Flow\Utility\Algorithms;
 class SessionManager implements SessionManagerInterface
 {
     protected ?SessionInterface $currentSession = null;
+
+    /**
+     * @var array<string,Session>
+     */
     protected array $remoteSessions = [];
 
     public function __construct(
@@ -139,7 +143,7 @@ class SessionManager implements SessionManagerInterface
      * Returns all sessions which are tagged by the specified tag.
      *
      * @param string $tag A valid Cache Frontend tag
-     * @return array A collection of Session objects or an empty array if tag did not match
+     * @return array<SessionInterface> A collection of Session objects or an empty array if tag did not match
      * @throws NotSupportedByBackendException
      * @api
      */
@@ -195,10 +199,8 @@ class SessionManager implements SessionManagerInterface
         foreach ($this->sessionMetaDataStore->retrieveAll() as $sessionMetadata) {
             $lastActivitySecondsAgo = $now - $sessionMetadata->lastActivityTimestamp;
             if ($lastActivitySecondsAgo > $this->inactivityTimeout) {
-                if ($sessionMetadata->lastActivityTimestamp !== null) {
-                    $this->sessionKeyValueStore->remove($sessionMetadata->storageIdentifier);
-                    $sessionRemovalCount++;
-                }
+                $this->sessionKeyValueStore->remove($sessionMetadata->storageIdentifier);
+                $sessionRemovalCount++;
                 $this->sessionMetaDataStore->remove($sessionMetadata);
             }
             if ($sessionRemovalCount >= $this->garbageCollectionMaximumPerRun) {
@@ -223,7 +225,7 @@ class SessionManager implements SessionManagerInterface
     public function shutdownObject(): void
     {
         if (str_contains((string)$this->garbageCollectionProbability, '.')) {
-            $decimals = strlen(strrchr((string)$this->garbageCollectionProbability, '.')) - 1;
+            $decimals = strlen(strrchr((string)$this->garbageCollectionProbability, '.') ?: '') - 1;
             $factor = $decimals * 10;
         } else {
             $factor = 1;

@@ -72,6 +72,9 @@ class SessionKeyValueStore
     {
         $entryIdentifier = $this->createEntryIdentifier($storageIdentifier, $key);
         $serializedValue = ($this->useIgBinary === true) ? igbinary_serialize($value) : serialize($value);
+        if (is_null($serializedValue)) {
+            throw new \Exception('Failed to serialize value', 1743874462);
+        }
         $valueHash = md5($serializedValue);
         $debounceHash = $this->writeDebounceHashes[$storageIdentifier->value][$key] ?? null;
         if ($debounceHash !== null && $debounceHash === $valueHash) {
@@ -90,7 +93,7 @@ class SessionKeyValueStore
         return $this->cache->flushByTag($storageIdentifier->value);
     }
 
-    private function createEntryIdentifier(StorageIdentifier $storageIdentifier, $key): string
+    private function createEntryIdentifier(StorageIdentifier $storageIdentifier, string $key): string
     {
         return $storageIdentifier->value . md5($key);
     }
