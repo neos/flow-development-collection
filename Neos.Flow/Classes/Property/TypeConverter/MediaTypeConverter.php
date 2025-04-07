@@ -48,9 +48,9 @@ class MediaTypeConverter extends AbstractTypeConverter implements MediaTypeConve
      *
      * @param string $source the raw request body
      * @param string $targetType must be "array"
-     * @param array $convertedChildProperties
+     * @param array<string,mixed> $convertedChildProperties
      * @param PropertyMappingConfigurationInterface|null $configuration
-     * @return array|string|integer Note that this TypeConverter may return a non-array in case of JSON media type, even though he declares to only convert to array
+     * @return array<mixed>|string|integer Note that this TypeConverter may return a non-array in case of JSON media type, even though he declares to only convert to array
      * @api
      */
     public function convertFrom($source, $targetType, array $convertedChildProperties = [], ?PropertyMappingConfigurationInterface $configuration = null)
@@ -71,13 +71,13 @@ class MediaTypeConverter extends AbstractTypeConverter implements MediaTypeConve
      *
      * @param string $requestBody the raw request body
      * @param string $mediaType the configured media type (for example "application/json")
-     * @return array|string|integer
+     * @return array<mixed>|string|integer
      * @api
      */
     protected function convertMediaType($requestBody, $mediaType)
     {
         $mediaTypeParts = MediaTypes::parseMediaType($mediaType);
-        if (!isset($mediaTypeParts['subtype']) || $mediaTypeParts['subtype'] === '') {
+        if ($mediaTypeParts['subtype'] === '') {
             return [];
         }
         $result = [];

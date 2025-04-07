@@ -53,7 +53,7 @@ class PropertyMapper
      * 3. Dimension: Priority
      * Value: Type Converter instance
      *
-     * @var array
+     * @var array<string,array<string,array<int,class-string<TypeConverterInterface>>>>
      */
     protected $typeConverters = [];
 
@@ -85,7 +85,7 @@ class PropertyMapper
      * Returns all class names implementing the TypeConverterInterface.
      *
      * @param ObjectManagerInterface $objectManager
-     * @return array Array of type converter implementations
+     * @return array<class-string<TypeConverterInterface>> Array of type converter implementations
      * @Flow\CompileStatic
      */
     public static function getTypeConverterImplementationClassNames($objectManager)
@@ -123,9 +123,10 @@ class PropertyMapper
             }
 
             return $result;
-        } catch (SecurityException $exception) {
+        } catch (SecurityException $exception) { /** @phpstan-ignore catch.neverThrown (AOP I guess) */
             throw $exception;
         } catch (\Exception $exception) {
+            /** @phpstan-ignore greater.alwaysFalse (Not sure about this tbh) */
             throw new PropertyException('Could not convert target type "' . $targetType . '"' . (count($currentPropertyPath) > 0 ? ', at property path "' . implode('.', $currentPropertyPath) . '"' : '') . ': ' . $exception->getMessage(), 1297759968, $exception);
         }
     }
@@ -147,7 +148,7 @@ class PropertyMapper
      * @param mixed $source the source data to map. MUST be a simple type, NO object allowed!
      * @param string $targetType The type of the target; can be either a class name or a simple type.
      * @param PropertyMappingConfigurationInterface $configuration Configuration for the property mapping.
-     * @param array $currentPropertyPath The property path currently being mapped; used for knowing the context in case an exception is thrown.
+     * @param array<int,string> $currentPropertyPath The property path currently being mapped; used for knowing the context in case an exception is thrown.
      * @return mixed an instance of $targetType
      * @throws Exception\TypeConverterException
      * @throws Exception\InvalidPropertyMappingConfigurationException
@@ -174,10 +175,6 @@ class PropertyMapper
 
         $typeConverter = $this->findTypeConverter($source, $targetType, $configuration);
         $targetType = $typeConverter->getTargetTypeForSource($source, $targetType, $configuration);
-
-        if (!is_object($typeConverter) || !($typeConverter instanceof TypeConverterInterface)) {
-            throw new Exception\TypeConverterException('Type converter for "' . $source . '" -> "' . $targetType . '" not found.');
-        }
 
         $convertedChildProperties = [];
         foreach ($typeConverter->getSourceChildPropertiesToBeConverted($source) as $sourcePropertyName => $sourcePropertyValue) {
@@ -232,9 +229,6 @@ class PropertyMapper
             return $configuration->getTypeConverter();
         }
 
-        if (!is_string($targetType)) {
-            throw new Exception\InvalidTargetException('The target type was no string, but of type "' . gettype($targetType) . '"', 1297941727);
-        }
         $normalizedTargetType = TypeHandling::normalizeType($targetType);
         $truncatedTargetType = TypeHandling::truncateElementType($normalizedTargetType);
         $converter = null;
@@ -296,7 +290,7 @@ class PropertyMapper
             }
         }
 
-        $converters = $this->getConvertersForInterfaces($convertersForSource, class_implements($targetClass));
+        $converters = $this->getConvertersForInterfaces($convertersForSource, class_implements($targetClass) ?: []);
         $converter = $this->findEligibleConverterWithHighestPriority($converters, $source, $targetType);
 
         if ($converter !== null) {
@@ -341,9 +335,9 @@ class PropertyMapper
     }
 
     /**
-     * @param array $convertersForSource
-     * @param array $interfaceNames
-     * @return array
+     * @param array<string,array<int,class-string<TypeConverterInterface>>> $convertersForSource
+     * @param array<class-string> $interfaceNames
+     * @return array<int,class-string<TypeConverterInterface>>
      * @throws DuplicateTypeConverterException
      */
     protected function getConvertersForInterfaces(array $convertersForSource, array $interfaceNames)
@@ -353,7 +347,7 @@ class PropertyMapper
             if (isset($convertersForSource[$implementedInterface])) {
                 foreach ($convertersForSource[$implementedInterface] as $priority => $converter) {
                     if (isset($convertersForInterface[$priority])) {
-                        throw new DuplicateTypeConverterException('There exist at least two converters which handle the conversion to an interface with priority "' . $priority . '". ' . get_class($convertersForInterface[$priority]) . ' and ' . get_class($converter), 1297951338);
+                        throw new DuplicateTypeConverterException('There exist at least two converters which handle the conversion to an interface with priority "' . $priority . '". ' . $convertersForInterface[$priority] . ' and ' . $converter, 1297951338);
                     }
                     $convertersForInterface[$priority] = $converter;
                 }
@@ -367,7 +361,7 @@ class PropertyMapper
      * Determine the type of the source data, or throw an exception if source was an unsupported format.
      *
      * @param mixed $source
-     * @return array Possible source types (single value for simple typed source, multiple values for object source)
+     * @return array<string> Possible source types (single value for simple typed source, multiple values for object source)
      * @throws Exception\InvalidSourceException
      */
     protected function determineSourceTypes($source)
@@ -396,7 +390,7 @@ class PropertyMapper
     /**
      * Collects all TypeConverter implementations in a multi-dimensional array with source and target types.
      *
-     * @return array
+     * @return array<string,array<string,array<int,class-string<TypeConverterInterface>>>>
      * @throws Exception\DuplicateTypeConverterException
      * @see getTypeConverters
      */
@@ -405,7 +399,6 @@ class PropertyMapper
         $typeConverterMap = [];
         $typeConverterClassNames = static::getTypeConverterImplementationClassNames($this->objectManager);
         foreach ($typeConverterClassNames as $typeConverterClassName) {
-            /** @var TypeConverterInterface $typeConverter */
             $typeConverter = $this->objectManager->get($typeConverterClassName);
             foreach ($typeConverter->getSupportedSourceTypes() as $supportedSourceType) {
                 $normalizedSourceType = TypeHandling::normalizeType($supportedSourceType);
@@ -430,7 +423,7 @@ class PropertyMapper
      * 3. Dimension: Priority
      * Value: Type Converter instance
      *
-     * @return array
+     * @return array<string,array<string,array<int,class-string<TypeConverterInterface>>>>
      */
     public function getTypeConverters()
     {

@@ -114,7 +114,7 @@ class PersistentObjectConverter extends ObjectConverter
     /**
      * The type of a property is determined by the reflection service.
      *
-     * @param string $targetType
+     * @param class-string $targetType
      * @param string $propertyName
      * @param PropertyMappingConfigurationInterface $configuration
      * @return string
@@ -128,6 +128,9 @@ class PersistentObjectConverter extends ObjectConverter
         }
 
         $schema = $this->reflectionService->getClassSchema($targetType);
+        if (!$schema) {
+            throw new InvalidTargetException('Schema for target object of type "' . $targetType . '" not found.', 1744057928);
+        }
         $setterMethodName = ObjectAccess::buildSetterMethodName($propertyName);
         $constructorParameters = $this->reflectionService->getMethodParameters($targetType, '__construct');
 
@@ -154,7 +157,7 @@ class PersistentObjectConverter extends ObjectConverter
      *
      * @param mixed $source
      * @param string $targetType
-     * @param array $convertedChildProperties
+     * @param array<string,mixed> $convertedChildProperties
      * @param PropertyMappingConfigurationInterface $configuration
      * @return object|TargetNotFoundError|null the converted entity/value object or an instance of TargetNotFoundError if the object could not be resolved
      * @throws \InvalidArgumentException|InvalidTargetException
@@ -191,6 +194,7 @@ class PersistentObjectConverter extends ObjectConverter
 
         foreach ($convertedChildProperties as $propertyName => $propertyValue) {
             // We need to check for "immutable" constructor arguments that have no setter and remove them.
+            /** @var object $object */
             if (isset($objectConstructorArguments[$propertyName]) && !ObjectAccess::isPropertySettable($object, $propertyName)) {
                 $currentPropertyValue = ObjectAccess::getProperty($object, $propertyName);
                 if ($currentPropertyValue === $propertyValue) {
@@ -217,15 +221,16 @@ class PersistentObjectConverter extends ObjectConverter
             }
         }
 
+        /** @var object $object */
         return $object;
     }
 
     /**
      * Handle the case if $source is an array.
      *
-     * @param array $source
+     * @param array<mixed> $source
      * @param class-string $targetType
-     * @param array $convertedChildProperties
+     * @param array<string,mixed> &$convertedChildProperties
      * @param PropertyMappingConfigurationInterface|null $configuration
      * @return object|TargetNotFoundError
      * @throws InvalidPropertyMappingConfigurationException
@@ -267,7 +272,7 @@ class PersistentObjectConverter extends ObjectConverter
      * Set the given $identity on the created $object.
      *
      * @param object $object
-     * @param string|array $identity
+     * @param string|array<mixed> $identity
      * @return void
      * @todo set identity properly if it is composite or custom property
      */
@@ -300,7 +305,7 @@ class PersistentObjectConverter extends ObjectConverter
     /**
      * Finds an object from the repository by searching for its identity properties.
      *
-     * @param array $identityProperties Property names and values to search for
+     * @param array<string,mixed> $identityProperties Property names and values to search for
      * @param string $type The object type to look for
      * @return object|null Either the object matching the identity or NULL if no object was found
      * @throws DuplicateObjectException if more than one object was found
@@ -311,7 +316,7 @@ class PersistentObjectConverter extends ObjectConverter
         $classSchema = $this->reflectionService->getClassSchema($type);
 
         $equals = [];
-        foreach ($classSchema->getIdentityProperties() as $propertyName => $propertyType) {
+        foreach ($classSchema?->getIdentityProperties() ?: [] as $propertyName => $propertyType) {
             if (isset($identityProperties[$propertyName])) {
                 if ($propertyType === 'string') {
                     $equals[] = $query->equals($propertyName, $identityProperties[$propertyName], false);

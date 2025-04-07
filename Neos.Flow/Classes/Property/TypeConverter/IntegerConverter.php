@@ -47,7 +47,7 @@ class IntegerConverter extends AbstractTypeConverter
      *
      * @param int|string|\DateTimeInterface|null $source
      * @param string $targetType
-     * @param array $convertedChildProperties
+     * @param array<string,mixed> $convertedChildProperties
      * @param PropertyMappingConfigurationInterface|null $configuration
      * @return integer|null|Error
      * @api

@@ -49,9 +49,9 @@ class CollectionConverter extends AbstractTypeConverter
      *
      * @param mixed $source
      * @param string $targetType
-     * @param array $convertedChildProperties
+     * @param array<string,mixed> $convertedChildProperties
      * @param PropertyMappingConfigurationInterface|null $configuration
-     * @return ArrayCollection
+     * @return ArrayCollection<string,mixed>
      * @api
      */
     public function convertFrom($source, $targetType, array $convertedChildProperties = [], ?PropertyMappingConfigurationInterface $configuration = null)
@@ -63,7 +63,7 @@ class CollectionConverter extends AbstractTypeConverter
      * Returns the source, if it is an array, otherwise an empty array.
      *
      * @param mixed $source
-     * @return array
+     * @return array<mixed>
      * @api
      */
     public function getSourceChildPropertiesToBeConverted($source)
