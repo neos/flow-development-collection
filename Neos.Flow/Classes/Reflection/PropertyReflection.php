@@ -21,7 +21,7 @@ use Neos\Flow\Annotations as Flow;
 class PropertyReflection extends \ReflectionProperty
 {
     /**
-     * @var DocCommentParser An instance of the doc comment parser
+     * @var ?DocCommentParser An instance of the doc comment parser
      */
     protected $docCommentParser;
 
@@ -58,7 +58,7 @@ class PropertyReflection extends \ReflectionProperty
     /**
      * Returns an array of tags and their values
      *
-     * @return array Tags and values
+     * @return array<string,array<int,string>> Tags and values
      */
     public function getTagsValues()
     {
@@ -69,7 +69,7 @@ class PropertyReflection extends \ReflectionProperty
      * Returns the values of the specified tag
      *
      * @param string $tag
-     * @return array Values of the given tag
+     * @return array<int,string> Values of the given tag
      */
     public function getTagValues($tag)
     {
@@ -137,8 +137,11 @@ class PropertyReflection extends \ReflectionProperty
     protected function getDocCommentParser()
     {
         if (!is_object($this->docCommentParser)) {
-            $this->docCommentParser = new DocCommentParser;
-            $this->docCommentParser->parseDocComment($this->getDocComment());
+            $this->docCommentParser = new DocCommentParser();
+            $docComment = $this->getDocComment();
+            if ($docComment) {
+                $this->docCommentParser->parseDocComment($docComment);
+            }
         }
         return $this->docCommentParser;
     }

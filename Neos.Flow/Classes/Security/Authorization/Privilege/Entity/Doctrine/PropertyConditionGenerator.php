@@ -381,9 +381,6 @@ class PropertyConditionGenerator implements SqlGeneratorInterface
             $currentReferencedOperandName = $operandAlias . $joinColumn['referencedColumnName'];
             if (is_object($this->operand)) {
                 $type = TypeHandling::getTypeForValue($this->operand);
-                if ($type === false) {
-                    throw new \Exception('Could not resolve type for ' . get_debug_type($this->operand), 1743930563);
-                }
                 $operandMetadataInfo = $this->entityManager->getClassMetadata($type);
                 $currentReferencedValueOfOperand = $operandMetadataInfo->getFieldValue($this->operand, $operandMetadataInfo->getFieldForColumn($joinColumn['referencedColumnName']));
                 $this->setParameter($sqlFilter, $currentReferencedOperandName, $currentReferencedValueOfOperand, $associationMapping['type']);
@@ -391,9 +388,6 @@ class PropertyConditionGenerator implements SqlGeneratorInterface
                 foreach ($this->operandDefinition as $operandIterator => $singleOperandValue) {
                     if (is_object($singleOperandValue)) {
                         $type = TypeHandling::getTypeForValue($singleOperandValue);
-                        if ($type === false) {
-                            throw new \Exception('Could not resolve type for ' . get_debug_type($singleOperandValue), 1743930566);
-                        }
                         $operandMetadataInfo = $this->entityManager->getClassMetadata($type);
                         $currentReferencedValueOfOperand = $operandMetadataInfo->getFieldValue($singleOperandValue, $operandMetadataInfo->getFieldForColumn($joinColumn['referencedColumnName']));
                         $this->setParameter($sqlFilter, $operandIterator, $currentReferencedValueOfOperand, $associationMapping['type']);

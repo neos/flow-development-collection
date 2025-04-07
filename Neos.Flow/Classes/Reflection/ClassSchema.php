@@ -54,14 +54,20 @@ class ClassSchema
     /**
      * Properties of the class which need to be persisted
      *
-     * @var array
+     * @var array<string,array{
+     *     type: string,
+     *     elementType: ?string,
+     *     nullable: bool,
+     *     lazy: bool,
+     *     transient: bool,
+     * }>
      */
     protected $properties = [];
 
     /**
      * The properties forming the identity of an object
      *
-     * @var array
+     * @var array<string,string>
      */
     protected $identityProperties = [];
 
@@ -137,7 +143,13 @@ class ClassSchema
      * hasProperty($propertyName) before!
      *
      * @param string $propertyName
-     * @return array
+     * @return array{
+     *       type: string,
+     *       elementType: ?string,
+     *       nullable: bool,
+     *       lazy: bool,
+     *       transient: bool,
+     * }
      */
     public function getProperty($propertyName)
     {
@@ -147,7 +159,13 @@ class ClassSchema
     /**
      * Returns all properties defined in this schema
      *
-     * @return array
+     * @return array<string,array{
+     *      type: string,
+     *      elementType: ?string,
+     *      nullable: bool,
+     *      lazy: bool,
+     *      transient: bool,
+     * }>
      */
     public function getProperties()
     {
@@ -198,7 +216,7 @@ class ClassSchema
     /**
      * Set the class name of the repository managing an entity.
      *
-     * @param string $repositoryClassName
+     * @param ?string $repositoryClassName
      * @return void
      * @throws Exception\ClassSchemaConstraintViolationException
      */
@@ -211,7 +229,7 @@ class ClassSchema
     }
 
     /**
-     * @return string
+     * @return ?string
      */
     public function getRepositoryClassName()
     {
@@ -300,7 +318,7 @@ class ClassSchema
     /**
      * Gets the properties (names and types) forming the identity of an object.
      *
-     * @return array
+     * @return array<string,string>
      * @see markAsIdentityProperty()
      */
     public function getIdentityProperties()
