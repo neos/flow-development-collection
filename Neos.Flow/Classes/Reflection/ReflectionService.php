@@ -1093,7 +1093,7 @@ class ReflectionService
     /**
      * Returns the class schema for the given class
      *
-     * @param class-string|object $classNameOrObject
+     * @param string|object $classNameOrObject
      * @return ClassSchema|null
      */
     public function getClassSchema(string|object $classNameOrObject): ?ClassSchema

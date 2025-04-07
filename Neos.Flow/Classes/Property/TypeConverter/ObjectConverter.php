@@ -79,7 +79,18 @@ class ObjectConverter extends AbstractTypeConverter
     /**
      * As it is very likely that the constructor arguments are needed twice we should cache them for the request.
      *
-     * @var array
+     * @var array<class-string,array<string,array{
+     *       position: int,
+     *       optional: bool,
+     *       type: ?string,
+     *       class: ?string,
+     *       array: bool,
+     *       byReference: bool,
+     *       allowsNull: bool,
+     *       defaultValue: mixed,
+     *       scalarDeclaration: bool,
+     *       annotations: array<string,array<int,object>>,
+     *  }>>
      */
     protected $constructorReflectionFirstLevelCache = [];
 
@@ -116,7 +127,7 @@ class ObjectConverter extends AbstractTypeConverter
     /**
      * The type of a property is determined by the reflection service.
      *
-     * @param string $targetType
+     * @param class-string $targetType
      * @param string $propertyName
      * @param PropertyMappingConfigurationInterface $configuration
      * @return string|null
@@ -149,6 +160,9 @@ class ObjectConverter extends AbstractTypeConverter
                     // would not find a property mapper. It is needed because the ObjectConverter doesn't use class schemata,
                     // but reads the annotations directly.
                     $declaredType = strtok(trim(current($varTagValues), " \n\t"), " \n\t");
+                    if ($declaredType === false) {
+                        throw new \Exception('Invalid declared type', 1744058940);
+                    }
                     try {
                         $parsedType = TypeHandling::parseType($declaredType);
                     } catch (InvalidTypeException $exception) {
@@ -173,7 +187,7 @@ class ObjectConverter extends AbstractTypeConverter
      *
      * @param mixed $source
      * @param string $targetType
-     * @param array $convertedChildProperties
+     * @param array<string,mixed> $convertedChildProperties
      * @param PropertyMappingConfigurationInterface|null $configuration
      * @return object the target type
      * @throws InvalidTargetException
@@ -185,6 +199,7 @@ class ObjectConverter extends AbstractTypeConverter
         $object = $this->buildObject($convertedChildProperties, $targetType);
         foreach ($convertedChildProperties as $propertyName => $propertyValue) {
             $result = ObjectAccess::setProperty($object, $propertyName, $propertyValue);
+            /** @var object $object */
             if ($result === false) {
                 $exceptionMessage = sprintf(
                     'Property "%s" having a value of type "%s" could not be set in target object of type "%s". Make sure that the property is accessible properly, for example via an appropriate setter method.',
@@ -214,7 +229,7 @@ class ObjectConverter extends AbstractTypeConverter
     {
         $targetType = $originalTargetType;
 
-        if (is_array($source) && array_key_exists('__type', $source)) {
+        if (is_array($source) && array_key_exists('__type', $source) && is_string($source['__type'])) {
             $targetType = $source['__type'];
 
             if ($configuration === null) {
@@ -224,6 +239,7 @@ class ObjectConverter extends AbstractTypeConverter
                 throw new InvalidPropertyMappingConfigurationException('Override of target type not allowed. To enable this, you need to set the PropertyMappingConfiguration Value "CONFIGURATION_OVERRIDE_TARGET_TYPE_ALLOWED" to true.', 1317050430);
             }
 
+            /** @todo is_a is not recursive! replace with is_subclass_of or similar */
             if ($targetType !== $originalTargetType && is_a($targetType, $originalTargetType, true) === false) {
                 throw new InvalidDataTypeException('The given type "' . $targetType . '" is not a subtype of "' . $originalTargetType . '".', 1317048056);
             }
@@ -239,7 +255,7 @@ class ObjectConverter extends AbstractTypeConverter
      *
      * Furthermore, the constructor arguments are removed from $possibleConstructorArgumentValues
      *
-     * @param array &$possibleConstructorArgumentValues
+     * @param array<string,mixed> &$possibleConstructorArgumentValues
      * @param string $objectType
      * @return object The created instance
      * @throws InvalidTargetException if a required constructor argument is missing
@@ -248,6 +264,9 @@ class ObjectConverter extends AbstractTypeConverter
     {
         $constructorArguments = [];
         $className = $this->objectManager->getClassNameByObjectName($objectType);
+        if ($className === false) {
+            throw new \Exception('Invalid object type '. $objectType, 1744058576);
+        }
         $constructorSignature = $this->getConstructorArgumentsForClass($className);
         if (count($constructorSignature)) {
             foreach ($constructorSignature as $constructorArgumentName => $constructorArgumentReflection) {
@@ -256,7 +275,7 @@ class ObjectConverter extends AbstractTypeConverter
                     unset($possibleConstructorArgumentValues[$constructorArgumentName]);
                 } elseif ($constructorArgumentReflection['optional'] === true) {
                     $constructorArguments[] = $constructorArgumentReflection['defaultValue'];
-                } elseif ($this->objectManager->isRegistered($constructorArgumentReflection['type']) && $this->objectManager->getScope($constructorArgumentReflection['type']) === Configuration::SCOPE_SINGLETON) {
+                } elseif ($constructorArgumentReflection['type'] && $this->objectManager->isRegistered($constructorArgumentReflection['type']) && $this->objectManager->getScope($constructorArgumentReflection['type']) === Configuration::SCOPE_SINGLETON) {
                     $constructorArguments[] = $this->objectManager->get($constructorArgumentReflection['type']);
                 } else {
                     throw new InvalidTargetException('Missing constructor argument "' . $constructorArgumentName . '" for object of type "' . $objectType . '".', 1268734872);
@@ -272,8 +291,19 @@ class ObjectConverter extends AbstractTypeConverter
     /**
      * Get the constructor argument reflection for the given object type.
      *
-     * @param string $className
-     * @return array<array>
+     * @param class-string $className
+     * @return array<string,array{
+     *        position: int,
+     *        optional: bool,
+     *        type: ?string,
+     *        class: ?string,
+     *        array: bool,
+     *        byReference: bool,
+     *        allowsNull: bool,
+     *        defaultValue: mixed,
+     *        scalarDeclaration: bool,
+     *        annotations: array<string,array<int,object>>,
+     * }>
      */
     protected function getConstructorArgumentsForClass($className)
     {

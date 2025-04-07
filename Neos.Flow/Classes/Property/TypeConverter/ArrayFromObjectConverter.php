@@ -50,7 +50,7 @@ class ArrayFromObjectConverter extends AbstractTypeConverter
      * Convert all properties in the source array
      *
      * @param mixed $source
-     * @return array
+     * @return array<string,mixed>
      */
     public function getSourceChildPropertiesToBeConverted($source)
     {
@@ -90,7 +90,7 @@ class ArrayFromObjectConverter extends AbstractTypeConverter
      *
      * @param mixed $source
      * @param string $targetType
-     * @param array $convertedChildProperties
+     * @param array<string,mixed> $convertedChildProperties
      * @param PropertyMappingConfigurationInterface|null $configuration
      * @return mixed|Error the target type, or an error object if a user-error occurred
      * @api

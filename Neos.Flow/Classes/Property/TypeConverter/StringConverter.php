@@ -94,7 +94,7 @@ class StringConverter extends AbstractTypeConverter
      *
      * @param mixed $source
      * @param string $targetType
-     * @param array $convertedChildProperties
+     * @param array<string,mixed> $convertedChildProperties
      * @param PropertyMappingConfigurationInterface|null $configuration
      * @return string
      * @throws InvalidPropertyMappingConfigurationException
@@ -113,7 +113,7 @@ class StringConverter extends AbstractTypeConverter
                 case self::ARRAY_FORMAT_CSV:
                     return implode($this->getCsvDelimiter($configuration), $source);
                 case self::ARRAY_FORMAT_JSON:
-                    return json_encode($source);
+                    return json_encode($source, JSON_THROW_ON_ERROR);
                 default:
                     throw new InvalidPropertyMappingConfigurationException(sprintf('Invalid array export format "%s" given', $this->getArrayFormat($configuration)), 1404317220);
             }
