@@ -17,6 +17,12 @@ use Neos\Utility\Files;
 
 /**
  * The generic base package that represents third party packages
+ *
+ * @phpstan-type AutoloadConfiguration array{
+ *     namespace: string,
+ *     classPath: string,
+ *     mappingType: string,
+ * }
  */
 class GenericPackage implements PackageInterface, PackageKeyAwareInterface
 {
@@ -54,12 +60,12 @@ class GenericPackage implements PackageInterface, PackageKeyAwareInterface
     protected $autoloadTypes;
 
     /**
-     * @var array
+     * @var array<string,AutoloadConfiguration>
      */
     protected $autoloadConfiguration;
 
     /**
-     * @var array
+     * @var array<int,AutoloadConfiguration>
      */
     protected $flattenedAutoloadConfiguration;
 
@@ -69,7 +75,7 @@ class GenericPackage implements PackageInterface, PackageKeyAwareInterface
      * @param string $packageKey Key of this package
      * @param string $composerName
      * @param string $packagePath Absolute path to the location of the package's composer manifest
-     * @param array $autoloadConfiguration
+     * @param array<string,AutoloadConfiguration> $autoloadConfiguration
      */
     public function __construct($packageKey, $composerName, $packagePath, array $autoloadConfiguration = [])
     {
@@ -82,7 +88,7 @@ class GenericPackage implements PackageInterface, PackageKeyAwareInterface
     /**
      * Returns the array of filenames of the class files
      *
-     * @return iterable A Generator for class names (key) and their filename, including the absolute path.
+     * @return iterable<string,string> A Generator for class names (key) and their filename, including the absolute path.
      */
     public function getClassFiles()
     {
@@ -121,7 +127,7 @@ class GenericPackage implements PackageInterface, PackageKeyAwareInterface
     /**
      * Returns array of all declared autoload namespaces contained in this package
      *
-     * @return array
+     * @return array<string>
      * @api
      */
     public function getNamespaces()
@@ -157,7 +163,7 @@ class GenericPackage implements PackageInterface, PackageKeyAwareInterface
     }
 
     /**
-     * @return array
+     * @return array<string>
      */
     public function getAutoloadPaths()
     {
@@ -169,9 +175,9 @@ class GenericPackage implements PackageInterface, PackageKeyAwareInterface
     /**
      * Get the autoload configuration for this package. Any valid composer "autoload" configuration.
      *
-     * @return array
+     * @return array<string,AutoloadConfiguration>
      */
-    public function getAutoloadConfiguration()
+    public function getAutoloadConfiguration(): array
     {
         return $this->autoloadConfiguration;
     }
@@ -179,7 +185,7 @@ class GenericPackage implements PackageInterface, PackageKeyAwareInterface
     /**
      * Get a flattened array of autoload configurations that have a predictable pattern (PSR-0, PSR-4)
      *
-     * @return array Keys: "namespace", "classPath", "mappingType"
+     * @return array<int,AutoloadConfiguration>
      */
     public function getFlattenedAutoloadConfiguration()
     {

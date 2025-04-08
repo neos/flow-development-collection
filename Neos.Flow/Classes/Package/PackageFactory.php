@@ -27,7 +27,7 @@ class PackageFactory
      * @param string $packagePath path to package, relative to base path
      * @param FlowPackageKey $packageKey key / name of the package
      * @param string $composerName
-     * @param array $autoloadConfiguration Autoload configuration as defined in composer.json
+     * @param array<mixed> $autoloadConfiguration Autoload configuration as defined in composer.json
      * @param array{className: class-string<PackageInterface>, pathAndFilename: string}|null $packageClassInformation
      * @return PackageInterface&PackageKeyAwareInterface
      * @throws Exception\CorruptPackageException
@@ -49,9 +49,6 @@ class PackageFactory
 
         /** dynamic construction {@see GenericPackage::__construct} */
         $package = new $packageClassName($packageKey->value, $composerName, $absolutePackagePath, $autoloadConfiguration);
-        if (!$package instanceof PackageInterface) {
-            throw new Exception\CorruptPackageException(sprintf('The package class of package "%s" does not implement \Neos\Flow\Package\PackageInterface. Check the file "%s".', $packageKey->value, $packageClassInformation['pathAndFilename']), 1427193370);
-        }
         if (!$package instanceof PackageKeyAwareInterface) {
             throw new Exception\CorruptPackageException(sprintf('The package class of package "%s" does not implement \Neos\Flow\Package\PackageKeyAwareInterface. Check the file "%s".', $packageKey->value, $packageClassInformation['pathAndFilename']), 1711665156);
         }
@@ -100,8 +97,11 @@ class PackageFactory
         $absolutePackageClassPath = Files::concatenatePaths([$absolutePackagePath, $packageClassPathAndFilename]);
 
         $packageClassContents = file_get_contents($absolutePackageClassPath);
+        if (!$packageClassContents) {
+            throw new \Exception('Could not read package class file', 1744142431);
+        }
         $packageClassName = (new PhpAnalyzer($packageClassContents))->extractFullyQualifiedClassName();
-        if ($packageClassName === null) {
+        if ($packageClassName === null || !is_subclass_of($packageClassName, PackageInterface::class)) {
             throw new Exception\CorruptPackageException(sprintf('The package "%s" does not contain a valid package class. Check if the file "%s" really contains a class.', $packageKey->value, $packageClassPathAndFilename), 1327587091);
         }
 

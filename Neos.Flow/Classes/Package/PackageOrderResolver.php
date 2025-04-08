@@ -3,21 +3,23 @@ namespace Neos\Flow\Package;
 
 /**
  * A simple package dependency order solver. Just sorts by simple dependencies, does no checking or versions.
+ *
+ * @phpstan-import-type ComposerManifest from PackageManager
  */
 class PackageOrderResolver
 {
     /**
-     * @var array
+     * @var array<string,ComposerManifest>
      */
     protected $manifestData;
 
     /**
-     * @var array
+     * @var array<string,array<string,mixed>>
      */
     protected $packageStates;
 
     /**
-     * @var array
+     * @var array<mixed>
      */
     protected $sortedPackages;
 
@@ -25,13 +27,13 @@ class PackageOrderResolver
      * Array with state information of still unsorted packages.
      * The key is a package key, the value is "-1" if it is on stack for cycle detection; otherwise it is the number of times it was attempted to sort it already.
      *
-     * @var array
+     * @var array<string,int>
      */
     protected $unsortedPackages;
 
     /**
-     * @param array $packages The array of package states to order by dependencies
-     * @param array $manifestData The manifests of all given packages for reading dependencies
+     * @param array<string,array<string,mixed>> $packages The array of package states to order by dependencies
+     * @param array<string,ComposerManifest> $manifestData The manifests of all given packages for reading dependencies
      */
     public function __construct(array $packages, array $manifestData)
     {
@@ -43,7 +45,7 @@ class PackageOrderResolver
     /**
      * Sorts the packages and returns the sorted packages array
      *
-     * @return array
+     * @return array<mixed>
      */
     public function sort()
     {
@@ -100,7 +102,6 @@ class PackageOrderResolver
             $unresolvedDependencies += $this->sortListBefore($packageKey, $sortingConfiguration);
         }
 
-        /** @var array $packageState */
         $packageState = $this->packageStates[$packageKey];
         $this->unsortedPackages[$packageKey] = $iterationForPackage + 1;
         if ($unresolvedDependencies === 0) {
