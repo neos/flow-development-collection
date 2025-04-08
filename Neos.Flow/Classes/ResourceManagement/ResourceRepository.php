@@ -73,7 +73,7 @@ class ResourceRepository extends Repository
      */
     public function add($object): void
     {
-        if (!$object instanceof PersistentResource) {
+        if (!($object instanceof PersistentResource)) {
             throw new \Exception('Can only add objects of type PersistentResource', 1743969457);
         }
         $this->persistenceManager->allowObject($object);
@@ -94,7 +94,7 @@ class ResourceRepository extends Repository
      */
     public function remove($object): void
     {
-        if (!$object instanceof PersistentResource) {
+        if (!($object instanceof PersistentResource)) {
             throw new \Exception('Can only remove objects of type PersistentResource', 1743969438);
         }
         // Intercept a second call for the same PersistentResource object because it might cause an endless loop caused by

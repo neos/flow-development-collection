@@ -30,7 +30,7 @@ class AccountRepository extends Repository
     const ENTITY_CLASSNAME = Account::class;
 
     /**
-     * @var array<string,string>
+     * @var array<string,QueryInterface::ORDER_ASCENDING|QueryInterface::ORDER_DESCENDING>
      */
     protected $defaultOrderings = ['creationDate' => QueryInterface::ORDER_DESCENDING];
 
@@ -51,7 +51,7 @@ class AccountRepository extends Repository
      */
     public function remove($object): void
     {
-        if (!$object instanceof Account) {
+        if (!($object instanceof Account)) {
             throw new \InvalidArgumentException('Can only remove account objects.', 1743961393);
         }
         parent::remove($object);

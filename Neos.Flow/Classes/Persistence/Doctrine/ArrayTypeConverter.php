@@ -63,16 +63,15 @@ class ArrayTypeConverter extends AbstractTypeConverter
      *
      * @param mixed $source
      * @param string $targetType
-     * @param array $convertedChildProperties
-     * @param PropertyMappingConfigurationInterface $configuration
-     * @return mixed|Error the target type, or an error object if a user-error occurred
+     * @param array<string,mixed> $convertedChildProperties
+     * @return array<mixed> the target type, or an error object if a user-error occurred
      * @throws TypeConverterException thrown in case a developer error occurred
      * @api
      */
     public function convertFrom($source, $targetType, array $convertedChildProperties = [], ?PropertyMappingConfigurationInterface $configuration = null)
     {
         $result = [];
-        $convertElements = $configuration->getConfigurationValue(ArrayTypeConverter::class, self::CONFIGURATION_CONVERT_ELEMENTS);
+        $convertElements = $configuration?->getConfigurationValue(ArrayTypeConverter::class, self::CONFIGURATION_CONVERT_ELEMENTS) ?: true;
         foreach ($source as $element) {
             if ($convertElements === true) {
                 $element = $this->propertyMapper->convert($element, 'array', $configuration);

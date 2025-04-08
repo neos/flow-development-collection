@@ -58,7 +58,7 @@ class EmptyQueryResult implements QueryResultInterface
     /**
      * Returns an empty array
      *
-     * @return array
+     * @return array<mixed>
      * @api
      */
     public function toArray(): array
@@ -68,6 +68,7 @@ class EmptyQueryResult implements QueryResultInterface
 
     public function current(): mixed
     {
+        /** @phpstan-ignore return.type (I don't see any "object" requirement here) */
         return null;
     }
 

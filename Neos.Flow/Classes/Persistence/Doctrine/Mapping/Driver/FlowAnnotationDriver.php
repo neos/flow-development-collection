@@ -14,6 +14,7 @@ namespace Neos\Flow\Persistence\Doctrine\Mapping\Driver;
 use Doctrine\Common\Annotations\AnnotationReader;
 use Doctrine\Common\Annotations\IndexedReader;
 use Doctrine\Common\Annotations\Reader;
+use Doctrine\ORM\Mapping\MappingAttribute;
 use Doctrine\Persistence\Mapping\ClassMetadata;
 use Doctrine\Persistence\Mapping\Driver\MappingDriver as DoctrineMappingDriverInterface;
 use Doctrine\ORM\EntityManagerInterface;
@@ -70,7 +71,7 @@ class FlowAnnotationDriver implements DoctrineMappingDriverInterface, PointcutFi
     protected $entityManager;
 
     /**
-     * @var array
+     * @var ?array<int,class-string>
      */
     protected $classNames;
 
@@ -126,7 +127,7 @@ class FlowAnnotationDriver implements DoctrineMappingDriverInterface, PointcutFi
     /**
      * Check for $className being an aggregate root.
      *
-     * @param string $className
+     * @param class-string $className
      * @param string $propertySourceHint
      * @return boolean
      * @throws ClassSchemaNotFoundException
@@ -146,7 +147,7 @@ class FlowAnnotationDriver implements DoctrineMappingDriverInterface, PointcutFi
     /**
      * Check for $className being a value object.
      *
-     * @param string $className
+     * @param class-string $className
      * @param string $propertySourceHint
      * @return boolean
      * @throws ClassSchemaNotFoundException
@@ -166,8 +167,8 @@ class FlowAnnotationDriver implements DoctrineMappingDriverInterface, PointcutFi
     /**
      * Loads the metadata for the specified class into the provided container.
      *
-     * @param string $className
-     * @param ClassMetadata $metadata
+     * @param class-string $className
+     * @param ClassMetadata<object> $metadata
      * @return void
      * @throws ORM\MappingException
      * @throws \UnexpectedValueException
@@ -178,9 +179,8 @@ class FlowAnnotationDriver implements DoctrineMappingDriverInterface, PointcutFi
          * This is the actual type we have at this point, but we cannot change the
          * signature due to inheritance.
          *
-         * @var ORM\ClassMetadata $metadata
+         * @var ORM\ClassMetadata<object> $metadata
          */
-
         try {
             $class = $metadata->getReflectionClass();
             $classSchema = $this->getClassSchema($class->getName());
@@ -191,24 +191,28 @@ class FlowAnnotationDriver implements DoctrineMappingDriverInterface, PointcutFi
 
         // Evaluate Entity annotation
         if (isset($classAnnotations[ORM\MappedSuperclass::class])) {
+            /** @var ORM\MappedSuperclass $mappedSuperclassAnnotation */
             $mappedSuperclassAnnotation = $classAnnotations[ORM\MappedSuperclass::class];
             if ($mappedSuperclassAnnotation->repositoryClass !== null) {
                 $metadata->setCustomRepositoryClass($mappedSuperclassAnnotation->repositoryClass);
             }
             $metadata->isMappedSuperclass = true;
         } elseif (isset($classAnnotations[Flow\Entity::class]) || isset($classAnnotations[ORM\Entity::class])) {
-            $entityAnnotation = isset($classAnnotations[Flow\Entity::class]) ? $classAnnotations[Flow\Entity::class] : $classAnnotations[ORM\Entity::class];
-            if ($entityAnnotation->repositoryClass !== null) {
+            /** @var Flow\Entity|ORM\Entity<object> $entityAnnotation */
+            $entityAnnotation = $classAnnotations[Flow\Entity::class] ?? $classAnnotations[ORM\Entity::class];
+            if ($entityAnnotation->repositoryClass !== null && is_subclass_of($entityAnnotation->repositoryClass, EntityRepository::class)) {
                 $metadata->setCustomRepositoryClass($entityAnnotation->repositoryClass);
             } elseif ($classSchema->getRepositoryClassName() !== null) {
-                if ($this->reflectionService->isClassImplementationOf($classSchema->getRepositoryClassName(), EntityRepository::class)) {
-                    $metadata->setCustomRepositoryClass($classSchema->getRepositoryClassName());
+                $repositoryClassName = $classSchema->getRepositoryClassName();
+                if (is_subclass_of($repositoryClassName, EntityRepository::class)) {
+                    $metadata->setCustomRepositoryClass($repositoryClassName);
                 }
             }
             if ($entityAnnotation->readOnly) {
                 $metadata->markReadOnly();
             }
         } elseif (isset($classAnnotations[Flow\ValueObject::class])) {
+            /** @var Flow\ValueObject $valueObjectAnnotation */
             $valueObjectAnnotation = $classAnnotations[Flow\ValueObject::class];
             if ($valueObjectAnnotation->embedded === true) {
                 $metadata->isEmbeddedClass = true;
@@ -225,6 +229,7 @@ class FlowAnnotationDriver implements DoctrineMappingDriverInterface, PointcutFi
         // Evaluate Table annotation
         $primaryTable = [];
         if (isset($classAnnotations[ORM\Table::class])) {
+            /** @var ORM\Table $tableAnnotation */
             $tableAnnotation = $classAnnotations[ORM\Table::class];
             $primaryTable = [
                 'name' => $tableAnnotation->name,
@@ -276,6 +281,7 @@ class FlowAnnotationDriver implements DoctrineMappingDriverInterface, PointcutFi
 
         // Evaluate @Cache annotation
         if (isset($classAnnotations[ORM\Cache::class])) {
+            /** @var ORM\Cache $cacheAnnotation */
             $cacheAnnotation = $classAnnotations[ORM\Cache::class];
             $cacheMap   = [
                 'region' => $cacheAnnotation->region,
@@ -287,6 +293,7 @@ class FlowAnnotationDriver implements DoctrineMappingDriverInterface, PointcutFi
 
         // Evaluate NamedNativeQueries annotation
         if (isset($classAnnotations[ORM\NamedNativeQueries::class])) {
+            /** @var ORM\NamedNativeQueries $namedNativeQueriesAnnotation */
             $namedNativeQueriesAnnotation = $classAnnotations[ORM\NamedNativeQueries::class];
 
             foreach ($namedNativeQueriesAnnotation->value as $namedNativeQuery) {
@@ -301,6 +308,7 @@ class FlowAnnotationDriver implements DoctrineMappingDriverInterface, PointcutFi
 
         // Evaluate SqlResultSetMappings annotation
         if (isset($classAnnotations[ORM\SqlResultSetMappings::class])) {
+            /** @var ORM\SqlResultSetMappings $sqlResultSetMappingsAnnotation */
             $sqlResultSetMappingsAnnotation = $classAnnotations[ORM\SqlResultSetMappings::class];
 
             foreach ($sqlResultSetMappingsAnnotation->value as $resultSetMapping) {
@@ -339,16 +347,10 @@ class FlowAnnotationDriver implements DoctrineMappingDriverInterface, PointcutFi
 
         // Evaluate NamedQueries annotation
         if (isset($classAnnotations[ORM\NamedQueries::class])) {
+            /** @var ORM\NamedQueries $namedQueriesAnnotation */
             $namedQueriesAnnotation = $classAnnotations[ORM\NamedQueries::class];
 
-            if (!is_array($namedQueriesAnnotation->value)) {
-                throw new \UnexpectedValueException('@ORM\NamedQueries should contain an array of @ORM\NamedQuery annotations.');
-            }
-
             foreach ($namedQueriesAnnotation->value as $namedQuery) {
-                if (!($namedQuery instanceof ORM\NamedQuery)) {
-                    throw new \UnexpectedValueException('@ORM\NamedQueries should contain an array of @ORM\NamedQuery annotations.');
-                }
                 $metadata->addNamedQuery([
                     'name' => $namedQuery->name,
                     'query' => $namedQuery->query
@@ -358,17 +360,19 @@ class FlowAnnotationDriver implements DoctrineMappingDriverInterface, PointcutFi
 
         // Evaluate InheritanceType annotation
         if (isset($classAnnotations[ORM\InheritanceType::class])) {
+            /** @var ORM\InheritanceType $inheritanceTypeAnnotation */
             $inheritanceTypeAnnotation = $classAnnotations[ORM\InheritanceType::class];
             $inheritanceType = constant('Doctrine\ORM\Mapping\ClassMetadata::INHERITANCE_TYPE_' . strtoupper($inheritanceTypeAnnotation->value));
 
             if ($inheritanceType !== ORM\ClassMetadata::INHERITANCE_TYPE_NONE) {
                 // Evaluate DiscriminatorColumn annotation
                 if (isset($classAnnotations[ORM\DiscriminatorColumn::class])) {
+                    /** @var ORM\DiscriminatorColumn $discriminatorColumnAnnotation */
                     $discriminatorColumnAnnotation = $classAnnotations[ORM\DiscriminatorColumn::class];
                     $discriminatorColumn = [
                         'name' => $discriminatorColumnAnnotation->name,
-                        'type' => $discriminatorColumnAnnotation->type,
-                        'length' => $discriminatorColumnAnnotation->length,
+                        'type' => $discriminatorColumnAnnotation->type ?: throw new \Exception('Cannot use untyped discriminator column', 1744137386),
+                        'length' => $discriminatorColumnAnnotation->length ?: throw new \Exception('Cannot use discriminator column without length', 1744137404),
                         'columnDefinition' => $discriminatorColumnAnnotation->columnDefinition
                     ];
                 } else {
@@ -379,6 +383,7 @@ class FlowAnnotationDriver implements DoctrineMappingDriverInterface, PointcutFi
 
                 // Evaluate DiscriminatorMap annotation
                 if (isset($classAnnotations[ORM\DiscriminatorMap::class])) {
+                    /** @var ORM\DiscriminatorMap $discriminatorMapAnnotation */
                     $discriminatorMapAnnotation = $classAnnotations[ORM\DiscriminatorMap::class];
                     $discriminatorMap = $discriminatorMapAnnotation->value;
                 } else {
@@ -407,8 +412,11 @@ class FlowAnnotationDriver implements DoctrineMappingDriverInterface, PointcutFi
 
         // Evaluate DoctrineChangeTrackingPolicy annotation
         if (isset($classAnnotations[ORM\ChangeTrackingPolicy::class])) {
+            /** @var ORM\ChangeTrackingPolicy $changeTrackingAnnotation */
             $changeTrackingAnnotation = $classAnnotations[ORM\ChangeTrackingPolicy::class];
-            $metadata->setChangeTrackingPolicy(constant('Doctrine\ORM\Mapping\ClassMetadata::CHANGETRACKING_' . strtoupper($changeTrackingAnnotation->value)));
+            $metadata->setChangeTrackingPolicy(constant(
+                'Doctrine\ORM\Mapping\ClassMetadata::CHANGETRACKING_' . strtoupper($changeTrackingAnnotation->value)
+            ));
         } else {
             $metadata->setChangeTrackingPolicy(ORM\ClassMetadata::CHANGETRACKING_DEFERRED_EXPLICIT);
         }
@@ -425,7 +433,11 @@ class FlowAnnotationDriver implements DoctrineMappingDriverInterface, PointcutFi
             && !isset($primaryTable['uniqueConstraints'])) {
             $idProperties = array_keys($classSchema->getIdentityProperties());
             if (array_diff($idProperties, $metadata->getIdentifierFieldNames()) !== []) {
-                $uniqueIndexName = $this->truncateIdentifier('flow_identity_' . $primaryTable['name']);
+                $primaryTableName = $primaryTable['name'] ?? null;
+                if (!$primaryTableName) {
+                    throw new \Exception('Missing primary table name', 1744135393);
+                }
+                $uniqueIndexName = $this->truncateIdentifier('flow_identity_' . $primaryTableName);
                 foreach ($idProperties as $idProperty) {
                     $primaryTable['uniqueConstraints'][$uniqueIndexName]['columns'][] = $metadata->fieldMappings[$idProperty]['columnName'] ?? strtolower($idProperty);
                 }
@@ -534,11 +546,11 @@ class FlowAnnotationDriver implements DoctrineMappingDriverInterface, PointcutFi
      * Check if the referenced column name is set (and valid) and if not make sure
      * it is initialized properly.
      *
-     * @param array $joinColumns
-     * @param array $mapping
+     * @param array<mixed> $joinColumns
+     * @param array<mixed> $mapping
      * @param \ReflectionProperty $property
      * @param integer $direction regular or inverse mapping (use is to be coded)
-     * @return array
+     * @return array<mixed>
      */
     protected function buildJoinColumnsIfNeeded(array $joinColumns, array $mapping, \ReflectionProperty $property, $direction = self::MAPPING_REGULAR)
     {
@@ -574,7 +586,7 @@ class FlowAnnotationDriver implements DoctrineMappingDriverInterface, PointcutFi
     /**
      * Evaluate the property annotations and amend the metadata accordingly.
      *
-     * @param ORM\ClassMetadataInfo $metadata
+     * @param ORM\ClassMetadataInfo<object> $metadata
      * @return void
      * @throws ORM\MappingException
      */
@@ -601,7 +613,7 @@ class FlowAnnotationDriver implements DoctrineMappingDriverInterface, PointcutFi
             $mapping['fieldName'] = $property->getName();
             $mapping['columnName'] = strtolower($property->getName());
             $mapping['targetEntity'] = $propertyMetaData['type'];
-            $mapping['nullable'] = $propertyMetaData['nullable'] ?? false;
+            $mapping['nullable'] = $propertyMetaData['nullable'];
 
             $joinColumns = $this->evaluateJoinColumnAnnotations($property);
 
@@ -621,13 +633,17 @@ class FlowAnnotationDriver implements DoctrineMappingDriverInterface, PointcutFi
                 $mapping['inversedBy'] = $oneToOneAnnotation->inversedBy;
                 if ($oneToOneAnnotation->cascade !== null) {
                     $mapping['cascade'] = $oneToOneAnnotation->cascade;
+                    /** @phpstan-ignore argument.type (this really is a class-string -.-) */
                 } elseif ($this->isValueObject($mapping['targetEntity'], $className)) {
                     $mapping['cascade'] = ['persist'];
+                    /** @phpstan-ignore argument.type (this really is a class-string -.-) */
                 } elseif ($this->isAggregateRoot($mapping['targetEntity'], $className) === false) {
                     $mapping['cascade'] = ['all'];
                 }
                 // We need to apply our value for non-aggregate roots first, because Doctrine sets a default value for orphanRemoval (see #1127)
+                /** @phpstan-ignore argument.type (this really is a class-string -.-) */
                 if ($this->isAggregateRoot($mapping['targetEntity'], $className) === false &&
+                    /** @phpstan-ignore argument.type (this really is a class-string -.-) */
                     $this->isValueObject($mapping['targetEntity'], $className) === false) {
                     $mapping['orphanRemoval'] = true;
                 } elseif ($oneToOneAnnotation->orphanRemoval !== null) {
@@ -644,14 +660,18 @@ class FlowAnnotationDriver implements DoctrineMappingDriverInterface, PointcutFi
                 }
                 if ($oneToManyAnnotation->cascade !== null) {
                     $mapping['cascade'] = $oneToManyAnnotation->cascade;
+                    /** @phpstan-ignore argument.type (this really is a class-string -.-) */
                 } elseif ($this->isValueObject($mapping['targetEntity'], $className)) {
                     $mapping['cascade'] = ['persist'];
+                    /** @phpstan-ignore argument.type (this really is a class-string -.-) */
                 } elseif ($this->isAggregateRoot($mapping['targetEntity'], $className) === false) {
                     $mapping['cascade'] = ['all'];
                 }
                 $mapping['indexBy'] = $oneToManyAnnotation->indexBy;
                 // We need to apply our value for non-aggregate roots first, because Doctrine sets a default value for orphanRemoval (see #1127)
+                /** @phpstan-ignore argument.type (this really is a class-string -.-) */
                 if ($this->isAggregateRoot($mapping['targetEntity'], $className) === false &&
+                    /** @phpstan-ignore argument.type (this really is a class-string -.-) */
                     $this->isValueObject($mapping['targetEntity'], $className) === false) {
                     $mapping['orphanRemoval'] = true;
                 } elseif ($oneToManyAnnotation->orphanRemoval !== null) {
@@ -712,8 +732,10 @@ class FlowAnnotationDriver implements DoctrineMappingDriverInterface, PointcutFi
                 $mapping['joinColumns'] = $this->buildJoinColumnsIfNeeded($joinColumns, $mapping, $property);
                 if ($manyToOneAnnotation->cascade !== null) {
                     $mapping['cascade'] = $manyToOneAnnotation->cascade;
+                    /** @phpstan-ignore argument.type (this really is a class-string -.-) */
                 } elseif ($this->isValueObject($mapping['targetEntity'], $className)) {
                     $mapping['cascade'] = ['persist'];
+                    /** @phpstan-ignore argument.type (this really is a class-string -.-) */
                 } elseif ($this->isAggregateRoot($mapping['targetEntity'], $className) === false) {
                     $mapping['cascade'] = ['all'];
                 }
@@ -749,8 +771,10 @@ class FlowAnnotationDriver implements DoctrineMappingDriverInterface, PointcutFi
                 $mapping['inversedBy'] = $manyToManyAnnotation->inversedBy;
                 if ($manyToManyAnnotation->cascade !== null) {
                     $mapping['cascade'] = $manyToManyAnnotation->cascade;
+                    /** @phpstan-ignore argument.type (this really is a class-string -.-) */
                 } elseif ($this->isValueObject($mapping['targetEntity'], $className)) {
                     $mapping['cascade'] = ['persist'];
+                    /** @phpstan-ignore argument.type (this really is a class-string -.-) */
                 } elseif ($this->isAggregateRoot($mapping['targetEntity'], $className) === false) {
                     $mapping['cascade'] = ['all'];
                 }
@@ -798,7 +822,7 @@ class FlowAnnotationDriver implements DoctrineMappingDriverInterface, PointcutFi
                             break;
                         default:
                             if (strpos($propertyMetaData['type'], '\\') !== false) {
-                                if ($this->reflectionService->isClassAnnotatedWith($propertyMetaData['type'], Flow\ValueObject::class)) {
+                                if (class_exists($propertyMetaData['type']) && $this->reflectionService->isClassAnnotatedWith($propertyMetaData['type'], Flow\ValueObject::class)) {
                                     $valueObjectAnnotation = $this->reflectionService->getClassAnnotation($propertyMetaData['type'], Flow\ValueObject::class);
                                     if ($valueObjectAnnotation && $valueObjectAnnotation->embedded === true) {
                                         $mapping['class'] = $propertyMetaData['type'];
@@ -833,11 +857,11 @@ class FlowAnnotationDriver implements DoctrineMappingDriverInterface, PointcutFi
 
                 // Check for SequenceGenerator/TableGenerator definition
                 if ($seqGeneratorAnnotation = $this->reader->getPropertyAnnotation($property, ORM\SequenceGenerator::class)) {
-                    $metadata->setSequenceGeneratorDefinition([
+                    $metadata->setSequenceGeneratorDefinition(array_filter([
                         'sequenceName' => $seqGeneratorAnnotation->sequenceName,
                         'allocationSize' => $seqGeneratorAnnotation->allocationSize,
                         'initialValue' => $seqGeneratorAnnotation->initialValue
-                    ]);
+                    ]));
                 } elseif ($customGeneratorAnnotation = $this->reader->getPropertyAnnotation($property, ORM\CustomIdGenerator::class)) {
                     $metadata->setCustomGeneratorDefinition([
                         'class' => $customGeneratorAnnotation->class
@@ -847,10 +871,10 @@ class FlowAnnotationDriver implements DoctrineMappingDriverInterface, PointcutFi
 
             // Evaluate @Cache annotation
             if (($cacheAnnotation = $this->reader->getPropertyAnnotation($property, ORM\Cache::class)) !== null) {
-                $metadata->enableAssociationCache($mapping['fieldName'], [
-                    'usage'         => constant('Doctrine\ORM\Mapping\ClassMetadata::CACHE_USAGE_' . $cacheAnnotation->usage),
-                    'region'        => $cacheAnnotation->region,
-                ]);
+                $metadata->enableAssociationCache($mapping['fieldName'], array_filter([
+                    'usage' => constant('Doctrine\ORM\Mapping\ClassMetadata::CACHE_USAGE_' . $cacheAnnotation->usage),
+                    'region' => $cacheAnnotation->region,
+                ]));
             }
         }
     }
@@ -861,8 +885,8 @@ class FlowAnnotationDriver implements DoctrineMappingDriverInterface, PointcutFi
      * @param ORM\JoinTable $joinTableAnnotation
      * @param \ReflectionProperty $property
      * @param string $className
-     * @param array $mapping
-     * @return array
+     * @param array<mixed> $mapping
+     * @return array{name: string, schema: ?string, joinColumns: array<int,mixed>, inverseJoinColumns: array<int,mixed>}
      */
     protected function evaluateJoinTableAnnotation(ORM\JoinTable $joinTableAnnotation, \ReflectionProperty $property, $className, array $mapping)
     {
@@ -908,12 +932,12 @@ class FlowAnnotationDriver implements DoctrineMappingDriverInterface, PointcutFi
     }
 
     /**
-     * Check for and build JoinColummn/JoinColumns annotations.
+     * Check for and build JoinColumn/JoinColumns annotations.
      *
      * If no annotations are found, a default is returned.
      *
      * @param \ReflectionProperty $property
-     * @return array
+     * @return array<int,array<mixed>>
      */
     protected function evaluateJoinColumnAnnotations(\ReflectionProperty $property)
     {
@@ -933,8 +957,8 @@ class FlowAnnotationDriver implements DoctrineMappingDriverInterface, PointcutFi
     /**
      * Evaluate the association overrides annotations and amend the metadata accordingly.
      *
-     * @param array $classAnnotations
-     * @param ORM\ClassMetadataInfo $metadata
+     * @param array<mixed> $classAnnotations
+     * @param ORM\ClassMetadataInfo<object> $metadata
      * @return void
      */
     protected function evaluateOverridesAnnotations(array $classAnnotations, ORM\ClassMetadataInfo $metadata)
@@ -992,9 +1016,9 @@ class FlowAnnotationDriver implements DoctrineMappingDriverInterface, PointcutFi
     /**
      * Evaluate the EntityListeners annotation and amend the metadata accordingly.
      *
-     * @param \ReflectionClass $class
-     * @param ORM\ClassMetadata $metadata
-     * @param array $classAnnotations
+     * @param \ReflectionClass<object> $class
+     * @param ORM\ClassMetadata<object> $metadata
+     * @param array<mixed> $classAnnotations
      * @return void
      * @throws ORM\MappingException
      */
@@ -1007,7 +1031,7 @@ class FlowAnnotationDriver implements DoctrineMappingDriverInterface, PointcutFi
                 $listenerClassName = $metadata->fullyQualifiedClassName($item);
 
                 if ($listenerClassName === null || !class_exists($listenerClassName)) {
-                    throw ORM\MappingException::entityListenerClassNotFound($listenerClassName, $class->getName());
+                    throw ORM\MappingException::entityListenerClassNotFound($listenerClassName ?: 'null', $class->getName());
                 }
 
                 $hasMapping = false;
@@ -1034,8 +1058,8 @@ class FlowAnnotationDriver implements DoctrineMappingDriverInterface, PointcutFi
     /**
      * Evaluate the lifecycle annotations and amend the metadata accordingly.
      *
-     * @param \ReflectionClass $class
-     * @param ORM\ClassMetadataInfo $metadata
+     * @param \ReflectionClass<object> $class
+     * @param ORM\ClassMetadataInfo<object> $metadata
      * @return void
      */
     protected function evaluateLifeCycleAnnotations(\ReflectionClass $class, ORM\ClassMetadataInfo $metadata)
@@ -1058,7 +1082,7 @@ class FlowAnnotationDriver implements DoctrineMappingDriverInterface, PointcutFi
      * Returns an array of callbacks for lifecycle annotations on the given method.
      *
      * @param \ReflectionMethod $method
-     * @return array
+     * @return array<int,array<int,mixed>>
      */
     protected function getMethodCallbacks(\ReflectionMethod $method)
     {
@@ -1138,7 +1162,7 @@ class FlowAnnotationDriver implements DoctrineMappingDriverInterface, PointcutFi
     /**
      * Returns the names of all mapped (non-transient) classes known to this driver.
      *
-     * @return array
+     * @return array<int,class-string>
      */
     public function getAllClassNames()
     {
@@ -1169,7 +1193,7 @@ class FlowAnnotationDriver implements DoctrineMappingDriverInterface, PointcutFi
      *
      * @param ORM\JoinColumn $joinColumnAnnotation
      * @param string $propertyName
-     * @return array
+     * @return array{name: ?string, unique: bool, nullable: bool, onDelete: mixed, columnDefinition: ?string, referencedColumnName: string}
      */
     protected function joinColumnToArray(ORM\JoinColumn $joinColumnAnnotation, $propertyName = null)
     {
@@ -1187,9 +1211,9 @@ class FlowAnnotationDriver implements DoctrineMappingDriverInterface, PointcutFi
      * Parse the given Column into an array
      *
      * @param ORM\Column $columnAnnotation
-     * @param array $mapping
+     * @param array<string,mixed> $mapping
      * @param string $fieldName
-     * @return array
+     * @return array<string,mixed>
      */
     protected function addColumnToMappingArray(ORM\Column $columnAnnotation, array $mapping = [], $fieldName = null)
     {
@@ -1222,11 +1246,12 @@ class FlowAnnotationDriver implements DoctrineMappingDriverInterface, PointcutFi
     /**
      * Returns the classname after stripping a potentially present Compiler::ORIGINAL_CLASSNAME_SUFFIX.
      *
-     * @param string $className
-     * @return string
+     * @param class-string $className
+     * @return class-string
      */
     protected function getUnproxiedClassName($className)
     {
+        /** @var class-string $className */
         $className = preg_replace('/' . Compiler::ORIGINAL_CLASSNAME_SUFFIX . '$/', '', $className);
 
         return $className;
@@ -1253,7 +1278,7 @@ class FlowAnnotationDriver implements DoctrineMappingDriverInterface, PointcutFi
     /**
      * Checks if the specified class has a property annotated with Id
      *
-     * @param string $className Name of the class to check against
+     * @param class-string $className Name of the class to check against
      * @param string $methodName Name of the method to check against
      * @param string $methodDeclaringClassName Name of the class the method was originally declared in
      * @param mixed $pointcutQueryIdentifier Some identifier for this query - must at least differ from a previous identifier. Used for circular reference detection.
@@ -1284,7 +1309,7 @@ class FlowAnnotationDriver implements DoctrineMappingDriverInterface, PointcutFi
     /**
      * Returns runtime evaluations for a previously matched pointcut
      *
-     * @return array Runtime evaluations
+     * @return array<mixed> Runtime evaluations
      */
     public function getRuntimeEvaluationsDefinition()
     {
