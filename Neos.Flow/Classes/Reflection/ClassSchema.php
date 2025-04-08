@@ -11,6 +11,7 @@ namespace Neos\Flow\Reflection;
  * source code.
  */
 
+use Neos\Flow\Persistence\RepositoryInterface;
 use Neos\Utility\Exception\InvalidTypeException;
 use Neos\Utility\TypeHandling;
 
@@ -47,7 +48,7 @@ class ClassSchema
     protected $lazyLoadable = false;
 
     /**
-     * @var string|null
+     * @var class-string<RepositoryInterface>|null
      */
     protected $repositoryClassName;
 
@@ -216,7 +217,7 @@ class ClassSchema
     /**
      * Set the class name of the repository managing an entity.
      *
-     * @param ?string $repositoryClassName
+     * @param ?class-string<RepositoryInterface> $repositoryClassName
      * @return void
      * @throws Exception\ClassSchemaConstraintViolationException
      */
@@ -229,7 +230,7 @@ class ClassSchema
     }
 
     /**
-     * @return ?string
+     * @return ?class-string<RepositoryInterface>
      */
     public function getRepositoryClassName()
     {

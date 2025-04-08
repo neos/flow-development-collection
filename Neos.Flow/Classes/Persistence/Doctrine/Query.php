@@ -64,7 +64,7 @@ class Query implements QueryInterface
     protected $entityManager;
 
     /**
-     * @var array
+     * @var array<mixed>
      */
     protected $settings;
 
@@ -74,7 +74,7 @@ class Query implements QueryInterface
     protected $constraint;
 
     /**
-     * @var array
+     * @var array<string,QueryInterface::ORDER_ASCENDING|QueryInterface::ORDER_DESCENDING>
      */
     protected $orderings = [];
 
@@ -104,7 +104,7 @@ class Query implements QueryInterface
     protected $parameters;
 
     /**
-     * @var array
+     * @var ?array<string,string>
      */
     protected $joins;
 
@@ -140,10 +140,10 @@ class Query implements QueryInterface
      * Injects the Flow settings, the persistence part is kept
      * for further use.
      *
-     * @param array $settings
+     * @param array<string,mixed> $settings
      * @return void
      */
-    public function injectSettings(array $settings)
+    public function injectSettings(array $settings): void
     {
         $this->settings = $settings['persistence'];
     }
@@ -151,7 +151,7 @@ class Query implements QueryInterface
     /**
      * @param LoggerInterface $logger
      */
-    public function injectLogger(LoggerInterface $logger)
+    public function injectLogger(LoggerInterface $logger): void
     {
         $this->logger = $logger;
     }
@@ -186,7 +186,7 @@ class Query implements QueryInterface
      * Really executes the query on the database.
      * This should only ever be executed from the QueryResult class.
      *
-     * @return array result set
+     * @return mixed result set
      * @throws DatabaseException
      * @throws DatabaseConnectionException
      * @throws DatabaseStructureException
@@ -283,7 +283,7 @@ class Query implements QueryInterface
      *  'bar' => \Neos\Flow\Persistence\QueryInterface::ORDER_DESCENDING
      * )
      *
-     * @param array $orderings The property names to order by
+     * @param array<string,QueryInterface::ORDER_ASCENDING|QueryInterface::ORDER_DESCENDING> $orderings The property names to order by
      * @return QueryInterface
      * @api
      */
@@ -304,7 +304,7 @@ class Query implements QueryInterface
      *  'bar' => \Neos\Flow\Persistence\QueryInterface::ORDER_DESCENDING
      * )
      *
-     * @return array
+     * @return array<string,QueryInterface::ORDER_ASCENDING|QueryInterface::ORDER_DESCENDING>
      * @api
      */
     public function getOrderings(): array
@@ -393,7 +393,7 @@ class Query implements QueryInterface
      * The constraint used to limit the result set. Returns $this to allow
      * for chaining (fluid interface)
      *
-     * @param object $constraint Some constraint, depending on the backend
+     * @param object|string $constraint Some constraint, depending on the backend
      * @return QueryInterface
      * @api
      */
@@ -456,7 +456,7 @@ class Query implements QueryInterface
     /**
      * Performs a logical negation of the given constraint
      *
-     * @param object $constraint Constraint to negate
+     * @param object|string $constraint Constraint to negate
      * @return object
      * @api
      */
@@ -618,7 +618,7 @@ class Query implements QueryInterface
     /**
      * Add parameters to the query
      *
-     * @param array $parameters
+     * @param array<mixed> $parameters
      * @return void
      */
     public function addParameters($parameters)
@@ -632,7 +632,7 @@ class Query implements QueryInterface
     /**
      * Gets all defined query parameters for the query being constructed.
      *
-     * @return ArrayCollection
+     * @return ArrayCollection<int,Parameter>
      */
     public function getParameters()
     {
@@ -717,7 +717,7 @@ class Query implements QueryInterface
             $this->queryBuilder->where($this->constraint);
         }
 
-        if (is_array($this->orderings)) {
+        if ($this->orderings !== []) {
             $aliases = $this->queryBuilder->getRootAliases();
             foreach ($this->orderings as $propertyName => $order) {
                 $this->queryBuilder->addOrderBy($aliases[0] . '.' . $propertyName, $order);
@@ -732,7 +732,7 @@ class Query implements QueryInterface
         $this->queryBuilder->setMaxResults($this->limit);
         $this->queryBuilder->distinct($this->distinct);
         $this->queryBuilder->setParameters($this->parameters);
-        unset($this->parameters);
+        $this->parameters = new ArrayCollection();
     }
 
     /**

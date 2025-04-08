@@ -1609,7 +1609,11 @@ class ReflectionService
         }
 
         $possibleRepositoryClassName = str_replace('\\Model\\', '\\Repository\\', $className) . 'Repository';
-        if (class_exists($possibleRepositoryClassName) && $this->isClassReflected($possibleRepositoryClassName) === true) {
+        if (
+            class_exists($possibleRepositoryClassName)
+            && is_subclass_of($possibleRepositoryClassName, RepositoryInterface::class)
+            && $this->isClassReflected($possibleRepositoryClassName) === true
+        ) {
             $classSchema->setRepositoryClassName($possibleRepositoryClassName);
         }
 

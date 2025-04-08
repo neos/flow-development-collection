@@ -34,7 +34,7 @@ class CountWalker extends TreeWalkerAdapter
         $parent = null;
         $parentName = null;
         foreach ($this->getQueryComponents() as $dqlAlias => $qComp) {
-            if ($qComp['parent'] === null && $qComp['nestingLevel'] === 0) {
+            if (($qComp['parent'] ?? null) === null && $qComp['nestingLevel'] === 0) {
                 $parent = $qComp;
                 $parentName = $dqlAlias;
                 break;
@@ -45,10 +45,13 @@ class CountWalker extends TreeWalkerAdapter
             $AST->selectClause->isDistinct = true;
         }
 
+        if (!is_string($parentName)) {
+            throw new \Exception('Missing parent name', 1744138349);
+        }
         $pathExpression = new PathExpression(
             PathExpression::TYPE_STATE_FIELD | PathExpression::TYPE_SINGLE_VALUED_ASSOCIATION,
             $parentName,
-            $parent['metadata']->getSingleIdentifierFieldName()
+            ($parent['metadata'] ?? null)?->getSingleIdentifierFieldName()
         );
         $pathExpression->type = PathExpression::TYPE_STATE_FIELD;
 

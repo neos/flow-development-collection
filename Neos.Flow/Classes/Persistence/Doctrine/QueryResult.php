@@ -23,7 +23,7 @@ use Neos\Flow\Persistence\QueryResultInterface;
 class QueryResult implements QueryResultInterface
 {
     /**
-     * @var array
+     * @var ?array<mixed>
      * @Flow\Transient
      */
     protected $rows;
@@ -50,6 +50,7 @@ class QueryResult implements QueryResultInterface
     /**
      * Loads the objects this QueryResult is supposed to hold
      *
+     * @phpstan-assert array<mixed> $this->rows
      * @return void
      */
     protected function initialize()
@@ -110,7 +111,7 @@ class QueryResult implements QueryResultInterface
     /**
      * Returns an array with the objects in the result set
      *
-     * @return array
+     * @return array<mixed>
      * @api
      */
     public function toArray(): array
@@ -209,6 +210,6 @@ class QueryResult implements QueryResultInterface
     public function valid(): bool
     {
         $this->initialize();
-        return current($this->rows) !== false;
+        return current($this->rows ?: []) !== false;
     }
 }

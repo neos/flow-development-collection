@@ -93,7 +93,7 @@ interface RepositoryInterface
      *  'bar' => \Neos\Flow\Persistence\QueryInterface::ORDER_DESCENDING
      * )
      *
-     * @param array $defaultOrderings The property names to order by by default
+     * @param array<string,QueryInterface::ORDER_ASCENDING|QueryInterface::ORDER_DESCENDING> $defaultOrderings The property names to order by by default
      * @return void
      * @api
      */
@@ -117,7 +117,7 @@ interface RepositoryInterface
      *  - countBy<PropertyName>($value, $caseSensitive = true)
      *
      * @param string $method Name of the method
-     * @param array $arguments The arguments
+     * @param array<mixed> $arguments The arguments
      * @return mixed The result of the repository method
      * @api
      */

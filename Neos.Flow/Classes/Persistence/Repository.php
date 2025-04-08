@@ -36,7 +36,7 @@ abstract class Repository implements RepositoryInterface
     protected $entityClassName;
 
     /**
-     * @var array
+     * @var array<string,QueryInterface::ORDER_ASCENDING|QueryInterface::ORDER_DESCENDING>
      */
     protected $defaultOrderings = [];
 
@@ -78,9 +78,8 @@ abstract class Repository implements RepositoryInterface
      */
     public function add($object): void
     {
-        if (!is_object($object) || !($object instanceof $this->entityClassName)) {
-            $type = (is_object($object) ? get_class($object) : gettype($object));
-            throw new IllegalObjectTypeException('The value given to add() was ' . $type . ' , however the ' . get_class($this) . ' can only store ' . $this->entityClassName . ' instances.', 1298403438);
+        if (!($object instanceof $this->entityClassName)) {
+            throw new IllegalObjectTypeException('The value given to add() was ' . get_class($object) . ' , however the ' . get_class($this) . ' can only store ' . $this->entityClassName . ' instances.', 1298403438);
         }
         $this->persistenceManager->add($object);
     }
@@ -95,9 +94,8 @@ abstract class Repository implements RepositoryInterface
      */
     public function remove($object): void
     {
-        if (!is_object($object) || !($object instanceof $this->entityClassName)) {
-            $type = (is_object($object) ? get_class($object) : gettype($object));
-            throw new IllegalObjectTypeException('The value given to remove() was ' . $type . ' , however the ' . get_class($this) . ' can only handle ' . $this->entityClassName . ' instances.', 1298403442);
+        if (!($object instanceof $this->entityClassName)) {
+            throw new IllegalObjectTypeException('The value given to remove() was ' . get_class($object) . ' , however the ' . get_class($this) . ' can only handle ' . $this->entityClassName . ' instances.', 1298403442);
         }
         $this->persistenceManager->remove($object);
     }
@@ -174,7 +172,7 @@ abstract class Repository implements RepositoryInterface
      *  'bar' => \Neos\Flow\Persistence\QueryInterface::ORDER_DESCENDING
      * )
      *
-     * @param array $defaultOrderings The property names to order by by default
+     * @param array<string,QueryInterface::ORDER_ASCENDING|QueryInterface::ORDER_DESCENDING> $defaultOrderings The property names to order by by default
      * @return void
      * @api
      */
@@ -192,9 +190,8 @@ abstract class Repository implements RepositoryInterface
      */
     public function update($object): void
     {
-        if (!is_object($object) || !($object instanceof $this->entityClassName)) {
-            $type = (is_object($object) ? get_class($object) : gettype($object));
-            throw new IllegalObjectTypeException('The value given to update() was ' . $type . ' , however the ' . get_class($this) . ' can only store ' . $this->entityClassName . ' instances.', 1249479625);
+        if (!($object instanceof $this->entityClassName)) {
+            throw new IllegalObjectTypeException('The value given to update() was ' . get_class($object) . ' , however the ' . get_class($this) . ' can only store ' . $this->entityClassName . ' instances.', 1249479625);
         }
 
         $this->persistenceManager->update($object);
@@ -209,7 +206,7 @@ abstract class Repository implements RepositoryInterface
      *  - countBy<PropertyName>($value, $caseSensitive = true)
      *
      * @param string $method Name of the method
-     * @param array $arguments The arguments
+     * @param array<mixed> $arguments The arguments
      * @return mixed The result of the repository method
      * @api
      */
