@@ -58,20 +58,18 @@ abstract class AbstractBackend implements BackendInterface
      * Constructs this backend
      *
      * @param EnvironmentConfiguration $environmentConfiguration
-     * @param array $options Configuration options - depends on the actual backend
+     * @param array<string,mixed> $options Configuration options - depends on the actual backend
      * @api
      */
     public function __construct(?EnvironmentConfiguration $environmentConfiguration = null, array $options = [])
     {
         $this->environmentConfiguration = $environmentConfiguration;
 
-        if (is_array($options) || $options instanceof \Iterator) {
-            $this->setProperties($options);
-        }
+        $this->setProperties($options);
     }
 
     /**
-     * @param array $properties
+     * @param array<string,mixed> $properties
      * @param boolean $throwExceptionIfPropertyNotSettable
      * @return void
      * @throws \InvalidArgumentException
