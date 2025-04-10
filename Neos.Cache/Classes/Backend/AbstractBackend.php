@@ -57,11 +57,10 @@ abstract class AbstractBackend implements BackendInterface
     /**
      * Constructs this backend
      *
-     * @param EnvironmentConfiguration $environmentConfiguration
      * @param array<string,mixed> $options Configuration options - depends on the actual backend
      * @api
      */
-    public function __construct(?EnvironmentConfiguration $environmentConfiguration = null, array $options = [])
+    public function __construct(EnvironmentConfiguration $environmentConfiguration = null, array $options = [])
     {
         $this->environmentConfiguration = $environmentConfiguration;
 
@@ -115,7 +114,7 @@ abstract class AbstractBackend implements BackendInterface
     {
         $this->cache = $cache;
         $this->cacheIdentifier = $this->cache->getIdentifier();
-        $applicationIdentifier = $this->environmentConfiguration instanceof EnvironmentConfiguration ? $this->environmentConfiguration->getApplicationIdentifier() : '';
+        $applicationIdentifier = $this->environmentConfiguration->getApplicationIdentifier();
         $this->identifierPrefix = md5($applicationIdentifier) . ':' . $this->cacheIdentifier . ':';
     }
 

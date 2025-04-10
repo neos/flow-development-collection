@@ -22,8 +22,14 @@ use Neos\Cache\Frontend\FrontendInterface;
  *
  * @api
  */
-class TransientMemoryBackend extends IndependentAbstractBackend implements TaggableBackendInterface
+class TransientMemoryBackend implements TaggableBackendInterface
 {
+    /**
+     * Reference to the cache frontend which uses this backend
+     * @var FrontendInterface
+     */
+    protected $cache;
+
     /**
      * @var array
      */
@@ -33,6 +39,12 @@ class TransientMemoryBackend extends IndependentAbstractBackend implements Tagga
      * @var array
      */
     protected $tagsAndEntries = [];
+
+    // todo there is no real contract it will just be invoked with the env configuration and options .. :(
+    public function __construct()
+    {
+
+    }
 
     /**
      * Saves data in the cache.
@@ -174,5 +186,16 @@ class TransientMemoryBackend extends IndependentAbstractBackend implements Tagga
      */
     public function collectGarbage(): void
     {
+    }
+
+    public function setCache(FrontendInterface $cache): void
+    {
+        $this->cache = $cache;
+    }
+
+    public function getPrefixedIdentifier(string $entryIdentifier): string
+    {
+        $identifierPrefix = $this->cache->getIdentifier() . ':';
+        return $identifierPrefix . $entryIdentifier;
     }
 }
