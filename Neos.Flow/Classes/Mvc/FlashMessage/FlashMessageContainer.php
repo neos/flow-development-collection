@@ -22,7 +22,7 @@ use Neos\Error\Messages\Message;
 class FlashMessageContainer
 {
     /**
-     * @var array
+     * @var array<int,Message>
      */
     protected $messages = [];
 

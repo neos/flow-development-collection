@@ -12,7 +12,7 @@ class ActionRequestFactory
 {
     /**
      * @param ServerRequestInterface $httpRequest
-     * @param array $additionalArguments
+     * @param array<mixed> $additionalArguments
      * @return ActionRequest
      * @throws Exception\InvalidActionNameException
      * @throws Exception\InvalidArgumentNameException
@@ -33,7 +33,7 @@ class ActionRequestFactory
 
     /**
      * @param ServerRequestInterface $httpRequest
-     * @return array
+     * @return array<mixed>
      */
     protected function mergeHttpRequestArguments(ServerRequestInterface $httpRequest): array
     {
@@ -50,9 +50,9 @@ class ActionRequestFactory
     }
 
     /**
-     * @param array $arguments
-     * @param array $additionalArguments
-     * @return array
+     * @param array<mixed> $arguments
+     * @param array<mixed> $additionalArguments
+     * @return array<mixed>
      */
     protected function mergeHttpRequestArgumentsWithAdditionalArguments(array $arguments, array $additionalArguments): array
     {

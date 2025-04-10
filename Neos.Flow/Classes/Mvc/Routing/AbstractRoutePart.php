@@ -20,7 +20,7 @@ abstract class AbstractRoutePart implements RoutePartInterface
     /**
      * Name of the Route Part
      *
-     * @var string
+     * @var ?string
      */
     protected $name = null;
 
@@ -55,7 +55,7 @@ abstract class AbstractRoutePart implements RoutePartInterface
     /**
      * Contains options for this Route Part.
      *
-     * @var array
+     * @var array<mixed>
      */
     protected $options = [];
 
@@ -73,7 +73,7 @@ abstract class AbstractRoutePart implements RoutePartInterface
     /**
      * Returns name of the Route Part.
      *
-     * @return string
+     * @return ?string
      */
     public function getName()
     {
@@ -180,7 +180,7 @@ abstract class AbstractRoutePart implements RoutePartInterface
      * Defines options for this Route Part.
      * Options can be used to enrich a route part with parameters or settings like case sensivity.
      *
-     * @param array $options
+     * @param array<mixed> $options
      * @return void
      */
     public function setOptions(array $options)
@@ -189,7 +189,7 @@ abstract class AbstractRoutePart implements RoutePartInterface
     }
 
     /**
-     * @return array options of this Route Part.
+     * @return array<mixed> options of this Route Part.
      */
     public function getOptions()
     {

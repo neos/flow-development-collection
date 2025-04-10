@@ -36,7 +36,7 @@ final class TestingRoutesProvider implements RoutesProviderInterface
      *
      * @internal Please use {@see FunctionalTestCase::registerRoute} instead.
      */
-    public function addRoute(Route $route)
+    public function addRoute(Route $route): void
     {
         // we prepended the route, like the old Router::addRoute
         $this->additionalRoutes = Routes::create($route)->merge($this->additionalRoutes);

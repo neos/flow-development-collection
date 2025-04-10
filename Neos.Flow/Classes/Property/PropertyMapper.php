@@ -60,7 +60,7 @@ class PropertyMapper
     /**
      * A list of property mapping messages (errors, warnings) which have occured on last mapping.
      *
-     * @var Result
+     * @var ?Result
      */
     protected $messages;
 
@@ -106,6 +106,7 @@ class PropertyMapper
      * @return mixed an instance of $targetType
      * @throws Exception
      * @throws SecurityException
+     * @phpstan-assert Result $this->getMessages()
      * @api
      */
     public function convert($source, $targetType, ?PropertyMappingConfigurationInterface $configuration = null)
@@ -134,7 +135,7 @@ class PropertyMapper
     /**
      * Get the messages of the last Property Mapping
      *
-     * @return Result
+     * @return ?Result
      * @api
      */
     public function getMessages()
@@ -207,7 +208,7 @@ class PropertyMapper
         $result = $typeConverter->convertFrom($source, $targetType, $convertedChildProperties, $configuration);
 
         if ($result instanceof Error) {
-            $this->messages->forProperty(implode('.', $currentPropertyPath))->addError($result);
+            $this->messages?->forProperty(implode('.', $currentPropertyPath))->addError($result);
         }
 
         return $result;

@@ -48,12 +48,12 @@ final class UriConstraints
     const HTTP_DEFAULT_HOST = 'localhost';
 
     /**
-     * @var array
+     * @var array<mixed>
      */
     private $constraints;
 
     /**
-     * @param array $constraints array of constraints with one of the CONSTRAINT_* constants as keys and corresponding values
+     * @param array<mixed> $constraints array of constraints with one of the CONSTRAINT_* constants as keys and corresponding values
      */
     private function __construct(array $constraints)
     {
@@ -212,7 +212,7 @@ final class UriConstraints
     /**
      * Create a new instance with a query string corresponding to the given $values merged with any existing query string constraint
      *
-     * @param array $values
+     * @param array<mixed> $values
      * @return UriConstraints
      */
     public function withAddedQueryValues(array $values): self

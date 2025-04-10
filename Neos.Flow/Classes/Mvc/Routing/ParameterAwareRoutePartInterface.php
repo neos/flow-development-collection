@@ -37,7 +37,7 @@ interface ParameterAwareRoutePartInterface extends RoutePartInterface
      * removes resolved elements from $routeValues-Array.
      * This is why $routeValues has to be passed by reference.
      *
-     * @param array &$routeValues An array with key/value pairs to be resolved by Dynamic Route Parts.
+     * @param array<mixed> &$routeValues An array with key/value pairs to be resolved by Dynamic Route Parts.
      * @param RouteParameters $parameters The Routing RouteParameters that can be registered via HTTP middleware
      * @return bool|ResolveResult true or an instance of ResolveResult if Route Part can resolve one or more $routeValues elements, otherwise false.
      */

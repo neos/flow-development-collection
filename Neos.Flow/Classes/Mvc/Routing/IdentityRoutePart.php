@@ -124,7 +124,7 @@ class IdentityRoutePart extends DynamicRoutePart
      */
     protected function matchValue($value)
     {
-        if ($value === null || $value === '') {
+        if ($value === '') {
             return false;
         }
         $identifier = $this->getObjectIdentifierFromPathSegment($value);
@@ -202,13 +202,10 @@ class IdentityRoutePart extends DynamicRoutePart
         } elseif ($value instanceof $this->objectType) {
             $identifier = $this->persistenceManager->getIdentifierByObject($value);
         }
-        if ($identifier === null || (!is_string($identifier) && !is_integer($identifier))) {
+        if (!is_string($identifier)) {
             return false;
         }
         $pathSegment = $this->getPathSegmentByIdentifier($identifier);
-        if ($pathSegment === null) {
-            return false;
-        }
         $this->value = $pathSegment;
         return true;
     }
@@ -277,7 +274,7 @@ class IdentityRoutePart extends DynamicRoutePart
                         $dateFormat = isset($dynamicPathSegmentParts[1]) ? trim($dynamicPathSegmentParts[1]) : 'Y-m-d';
                         $pathSegment .= $this->rewriteForUri($dynamicPathSegment->format($dateFormat));
                     } else {
-                        throw new InvalidUriPatternException(sprintf('Invalid uriPattern "%s" for route part "%s". Property "%s" must be of type string or \DateTime. "%s" given.', $this->getUriPattern(), $this->getName(), $propertyPath, is_object($dynamicPathSegment) ? get_class($dynamicPathSegment) : gettype($dynamicPathSegment)), 1316442409);
+                        throw new InvalidUriPatternException(sprintf('Invalid uriPattern "%s" for route part "%s". Property "%s" must be of type string or \DateTime. "%s" given.', $this->getUriPattern(), $this->getName(), $propertyPath, get_class($dynamicPathSegment)), 1316442409);
                     }
                 } else {
                     $pathSegment .= $this->rewriteForUri((string)$dynamicPathSegment);
@@ -291,7 +288,7 @@ class IdentityRoutePart extends DynamicRoutePart
      * Creates a new ObjectPathMapping and stores it in the repository
      *
      * @param string $pathSegment
-     * @param string|integer $identifier
+     * @param string $identifier
      * @return void
      */
     protected function storeObjectPathMapping($pathSegment, $identifier)
@@ -327,12 +324,12 @@ class IdentityRoutePart extends DynamicRoutePart
         $value = strtr($value, $transliteration);
 
         $spaceCharacter = '-';
-        $value = preg_replace('/[ \-+_]+/', $spaceCharacter, $value);
+        $value = preg_replace('/[ \-+_]+/', $spaceCharacter, $value) ?: '';
 
-        $value = preg_replace('/[^-a-z0-9.\\' . $spaceCharacter . ']/i', '', $value);
+        $value = preg_replace('/[^-a-z0-9.\\' . $spaceCharacter . ']/i', '', $value) ?: '';
 
-        $value = preg_replace('/\\' . $spaceCharacter . '{2,}/', $spaceCharacter, $value);
-        $value = trim($value, $spaceCharacter);
+        $value = preg_replace('/\\' . $spaceCharacter . '{2,}/', $spaceCharacter, $value) ?: '';
+        $value = trim($value, $spaceCharacter) ?: '';
 
         return $value;
     }

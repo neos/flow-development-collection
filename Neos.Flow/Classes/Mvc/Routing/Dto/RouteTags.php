@@ -29,7 +29,7 @@ final class RouteTags
     const PATTERN_TAG = '/^[a-zA-Z0-9_%\-&]{1,250}$/';
 
     /**
-     * @var string[] numeric array of strings satisfying the PATTERN_TAG regex
+     * @var array<int,string> numeric array of strings satisfying the PATTERN_TAG regex
      */
     private $tags = [];
 
@@ -113,11 +113,8 @@ final class RouteTags
      * @param string $tag
      * @throws \InvalidArgumentException
      */
-    private static function validateTag($tag)
+    private static function validateTag(string $tag): void
     {
-        if (!is_string($tag)) {
-            throw new \InvalidArgumentException(sprintf('RouteTags have to be strings, %s given', is_object($tag) ? get_class($tag) : gettype($tag)), 1512553153);
-        }
         if (preg_match(self::PATTERN_TAG, $tag) !== 1) {
             throw new \InvalidArgumentException(sprintf('The given string "%s" is not a valid tag', $tag), 1511807639);
         }
@@ -137,7 +134,7 @@ final class RouteTags
     /**
      * Returns the tags of this tag collection as value array
      *
-     * @return array
+     * @return array<int,string>
      */
     public function getTags(): array
     {
