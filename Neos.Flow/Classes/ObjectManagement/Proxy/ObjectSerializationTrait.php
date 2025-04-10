@@ -24,6 +24,7 @@ use Neos\Utility\ObjectAccess;
 
 /**
  * Methods used to serialize objects used by proxy classes.
+ * @phpstan-ignore trait.unused (probably API?)
  */
 trait ObjectSerializationTrait
 {

@@ -44,8 +44,9 @@ class ProxyMethodGenerator extends MethodGenerator
     {
         $instance = parent::copyMethodSignature($reflectionMethod);
         assert($instance instanceof static);
-        if ($reflectionMethod->getDocComment() !== false) {
-            $instance->setDocBlock(DocBlockGenerator::fromReflection($reflectionMethod->getDocBlock()));
+        $docBlock = $reflectionMethod->getDocBlock();
+        if ($docBlock !== false) {
+            $instance->setDocBlock(DocBlockGenerator::fromReflection($docBlock));
         }
         $instance->fullOriginalClassName = $reflectionMethod->getDeclaringClass()->getName();
         $instance->attributesCode = $instance->buildAttributesCode($reflectionMethod);
@@ -271,7 +272,7 @@ class ProxyMethodGenerator extends MethodGenerator
     /**
      * Formats the arguments of attributes into a string.
      *
-     * @param array $arguments An array of arguments for attributes.
+     * @param array<mixed> $arguments An array of arguments for attributes.
      * @param string $methodName The current method name the proxy code is built for.
      * @return string The formatted arguments as a string.
      * @throws UnsupportedAttributeException

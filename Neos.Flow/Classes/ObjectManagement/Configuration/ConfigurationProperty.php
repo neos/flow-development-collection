@@ -42,7 +42,7 @@ class ConfigurationProperty
 
     /**
      * If specified, this configuration is used for instantiating / retrieving an property of type object
-     * @var Configuration
+     * @var ?Configuration
      */
     protected $objectConfiguration = null;
 

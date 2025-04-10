@@ -266,7 +266,7 @@ class ReflectionService
      * This method is called by the Compile Time Object Manager which also determines
      * the list of classes to consider for reflection.
      *
-     * @param array<string,array<class-string>> $availableClassNames
+     * @param array<string,array<int,class-string>> $availableClassNames
      * @throws ClassLoadingForReflectionFailedException
      * @throws ClassSchemaConstraintViolationException
      * @throws Exception
@@ -324,19 +324,20 @@ class ReflectionService
      * implementation was found in the package defining the interface, false is returned.
      *
      * @param class-string $interfaceName
-     * @return string|bool
+     * @return class-string|false
      * @throws ClassLoadingForReflectionFailedException
      * @throws InvalidClassException
      * @throws \ReflectionException
      * @api
      */
-    public function getDefaultImplementationClassNameForInterface(string $interfaceName): string|bool
+    public function getDefaultImplementationClassNameForInterface(string $interfaceName): string|false
     {
         if (interface_exists($interfaceName) === false) {
             throw new \InvalidArgumentException('"' . $interfaceName . '" does not exist or is not the name of an interface.', 1238769559);
         }
         $interfaceName = $this->prepareClassReflectionForUsage($interfaceName);
 
+        /** @var array<class-string> $classNamesFound */
         $classNamesFound = array_keys($this->classReflectionData[$interfaceName][self::DATA_INTERFACE_IMPLEMENTATIONS] ?? []);
         if (count($classNamesFound) === 1) {
             return $classNamesFound[0];
@@ -760,6 +761,7 @@ class ReflectionService
      * @template T of object
      * @param class-string $className
      * @param class-string<T> $annotationClassName
+     * @return ?T
      *
      * @throws \ReflectionException
      */

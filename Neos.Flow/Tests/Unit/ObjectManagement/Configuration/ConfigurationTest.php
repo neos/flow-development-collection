@@ -119,10 +119,10 @@ class ConfigurationTest extends UnitTestCase
     /**
      * @test
      */
-    public function setFactoryMethodNameRejectsAnythingElseThanAString()
+    public function setFactoryMethodNameRejectsEmptyString()
     {
         $this->expectException(\InvalidArgumentException::class);
-        $this->objectConfiguration->setFactoryMethodName([]);
+        $this->objectConfiguration->setFactoryMethodName('');
     }
 
     /**
