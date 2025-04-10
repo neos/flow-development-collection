@@ -13,6 +13,7 @@ namespace Neos\Flow\ObjectManagement\DependencyInjection;
 
 /**
  * Boilerplate code for dependency injection
+ * @phpstan-ignore trait.unused (probably API)
  */
 trait PropertyInjectionTrait
 {

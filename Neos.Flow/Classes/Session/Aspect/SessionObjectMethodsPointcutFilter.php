@@ -22,12 +22,20 @@ use Neos\Flow\Reflection\Exception\ClassLoadingForReflectionFailedException;
 
 /**
  * Pointcut filter matching proxyable methods in objects of scope session
+ *
+ * @template ObjectRecordInstance of object
  */
 #[Flow\Scope("singleton")]
 class SessionObjectMethodsPointcutFilter implements PointcutFilterInterface
 {
+    /**
+     * @phpstan-var CompileTimeObjectManager<ObjectRecordInstance> $objectManager
+     */
     protected CompileTimeObjectManager $objectManager;
 
+    /**
+     * @phpstan-param CompileTimeObjectManager<ObjectRecordInstance> $objectManager
+     */
     public function injectObjectManager(CompileTimeObjectManager $objectManager): void
     {
         $this->objectManager = $objectManager;

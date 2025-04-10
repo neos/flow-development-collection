@@ -34,7 +34,7 @@ class Package extends GenericPackage implements FlowPackageInterface, BootablePa
     /**
      * Returns a generator of filenames of class files provided by functional tests contained in this package
      *
-     * @return \Generator A generator of class names (key) and their filename, including the relative path to the package's directory
+     * @return \Generator<class-string,string> A generator of class names (key) and their filename, including the relative path to the package's directory
      * @internal
      */
     public function getFunctionalTestsClassFiles()

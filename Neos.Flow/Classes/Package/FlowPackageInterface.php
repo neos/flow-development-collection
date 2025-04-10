@@ -41,7 +41,7 @@ interface FlowPackageInterface extends PackageInterface, PackageKeyAwareInterfac
     /**
      * Returns a generator of filenames of class files provided by functional tests contained in this package
      *
-     * @return \Generator
+     * @return \Generator<class-string,string>
      * @internal
      */
     public function getFunctionalTestsClassFiles();
