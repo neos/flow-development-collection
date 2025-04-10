@@ -53,7 +53,11 @@ class ViewConfigurationManager
      * an array of options that will be set on the view object.
      *
      * @param ActionRequest $request
-     * @return array
+     * @return array{
+     *     requestFilter?: string,
+     *     viewObjectName?: string,
+     *     options?: array<string,mixed>
+     * }
      */
     public function getViewConfiguration(ActionRequest $request)
     {
@@ -61,6 +65,13 @@ class ViewConfigurationManager
 
         $viewConfiguration = $this->cache->get($cacheIdentifier);
         if ($viewConfiguration === false) {
+            /**
+             * @var array<int,array{
+             *     requestFilter?: string,
+             *     viewObjectName?: string,
+             *     options?: array<string,mixed>
+             * }> $configurations
+             */
             $configurations = $this->configurationManager->getConfiguration('Views');
 
             $requestMatcher = new RequestMatcher($request);

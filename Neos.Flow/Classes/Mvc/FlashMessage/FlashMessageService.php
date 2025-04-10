@@ -41,7 +41,7 @@ class FlashMessageService
 
     /**
      * @Flow\InjectConfiguration(path="mvc.flashMessages.containers")
-     * @var array
+     * @var array<mixed>
      */
     protected $flashMessageContainerConfiguration;
 

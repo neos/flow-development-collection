@@ -31,7 +31,7 @@ final class ResolveContext
     /**
      * Route values to build the URI, for example ['@action' => 'index', 'someArgument' => 'foo', ...]
      *
-     * @var array
+     * @var array<mixed>
      */
     private $routeValues;
 
@@ -56,7 +56,7 @@ final class ResolveContext
 
     /**
      * @param UriInterface $baseUri The base URI, retrieved from the current request URI or from configuration, if specified. Required to fill in parts of the result when resolving absolute URIs
-     * @param array $routeValues Route values to build the URI, for example ['@action' => 'index', 'someArgument' => 'foo', ...]
+     * @param array<mixed> $routeValues Route values to build the URI, for example ['@action' => 'index', 'someArgument' => 'foo', ...]
      * @param bool $forceAbsoluteUri Whether or not an absolute URI is to be returned
      * @param string $uriPathPrefix A prefix to be prepended to any resolved URI. Not allowed to start with "/".
      * @param RouteParameters $parameters
@@ -83,7 +83,7 @@ final class ResolveContext
     }
 
     /**
-     * @return array
+     * @return array<mixed>
      */
     public function getRouteValues(): array
     {

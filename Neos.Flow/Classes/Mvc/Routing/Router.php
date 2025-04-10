@@ -20,6 +20,7 @@ use Neos\Flow\Mvc\Exception\InvalidRouteSetupException;
 use Neos\Flow\Mvc\Exception\NoMatchingRouteException;
 use Neos\Flow\Mvc\Routing\Dto\ResolveContext;
 use Neos\Flow\Mvc\Routing\Dto\RouteContext;
+use Neos\Flow\Mvc\Routing\Dto\UriConstraints;
 use Psr\Http\Message\UriInterface;
 use Psr\Log\LoggerInterface;
 
@@ -76,7 +77,7 @@ class Router implements RouterInterface
      * route could be found.
      *
      * @param RouteContext $routeContext The Route Context containing the current HTTP Request and, optional, Routing RouteParameters
-     * @return array The results of the matching route or NULL if no route matched
+     * @return array<mixed> The results of the matching route or NULL if no route matched
      * @throws InvalidRouteSetupException
      * @throws NoMatchingRouteException if no route matched the given $routeContext
      * @throws InvalidRoutePartValueException
@@ -109,7 +110,7 @@ class Router implements RouterInterface
      * Returns the route that has been matched with the last route() call.
      * Returns NULL if no route matched or route() has not been called yet
      *
-     * @return Route
+     * @return ?Route
      */
     public function getLastMatchedRoute()
     {
@@ -151,7 +152,7 @@ class Router implements RouterInterface
      * Returns the route that has been resolved with the last resolve() call.
      * Returns NULL if no route was found or resolve() has not been called yet
      *
-     * @return Route
+     * @return ?Route
      */
     public function getLastResolvedRoute()
     {

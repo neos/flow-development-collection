@@ -119,7 +119,7 @@ interface ObjectManagerInterface extends ContainerInterface
      * Returns the key of the package the specified object is contained in.
      *
      * @param string $objectName The object name
-     * @return string The package key or false if no such object exists
+     * @return string|false|null The package key or false if no such object exists or null if no key was assigned
      */
     public function getPackageKeyByObjectName($objectName);
 

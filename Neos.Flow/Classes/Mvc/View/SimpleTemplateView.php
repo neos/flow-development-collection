@@ -25,7 +25,7 @@ class SimpleTemplateView extends AbstractView
     use StreamFactoryTrait;
 
     /**
-     * @var array
+     * @var array<string,array<mixed>>
      */
     protected $supportedOptions = [
         'templateSource' => ['', 'Source of the template to render', 'string'],

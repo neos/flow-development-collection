@@ -26,7 +26,7 @@ interface RouterInterface
      * Returns the matchResults of the matching route.
      *
      * @param RouteContext $routeContext The Route Context containing the current HTTP Request and, optional, Routing RouteParameters
-     * @return array The results of the matching route
+     * @return array<mixed> The results of the matching route
      * @throws NoMatchingRouteException if no route matched the $routeContext
      */
     public function route(RouteContext $routeContext): array;

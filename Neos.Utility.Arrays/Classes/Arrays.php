@@ -237,6 +237,7 @@ abstract class Arrays
      * @param array<mixed>|\ArrayAccess<int|string, mixed> $subject The array or ArrayAccess instance to work on
      * @param array<mixed>|string $path The path to follow. Either a simple array of keys or a string in the format 'foo.bar.baz'
      * @param mixed $value The value to set
+     * @phpstan-return ($subject is array<mixed> ? array<mixed> : \ArrayAccess<int|string, mixed>)
      * @return array<mixed>|\ArrayAccess<int|string, mixed> The modified array or object
      * @throws \InvalidArgumentException
      */

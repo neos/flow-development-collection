@@ -26,7 +26,7 @@ class FlashMessageCookieStorage implements FlashMessageStorageInterface
     const DEFAULT_COOKIE_NAME = 'Neos_Flow_FlashMessages';
 
     /**
-     * @var array
+     * @var array<mixed>
      */
     private $options;
 
@@ -41,7 +41,7 @@ class FlashMessageCookieStorage implements FlashMessageStorageInterface
     private $flashMessageContainer;
 
     /**
-     * @param array $options
+     * @param array<mixed> $options
      */
     public function __construct(array $options = [])
     {
@@ -106,7 +106,7 @@ class FlashMessageCookieStorage implements FlashMessageStorageInterface
 
     /**
      * @param Message $message
-     * @return array
+     * @return array<string,mixed>
      */
     private function serializeMessage(Message $message): array
     {
@@ -121,7 +121,7 @@ class FlashMessageCookieStorage implements FlashMessageStorageInterface
     }
 
     /**
-     * @param array $messageArray
+     * @param array<mixed> $messageArray
      * @return Message
      */
     private function deserializeMessage(array $messageArray): Message

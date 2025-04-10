@@ -31,7 +31,7 @@ abstract class AbstractView implements ViewInterface
      *         ...
      *     )
      *
-     * @var array
+     * @var array<mixed>
      */
     protected $supportedOptions = [];
 
@@ -39,13 +39,13 @@ abstract class AbstractView implements ViewInterface
      * The configuration options of this view
      * @see $supportedOptions
      *
-     * @var array
+     * @var array<mixed>
      */
     protected $options = [];
 
     /**
      * View variables and their values
-     * @var array
+     * @var array<string,mixed>
      * @see assign()
      */
     protected $variables = [];
@@ -60,7 +60,7 @@ abstract class AbstractView implements ViewInterface
     /**
      * Factory method to create an instance with given options.
      *
-     * @param array $options
+     * @param array<mixed> $options
      * @return static
      */
     public static function createWithOptions(array $options): self
@@ -71,7 +71,7 @@ abstract class AbstractView implements ViewInterface
     /**
      * Set default options based on the supportedOptions provided
      *
-     * @param array $options
+     * @param array<mixed> $options
      * @throws Exception
      */
     public function __construct(array $options = [])
@@ -155,7 +155,7 @@ abstract class AbstractView implements ViewInterface
     /**
      * Add multiple variables to $this->variables.
      *
-     * @param array $values array in the format array(key1 => value1, key2 => value2)
+     * @param array<string,mixed> $values array in the format array(key1 => value1, key2 => value2)
      * @return $this for chaining
      * @api
      */

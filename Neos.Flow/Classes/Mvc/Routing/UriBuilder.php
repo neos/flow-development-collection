@@ -51,13 +51,13 @@ class UriBuilder
     protected $request;
 
     /**
-     * @var array
+     * @var array<mixed>
      */
     protected $arguments = [];
 
     /**
      * Arguments which have been used for building the last URI
-     * @var array
+     * @var array<mixed>
      */
     protected $lastArguments = [];
 
@@ -78,7 +78,7 @@ class UriBuilder
     protected $addQueryString = false;
 
     /**
-     * @var array
+     * @var array<mixed>
      * @deprecated with Flow 9.0
      */
     protected $argumentsToBeExcludedFromQueryString = [];
@@ -117,7 +117,7 @@ class UriBuilder
      * If you want to "prefix" arguments, you can pass in multidimensional arrays:
      * array('prefix1' => array('foo' => 'bar')) gets "&prefix1[foo]=bar"
      *
-     * @param array $arguments
+     * @param array<mixed> $arguments
      * @return UriBuilder the current UriBuilder to allow method chaining
      * @api
      */
@@ -128,7 +128,7 @@ class UriBuilder
     }
 
     /**
-     * @return array
+     * @return array<mixed>
      * @api
      */
     public function getArguments()
@@ -228,7 +228,7 @@ class UriBuilder
      * A list of arguments to be excluded from the query parameters
      * Only active if addQueryString is set
      *
-     * @param array $argumentsToBeExcludedFromQueryString
+     * @param array<mixed> $argumentsToBeExcludedFromQueryString
      * @return UriBuilder the current UriBuilder to allow method chaining
      * @deprecated with Flow 9.0
      */
@@ -239,7 +239,7 @@ class UriBuilder
     }
 
     /**
-     * @return array
+     * @return array<mixed>
      * @deprecated with Flow 9.0
      */
     public function getArgumentsToBeExcludedFromQueryString()
@@ -251,7 +251,7 @@ class UriBuilder
      * Returns the arguments being used for the last URI being built.
      * This is only set after build() / uriFor() has been called.
      *
-     * @return array The last arguments
+     * @return array<mixed> The last arguments
      */
     public function getLastArguments()
     {
@@ -330,9 +330,9 @@ class UriBuilder
      *    )
      * )
      *
-     * @param array $arguments arguments
+     * @param array<mixed> $arguments arguments
      * @param ActionRequest $currentRequest
-     * @return array arguments with namespace
+     * @return array<mixed> arguments with namespace
      */
     protected function addNamespaceToArguments(array $arguments, ActionRequest $currentRequest)
     {
@@ -349,7 +349,7 @@ class UriBuilder
     /**
      * Builds the URI
      *
-     * @param array $arguments optional URI arguments. Will be merged with $this->arguments with precedence to $arguments
+     * @param array<mixed> $arguments optional URI arguments. Will be merged with $this->arguments with precedence to $arguments
      * @return string the (absolute or relative) URI as string
      * @throws \Neos\Flow\Http\Exception
      * @api
@@ -389,8 +389,8 @@ class UriBuilder
      * The request hierarchy is structured as follows:
      * root (HTTP) > main (Action) > sub (Action) > sub sub (Action)
      *
-     * @param array $arguments
-     * @return array
+     * @param array<mixed> $arguments
+     * @return array<mixed>
      */
     protected function mergeArgumentsWithRequestArguments(array $arguments)
     {

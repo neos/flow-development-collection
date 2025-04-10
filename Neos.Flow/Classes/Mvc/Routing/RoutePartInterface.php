@@ -34,7 +34,7 @@ interface RoutePartInterface
     /**
      * Returns name of the Route Part.
      *
-     * @return string
+     * @return ?string
      */
     public function getName();
 
@@ -108,13 +108,13 @@ interface RoutePartInterface
      * Defines options for this Route Part.
      * Options can be used to enrich a route part with parameters or settings like case sensivitity.
      *
-     * @param array $options
+     * @param array<mixed> $options
      * @return void
      */
     public function setOptions(array $options);
 
     /**
-     * @return array options of this Route Part.
+     * @return array<mixed> options of this Route Part.
      */
     public function getOptions();
 
@@ -135,7 +135,7 @@ interface RoutePartInterface
      * removes resolved elements from $routeValues-Array.
      * This is why $routeValues has to be passed by reference.
      *
-     * @param array &$routeValues An array with key/value pairs to be resolved by Dynamic Route Parts.
+     * @param array<mixed> &$routeValues An array with key/value pairs to be resolved by Dynamic Route Parts.
      * @return bool|ResolveResult true or an instance of ResolveResult if Route Part can resolve one or more $routeValues elements, otherwise false.
      */
     public function resolve(array &$routeValues);

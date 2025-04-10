@@ -57,7 +57,7 @@ abstract class AbstractController implements ControllerInterface
 
     /**
      * The current action request directed to this controller
-     * @var ActionRequest
+     * @var ?ActionRequest
      * @api
      */
     protected $request;
@@ -101,7 +101,7 @@ abstract class AbstractController implements ControllerInterface
     /**
      * A list of IANA media types which are supported by this controller
      *
-     * @var array
+     * @var array<int,string>
      * @see http://www.iana.org/assignments/media-types/index.html
      */
     protected $supportedMediaTypes = ['text/html'];
@@ -121,7 +121,7 @@ abstract class AbstractController implements ControllerInterface
      * @param ActionRequest $request
      * @param ActionResponse $response
      */
-    protected function initializeController(ActionRequest $request, ActionResponse $response)
+    protected function initializeController(ActionRequest $request, ActionResponse $response): void
     {
         // make the current request and response "globally" available to everywhere in this controller.
         $this->request = $request;
@@ -163,18 +163,15 @@ abstract class AbstractController implements ControllerInterface
      * @param string $messageBody text of the FlashMessage
      * @param string $messageTitle optional header of the FlashMessage
      * @param string $severity severity of the FlashMessage (one of the Message::SEVERITY_* constants)
-     * @param array $messageArguments arguments to be passed to the FlashMessage
+     * @param array<mixed> $messageArguments arguments to be passed to the FlashMessage
      * @param integer $messageCode
      * @return void
      * @throws \InvalidArgumentException if the message body is no string
      * @see Error\Message
      * @api
      */
-    public function addFlashMessage($messageBody, $messageTitle = '', $severity = Error\Message::SEVERITY_OK, array $messageArguments = [], $messageCode = null)
+    public function addFlashMessage(string $messageBody, $messageTitle = '', $severity = Error\Message::SEVERITY_OK, array $messageArguments = [], $messageCode = null)
     {
-        if (!is_string($messageBody)) {
-            throw new \InvalidArgumentException('The message body must be of type string, "' . gettype($messageBody) . '" given.', 1243258395);
-        }
         switch ($severity) {
             case Error\Message::SEVERITY_NOTICE:
                 $message = new Error\Notice($messageBody, $messageCode, $messageArguments, $messageTitle);
@@ -213,6 +210,9 @@ abstract class AbstractController implements ControllerInterface
      */
     protected function forward(string $actionName, ?string $controllerName = null, ?string $packageKey = null, array $arguments = []): never
     {
+        if (!$this->request) {
+            throw new \Exception('Cannot resolve request', 1744328653);
+        }
         $nextRequest = clone $this->request;
         $nextRequest->setControllerActionName($actionName);
 
@@ -290,7 +290,7 @@ abstract class AbstractController implements ControllerInterface
         }
         $this->uriBuilder->reset();
         if ($format === null) {
-            $this->uriBuilder->setFormat($this->request->getFormat());
+            $this->uriBuilder->setFormat($this->request?->getFormat());
         } else {
             $this->uriBuilder->setFormat($format);
         }

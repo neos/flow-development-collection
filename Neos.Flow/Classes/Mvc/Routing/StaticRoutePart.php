@@ -21,7 +21,7 @@ class StaticRoutePart extends \Neos\Flow\Mvc\Routing\AbstractRoutePart
     /**
      * Gets default value of the Route Part.
      *
-     * @return string
+     * @return ?string
      */
     public function getDefaultValue()
     {
@@ -37,7 +37,6 @@ class StaticRoutePart extends \Neos\Flow\Mvc\Routing\AbstractRoutePart
      */
     public function match(&$routePath)
     {
-        $routePath = (string)$routePath;
         $this->value = null;
         if ($this->name === null || $this->name === '') {
             return false;
@@ -57,7 +56,7 @@ class StaticRoutePart extends \Neos\Flow\Mvc\Routing\AbstractRoutePart
     /**
      * Sets the Route Part value to the Route Part name and returns true if successful.
      *
-     * @param array $routeValues not used but needed to implement \Neos\Flow\Mvc\Routing\AbstractRoutePart
+     * @param array<mixed> $routeValues not used but needed to implement \Neos\Flow\Mvc\Routing\AbstractRoutePart
      * @return boolean
      */
     public function resolve(array &$routeValues)
