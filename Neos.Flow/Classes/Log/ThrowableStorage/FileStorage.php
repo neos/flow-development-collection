@@ -53,7 +53,7 @@ class FileStorage implements ThrowableStorageInterface
     /**
      * Factory method to get an instance.
      *
-     * @param array $options
+     * @param array{storagePath?: string, maximumThrowableDumpAge?: int, maximumThrowableDumpCount: ?int} $options
      * @return ThrowableStorageInterface
      */
     public static function createWithOptions(array $options): ThrowableStorageInterface
@@ -88,14 +88,13 @@ class FileStorage implements ThrowableStorageInterface
             }
 
             $bootstrap = Bootstrap::$staticObjectManager->get(Bootstrap::class);
-            /* @var Bootstrap $bootstrap */
             $requestHandler = $bootstrap->getActiveRequestHandler();
             if (!$requestHandler instanceof HttpRequestHandlerInterface) {
                 return $output;
             }
 
             $request = $requestHandler->getHttpRequest();
-            $output .= PHP_EOL . 'HTTP REQUEST:' . PHP_EOL . ($request instanceof RequestInterface ? RequestInformationHelper::renderRequestInformation($request) : '[request was empty]') . PHP_EOL;
+            $output .= PHP_EOL . 'HTTP REQUEST:' . PHP_EOL . RequestInformationHelper::renderRequestInformation($request) . PHP_EOL;
             $output .= PHP_EOL . 'PHP PROCESS:' . PHP_EOL . 'Inode: ' . getmyinode() . PHP_EOL . 'PID: ' . getmypid() . PHP_EOL . 'UID: ' . getmyuid() . PHP_EOL . 'GID: ' . getmygid() . PHP_EOL . 'User: ' . get_current_user() . PHP_EOL;
 
             return $output;
@@ -137,7 +136,7 @@ class FileStorage implements ThrowableStorageInterface
      * Exception #<code> in <line> of <file>: <message> - See also: <dumpFilename>
      *
      * @param \Throwable $throwable
-     * @param array $additionalData
+     * @param array<mixed> $additionalData
      * @return string Informational message about the stored throwable
      */
     public function logThrowable(\Throwable $throwable, array $additionalData = [])
@@ -177,14 +176,14 @@ class FileStorage implements ThrowableStorageInterface
     protected function generateUniqueReferenceCode()
     {
         $timestamp = $_SERVER['REQUEST_TIME'] ?? time();
-        return date('YmdHis', $timestamp) . substr(md5(rand()), 0, 6);
+        return date('YmdHis', $timestamp) . substr(md5((string)rand()), 0, 6);
     }
 
     /**
      * Get current error post mortem informations with support for error chaining
      *
      * @param \Throwable $error
-     * @param array $additionalData
+     * @param array<mixed> $additionalData
      * @return string
      */
     protected function renderErrorInfo(\Throwable $error, array $additionalData = [])
@@ -226,7 +225,7 @@ class FileStorage implements ThrowableStorageInterface
             $errorCodeString = ' [' . $error->getCode() . ']';
         }
         $backTrace = $error->getTrace();
-        $line = isset($backTrace[0]['line']) ? ' in line ' . $backTrace[0]['line'] . ' of ' . $backTrace[0]['file'] : '';
+        $line = isset($backTrace[0]['line']) ? ' in line ' . $backTrace[0]['line'] . ' of ' . ($backTrace[0]['file'] ?? 'unknown') : '';
 
         return 'Exception' . $errorCodeString . $line . ': ' . $error->getMessage();
     }
@@ -234,7 +233,7 @@ class FileStorage implements ThrowableStorageInterface
     /**
      * Renders background information about the circumstances of the exception.
      *
-     * @param array $backtrace
+     * @param array<mixed> $backtrace
      * @return string
      */
     protected function renderBacktrace($backtrace)
@@ -281,7 +280,7 @@ class FileStorage implements ThrowableStorageInterface
 
         if ($this->maximumThrowableDumpCount > 0) {
             // this returns alphabetically ordered, so oldest first, as we have a date/time in the name
-            $existingDumps = glob(Files::concatenatePaths([$this->storagePath, '*']));
+            $existingDumps = glob(Files::concatenatePaths([$this->storagePath, '*'])) ?: [];
             $existingDumpsCount = count($existingDumps);
             if ($existingDumpsCount > $this->maximumThrowableDumpCount) {
                 $dumpsToRemove = array_slice($existingDumps, 0, $existingDumpsCount - $this->maximumThrowableDumpCount);

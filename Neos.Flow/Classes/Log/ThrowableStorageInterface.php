@@ -13,7 +13,7 @@ interface ThrowableStorageInterface
      *
      * Note that throwable storages must work without proxy so all dependencies need to be resolved manually or via options.
      *
-     * @param array $options
+     * @param array<mixed> $options
      * @return ThrowableStorageInterface
      */
     public static function createWithOptions(array $options): ThrowableStorageInterface;
@@ -25,7 +25,7 @@ interface ThrowableStorageInterface
      * can be logged or displayed as needed.
      *
      * @param \Throwable $throwable The throwable to log
-     * @param array $additionalData Additional data to log
+     * @param array<mixed> $additionalData Additional data to log
      * @return string Informational message about the stored throwable
      * @api
      */

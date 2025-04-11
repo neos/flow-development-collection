@@ -30,7 +30,7 @@ interface PsrLoggerFactoryInterface
      * Reminder for super low level things like this, the Bootstrap class has
      * some static properties for you.
      *
-     * @param array $configuration
+     * @param array<mixed> $configuration
      * @return static
      * @api
      */
