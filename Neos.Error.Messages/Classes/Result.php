@@ -164,15 +164,17 @@ class Result
     /**
      * Get the first error object of the current Result object (non-recursive)
      *
-     * @param string $messageTypeFilter if specified only errors implementing the given class are considered
-     * @return Error
+     * @template T of Error
+     * @param class-string<T>|null $messageTypeFilter if specified only errors implementing the given class are considered
+     * @return ?T
      * @api
      */
     public function getFirstError(?string $messageTypeFilter = null)
     {
         $matchingErrors = $this->filterMessages($this->errors, $messageTypeFilter);
-        reset($matchingErrors);
-        return current($matchingErrors);
+        $result = reset($matchingErrors);
+
+        return $result instanceof Error ? $result : null;
     }
 
     /**
