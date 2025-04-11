@@ -114,6 +114,9 @@ class JsonArrayType extends DoctrineJsonType
      */
     protected function initializeDependencies(): void
     {
+        if (!Bootstrap::$staticObjectManager) {
+            throw new \Exception('Cannot initialize dependencies without the static object manager', 1744398442);
+        }
         if ($this->persistenceManager === null) {
             $this->persistenceManager = Bootstrap::$staticObjectManager->get(PersistenceManagerInterface::class);
             $this->reflectionService = Bootstrap::$staticObjectManager->get(ReflectionService::class);

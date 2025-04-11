@@ -107,6 +107,9 @@ class SqlFilter extends DoctrineSqlFilter
      */
     protected function initializeDependencies()
     {
+        if (!Bootstrap::$staticObjectManager) {
+            throw new \Exception('Cannot initialize dependencies without the static object manager', 1744398442);
+        }
         if ($this->securityContext === null) {
             $this->securityContext = Bootstrap::$staticObjectManager->get(Context::class);
         }
