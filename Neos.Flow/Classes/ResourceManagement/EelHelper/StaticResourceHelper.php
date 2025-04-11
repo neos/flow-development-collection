@@ -73,7 +73,7 @@ class StaticResourceHelper implements ProtectedContextAwareInterface
         $resourcePath = sprintf('resource://%s/%s', $packageKey, $pathAndFilename);
         if ($localize === true) {
             $localizedResourcePathData = $this->i18nService->getLocalizedFilename($resourcePath);
-            $resourcePath = $localizedResourcePathData[0] ?? $resourcePath;
+            $resourcePath = $localizedResourcePathData[0];
         }
         return $resourcePath;
     }

@@ -34,7 +34,7 @@ class TranslationHelper implements ProtectedContextAwareInterface
      *
      * @param string $id Id to use for finding translation (trans-unit id in XLIFF)
      * @param string $originalLabel The original translation value (the untranslated source string).
-     * @param array $arguments Array of numerically indexed or named values to be inserted into placeholders. Have a look at the internationalization documentation in the definitive guide for details.
+     * @param array<mixed> $arguments Array of numerically indexed or named values to be inserted into placeholders. Have a look at the internationalization documentation in the definitive guide for details.
      * @param string $source Name of file with translations
      * @param string $package Target package key. If not set, the current package key will be used
      * @param mixed $quantity A number to find plural form for (float or int), NULL to not use plural forms
@@ -98,10 +98,10 @@ class TranslationHelper implements ProtectedContextAwareInterface
      * translated label.
      *
      * @param string $id Id to use for finding translation (trans-unit id in XLIFF)
-     * @param string $originalLabel The original translation value (the untranslated source string).
-     * @param array $arguments Numerically indexed array of values to be inserted into placeholders
+     * @param ?string $originalLabel The original translation value (the untranslated source string).
+     * @param array<mixed> $arguments Numerically indexed array of values to be inserted into placeholders
      * @param string|null $source Name of file with translations, defaults to 'Main'
-     * @param string $package Target package key. If not set, the current package key will be used
+     * @param ?string $package Target package key. If not set, the current package key will be used
      * @param mixed $quantity A number to find plural form for (float or int), NULL to not use plural forms
      * @param string $locale An identifier of locale to use (NULL for use the default locale)
      * @return string|null Translated label or source label / ID key
@@ -111,11 +111,15 @@ class TranslationHelper implements ProtectedContextAwareInterface
         $translationParameterToken = $this->createTranslationParameterToken($id);
         $source = $source === null ? 'Main' : str_replace('.', '/', $source);
         $translationParameterToken
-            ->value($originalLabel)
             ->arguments($arguments)
             ->source($source)
-            ->package($package)
             ->quantity($quantity);
+        if ($originalLabel) {
+            $translationParameterToken->value($originalLabel);
+        }
+        if ($package) {
+            $translationParameterToken->package($package);
+        }
 
         if ($locale !== null) {
             $translationParameterToken->locale($locale);

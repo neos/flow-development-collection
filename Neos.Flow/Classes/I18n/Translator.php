@@ -113,7 +113,7 @@ class Translator
      * If no $locale is provided, default system locale will be used.
      *
      * @param string $originalLabel Untranslated message
-     * @param array $arguments An array of values to replace placeholders with
+     * @param array<string,mixed> $arguments An array of values to replace placeholders with
      * @param mixed $quantity A number to find plural form for (float or int), NULL to not use plural forms
      * @param Locale $locale Locale to use (NULL for default one)
      * @param string $sourceName Name of file with translations, base path is $packageKey/Resources/Private/Locale/Translations/
@@ -170,7 +170,7 @@ class Translator
      * be chosen and used to choose correct translation variant.
      *
      * @param string $labelId Key to use for finding translation
-     * @param array $arguments An array of values to replace placeholders with
+     * @param array<string,mixed> $arguments An array of values to replace placeholders with
      * @param mixed $quantity A number to find plural form for (float or int), NULL to not use plural forms
      * @param Locale $locale Locale to use (NULL for default one)
      * @param string $sourceName Name of file with translations, base path is $packageKey/Resources/Private/Locale/Translations/

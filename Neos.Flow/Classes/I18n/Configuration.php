@@ -24,12 +24,12 @@ class Configuration
     protected $defaultLocale;
 
     /**
-     * @var Locale
+     * @var ?Locale
      */
     protected $currentLocale;
 
     /**
-     * @var array
+     * @var array{strict: bool, order: array<int,string>}
      */
     protected $fallbackRule = ['strict' => false, 'order' => []];
 
@@ -103,9 +103,9 @@ class Configuration
      * Here is an example:
      *   array('strict' => false, 'order' => array('dk', 'za'))
      *
-     * @param array $fallbackRule
+     * @param array{strict?: bool, order?: array<int,string>} $fallbackRule
      */
-    public function setFallbackRule(array $fallbackRule)
+    public function setFallbackRule(array $fallbackRule): void
     {
         if (!array_key_exists('order', $fallbackRule)) {
             throw new \InvalidArgumentException('The given fallback rule did not contain an order element.', 1406710671);
@@ -119,7 +119,7 @@ class Configuration
     /**
      * Returns the current fallback rule.
      *
-     * @return array
+     * @return array<mixed>
      * @see setFallbackRule()
      */
     public function getFallbackRule()

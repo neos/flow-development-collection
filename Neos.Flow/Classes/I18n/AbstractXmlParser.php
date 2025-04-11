@@ -23,7 +23,7 @@ abstract class AbstractXmlParser
     /**
      * Associative array of "filename => parsed data" pairs.
      *
-     * @var array
+     * @var array<string,array<mixed>>
      */
     protected $parsedFiles;
 
@@ -33,7 +33,7 @@ abstract class AbstractXmlParser
      * Parses XML if it wasn't done before. Caches parsed data.
      *
      * @param string $sourcePath An absolute path to XML file
-     * @return array Parsed XML file
+     * @return array<mixed> Parsed XML file
      */
     public function getParsedData(string $sourcePath)
     {
@@ -56,7 +56,7 @@ abstract class AbstractXmlParser
         }
         libxml_use_internal_errors(true);
         // Use of simplexml_load_string/file_get_contents ia a workaround for https://bugs.php.net/bug.php?id=62577
-        $rootXmlNode = simplexml_load_string(file_get_contents($sourcePath), 'SimpleXmlElement', \LIBXML_NOWARNING);
+        $rootXmlNode = simplexml_load_string(file_get_contents($sourcePath) ?: '', 'SimpleXmlElement', \LIBXML_NOWARNING);
         if ($rootXmlNode === false) {
             $errors = [];
             foreach (libxml_get_errors() as $error) {
@@ -76,7 +76,7 @@ abstract class AbstractXmlParser
      * Reads and parses XML file and returns internal representation of data.
      *
      * @param string $sourcePath An absolute path to XML file
-     * @return array Parsed XML file
+     * @return array<mixed> Parsed XML file
      */
     protected function parseXmlFile(string $sourcePath)
     {
@@ -89,7 +89,7 @@ abstract class AbstractXmlParser
      * Returns array representation of XML data, starting from a root node.
      *
      * @param \SimpleXMLElement $root A root node
-     * @return array An array representing parsed XML file (structure depends on concrete parser)
+     * @return array<mixed> An array representing parsed XML file (structure depends on concrete parser)
      */
     abstract protected function doParsingFromRoot(\SimpleXMLElement $root);
 }

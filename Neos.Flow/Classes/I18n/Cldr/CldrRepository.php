@@ -51,7 +51,7 @@ class CldrRepository
      * reside and 'locale' is used to define which files are included in the
      * relation (e.g. for locale 'en_GB' files would be: root + en + en_GB).
      *
-     * @var array<CldrModel>
+     * @var array<string,CldrModel|array<string,CldrModel>>
      */
     protected $models;
 
@@ -73,13 +73,13 @@ class CldrRepository
      * file.
      *
      * @param string $filename Relative (from CLDR root) path to existing CLDR file
-     * @return CldrModel|false A CldrModel instance or false on failure
+     * @return CldrModel|false An array of CldrModel instances indexed by Locale or false on failure
      */
     public function getModel($filename)
     {
         $filename = Files::concatenatePaths([$this->cldrBasePath, $filename . '.xml']);
 
-        if (isset($this->models[$filename])) {
+        if (isset($this->models[$filename]) && $this->models[$filename] instanceof CldrModel) {
             return $this->models[$filename];
         }
 
@@ -110,7 +110,7 @@ class CldrRepository
     {
         $directoryPath = Files::concatenatePaths([$this->cldrBasePath, $directoryPath]);
 
-        if (isset($this->models[$directoryPath][(string)$locale])) {
+        if (is_array($this->models[$directoryPath]) && isset($this->models[$directoryPath][(string)$locale])) {
             return $this->models[$directoryPath][(string)$locale];
         }
 
@@ -120,6 +120,11 @@ class CldrRepository
 
         $filesInHierarchy = $this->findLocaleChain($locale, $directoryPath);
 
+        if (($this->models[$directoryPath] ?? null) instanceof CldrModel)  {
+            throw new \Exception('Directory path ' . $directoryPath . ' is already occupied', 1744414384);
+        }
+
+        /** @phpstan-ignore offsetAccess.nonOffsetAccessible (we already checked that above. also @todo separate the arrays) */
         return $this->models[$directoryPath][(string)$locale] = new CldrModel($filesInHierarchy);
     }
 
