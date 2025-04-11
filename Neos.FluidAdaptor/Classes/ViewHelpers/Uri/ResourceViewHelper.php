@@ -145,7 +145,7 @@ class ResourceViewHelper extends AbstractViewHelper
             $resourcePath = 'resource://' . $package . '/Public/' . $path;
             $localizedResourcePathData = $i18nService->getLocalizedFilename($resourcePath);
             $matches = [];
-            if (preg_match('#resource://([^/]+)/Public/(.*)#', current($localizedResourcePathData), $matches) === 1) {
+            if (preg_match('#resource://([^/]+)/Public/(.*)#', (string)current($localizedResourcePathData), $matches) === 1) {
                 $package = $matches[1];
                 $path = $matches[2];
             }

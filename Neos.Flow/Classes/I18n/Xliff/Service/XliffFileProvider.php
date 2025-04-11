@@ -25,6 +25,7 @@ use Neos\Utility\Files;
  * A provider service for XLIFF file objects within the application
  *
  * @Flow\Scope("singleton")
+ * @phpstan-import-type XliffRecord from FileAdapter
  */
 class XliffFileProvider
 {
@@ -65,7 +66,7 @@ class XliffFileProvider
     protected $xliffBasePath = 'Private/Translations/';
 
     /**
-     * @var array
+     * @var array<string,array<string,XliffRecord>>
      */
     protected $files = [];
 
@@ -94,7 +95,7 @@ class XliffFileProvider
     /**
      * @param string $fileId
      * @param Locale $locale
-     * @return array
+     * @return XliffRecord
      * @todo Add XLIFF 2.0 support
      */
     public function getMergedFileData($fileId, Locale $locale): array
@@ -126,7 +127,7 @@ class XliffFileProvider
 
     /**
      * @param string $translationPath
-     * @param array $parsedData
+     * @param array{fileIdentifier: string, sourceLocale?: Locale, translationUnits?: array<string,array<int,array{source: string, target: string}>>} $parsedData
      * @param string $fileId
      * @param string $defaultPackageName
      * @return void
@@ -135,7 +136,7 @@ class XliffFileProvider
     {
         foreach (Files::readDirectoryRecursively($translationPath) as $filePath) {
             $defaultSource = trim(str_replace($translationPath, '', $filePath), '/');
-            $defaultSource = substr($defaultSource, 0, strrpos($defaultSource, '.'));
+            $defaultSource = substr($defaultSource, 0, strrpos($defaultSource, '.') ?: 0);
 
             $relevantOffset = null;
             $documentVersion = null;
@@ -161,7 +162,8 @@ class XliffFileProvider
                 $xliffParser = $this->getParser($documentVersion);
                 if ($xliffParser) {
                     $fileData = $xliffParser->getFileDataFromDocument($filePath, $relevantOffset);
-                    $parsedData = Arrays::arrayMergeRecursiveOverrule($parsedData, $fileData);
+                    /** @phpstan-ignore parameterByRef.type (arrayMergeRecursiveOverrule will not reduce the array shape) */
+                    $parsedData = Arrays::arrayMergeRecursiveOverrule($parsedData, $fileData ?: []);
                 }
             }
         }
@@ -186,7 +188,6 @@ class XliffFileProvider
         switch ($documentVersion) {
             case '1.2':
                 return new V12XliffParser();
-                break;
             default:
                 return null;
         }

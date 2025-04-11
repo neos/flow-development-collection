@@ -494,6 +494,7 @@ class ReflectionService
     /**
      * Tells if the specified class implements the given interface
      *
+     * @todo can't this be replaces with is_subclass_of() ?
      * @throws ClassLoadingForReflectionFailedException
      * @throws InvalidClassException
      * @throws \ReflectionException

@@ -127,10 +127,10 @@ class DatetimeParser
      * Parses date and / or time using parsed format, in strict or lenient mode.
      *
      * @param string $datetimeToParse Date/time to be parsed
-     * @param array $parsedFormat Parsed format (from DatesReader)
-     * @param array $localizedLiterals Array of date / time literals from CLDR
+     * @param array<mixed> $parsedFormat Parsed format (from DatesReader)
+     * @param array<mixed> $localizedLiterals Array of date / time literals from CLDR
      * @param boolean $strictMode Work mode (strict when true, lenient when false)
-     * @return mixed Array of parsed date and / or time elements, false on failure
+     * @return array<string,mixed>|false Array of parsed date and / or time elements, false on failure
      */
     protected function doParsingWithParsedFormat($datetimeToParse, array $parsedFormat, array $localizedLiterals, $strictMode)
     {
@@ -141,9 +141,9 @@ class DatetimeParser
      * Parses date and / or time in strict mode.
      *
      * @param string $datetimeToParse Date/time to be parsed
-     * @param array $parsedFormat Format parsed by DatesReader
-     * @param array $localizedLiterals Array of date / time literals from CLDR
-     * @return array|false Array of parsed date and / or time elements, false on failure
+     * @param array<mixed> $parsedFormat Format parsed by DatesReader
+     * @param array<mixed> $localizedLiterals Array of date / time literals from CLDR
+     * @return array<string,mixed>|false Array of parsed date and / or time elements, false on failure
      * @throws InvalidArgumentException When unexpected symbol found in format
      * @see DatesReader
      */
@@ -341,9 +341,9 @@ class DatetimeParser
      * - some format fallback substitutions can be done (eg. 'Jan' for 'January')
      *
      * @param string $datetimeToParse Date/time to be parsed
-     * @param array $parsedFormat Format parsed by DatesReader
-     * @param array $localizedLiterals Array of date / time literals from CLDR
-     * @return array Array of parsed date and / or time elements (can be array of NULLs if nothing was parsed)
+     * @param array<mixed> $parsedFormat Format parsed by DatesReader
+     * @param array<mixed> $localizedLiterals Array of date / time literals from CLDR
+     * @return array<string,mixed> Array of parsed date and / or time elements (can be array of NULLs if nothing was parsed)
      * @throws Exception\InvalidParseStringException
      * @throws InvalidArgumentException When unexpected symbol found in format
      * @see DatesReader
@@ -403,7 +403,7 @@ class DatetimeParser
                             $hour = $this->extractNumberAndGetPosition($datetimeToParse, $position);
                         }
                         if ($hour >= 0 && $hour <= 23) {
-                            $numberOfCharactersToRemove = $position + strlen($hour);
+                            $numberOfCharactersToRemove = $position + strlen((string)$hour);
                             $datetimeElements['hour'] = (int)$hour;
                             break;
                         }
@@ -533,9 +533,10 @@ class DatetimeParser
                             }
                         }
 
-                        $timezone = $matches[0];
+                        /** @var string $timezone */
+                        $timezone = $matches[0] ?? null;
                         $numberOfCharactersToRemove = strpos($datetimeToParse, $timezone) + strlen($timezone);
-                        $datetimeElements['timezone'] = $matches[0];
+                        $datetimeElements['timezone'] = $timezone;
                         break;
                     case 'D':
                     case 'F':

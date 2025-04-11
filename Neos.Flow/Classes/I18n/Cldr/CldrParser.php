@@ -56,7 +56,7 @@ class CldrParser extends AbstractXmlParser
      * Returns array representation of XML data, starting from a root node.
      *
      * @param \SimpleXMLElement $root A root node
-     * @return array An array representing parsed CLDR File
+     * @return array<mixed> An array representing parsed CLDR File
      * @see AbstractXmlParser::doParsingFromRoot()
      */
     protected function doParsingFromRoot(\SimpleXMLElement $root)

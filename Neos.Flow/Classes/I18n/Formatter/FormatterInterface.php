@@ -24,7 +24,7 @@ interface FormatterInterface
      *
      * @param mixed $value Formatter-specific variable to format (can be integer, \DateTime, etc)
      * @param Locale $locale Locale to use
-     * @param array $styleProperties Integer-indexed array of formatter-specific style properties (can be empty)
+     * @param array<mixed> $styleProperties Integer-indexed array of formatter-specific style properties (can be empty)
      * @return string String representation of $value provided, or (string)$value
      * @api
      */

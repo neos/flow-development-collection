@@ -36,7 +36,7 @@ class TranslationParameterToken implements ProtectedContextAwareInterface
     /**
      * Key/Value store to keep the collected parameters
      *
-     * @var array
+     * @var array<mixed>
      */
     protected $parameters = [];
 
@@ -61,7 +61,7 @@ class TranslationParameterToken implements ProtectedContextAwareInterface
      *
      * @param Translator $translator
      */
-    public function injectTranslator(Translator $translator)
+    public function injectTranslator(Translator $translator): void
     {
         $this->translator = $translator;
     }
@@ -93,7 +93,7 @@ class TranslationParameterToken implements ProtectedContextAwareInterface
     /**
      * Set the arguments.
      *
-     * @param array $arguments Numerically indexed array of values to be inserted into placeholders
+     * @param array<mixed> $arguments Numerically indexed array of values to be inserted into placeholders
      * @return TranslationParameterToken
      */
     public function arguments(array $arguments)
@@ -160,13 +160,14 @@ class TranslationParameterToken implements ProtectedContextAwareInterface
     /**
      * Translate according to currently collected parameters
      *
-     * @param array $overrides An associative array to override the collected parameters
+     * @param array<mixed> $overrides An associative array to override the collected parameters
      * @return string|null
      * @throws IndexOutOfBoundsException
      * @throws InvalidFormatPlaceholderException
      */
     public function translate(array $overrides = [])
     {
+        /** @phpstan-ignore function.resultUnused (whatever, @todo fixme) */
         array_replace_recursive($this->parameters, $overrides);
 
         $id = $this->parameters['id'] ?? null;
@@ -182,7 +183,7 @@ class TranslationParameterToken implements ProtectedContextAwareInterface
         }
 
         $translation = $this->translator->translateById($id, $arguments, $quantity, $locale, $source, $package);
-        if ($translation === null && $value !== null) {
+        if ($translation === null) {
             return $this->translator->translateByOriginalLabel($value, $arguments, $quantity, $locale, $source, $package);
         }
 

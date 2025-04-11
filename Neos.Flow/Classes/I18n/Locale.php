@@ -89,11 +89,8 @@ class Locale
      * @throws Exception\InvalidLocaleIdentifierException If the locale identifier is not valid
      * @api
      */
-    public function __construct($localeIdentifier)
+    public function __construct(string $localeIdentifier)
     {
-        if (!is_string($localeIdentifier)) {
-            throw new \InvalidArgumentException('A locale identifier must be of type string, ' . gettype($localeIdentifier) . ' given.', 1221216120);
-        }
         if (preg_match(self::PATTERN_MATCH_LOCALEIDENTIFIER, $localeIdentifier, $matches) !== 1) {
             throw new Exception\InvalidLocaleIdentifierException('"' . $localeIdentifier . '" is not a valid locale identifier.', 1221137814);
         }

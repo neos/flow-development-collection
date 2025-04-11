@@ -37,7 +37,7 @@ class XliffParser extends AbstractXmlParser
      * Returns array representation of XLIFF data, starting from a root node.
      *
      * @param \SimpleXMLElement $root A root node
-     * @return array An array representing parsed XLIFF
+     * @return array<int,array{sourceLocale: Locale, translationUnits?: array<string,array<int,array{source: string, target: string}>>}> An array representing parsed XLIFF
      * @throws InvalidXliffDataException
      * @todo Support "approved" attribute
      */
@@ -54,7 +54,7 @@ class XliffParser extends AbstractXmlParser
 
     /**
      * @param \SimpleXMLElement $file
-     * @return array
+     * @return array{sourceLocale: Locale, translationUnits?: array<string,array<int,array{source: string, target: string}>>}
      * @throws InvalidXliffDataException
      */
     protected function getFileData(\SimpleXMLElement $file): array
@@ -110,7 +110,7 @@ class XliffParser extends AbstractXmlParser
                         if (!empty($parsedTranslationElement)) {
                             if (isset($translationElement->{'trans-unit'}[0]['id'])) {
                                 $id = (string)$translationElement->{'trans-unit'}[0]['id'];
-                                $id = substr($id, 0, strpos($id, '['));
+                                $id = substr($id, 0, strpos($id, '[') ?: 0);
                             } else {
                                 throw new InvalidXliffDataException('A trans-unit tag without id attribute was found, validate your XLIFF files.', 1329399258);
                             }
@@ -128,7 +128,7 @@ class XliffParser extends AbstractXmlParser
     /**
      * @param string $sourcePath
      * @param mixed $fileOffset
-     * @return array|null
+     * @return array{sourceLocale: Locale, translationUnits?: array<string,array<int,array{source: string, target: string}>>}|null
      * @throws InvalidXliffDataException
      * @throws InvalidXmlFileException
      */
