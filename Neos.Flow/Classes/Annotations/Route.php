@@ -38,8 +38,8 @@ final readonly class Route
     /**
      * @param string $uriPattern The uri-pattern for the route without leading '/'. Might contain route values in the form of `path/{foo}`
      * @param string $name The suffix of the route name as shown in `route:list` (defaults to the action name: "My.Package :: Site :: index")
-     * @param array $httpMethods List of uppercase http verbs like 'GET', 'POST', 'PUT', 'DELETE', if not specified any request method will be matched
-     * @param array $defaults Values to set for this route
+     * @param list<string> $httpMethods List of uppercase http verbs like 'GET', 'POST', 'PUT', 'DELETE', if not specified any request method will be matched
+     * @param array<string,mixed> $defaults Values to set for this route
      */
     public function __construct(
         public string $uriPattern,
