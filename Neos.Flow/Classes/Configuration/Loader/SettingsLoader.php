@@ -16,6 +16,7 @@ namespace Neos\Flow\Configuration\Loader;
 use Neos\Flow\Configuration\ConfigurationManager;
 use Neos\Flow\Configuration\Source\YamlSource;
 use Neos\Flow\Core\ApplicationContext;
+use Neos\Flow\Package\FlowPackageInterface;
 use Neos\Utility\Arrays;
 
 class SettingsLoader implements LoaderInterface
@@ -30,6 +31,10 @@ class SettingsLoader implements LoaderInterface
         $this->yamlSource = $yamlSource;
     }
 
+    /**
+     * @param array<string,FlowPackageInterface> $packages
+     * @return array<mixed>
+     */
     public function load(array $packages, ApplicationContext $context): array
     {
         // Make sure that the Flow package is the first item of the packages array:

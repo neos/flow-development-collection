@@ -14,6 +14,7 @@ namespace Neos\Flow\Configuration\Loader;
  */
 
 use Neos\Flow\Core\ApplicationContext;
+use Neos\Flow\Package\PackageInterface;
 
 /**
  * The interface for a configuration loader
@@ -23,9 +24,9 @@ interface LoaderInterface
     /**
      * Read configuration resources and return the final configuration array for the given configurationType
      *
-     * @param array $packages An array of Package objects (indexed by package key) to consider
+     * @param array<PackageInterface> $packages An array of Package objects (indexed by package key) to consider
      * @param ApplicationContext $context
-     * @return array The Configuration array for the current configurationType
+     * @return array<mixed> The Configuration array for the current configurationType
      */
     public function load(array $packages, ApplicationContext $context) : array;
 }
