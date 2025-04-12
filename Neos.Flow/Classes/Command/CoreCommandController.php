@@ -74,7 +74,7 @@ class CoreCommandController extends CommandController
     protected $aopProxyClassBuilder;
 
     /**
-     * @var ProxyClassBuilder
+     * @var ProxyClassBuilder<object>
      */
     protected $dependencyInjectionProxyClassBuilder;
 
@@ -147,7 +147,7 @@ class CoreCommandController extends CommandController
     }
 
     /**
-     * @param ProxyClassBuilder $dependencyInjectionProxyClassBuilder
+     * @param ProxyClassBuilder<object> $dependencyInjectionProxyClassBuilder
      * @return void
      */
     public function injectDependencyInjectionProxyClassBuilder(ProxyClassBuilder $dependencyInjectionProxyClassBuilder)

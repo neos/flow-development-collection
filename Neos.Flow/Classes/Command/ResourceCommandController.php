@@ -249,13 +249,9 @@ class ResourceCommandController extends CommandController
             foreach ($brokenResources as $resource) {
                 if ($mediaPackagePresent) {
                     $assets = $assetRepository->findByResource($resource);
-                    if ($assets !== null) {
-                        $relatedAssets[$resource] = $assets;
-                    }
+                    $relatedAssets[$resource] = $assets;
                     $thumbnails = $thumbnailRepository->findByResource($resource);
-                    if ($assets !== null) {
-                        $relatedThumbnails[$resource] = $thumbnails;
-                    }
+                    $relatedThumbnails[$resource] = $thumbnails;
                 }
             }
         }
@@ -306,6 +302,7 @@ class ResourceCommandController extends CommandController
                         $this->persistenceManager->persistAll();
                     }
                     $brokenResourcesCounter = count($brokenResources);
+                    /** @phpstan-ignore greater.alwaysTrue (not sure about this) */
                     if ($brokenResourcesCounter > 0) {
                         $this->outputLine('Removed %s resource object(s) from the database.', [$brokenResourcesCounter]);
                     }
@@ -319,7 +316,6 @@ class ResourceCommandController extends CommandController
                 case 'n':
                     $this->outputLine('Did not delete any resource objects.');
                     $this->quit(0);
-                    break;
             }
         }
     }

@@ -22,7 +22,7 @@ use Neos\Flow\Error\WithReferenceCodeInterface;
 class Exception extends \Exception implements WithReferenceCodeInterface, WithHttpStatusInterface
 {
     /**
-     * @var string
+     * @var ?string
      */
     protected $referenceCode;
 
@@ -41,7 +41,7 @@ class Exception extends \Exception implements WithReferenceCodeInterface, WithHt
     public function getReferenceCode()
     {
         if (!isset($this->referenceCode)) {
-            $this->referenceCode = date('YmdHis', $_SERVER['REQUEST_TIME']) . substr(md5(rand()), 0, 6);
+            $this->referenceCode = date('YmdHis', $_SERVER['REQUEST_TIME']) . substr(md5((string)rand()), 0, 6);
         }
         return $this->referenceCode;
     }
