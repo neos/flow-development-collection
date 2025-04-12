@@ -31,7 +31,8 @@ class SessionMiddleware implements MiddlewareInterface
 {
     /**
      * @Flow\InjectConfiguration(package="Neos.Flow", path="session")
-     * @var array
+     * @todo enforce with extractor
+     * @var array{name: string, cookie: array{lifetime: int, domain: string, path: string, secure: bool, httponly: true, samesite: string}}
      */
     protected $sessionSettings;
 
@@ -41,20 +42,19 @@ class SessionMiddleware implements MiddlewareInterface
      */
     protected $sessionManager;
 
-    public function process(ServerRequestInterface $request, RequestHandlerInterface $next): ResponseInterface
+    public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         if (!$this->sessionManager instanceof SessionManager) {
-            return $next->handle($request);
+            return $handler->handle($request);
         }
 
         $sessionCookieName = $this->sessionSettings['name'];
-        /** @var ServerRequestInterface $request */
         $cookies = $request->getCookieParams();
 
         if (!isset($cookies[$sessionCookieName])) {
             $sessionCookie = $this->prepareCookie($sessionCookieName, Algorithms::generateRandomString(32));
             $this->sessionManager->createCurrentSessionFromCookie($sessionCookie);
-            return $this->handleSetCookie($next->handle($request));
+            return $this->handleSetCookie($handler->handle($request));
         }
 
         $sessionIdentifier = $cookies[$sessionCookieName];
@@ -62,7 +62,7 @@ class SessionMiddleware implements MiddlewareInterface
         $this->sessionManager->initializeCurrentSessionFromCookie($sessionCookie);
         $this->sessionManager->getCurrentSession()->resume();
 
-        return $this->handleSetCookie($next->handle($request));
+        return $this->handleSetCookie($handler->handle($request));
     }
 
     /**

@@ -33,26 +33,26 @@ class RequestBodyParsingMiddleware implements MiddlewareInterface
     /**
      * @inheritDoc
      */
-    public function process(ServerRequestInterface $request, RequestHandlerInterface $next): ResponseInterface
+    public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         if (!empty($request->getParsedBody())) {
-            return $next->handle($request);
+            return $handler->handle($request);
         }
         $parsedBody = $this->parseRequestBody($request);
-        return $next->handle($request->withParsedBody($parsedBody));
+        return $handler->handle($request->withParsedBody($parsedBody));
     }
 
     /**
      * Parses the request body according to the media type.
      *
      * @param ServerRequestInterface $httpRequest
-     * @return null|array|string|integer
+     * @return null|array<mixed>
      */
     protected function parseRequestBody(ServerRequestInterface $httpRequest)
     {
         $requestBody = $httpRequest->getBody()->getContents();
-        if ($requestBody === null || $requestBody === '') {
-            return $requestBody;
+        if ($requestBody === '') {
+            return null;
         }
 
         /** @var MediaTypeConverterInterface $mediaTypeConverter */
@@ -62,6 +62,9 @@ class RequestBodyParsingMiddleware implements MiddlewareInterface
         $requestedContentType = $httpRequest->getHeaderLine('Content-Type');
         $propertyMappingConfiguration->setTypeConverterOption(MediaTypeConverterInterface::class, MediaTypeConverterInterface::CONFIGURATION_MEDIA_TYPE, $requestedContentType);
         // FIXME: The MediaTypeConverter returns an empty array for "error cases", which might be unintended
-        return $this->propertyMapper->convert($requestBody, 'array', $propertyMappingConfiguration);
+        /** @var array<mixed> $array */
+        $array = $this->propertyMapper->convert($requestBody, 'array', $propertyMappingConfiguration);
+
+        return $array;
     }
 }

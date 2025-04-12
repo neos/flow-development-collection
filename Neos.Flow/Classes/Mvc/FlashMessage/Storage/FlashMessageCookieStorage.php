@@ -100,7 +100,7 @@ class FlashMessageCookieStorage implements FlashMessageStorageInterface
         foreach ($this->flashMessageContainer->getMessagesAndFlush() as $flashMessage) {
             $serializedMessages[] = $this->serializeMessage($flashMessage);
         }
-        $cookie = new Cookie($this->cookieName, json_encode($serializedMessages), 0, null, null, '/', false, false);
+        $cookie = new Cookie($this->cookieName, json_encode($serializedMessages, JSON_THROW_ON_ERROR), 0, null, null, '/', false, false);
         return $response->withAddedHeader('Set-Cookie', (string)$cookie);
     }
 

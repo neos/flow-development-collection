@@ -16,12 +16,12 @@ use RuntimeException;
 class UploadedFile implements UploadedFileInterface
 {
     /**
-     * @var string
+     * @var ?string
      */
     protected $clientFilename;
 
     /**
-     * @var string
+     * @var ?string
      */
     protected $clientMediaType;
 
@@ -75,7 +75,7 @@ class UploadedFile implements UploadedFileInterface
      * @param string|StreamInterface|resource $streamOrFile
      * @throws InvalidArgumentException
      */
-    protected function setStreamOrFile($streamOrFile)
+    protected function setStreamOrFile($streamOrFile): void
     {
         if (is_string($streamOrFile)) {
             $this->file = $streamOrFile;
@@ -135,7 +135,14 @@ class UploadedFile implements UploadedFileInterface
             return $this->stream;
         }
 
-        return new Stream(fopen($this->file, 'rb+'));
+        if (!$this->file) {
+            throw new \RuntimeException('Missing file ' . $this->file, 1744443740);
+        }
+        $resource = fopen($this->file, 'rb+');
+        if (!$resource) {
+            throw new \RuntimeException('Failed to open file ' . $this->file, 1744442831);
+        }
+        return new Stream($resource);
     }
 
     /**
@@ -172,18 +179,20 @@ class UploadedFile implements UploadedFileInterface
      *     the second or subsequent call to the method.
      * @api PSR-7
      */
-    public function moveTo($targetPath)
+    public function moveTo(string $targetPath): void
     {
         $this->throwExceptionIfNotAccessible();
 
-        if (!is_string($targetPath) || empty($targetPath)) {
+        if (empty($targetPath)) {
             throw new InvalidArgumentException('Invalid path provided to move uploaded file to. Must be a non-empty string', 1479747624);
         }
 
+        /** @phpstan-ignore identical.alwaysTrue (FLOW_SAPITYPE can also be "Web") */
         if ($this->stream !== null || ($this->file !== null && FLOW_SAPITYPE === 'CLI')) {
             $this->moved = $this->writeFile($targetPath);
         }
 
+        /** @phpstan-ignore notIdentical.alwaysFalse, booleanAnd.alwaysFalse (FLOW_SAPITYPE can also be "Web", thus this can be true) */
         if ($this->file !== null && FLOW_SAPITYPE !== 'CLI') {
             $this->moved = move_uploaded_file($this->file, $targetPath);
         }
@@ -267,7 +276,7 @@ class UploadedFile implements UploadedFileInterface
     /**
      * @throws RuntimeException if is moved or not ok
      */
-    protected function throwExceptionIfNotAccessible()
+    protected function throwExceptionIfNotAccessible(): void
     {
         if (!$this->isOk()) {
             throw new RuntimeException('UploadedFile has the following error: ' . Files::getUploadErrorMessage($this->error), 1479743608);

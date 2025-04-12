@@ -159,8 +159,8 @@ abstract class RequestInformationHelper
     /**
      * Extract header key/value pairs from a $_SERVER array.
      *
-     * @param array $server
-     * @return array
+     * @param array<string,mixed> $server
+     * @return array<string,mixed>
      */
     public static function extractHeadersFromServerVariables(array $server): array
     {

@@ -174,7 +174,7 @@ class InternalRequestEngine implements RequestEngineInterface
     /**
      * Prepare a response in case an error occurred.
      *
-     * @param object $exception \Exception or \Throwable
+     * @param \Throwable $exception
      * @param ResponseInterface $response
      * @return ResponseInterface
      */
@@ -197,7 +197,7 @@ class InternalRequestEngine implements RequestEngineInterface
         return $response
             ->withStatus($statusCode)
             ->withBody($this->contentFactory->createStream($content))
-            ->withHeader('X-Flow-ExceptionCode', $exception->getCode())
+            ->withHeader('X-Flow-ExceptionCode', (string)$exception->getCode())
             ->withHeader('X-Flow-ExceptionMessage', base64_encode($exception->getMessage()));
     }
 }
