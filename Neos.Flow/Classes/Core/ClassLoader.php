@@ -46,7 +46,7 @@ class ClassLoader
     /**
      * A list of namespaces this class loader is definitely responsible for.
      *
-     * @var array
+     * @var array<mixed>
      */
     protected $packageNamespaces = [];
 
@@ -56,7 +56,7 @@ class ClassLoader
     protected $considerTestsNamespace = false;
 
     /**
-     * @var array
+     * @var array<string,true>
      */
     protected $ignoredClassNames = [
         'integer' => true,
@@ -78,7 +78,7 @@ class ClassLoader
     ];
 
     /**
-     * @var array
+     * @var array<mixed>
      */
     protected $fallbackClassPaths = [];
 
@@ -87,13 +87,13 @@ class ClassLoader
      * to save time in resolving those non existent classes.
      * Usually these will be annotations that have no class.
      *
-     * @var array
+     * @var array<string,true>
      *
      */
     protected $nonExistentClasses = [];
 
     /**
-     * @param array $defaultPackageEntries Adds default entries for packages that should be available for very early loading
+     * @param array<array{namespace: string, classPath: string, mappingType: string}> $defaultPackageEntries Adds default entries for packages that should be available for very early loading
      */
     public function __construct(array $defaultPackageEntries = [])
     {
@@ -161,8 +161,8 @@ class ClassLoader
      * there may exist a package "Neos" and a package "Neos.NodeTypes" -- so a class Neos\NodeTypes\Foo must be first
      * loaded (if it exists) from Neos.NodeTypes, falling back to Neos afterwards.
      *
-     * @param array $possiblePaths
-     * @param array $namespaceParts
+     * @param array<mixed> $possiblePaths
+     * @param array<string> $namespaceParts
      * @param integer $packageNamespacePartCount
      * @return boolean
      */
@@ -191,12 +191,11 @@ class ClassLoader
     /**
      * Sets the available packages
      *
-     * @param array $activePackages An array of \Neos\Flow\Package\Package objects
+     * @param array<Package> $activePackages An array of \Neos\Flow\Package\Package objects
      * @return void
      */
     public function setPackages(array $activePackages)
     {
-        /** @var Package $package */
         foreach ($activePackages as $packageKey => $package) {
             foreach ($package->getFlattenedAutoloadConfiguration() as $configuration) {
                 $this->createNamespaceMapEntry($configuration['namespace'], $configuration['classPath'], $configuration['mappingType']);
@@ -292,7 +291,7 @@ class ClassLoader
     /**
      * Try to build a path to a class according to PSR-0 rules.
      *
-     * @param array $classNameParts Parts of the FQ classname.
+     * @param array<string> $classNameParts Parts of the FQ classname.
      * @param string $classPath Already detected class path to a possible package.
      * @return string
      */
@@ -306,7 +305,7 @@ class ClassLoader
     /**
      * Try to build a path to a class according to PSR-4 rules.
      *
-     * @param array $classNameParts Parts of the FQ classname.
+     * @param array<string> $classNameParts Parts of the FQ classname.
      * @param string $classPath Already detected class path to a possible package.
      * @param integer $packageNamespacePartCount Amount of parts of the className that is also part of the package namespace.
      * @return string
