@@ -13,6 +13,7 @@ namespace Neos\Flow\Cli;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Command\HelpCommandController;
+use Neos\Flow\Mvc\Controller\AbstractController;
 use Neos\Flow\Mvc\Controller\Argument;
 use Neos\Flow\Mvc\Controller\Arguments;
 use Neos\Flow\Mvc\Exception\CommandException;
@@ -189,10 +190,6 @@ class CommandController implements CommandControllerInterface
                 $argumentValue = $this->output->ask(sprintf('<comment>Please specify the required argument "%s":</comment> ', $argumentName));
             }
 
-            if ($argumentValue === null) {
-                $exception = new CommandException(sprintf('Required argument "%s" is not set.', $argumentName), 1306755520);
-                $this->forward('error', HelpCommandController::class, ['exception' => $exception]);
-            }
             $argument->setValue($argumentValue);
         }
     }
@@ -204,8 +201,8 @@ class CommandController implements CommandControllerInterface
      * without the need for a new request.
      *
      * @param string $commandName
-     * @param string $controllerObjectName
-     * @param array $arguments
+     * @param ?string $controllerObjectName
+     * @param array<mixed> $arguments
      * @return void
      * @throws StopCommandException
      */
@@ -213,7 +210,11 @@ class CommandController implements CommandControllerInterface
     {
         $this->request->setDispatched(false);
         $this->request->setControllerCommandName($commandName);
-        if ($controllerObjectName !== null) {
+        if (
+            $controllerObjectName !== null
+            && class_exists($controllerObjectName)
+            && is_subclass_of($controllerObjectName, CommandControllerInterface::class)
+        ) {
             $this->request->setControllerObjectName($controllerObjectName);
         }
         $this->request->setArguments($arguments);
@@ -284,7 +285,7 @@ class CommandController implements CommandControllerInterface
      * @see http://www.php.net/sprintf
      *
      * @param string $text Text to output
-     * @param array $arguments Optional arguments to use for sprintf
+     * @param array<mixed> $arguments Optional arguments to use for sprintf
      * @return void
      * @api
      */
@@ -297,7 +298,7 @@ class CommandController implements CommandControllerInterface
      * Outputs specified text to the console window and appends a line break
      *
      * @param string $text Text to output
-     * @param array $arguments Optional arguments to use for sprintf
+     * @param array<mixed> $arguments Optional arguments to use for sprintf
      * @return void
      * @see output()
      * @see outputLines()
@@ -313,7 +314,7 @@ class CommandController implements CommandControllerInterface
      * console window
      *
      * @param string $text Text to output
-     * @param array $arguments Optional arguments to use for sprintf
+     * @param array<mixed> $arguments Optional arguments to use for sprintf
      * @param integer $leftPadding The number of spaces to use for indentation
      * @return void
      * @see outputLine()

@@ -61,7 +61,6 @@ class Response
      *
      * @param integer $exitCode
      * @return void
-     * @throws \InvalidArgumentException
      * @api
      */
     public function setExitCode(int $exitCode): void
@@ -190,21 +189,21 @@ class Response
 
         $content = $this->getContent();
         if ($this->hasColorSupport() === true) {
-            $content =  preg_replace('|\<b>(((?!\</b>).)*)\</b>|', "\x1B[" . self::STYLE_BRIGHT . "m\$1\x1B[0m", $content);
-            $content =  preg_replace('|\<i>(((?!\</i>).)*)\</i>|', "\x1B[" . self::STYLE_ITALIC . "m\$1\x1B[0m", $content);
-            $content =  preg_replace('|\<u>(((?!\</u>).)*)\</u>|', "\x1B[" . self::STYLE_UNDERLINED . "m\$1\x1B[0m", $content);
-            $content =  preg_replace('|\<em>(((?!\</em>).)*)\</em>|', "\x1B[" . self::STYLE_INVERSE . "m\$1\x1B[0m", $content);
-            $content =  preg_replace('|\<strike>(((?!\</strike>).)*)\</strike>|', "\x1B[" . self::STYLE_STRIKETHROUGH . "m\$1\x1B[0m", $content);
-            $content =  preg_replace('|\<error>(((?!\</error>).)*)\</error>|', "\x1B[" . self::STYLE_ERROR . "m\$1\x1B[0m", $content);
-            $content =  preg_replace('|\<success>(((?!\</success>).)*)\</success>|', "\x1B[" . self::STYLE_SUCCESS . "m\$1\x1B[0m", $content);
+            $content =  preg_replace('|\<b>(((?!\</b>).)*)\</b>|', "\x1B[" . self::STYLE_BRIGHT . "m\$1\x1B[0m", $content) ?: '';
+            $content =  preg_replace('|\<i>(((?!\</i>).)*)\</i>|', "\x1B[" . self::STYLE_ITALIC . "m\$1\x1B[0m", $content) ?: '';
+            $content =  preg_replace('|\<u>(((?!\</u>).)*)\</u>|', "\x1B[" . self::STYLE_UNDERLINED . "m\$1\x1B[0m", $content) ?: '';
+            $content =  preg_replace('|\<em>(((?!\</em>).)*)\</em>|', "\x1B[" . self::STYLE_INVERSE . "m\$1\x1B[0m", $content) ?: '';
+            $content =  preg_replace('|\<strike>(((?!\</strike>).)*)\</strike>|', "\x1B[" . self::STYLE_STRIKETHROUGH . "m\$1\x1B[0m", $content) ?: '';
+            $content =  preg_replace('|\<error>(((?!\</error>).)*)\</error>|', "\x1B[" . self::STYLE_ERROR . "m\$1\x1B[0m", $content) ?: '';
+            $content =  preg_replace('|\<success>(((?!\</success>).)*)\</success>|', "\x1B[" . self::STYLE_SUCCESS . "m\$1\x1B[0m", $content) ?: '';
         } else {
-            $content =  preg_replace('|\<b>(((?!\</b>).)*)\</b>|', "$1", $content);
-            $content =  preg_replace('|\<i>(((?!\</i>).)*)\</i>|', "$1", $content);
-            $content =  preg_replace('|\<u>(((?!\</u>).)*)\</u>|', "$1", $content);
-            $content =  preg_replace('|\<em>(((?!\</em>).)*)\</em>|', "$1", $content);
-            $content =  preg_replace('|\<strike>(((?!\</strike>).)*)\</strike>|', "$1", $content);
-            $content =  preg_replace('|\<error>(((?!\</strike>).)*)\</error>|', "$1", $content);
-            $content =  preg_replace('|\<success>(((?!\</strike>).)*)\</success>|', "$1", $content);
+            $content =  preg_replace('|\<b>(((?!\</b>).)*)\</b>|', "$1", $content) ?: '';
+            $content =  preg_replace('|\<i>(((?!\</i>).)*)\</i>|', "$1", $content) ?: '';
+            $content =  preg_replace('|\<u>(((?!\</u>).)*)\</u>|', "$1", $content) ?: '';
+            $content =  preg_replace('|\<em>(((?!\</em>).)*)\</em>|', "$1", $content) ?: '';
+            $content =  preg_replace('|\<strike>(((?!\</strike>).)*)\</strike>|', "$1", $content) ?: '';
+            $content =  preg_replace('|\<error>(((?!\</strike>).)*)\</error>|', "$1", $content) ?: '';
+            $content =  preg_replace('|\<success>(((?!\</strike>).)*)\</success>|', "$1", $content) ?: '';
         }
         echo $content;
     }
