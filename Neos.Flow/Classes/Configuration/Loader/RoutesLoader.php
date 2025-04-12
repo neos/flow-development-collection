@@ -13,6 +13,7 @@ namespace Neos\Flow\Configuration\Loader;
  * source code.
  */
 
+use http\Encoding\Stream\Deflate;
 use Neos\Flow\Configuration\ConfigurationManager;
 use Neos\Flow\Configuration\Exception as ConfigurationException;
 use Neos\Flow\Configuration\Exception\InvalidConfigurationException;
@@ -26,6 +27,26 @@ use Neos\Flow\Package\PackageInterface;
 use Neos\Utility\Arrays;
 use Neos\Utility\PositionalArraySorter;
 
+/**
+ * @phpstan-type RouteDefinition array{
+ *      name: string,
+ *      providerFactory?: class-string,
+ *      providerOptions?: array<mixed>,
+ *      uriPattern?: string,
+ *      subRoutes?: array<string,array{
+ *          package: string,
+ *          variables?: array<mixed>,
+ *          suffix?: string,
+ *      }>
+ *  }
+ * @phpstan-type SubrouteDefinition array{
+ *     name?: string,
+ *     uriPattern?: string,
+ *     defaults?: mixed,
+ *     routeParts?: mixed,
+ *     subRoutes?: mixed,
+ * }
+ */
 class RoutesLoader implements LoaderInterface
 {
     /**
@@ -52,9 +73,9 @@ class RoutesLoader implements LoaderInterface
     }
 
     /**
-     * @param array $packages
+     * @param array<PackageInterface> $packages
      * @param ApplicationContext $context
-     * @return array
+     * @return array<int,array<mixed>>
      * @throws ConfigurationException | InvalidConfigurationException | InvalidConfigurationTypeException | ParseErrorException | RecursionException
      */
     public function load(array $packages, ApplicationContext $context): array
@@ -77,9 +98,9 @@ class RoutesLoader implements LoaderInterface
      * Merges routes from Neos.Flow.mvc.routes settings into $routeDefinitions
      * NOTE: Routes from settings will always be appended to existing route definitions from the main Routes configuration!
      *
-     * @param array $routeDefinitions
-     * @param array $routeSettings
-     * @return array
+     * @param array<int,RouteDefinition> $routeDefinitions
+     * @param array<mixed> $routeSettings
+     * @return array<int,RouteDefinition>
      */
     protected function includeSubRoutesFromSettings(array $routeDefinitions, array $routeSettings): array
     {
@@ -121,9 +142,9 @@ class RoutesLoader implements LoaderInterface
      *
      * @param PackageInterface[] $packages
      * @param ApplicationContext $context
-     * @param array $routesConfiguration
+     * @param array<mixed> $routesConfiguration
      * @param int $subRoutesRecursionLevel Counts how many SubRoutes have been loaded. If this number exceeds MAXIMUM_SUBROUTE_RECURSIONS, an exception is thrown
-     * @return array
+     * @return array<int,array<mixed>>
      * @throws ParseErrorException | RecursionException| ConfigurationException
      */
     protected function mergeRoutesWithSubRoutes(array $packages, ApplicationContext $context, array $routesConfiguration, int $subRoutesRecursionLevel = 0): array
@@ -176,11 +197,11 @@ class RoutesLoader implements LoaderInterface
     /**
      * Merges all routes in $routesConfiguration with the sub routes in $subRoutesConfiguration
      *
-     * @param array $routesConfiguration
-     * @param array $subRoutesConfiguration
+     * @param array<array{name?: string, uriPattern: string}> $routesConfiguration
+     * @param array<SubrouteDefinition> $subRoutesConfiguration
      * @param string $subRouteKey the key of the sub route: <subRouteKey>
-     * @param array $subRouteOptions
-     * @return array the merged route configuration
+     * @param array{variables?: array<mixed>} $subRouteOptions
+     * @return array<int,SubrouteDefinition> the merged route configuration
      * @throws ParseErrorException
      */
     protected function buildSubRouteConfigurations(array $routesConfiguration, array $subRoutesConfiguration, string $subRouteKey, array $subRouteOptions): array
@@ -190,7 +211,11 @@ class RoutesLoader implements LoaderInterface
         foreach ($subRoutesConfiguration as $subRouteConfiguration) {
             foreach ($routesConfiguration as $routeConfiguration) {
                 $mergedSubRouteConfiguration = $subRouteConfiguration;
-                $mergedSubRouteConfiguration['name'] = sprintf('%s :: %s', $routeConfiguration['name'] ?? 'Unnamed Route', $subRouteConfiguration['name'] ?? 'Unnamed Subroute');
+                $mergedSubRouteConfiguration['name'] = sprintf(
+                    '%s :: %s',
+                    $routeConfiguration['name'] ?? 'Unnamed Route',
+                    $subRouteConfiguration['name'] ?? 'Unnamed Subroute'
+                );
                 $mergedSubRouteConfiguration['name'] = $this->replacePlaceholders($mergedSubRouteConfiguration['name'], $variables);
                 if (!isset($mergedSubRouteConfiguration['uriPattern'])) {
                     throw new ParseErrorException('No uriPattern defined in route configuration "' . $mergedSubRouteConfiguration['name'] . '".', 1274197615);
@@ -207,6 +232,7 @@ class RoutesLoader implements LoaderInterface
                 if (isset($mergedSubRouteConfiguration['routeParts'])) {
                     $mergedSubRouteConfiguration['routeParts'] = $this->replacePlaceholders($mergedSubRouteConfiguration['routeParts'], $variables);
                 }
+                /** @var SubrouteDefinition $mergedSubRouteConfiguration arrayMergeRecursiveOverrule does not change that */
                 $mergedSubRouteConfiguration = Arrays::arrayMergeRecursiveOverrule($routeConfiguration, $mergedSubRouteConfiguration);
                 unset($mergedSubRouteConfiguration['subRoutes']);
                 $mergedSubRoutesConfigurations[] = $mergedSubRouteConfiguration;
@@ -219,9 +245,10 @@ class RoutesLoader implements LoaderInterface
     /**
      * Replaces placeholders in the format <variableName> with the corresponding variable of the specified $variables collection.
      *
-     * @param string|array $value
-     * @param array $variables
-     * @return array|string
+     * @param string|array<mixed> $value
+     * @param array<mixed> $variables
+     *
+     * @return ($value is string ? string : array<mixed>)
      */
     private function replacePlaceholders($value, array $variables)
     {
