@@ -25,7 +25,7 @@ use Neos\Flow\Utility\Environment;
 class ProxyClassLoader
 {
     /**
-     * @var array
+     * @var array<string,true>
      */
     protected $ignoredClassNames = [
         'integer' => true,
@@ -52,7 +52,7 @@ class ProxyClassLoader
     protected $classesCache;
 
     /**
-     * @var array
+     * @var ?array<mixed>
      */
     protected $availableProxyClasses;
 
