@@ -13,6 +13,7 @@ use Psr\Http\Message\RequestInterface;
 trait RequestFactoryTrait
 {
     /**
+     * @param non-empty-string $method
      * @inheritDoc
      */
     public function createRequest(string $method, $uri): RequestInterface
