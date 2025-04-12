@@ -22,7 +22,7 @@ use Neos\Flow\Error as FlowError;
 class ErrorHandler
 {
     /**
-     * @var array
+     * @var array<int>
      */
     protected $exceptionalErrors = [];
 
@@ -32,13 +32,15 @@ class ErrorHandler
      */
     public function __construct()
     {
-        set_error_handler([$this, 'handleError']);
+        /** @var callable $callback */
+        $callback = [$this, 'handleError'];
+        set_error_handler($callback);
     }
 
     /**
      * Defines which error levels result should result in an exception thrown.
      *
-     * @param array $exceptionalErrors An array of E_* error levels
+     * @param array<int> $exceptionalErrors An array of E_* error levels
      * @return void
      */
     public function setExceptionalErrors(array $exceptionalErrors)
