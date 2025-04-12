@@ -37,19 +37,23 @@ class InstallerScripts
      */
     public static function postUpdateAndInstall(Event $event): void
     {
+        $workingDirectory = getcwd();
+        if ($workingDirectory === false) {
+            throw new \RuntimeException('Could not resolve working directory', 1744470280);
+        }
         if (!defined('FLOW_PATH_ROOT')) {
-            define('FLOW_PATH_ROOT', Files::getUnixStylePath(getcwd()) . '/');
+            define('FLOW_PATH_ROOT', Files::getUnixStylePath($workingDirectory) . '/');
         }
 
         if (!defined('FLOW_PATH_PACKAGES')) {
-            define('FLOW_PATH_PACKAGES', Files::getUnixStylePath(getcwd()) . '/Packages/');
+            define('FLOW_PATH_PACKAGES', Files::getUnixStylePath($workingDirectory) . '/Packages/');
         }
 
         if (!defined('FLOW_PATH_CONFIGURATION')) {
-            define('FLOW_PATH_CONFIGURATION', Files::getUnixStylePath(getcwd()) . '/Configuration/');
+            define('FLOW_PATH_CONFIGURATION', Files::getUnixStylePath($workingDirectory) . '/Configuration/');
         }
         if (!defined('FLOW_PATH_TEMPORARY_BASE')) {
-            define('FLOW_PATH_TEMPORARY_BASE', Files::getUnixStylePath(getcwd()) . '/Data/Temporary');
+            define('FLOW_PATH_TEMPORARY_BASE', Files::getUnixStylePath($workingDirectory) . '/Data/Temporary');
         }
 
         Files::createDirectoryRecursively('Configuration');
@@ -106,14 +110,19 @@ class InstallerScripts
      */
     protected static function copyDistributionFiles(string $installerResourcesDirectory): void
     {
+        $workingDirectory = getcwd();
+        if ($workingDirectory === false) {
+            throw new \RuntimeException('Could not resolve working directory', 1744470280);
+        }
+
         $essentialsPath = $installerResourcesDirectory . 'Distribution/Essentials';
         if (is_dir($essentialsPath)) {
-            Files::copyDirectoryRecursively($essentialsPath, Files::getUnixStylePath(getcwd()) . '/', false, true);
+            Files::copyDirectoryRecursively($essentialsPath, Files::getUnixStylePath($workingDirectory) . '/', false, true);
         }
 
         $defaultsPath = $installerResourcesDirectory . 'Distribution/Defaults';
         if (is_dir($defaultsPath)) {
-            Files::copyDirectoryRecursively($defaultsPath, Files::getUnixStylePath(getcwd()) . '/', true, true);
+            Files::copyDirectoryRecursively($defaultsPath, Files::getUnixStylePath($workingDirectory) . '/', true, true);
         }
     }
 
@@ -127,7 +136,7 @@ class InstallerScripts
      */
     protected static function runPackageScripts(string $staticMethodReference, PackageEvent $event): void
     {
-        $className = substr($staticMethodReference, 0, strpos($staticMethodReference, '::'));
+        $className = substr($staticMethodReference, 0, strpos($staticMethodReference, '::') ?: 0);
         $methodName = substr($staticMethodReference, strpos($staticMethodReference, '::') + 2);
 
         if (!class_exists($className)) {
