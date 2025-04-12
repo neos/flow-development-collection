@@ -24,9 +24,9 @@ abstract class UploadedFilesHelper
 {
     /**
      * @param UploadedFileInterface[]|mixed[][] $uploadedFiles A (deep) array of UploadedFile or an untangled $_FILES array
-     * @param array $arguments
-     * @param array $currentPath internal argument for recursion
-     * @return array The nested array of paths and uploaded files
+     * @param array<mixed> $arguments
+     * @param array<mixed> $currentPath internal argument for recursion
+     * @return array<mixed> The nested array of paths and uploaded files
      */
     public static function upcastUploadedFiles(array $uploadedFiles, array $arguments, array $currentPath = []): array
     {
@@ -64,7 +64,7 @@ abstract class UploadedFilesHelper
 
     /**
      * @param UploadedFileInterface $uploadedFile
-     * @param string|array $originallySubmittedResource
+     * @param string|array{__identity: string} $originallySubmittedResource
      * @param string $collectionName
      * @return FlowUploadedFile
      */
@@ -87,8 +87,8 @@ abstract class UploadedFilesHelper
     /**
      * Transforms the convoluted _FILES superglobal into a manageable form.
      *
-     * @param array $convolutedFiles The _FILES superglobal or something with the same structure
-     * @return array Untangled files
+     * @param array<mixed> $convolutedFiles The _FILES superglobal or something with the same structure
+     * @return array<mixed> Untangled files
      */
     public static function untangleFilesArray(array $convolutedFiles): array
     {
@@ -124,9 +124,9 @@ abstract class UploadedFilesHelper
     /**
      * Returns an array of all possible "field paths" for the given array.
      *
-     * @param array $structure The array to walk through
+     * @param array<mixed> $structure The array to walk through
      * @param string $firstLevelFieldName
-     * @return array An array of paths (as arrays) in the format ["key1", "key2", "key3"] ...
+     * @return array<mixed> An array of paths (as arrays) in the format ["key1", "key2", "key3"] ...
      */
     protected static function calculateFieldPathsAsArray(array $structure, ?string $firstLevelFieldName = null): array
     {

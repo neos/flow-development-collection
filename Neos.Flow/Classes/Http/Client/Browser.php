@@ -62,7 +62,7 @@ class Browser implements ClientInterface
      * A simple string array that keeps track of occurred "Location" header
      * redirections to avoid infinite loops if the same redirection happens
      *
-     * @var array
+     * @var array<int,string>
      */
     protected $redirectionStack = [];
 
@@ -112,7 +112,7 @@ class Browser implements ClientInterface
      * Allows to add headers to be sent with every request the browser executes.
      *
      * @param string $name Name of the header, for example "Location", "Content-Description" etc.
-     * @param array|string|\DateTime $values An array of values or a single value for the specified header field
+     * @param array<mixed>|string|\DateTime|\DateTimeImmutable $values An array of values or a single value for the specified header field
      * @return void
      * @see Message::setHeader()
      */
@@ -139,22 +139,19 @@ class Browser implements ClientInterface
      *
      * @param string|UriInterface $uri
      * @param string $method Request method, for example "GET"
-     * @param array $arguments Arguments to send in the request body
+     * @param array<mixed> $arguments Arguments to send in the request body
      * @param UploadedFileInterface[]|mixed[][] $files A (deep) array of UploadedFile or an untangled $_FILES array
-     * @param array $server
+     * @param array<mixed> $server
      * @param string $content
      * @return ResponseInterface The HTTP response
      * @throws \InvalidArgumentException
      * @throws InfiniteRedirectionException
      * @api
      */
-    public function request($uri, $method = 'GET', array $arguments = [], array $files = [], array $server = [], $content = null): ResponseInterface
+    public function request(string|UriInterface $uri, $method = 'GET', array $arguments = [], array $files = [], array $server = [], $content = null): ResponseInterface
     {
         if (is_string($uri)) {
             $uri = new Uri($uri);
-        }
-        if (!$uri instanceof UriInterface) {
-            throw new \InvalidArgumentException('$uri must be a URI object or a valid string representation of a URI.', 1333443624);
         }
         $request = $this->serverRequestFactory->createServerRequest($method, $uri, $server);
         if ($content) {

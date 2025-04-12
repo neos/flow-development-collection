@@ -109,7 +109,7 @@ class PropertyMapper
      * @phpstan-assert Result $this->getMessages()
      * @api
      */
-    public function convert($source, $targetType, ?PropertyMappingConfigurationInterface $configuration = null)
+    public function convert($source, string $targetType, ?PropertyMappingConfigurationInterface $configuration = null)
     {
         if ($configuration === null) {
             $configuration = $this->buildPropertyMappingConfiguration();

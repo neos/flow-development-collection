@@ -32,7 +32,7 @@ class MiddlewaresChainFactory
     protected $objectManager;
 
     /**
-     * @param array $chainConfiguration
+     * @param array<mixed> $chainConfiguration
      * @return MiddlewaresChain
      * @throws Exception
      */
@@ -53,6 +53,6 @@ class MiddlewaresChainFactory
             $middlewaresChain[] = $middleware;
         }
 
-        return new MiddlewaresChain($middlewaresChain);
+        return new MiddlewaresChain(...$middlewaresChain);
     }
 }
