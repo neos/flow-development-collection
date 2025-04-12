@@ -23,7 +23,7 @@ class ClassNameIndex
 {
     /**
      * Indexed array by class name
-     * @var array
+     * @var array<class-string,true>
      */
     protected $classNames = [];
 
@@ -31,7 +31,7 @@ class ClassNameIndex
      * Constructor. Note: If you pass a data array here, make sure
      * to key sort it before!
      *
-     * @param array $classNames Array with class names as keys
+     * @param array<class-string,true> $classNames Array with class names as keys
      */
     public function __construct(array $classNames = [])
     {
@@ -42,7 +42,7 @@ class ClassNameIndex
      * Set the data of this index to the given class
      * names. Note: Make sure to sort the array before!
      *
-     * @param array $classNames
+     * @param array<class-string> $classNames
      * @return void
      */
     public function setClassNames(array $classNames): void
@@ -53,7 +53,7 @@ class ClassNameIndex
     /**
      * Returns the class names contained in this index
      *
-     * @return array An array of class names contained in this index
+     * @return array<class-string> An array of class names contained in this index
      */
     public function getClassNames(): array
     {
@@ -63,7 +63,7 @@ class ClassNameIndex
     /**
      * Checks, if a class name is contained in this index
      *
-     * @param string $className The class name to check for
+     * @param class-string $className The class name to check for
      * @return bool true, if the given class name is contained in this index
      */
     public function hasClassName(string $className): bool

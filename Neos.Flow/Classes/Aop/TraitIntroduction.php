@@ -21,13 +21,13 @@ class TraitIntroduction
 {
     /**
      * Name of the aspect declaring this introduction
-     * @var string
+     * @var class-string
      */
     protected $declaringAspectClassName;
 
     /**
      * Name of the introduced trait
-     * @var string
+     * @var trait-string
      */
     protected $traitName;
 
@@ -41,8 +41,8 @@ class TraitIntroduction
     /**
      * Constructor
      *
-     * @param string $declaringAspectClassName Name of the aspect containing the declaration for this introduction
-     * @param string $traitName Name of the trait to introduce
+     * @param class-string $declaringAspectClassName Name of the aspect containing the declaration for this introduction
+     * @param trait-string $traitName Name of the trait to introduce
      * @param Pointcut $pointcut The pointcut for this introduction
      */
     public function __construct(string $declaringAspectClassName, string $traitName, Pointcut $pointcut)
@@ -55,7 +55,7 @@ class TraitIntroduction
     /**
      * Returns the name of the introduced trait
      *
-     * @return string Name of the introduced trait
+     * @return trait-string Name of the introduced trait
      */
     public function getTraitName(): string
     {
@@ -75,7 +75,7 @@ class TraitIntroduction
     /**
      * Returns the object name of the aspect which declared this introduction
      *
-     * @return string The aspect object name
+     * @return class-string The aspect object name
      */
     public function getDeclaringAspectClassName(): string
     {

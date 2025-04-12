@@ -207,7 +207,6 @@ class RoutingCommandController extends CommandController
             $this->quit(1);
         }
 
-        /** @var UriConstraints $uriConstraints */
         $uriConstraints = $resolvedRoute->getResolvedUriConstraints();
         $resolvedUri = $uriConstraints->applyTo($resolveContext->getBaseUri(), $resolveContext->isForceAbsoluteUri());
 

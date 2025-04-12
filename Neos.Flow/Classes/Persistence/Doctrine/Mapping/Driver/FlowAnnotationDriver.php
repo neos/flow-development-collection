@@ -110,7 +110,7 @@ class FlowAnnotationDriver implements DoctrineMappingDriverInterface, PointcutFi
     /**
      * Fetch a class schema for the given class, if possible.
      *
-     * @param string $className
+     * @param class-string $className
      * @return ClassSchema
      * @throws ClassSchemaNotFoundException
      */
@@ -1144,7 +1144,7 @@ class FlowAnnotationDriver implements DoctrineMappingDriverInterface, PointcutFi
      * Returns whether the class with the specified name is transient. Only non-transient
      * classes, that is entities and mapped superclasses, should have their metadata loaded.
      *
-     * @param string $className
+     * @param class-string $className
      * @return boolean
      */
     public function isTransient($className)
@@ -1153,7 +1153,7 @@ class FlowAnnotationDriver implements DoctrineMappingDriverInterface, PointcutFi
             (
                 !$this->reflectionService->isClassAnnotatedWith($className, Flow\Entity::class) &&
                 !$this->reflectionService->isClassAnnotatedWith($className, Flow\ValueObject::class) &&
-                    !$this->reflectionService->isClassAnnotatedWith($className, ORM\Entity::class) &&
+                !$this->reflectionService->isClassAnnotatedWith($className, ORM\Entity::class) &&
                 !$this->reflectionService->isClassAnnotatedWith($className, ORM\MappedSuperclass::class) &&
                 !$this->reflectionService->isClassAnnotatedWith($className, ORM\Embeddable::class)
             );

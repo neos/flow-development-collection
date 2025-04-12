@@ -104,9 +104,12 @@ class ObjectConverter extends AbstractTypeConverter
     public function canConvertFrom($source, $targetType)
     {
         return !(
-            $this->reflectionService->isClassAnnotatedWith($targetType, Flow\Entity::class) ||
-            $this->reflectionService->isClassAnnotatedWith($targetType, Flow\ValueObject::class) ||
-            $this->reflectionService->isClassAnnotatedWith($targetType, \Doctrine\ORM\Mapping\Entity::class)
+            class_exists($targetType) &&
+            (
+                $this->reflectionService->isClassAnnotatedWith($targetType, Flow\Entity::class) ||
+                $this->reflectionService->isClassAnnotatedWith($targetType, Flow\ValueObject::class) ||
+                $this->reflectionService->isClassAnnotatedWith($targetType, \Doctrine\ORM\Mapping\Entity::class)
+            )
         );
     }
 

@@ -34,20 +34,20 @@ class PointcutClassAnnotatedWithFilter implements PointcutFilterInterface
     protected $logger;
 
     /**
-     * @var string A regular expression to match annotations
+     * @var class-string<object> An annotation class (for example "@Neos\Flow\Annotations\Aspect") which defines which class annotations should match
      */
     protected $annotation;
 
     /**
-     * @var array
+     * @var array<mixed>
      */
     protected $annotationValueConstraints;
 
     /**
      * The constructor - initializes the class annotation filter with the expected annotation class
      *
-     * @param string $annotation An annotation class (for example "@Neos\Flow\Annotations\Aspect") which defines which class annotations should match
-     * @param array $annotationValueConstraints
+     * @param class-string<object> $annotation An annotation class (for example "@Neos\Flow\Annotations\Aspect") which defines which class annotations should match
+     * @param array<mixed> $annotationValueConstraints
      */
     public function __construct(string $annotation, array $annotationValueConstraints = [])
     {
@@ -80,9 +80,9 @@ class PointcutClassAnnotatedWithFilter implements PointcutFilterInterface
     /**
      * Checks if the specified class matches with the class tag filter pattern
      *
-     * @param string $className Name of the class to check against
+     * @param class-string<object> $className Name of the class to check against
      * @param string $methodName Name of the method - not used here
-     * @param string $methodDeclaringClassName Name of the class the method was originally declared in - not used here
+     * @param class-string<object> $methodDeclaringClassName Name of the class the method was originally declared in - not used here
      * @param mixed $pointcutQueryIdentifier Some identifier for this query - must at least differ from a previous identifier. Used for circular reference detection.
      * @return bool true if the class matches, otherwise false
      */
@@ -126,7 +126,7 @@ class PointcutClassAnnotatedWithFilter implements PointcutFilterInterface
     /**
      * Returns runtime evaluations for the pointcut.
      *
-     * @return array Runtime evaluations
+     * @return array<mixed> Runtime evaluations
      */
     public function getRuntimeEvaluationsDefinition(): array
     {

@@ -30,7 +30,7 @@ class PointcutClassTypeFilter implements PointcutFilterInterface
 
     /**
      * An interface name to match class types
-     * @var string
+     * @var class-string<object>
      */
     protected $interfaceOrClassName;
 
@@ -43,7 +43,7 @@ class PointcutClassTypeFilter implements PointcutFilterInterface
     /**
      * The constructor - initializes the class type filter with the class or interface name
      *
-     * @param string $interfaceOrClassName Interface or a class name to match against
+     * @param class-string $interfaceOrClassName Interface or a class name to match against
      * @throws Exception
      */
     public function __construct(string $interfaceOrClassName)
@@ -71,19 +71,16 @@ class PointcutClassTypeFilter implements PointcutFilterInterface
     /**
      * Checks if the specified class matches with the class type filter
      *
-     * @param string $className Name of the class to check against
+     * @param class-string<object> $className Name of the class to check against
      * @param string $methodName Name of the method - not used here
-     * @param string $methodDeclaringClassName Name of the class the method was originally declared in - not used here
+     * @param class-string<object> $methodDeclaringClassName Name of the class the method was originally declared in - not used here
      * @param mixed $pointcutQueryIdentifier Some identifier for this query - must at least differ from a previous identifier. Used for circular reference detection.
      * @return boolean true if the class matches, otherwise false
      */
     public function matches($className, $methodName, $methodDeclaringClassName, $pointcutQueryIdentifier): bool
     {
-        if ($this->isInterface === true) {
-            return (array_search($this->interfaceOrClassName, class_implements($className)) !== false);
-        } else {
-            return ($className === $this->interfaceOrClassName || is_subclass_of($className, $this->interfaceOrClassName));
-        }
+        return $className === $this->interfaceOrClassName
+            || is_subclass_of($className, $this->interfaceOrClassName);
     }
 
     /**
@@ -99,7 +96,7 @@ class PointcutClassTypeFilter implements PointcutFilterInterface
     /**
      * Returns runtime evaluations for the pointcut.
      *
-     * @return array Runtime evaluations
+     * @return array<mixed> Runtime evaluations
      */
     public function getRuntimeEvaluationsDefinition(): array
     {
