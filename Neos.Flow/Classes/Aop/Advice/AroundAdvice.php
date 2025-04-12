@@ -30,6 +30,9 @@ class AroundAdvice extends AbstractAdvice implements AdviceInterface
             return $joinPoint->getAdviceChain()->proceed($joinPoint);
         }
 
+        if ($this->objectManager === null) {
+            throw new \RuntimeException('Object manager is missing', 1744496510);
+        }
         $adviceObject = $this->objectManager->get($this->aspectObjectName);
         $methodName = $this->adviceMethodName;
         $result = $adviceObject->$methodName($joinPoint);

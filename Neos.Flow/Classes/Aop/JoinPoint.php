@@ -41,13 +41,13 @@ class JoinPoint implements JoinPointInterface
 
     /**
      * Array of method arguments which have been passed to the target method
-     * @var array
+     * @var array<string,mixed>
      */
     protected $methodArguments;
 
     /**
      * The advice chain for this join point
-     * @var Advice\AdviceChain
+     * @var ?Advice\AdviceChain
      */
     protected $adviceChain;
 
@@ -59,7 +59,7 @@ class JoinPoint implements JoinPointInterface
 
     /**
      * The exception thrown (only used for After Throwing advices)
-     * @var \Exception
+     * @var ?\Exception
      */
     protected $exception = null;
 
@@ -69,10 +69,10 @@ class JoinPoint implements JoinPointInterface
      * @param object $proxy Reference to the proxy class instance of the target class
      * @param string $className Class name of the target class this join point refers to
      * @param string $methodName Method name of the target method which is about to or has been invoked
-     * @param array $methodArguments Array of method arguments which have been passed to the target method
-     * @param Advice\AdviceChain $adviceChain The advice chain for this join point
+     * @param array<mixed> $methodArguments Array of method arguments which have been passed to the target method
+     * @param ?Advice\AdviceChain $adviceChain The advice chain for this join point
      * @param mixed $result The result of the method invocations (only used for After Returning advices)
-     * @param \Exception $exception The exception thrown (only used for After Throwing advices)
+     * @param ?\Exception $exception The exception thrown (only used for After Throwing advices)
      */
     public function __construct($proxy, string $className, string $methodName, array $methodArguments, ?Advice\AdviceChain $adviceChain = null, $result = null, ?\Exception $exception = null)
     {
@@ -121,7 +121,7 @@ class JoinPoint implements JoinPointInterface
     /**
      * Returns an array of arguments which have been passed to the target method
      *
-     * @return array Array of arguments
+     * @return array<string,mixed> Array of arguments
      * @api
      */
     public function getMethodArguments(): array
@@ -178,10 +178,10 @@ class JoinPoint implements JoinPointInterface
     /**
      * Returns the advice chain related to this join point
      *
-     * @return Advice\AdviceChain The advice chain
+     * @return ?Advice\AdviceChain The advice chain
      * @api
      */
-    public function getAdviceChain(): Advice\AdviceChain
+    public function getAdviceChain(): ?Advice\AdviceChain
     {
         return $this->adviceChain;
     }

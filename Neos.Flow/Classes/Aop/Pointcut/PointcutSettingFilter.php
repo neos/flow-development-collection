@@ -109,7 +109,7 @@ class PointcutSettingFilter implements PointcutFilterInterface
     /**
      * Returns runtime evaluations for the pointcut.
      *
-     * @return array Runtime evaluations
+     * @return array<mixed> Runtime evaluations
      */
     public function getRuntimeEvaluationsDefinition(): array
     {
@@ -126,7 +126,7 @@ class PointcutSettingFilter implements PointcutFilterInterface
      */
     protected function parseConfigurationOptionPath(string $settingComparisonExpression): void
     {
-        $settingComparisonExpression = preg_split(self::PATTERN_SPLITBYEQUALSIGN, $settingComparisonExpression);
+        $settingComparisonExpression = preg_split(self::PATTERN_SPLITBYEQUALSIGN, $settingComparisonExpression) ?: [];
         if (isset($settingComparisonExpression[1])) {
             $matches = [];
             preg_match(self::PATTERN_MATCHVALUEINQUOTES, $settingComparisonExpression[1], $matches);
@@ -141,6 +141,7 @@ class PointcutSettingFilter implements PointcutFilterInterface
 
         $configurationKeys = explode('.', $settingComparisonExpression[0]);
 
+        /** @phpstan-ignore greater.alwaysTrue (not sure about this) */
         if (count($configurationKeys) > 0) {
             $settingPackageKey = array_shift($configurationKeys);
             $settingValue = $this->configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, $settingPackageKey);

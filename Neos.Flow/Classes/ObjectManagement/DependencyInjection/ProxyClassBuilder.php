@@ -726,7 +726,7 @@ class ProxyClassBuilder
     /**
      * Compile the result of methods marked with CompileStatic into the proxy class
      *
-     * @param string $className
+     * @param class-string $className
      * @param ProxyClass $proxyClass
      * @return void
      * @throws ObjectException

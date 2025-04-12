@@ -48,7 +48,7 @@ class PointcutMethodNameFilter implements PointcutFilterInterface
     protected $logger;
 
     /**
-     * @var array Array with constraints for method arguments
+     * @var array<mixed> Array with constraints for method arguments
      */
     protected $methodArgumentConstraints = [];
 
@@ -57,7 +57,7 @@ class PointcutMethodNameFilter implements PointcutFilterInterface
      *
      * @param string $methodNameFilterExpression A regular expression which filters method names
      * @param string|null $methodVisibility The method visibility modifier (public, protected or private). Specify NULL if you don't care.
-     * @param array $methodArgumentConstraints array of method constraints
+     * @param array<mixed> $methodArgumentConstraints array of method constraints
      * @throws InvalidPointcutExpressionException
      */
     public function __construct(string $methodNameFilterExpression, ?string $methodVisibility = null, array $methodArgumentConstraints = [])
@@ -98,9 +98,9 @@ class PointcutMethodNameFilter implements PointcutFilterInterface
      *
      * Returns true if method name, visibility and arguments constraints match.
      *
-     * @param string $className Ignored in this pointcut filter
+     * @param class-string $className Ignored in this pointcut filter
      * @param string $methodName Name of the method to match against
-     * @param string $methodDeclaringClassName Name of the class the method was originally declared in
+     * @param class-string $methodDeclaringClassName Name of the class the method was originally declared in
      * @param mixed $pointcutQueryIdentifier Some identifier for this query - must at least differ from a previous identifier. Used for circular reference detection.
      * @return boolean true if the class matches, otherwise false
      * @throws Exception
@@ -117,18 +117,18 @@ class PointcutMethodNameFilter implements PointcutFilterInterface
 
         switch ($this->methodVisibility) {
             case 'public':
-                if (!($methodDeclaringClassName !== null && $this->reflectionService->isMethodPublic($methodDeclaringClassName, $methodName))) {
+                if (!($this->reflectionService->isMethodPublic($methodDeclaringClassName, $methodName))) {
                     return false;
                 }
                 break;
             case 'protected':
-                if (!($methodDeclaringClassName !== null && $this->reflectionService->isMethodProtected($methodDeclaringClassName, $methodName))) {
+                if (!($this->reflectionService->isMethodProtected($methodDeclaringClassName, $methodName))) {
                     return false;
                 }
                 break;
         }
 
-        $methodArguments = ($methodDeclaringClassName === null ? [] : $this->reflectionService->getMethodParameters($methodDeclaringClassName, $methodName));
+        $methodArguments = $this->reflectionService->getMethodParameters($methodDeclaringClassName, $methodName);
         foreach (array_keys($this->methodArgumentConstraints) as $argumentName) {
             $objectAccess = explode('.', $argumentName, 2);
             $argumentName = $objectAccess[0];
@@ -153,7 +153,7 @@ class PointcutMethodNameFilter implements PointcutFilterInterface
     /**
      * Returns runtime evaluations for a previously matched pointcut
      *
-     * @return array Runtime evaluations
+     * @return array{methodArgumentConstraints: array<mixed>} Runtime evaluations
      */
     public function getRuntimeEvaluationsDefinition(): array
     {
@@ -185,7 +185,7 @@ class PointcutMethodNameFilter implements PointcutFilterInterface
     /**
      * Returns the method argument constraints
      *
-     * @return array
+     * @return array<mixed>
      */
     public function getMethodArgumentConstraints(): array
     {

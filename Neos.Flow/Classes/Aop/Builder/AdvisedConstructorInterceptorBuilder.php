@@ -26,8 +26,8 @@ class AdvisedConstructorInterceptorBuilder extends AbstractMethodInterceptorBuil
      * Builds interception PHP code for an advised constructor
      *
      * @param string $methodName Name of the method to build an interceptor for
-     * @param array $methodMetaInformation An array of method names and their meta information, including advices for the method (if any)
-     * @param string $targetClassName Name of the target class to build the interceptor for
+     * @param array<string,mixed> $methodMetaInformation An array of method names and their meta information, including advices for the method (if any)
+     * @param class-string $targetClassName Name of the target class to build the interceptor for
      * @return void
      * @throws Exception
      */
@@ -38,7 +38,11 @@ class AdvisedConstructorInterceptorBuilder extends AbstractMethodInterceptorBuil
         }
 
         $declaringClassName = $methodMetaInformation[$methodName]['declaringClassName'];
-        $proxyMethod = $this->compiler->getProxyClass($targetClassName)->getConstructor();
+        $proxyClass = $this->compiler->getProxyClass($targetClassName);
+        if ($proxyClass === false) {
+            throw new \InvalidArgumentException('Cannot build proxy class for '. $targetClassName, 1744495809);
+        }
+        $proxyMethod = $proxyClass->getConstructor();
 
         $groupedAdvices = $methodMetaInformation[$methodName]['groupedAdvices'];
         $advicesCode = $this->buildAdvicesCode($groupedAdvices, $methodName, $targetClassName, $declaringClassName);

@@ -83,9 +83,9 @@ class MethodPrivilegePointcutFilter implements PointcutFilterInterface
      * Checks if the specified class and method matches against the filter, i.e. if there is a policy entry to intercept this method.
      * This method also creates a cache entry for every method, to cache the associated roles and privileges.
      *
-     * @param string $className Name of the class to check the name of
+     * @param class-string $className Name of the class to check the name of
      * @param string $methodName Name of the method to check the name of
-     * @param string $methodDeclaringClassName Name of the class the method was originally declared in
+     * @param class-string $methodDeclaringClassName Name of the class the method was originally declared in
      * @param mixed $pointcutQueryIdentifier Some identifier for this query - must at least differ from a previous identifier. Used for circular reference detection.
      * @return boolean true if the names match, otherwise false
      */
@@ -158,9 +158,9 @@ class MethodPrivilegePointcutFilter implements PointcutFilterInterface
     }
 
     /**
-     * @param string $className
+     * @param class-string $className
      * @param string $methodName
-     * @param string $methodDeclaringClassName
+     * @param class-string $methodDeclaringClassName
      * @param mixed $pointcutQueryIdentifier
      * @return \Closure
      */

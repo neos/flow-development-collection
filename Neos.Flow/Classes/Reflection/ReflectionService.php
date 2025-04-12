@@ -289,7 +289,7 @@ class ReflectionService
      * Tells if the specified class is known to this reflection service and
      * reflection information is available.
      *
-     * @param string $className
+     * @param class-string $className
      *
      * @api
      */
@@ -405,6 +405,7 @@ class ReflectionService
      * Searches for and returns all names of classes which are tagged by the specified
      * annotation. If no classes were found, an empty array is returned.
      *
+     * @param class-string $annotationClassName
      * @return array<int,class-string>
      */
     public function getClassNamesByAnnotation(string $annotationClassName): array
@@ -420,6 +421,8 @@ class ReflectionService
     /**
      * Tells if the specified class has the given annotation
      *
+     * @param class-string $className
+     * @param class-string $annotationClassName
      * @api
      */
     public function isClassAnnotatedWith(string $className, string $annotationClassName): bool
@@ -495,6 +498,8 @@ class ReflectionService
      * Tells if the specified class implements the given interface
      *
      * @todo can't this be replaces with is_subclass_of() ?
+     * @param class-string $className
+     * @param class-string $interfaceName
      * @throws ClassLoadingForReflectionFailedException
      * @throws InvalidClassException
      * @throws \ReflectionException
@@ -541,7 +546,7 @@ class ReflectionService
     /**
      * Tells if the specified class is readonly or not
      *
-     * @param string $className Name of the class to analyze
+     * @param class-string $className Name of the class to analyze
      * @return bool true if the class is readonly, otherwise false
      * @throws ClassLoadingForReflectionFailedException
      * @throws InvalidClassException
@@ -557,6 +562,7 @@ class ReflectionService
     /**
      * Tells if the class is unconfigurable or not
      *
+     * @param class-string $className
      * @api
      */
     public function isClassUnconfigurable(string $className): bool
@@ -599,7 +605,7 @@ class ReflectionService
     /**
      * Tells if the specified method is final or not
      *
-     * @param string $className
+     * @param class-string $className
      * @param string $methodName
      * @return bool
      * @throws ClassLoadingForReflectionFailedException
@@ -616,7 +622,7 @@ class ReflectionService
     /**
      * Tells if the specified method is declared as static or not
      *
-     * @param string $className
+     * @param class-string $className
      * @throws ClassLoadingForReflectionFailedException
      * @throws InvalidClassException
      * @throws \ReflectionException
@@ -655,6 +661,7 @@ class ReflectionService
     }
 
     /**
+     * @param class-string $className
      * @throws ClassLoadingForReflectionFailedException
      * @throws InvalidClassException
      * @throws \ReflectionException
@@ -669,6 +676,7 @@ class ReflectionService
     /**
      * Tells if the specified method is tagged with the given tag
      *
+     * @param class-string $className
      * @throws \ReflectionException
      * @api
      */
@@ -812,6 +820,7 @@ class ReflectionService
      *
      * @throws \ReflectionException
      * @deprecated since 8.4
+     * @param class-string $className
      * @return array<string,array<int,string>>
      */
     public function getMethodTagsValues(string $className, string $methodName): array
@@ -821,7 +830,7 @@ class ReflectionService
         }
         $className = $this->cleanClassName($className);
 
-        return (new MethodReflection($className, $methodName))->getTagsValues();
+        return new MethodReflection($className, $methodName)->getTagsValues();
     }
 
     /**
@@ -968,6 +977,7 @@ class ReflectionService
     /**
      * Tells if the specified property is promoted
      *
+     * @param class-string $className
      * @api
      */
     public function isPropertyPromoted(string $className, string $propertyName): bool
@@ -1096,7 +1106,7 @@ class ReflectionService
     /**
      * Returns the class schema for the given class
      *
-     * @param string|object $classNameOrObject
+     * @param class-string|object $classNameOrObject
      * @return ClassSchema|null
      */
     public function getClassSchema(string|object $classNameOrObject): ?ClassSchema
@@ -1122,7 +1132,7 @@ class ReflectionService
     /**
      * Initializes the ReflectionService, cleans the given class name and finally reflects the class if necessary.
      *
-     * @param string $className
+     * @param class-string $className
      * @return class-string
      * @throws ClassLoadingForReflectionFailedException
      * @throws InvalidClassException
@@ -1212,7 +1222,7 @@ class ReflectionService
     /**
      * Reflects the given class and stores the results in this service's properties.
      *
-     * @param string $className
+     * @param class-string $className
      * @throws ClassLoadingForReflectionFailedException
      * @throws InvalidClassException
      * @throws \ReflectionException
@@ -1478,7 +1488,7 @@ class ReflectionService
         }
 
         if (
-            isset($this->classReflectionData[$className][self::DATA_CLASS_METHODS][$methodName][self::DATA_METHOD_PARAMETERS][$parameter->getName()][self::DATA_PARAMETER_TYPE]) &&
+            isset($this->classReflectionData[$className][self::DATA_CLASS_METHODS][$methodName][self::DATA_METHOD_PARAMETERS][$parameter->getName()][self::DATA_PARAMETER_TYPE]) && class_exists($parameterAnnotation[0]) &&
             $this->classReflectionData[$className][self::DATA_CLASS_METHODS][$methodName][self::DATA_METHOD_PARAMETERS][$parameter->getName()][self::DATA_PARAMETER_TYPE] !== $this->cleanClassName($parameterAnnotation[0])
         ) {
             $this->log('  Wrong type in @param for "' . $method->getName() . '::' . $parameter->getName() . '": "' . $parameterAnnotation[0] . '"', LogLevel::DEBUG);
@@ -1931,7 +1941,7 @@ class ReflectionService
                 break;
             }
         }
-        if (!isset($parameterInformation[self::DATA_PARAMETER_TYPE]) && $parameterType !== null) {
+        if (!isset($parameterInformation[self::DATA_PARAMETER_TYPE]) && $parameterType !== null && class_exists($parameterType)) {
             $parameterInformation[self::DATA_PARAMETER_TYPE] = $this->cleanClassName($parameterType);
         } elseif (!isset($parameterInformation[self::DATA_PARAMETER_TYPE])) {
             $parameterInformation[self::DATA_PARAMETER_TYPE] = 'mixed';
@@ -2090,6 +2100,7 @@ class ReflectionService
 
     /**
      * Clean a given class name from possibly prefixed backslash
+     * @param class-string $className
      * @return class-string
      */
     protected function cleanClassName(string $className): string

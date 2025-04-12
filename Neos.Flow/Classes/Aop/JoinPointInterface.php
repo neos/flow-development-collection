@@ -41,7 +41,7 @@ interface JoinPointInterface
     /**
      * Returns an array of arguments which have been passed to the target method
      *
-     * @return array Array of arguments
+     * @return array<string,mixed> Array of arguments
      */
     public function getMethodArguments();
 
@@ -82,6 +82,7 @@ interface JoinPointInterface
      * If an exception was thrown by the target method
      * Only makes sense for After Throwing advices.
      *
+     * @phpstan-assert-if-true !null $this->getException()
      * @return boolean
      */
     public function hasException();
@@ -90,6 +91,7 @@ interface JoinPointInterface
      * Returns the exception which has been thrown in the target method.
      * If no exception has been thrown, NULL is returned.
      * Only makes sense for After Throwing advices.
+     *
      *
      * @return \Exception|null The exception thrown or NULL
      */
