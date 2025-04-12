@@ -33,17 +33,21 @@ final class Introduce
 
     /**
      * The interface name to introduce.
-     * @var string|null
+     * @var class-string|null
      */
     public $interfaceName;
 
     /**
      * The trait name to introduce
      *
-     * @var string|null
+     * @var trait-string|null
      */
     public $traitName;
 
+    /**
+     * @param class-string|null $interfaceName
+     * @param trait-string|null $traitName
+     */
     public function __construct(string $pointcutExpression, ?string $interfaceName = null, ?string $traitName = null)
     {
         $this->pointcutExpression = $pointcutExpression;

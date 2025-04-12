@@ -31,7 +31,7 @@ final class Validate
 
     /**
      * Options for the validator, validator-specific.
-     * @var array
+     * @var array<mixed>
      */
     public $options = [];
 
@@ -43,10 +43,14 @@ final class Validate
 
     /**
      * The validation groups for which this validator should be executed.
-     * @var array
+     * @var array<int,string>
      */
     public $validationGroups = ['Default'];
 
+    /**
+     * @param array<mixed> $options
+     * @param array<int,string>|null $validationGroups
+     */
     public function __construct(?string $argumentName = null, ?string $type = null, array $options = [], ?array $validationGroups = null)
     {
         $this->type = $type;
