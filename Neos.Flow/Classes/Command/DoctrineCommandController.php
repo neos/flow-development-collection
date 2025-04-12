@@ -39,7 +39,7 @@ use Psr\Log\LoggerInterface;
 class DoctrineCommandController extends CommandController
 {
     /**
-     * @var array
+     * @var array<mixed>
      */
     protected $settings = [];
 
@@ -70,7 +70,7 @@ class DoctrineCommandController extends CommandController
     /**
      * Injects the Flow settings, only the persistence part is kept for further use
      *
-     * @param array $settings
+     * @param array<mixed> $settings
      * @return void
      */
     public function injectSettings(array $settings): void
@@ -510,9 +510,8 @@ class DoctrineCommandController extends CommandController
 
             $migrationPlatformFolderPart = $migrationFolder ?? $this->doctrineService->getMigrationFolderName();
 
-            if ($selectedPackage !== $choices[0]) {
+            if (is_string($selectedPackage) && $selectedPackage !== $choices[0]) {
                 $selectedPackage = $packages[$selectedPackage];
-                /** @var Package $selectedPackage */
                 $targetPathAndFilename = Files::concatenatePaths([$selectedPackage->getPackagePath(), 'Migrations', $migrationPlatformFolderPart, basename($migrationClassPathAndFilename)]);
                 Files::createDirectoryRecursively(dirname($targetPathAndFilename));
                 rename($migrationClassPathAndFilename, $targetPathAndFilename);
@@ -569,7 +568,7 @@ class DoctrineCommandController extends CommandController
         return sprintf('Neos\Flow\Persistence\Doctrine\Migrations\Version%s', $version);
     }
 
-    private function maybeOutputMigrationFolderWarning(?string $migrationFolder = null)
+    private function maybeOutputMigrationFolderWarning(?string $migrationFolder = null): void
     {
         if ($migrationFolder !== null) {
             $this->outputLine('<comment>Migration folder override is in effect, migration files are not searched in folder matching the configured connection but in ...Migrations/%s/</comment>', [$migrationFolder]);

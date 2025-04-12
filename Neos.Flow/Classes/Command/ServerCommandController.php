@@ -24,7 +24,14 @@ class ServerCommandController extends CommandController
 {
     /**
      * @Flow\InjectConfiguration
-     * @var array
+     * @var array{
+     *      core: array{
+     *          context: string,
+     *          phpBinaryPathAndFilename: string,
+     *          subRequestPhpIniPathAndFilename?: mixed,
+     *          subRequestEnvironmentVariables?: array<mixed>,
+     *      },
+     *  }
      */
     protected $settings;
 

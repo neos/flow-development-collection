@@ -97,7 +97,6 @@ class PackageCommandController extends CommandController
         }
 
         $this->outputLine('PACKAGES:');
-        /** @var PackageInterface|PackageKeyAwareInterface $package */
         foreach ($availablePackages as $package) {
             $this->outputLine(' ' . str_pad($package->getPackageKey(), $longestPackageKey + 3) . str_pad($package->getInstalledVersion(), 15));
         }
@@ -106,7 +105,7 @@ class PackageCommandController extends CommandController
     /**
      * Rescan package availability and recreates the PackageStates configuration.
      */
-    public function rescanCommand()
+    public function rescanCommand(): void
     {
         $packageStates = $this->packageManager->rescanPackages();
 
