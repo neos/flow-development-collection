@@ -83,7 +83,7 @@ class CacheFactory extends \Neos\Cache\CacheFactory
      * @param string $cacheIdentifier
      * @param string $cacheObjectName
      * @param string $backendObjectName
-     * @param array $backendOptions
+     * @param array<mixed> $backendOptions
      * @param bool $persistent
      * @return FrontendInterface
      */
@@ -112,7 +112,7 @@ class CacheFactory extends \Neos\Cache\CacheFactory
 
     /**
      * @param string $backendObjectName
-     * @param array $backendOptions
+     * @param array<string,mixed> $backendOptions
      * @param EnvironmentConfiguration $environmentConfiguration
      * @param boolean $persistent
      * @return BackendInterface
