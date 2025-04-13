@@ -231,7 +231,7 @@ class StringHelper implements ProtectedContextAwareInterface
      *
      * @param string $string The input string
      * @param string $pattern A PREG pattern
-     * @return array|null The matches as array or NULL if not matched
+     * @return array<mixed>|null The matches as array or NULL if not matched
      * @throws EvaluationException
      */
     public function pregMatch($string, $pattern)
@@ -256,7 +256,7 @@ class StringHelper implements ProtectedContextAwareInterface
      *
      * @param string $string The input string
      * @param string $pattern A PREG pattern
-     * @return array|null The matches as array or NULL if not matched
+     * @return array<mixed>|null The matches as array or NULL if not matched
      * @throws EvaluationException
      */
     public function pregMatchAll($string, $pattern)
@@ -288,10 +288,7 @@ class StringHelper implements ProtectedContextAwareInterface
      */
     public function pregReplace($string, $pattern, $replace, $limit = -1)
     {
-        if ($limit === null) {
-            $limit = -1;
-        }
-        return preg_replace($pattern, $replace, (string)$string, $limit);
+        return preg_replace($pattern, $replace, (string)$string, $limit) ?: '';
     }
 
     /**
@@ -305,11 +302,11 @@ class StringHelper implements ProtectedContextAwareInterface
      * @param string $string The input string
      * @param string $pattern A PREG pattern
      * @param integer $limit The maximum amount of items to return, in contrast to split() this will return all remaining characters in the last item (see example)
-     * @return array An array of the splitted parts, excluding the matched pattern
+     * @return array<string> An array of the splitted parts, excluding the matched pattern
      */
     public function pregSplit($string, $pattern, $limit = -1)
     {
-        return preg_split($pattern, (string)$string, (int)$limit);
+        return preg_split($pattern, (string)$string, (int)$limit) ?: [];
     }
 
     /**
@@ -322,10 +319,10 @@ class StringHelper implements ProtectedContextAwareInterface
      *
      * Note: this method does not perform regular expression matching, @see pregReplace().
      *
-     * @param array|string|null $string The input string
-     * @param array|string|null $search A search string
-     * @param array|string|null $replace A replacement string
-     * @return array|string|string[] The string with all occurrences replaced
+     * @param array<mixed>|string|null $string The input string
+     * @param array<mixed>|string|null $search A search string
+     * @param array<mixed>|string|null $replace A replacement string
+     * @return array<mixed>|string|string[] The string with all occurrences replaced
      */
     public function replace($string, $search, $replace)
     {
@@ -350,7 +347,7 @@ class StringHelper implements ProtectedContextAwareInterface
      * @param string $string The string to split
      * @param string|null $separator The separator where the string should be splitted
      * @param int|null $limit The maximum amount of items to split (exceeding items will be discarded)
-     * @return array An array of the splitted parts, excluding the separators
+     * @return array<string> An array of the split parts, excluding the separators
      */
     public function split($string, $separator = null, $limit = null)
     {
@@ -592,7 +589,7 @@ class StringHelper implements ProtectedContextAwareInterface
      */
     public function htmlSpecialChars($string, $preserveEntities = false)
     {
-        return htmlspecialchars((string)$string, ENT_NOQUOTES | ENT_HTML401, ini_get("default_charset"), !$preserveEntities);
+        return htmlspecialchars((string)$string, ENT_NOQUOTES | ENT_HTML401, ini_get("default_charset") ?: null, !$preserveEntities);
     }
 
     /**
@@ -712,9 +709,9 @@ class StringHelper implements ProtectedContextAwareInterface
     {
         $unicodeString = (string)$unicodeString;
 
-        $unicodeString = preg_replace('/[[:punct:][:digit:]]/', '', $unicodeString);
+        $unicodeString = preg_replace('/[[:punct:][:digit:]]/', '', $unicodeString) ?: '';
 
-        return count(preg_split('/[[:space:]]+/', $unicodeString, 0, PREG_SPLIT_NO_EMPTY));
+        return count(preg_split('/[[:space:]]+/', $unicodeString, 0, PREG_SPLIT_NO_EMPTY) ?: []);
     }
 
     /**
@@ -747,7 +744,7 @@ class StringHelper implements ProtectedContextAwareInterface
      * @see https://php.net/manual/en/function.vsprintf.php
      *
      * @param string $format A formatting string containing directives
-     * @param array $args An array of values to be inserted according to the formatting string $format
+     * @param array<mixed> $args An array of values to be inserted according to the formatting string $format
      * @return string A string produced according to the formatting string $format
      */
     public function format($format, array $args)
