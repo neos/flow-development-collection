@@ -28,22 +28,23 @@ class StringFrontend extends AbstractFrontend
      * Saves the value of a PHP variable in the cache.
      *
      * @param string $entryIdentifier An identifier used for this cache entry
-     * @param string $string The variable to cache
-     * @param array $tags Tags to associate with this cache entry
-     * @param integer $lifetime Lifetime of this cache entry in seconds. If NULL is specified, the default lifetime is used. "0" means unlimited lifetime.
+     * @param string $data The variable to cache
+     * @param array<string> $tags Tags to associate with this cache entry
+     * @param ?integer $lifetime Lifetime of this cache entry in seconds. If NULL is specified, the default lifetime is used. "0" means unlimited lifetime.
      * @return void
      * @throws InvalidDataException
      * @throws \InvalidArgumentException
      * @throws \Neos\Cache\Exception
      * @api
      */
-    public function set(string $entryIdentifier, $string, array $tags = [], ?int $lifetime = null)
+    public function set(string $entryIdentifier, $data, array $tags = [], ?int $lifetime = null)
     {
         if (!$this->isValidEntryIdentifier($entryIdentifier)) {
             throw new \InvalidArgumentException('"' . $entryIdentifier . '" is not a valid cache entry identifier.', 1233057566);
         }
-        if (!is_string($string)) {
-            throw new InvalidDataException('Given data is of type "' . gettype($string) . '", but a string is expected for string cache.', 1222808333);
+        /** @phpstan-ignore function.alreadyNarrowedType (we cannot narrow this on language level) */
+        if (!is_string($data)) {
+            throw new InvalidDataException('Given data is of type "' . gettype($data) . '", but a string is expected for string cache.', 1222808333);
         }
         foreach ($tags as $tag) {
             if (!$this->isValidTag($tag)) {
@@ -51,7 +52,7 @@ class StringFrontend extends AbstractFrontend
             }
         }
 
-        $this->backend->set($entryIdentifier, $string, $tags, $lifetime);
+        $this->backend->set($entryIdentifier, $data, $tags, $lifetime);
     }
 
     /**
@@ -75,7 +76,7 @@ class StringFrontend extends AbstractFrontend
      * Finds and returns all cache entries which are tagged by the specified tag.
      *
      * @param string $tag The tag to search for
-     * @return array An array with the identifier (key) and content (value) of all matching entries. An empty array if no entries matched
+     * @return array<string,mixed> An array with the identifier (key) and content (value) of all matching entries. An empty array if no entries matched
      * @throws NotSupportedByBackendException
      * @throws \InvalidArgumentException
      * @api

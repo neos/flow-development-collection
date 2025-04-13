@@ -21,7 +21,7 @@ trait BackendInstantiationTrait
 {
     /**
      * @param string $backendObjectName
-     * @param array $backendOptions
+     * @param array<mixed> $backendOptions
      * @param EnvironmentConfiguration $environmentConfiguration
      * @return BackendInterface
      * @throws InvalidBackendException

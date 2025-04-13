@@ -48,15 +48,15 @@ class VariableFrontend extends AbstractFrontend
      * will be serialized if necessary.
      *
      * @param string $entryIdentifier An identifier used for this cache entry
-     * @param mixed $variable The variable to cache
-     * @param array $tags Tags to associate with this cache entry
-     * @param integer $lifetime Lifetime of this cache entry in seconds. If NULL is specified, the default lifetime is used. "0" means unlimited lifetime.
+     * @param mixed $data The variable to cache
+     * @param array<string> $tags Tags to associate with this cache entry
+     * @param ?integer $lifetime Lifetime of this cache entry in seconds. If NULL is specified, the default lifetime is used. "0" means unlimited lifetime.
      * @return void
      * @throws \InvalidArgumentException
      * @throws \Neos\Cache\Exception
      * @api
      */
-    public function set(string $entryIdentifier, $variable, array $tags = [], ?int $lifetime = null)
+    public function set(string $entryIdentifier, $data, array $tags = [], ?int $lifetime = null)
     {
         if (!$this->isValidEntryIdentifier($entryIdentifier)) {
             throw new \InvalidArgumentException('"' . $entryIdentifier . '" is not a valid cache entry identifier.', 1233058264);
@@ -67,9 +67,9 @@ class VariableFrontend extends AbstractFrontend
             }
         }
         if ($this->useIgBinary === true) {
-            $this->backend->set($entryIdentifier, igbinary_serialize($variable), $tags, $lifetime);
+            $this->backend->set($entryIdentifier, igbinary_serialize($data) ?: '', $tags, $lifetime);
         } else {
-            $this->backend->set($entryIdentifier, serialize($variable), $tags, $lifetime);
+            $this->backend->set($entryIdentifier, serialize($data), $tags, $lifetime);
         }
     }
 
@@ -98,7 +98,7 @@ class VariableFrontend extends AbstractFrontend
      * Finds and returns all cache entries which are tagged by the specified tag.
      *
      * @param string $tag The tag to search for
-     * @return array An array with the identifier (key) and content (value) of all matching entries. An empty array if no entries matched
+     * @return array<string,mixed> An array with the identifier (key) and content (value) of all matching entries. An empty array if no entries matched
      * @throws NotSupportedByBackendException
      * @throws \InvalidArgumentException
      * @api

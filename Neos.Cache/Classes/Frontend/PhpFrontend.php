@@ -60,7 +60,7 @@ class PhpFrontend extends StringFrontend
 
         preg_match('/^(?:.*\n){1}((?:.*\n)*)(?:.+\n?|\n)$/', $code, $matches);
 
-        return $matches[1];
+        return $matches[1] ?? false;
     }
 
     /**
@@ -83,21 +83,22 @@ class PhpFrontend extends StringFrontend
      * Saves the PHP source code in the cache.
      *
      * @param string $entryIdentifier An identifier used for this cache entry, for example the class name
-     * @param string $sourceCode PHP source code
-     * @param array $tags Tags to associate with this cache entry
-     * @param integer $lifetime Lifetime of this cache entry in seconds. If NULL is specified, the default lifetime is used. "0" means unlimited lifetime.
+     * @param string $data PHP source code
+     * @param array<string> $tags Tags to associate with this cache entry
+     * @param ?integer $lifetime Lifetime of this cache entry in seconds. If NULL is specified, the default lifetime is used. "0" means unlimited lifetime.
      * @return void
      * @throws InvalidDataException
      * @throws \InvalidArgumentException
      * @throws \Neos\Cache\Exception
      * @api
      */
-    public function set(string $entryIdentifier, $sourceCode, array $tags = [], ?int $lifetime = null)
+    public function set(string $entryIdentifier, $data, array $tags = [], ?int $lifetime = null)
     {
         if (!$this->isValidEntryIdentifier($entryIdentifier)) {
             throw new \InvalidArgumentException('"' . $entryIdentifier . '" is not a valid cache entry identifier.', 1264023823);
         }
-        if (!is_string($sourceCode)) {
+        /** @phpstan-ignore function.alreadyNarrowedType (we cannot narrow this on language level) */
+        if (!is_string($data)) {
             throw new InvalidDataException('The given source code is not a valid string.', 1264023824);
         }
         foreach ($tags as $tag) {
@@ -105,7 +106,7 @@ class PhpFrontend extends StringFrontend
                 throw new \InvalidArgumentException('"' . $tag . '" is not a valid tag for a cache entry.', 1264023825);
             }
         }
-        $sourceCode = '<?php ' . $sourceCode . chr(10) . '#';
+        $sourceCode = '<?php ' . $data . chr(10) . '#';
         $this->backend->set($entryIdentifier, $sourceCode, $tags, $lifetime);
     }
 

@@ -49,7 +49,7 @@ class CacheFactory implements CacheFactoryInterface
      * @param string $cacheIdentifier The name / identifier of the cache to create
      * @param string $cacheObjectName Object name of the cache frontend
      * @param string $backendObjectName Object name of the cache backend
-     * @param array $backendOptions (optional) Array of backend options
+     * @param array<mixed> $backendOptions (optional) Array of backend options
      * @return FrontendInterface The created cache frontend
      * @throws InvalidBackendException
      * @throws InvalidCacheException
