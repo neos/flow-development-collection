@@ -48,7 +48,7 @@ class FileBackend extends SimpleFileBackend implements PhpCapableBackendInterfac
     protected $cacheEntryFileExtension = '';
 
     /**
-     * @var array<string>
+     * @var array<string, true> @phpstan-ignore property.phpDocType (this backend seems to work differently)
      */
     protected $cacheEntryIdentifiers = [];
 
@@ -90,6 +90,9 @@ class FileBackend extends SimpleFileBackend implements PhpCapableBackendInterfac
         $cachePathAndFileName = $this->cacheDirectory . 'FrozenCache.data';
         if ($this->useIgBinary === true) {
             $data = igbinary_serialize($this->cacheEntryIdentifiers);
+            if ($data === null) {
+                throw new \RuntimeException('Failed to serialize cache entry identifiers', 1744536663);
+            }
         } else {
             $data = serialize($this->cacheEntryIdentifiers);
         }
@@ -140,8 +143,8 @@ class FileBackend extends SimpleFileBackend implements PhpCapableBackendInterfac
      *
      * @param string $entryIdentifier An identifier for this specific cache entry
      * @param string $data The data to be stored
-     * @param array $tags Tags to associate with this cache entry
-     * @param integer $lifetime Lifetime of this cache entry in seconds. If NULL is specified, the default lifetime is used. "0" means unlimited lifetime.
+     * @param array<string> $tags Tags to associate with this cache entry
+     * @param ?integer $lifetime Lifetime of this cache entry in seconds. If NULL is specified, the default lifetime is used. "0" means unlimited lifetime.
      * @return void
      * @throws \RuntimeException
      * @throws Exception if the directory does not exist or is not writable or exceeds the maximum allowed path length, or if no cache frontend has been set.

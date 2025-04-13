@@ -41,8 +41,8 @@ class NullBackend extends AbstractCacheBackend implements PhpCapableBackendInter
      *
      * @param string $entryIdentifier ignored
      * @param string $data ignored
-     * @param array $tags ignored
-     * @param integer $lifetime ignored
+     * @param array<string> $tags ignored
+     * @param ?integer $lifetime ignored
      * @return void
      * @api
      */

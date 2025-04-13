@@ -28,18 +28,18 @@ abstract class AbstractBackend implements BackendInterface
 
     /**
      * Reference to the cache frontend which uses this backend
-     * @var FrontendInterface
+     * @var ?FrontendInterface
      */
     protected $cache;
 
     /**
-     * @var string
+     * @var ?string
      */
     protected $cacheIdentifier;
 
     /**
-     * A prefix to seperate stored by appliaction context and cache
-     * @var string
+     * A prefix to separate stored by application context and cache
+     * @var ?string
      */
     protected $identifierPrefix;
 
@@ -50,28 +50,25 @@ abstract class AbstractBackend implements BackendInterface
     protected $defaultLifetime = 3600;
 
     /**
-     * @var EnvironmentConfiguration
+     * @var ?EnvironmentConfiguration
      */
     protected $environmentConfiguration;
 
     /**
      * Constructs this backend
      *
-     * @param EnvironmentConfiguration $environmentConfiguration
-     * @param array $options Configuration options - depends on the actual backend
+     * @param ?EnvironmentConfiguration $environmentConfiguration @todo is this ever null and does that even make sense?
+     * @param array<mixed> $options Configuration options - depends on the actual backend
      * @api
      */
     public function __construct(?EnvironmentConfiguration $environmentConfiguration = null, array $options = [])
     {
         $this->environmentConfiguration = $environmentConfiguration;
-
-        if (is_array($options) || $options instanceof \Iterator) {
-            $this->setProperties($options);
-        }
+        $this->setProperties($options);
     }
 
     /**
-     * @param array $properties
+     * @param array<mixed> $properties
      * @param boolean $throwExceptionIfPropertyNotSettable
      * @return void
      * @throws \InvalidArgumentException

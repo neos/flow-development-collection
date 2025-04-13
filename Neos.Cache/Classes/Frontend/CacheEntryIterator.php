@@ -18,6 +18,7 @@ use Neos\Cache\Backend\IterableBackendInterface;
 /**
  * An iterator for cache entries
  *
+ * @implements \Iterator<string,mixed>
  * @api
  */
 class CacheEntryIterator implements \Iterator
