@@ -24,7 +24,7 @@ use Neos\Flow\Annotations as Flow;
 class ProtectedContext extends Context
 {
     /**
-     * @var array
+     * @var array<string,mixed>
      */
     protected $allowedMethods = [];
 
@@ -32,7 +32,7 @@ class ProtectedContext extends Context
      * Call a method if it is allowed
      *
      * @param string $method
-     * @param array $arguments
+     * @param array<mixed> $arguments
      * @return mixed|void
      * @throws NotAllowedException
      */
@@ -49,7 +49,7 @@ class ProtectedContext extends Context
      *
      * The list of allowed methods for the given path is applied to the new context.
      *
-     * @param string $path
+     * @param ProtectedContext|string|null $path
      * @return Context The wrapped value
      */
     public function getAndWrap($path = null)
@@ -82,7 +82,7 @@ class ProtectedContext extends Context
      *
      *   $context->allow(array('String.*', 'Array.reverse'));
      *
-     * @param array|string $pathOrMethods
+     * @param array<string>|string $pathOrMethods
      * @return void
      */
     public function allow($pathOrMethods)

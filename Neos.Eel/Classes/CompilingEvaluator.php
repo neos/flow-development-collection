@@ -39,7 +39,7 @@ class CompilingEvaluator implements EelEvaluatorInterface
      *
      * @param StringFrontend $expressionCache
      */
-    public function injectExpressionCache(StringFrontend $expressionCache)
+    public function injectExpressionCache(StringFrontend $expressionCache): void
     {
         $this->expressionCache = $expressionCache;
     }

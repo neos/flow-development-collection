@@ -71,13 +71,17 @@ use Neos\Flow\Annotations as Flow;
  * If an operation is final, it should return the resulting value directly.
  *
  * @phpstan-consistent-constructor
+ *
+ * @phpstan-type Operation array{name: string, arguments: array<mixed>}
+ *
+ * @implements \IteratorAggregate<mixed>
  */
 class FlowQuery implements ProtectedContextAwareInterface, \IteratorAggregate, \Countable
 {
     /**
      * the objects this FlowQuery object wraps
      *
-     * @var array|\Traversable
+     * @var array<mixed>|\Traversable<mixed>
      */
     protected $context;
 
@@ -87,7 +91,7 @@ class FlowQuery implements ProtectedContextAwareInterface, \IteratorAggregate, \
      * whereas the name is a string like 'children' and the arguments
      * are a numerically-indexed array
      *
-     * @var array
+     * @var array<int,Operation>
      */
     protected $operations = [];
 
@@ -104,16 +108,12 @@ class FlowQuery implements ProtectedContextAwareInterface, \IteratorAggregate, \
      *
      * If a FlowQuery is given as the $context we unwrap its context to assert q(q(context)) == q(context).
      *
-     * @param array|\Traversable $context The initial context (wrapped objects) for this FlowQuery
-     * @param array              $operations
-     * @throws Exception
+     * @param array<mixed>|\Traversable<mixed> $context The initial context (wrapped objects) for this FlowQuery
+     * @param array<int,Operation> $operations
      * @api
      */
     public function __construct($context, array $operations = [])
     {
-        if (!(is_array($context) || $context instanceof \Traversable)) {
-            throw new Exception('The FlowQuery context must be an array or implement \Traversable but context was a ' . gettype($context), 1380816689);
-        }
         if ($context instanceof FlowQuery) {
             $this->context = $context->getContext();
         } else {
@@ -139,7 +139,7 @@ class FlowQuery implements ProtectedContextAwareInterface, \IteratorAggregate, \
      *
      * @param OperationResolverInterface $operationResolver
      */
-    public function setOperationResolver(OperationResolverInterface $operationResolver)
+    public function setOperationResolver(OperationResolverInterface $operationResolver): void
     {
         $this->operationResolver = $operationResolver;
     }
@@ -150,7 +150,7 @@ class FlowQuery implements ProtectedContextAwareInterface, \IteratorAggregate, \
      * If the operation is final, we directly compute the result and return the value.
      *
      * @param string $operationName
-     * @param array $arguments
+     * @param array<mixed> $arguments
      * @return FlowQuery|mixed
      */
     public function __call($operationName, array $arguments)
@@ -194,14 +194,14 @@ class FlowQuery implements ProtectedContextAwareInterface, \IteratorAggregate, \
      *
      * Should NEVER be called inside an operation!
      *
-     * @return \ArrayIterator
+     * @return \ArrayIterator<int|string, mixed>
      */
     public function getIterator(): \ArrayIterator
     {
         if (count($this->operations) > 0) {
             $this->evaluateOperations();
         }
-        return new \ArrayIterator($this->context);
+        return new \ArrayIterator($this->context instanceof \Traversable ? iterator_to_array($this->context) : $this->context);
     }
 
     /**
@@ -227,7 +227,7 @@ class FlowQuery implements ProtectedContextAwareInterface, \IteratorAggregate, \
      *
      * Should only be called inside an operation.
      *
-     * @return array
+     * @return Operation|null
      */
     public function popOperation()
     {
@@ -242,9 +242,9 @@ class FlowQuery implements ProtectedContextAwareInterface, \IteratorAggregate, \
      * Should only be called inside an operation.
      *
      * @param string $operationName
-     * @param array $arguments
+     * @param array<mixed> $arguments
      */
-    public function pushOperation($operationName, array $arguments)
+    public function pushOperation($operationName, array $arguments): void
     {
         array_unshift($this->operations, [
             'name' => $operationName,
@@ -273,7 +273,7 @@ class FlowQuery implements ProtectedContextAwareInterface, \IteratorAggregate, \
      *
      * Should only be called inside an operation.
      *
-     * @return array|\Traversable
+     * @return array<mixed>|\Traversable<mixed>
      */
     public function getContext()
     {
@@ -285,9 +285,9 @@ class FlowQuery implements ProtectedContextAwareInterface, \IteratorAggregate, \
      *
      * Should only be called inside an operation.
      *
-     * @param array|\Traversable $context
+     * @param array<mixed>|\Traversable<mixed> $context
      */
-    public function setContext($context)
+    public function setContext($context): void
     {
         $this->context = $context;
     }

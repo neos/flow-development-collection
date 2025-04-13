@@ -80,7 +80,7 @@ class SecurityHelper implements ProtectedContextAwareInterface
      * Returns true, if access to the given privilege-target is granted
      *
      * @param string $privilegeTarget The identifier of the privilege target to decide on
-     * @param array $parameters Optional array of privilege parameters (simple key => value array)
+     * @param array<mixed> $parameters Optional array of privilege parameters (simple key => value array)
      * @return boolean true if access is granted, false otherwise
      */
     public function hasAccess(string $privilegeTarget, array $parameters = []): bool
