@@ -43,7 +43,7 @@ class Message
 
     /**
      * The message arguments. Will be replaced in the message body.
-     * @var array
+     * @var array<mixed>
      */
     protected $arguments = [];
 
@@ -58,7 +58,7 @@ class Message
      *
      * @param string $message An english error message which is used if no other error message can be resolved
      * @param integer|null $code A unique error code
-     * @param array $arguments Array of arguments to be replaced in message
+     * @param array<mixed> $arguments Array of arguments to be replaced in message
      * @param string $title optional title for the message
      * @api
      */
@@ -102,7 +102,7 @@ class Message
     }
 
     /**
-     * @return array
+     * @return array<mixed>
      * @api
      */
     public function getArguments(): array
