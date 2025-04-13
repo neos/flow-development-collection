@@ -31,7 +31,7 @@ class AddOperation extends AbstractOperation
      * {@inheritdoc}
      *
      * @param FlowQuery $flowQuery the FlowQuery object
-     * @param array $arguments the elements to add (as array in index 0)
+     * @param array<mixed> $arguments the elements to add (as array in index 0)
      * @return void
      */
     public function evaluate(FlowQuery $flowQuery, array $arguments)

@@ -31,7 +31,7 @@ class RemoveOperation extends AbstractOperation
      * {@inheritdoc}
      *
      * @param FlowQuery $flowQuery the FlowQuery object
-     * @param array $arguments the elements to remove (as array in index 0)
+     * @param array<mixed> $arguments the elements to remove (as array in index 0)
      * @return void
      */
     public function evaluate(FlowQuery $flowQuery, array $arguments)
@@ -46,8 +46,9 @@ class RemoveOperation extends AbstractOperation
                 $valuesToRemove[] = $arguments[0];
             }
         }
+        $context = $flowQuery->getContext();
         $filteredContext = array_filter(
-            $flowQuery->getContext(),
+            $context instanceof \Traversable ? iterator_to_array($context) : $context,
             function ($item) use ($valuesToRemove) {
                 return in_array($item, $valuesToRemove, true) === false;
             }

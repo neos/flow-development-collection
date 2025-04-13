@@ -41,7 +41,7 @@ class DateHelper implements ProtectedContextAwareInterface
      *
      * @param string $string
      * @param string $format
-     * @return \DateTime
+     * @return \DateTime|false
      */
     public function parse($string, $format)
     {

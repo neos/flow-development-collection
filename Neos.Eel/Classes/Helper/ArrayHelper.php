@@ -33,7 +33,7 @@ class ArrayHelper implements ProtectedContextAwareInterface
      * @param iterable|mixed $array1 First array or value
      * @param iterable|mixed $array2 Second array or value
      * @param iterable|mixed $array_ Optional variable list of additional arrays / values
-     * @return array The array with concatenated arrays or values
+     * @return array<mixed> The array with concatenated arrays or values
      */
     public function concat($array1, $array2, $array_ = null): array
     {
@@ -51,7 +51,7 @@ class ArrayHelper implements ProtectedContextAwareInterface
     /**
      * Join values of an array with a separator
      *
-     * @param iterable $array Array with values to join
+     * @param iterable<mixed> $array Array with values to join
      * @param string $separator A separator for the values
      * @return string A string with the joined values separated by the separator
      */
@@ -66,10 +66,10 @@ class ArrayHelper implements ProtectedContextAwareInterface
     /**
      * Extract a portion of an indexed array
      *
-     * @param iterable $array The array (with numeric indices)
+     * @param iterable<mixed> $array The array (with numeric indices)
      * @param int $begin
      * @param int $end
-     * @return array
+     * @return array<mixed>
      */
     public function slice(iterable $array, $begin, $end = null): array
     {
@@ -88,8 +88,8 @@ class ArrayHelper implements ProtectedContextAwareInterface
     /**
      * Returns an array in reverse order
      *
-     * @param iterable $array The array
-     * @return array
+     * @param iterable<mixed> $array The array
+     * @return array<mixed>
      */
     public function reverse(iterable $array): array
     {
@@ -102,8 +102,8 @@ class ArrayHelper implements ProtectedContextAwareInterface
     /**
      * Get the array keys
      *
-     * @param iterable $array The array
-     * @return array
+     * @param iterable<mixed> $array The array
+     * @return array<mixed>
      */
     public function keys(iterable $array): array
     {
@@ -116,8 +116,8 @@ class ArrayHelper implements ProtectedContextAwareInterface
     /**
      * Get the array values
      *
-     * @param iterable $array The array
-     * @return array
+     * @param iterable<mixed> $array The array
+     * @return array<mixed>
      */
     public function values(iterable $array): array
     {
@@ -130,7 +130,7 @@ class ArrayHelper implements ProtectedContextAwareInterface
     /**
      * Get the length of an array
      *
-     * @param iterable $array The array
+     * @param iterable<mixed> $array The array
      * @return int
      */
     public function length(iterable $array): int
@@ -144,7 +144,7 @@ class ArrayHelper implements ProtectedContextAwareInterface
     /**
      * Check if an array is empty
      *
-     * @param iterable $array The array
+     * @param iterable<mixed> $array The array
      * @return bool true if the array is empty
      */
     public function isEmpty(iterable $array): bool
@@ -155,7 +155,7 @@ class ArrayHelper implements ProtectedContextAwareInterface
     /**
      * Get the first element of an array
      *
-     * @param iterable $array The array
+     * @param iterable<mixed> $array The array
      * @return mixed
      */
     public function first(iterable $array)
@@ -172,7 +172,7 @@ class ArrayHelper implements ProtectedContextAwareInterface
     /**
      * Get the last element of an array
      *
-     * @param iterable $array The array
+     * @param iterable<mixed> $array The array
      * @return mixed
      */
     public function last(iterable $array)
@@ -191,7 +191,7 @@ class ArrayHelper implements ProtectedContextAwareInterface
      * Returns the first index at which a given element can be found in the array,
      * or -1 if it is not present
      *
-     * @param iterable $array The array
+     * @param iterable<mixed> $array The array
      * @param mixed $searchElement The element value to find
      * @param int $fromIndex Position in the array to start the search.
      * @return int
@@ -217,7 +217,7 @@ class ArrayHelper implements ProtectedContextAwareInterface
     /**
      * Picks a random element from the array
      *
-     * @param array $array
+     * @param array<mixed> $array
      * @return mixed A random entry or null if the array is empty
      */
     public function random(iterable $array)
@@ -240,8 +240,8 @@ class ArrayHelper implements ProtectedContextAwareInterface
      * Internally natsort() is used as it most closely resembles javascript's sort().
      * Because there are no real associative arrays in Javascript, keys of the array will be preserved.
      *
-     * @param iterable $array
-     * @return array The sorted array
+     * @param iterable<mixed> $array
+     * @return array<mixed> The sorted array
      */
     public function sort(iterable $array): array
     {
@@ -268,8 +268,8 @@ class ArrayHelper implements ProtectedContextAwareInterface
     /**
      * Sort an array by key
      *
-     * @param iterable $array The array to sort
-     * @return array The sorted array
+     * @param iterable<mixed> $array The array to sort
+     * @return array<mixed> The sorted array
      */
     public function ksort(iterable $array): array
     {
@@ -286,9 +286,9 @@ class ArrayHelper implements ProtectedContextAwareInterface
      * Randomizes entries an array with the option to preserve the existing keys.
      * When this option is set to false, all keys will be replaced
      *
-     * @param iterable $array
-     * @param bool $preserveKeys Wether to preserve the keys when shuffling the array
-     * @return array The shuffled array
+     * @param iterable<mixed> $array
+     * @param bool $preserveKeys Whether to preserve the keys when shuffling the array
+     * @return array<mixed> The shuffled array
      */
     public function shuffle(iterable $array, $preserveKeys = true): array
     {
@@ -315,8 +315,8 @@ class ArrayHelper implements ProtectedContextAwareInterface
     /**
      * Removes duplicate values from an array
      *
-     * @param iterable $array The input array
-     * @return array The filtered array.
+     * @param iterable<mixed> $array The input array
+     * @return array<mixed> The filtered array.
      */
     public function unique(iterable $array): array
     {
@@ -333,8 +333,8 @@ class ArrayHelper implements ProtectedContextAwareInterface
      *
      * An empty array will result in an empty array again.
      *
-     * @param iterable $array
-     * @return array The array without the last element
+     * @param iterable<mixed> $array
+     * @return array<mixed> The array without the last element
      */
     public function pop(iterable $array): array
     {
@@ -355,9 +355,9 @@ class ArrayHelper implements ProtectedContextAwareInterface
      *
      *     Array.push(array, e1, e2)
      *
-     * @param iterable|scalar|null $array
+     * @param mixed $array
      * @param mixed $element
-     * @return array The array with the inserted elements
+     * @return array<mixed> The array with the inserted elements
      */
     public function push($array, $element): array
     {
@@ -388,8 +388,8 @@ class ArrayHelper implements ProtectedContextAwareInterface
      *
      * An empty array will result in an empty array again.
      *
-     * @param iterable $array
-     * @return array The array without the first element
+     * @param iterable<mixed> $array
+     * @return array<mixed> The array without the first element
      */
     public function shift(iterable $array): array
     {
@@ -407,9 +407,9 @@ class ArrayHelper implements ProtectedContextAwareInterface
      *
      *     Array.unshift(array, e1, e2)
      *
-     * @param iterable $array
+     * @param iterable<mixed> $array
      * @param mixed $element
-     * @return array The array with the inserted elements
+     * @return array<mixed> The array with the inserted elements
      */
     public function unshift(iterable $array, $element): array
     {
@@ -432,11 +432,11 @@ class ArrayHelper implements ProtectedContextAwareInterface
      *
      *     Array.splice(array, 3, 2, 'a', 'b')
      *
-     * @param iterable $array
+     * @param iterable<mixed> $array
      * @param int $offset Index of the first element to remove
      * @param int $length Number of elements to remove
      * @param mixed $replacements Elements to insert instead of the removed range
-     * @return array The array with removed and replaced elements
+     * @return array<mixed> The array with removed and replaced elements
      */
     public function splice(iterable $array, $offset, $length = 1, $replacements = null): array
     {
@@ -455,8 +455,8 @@ class ArrayHelper implements ProtectedContextAwareInterface
      * Note that the values of array need to be valid keys, i.e. they need to be either int or string.
      * If a value has several occurrences, the latest key will be used as its value, and all others will be lost.
      *
-     * @param iterable $array
-     * @return array The array with flipped keys and values
+     * @param iterable<mixed> $array
+     * @return array<mixed> The array with flipped keys and values
      */
     public function flip(iterable $array): array
     {
@@ -475,7 +475,7 @@ class ArrayHelper implements ProtectedContextAwareInterface
      * @param mixed $start First value of the sequence.
      * @param mixed $end The sequence is ended upon reaching the end value.
      * @param int $step The increment between items, will default to 1.
-     * @return array Array of elements from start to end, inclusive.
+     * @return array<mixed> Array of elements from start to end, inclusive.
      */
     public function range($start, $end, $step = 1): array
     {
@@ -485,10 +485,10 @@ class ArrayHelper implements ProtectedContextAwareInterface
     /**
      * Set the specified key in the the array
      *
-     * @param iterable $array
+     * @param iterable<mixed> $array
      * @param string|integer $key the key that should be set
      * @param mixed $value the value to assign to the key
-     * @return array The modified array.
+     * @return array<mixed> The modified array.
      */
     public function set(iterable $array, $key, $value): array
     {
@@ -507,9 +507,9 @@ class ArrayHelper implements ProtectedContextAwareInterface
      *     Array.map([1, 2, 3, 4], x => x * x)
      *     Array.map([1, 2, 3, 4], (x, index) => x * index)
      *
-     * @param iterable $array Array of elements to map
+     * @param iterable<mixed> $array Array of elements to map
      * @param callable $callback Callback to apply for each element, current value and key will be passed as arguments
-     * @return array The array with callback applied, keys will be preserved
+     * @return array<mixed> The array with callback applied, keys will be preserved
      */
     public function map(iterable $array, callable $callback): array
     {
@@ -528,7 +528,7 @@ class ArrayHelper implements ProtectedContextAwareInterface
      *     Array.reduce([1, 2, 3, 4], (accumulator, currentValue) => accumulator + currentValue) // == 10
      *     Array.reduce([1, 2, 3, 4], (accumulator, currentValue) => accumulator + currentValue, 1) // == 11
      *
-     * @param iterable $array Array of elements to reduce to a value
+     * @param iterable<mixed> $array Array of elements to reduce to a value
      * @param callable $callback Callback for accumulating values, accumulator, current value and key will be passed as arguments
      * @param mixed $initialValue Initial value, defaults to first item in array and callback starts with second entry
      * @return mixed
@@ -558,9 +558,9 @@ class ArrayHelper implements ProtectedContextAwareInterface
      *     Array.filter([1, 2, 3, 4], x => x % 2 == 0) // == [2, 4]
      *     Array.filter(['foo', 'bar', 'baz'], (x, index) => index < 2) // == ['foo', 'bar']
      *
-     * @param iterable $array Array of elements to filter
-     * @param callable $callback Callback for testing if an element should be included in the result, current value and key will be passed as arguments
-     * @return array The array with elements where callback returned true
+     * @param iterable<mixed> $array Array of elements to filter
+     * @param ?callable $callback Callback for testing if an element should be included in the result, current value and key will be passed as arguments
+     * @return array<mixed> The array with elements where callback returned true
      */
     public function filter(iterable $array, ?callable $callback = null): array
     {
@@ -583,7 +583,7 @@ class ArrayHelper implements ProtectedContextAwareInterface
      *     Array.some([1, 2, 3, 4], x => x % 2 == 0) // == true
      *     Array.some([1, 2, 3, 4], x => x > 4) // == false
      *
-     * @param iterable $array Array of elements to test
+     * @param iterable<mixed> $array Array of elements to test
      * @param callable $callback Callback for testing elements, current value and key will be passed as arguments
      * @return bool True if at least one element passed the test
      */
@@ -606,7 +606,7 @@ class ArrayHelper implements ProtectedContextAwareInterface
      *     Array.every([1, 2, 3, 4], x => x % 2 == 0) // == false
      *     Array.every([2, 4, 6, 8], x => x % 2) // == true
      *
-     * @param iterable $array Array of elements to test
+     * @param iterable<mixed> $array Array of elements to test
      * @param callable $callback Callback for testing elements, current value and key will be passed as arguments
      * @return bool True if all elements passed the test
      */

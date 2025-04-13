@@ -87,7 +87,7 @@ class FilterOperation extends AbstractOperation
      * {@inheritdoc}
      *
      * @param FlowQuery $flowQuery the FlowQuery object
-     * @param array $arguments the filter expression to use (in index 0)
+     * @param array<mixed> $arguments the filter expression to use (in index 0)
      * @return void
      * @throws FizzleException
      */
@@ -120,7 +120,7 @@ class FilterOperation extends AbstractOperation
      * Filter Group is something like "[foo], [bar]"
      *
      * @param object $element
-     * @param array $parsedFilter
+     * @param array<string,mixed> $parsedFilter
      * @return boolean true if $element matches filter group, false otherwise
      */
     protected function matchesFilterGroup($element, array $parsedFilter)
@@ -138,7 +138,7 @@ class FilterOperation extends AbstractOperation
      * Match a single filter, i.e. [foo]. It matches only if all filter parts match.
      *
      * @param object $element
-     * @param string $filter
+     * @param array<string,mixed> $filter
      * @return boolean true if $element matches filter, false otherwise
      */
     protected function matchesFilter($element, $filter)
@@ -177,7 +177,7 @@ class FilterOperation extends AbstractOperation
      * Match a single attribute filter
      *
      * @param mixed $element
-     * @param array $attributeFilter
+     * @param array<mixed> $attributeFilter
      * @return boolean
      */
     protected function matchesAttributeFilter($element, array $attributeFilter)

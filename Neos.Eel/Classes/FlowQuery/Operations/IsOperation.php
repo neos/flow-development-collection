@@ -39,13 +39,15 @@ class IsOperation extends AbstractOperation
      * {@inheritdoc}
      *
      * @param FlowQuery $flowQuery the FlowQuery object
-     * @param array $arguments the filter arguments
+     * @param array<mixed> $arguments the filter arguments
      * @return mixed
      */
     public function evaluate(FlowQuery $flowQuery, array $arguments)
     {
         if (count($arguments) == 0) {
-            return count($flowQuery->getContext()) > 0;
+            $context = $flowQuery->getContext();
+            $context = $context instanceof \Traversable ? iterator_to_array($context) : $context;
+            return count($context) > 0;
         } else {
             $flowQuery->pushOperation('is', []);
             $flowQuery->pushOperation('filter', $arguments);
