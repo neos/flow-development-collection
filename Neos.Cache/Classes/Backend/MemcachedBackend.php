@@ -165,10 +165,6 @@ class MemcachedBackend extends IndependentAbstractBackend implements TaggableBac
     {
         parent::setCache($cache);
 
-        if ($this->environmentConfiguration === null) {
-            throw new \RuntimeException('No environment configuration set', 1744535714);
-        }
-
         $pathHash = substr(md5($this->environmentConfiguration->getApplicationIdentifier() . $cache->getIdentifier()), 0, 12);
         $this->identifierPrefix = 'Flow_' . $pathHash . '_';
     }

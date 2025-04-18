@@ -47,7 +47,7 @@ class MultiBackend extends AbstractBackend
     protected ?LoggerInterface $logger = null;
     protected ?ThrowableStorageInterface $throwableStorage = null;
 
-    public function __construct(?EnvironmentConfiguration $environmentConfiguration = null, array $options = [])
+    public function __construct(EnvironmentConfiguration $environmentConfiguration, array $options = [])
     {
         parent::__construct($environmentConfiguration, $options);
 
@@ -90,9 +90,6 @@ class MultiBackend extends AbstractBackend
         try {
             if ($this->cache === null) {
                 throw new \RuntimeException('Cache frontend is not yet initialized', 1744535490);
-            }
-            if ($this->environmentConfiguration === null) {
-                throw new \RuntimeException('Environment configuration is missing', 1744535532);
             }
             $backend = $this->instantiateBackend($backendClassName, $backendOptions, $this->environmentConfiguration);
             $backend->setCache($this->cache);

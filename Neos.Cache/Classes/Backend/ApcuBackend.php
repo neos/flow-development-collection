@@ -83,10 +83,6 @@ class ApcuBackend extends IndependentAbstractBackend implements TaggableBackendI
     {
         parent::setCache($cache);
 
-        if ($this->environmentConfiguration === null) {
-            throw new \RuntimeException('The environment configuration is not set.', 1744537489);
-        }
-
         $pathHash = substr(md5($this->environmentConfiguration->getApplicationIdentifier() . $cache->getIdentifier()), 0, 12);
         $this->identifierPrefix = 'Flow_' . $pathHash . '_';
     }

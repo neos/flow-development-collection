@@ -429,8 +429,8 @@ class SimpleFileBackend extends IndependentAbstractBackend implements PhpCapable
      */
     protected function throwExceptionIfPathExceedsMaximumLength(string $cacheEntryPathAndFilename): void
     {
-        if (strlen($cacheEntryPathAndFilename) > $this->environmentConfiguration?->getMaximumPathLength()) {
-            throw new Exception('The length of the cache entry path "' . $cacheEntryPathAndFilename . '" exceeds the maximum path length of ' . $this->environmentConfiguration?->getMaximumPathLength() . '. Please consider setting the FLOW_PATH_TEMPORARY_BASE environment variable to a shorter path. ', 1248710426);
+        if (strlen($cacheEntryPathAndFilename) > $this->environmentConfiguration->getMaximumPathLength()) {
+            throw new Exception('The length of the cache entry path "' . $cacheEntryPathAndFilename . '" exceeds the maximum path length of ' . $this->environmentConfiguration->getMaximumPathLength() . '. Please consider setting the FLOW_PATH_TEMPORARY_BASE environment variable to a shorter path. ', 1248710426);
         }
     }
 
@@ -458,7 +458,7 @@ class SimpleFileBackend extends IndependentAbstractBackend implements PhpCapable
         $cacheDirectory = $this->cacheDirectory;
         if ($cacheDirectory === '') {
             $codeOrData = ($this->cache instanceof PhpFrontend) ? 'Code' : 'Data';
-            $baseDirectory = ($this->baseDirectory ?: $this->environmentConfiguration?->getFileCacheBasePath());
+            $baseDirectory = ($this->baseDirectory ?: $this->environmentConfiguration->getFileCacheBasePath());
             if ($baseDirectory === null) {
                 throw new \RuntimeException('Could not resolve base directory for SimpleFileBackend', 1744534007);
             }

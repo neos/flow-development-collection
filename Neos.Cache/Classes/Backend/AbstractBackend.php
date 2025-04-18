@@ -50,18 +50,18 @@ abstract class AbstractBackend implements BackendInterface
     protected $defaultLifetime = 3600;
 
     /**
-     * @var ?EnvironmentConfiguration
+     * @var EnvironmentConfiguration
      */
     protected $environmentConfiguration;
 
     /**
      * Constructs this backend
      *
-     * @param ?EnvironmentConfiguration $environmentConfiguration @todo is this ever null and does that even make sense?
+     * @param EnvironmentConfiguration $environmentConfiguration
      * @param array<mixed> $options Configuration options - depends on the actual backend
      * @api
      */
-    public function __construct(?EnvironmentConfiguration $environmentConfiguration = null, array $options = [])
+    public function __construct(EnvironmentConfiguration $environmentConfiguration, array $options = [])
     {
         $this->environmentConfiguration = $environmentConfiguration;
         $this->setProperties($options);
@@ -114,7 +114,7 @@ abstract class AbstractBackend implements BackendInterface
     {
         $this->cache = $cache;
         $this->cacheIdentifier = $this->cache->getIdentifier();
-        $applicationIdentifier = $this->environmentConfiguration instanceof EnvironmentConfiguration ? $this->environmentConfiguration->getApplicationIdentifier() : '';
+        $applicationIdentifier = $this->environmentConfiguration->getApplicationIdentifier();
         $this->identifierPrefix = md5($applicationIdentifier) . ':' . $this->cacheIdentifier . ':';
     }
 

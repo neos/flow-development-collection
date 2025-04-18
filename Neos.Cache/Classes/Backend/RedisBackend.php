@@ -89,7 +89,6 @@ class RedisBackend extends IndependentAbstractBackend implements TaggableBackend
      * @param EnvironmentConfiguration $environmentConfiguration
      * @param array<mixed> $options Configuration options - depends on the actual backend
      * @throws CacheException
-     * @phpstan-assert EnvironmentConfiguration $this->environmentConfiguration
      */
     public function __construct(EnvironmentConfiguration $environmentConfiguration, array $options)
     {

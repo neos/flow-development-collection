@@ -648,9 +648,6 @@ class PdoBackend extends IndependentAbstractBackend implements TaggableBackendIn
     protected function context(): string
     {
         if ($this->context === null) {
-            if ($this->environmentConfiguration === null) {
-                throw new \RuntimeException('Environment configuration not set', 1744534618);
-            }
             $this->context = md5($this->environmentConfiguration->getApplicationIdentifier());
         }
         return $this->context;
