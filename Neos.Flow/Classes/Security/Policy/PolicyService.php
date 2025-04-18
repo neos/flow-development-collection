@@ -46,7 +46,7 @@ class PolicyService
     protected $configurationManager;
 
     /**
-     * @var array
+     * @var array<mixed>
      */
     protected $policyConfiguration;
 
@@ -198,7 +198,7 @@ class PolicyService
                     if ($parameterClassName === null) {
                         throw new SecurityException(sprintf('No "className" defined for parameter "%s" in privilegeTarget "%s"', $parameterName, $privilegeTargetIdentifier), 1396021782);
                     }
-                    if (!in_array(PrivilegeParameterInterface::class, class_implements($parameterClassName), true)) {
+                    if (!in_array(PrivilegeParameterInterface::class, class_implements($parameterClassName) ?: [], true)) {
                         throw new SecurityException(sprintf('PrivilegeParameterInterface must be implemented for "className" defined for parameter "%s" in privilegeTarget "%s"', $parameterName, $privilegeTargetIdentifier), 1396021782);
                     }
                     $parameterDefinitions[$parameterName] = new PrivilegeParameterDefinition($parameterName, $parameterClassName);
@@ -266,7 +266,7 @@ class PolicyService
      * Returns all privileges of the given type
      *
      * @param string $type Full qualified class or interface name
-     * @return array
+     * @return array<PrivilegeInterface>
      * @throws InvalidConfigurationTypeException
      * @throws SecurityException
      */
@@ -325,7 +325,7 @@ class PolicyService
      * This signal can be used to add roles and/or privilegeTargets during runtime. In the slot make sure to receive the
      * $policyConfiguration array by reference so you can alter it.
      *
-     * @param array $policyConfiguration The policy configuration
+     * @param array<mixed> $policyConfiguration The policy configuration
      * @return void
      * @Flow\Signal
      */

@@ -34,7 +34,7 @@ class Package extends GenericPackage implements FlowPackageInterface, BootablePa
     /**
      * Returns a generator of filenames of class files provided by functional tests contained in this package
      *
-     * @return \Generator A generator of class names (key) and their filename, including the relative path to the package's directory
+     * @return \Generator<class-string,string> A generator of class names (key) and their filename, including the relative path to the package's directory
      * @internal
      */
     public function getFunctionalTestsClassFiles()
@@ -42,8 +42,12 @@ class Package extends GenericPackage implements FlowPackageInterface, BootablePa
         $namespaces = $this->getNamespaces();
         if (is_dir($this->packagePath . self::DIRECTORY_TESTS_FUNCTIONAL)) {
             // TODO REFACTOR replace with usage of "autoload-dev"
+            $namespace = reset($namespaces);
+            if (!$namespace) {
+                throw new \Exception('Missing namespace', 1744144110);
+            }
             $namespacePrefix = str_replace('/', '\\', Files::concatenatePaths([
-                reset($namespaces),
+                $namespace,
                 '\\Tests\\Functional\\'
             ]));
             foreach ($this->getClassesInNormalizedAutoloadPath($this->packagePath . FlowPackageInterface::DIRECTORY_TESTS_FUNCTIONAL, $namespacePrefix) as $className => $classPath) {

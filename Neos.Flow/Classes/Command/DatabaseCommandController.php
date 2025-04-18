@@ -28,7 +28,7 @@ class DatabaseCommandController extends CommandController
 {
     /**
      * @Flow\InjectConfiguration(path="persistence")
-     * @var array
+     * @var array<mixed>
      */
     protected $persistenceSettings = [];
 
@@ -86,7 +86,7 @@ class DatabaseCommandController extends CommandController
      * @throws DBALException
      * @throws StopActionException
      */
-    public function setCharsetCommand(string $characterSet = 'utf8mb4', string $collation = 'utf8mb4_unicode_ci', ?string $output = null, bool $verbose = false)
+    public function setCharsetCommand(string $characterSet = 'utf8mb4', string $collation = 'utf8mb4_unicode_ci', ?string $output = null, bool $verbose = false): void
     {
         if (!in_array($this->persistenceSettings['backendOptions']['driver'], ['pdo_mysql', 'mysqli'])) {
             $this->outputLine('Database charset/collation fixing is only supported on MySQL.');
@@ -118,13 +118,13 @@ class DatabaseCommandController extends CommandController
      * @throws ConnectionException
      * @throws DBALException
      */
-    protected function convertToCharacterSetAndCollation(string $characterSet, string $collation, ?string $outputPathAndFilename = null, bool $verbose = false)
+    protected function convertToCharacterSetAndCollation(string $characterSet, string $collation, ?string $outputPathAndFilename = null, bool $verbose = false): void
     {
         $statements = ['SET foreign_key_checks = 0'];
 
         $statements[] = 'ALTER DATABASE ' . $this->connection->quoteIdentifier($this->persistenceSettings['backendOptions']['dbname']) . ' CHARACTER SET ' . $characterSet . ' COLLATE ' . $collation;
 
-        $tableNames = $this->connection->createSchemaManager()->listTableNames() ?? [];
+        $tableNames = $this->connection->createSchemaManager()->listTableNames();
         foreach ($tableNames as $tableName) {
             $statements[] = 'ALTER TABLE ' . $this->connection->quoteIdentifier($tableName) . ' DEFAULT CHARACTER SET ' . $characterSet . ' COLLATE ' . $collation;
             $statements[] = 'ALTER TABLE ' . $this->connection->quoteIdentifier($tableName) . ' CONVERT TO CHARACTER SET ' . $characterSet . ' COLLATE ' . $collation;

@@ -35,14 +35,14 @@ use Neos\Flow\Utility\Ip as IpUtility;
 class Ip implements RequestPatternInterface
 {
     /**
-     * @var array
+     * @var array<string,string>
      */
     protected $options;
 
     /**
      * Expects options in the form array('cidrPattern' => '<CIDR IP Pattern>')
      *
-     * @param array $options
+     * @param array<string,string> $options
      */
     public function __construct(array $options)
     {

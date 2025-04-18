@@ -85,7 +85,11 @@ abstract class AbstractAuthenticationController extends ActionController
 
         if (!$this->authenticationManager->isAuthenticated()) {
             $this->onAuthenticationFailure($authenticationException);
-            return call_user_func([$this, $this->errorMethodName]);
+            $callable = [$this, $this->errorMethodName];
+            if (!is_callable($callable)) {
+                throw new \Exception('Invalid error method ' . $this->errorMethodName, 1743955562);
+            }
+            return call_user_func($callable);
         }
 
         $storedRequest = $this->securityContext->getInterceptedRequest();

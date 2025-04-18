@@ -60,11 +60,11 @@ class EntityPrivilege extends AbstractPrivilege implements EntityPrivilegeInterf
     /**
      * Note: The result of this method cannot be cached, as the target table alias might change for different query scenarios
      *
-     * @param ClassMetadata $targetEntity
+     * @param \Doctrine\ORM\Mapping\ClassMetadata<object> $targetEntity
      * @param string $targetTableAlias
      * @return string|null
      */
-    public function getSqlConstraint(ClassMetadata $targetEntity, $targetTableAlias)
+    public function getSqlConstraint(\Doctrine\ORM\Mapping\ClassMetadata $targetEntity, $targetTableAlias)
     {
         $this->evaluateMatcher();
 

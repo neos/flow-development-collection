@@ -71,7 +71,10 @@ class PackageStorage extends FileSystemStorage
             if ($directoryPattern === '*') {
                 $directories[$packageKey][] = $package->getPackagePath();
             } else {
-                $directories[$packageKey] = glob($package->getPackagePath() . $directoryPattern, GLOB_ONLYDIR);
+                $packageDirectories = glob($package->getPackagePath() . $directoryPattern, GLOB_ONLYDIR);
+                if ($packageDirectories !== false) {
+                    $directories[$packageKey] = $packageDirectories;
+                }
             }
         }
 
@@ -98,11 +101,15 @@ class PackageStorage extends FileSystemStorage
 
         $object = new StorageObject();
         $object->setFilename($pathInfo['basename']);
-        $object->setSha1(sha1_file($resourcePathAndFilename));
-        $object->setFileSize(filesize($resourcePathAndFilename));
-        if (isset($pathInfo['dirname'])) {
-            $object->setRelativePublicationPath($this->prepareRelativePublicationPath($pathInfo['dirname'], $resourcePackage->getPackageKey(), $resourcePackage->getResourcesPath()));
+        $sha1 = sha1_file($resourcePathAndFilename);
+        if ($sha1 !== false) {
+            $object->setSha1($sha1);
         }
+        $fileSize = filesize($resourcePathAndFilename);
+        if ($fileSize !== false) {
+            $object->setFileSize($fileSize);
+        }
+        $object->setRelativePublicationPath($this->prepareRelativePublicationPath($pathInfo['dirname'], $resourcePackage->getPackageKey(), $resourcePackage->getResourcesPath()));
         $object->setStream(function () use ($resourcePathAndFilename) {
             return fopen($resourcePathAndFilename, 'r');
         });

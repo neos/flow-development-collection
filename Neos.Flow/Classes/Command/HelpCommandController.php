@@ -15,6 +15,7 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Cli\Command;
 use Neos\Flow\Cli\CommandArgumentDefinition;
 use Neos\Flow\Cli\CommandController;
+use Neos\Flow\Cli\CommandControllerInterface;
 use Neos\Flow\Core\Bootstrap;
 use Neos\Flow\Mvc\Exception\AmbiguousCommandIdentifierException;
 use Neos\Flow\Mvc\Exception\CommandException;
@@ -176,7 +177,7 @@ class HelpCommandController extends CommandController
             if (!$commandArgumentDefinition->isRequired()) {
                 $hasOptions = true;
             } else {
-                $usage .= sprintf(' <%s>', strtolower(preg_replace('/([A-Z])/', ' $1', $commandArgumentDefinition->getName())));
+                $usage .= sprintf(' <%s>', strtolower(preg_replace('/([A-Z])/', ' $1', $commandArgumentDefinition->getName()) ?: ''));
             }
         }
 
@@ -270,18 +271,17 @@ class HelpCommandController extends CommandController
      * added to the commands array of this class.
      *
      * @param array<Command> $commands
-     * @return array in the format array('<packageKey>' => array('<CommandControllerClassName>', array('<command1>' => $command1, '<command2>' => $command2)))
+     * @return array<string,array<class-string<CommandControllerInterface>,array<string,Command>>> in the format array('<packageKey>' => array('<CommandControllerClassName>', array('<command1>' => $command1, '<command2>' => $command2)))
      */
     protected function buildCommandsIndex(array $commands)
     {
         $commandsByPackagesAndControllers = [];
-        /** @var Command $command */
         foreach ($commands as $command) {
             if ($command->isInternal()) {
                 continue;
             }
             $commandIdentifier = $command->getCommandIdentifier();
-            $packageKey = strstr($commandIdentifier, ':', true);
+            $packageKey = (string)strstr($commandIdentifier, ':', true);
             $commandControllerClassName = $command->getControllerClassName();
             $commandName = $command->getControllerCommandName();
             $commandsByPackagesAndControllers[$packageKey][$commandControllerClassName][$commandName] = $command;

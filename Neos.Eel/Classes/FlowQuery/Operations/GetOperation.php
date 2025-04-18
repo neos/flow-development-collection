@@ -44,12 +44,13 @@ class GetOperation extends AbstractOperation
      * {@inheritdoc}
      *
      * @param FlowQuery $flowQuery the FlowQuery object
-     * @param array $arguments the context index to fetch from
+     * @param array<mixed> $arguments the context index to fetch from
      * @return mixed
      */
     public function evaluate(FlowQuery $flowQuery, array $arguments)
     {
         $context = $flowQuery->getContext();
+        $context = $context instanceof \Traversable ? iterator_to_array($context) : $context;
         if (isset($arguments[0])) {
             $index = $arguments[0];
             if (isset($context[$index])) {

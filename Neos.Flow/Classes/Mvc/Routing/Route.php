@@ -48,7 +48,7 @@ class Route
     /**
      * Default values
      *
-     * @var array
+     * @var array<mixed>
      */
     protected $defaults = [];
 
@@ -91,7 +91,7 @@ class Route
      * Contains the routing results (indexed by "package", "controller" and
      * "action") after a successful call of matches()
      *
-     * @var array|null
+     * @var array<mixed>|null
      */
     protected $matchResults = [];
 
@@ -112,7 +112,7 @@ class Route
     /**
      * The merged UriConstraints of all Route Parts after resolving
      *
-     * @var UriConstraints|null
+     * @var ?UriConstraints
      */
     protected $resolvedUriConstraints;
 
@@ -134,7 +134,7 @@ class Route
      * Contains associative array of Route Part options
      * (key: Route Part name, value: array of Route Part options)
      *
-     * @var array
+     * @var array<string,array<mixed>>
      */
     protected $routePartsConfiguration = [];
 
@@ -172,9 +172,22 @@ class Route
      */
     protected $routeValuesNormalizer;
 
+    /**
+     * @param array{
+     *     name?: string,
+     *     uriPattern: string,
+     *     defaults?: array<mixed>,
+     *     routeParts?: array<mixed>,
+     *     toLowerCase?: bool,
+     *     appendExceedingArguments?: bool,
+     *     cache?: array{lifetime?: int, tags?: array<mixed>},
+     *     httpMethods?: list<string>
+     * } $configuration
+     * @return static
+     */
     public static function fromConfiguration(array $configuration): static
     {
-        /** @phpstan-ignore-next-line phpstan doesn't respekt the consistent constructor flag in the class doc block */
+        /** @phpstan-ignore new.static */
         $route = new static();
         if (isset($configuration['name'])) {
             $route->setName($configuration['name']);
@@ -232,7 +245,7 @@ class Route
      * Sets default values for this Route.
      * This array is merged with the actual matchResults when match() is called.
      *
-     * @param array $defaults
+     * @param array<mixed> $defaults
      * @return void
      */
     public function setDefaults(array $defaults)
@@ -243,7 +256,7 @@ class Route
     /**
      * Returns default values for this Route.
      *
-     * @return array Route defaults
+     * @return array<mixed> Route defaults
      */
     public function getDefaults()
     {
@@ -257,11 +270,8 @@ class Route
      * @return void
      * @throws \InvalidArgumentException
      */
-    public function setUriPattern($uriPattern)
+    public function setUriPattern(string $uriPattern)
     {
-        if (!is_string($uriPattern)) {
-            throw new \InvalidArgumentException(sprintf('URI Pattern must be of type string, %s given.', gettype($uriPattern)), 1223499724);
-        }
         $this->uriPattern = $uriPattern;
         $this->isParsed = false;
     }
@@ -334,7 +344,7 @@ class Route
      * Usage: setRoutePartsConfiguration(array('@controller' =>
      *            array('handler' => \Neos\Package\Subpackage\MyRoutePartHandler::class)));
      *
-     * @param array $routePartsConfiguration Route Parts configuration options
+     * @param array<string,array<mixed>> $routePartsConfiguration Route Parts configuration options
      * @return void
      */
     public function setRoutePartsConfiguration(array $routePartsConfiguration)
@@ -345,7 +355,7 @@ class Route
     /**
      * Returns the route parts configuration of this route
      *
-     * @return array $routePartsConfiguration
+     * @return array<string,array<mixed>> $routePartsConfiguration
      */
     public function getRoutePartsConfiguration()
     {
@@ -356,7 +366,7 @@ class Route
      * Limits the HTTP verbs that are accepted by this route.
      * If empty all HTTP verbs are accepted
      *
-     * @param array $httpMethods non-associative array in the format array('GET', 'POST', ...)
+     * @param list<string> $httpMethods non-associative array in the format array('GET', 'POST', ...)
      * @return void
      */
     public function setHttpMethods(array $httpMethods)
@@ -365,7 +375,7 @@ class Route
     }
 
     /**
-     * @return array
+     * @return list<string>
      */
     public function getHttpMethods()
     {
@@ -405,7 +415,7 @@ class Route
     /**
      * Returns an array with the Route match results.
      *
-     * @return array An array of Route Parts and their values for further handling by the Router
+     * @return ?array<mixed> An array of Route Parts and their values for further handling by the Router
      * @see \Neos\Flow\Mvc\Routing\Router
      */
     public function getMatchResults()
@@ -436,7 +446,7 @@ class Route
     /**
      * Returns the merged UriConstraints of all Route Parts after resolving, or NULL if no constraints were set yet
      *
-     * @return UriConstraints|null
+     * @return ?UriConstraints
      */
     public function getResolvedUriConstraints()
     {
@@ -471,6 +481,7 @@ class Route
      * @param RouteContext $routeContext The Route Context containing the current HTTP request object and, optional, Routing RouteParameters
      * @return boolean true if this Route corresponds to the given $routeContext, otherwise false
      * @throws InvalidRoutePartValueException
+     * @phpstan-assert-if-true array<mixed> $this->getMatchResults()
      * @see getMatchResults()
      */
     public function matches(RouteContext $routeContext)
@@ -516,9 +527,11 @@ class Route
                 $routeMatches = true;
                 $routePartValue = $matchResult->getMatchedValue();
                 if ($matchResult->hasTags()) {
+                    /** @phpstan-ignore method.nonObject (already set) */
                     $this->matchedTags = $this->matchedTags->merge($matchResult->getTags());
                 }
                 if ($matchResult->hasLifetime()) {
+                    /** @phpstan-ignore method.nonObject (already set) */
                     $this->matchedLifetime = $this->matchedLifetime->merge($matchResult->getLifetime());
                 }
             } else {
@@ -539,7 +552,11 @@ class Route
                 if ($this->containsObject($routePartValue)) {
                     throw new InvalidRoutePartValueException('RoutePart::getValue() must only return simple types after calling RoutePart::match(). RoutePart "' . get_class($routePart) . '" returned one or more objects in Route "' . $this->getName() . '".');
                 }
-                $matchResults = Arrays::setValueByPath($matchResults, $routePart->getName(), $routePartValue);
+                $routePartName = $routePart->getName();
+                if ($routePartName === null) {
+                    throw new \Exception('Missing name for route part', 1744323723);
+                }
+                $matchResults = Arrays::setValueByPath($matchResults, $routePartName, $routePartValue);
             }
         }
         if (strlen($routePath) > 0) {
@@ -558,6 +575,7 @@ class Route
      *
      * @param ResolveContext $resolveContext context for this resolve invokation
      * @return boolean true if this Route corresponds to the given $routeValues, otherwise false
+     * @phpstan-assert-if-true UriConstraints $this->getResolvedUriConstraints()
      * @throws InvalidRoutePartValueException
      */
     public function resolves(ResolveContext $resolveContext)
@@ -592,12 +610,15 @@ class Route
                 $hasRoutePartValue = true;
                 $routePartValue = $resolveResult->getResolvedValue();
                 if ($resolveResult->hasUriConstraints()) {
+                    /** @phpstan-ignore method.nonObject (already set) */
                     $this->resolvedUriConstraints = $this->resolvedUriConstraints->merge($resolveResult->getUriConstraints());
                 }
                 if ($resolveResult->hasTags()) {
+                    /** @phpstan-ignore method.nonObject (already set) */
                     $this->resolvedTags = $this->resolvedTags->merge($resolveResult->getTags());
                 }
                 if ($resolveResult->hasLifetime()) {
+                    /** @phpstan-ignore method.nonObject (already set) */
                     $this->resolvedLifetime = $this->resolvedLifetime->merge($resolveResult->getLifetime());
                 }
             } else {
@@ -619,7 +640,7 @@ class Route
                 $requireOptionalRouteParts = false;
                 continue;
             }
-            if ($hasRoutePartValue && strtolower($routePartValue) !== strtolower($routePartDefaultValue)) {
+            if ($hasRoutePartValue && strtolower($routePartValue ?: '') !== strtolower($routePartDefaultValue ?: '')) {
                 $matchingOptionalUriPortion .= $routePartValue;
                 $requireOptionalRouteParts = true;
             } else {
@@ -648,10 +669,12 @@ class Route
                 }
                 $routeValues = $internalArguments;
             }
+            /** @phpstan-ignore method.nonObject (already set) */
             $this->resolvedUriConstraints = $this->resolvedUriConstraints->withAddedQueryValues($routeValues);
         }
 
         if (!empty($resolvedUriPath)) {
+            /** @phpstan-ignore method.nonObject (already set) */
             $this->resolvedUriConstraints = $this->resolvedUriConstraints->withPath($resolvedUriPath);
         }
         return true;
@@ -664,8 +687,8 @@ class Route
      * If a value exists but is not equal to is corresponding default,
      * iteration is interrupted and false is returned.
      *
-     * @param array $defaults
-     * @param array $routeValues
+     * @param array<mixed> $defaults
+     * @param array<mixed> $routeValues
      * @return boolean false if one of the $routeValues is not equal to it's default value. Otherwise true
      */
     protected function compareAndRemoveMatchingDefaultValues(array $defaults, array &$routeValues)
@@ -700,8 +723,8 @@ class Route
      * Removes all internal arguments (prefixed with two underscores) from the given $arguments
      * and returns them as array
      *
-     * @param array $arguments
-     * @return array the internal arguments
+     * @param array<mixed> $arguments
+     * @return array<mixed> the internal arguments
      */
     protected function extractInternalArguments(array &$arguments)
     {
@@ -813,6 +836,9 @@ class Route
                         /** @var DynamicRoutePartInterface $lastRoutePart */
                         $lastRoutePart->setSplitString($routePartName);
                     }
+                    break;
+                default:
+                    continue 2;
             }
             $routePart->setName($routePartName);
             if ($currentRoutePartIsOptional) {

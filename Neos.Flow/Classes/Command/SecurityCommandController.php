@@ -89,6 +89,9 @@ class SecurityCommandController extends CommandController
         $keyData = '';
         // no file_get_contents here because it does not work on php://stdin
         $fp = fopen('php://stdin', 'rb');
+        if ($fp === false) {
+            throw new \RuntimeException('Unable to open php://stdin', 1744497200);
+        }
         while (!feof($fp)) {
             $keyData .= fgets($fp, 4096);
         }
@@ -144,6 +147,9 @@ class SecurityCommandController extends CommandController
         $keyData = '';
         // no file_get_contents here because it does not work on php://stdin
         $fp = fopen('php://stdin', 'rb');
+        if ($fp === false) {
+            throw new \RuntimeException('Unable to open php://stdin', 1744497170);
+        }
         while (!feof($fp)) {
             $keyData .= fgets($fp, 4096);
         }
@@ -160,7 +166,7 @@ class SecurityCommandController extends CommandController
      * @param string $privilegeType The privilege type ("entity", "method" or the FQN of a class implementing PrivilegeInterface)
      * @param string $roles A comma separated list of role identifiers. Shows policy for an unauthenticated user when left empty.
      */
-    public function showEffectivePolicyCommand(string $privilegeType, string $roles = '')
+    public function showEffectivePolicyCommand(string $privilegeType, string $roles = ''): void
     {
         $systemRoleIdentifiers = ['Neos.Flow:Everybody', 'Neos.Flow:Anonymous', 'Neos.Flow:AuthenticatedUser'];
 
@@ -323,11 +329,7 @@ class SecurityCommandController extends CommandController
 
         $matchedClassesAndMethods = [];
         foreach ($this->reflectionService->getAllClassNames() as $className) {
-            try {
-                $reflectionClass = new \ReflectionClass($className);
-            } catch (\ReflectionException $exception) {
-                continue;
-            }
+            $reflectionClass = new \ReflectionClass($className);
             foreach ($reflectionClass->getMethods() as $reflectionMethod) {
                 $methodName = $reflectionMethod->getName();
                 if ($privilege->matchesMethod($className, $methodName)) {

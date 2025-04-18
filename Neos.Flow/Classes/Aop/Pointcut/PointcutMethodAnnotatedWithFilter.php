@@ -33,22 +33,21 @@ class PointcutMethodAnnotatedWithFilter implements PointcutFilterInterface
      */
     protected $logger;
 
-
     /**
-     * @var string The tag of an annotation to match against
+     * @var class-string<object> The tag of an annotation to match against
      */
-    protected $annotation;
+    protected string $annotation;
 
     /**
-     * @var array
+     * @var array<mixed>
      */
     protected $annotationValueConstraints;
 
     /**
      * The constructor - initializes the method annotation filter with the expected annotation class
      *
-     * @param string $annotation An annotation class (for example "Neos\Flow\Annotations\Lazy") which defines which method annotations should match
-     * @param array $annotationValueConstraints
+     * @param class-string<object> $annotation An annotation class (for example "Neos\Flow\Annotations\Lazy") which defines which method annotations should match
+     * @param array<mixed> $annotationValueConstraints
      */
     public function __construct(string $annotation, array $annotationValueConstraints = [])
     {
@@ -81,15 +80,15 @@ class PointcutMethodAnnotatedWithFilter implements PointcutFilterInterface
     /**
      * Checks if the specified method matches with the method annotation filter pattern
      *
-     * @param string $className Name of the class to check against - not used here
+     * @param class-string $className Name of the class to check against - not used here
      * @param string $methodName Name of the method
-     * @param string $methodDeclaringClassName Name of the class the method was originally declared in
+     * @param class-string $methodDeclaringClassName Name of the class the method was originally declared in
      * @param mixed $pointcutQueryIdentifier Some identifier for this query - must at least differ from a previous identifier. Used for circular reference detection - not used here
      * @return boolean true if the class matches, otherwise false
      */
     public function matches($className, $methodName, $methodDeclaringClassName, $pointcutQueryIdentifier): bool
     {
-        if ($methodDeclaringClassName === null || !method_exists($methodDeclaringClassName, $methodName)) {
+        if (!method_exists($methodDeclaringClassName, $methodName)) {
             return false;
         }
 
@@ -128,7 +127,7 @@ class PointcutMethodAnnotatedWithFilter implements PointcutFilterInterface
     /**
      * Returns runtime evaluations for the pointcut.
      *
-     * @return array Runtime evaluations
+     * @return array<mixed> Runtime evaluations
      */
     public function getRuntimeEvaluationsDefinition(): array
     {

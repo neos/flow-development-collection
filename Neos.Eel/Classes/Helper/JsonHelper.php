@@ -29,13 +29,14 @@ class JsonHelper implements ProtectedContextAwareInterface
      * Json.stringify(value, ['JSON_UNESCAPED_UNICODE', 'JSON_FORCE_OBJECT'])
      *
      * @param mixed $value
-     * @param array $options Array of option constant names as strings
+     * @param array<int> $options Array of option constant names as strings
      * @return string
      */
     public function stringify($value, array $options = []): string
     {
+        /** @phpstan-ignore argument.type ("constant" is callable) */
         $optionSum = array_sum(array_map('constant', $options));
-        return json_encode($value, $optionSum);
+        return json_encode($value, $optionSum | JSON_THROW_ON_ERROR);
     }
 
     /**

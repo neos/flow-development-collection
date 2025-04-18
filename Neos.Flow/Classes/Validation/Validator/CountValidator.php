@@ -20,7 +20,7 @@ namespace Neos\Flow\Validation\Validator;
 class CountValidator extends AbstractValidator
 {
     /**
-     * @var array
+     * @var array<string,mixed>
      */
     protected $supportedOptions = [
         'minimum' => [0, 'The minimum count to accept', 'integer'],

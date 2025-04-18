@@ -120,7 +120,7 @@ class LinkViewHelper extends AbstractTagBasedViewHelper
         } else {
             $arguments['__widgetId'] = $widgetContext->getAjaxWidgetIdentifier();
         }
-        return '?' . http_build_query($arguments, null, '&');
+        return '?' . http_build_query(data: $arguments, arg_separator: '&');
     }
 
     /**

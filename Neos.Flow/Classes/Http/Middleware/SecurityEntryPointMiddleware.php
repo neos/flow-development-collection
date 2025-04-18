@@ -8,6 +8,7 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Http\ServerRequestAttributes;
 use Neos\Flow\Log\Utility\LogEnvironment;
 use Neos\Flow\Mvc\ActionRequestFactory;
+use Neos\Flow\Security\Authentication\EntryPointInterface;
 use Neos\Flow\Security\Authentication\Token\SessionlessTokenInterface;
 use Neos\Flow\Security\Authentication\TokenInterface;
 use Neos\Flow\Security\Context;
@@ -55,7 +56,6 @@ class SecurityEntryPointMiddleware implements MiddlewareInterface
         try {
             return $next->handle($request->withAttribute(ServerRequestAttributes::ACTION_REQUEST, $actionRequest));
         } catch (AuthenticationRequiredException $authenticationException) {
-            /** @var TokenInterface[] $tokensWithEntryPoint */
             $tokensWithEntryPoint = array_filter($this->securityContext->getAuthenticationTokens(), static function (TokenInterface $token) {
                 return $token->getAuthenticationEntryPoint() !== null;
             });
@@ -72,6 +72,7 @@ class SecurityEntryPointMiddleware implements MiddlewareInterface
                 }
 
                 $entryPoint = $token->getAuthenticationEntryPoint();
+                assert($entryPoint instanceof EntryPointInterface);
                 $this->securityLogger->debug(sprintf('Starting authentication with entry point of type "%s"', \get_class($entryPoint)), LogEnvironment::fromMethodName(__METHOD__));
 
                 // Only store the intercepted request if it is a GET request (otherwise it can't be resumed properly)

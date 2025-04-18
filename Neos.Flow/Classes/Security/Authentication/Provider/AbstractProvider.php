@@ -26,7 +26,7 @@ abstract class AbstractProvider implements AuthenticationProviderInterface
     protected $name;
 
     /**
-     * @var array
+     * @var array<mixed>
      */
     protected $options = [];
 
@@ -34,7 +34,7 @@ abstract class AbstractProvider implements AuthenticationProviderInterface
      * Factory method
      *
      * @param string $name
-     * @param array $options
+     * @param array<mixed> $options
      * @return AuthenticationProviderInterface
      * @api
      */
@@ -47,7 +47,7 @@ abstract class AbstractProvider implements AuthenticationProviderInterface
      * Protected constructor, see create method
      *
      * @param string $name The name of this authentication provider
-     * @param array $options Additional configuration options
+     * @param array<mixed> $options Additional configuration options
      * @see create
      */
     protected function __construct($name, array $options = [])

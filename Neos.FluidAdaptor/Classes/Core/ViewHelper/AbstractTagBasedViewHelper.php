@@ -32,7 +32,7 @@ abstract class AbstractTagBasedViewHelper extends AbstractViewHelper
     /**
      * Names of all registered tag attributes
      *
-     * @var array
+     * @var array<mixed>
      */
     private static $tagAttributes = [];
 
@@ -156,7 +156,7 @@ abstract class AbstractTagBasedViewHelper extends AbstractViewHelper
      * which in the default implementation will throw an error
      * about "undeclared argument used".
      *
-     * @param array $arguments
+     * @param array<string,string|\Traversable<mixed>|array<mixed>|null> $arguments
      * @return void
      */
     public function handleAdditionalArguments(array $arguments)

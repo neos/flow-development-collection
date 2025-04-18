@@ -207,9 +207,8 @@ class RoutingCommandController extends CommandController
             $this->quit(1);
         }
 
-        /** @var UriConstraints $uriConstraints */
         $uriConstraints = $resolvedRoute->getResolvedUriConstraints();
-        $resolvedUri = $uriConstraints->applyTo($resolveContext->getBaseUri(), $resolveContext->isForceAbsoluteUri());
+        $resolvedUri = $uriConstraints?->applyTo($resolveContext->getBaseUri(), $resolveContext->isForceAbsoluteUri()) ?: $resolveContext->getBaseUri();
 
         $this->outputLine('<b><success>Route resolved!</success></b>');
         $this->outputLine('<b>Name:</b> %s', [$resolvedRoute->getName()]);
@@ -299,7 +298,7 @@ class RoutingCommandController extends CommandController
 
         $this->outputLine();
         $this->outputLine('<b>Results:</b>');
-        $matchResults = $matchedRoute->getMatchResults();
+        $matchResults = $matchedRoute->getMatchResults() ?: [];
         $this->outputArray($matchResults, 2);
 
         $this->outputLine();
@@ -338,7 +337,7 @@ class RoutingCommandController extends CommandController
      * Parses the given JSON string as array
      *
      * @param string|null $json
-     * @return array
+     * @return array<mixed>
      * @throws StopCommandException
      */
     private function parseJsonToArray(?string $json): array
@@ -361,7 +360,7 @@ class RoutingCommandController extends CommandController
     /**
      * Outputs a (potentially multi-dimensional) array to the console
      *
-     * @param array $array
+     * @param array<mixed> $array
      * @param int $indention
      */
     private function outputArray(array $array, int $indention): void
@@ -391,7 +390,11 @@ class RoutingCommandController extends CommandController
      */
     private function outputControllerObjectName(string $package, ?string $subpackage, ?string $controller): void
     {
-        $possibleControllerObjectName = str_replace(['@package', '@subpackage', '@controller', '\\\\'], [str_replace('.', '\\', $package), $subpackage, $controller, '\\'], '@package\@subpackage\Controller\@controllerController');
+        $possibleControllerObjectName = str_replace(
+            ['@package', '@subpackage', '@controller', '\\\\'],
+            array_filter([str_replace('.', '\\', $package), $subpackage, $controller, '\\']),
+            '@package\@subpackage\Controller\@controllerController'
+        );
         $controllerObjectName = $this->objectManager->getCaseSensitiveObjectName($possibleControllerObjectName);
         if ($controllerObjectName === null) {
             $this->outputLine('<error>%s</error> (no corresponding class exists)', [$possibleControllerObjectName]);

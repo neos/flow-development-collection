@@ -45,34 +45,38 @@ class ProxyClass
     protected $fullOriginalClassName;
 
     /**
-     * @var ProxyConstructorGenerator
+     * @var ?ProxyConstructorGenerator
      */
     protected $constructor;
 
     /**
-     * @var array
+     * @var array<string,ProxyMethodGenerator>
      */
     protected $methods = [];
 
     /**
-     * @var array
+     * @var array<string,string>
      */
     protected $constants = [];
 
     /**
      * Note: Not using ProxyInterface::class here, since the interface names must have a leading backslash.
      *
-     * @var array
+     * @var array<class-string>
      */
     protected $interfaces = ['\Neos\Flow\ObjectManagement\Proxy\ProxyInterface'];
 
     /**
-     * @var array
+     * @var array<class-string>
      */
     protected $traits = [];
 
     /**
-     * @var array
+     * @var array<string,array{
+     *     initialValueCode: string,
+     *     visibility: string,
+     *     docComment: string,
+     * }>
      */
     protected $properties = [];
 
@@ -88,10 +92,11 @@ class ProxyClass
      */
     public function __construct(string $fullOriginalClassName)
     {
-        if (!str_contains($fullOriginalClassName, '\\')) {
+        $pivot = strrpos($fullOriginalClassName, '\\');
+        if ($pivot === false) {
             $this->originalClassName = $fullOriginalClassName;
         } else {
-            $this->namespace = substr($fullOriginalClassName, 0, strrpos($fullOriginalClassName, '\\'));
+            $this->namespace = substr($fullOriginalClassName, 0, $pivot);
             $this->originalClassName = substr($fullOriginalClassName, strlen($this->namespace) + 1);
         }
         $this->fullOriginalClassName = $fullOriginalClassName;
@@ -186,7 +191,7 @@ class ProxyClass
      * Note that the passed interface names must already have a leading backslash,
      * for example "\Neos\Flow\Foo\BarInterface".
      *
-     * @param array $interfaceNames Fully qualified names of the interfaces to introduce
+     * @param array<class-string> $interfaceNames Fully qualified names of the interfaces to introduce
      * @return void
      */
     public function addInterfaces(array $interfaceNames): void
@@ -200,7 +205,7 @@ class ProxyClass
      * Note that the passed trait names must have a leading backslash,
      * for example "\Neos\Flow\ObjectManagement\Proxy\PropertyInjectionTrait".
      *
-     * @param array $traitNames
+     * @param array<class-string> $traitNames
      * @return void
      */
     public function addTraits(array $traitNames): void
@@ -246,7 +251,6 @@ class ProxyClass
         }
 
         foreach ($this->methods as $proxyMethod) {
-            assert($proxyMethod instanceof ProxyMethodGenerator);
             if ($proxyMethod->willBeRendered()) {
                 $methodsCode .= PHP_EOL . $proxyMethod->generate();
             }
@@ -274,7 +278,12 @@ class ProxyClass
     {
         $classReflection = new ClassReflection($this->fullOriginalClassName);
 
-        $classDocumentation = str_replace("*/", "* @codeCoverageIgnore\n */", $classReflection->getDocComment()) . "\n";
+        $docComment = $classReflection->getDocComment();
+        if (!$docComment) {
+            return '';
+        }
+
+        $classDocumentation = str_replace("*/", "* @codeCoverageIgnore\n */", $docComment) . "\n";
         foreach ($classReflection->getAttributes() as $attribute) {
             $classDocumentation .= Compiler::renderAttribute($attribute) . "\n";
         }

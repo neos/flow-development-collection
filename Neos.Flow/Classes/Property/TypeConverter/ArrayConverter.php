@@ -112,9 +112,9 @@ class ArrayConverter extends AbstractTypeConverter
      *
      * @param mixed $source
      * @param string $targetType
-     * @param array $convertedChildProperties
+     * @param array<string,mixed> $convertedChildProperties
      * @param PropertyMappingConfigurationInterface|null $configuration
-     * @return array
+     * @return array<mixed>
      * @throws InvalidPropertyMappingConfigurationException
      * @throws InvalidSourceException
      * @throws TypeConverterException
@@ -146,9 +146,13 @@ class ArrayConverter extends AbstractTypeConverter
             $exportType = $this->getResourceExportType($configuration);
             switch ($exportType) {
                 case self::RESOURCE_EXPORT_TYPE_BASE64:
+                    $fileContent = file_get_contents('resource://' . $source->getSha1());
+                    if ($fileContent === false) {
+                        throw new \Exception('Failed to fetch content for resource ' . $source->getSha1(), 1744060115);
+                    }
                     return [
                         'filename' => $source->getFilename(),
-                        'data' => base64_encode(file_get_contents('resource://' . $source->getSha1())),
+                        'data' => base64_encode($fileContent),
                         'collectionName' => $source->getCollectionName(),
                         'relativePublicationPath' => $source->getRelativePublicationPath(),
                         'mediaType' => $source->getMediaType(),
@@ -159,7 +163,13 @@ class ArrayConverter extends AbstractTypeConverter
                     if ($sourceStream === false) {
                         throw new InvalidSourceException(sprintf('Could not get stream of resource "%s" (%s). This might be caused by a broken resource object and can be fixed by running the "resource:clean" command.', $source->getFilename(), $source->getSha1()), 1435842312);
                     }
+                    if (!$configuration) {
+                        throw new \Exception('Cannot resolve target path without a property mapping configuration', 1744060031);
+                    }
                     $targetStream = fopen($configuration->getConfigurationValue(ArrayConverter::class, self::CONFIGURATION_RESOURCE_SAVE_PATH) . '/' . $source->getSha1(), 'w');
+                    if ($targetStream === false) {
+                        throw new \Exception('Could not open target stream', 1744060053);
+                    }
                     stream_copy_to_stream($sourceStream, $targetStream);
                     fclose($targetStream);
                     fclose($sourceStream);
@@ -181,7 +191,7 @@ class ArrayConverter extends AbstractTypeConverter
 
     /**
      * @param PropertyMappingConfigurationInterface|null $configuration
-     * @return string
+     * @return non-empty-string
      * @throws InvalidPropertyMappingConfigurationException
      */
     protected function getStringDelimiter(?PropertyMappingConfigurationInterface $configuration = null)
@@ -195,6 +205,8 @@ class ArrayConverter extends AbstractTypeConverter
             return self::DEFAULT_STRING_DELIMITER;
         } elseif (!is_string($stringDelimiter)) {
             throw new InvalidPropertyMappingConfigurationException(sprintf('CONFIGURATION_STRING_DELIMITER must be of type string, "%s" given', (is_object($stringDelimiter) ? get_class($stringDelimiter) : gettype($stringDelimiter))), 1368433339);
+        } elseif ($stringDelimiter === '') {
+            throw new InvalidPropertyMappingConfigurationException('CONFIGURATION_STRING_DELIMITER must not be empty', 1744060278);
         }
 
         return $stringDelimiter;

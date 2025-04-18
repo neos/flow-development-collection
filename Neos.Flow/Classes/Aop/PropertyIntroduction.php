@@ -21,7 +21,7 @@ class PropertyIntroduction
 {
     /**
      * Name of the aspect declaring this introduction
-     * @var string
+     * @var class-string
      */
     protected $declaringAspectClassName;
 
@@ -58,7 +58,7 @@ class PropertyIntroduction
     /**
      * Constructor
      *
-     * @param string $declaringAspectClassName Name of the aspect containing the declaration for this introduction
+     * @param class-string $declaringAspectClassName Name of the aspect containing the declaration for this introduction
      * @param string $propertyName Name of the property to introduce
      * @param Pointcut $pointcut The pointcut for this introduction
      */
@@ -80,7 +80,7 @@ class PropertyIntroduction
         } else {
             $this->propertyVisibility = 'public';
         }
-        $this->propertyDocComment = preg_replace('/@(Neos\\\\Flow\\\\Annotations|Flow)\\\\Introduce.+$/mi', 'introduced by ' . $declaringAspectClassName, $propertyReflection->getDocComment());
+        $this->propertyDocComment = preg_replace('/@(Neos\\\\Flow\\\\Annotations|Flow)\\\\Introduce.+$/mi', 'introduced by ' . $declaringAspectClassName, $propertyReflection->getDocComment() ?: '') ?: '';
     }
 
     /**
@@ -132,9 +132,9 @@ class PropertyIntroduction
     }
 
     /**
-     * Returns the object name of the aspect which declared this introduction
+     * Returns the class name of the aspect which declared this introduction
      *
-     * @return string The aspect object name
+     * @return class-string The aspect class name
      */
     public function getDeclaringAspectClassName(): string
     {

@@ -69,7 +69,7 @@ class SchemaValidator
      *
      * @param mixed $value value to validate
      * @param mixed $schema type as string, schema or array of schemas
-     * @param array $types the additional type schemas
+     * @param array<mixed> $types the additional type schemas
      * @return ErrorResult
      */
     public function validate($value, $schema, array $types = []): ErrorResult
@@ -147,8 +147,8 @@ class SchemaValidator
      * Validate a value for a given type
      *
      * @param mixed $value
-     * @param array $schema
-     * @param array $types
+     * @param array<string,mixed> $schema
+     * @param array<mixed> $types
      * @return ErrorResult
      */
     protected function validateType($value, array $schema, array $types = []): ErrorResult
@@ -209,8 +209,8 @@ class SchemaValidator
      * Validate a value with a given list of allowed types
      *
      * @param mixed $value
-     * @param array $schema
-     * @param array $types
+     * @param array<string,mixed> $schema
+     * @param array<mixed> $types
      * @return ErrorResult
      */
     protected function validateTypeArray($value, array $schema, array $types = []): ErrorResult
@@ -254,7 +254,7 @@ class SchemaValidator
      * - divisibleBy : value is divisibleBy the given number
      *
      * @param mixed $value
-     * @param array $schema
+     * @param array<string,mixed> $schema
      * @return ErrorResult
      */
     protected function validateNumberType($value, array $schema): ErrorResult
@@ -305,7 +305,7 @@ class SchemaValidator
      *
      * @see SchemaValidator::validateNumberType
      * @param mixed $value
-     * @param array $schema
+     * @param array<mixed> $schema
      * @return ErrorResult
      */
     protected function validateIntegerType($value, array $schema): ErrorResult
@@ -323,7 +323,7 @@ class SchemaValidator
      * Validate a boolean value with the given schema
      *
      * @param mixed $value
-     * @param array $schema
+     * @param array<mixed> $schema
      * @return ErrorResult
      */
     protected function validateBooleanType($value, array $schema): ErrorResult
@@ -346,8 +346,8 @@ class SchemaValidator
      * - uniqueItems : allow only unique values
      *
      * @param mixed $value
-     * @param array $schema
-     * @param array $types
+     * @param array<string,mixed> $schema
+     * @param array<mixed> $types
      * @return ErrorResult
      */
     protected function validateArrayType($value, array $schema, array $types = []): ErrorResult
@@ -404,8 +404,8 @@ class SchemaValidator
      * - additionalProperties : if false is given all additionalProperties are forbidden, if a schema is given all additional properties have to match the schema
      *
      * @param mixed $value
-     * @param array $schema
-     * @param array $types
+     * @param array<int|string,mixed> $schema
+     * @param array<int|string,mixed> $types
      * @return ErrorResult
      */
     protected function validateDictionaryType($value, array $schema, array $types = []): ErrorResult
@@ -496,8 +496,8 @@ class SchemaValidator
      *   [date-time|date|time|uri|email|ipv4|ipv6|ip-address|host-name|class-name|interface-name]
      *
      * @param mixed $value
-     * @param array $schema
-     * @param array $types
+     * @param array<string,mixed> $schema
+     * @param array<mixed> $types
      * @return ErrorResult
      */
     protected function validateStringType($value, array $schema, array $types = []): ErrorResult
@@ -530,6 +530,7 @@ class SchemaValidator
             switch ($schema['format']) {
                 case 'date-time':
                     // YYYY-MM-DDThh:mm:ssZ ISO8601
+                    /** @phpstan-ignore staticMethod.resultUnused (we only care about the error) */
                     \DateTime::createFromFormat(\DateTime::ISO8601, $value);
                     $parseErrors = \DateTime::getLastErrors();
                     if ($parseErrors && $parseErrors['error_count'] > 0) {
@@ -538,6 +539,7 @@ class SchemaValidator
                     break;
                 case 'date':
                     // YYYY-MM-DD
+                    /** @phpstan-ignore staticMethod.resultUnused (we only care about the error) */
                     \DateTime::createFromFormat('Y-m-d', $value);
                     $parseErrors = \DateTime::getLastErrors();
                     if ($parseErrors && $parseErrors['error_count'] > 0) {
@@ -546,6 +548,7 @@ class SchemaValidator
                     break;
                 case 'time':
                     // hh:mm:ss
+                    /** @phpstan-ignore staticMethod.resultUnused (we only care about the error) */
                     \DateTime::createFromFormat('H:i:s', $value);
                     $parseErrors = \DateTime::getLastErrors();
                     if ($parseErrors && $parseErrors['error_count'] > 0) {
@@ -604,7 +607,7 @@ class SchemaValidator
      * Validate a null value with the given schema
      *
      * @param mixed $value
-     * @param array $schema
+     * @param array<mixed> $schema
      * @return ErrorResult
      */
     protected function validateNullType($value, array $schema): ErrorResult
@@ -620,7 +623,7 @@ class SchemaValidator
      * Validate any value with the given schema. Return always a valid Result.
      *
      * @param mixed $value
-     * @param array $schema
+     * @param array<int|string,mixed> $schema
      * @return ErrorResult
      */
     protected function validateAnyType($value, array $schema): ErrorResult
@@ -665,7 +668,7 @@ class SchemaValidator
      * Determine whether the given php array is a schema or not
      *
      * @todo there should be a more sophisticated way to detect schemas
-     * @param array $phpArray
+     * @param array<int|string, mixed> $phpArray
      * @return boolean
      */
     protected function isSchema(array $phpArray): bool
@@ -677,7 +680,7 @@ class SchemaValidator
     /**
      * Determine whether the given php array is a plain numerically indexed array
      *
-     * @param array $phpArray
+     * @param array<int|string,mixed> $phpArray
      * @return boolean
      */
     protected function isNumericallyIndexedArray(array $phpArray): bool
@@ -693,7 +696,7 @@ class SchemaValidator
     /**
      * Determine whether the given php array is a Dictionary (has no numeric identifiers)
      *
-     * @param array $phpArray
+     * @param array<int|string, mixed> $phpArray
      * @return boolean
      */
     protected function isDictionary(array $phpArray): bool

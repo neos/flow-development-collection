@@ -80,7 +80,7 @@ final class ActionResponse
     protected $content;
 
     /**
-     * @var UriInterface
+     * @var ?UriInterface
      */
     protected $redirectUri;
 
@@ -95,7 +95,7 @@ final class ActionResponse
     protected $statusCode;
 
     /**
-     * @var string
+     * @var ?string
      */
     protected $contentType;
 
@@ -105,7 +105,7 @@ final class ActionResponse
     protected $cookies = [];
 
     /**
-     * @var array
+     * @var array<mixed>
      */
     protected $headers = [];
 
@@ -204,7 +204,7 @@ final class ActionResponse
      * This behaviour is unsafe and partially unspecified: https://github.com/neos/flow-development-collection/issues/2492
      *
      * @param string $headerName The name of the header to set
-     * @param array|string|\DateTime $headerValue An array of values or a single value for the specified header field
+     * @param array<mixed>|string|\DateTime $headerValue An array of values or a single value for the specified header field
      * @return void
      */
     public function setHttpHeader(string $headerName, $headerValue): void
@@ -224,7 +224,7 @@ final class ActionResponse
      * This behaviour is unsafe and partially unspecified: https://github.com/neos/flow-development-collection/issues/2492
      *
      * @param string $headerName The name of the header to set
-     * @param array|string|\DateTime $headerValue An array of values or a single value for the specified header field
+     * @param array<mixed>|string|\DateTime $headerValue An array of values or a single value for the specified header field
      * @return void
      */
     public function addHttpHeader(string $headerName, $headerValue): void
@@ -241,7 +241,7 @@ final class ActionResponse
      * Return the specified HTTP header that was previously set.
      *
      * @param string $headerName The name of the header to get the value(s) for
-     * @return array|string|null An array of field values if multiple headers of that name exist, a string value if only one value exists and NULL if there is no such header.
+     * @return array<mixed>|string|null An array of field values if multiple headers of that name exist, a string value if only one value exists and NULL if there is no such header.
      */
     public function getHttpHeader(string $headerName)
     {
@@ -278,6 +278,9 @@ final class ActionResponse
         return $this->statusCode ?? 200;
     }
 
+    /**
+     * @phpstan-assert-if-true non-empty-string $this->contentType
+     */
     public function hasContentType(): bool
     {
         return !empty($this->contentType);

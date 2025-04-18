@@ -51,8 +51,8 @@ interface FrontendInterface
      *
      * @param string $entryIdentifier Something which identifies the data - depends on concrete cache
      * @param mixed $data The data to cache - also depends on the concrete cache implementation
-     * @param array $tags Tags to associate with this cache entry
-     * @param integer $lifetime Lifetime of this cache entry in seconds. If NULL is specified, the default lifetime is used. "0" means unlimited lifetime.
+     * @param array<string> $tags Tags to associate with this cache entry
+     * @param ?integer $lifetime Lifetime of this cache entry in seconds. If NULL is specified, the default lifetime is used. "0" means unlimited lifetime.
      * @return void
      * @api
      */
@@ -71,7 +71,7 @@ interface FrontendInterface
      * Finds and returns all cache entries which are tagged by the specified tag.
      *
      * @param string $tag The tag to search for
-     * @return array An array with the identifier (key) and content (value) of all matching entries. An empty array if no entries matched
+     * @return array<string,mixed> An array with the identifier (key) and content (value) of all matching entries. An empty array if no entries matched
      * @api
      */
     public function getByTag(string $tag): array;

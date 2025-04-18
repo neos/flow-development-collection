@@ -43,7 +43,7 @@ class PropertyOperation extends AbstractOperation
      * {@inheritdoc}
      *
      * @param FlowQuery $flowQuery the FlowQuery object
-     * @param array $arguments the property path to use (in index 0)
+     * @param array<mixed> $arguments the property path to use (in index 0)
      * @return mixed
      */
     public function evaluate(FlowQuery $flowQuery, array $arguments)
@@ -53,6 +53,7 @@ class PropertyOperation extends AbstractOperation
         }
 
         $context = $flowQuery->getContext();
+        $context = $context instanceof \Traversable ? iterator_to_array($context) : $context;
         if (!isset($context[0])) {
             return null;
         }

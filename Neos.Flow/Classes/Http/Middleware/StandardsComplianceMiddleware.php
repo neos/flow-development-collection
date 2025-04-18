@@ -26,12 +26,12 @@ use Psr\Http\Server\RequestHandlerInterface;
 class StandardsComplianceMiddleware implements MiddlewareInterface
 {
     /**
-     * @var array
+     * @var array<mixed>
      */
     protected $options;
 
     /**
-     * @param array $options
+     * @param array<mixed> $options
      */
     public function __construct(array $options = [])
     {

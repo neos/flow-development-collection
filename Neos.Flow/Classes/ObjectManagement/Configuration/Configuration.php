@@ -12,7 +12,6 @@ namespace Neos\Flow\ObjectManagement\Configuration;
  */
 
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Configuration\Exception\InvalidConfigurationException;
 
 /**
  * Flow Object Configuration
@@ -36,13 +35,13 @@ class Configuration
 
     /**
      * Name of the class the object is based on
-     * @var string $className
+     * @var class-string $className
      */
     protected $className;
 
     /**
      * Key of the package the specified object is part of
-     * @var string
+     * @var ?string
      */
     protected $packageKey;
 
@@ -60,7 +59,7 @@ class Configuration
 
     /**
      * Arguments of the factory method
-     * @var array
+     * @var array<ConfigurationArgument>
      */
     protected $factoryArguments = [];
 
@@ -71,13 +70,13 @@ class Configuration
 
     /**
      * Arguments of the constructor detected by reflection
-     * @var array
+     * @var array<ConfigurationArgument>
      */
     protected $arguments = [];
 
     /**
      * Array of properties which are injected into the object
-     * @var array
+     * @var array<ConfigurationProperty>
      */
     protected $properties = [];
 
@@ -109,7 +108,9 @@ class Configuration
      * The constructor
      *
      * @param string $objectName The unique identifier of the object
-     * @param string $className Name of the class which provides the functionality of this object
+     * @param ?class-string $className Name of the class which provides the functionality of this object
+     * @todo fix the weird test case that is the only thing ever putting null in $className,
+     * @see \Neos\Flow\Tests\Unit\ObjectManagement\Configuration\ConfigurationTest::setUp())
      */
     public function __construct($objectName, $className = null)
     {
@@ -121,7 +122,9 @@ class Configuration
         }
 
         $this->objectName = $objectName;
-        $this->className = ($className === null ? $objectName : $className);
+        /** @var class-string $className */
+        $className = ($className === null ? $objectName : $className);
+        $this->className = $className;
     }
 
     /**
@@ -149,7 +152,7 @@ class Configuration
     /**
      * Setter function for property "className"
      *
-     * @param string $className Name of the class which provides the functionality for this object
+     * @param class-string $className Name of the class which provides the functionality for this object
      * @return void
      */
     public function setClassName($className)
@@ -160,7 +163,7 @@ class Configuration
     /**
      * Returns the class name
      *
-     * @return string Name of the implementing class of this object
+     * @return class-string Name of the implementing class of this object
      */
     public function getClassName()
     {
@@ -181,7 +184,7 @@ class Configuration
     /**
      * Returns the package key
      *
-     * @return string Key of the package this object is part of
+     * @return ?string Key of the package this object is part of
      */
     public function getPackageKey()
     {
@@ -221,9 +224,9 @@ class Configuration
      * @return void
      * @throws \InvalidArgumentException
      */
-    public function setFactoryMethodName($methodName)
+    public function setFactoryMethodName(string $methodName)
     {
-        if (!is_string($methodName) || $methodName === '') {
+        if ($methodName === '') {
             throw new \InvalidArgumentException('No valid factory method name specified.', 1229700126);
         }
         $this->factoryMethodName = $methodName;
@@ -337,8 +340,7 @@ class Configuration
      * Setter function for injection properties. If an empty array is passed to this
      * method, all (possibly) defined properties are removed from the configuration.
      *
-     * @param array $properties Array of ConfigurationProperty
-     * @throws InvalidConfigurationException
+     * @param array<ConfigurationProperty> $properties Array of ConfigurationProperty
      * @return void
      */
     public function setProperties(array $properties)
@@ -347,11 +349,7 @@ class Configuration
             $this->properties = [];
         } else {
             foreach ($properties as $value) {
-                if ($value instanceof ConfigurationProperty) {
-                    $this->setProperty($value);
-                } else {
-                    throw new InvalidConfigurationException(sprintf('Only ConfigurationProperty instances are allowed, "%s" given', is_object($value) ? get_class($value) : gettype($value)), 1449217567);
-                }
+                $this->setProperty($value);
             }
         }
     }
@@ -382,7 +380,6 @@ class Configuration
      * method, all (possibly) defined constructor arguments are removed from the configuration.
      *
      * @param array<ConfigurationArgument> $arguments
-     * @throws InvalidConfigurationException
      * @return void
      */
     public function setArguments(array $arguments)
@@ -391,11 +388,7 @@ class Configuration
             $this->arguments = [];
         } else {
             foreach ($arguments as $argument) {
-                if ($argument instanceof ConfigurationArgument) {
-                    $this->setArgument($argument);
-                } else {
-                    throw new InvalidConfigurationException(sprintf('Only ConfigurationArgument instances are allowed, "%s" given', is_object($argument) ? get_class($argument) : gettype($argument)), 1449217803);
-                }
+                $this->setArgument($argument);
             }
         }
     }
@@ -429,7 +422,7 @@ class Configuration
         for ($index = 1; $index <= $argumentsCount; $index++) {
             $sortedArguments[$index] = $this->arguments[$index] ?? null;
         }
-        return $sortedArguments;
+        return array_filter($sortedArguments);
     }
 
     /**
@@ -446,7 +439,7 @@ class Configuration
     /**
      * Returns a sorted array of factory method arguments indexed by position (starting with "1")
      *
-     * @return array<ConfigurationArgument> A sorted array of ConfigurationArgument objects with the argument position as index
+     * @return array<int,?ConfigurationArgument> A sorted array of ConfigurationArgument objects with the argument position as index
      */
     public function getFactoryArguments()
     {

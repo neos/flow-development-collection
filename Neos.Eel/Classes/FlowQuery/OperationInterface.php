@@ -42,7 +42,7 @@ interface OperationInterface
      * can work with the $context objects. It can be implemented
      * to implement runtime conditions.
      *
-     * @param array $context (or array-like object) $context onto which this operation should be applied
+     * @param array<mixed>|\Traversable<mixed> $context (or array-like object) $context onto which this operation should be applied
      * @return boolean true if the operation can be applied onto the $context, false otherwise
      * @api
      */
@@ -57,7 +57,7 @@ interface OperationInterface
      * If the operation is final, evaluate should directly return the operation result.
      *
      * @param FlowQuery $flowQuery the FlowQuery object
-     * @param array $arguments the arguments for this operation
+     * @param array<mixed> $arguments the arguments for this operation
      * @return mixed if the operation is final, the return value
      */
     public function evaluate(FlowQuery $flowQuery, array $arguments);

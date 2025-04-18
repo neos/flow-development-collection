@@ -27,8 +27,8 @@ class AdvisedMethodInterceptorBuilder extends AbstractMethodInterceptorBuilder
      * Builds interception PHP code for an advised method
      *
      * @param string $methodName Name of the method to build an interceptor for
-     * @param array $methodMetaInformation An array of method names and their meta information, including advices for the method (if any)
-     * @param string $targetClassName Name of the target class to build the interceptor for
+     * @param array<string,mixed> $methodMetaInformation An array of method names and their meta information, including advices for the method (if any)
+     * @param class-string $targetClassName Name of the target class to build the interceptor for
      * @return void
      * @throws Exception
      */
@@ -39,7 +39,11 @@ class AdvisedMethodInterceptorBuilder extends AbstractMethodInterceptorBuilder
         }
 
         $declaringClassName = $methodMetaInformation[$methodName]['declaringClassName'];
-        $proxyMethod = $this->compiler->getProxyClass($targetClassName)->getMethod($methodName);
+        $proxyClass = $this->compiler->getProxyClass($targetClassName);
+        if ($proxyClass === false) {
+            throw new \InvalidArgumentException('Cannot build proxy class for ' . $targetClassName);
+        }
+        $proxyMethod = $proxyClass->getMethod($methodName);
         if ($proxyMethod->getVisibility() === ProxyMethodGenerator::VISIBILITY_PRIVATE) {
             throw new Exception(sprintf('The %s cannot build interceptor code for private method %s::%s(). Please change the scope to at least protected or adjust the pointcut expression in the corresponding aspect.', __CLASS__, $targetClassName, $methodName), 1593070574);
         }

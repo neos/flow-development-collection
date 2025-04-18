@@ -65,7 +65,7 @@ class MemcachedBackend extends IndependentAbstractBackend implements TaggableBac
     /**
      * Array of Memcache server configurations
      *
-     * @var array
+     * @var array<string>
      */
     protected $servers = [];
 
@@ -102,7 +102,7 @@ class MemcachedBackend extends IndependentAbstractBackend implements TaggableBac
      * Setter for servers to be used. Expects an array,  the values are expected
      * to be formatted like "<host>[:<port>]" or "unix://<path>"
      *
-     * @param array $servers An array of servers to add.
+     * @param array<string> $servers An array of servers to add.
      * @return void
      * @throws Exception
      * @api
@@ -121,12 +121,12 @@ class MemcachedBackend extends IndependentAbstractBackend implements TaggableBac
             $host = $server;
             $port = 0;
 
-            if (strpos($server, 'tcp://') === 0) {
+            if (str_starts_with($server, 'tcp://')) {
                 $port = $defaultPort;
                 $server = substr($server, 6);
             }
 
-            if (strpos($server, ':') !== false) {
+            if (str_contains($server, ':')) {
                 [$host, $portValue] = explode(':', $server, 2);
                 $port = (int)$portValue;
             }
@@ -192,8 +192,8 @@ class MemcachedBackend extends IndependentAbstractBackend implements TaggableBac
      *
      * @param string $entryIdentifier An identifier for this specific cache entry
      * @param string $data The data to be stored
-     * @param array $tags Tags to associate with this cache entry
-     * @param integer $lifetime Lifetime of this cache entry in seconds. If NULL is specified, the default lifetime is used. "0" means unlimited lifetime.
+     * @param array<string> $tags Tags to associate with this cache entry
+     * @param ?integer $lifetime Lifetime of this cache entry in seconds. If NULL is specified, the default lifetime is used. "0" means unlimited lifetime.
      * @return void
      * @throws Exception if no cache frontend has been set.
      * @throws \InvalidArgumentException if the identifier is not valid or the final memcached key is longer than 250 characters
@@ -325,7 +325,7 @@ class MemcachedBackend extends IndependentAbstractBackend implements TaggableBac
      * index to search for tags.
      *
      * @param string $identifier Identifier to find tags by
-     * @return array Array with tags
+     * @return array<string> Array with tags
      */
     protected function findTagsByIdentifier(string $identifier): array
     {
@@ -383,7 +383,7 @@ class MemcachedBackend extends IndependentAbstractBackend implements TaggableBac
      * Associates the identifier with the given tags
      *
      * @param string $entryIdentifier
-     * @param array $tags
+     * @param array<string> $tags
      * @return void
      */
     protected function addIdentifierToTags(string $entryIdentifier, array $tags)

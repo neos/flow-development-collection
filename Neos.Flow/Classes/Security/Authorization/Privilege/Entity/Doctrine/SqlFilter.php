@@ -40,7 +40,7 @@ class SqlFilter extends DoctrineSqlFilter
     /**
      * Gets the SQL query part to add to a query.
      *
-     * @param ClassMetadata $targetEntity Metadata object for the target entity to be filtered
+     * @param ClassMetadata<object> $targetEntity Metadata object for the target entity to be filtered
      * @param string $targetTableAlias The target table alias used in the current query
      * @return string The constraint SQL if there is available, empty string otherwise
      */
@@ -107,6 +107,9 @@ class SqlFilter extends DoctrineSqlFilter
      */
     protected function initializeDependencies()
     {
+        if (!Bootstrap::$staticObjectManager) {
+            throw new \Exception('Cannot initialize dependencies without the static object manager', 1744398442);
+        }
         if ($this->securityContext === null) {
             $this->securityContext = Bootstrap::$staticObjectManager->get(Context::class);
         }

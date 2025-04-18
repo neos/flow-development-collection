@@ -40,7 +40,7 @@ class TokenAndProviderFactory implements TokenAndProviderFactoryInterface
     protected $tokens = [];
 
     /**
-     * @var array
+     * @var array<string,array<mixed>>
      */
     protected $providerConfigurations = [];
 
@@ -113,7 +113,7 @@ class TokenAndProviderFactory implements TokenAndProviderFactoryInterface
     /**
      * Inject the settings and does a fresh build of tokens based on the injected settings
      *
-     * @param array $settings The settings
+     * @param array<string,mixed> $settings The settings
      * @return void
      * @throws Exception
      */
@@ -151,14 +151,11 @@ class TokenAndProviderFactory implements TokenAndProviderFactoryInterface
                 continue;
             }
 
-            if (!is_array($providerConfiguration) || !isset($providerConfiguration['provider'])) {
+            if (!isset($providerConfiguration['provider'])) {
                 throw new Exception\InvalidAuthenticationProviderException('The configured authentication provider "' . $providerName . '" needs a "provider" option!', 1248209521);
             }
 
             $providerObjectName = $this->providerResolver->resolveProviderClass((string)$providerConfiguration['provider']);
-            if ($providerObjectName === null) {
-                throw new Exception\InvalidAuthenticationProviderException('The configured authentication provider "' . $providerConfiguration['provider'] . '" could not be found!', 1237330453);
-            }
             $providerOptions = [];
             if (isset($providerConfiguration['providerOptions']) && is_array($providerConfiguration['providerOptions'])) {
                 $providerOptions = $providerConfiguration['providerOptions'];
@@ -175,7 +172,7 @@ class TokenAndProviderFactory implements TokenAndProviderFactoryInterface
                 }
                 $tokenInstance = $this->objectManager->get($tokenClassName, $providerConfiguration['tokenOptions'] ?? []);
                 if (!$tokenInstance instanceof TokenInterface) {
-                    throw new Exception\InvalidAuthenticationProviderException(sprintf('The specified token is not an instance of %s but a %s. Please adjust the "token" configuration of the "%s" authentication provider', TokenInterface::class, is_object($tokenInstance) ? get_class($tokenInstance) : gettype($tokenInstance), $providerName), 1585921152);
+                    throw new Exception\InvalidAuthenticationProviderException(sprintf('The specified token is not an instance of %s but a %s. Please adjust the "token" configuration of the "%s" authentication provider', TokenInterface::class, get_class($tokenInstance), $providerName), 1585921152);
                 }
                 $tokenInstance->setAuthenticationProviderName($providerName);
                 $this->tokens[] = $tokenInstance;
@@ -225,7 +222,7 @@ class TokenAndProviderFactory implements TokenAndProviderFactoryInterface
                     $entryPoint->setOptions($providerConfiguration['entryPointOptions']);
                 }
 
-                $tokenInstance->setAuthenticationEntryPoint($entryPoint);
+                $tokenInstance?->setAuthenticationEntryPoint($entryPoint);
             }
         }
 

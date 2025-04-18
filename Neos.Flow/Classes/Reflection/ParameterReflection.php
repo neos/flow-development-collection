@@ -28,11 +28,12 @@ class ParameterReflection extends \ReflectionParameter
     /**
      * Returns the declaring class
      *
-     * @return ClassReflection The declaring class
+     * @return ?ClassReflection The declaring class
      */
-    public function getDeclaringClass(): ClassReflection
+    public function getDeclaringClass(): ?ClassReflection
     {
-        return new ClassReflection(parent::getDeclaringClass()->getName());
+        $reflectionClass = parent::getDeclaringClass();
+        return $reflectionClass ? new ClassReflection($reflectionClass->getName()) : null;
     }
 
     /**

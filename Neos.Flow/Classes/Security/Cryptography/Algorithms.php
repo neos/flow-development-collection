@@ -32,6 +32,15 @@ class Algorithms
      */
     public static function pbkdf2($password, $salt, $iterationCount, $derivedKeyLength, $algorithm = 'sha256')
     {
+        if (!$algorithm) {
+            throw new \Exception('Algorithm must not be falsy', 1743877215);
+        }
+        if ($iterationCount < 1) {
+            throw new \Exception('Iteration count too low, must be at least 1', 1743877176);
+        }
+        if ($derivedKeyLength < 0) {
+            throw new \Exception('Derived key length too low, must be at least 0', 1743877275);
+        }
         return hash_pbkdf2($algorithm, $password, $salt, $iterationCount, $derivedKeyLength, true);
     }
 }

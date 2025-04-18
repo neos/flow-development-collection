@@ -25,6 +25,17 @@ use Neos\Flow\Security\Context;
 /**
  * Object Manager
  *
+ * @template ObjectRecordInstance of object
+ * @phpstan-type ObjectRecord array{
+ *     i?: ObjectRecordInstance,
+ *     s: int,
+ *     f?: array{0: string, 1: string},
+ *     fa?: array<int,array{t: int, v: mixed}>,
+ *     c: class-string,
+ *     p: ?string,
+ *     l: string,
+ * }
+ *
  * @Flow\Scope("singleton")
  * @Flow\Proxy(false)
  */
@@ -50,12 +61,12 @@ class ObjectManager implements ObjectManagerInterface
     /**
      * An array of settings of all packages, indexed by package key
      *
-     * @var array
+     * @var array<string,array<mixed>>
      */
     protected array $allSettings = [];
 
     /**
-     * @var array
+     * @var array<string<ObjectRecordInstance>,ObjectRecord>
      */
     protected array $objects = [];
 
@@ -65,12 +76,12 @@ class ObjectManager implements ObjectManagerInterface
     protected array $dependencyProxies = [];
 
     /**
-     * @var array
+     * @var array<class-string,mixed>
      */
     protected array $classesBeingInstantiated = [];
 
     /**
-     * @var array
+     * @var array<string,string>
      */
     protected array $cachedLowerCasedObjectNames = [];
 
@@ -78,7 +89,7 @@ class ObjectManager implements ObjectManagerInterface
      * A SplObjectStorage containing those objects which need to be shutdown when the container
      * shuts down. Each value of each entry is the respective shutdown method name.
      *
-     * @var \SplObjectStorage
+     * @var \SplObjectStorage<object,mixed>
      */
     protected \SplObjectStorage $shutdownObjects;
 
@@ -86,7 +97,7 @@ class ObjectManager implements ObjectManagerInterface
      * A SplObjectStorage containing only those shutdown objects which have been registered for Flow.
      * These shutdown method will be called after all other shutdown methods have been called.
      *
-     * @var \SplObjectStorage
+     * @var \SplObjectStorage<object,mixed>
      */
     protected \SplObjectStorage $internalShutdownObjects;
 
@@ -105,20 +116,22 @@ class ObjectManager implements ObjectManagerInterface
     /**
      * Sets the objects array
      *
-     * @param array $objects An array of object names and some information about each registered object (scope, lower cased name etc.)
+     * @param array<string<ObjectRecordInstance>,ObjectRecord> $objects An array of object names and some information about each registered object (scope, lower cased name etc.)
      * @return void
      */
     public function setObjects(array $objects): void
     {
         $this->objects = $objects;
+        /** @phpstan-ignore assign.propertyType (classical subtype problem) */
         $this->objects[ObjectManagerInterface::class][self::KEY_INSTANCE] = $this;
+        /** @phpstan-ignore assign.propertyType (classical subtype problem) */
         $this->objects[get_class($this)][self::KEY_INSTANCE] = $this;
     }
 
     /**
      * Injects the global settings array, indexed by package key.
      *
-     * @param array $settings The global settings
+     * @param array<string,mixed> $settings The global settings
      * @return void
      * @Flow\Autowiring(false)
      */
@@ -215,6 +228,7 @@ class ObjectManager implements ObjectManagerInterface
                 return $this->buildObjectByFactory($objectName);
             }
 
+            /** @phpstan-ignore assign.propertyType (classical subtype problem) */
             $this->objects[$objectName][self::KEY_INSTANCE] = $this->buildObjectByFactory($objectName);
             return $this->objects[$objectName][self::KEY_INSTANCE];
         }
@@ -229,6 +243,7 @@ class ObjectManager implements ObjectManagerInterface
             return $this->instantiateClass($className, $constructorArguments);
         }
 
+        /** @phpstan-ignore assign.propertyType (classical subtype problem) */
         $this->objects[$objectName][self::KEY_INSTANCE] = $this->instantiateClass($className, []);
         return $this->objects[$objectName][self::KEY_INSTANCE];
     }
@@ -272,7 +287,7 @@ class ObjectManager implements ObjectManagerInterface
         }
 
         foreach ($this->objects as $objectName => $information) {
-            if (isset($information[self::KEY_LOWERCASE_NAME]) && $information[self::KEY_LOWERCASE_NAME] === $lowerCasedObjectName) {
+            if ($information[self::KEY_LOWERCASE_NAME] === $lowerCasedObjectName) {
                 $this->cachedLowerCasedObjectNames[$lowerCasedObjectName] = $objectName;
                 return $objectName;
             }
@@ -294,12 +309,12 @@ class ObjectManager implements ObjectManagerInterface
      */
     public function getObjectNameByClassName($className): string|false
     {
-        if (isset($this->objects[$className]) && (!isset($this->objects[$className][self::KEY_CLASS_NAME]) || $this->objects[$className][self::KEY_CLASS_NAME] === $className)) {
+        if ((!isset($this->objects[$className][self::KEY_CLASS_NAME]) || $this->objects[$className][self::KEY_CLASS_NAME] === $className)) {
             return $className;
         }
 
         foreach ($this->objects as $objectName => $information) {
-            if (isset($information[self::KEY_CLASS_NAME]) && $information[self::KEY_CLASS_NAME] === $className) {
+            if ($information[self::KEY_CLASS_NAME] === $className) {
                 return $objectName;
             }
         }
@@ -314,7 +329,7 @@ class ObjectManager implements ObjectManagerInterface
      * Returns the implementation class name for the specified object
      *
      * @param string $objectName The object name
-     * @return string|false The class name corresponding to the given object name or false if no such object is registered
+     * @return class-string<object>|false The class name corresponding to the given object name or false if no such object is registered
      * @api
      */
     public function getClassNameByObjectName($objectName): string|false
@@ -322,17 +337,17 @@ class ObjectManager implements ObjectManagerInterface
         if (!isset($this->objects[$objectName])) {
             return class_exists($objectName) ? $objectName : false;
         }
-        return $this->objects[$objectName][self::KEY_CLASS_NAME] ?? $objectName;
+        return $this->objects[$objectName][self::KEY_CLASS_NAME];
     }
 
     /**
      * Returns the key of the package the specified object is contained in.
      *
      * @param string $objectName The object name
-     * @return string|false The package key or false if no such object exists
+     * @return string|false|null The package key or false if no such object exists or null if no key was assigned
      * @internal
      */
-    public function getPackageKeyByObjectName($objectName): string|false
+    public function getPackageKeyByObjectName($objectName): string|false|null
     {
         return (isset($this->objects[$objectName]) ? $this->objects[$objectName][self::KEY_PACKAGE] : false);
     }
@@ -361,6 +376,7 @@ class ObjectManager implements ObjectManagerInterface
         if ($this->objects[$objectName][self::KEY_SCOPE] === ObjectConfiguration::SCOPE_PROTOTYPE) {
             throw new Exception\WrongScopeException('Cannot set instance of object "' . $objectName . '" because it is of scope prototype. Only session and singleton instances can be set.', 1265370540);
         }
+        /** @phpstan-ignore assign.propertyType (classical subtype problem) */
         $this->objects[$objectName][self::KEY_INSTANCE] = $instance;
     }
 
@@ -451,7 +467,7 @@ class ObjectManager implements ObjectManagerInterface
     /**
      * Returns all instances of objects with scope session
      *
-     * @return array
+     * @return array<int,object>
      */
     public function getSessionInstances(): array
     {
@@ -493,7 +509,15 @@ class ObjectManager implements ObjectManagerInterface
      * Returns all current object configurations.
      * For internal use in bootstrap only. Can change anytime.
      *
-     * @return array
+     * @return array<string<ObjectRecordInstance>,array{
+     *      i?: ObjectRecordInstance,
+     *      s: int,
+     *      f?: array{0: string, 1: string},
+     *      fa?: array<int,array{t: int, v: mixed}>,
+     *      c?: class-string,
+     *      p: ?string,
+     *      l: string,
+     *  }>
      */
     public function getAllObjectConfigurations(): array
     {
@@ -513,11 +537,12 @@ class ObjectManager implements ObjectManagerInterface
      */
     protected function buildObjectByFactory(string $objectName): object
     {
-        $factory = $this->objects[$objectName][self::KEY_FACTORY][0] ? $this->get($this->objects[$objectName][self::KEY_FACTORY][0]) : null;
-        $factoryMethodName = $this->objects[$objectName][self::KEY_FACTORY][1];
+        $factoryName = $this->objects[$objectName][self::KEY_FACTORY][0] ?? null;
+        $factory = $factoryName ? $this->get($factoryName) : null;
+        $factoryMethodName = $this->objects[$objectName][self::KEY_FACTORY][1] ?? null;
 
         $factoryMethodArguments = [];
-        foreach ($this->objects[$objectName][self::KEY_FACTORY_ARGUMENTS] as $index => $argumentInformation) {
+        foreach ($this->objects[$objectName][self::KEY_FACTORY_ARGUMENTS] ?? [] as $index => $argumentInformation) {
             switch ($argumentInformation[self::KEY_ARGUMENT_TYPE]) {
                 case ObjectConfigurationArgument::ARGUMENT_TYPES_SETTING:
                     $factoryMethodArguments[$index] = $this->get(ConfigurationManager::class)->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, $argumentInformation[self::KEY_ARGUMENT_VALUE]);
@@ -535,14 +560,17 @@ class ObjectManager implements ObjectManagerInterface
             return $factory->$factoryMethodName(...$factoryMethodArguments);
         }
 
+        if (!is_callable($factoryMethodName)) {
+            throw new \Exception($factoryMethodName . ' is not callable', 1744233428);
+        }
         return $factoryMethodName(...$factoryMethodArguments);
     }
 
     /**
      * Speed optimized alternative to ReflectionClass::newInstanceArgs()
      *
-     * @param string $className Name of the class to instantiate
-     * @param array $arguments Arguments to pass to the constructor
+     * @param class-string $className Name of the class to instantiate
+     * @param array<mixed> $arguments Arguments to pass to the constructor
      * @return object The object
      * @throws Exception\CannotBuildObjectException
      * @throws \Exception
@@ -566,7 +594,7 @@ class ObjectManager implements ObjectManagerInterface
     /**
      * Executes the methods of the provided objects.
      *
-     * @param \SplObjectStorage $shutdownObjects
+     * @param \SplObjectStorage<object,mixed> $shutdownObjects
      * @return void
      */
     protected function callShutdownMethods(\SplObjectStorage $shutdownObjects): void

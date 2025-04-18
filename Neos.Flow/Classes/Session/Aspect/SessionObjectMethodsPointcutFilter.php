@@ -22,12 +22,20 @@ use Neos\Flow\Reflection\Exception\ClassLoadingForReflectionFailedException;
 
 /**
  * Pointcut filter matching proxyable methods in objects of scope session
+ *
+ * @template ObjectRecordInstance of object
  */
 #[Flow\Scope("singleton")]
 class SessionObjectMethodsPointcutFilter implements PointcutFilterInterface
 {
+    /**
+     * @phpstan-var CompileTimeObjectManager<ObjectRecordInstance> $objectManager
+     */
     protected CompileTimeObjectManager $objectManager;
 
+    /**
+     * @phpstan-param CompileTimeObjectManager<ObjectRecordInstance> $objectManager
+     */
     public function injectObjectManager(CompileTimeObjectManager $objectManager): void
     {
         $this->objectManager = $objectManager;
@@ -37,7 +45,7 @@ class SessionObjectMethodsPointcutFilter implements PointcutFilterInterface
      * Checks if the specified class and method matches against the filter
      *
      * @param string $className Name of the class to check against
-     * @param string $methodName Name of the method to check against
+     * @param ?string $methodName Name of the method to check against
      * @param string $methodDeclaringClassName Name of the class the method was originally declared in
      * @param mixed $pointcutQueryIdentifier Some identifier for this query - must at least differ from a previous identifier. Used for circular reference detection.
      * @return bool true if the class / method match, otherwise false
@@ -79,7 +87,7 @@ class SessionObjectMethodsPointcutFilter implements PointcutFilterInterface
     /**
      * Returns runtime evaluations for a previously matched pointcut
      *
-     * @return array Runtime evaluations
+     * @return array<mixed> Runtime evaluations
      */
     public function getRuntimeEvaluationsDefinition(): array
     {

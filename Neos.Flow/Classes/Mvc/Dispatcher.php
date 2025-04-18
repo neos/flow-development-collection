@@ -68,7 +68,7 @@ class Dispatcher
     /**
      * @param Context $context
      */
-    public function injectSecurityContext(Context $context)
+    public function injectSecurityContext(Context $context): void
     {
         $this->securityContext = $context;
     }
@@ -76,7 +76,7 @@ class Dispatcher
     /**
      * @param FirewallInterface $firewall
      */
-    public function injectFirewall(FirewallInterface $firewall)
+    public function injectFirewall(FirewallInterface $firewall): void
     {
         $this->firewall = $firewall;
     }
@@ -193,7 +193,7 @@ class Dispatcher
 
         $controller = $this->objectManager->get($controllerObjectName);
         if (!$controller instanceof ControllerInterface) {
-            throw new Controller\Exception\InvalidControllerException('Invalid controller "' . $request->getControllerObjectName() . '". The controller must be a valid request handling controller, ' . (is_object($controller) ? get_class($controller) : gettype($controller)) . ' given.', 1202921619, null, $request);
+            throw new Controller\Exception\InvalidControllerException('Invalid controller "' . $request->getControllerObjectName() . '". The controller must be a valid request handling controller, ' . get_class($controller) . ' given.', 1202921619, null, $request);
         }
         return $controller;
     }

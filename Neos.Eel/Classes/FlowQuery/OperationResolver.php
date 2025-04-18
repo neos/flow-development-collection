@@ -38,7 +38,7 @@ class OperationResolver implements OperationResolverInterface
      * 2-dimensional array of registered operations:
      * shortOperationName => priority => operation class name
      *
-     * @var array
+     * @var array<string,array<int,string>>
      */
     protected $operations = [];
 
@@ -46,14 +46,14 @@ class OperationResolver implements OperationResolverInterface
      * associative array of registered final operations:
      * shortOperationName => shortOperationName
      *
-     * @var array
+     * @var array<string,string>
      */
     protected $finalOperationNames = [];
 
     /**
      * Initializer, building up $this->operations and $this->finalOperationNames
      */
-    public function initializeObject()
+    public function initializeObject(): void
     {
         $operationsAndFinalOperationNames = static::buildOperationsAndFinalOperationNames($this->objectManager);
         $this->operations = $operationsAndFinalOperationNames[0];
@@ -62,7 +62,7 @@ class OperationResolver implements OperationResolverInterface
 
     /**
      * @param ObjectManagerInterface $objectManager
-     * @return array Array of sorted operations and array of final operation names
+     * @return array{0: array<mixed>, 1: array<mixed>} Array of sorted operations and array of final operation names
      * @throws FlowQueryException
      * @Flow\CompileStatic
      */

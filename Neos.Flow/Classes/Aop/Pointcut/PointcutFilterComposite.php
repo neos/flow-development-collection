@@ -27,7 +27,7 @@ use Neos\Flow\Aop\Builder\ClassNameIndex;
 class PointcutFilterComposite implements PointcutFilterInterface
 {
     /**
-     * @var array An array of \Neos\Flow\Aop\Pointcut\Pointcut*Filter objects
+     * @var array<mixed> An array of \Neos\Flow\Aop\Pointcut\Pointcut*Filter objects
      */
     protected $filters = [];
 
@@ -37,12 +37,12 @@ class PointcutFilterComposite implements PointcutFilterInterface
     protected $earlyReturn = true;
 
     /**
-     * @var array An array of runtime evaluations
+     * @var array<mixed> An array of runtime evaluations
      */
     protected $runtimeEvaluationsDefinition = [];
 
     /**
-     * @var array An array of global runtime evaluations
+     * @var array<mixed> An array of global runtime evaluations
      */
     protected $globalRuntimeEvaluationsDefinition = [];
 
@@ -50,9 +50,9 @@ class PointcutFilterComposite implements PointcutFilterInterface
      * Checks if the specified class and method match the registered class-
      * and method filter patterns.
      *
-     * @param string $className Name of the class to check against
-     * @param string $methodName Name of the method to check against
-     * @param string $methodDeclaringClassName Name of the class the method was originally declared in
+     * @param class-string $className Name of the class to check against
+     * @param ?string $methodName Name of the method to check against
+     * @param ?class-string $methodDeclaringClassName Name of the class the method was originally declared in
      * @param mixed $pointcutQueryIdentifier Some identifier for this query - must at least differ from a previous identifier. Used for circular reference detection.
      * @return boolean true if class and method match the pattern, otherwise false
      */
@@ -143,7 +143,7 @@ class PointcutFilterComposite implements PointcutFilterInterface
     /**
      * Returns runtime evaluations for the pointcut.
      *
-     * @return array Runtime evaluations
+     * @return array<mixed> Runtime evaluations
      */
     public function getRuntimeEvaluationsDefinition()
     {
@@ -154,7 +154,7 @@ class PointcutFilterComposite implements PointcutFilterInterface
      * Sets static runtime evaluations for to pointcut, that will be used for every
      * method this composite matches
      *
-     * @param array $runtimeEvaluations Runtime evaluations to be added
+     * @param array<mixed> $runtimeEvaluations Runtime evaluations to be added
      * @return void
      */
     public function setGlobalRuntimeEvaluationsDefinition(array $runtimeEvaluations): void
@@ -214,7 +214,7 @@ class PointcutFilterComposite implements PointcutFilterInterface
      * Returns the PHP code of the conditions used for runtime evaluations
      *
      * @param string $operator The operator for the given condition
-     * @param array $conditions Condition array
+     * @param array<string,mixed> $conditions Condition array
      * @param boolean &$useGlobalObjects Set to true if global objects are used by the condition
      * @return string The condition code
      */
@@ -289,7 +289,10 @@ class PointcutFilterComposite implements PointcutFilterInterface
     /**
      * Returns the PHP code of the conditions used argument runtime evaluations
      *
-     * @param array $conditions Condition array
+     * @param array<string,array{
+     *      operator: array<int,string>,
+     *      value: array<int,string>,
+     *  }> $conditions Condition array
      * @param boolean &$useGlobalObjects Set to true if global objects are used by the condition
      * @return string The arguments condition code
      */
@@ -329,7 +332,11 @@ class PointcutFilterComposite implements PointcutFilterInterface
     /**
      * Returns the PHP code of the conditions used for global runtime evaluations
      *
-     * @param array $conditions Condition array
+     * @param array<array{
+     *     leftValue: string,
+     *     operator: string,
+     *     rightValue: string,
+     * }> $conditions Condition array
      * @param boolean &$useGlobalObjects Set to true if global objects are used by the condition
      * @return string The condition code
      */

@@ -17,7 +17,7 @@ class TemplateParser extends \TYPO3Fluid\Fluid\Core\Parser\TemplateParser
     /**
      * @param boolean $escapingEnabled
      */
-    public function setEscapingEnabled($escapingEnabled)
+    public function setEscapingEnabled($escapingEnabled): void
     {
         $this->escapingEnabled = $escapingEnabled;
     }

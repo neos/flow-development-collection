@@ -122,9 +122,7 @@ class TranslateViewHelper extends ViewHelper\AbstractViewHelper
         }
         if ($package === null) {
             $request = $this->renderingContext->getControllerContext()->getRequest();
-            if ($request instanceof ActionRequest) {
-                $package = $request->getControllerPackageKey();
-            }
+            $package = $request->getControllerPackageKey();
             if (empty($package)) {
                 throw new ViewHelperException(
                     'The current package key can\'t be resolved. Make sure to initialize the Fluid view with a proper ActionRequest and/or specify the "package" argument when using the f:translate ViewHelper',
@@ -151,7 +149,7 @@ class TranslateViewHelper extends ViewHelper\AbstractViewHelper
     /**
      * @param Translator $translator
      */
-    public function injectTranslator(Translator $translator)
+    public function injectTranslator(Translator $translator): void
     {
         $this->translator = $translator;
     }

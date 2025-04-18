@@ -299,7 +299,7 @@ class FormViewHelper extends AbstractFormViewHelper
         $result = chr(10);
         $request = $this->controllerContext->getRequest();
         $argumentNamespace = null;
-        if ($request instanceof ActionRequest && $request->isMainRequest() === false) {
+        if ($request->isMainRequest() === false) {
             $argumentNamespace = $request->getArgumentNamespace();
 
             $referrer = [
@@ -313,11 +313,8 @@ class FormViewHelper extends AbstractFormViewHelper
                 $referrerValue = $referrerValue ? htmlspecialchars($referrerValue) : '';
                 $result .= '<input type="hidden" name="' . $argumentNamespace . '[__referrer][' . $referrerKey . ']" value="' . $referrerValue . '" />' . chr(10);
             }
+            /** @var ActionRequest $request we know this since $request is not the main request */
             $request = $request->getParentRequest();
-        }
-
-        if ($request === null) {
-            throw new \RuntimeException('No ActionRequest could be found to evaluate form argument namespace.', 1565945918);
         }
 
         $arguments = $request->getArguments();

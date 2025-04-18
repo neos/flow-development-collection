@@ -11,6 +11,7 @@ namespace Neos\Flow\Cache;
  * source code.
  */
 
+use Neos\Cache\Backend\BackendInterface;
 use Neos\Cache\CacheFactoryInterface;
 use Neos\Flow\Annotations as Flow;
 use Neos\Cache\Backend\FileBackend;
@@ -32,6 +33,12 @@ use Psr\Cache\CacheItemPoolInterface;
 /**
  * The Cache Manager
  *
+ * @phpstan-type CacheConfiguration array{
+ *      frontend?: class-string<FrontendInterface>,
+ *      backend?: class-string<BackendInterface>,
+ *      backendOptions?: array<mixed>,
+ *      persistent?: bool,
+ * }
  * @Flow\Scope("singleton")
  * @api
  */
@@ -73,12 +80,12 @@ class CacheManager
     protected $cacheItemPools = [];
 
     /**
-     * @var array
+     * @var array<string,FrontendInterface>
      */
     protected $persistentCaches = [];
 
     /**
-     * @var array
+     * @var array<string,CacheConfiguration>
      */
     protected $cacheConfigurations = [
         'Default' => [
@@ -140,16 +147,14 @@ class CacheManager
      * If one of the options is not specified, the default value is assumed.
      * Existing cache configurations are preserved.
      *
-     * @param array $cacheConfigurations The cache configurations to set
+     * @todo enforce via extractor
+     * @param array<string,CacheConfiguration> $cacheConfigurations The cache configurations to set
      * @return void
      * @throws \InvalidArgumentException
      */
     public function setCacheConfigurations(array $cacheConfigurations): void
     {
         foreach ($cacheConfigurations as $identifier => $configuration) {
-            if (!is_array($configuration)) {
-                throw new \InvalidArgumentException('The cache configuration for cache "' . $identifier . '" was not an array as expected.', 1231259656);
-            }
             $this->cacheConfigurations[$identifier] = $configuration;
         }
     }
@@ -301,7 +306,7 @@ class CacheManager
     /**
      * Returns an array of cache configurations, indexed by cache identifier
      *
-     * @return array
+     * @return array<string,mixed>
      */
     public function getCacheConfigurations(): array
     {
@@ -320,7 +325,7 @@ class CacheManager
      *       time needed.
      *
      * @param string $fileMonitorIdentifier Identifier of the File Monitor
-     * @param array $changedFiles A list of full paths to changed files
+     * @param array<string,mixed> $changedFiles A list of full paths to changed files
      * @return void
      */
     public function flushSystemCachesByChangedFiles(string $fileMonitorIdentifier, array $changedFiles): void
@@ -341,7 +346,7 @@ class CacheManager
     /**
      * Flushes entries tagged with class names if their class source files have changed.
      *
-     * @param array $changedFiles A list of full paths to changed files
+     * @param array<string,mixed> $changedFiles A list of full paths to changed files
      * @return void
      * @see flushSystemCachesByChangedFiles()
      */
@@ -355,8 +360,8 @@ class CacheManager
             if (!file_exists($pathAndFilename)) {
                 continue;
             }
-            $fileContents = file_get_contents($pathAndFilename);
-            $className = (new PhpAnalyzer($fileContents))->extractFullyQualifiedClassName();
+            $fileContents = file_get_contents($pathAndFilename) ?: '';
+            $className = new PhpAnalyzer($fileContents)->extractFullyQualifiedClassName();
             if ($className === null) {
                 continue;
             }
@@ -408,7 +413,7 @@ class CacheManager
     /**
      * Flushes caches as needed if settings, routes or policies have changed
      *
-     * @param array $changedFiles A list of full paths to changed files
+     * @param array<string,mixed> $changedFiles A list of full paths to changed files
      * @return void
      * @see flushSystemCachesByChangedFiles()
      */
@@ -458,7 +463,7 @@ class CacheManager
     /**
      * Flushes I18n caches if translation files have changed
      *
-     * @param array $changedFiles A list of full paths to changed files
+     * @param array<string, mixed> $changedFiles A list of full paths to changed files
      * @return void
      * @see flushSystemCachesByChangedFiles()
      */
@@ -495,11 +500,15 @@ class CacheManager
      */
     protected function createCache(string $identifier): void
     {
-        $frontend = isset($this->cacheConfigurations[$identifier]['frontend']) ? $this->cacheConfigurations[$identifier]['frontend'] : $this->cacheConfigurations['Default']['frontend'];
-        $backend = isset($this->cacheConfigurations[$identifier]['backend']) ? $this->cacheConfigurations[$identifier]['backend'] : $this->cacheConfigurations['Default']['backend'];
-        $backendOptions = isset($this->cacheConfigurations[$identifier]['backendOptions']) ? $this->cacheConfigurations[$identifier]['backendOptions'] : $this->cacheConfigurations['Default']['backendOptions'];
-        $persistent = isset($this->cacheConfigurations[$identifier]['persistent']) ? $this->cacheConfigurations[$identifier]['persistent'] : $this->cacheConfigurations['Default']['persistent'];
-        // @phpstan-ignore-next-line - $persistent is not yet part of the CacheFactoryInterface
+        /** @phpstan-ignore offsetAccess.notFound (always set for Default) */
+        $frontend = $this->cacheConfigurations[$identifier]['frontend'] ?? $this->cacheConfigurations['Default']['frontend'];
+        /** @phpstan-ignore offsetAccess.notFound (always set for Default) */
+        $backend = $this->cacheConfigurations[$identifier]['backend'] ?? $this->cacheConfigurations['Default']['backend'];
+        /** @phpstan-ignore offsetAccess.notFound (always set for Default) */
+        $backendOptions = $this->cacheConfigurations[$identifier]['backendOptions'] ?? $this->cacheConfigurations['Default']['backendOptions'];
+        /** @phpstan-ignore offsetAccess.notFound (always set for Default) */
+        $persistent = $this->cacheConfigurations[$identifier]['persistent'] ?? $this->cacheConfigurations['Default']['persistent'];
+        /** @phpstan-ignore arguments.count ($persistent is not part of the interface) */
         $cache = $this->cacheFactory->create($identifier, $frontend, $backend, $backendOptions, $persistent);
         $this->registerCache($cache, $persistent);
     }

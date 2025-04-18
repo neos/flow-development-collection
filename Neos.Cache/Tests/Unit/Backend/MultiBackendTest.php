@@ -5,8 +5,8 @@ namespace Neos\Cache\Tests\Unit\Backend;
 
 include_once(__DIR__ . '/../../BaseTestCase.php');
 
+use Neos\Cache\Backend\BackendInterface;
 use Neos\Cache\Backend\MultiBackend;
-use Neos\Cache\Backend\NullBackend;
 use Neos\Cache\Backend\RedisBackend;
 use Neos\Cache\EnvironmentConfiguration;
 use Neos\Cache\Tests\BaseTestCase;
@@ -66,7 +66,7 @@ class MultiBackendTest extends BaseTestCase
      */
     public function writesToAllBackends(): void
     {
-        $mockBuilder = $this->getMockBuilder(NullBackend::class);
+        $mockBuilder = $this->getMockBuilder(BackendInterface::class);
         $firstNullBackendMock = $mockBuilder->getMock();
         $secondNullBackendMock = $mockBuilder->getMock();
 
@@ -85,7 +85,7 @@ class MultiBackendTest extends BaseTestCase
      */
     public function fallsBackToSecondaryBackend(): void
     {
-        $mockBuilder = $this->getMockBuilder(NullBackend::class);
+        $mockBuilder = $this->getMockBuilder(BackendInterface::class);
         $firstNullBackendMock = $mockBuilder->getMock();
         $secondNullBackendMock = $mockBuilder->getMock();
 
@@ -105,7 +105,7 @@ class MultiBackendTest extends BaseTestCase
      */
     public function removesUnhealthyBackend(): void
     {
-        $mockBuilder = $this->getMockBuilder(NullBackend::class);
+        $mockBuilder = $this->getMockBuilder(BackendInterface::class);
         $firstNullBackendMock = $mockBuilder->getMock();
         $secondNullBackendMock = $mockBuilder->getMock();
 

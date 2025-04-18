@@ -18,17 +18,18 @@ use Neos\Flow\Annotations as Flow;
  *
  * @deprecated Headers will be only accessed via request in the future, if this class stays, then as internal implementation detail.
  * @Flow\Proxy(false)
+ * @implements \Iterator<string,mixed>
  * TODO: case-insensitive header name matching
  */
 class Headers implements \Iterator
 {
     /**
-     * @var array
+     * @var array<string,mixed>
      */
     protected array $fields = ['Cache-Control' => []];
 
     /**
-     * @var array
+     * @var array<mixed>
      */
     protected array $cookies = [];
 
@@ -40,7 +41,7 @@ class Headers implements \Iterator
     /**
      * Constructs a new Headers object.
      *
-     * @param array $fields Field names and their values (either as single value or array of values)
+     * @param array<string, mixed> $fields Field names and their values (either as single value or array of values)
      */
     public function __construct(array $fields = [])
     {
@@ -53,7 +54,7 @@ class Headers implements \Iterator
     /**
      * Creates a new Headers instance from the given $_SERVER-superglobal-like array.
      *
-     * @param array $server An array similar or equal to $_SERVER, containing headers in the form of "HTTP_FOO_BAR"
+     * @param array<string,mixed> $server An array similar or equal to $_SERVER, containing headers in the form of "HTTP_FOO_BAR"
      * @return Headers
      */
     public static function createFromServer(array $server)
@@ -88,7 +89,7 @@ class Headers implements \Iterator
      * GMT previously. GMT is used synonymously with UTC as per RFC 2616 3.3.1.
      *
      * @param string $name Name of the header, for example "Location", "Content-Description" etc.
-     * @param array|string|\DateTime $values An array of values or a single value for the specified header field
+     * @param array<mixed>|string|\DateTime|\DateTimeImmutable $values An array of values or a single value for the specified header field
      * @param boolean $replaceExistingHeader If a header with the same name should be replaced. Default is true.
      * @return void
      * @throws \InvalidArgumentException
@@ -96,9 +97,12 @@ class Headers implements \Iterator
      */
     public function set($name, $values, $replaceExistingHeader = true)
     {
-        if ($values instanceof \DateTimeInterface) {
+        if ($values instanceof \DateTime) {
             $date = clone $values;
             $date->setTimezone(new \DateTimeZone('GMT'));
+            $values = [$date->format('D, d M Y H:i:s') . ' GMT'];
+        } elseif ($values instanceof \DateTimeImmutable) {
+            $date = $values->setTimezone(new \DateTimeZone('GMT'));
             $values = [$date->format('D, d M Y H:i:s') . ' GMT'];
         } else {
             $values = (array) $values;
@@ -161,7 +165,7 @@ class Headers implements \Iterator
      * Dates are returned as DateTime objects with the timezone set to GMT.
      *
      * @param string $name Name of the header, for example "Location", "Content-Description" etc.
-     * @return array|string|null An array of field values if multiple headers of that name exist, a string value if only one value exists and NULL if there is no such header.
+     * @return array<mixed>|string|null An array of field values if multiple headers of that name exist, a string value if only one value exists and NULL if there is no such header.
      * @api
      */
     public function get($name)
@@ -200,7 +204,7 @@ class Headers implements \Iterator
      * Note that even for those header fields which exist only one time, the value is
      * returned as an array (with a single item).
      *
-     * @return array
+     * @return array<string,mixed>
      * @api
      */
     public function getAll()
@@ -384,7 +388,7 @@ class Headers implements \Iterator
     /**
      * Get all header lines prepared as "name: value" strings.
      *
-     * @return array
+     * @return array<mixed>
      */
     public function getPreparedValues()
     {
@@ -398,8 +402,8 @@ class Headers implements \Iterator
 
     /**
      * @param string $headerName
-     * @param array $values
-     * @return array
+     * @param array<mixed> $values
+     * @return array<mixed>
      */
     private function prepareValues($headerName, array $values)
     {
@@ -413,7 +417,7 @@ class Headers implements \Iterator
 
     /**
      * @param string $headerName
-     * @param array $values
+     * @param array<mixed> $values
      * @return string
      */
     private function renderValuesFor($headerName, array $values)

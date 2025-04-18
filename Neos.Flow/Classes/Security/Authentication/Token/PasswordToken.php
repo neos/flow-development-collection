@@ -25,7 +25,7 @@ class PasswordToken extends AbstractToken implements PasswordTokenInterface
 
     /**
      * The password credentials
-     * @var array
+     * @var array{password: string,}
      * @Flow\Transient
      */
     protected $credentials = ['password' => ''];
@@ -60,7 +60,7 @@ class PasswordToken extends AbstractToken implements PasswordTokenInterface
      */
     public function getPassword(): string
     {
-        return $this->credentials['password'] ?? '';
+        return $this->credentials['password'];
     }
 
     /**

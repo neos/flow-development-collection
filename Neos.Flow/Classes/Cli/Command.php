@@ -22,7 +22,7 @@ use Neos\Flow\Reflection\ReflectionService;
 class Command
 {
     /**
-     * @var string
+     * @var class-string<CommandControllerInterface>
      */
     protected $controllerClassName;
 
@@ -54,7 +54,7 @@ class Command
     /**
      * Constructor
      *
-     * @param string $controllerClassName Class name of the controller providing the command
+     * @param class-string<CommandControllerInterface> $controllerClassName Class name of the controller providing the command
      * @param string $controllerCommandName Command name, i.e. the method name of the command, without the "Command" suffix
      * @throws \InvalidArgumentException
      */
@@ -74,7 +74,7 @@ class Command
     /**
      * @param ReflectionService $reflectionService Reflection service
      */
-    public function injectReflectionService(ReflectionService $reflectionService)
+    public function injectReflectionService(ReflectionService $reflectionService): void
     {
         $this->reflectionService = $reflectionService;
     }
@@ -82,13 +82,13 @@ class Command
     /**
      * @param ObjectManagerInterface $objectManager
      */
-    public function injectObjectManager(ObjectManagerInterface $objectManager)
+    public function injectObjectManager(ObjectManagerInterface $objectManager): void
     {
         $this->objectManager = $objectManager;
     }
 
     /**
-     * @return string
+     * @return class-string<CommandControllerInterface>
      */
     public function getControllerClassName(): string
     {
@@ -122,10 +122,16 @@ class Command
     {
         $commandMethodReflection = $this->getCommandMethodReflection();
         $lines = explode(chr(10), $commandMethodReflection->getDescription());
-        $shortDescription = ((count($lines) > 0) ? trim($lines[0]) : '<no description available>') . ($this->isDeprecated() ? ' <b>(DEPRECATED)</b>' : '');
+        /** @phpstan-ignore greater.alwaysTrue (not sure about this) */
+        $shortDescription = ((count($lines) > 0)
+            ? trim($lines[0])
+            : '<no description available>') . ($this->isDeprecated() ? ' <b>(DEPRECATED)</b>' : '');
 
         if ($commandMethodReflection->getDeclaringClass()->implementsInterface(DescriptionAwareCommandControllerInterface::class)) {
-            $shortDescription = call_user_func([$this->controllerClassName, 'processDescription'], $this->controllerCommandName, $shortDescription, $this->objectManager);
+            $callback = [$this->controllerClassName, 'processDescription'];
+            if (is_callable($callback)) {
+                $shortDescription = call_user_func($callback, $this->controllerCommandName, $shortDescription, $this->objectManager);
+            }
         }
         return $shortDescription;
     }
@@ -151,7 +157,10 @@ class Command
         }
         $description = implode(chr(10), $descriptionLines);
         if ($commandMethodReflection->getDeclaringClass()->implementsInterface(DescriptionAwareCommandControllerInterface::class)) {
-            $description = call_user_func([$this->controllerClassName, 'processDescription'], $this->controllerCommandName, $description, $this->objectManager);
+            $callback = [$this->controllerClassName, 'processDescription'];
+            if (is_callable($callback)) {
+                $description = call_user_func($callback, $this->controllerCommandName, $description, $this->objectManager);
+            }
         }
         return $description;
     }
@@ -239,7 +248,7 @@ class Command
      * Returns an array of command identifiers which were specified in the "@see"
      * annotation of a command method.
      *
-     * @return array
+     * @return array<int,string>
      */
     public function getRelatedCommandIdentifiers(): array
     {

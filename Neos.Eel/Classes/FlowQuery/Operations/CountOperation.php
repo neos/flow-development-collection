@@ -38,13 +38,15 @@ class CountOperation extends AbstractOperation
      * {@inheritdoc}
      *
      * @param FlowQuery $flowQuery the FlowQuery object
-     * @param array $arguments filter arguments for this operation
+     * @param array<mixed> $arguments filter arguments for this operation
      * @return void|integer with the number of elements
      */
     public function evaluate(FlowQuery $flowQuery, array $arguments)
     {
         if (count($arguments) == 0) {
-            return count($flowQuery->getContext());
+            $context = $flowQuery->getContext();
+            $context = $context instanceof \Traversable ? iterator_to_array($context) : $context;
+            return count($context);
         } else {
             $flowQuery->pushOperation('count', []);
             $flowQuery->pushOperation('filter', $arguments);

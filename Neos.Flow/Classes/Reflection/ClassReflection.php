@@ -16,6 +16,7 @@ use Neos\Flow\Annotations as Flow;
 /**
  * Extended version of the ReflectionClass
  *
+ * @extends \ReflectionClass<object>
  * @Flow\Proxy(false)
  */
 class ClassReflection extends \ReflectionClass
@@ -39,7 +40,7 @@ class ClassReflection extends \ReflectionClass
     }
 
     /**
-     * @var DocCommentParser Holds an instance of the doc comment parser for this class
+     * @var ?DocCommentParser Holds an instance of the doc comment parser for this class
      */
     protected $docCommentParser;
 
@@ -48,12 +49,14 @@ class ClassReflection extends \ReflectionClass
      * that MethodReflection objects are returned instead of the
      * original ReflectionMethod instances.
      *
-     * @return MethodReflection Method reflection object of the constructor method
+     * @return ?MethodReflection Method reflection object of the constructor method
      */
-    public function getConstructor(): MethodReflection
+    public function getConstructor(): ?MethodReflection
     {
         $parentConstructor = parent::getConstructor();
-        return (!is_object($parentConstructor)) ? $parentConstructor : new MethodReflection($this->getName(), $parentConstructor->getName());
+        return $parentConstructor === null
+            ? $parentConstructor
+            : new MethodReflection($this->getName(), $parentConstructor->getName());
     }
 
     /**
@@ -165,7 +168,7 @@ class ClassReflection extends \ReflectionClass
     /**
      * Returns an array of tags and their values
      *
-     * @return array Tags and values
+     * @return array<string,array<int,string>> Tags and values
      */
     public function getTagsValues()
     {
@@ -175,7 +178,7 @@ class ClassReflection extends \ReflectionClass
     /**
      * Returns the values of the specified tag
      * @param string $tag
-     * @return array Values of the given tag
+     * @return array<int,string> Values of the given tag
      */
     public function getTagValues($tag)
     {
@@ -205,7 +208,7 @@ class ClassReflection extends \ReflectionClass
     {
         $instance = parent::newInstanceWithoutConstructor();
 
-        if (method_exists($instance, '__wakeup') && is_callable([$instance, '__wakeup'])) {
+        if (method_exists($instance, '__wakeup')) {
             $instance->__wakeup();
         }
 
@@ -221,8 +224,11 @@ class ClassReflection extends \ReflectionClass
     protected function getDocCommentParser()
     {
         if (!is_object($this->docCommentParser)) {
-            $this->docCommentParser = new DocCommentParser;
-            $this->docCommentParser->parseDocComment($this->getDocComment());
+            $this->docCommentParser = new DocCommentParser();
+            $docComment = $this->getDocComment();
+            if ($docComment) {
+                $this->docCommentParser->parseDocComment($docComment);
+            }
         }
         return $this->docCommentParser;
     }

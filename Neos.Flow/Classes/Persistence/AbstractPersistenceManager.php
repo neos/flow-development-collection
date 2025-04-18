@@ -22,12 +22,12 @@ use Neos\Utility\ObjectAccess;
 abstract class AbstractPersistenceManager implements PersistenceManagerInterface
 {
     /**
-     * @var array
+     * @var array<mixed>
      */
     protected $settings = [];
 
     /**
-     * @var array
+     * @var array<string,Aspect\PersistenceMagicInterface>
      */
     protected $newObjects = [];
 
@@ -46,7 +46,7 @@ abstract class AbstractPersistenceManager implements PersistenceManagerInterface
      * Injects the Flow settings, the persistence part is kept
      * for further use.
      *
-     * @param array $settings
+     * @param array<string,array<mixed>> $settings
      * @return void
      */
     public function injectSettings(array $settings): void

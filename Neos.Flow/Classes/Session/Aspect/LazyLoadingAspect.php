@@ -29,6 +29,9 @@ class LazyLoadingAspect
     #[Flow\Inject]
     protected ?LoggerInterface $logger = null;
 
+    /**
+     * @var array<string,object>
+     */
     protected array $sessionOriginalInstances = [];
 
     public function __construct(

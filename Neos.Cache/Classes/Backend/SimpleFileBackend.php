@@ -82,12 +82,13 @@ class SimpleFileBackend extends IndependentAbstractBackend implements PhpCapable
      * the effective directory will be a subdirectory of this.
      * If not given this will be determined by the EnvironmentConfiguration
      *
-     * @var string
+     * @var ?string
      */
     protected $baseDirectory;
 
     /**
      * {@inheritdoc}
+     * @param array<mixed> $options
      */
     public function __construct(EnvironmentConfiguration $environmentConfiguration, array $options = [])
     {
@@ -138,7 +139,7 @@ class SimpleFileBackend extends IndependentAbstractBackend implements PhpCapable
      *
      * @param string $entryIdentifier An identifier for this specific cache entry
      * @param string $data The data to be stored
-     * @param array $tags Ignored in this type of cache backend
+     * @param array<string> $tags Ignored in this type of cache backend
      * @param int|null $lifetime Ignored in this type of cache backend
      * @return void
      * @throws Exception if the directory does not exist or is not writable or exceeds the maximum allowed path length, or if no cache frontend has been set.
@@ -408,6 +409,7 @@ class SimpleFileBackend extends IndependentAbstractBackend implements PhpCapable
      *
      * @return void
      * @api
+     * @phpstan-assert \DirectoryIterator $this->cacheFilesIterator
      */
     public function rewind(): void
     {
@@ -433,9 +435,9 @@ class SimpleFileBackend extends IndependentAbstractBackend implements PhpCapable
     }
 
     /**
-     * @return string
+     * @return ?string
      */
-    public function getBaseDirectory(): string
+    public function getBaseDirectory(): ?string
     {
         return $this->baseDirectory;
     }
@@ -457,6 +459,9 @@ class SimpleFileBackend extends IndependentAbstractBackend implements PhpCapable
         if ($cacheDirectory === '') {
             $codeOrData = ($this->cache instanceof PhpFrontend) ? 'Code' : 'Data';
             $baseDirectory = ($this->baseDirectory ?: $this->environmentConfiguration->getFileCacheBasePath());
+            if ($baseDirectory === null) {
+                throw new \RuntimeException('Could not resolve base directory for SimpleFileBackend', 1744534007);
+            }
             $cacheDirectory = $baseDirectory . 'Cache/' . $codeOrData . '/' . $this->cacheIdentifier . '/';
         }
 
@@ -504,9 +509,9 @@ class SimpleFileBackend extends IndependentAbstractBackend implements PhpCapable
                 }
                 if (flock($file, LOCK_SH) !== false) {
                     $data = '';
-                    if ($maxlen !== 0) {
-                        $data = $maxlen !== null ? file_get_contents($cacheEntryPathAndFilename, false, null, $offset, $maxlen) : file_get_contents($cacheEntryPathAndFilename, false, null, $offset);
-                    }
+                    $data = $maxlen > 0
+                        ? file_get_contents($cacheEntryPathAndFilename, false, null, $offset, $maxlen)
+                        : file_get_contents($cacheEntryPathAndFilename, false, null, $offset);
 
                     flock($file, LOCK_UN);
                 }

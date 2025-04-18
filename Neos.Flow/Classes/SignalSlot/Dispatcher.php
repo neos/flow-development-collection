@@ -24,18 +24,21 @@ use Neos\Flow\ObjectManagement\ObjectManagerInterface;
  */
 class Dispatcher
 {
-    /**
-     * @var ObjectManagerInterface
-     */
-    protected $objectManager;
+    protected ?ObjectManagerInterface $objectManager = null;
 
     /**
      * Information about all slots connected a certain signal.
      * Indexed by [$signalClassName][$signalMethodName] and then numeric with an
      * array of information about the slot
-     * @var array
+     * @var array<class-string,array<string,array<int,array{
+     *     class: ?class-string,
+     *     method: string,
+     *     object: ?object,
+     *     passSignalInformation: bool,
+     *     useSignalInformationObject: bool,
+     * }>>>
      */
-    protected $slots = [];
+    protected array $slots = [];
 
     /**
      * Injects the object manager
@@ -56,7 +59,7 @@ class Dispatcher
      * When $passSignalInformation is true, the slot will be passed a string (EmitterClassName::signalName) as the last
      * parameter.
      *
-     * @param string $signalClassName Name of the class containing the signal
+     * @param class-string $signalClassName Name of the class containing the signal
      * @param string $signalName Name of the signal
      * @param mixed $slotClassNameOrObject Name of the class containing the slot or the instantiated class or a Closure object
      * @param string $slotMethodName Name of the method to be used as a slot. If $slotClassNameOrObject is a Closure object, this parameter is ignored
@@ -78,7 +81,7 @@ class Dispatcher
      *
      * The slot will be passed a an instance of SignalInformation as the sole parameter.
      *
-     * @param string $signalClassName Name of the class containing the signal
+     * @param class-string $signalClassName Name of the class containing the signal
      * @param string $signalName Name of the signal
      * @param mixed $slotClassNameOrObject Name of the class containing the slot or the instantiated class or a Closure object
      * @param string $slotMethodName Name of the method to be used as a slot. If $slotClassNameOrObject is a Closure object, this parameter is ignored
@@ -94,7 +97,7 @@ class Dispatcher
     }
 
     /**
-     * @param string $signalClassName
+     * @param class-string $signalClassName
      * @param string $signalName
      * @param mixed $slotClassNameOrObject
      * @param string $slotMethodName
@@ -116,6 +119,9 @@ class Dispatcher
             $object = $slotClassNameOrObject;
             $method = ($slotClassNameOrObject instanceof \Closure) ? '__invoke' : $slotMethodName;
         } else {
+            if (!class_exists($slotClassNameOrObject)) {
+                throw new \Exception('Unkown class ' . $slotClassNameOrObject, 1743926351);
+            }
             if ($slotMethodName === '') {
                 throw new \InvalidArgumentException('The slot method name must not be empty (except for closures).', 1229531659);
             }
@@ -137,7 +143,7 @@ class Dispatcher
      *
      * @param string $signalClassName Name of the class containing the signal
      * @param string $signalName Name of the signal
-     * @param array $signalArguments arguments passed to the signal method
+     * @param array<mixed> $signalArguments arguments passed to the signal method
      * @return void
      * @throws Exception\InvalidSlotException if the slot is not valid
      * @api
@@ -153,37 +159,48 @@ class Dispatcher
             if (isset($slotInformation['object'])) {
                 $object = $slotInformation['object'];
             } elseif (strpos($slotInformation['method'], '::') === 0) {
-                if (!isset($this->objectManager)) {
+                if ($this->objectManager === null) {
                     if (is_callable($slotInformation['class'] . $slotInformation['method'])) {
                         $object = $slotInformation['class'];
                     } else {
                         throw new Exception\InvalidSlotException(sprintf('Cannot dispatch %s::%s to class %s. The object manager is not yet available in the Signal Slot Dispatcher and therefore it cannot dispatch classes.', $signalClassName, $signalName, $slotInformation['class']), 1298113624);
                     }
                 } else {
+                    if ($slotInformation['class'] === null) {
+                        throw new Exception\InvalidSlotException('Slot class is undefined.', 1743958214);
+                    }
                     $object = $this->objectManager->getClassNameByObjectName($slotInformation['class']);
                 }
                 $slotInformation['method'] = substr($slotInformation['method'], 2);
             } else {
-                if (!isset($this->objectManager)) {
+                if ($this->objectManager === null) {
                     throw new Exception\InvalidSlotException(sprintf('Cannot dispatch %s::%s to class %s. The object manager is not yet available in the Signal Slot Dispatcher and therefore it cannot dispatch classes.', $signalClassName, $signalName, $slotInformation['class']), 1298113624);
+                }
+                if ($slotInformation['class'] === null) {
+                    throw new Exception\InvalidSlotException('Slot class is undefined.', 1743958214);
                 }
                 if (!$this->objectManager->isRegistered($slotInformation['class'])) {
                     throw new Exception\InvalidSlotException('The given class "' . $slotInformation['class'] . '" is not a registered object.', 1245673367);
                 }
                 $object = $this->objectManager->get($slotInformation['class']);
             }
-            if (!method_exists($object, $slotInformation['method'])) {
+            if (is_object($object) && !method_exists($object, $slotInformation['method'])) {
                 throw new Exception\InvalidSlotException('The slot method ' . get_class($object) . '->' . $slotInformation['method'] . '() does not exist.', 1245673368);
             }
 
+            $callable = [$object, $slotInformation['method']];
+            if (!is_callable($callable)) {
+                throw new \Exception('Invalid slot method ' . $slotInformation['method'], 1743955562);
+            }
+
             if ($slotInformation['useSignalInformationObject'] === true) {
-                call_user_func([$object, $slotInformation['method']], new SignalInformation($signalClassName, $signalName, $finalSignalArguments));
+                call_user_func($callable, new SignalInformation($signalClassName, $signalName, $finalSignalArguments));
             } else {
                 if ($slotInformation['passSignalInformation'] === true) {
                     $finalSignalArguments[] = $signalClassName . '::' . $signalName;
                 }
                 // Need to use call_user_func_array here, because $object may be the class name when the slot is a static method
-                call_user_func_array([$object, $slotInformation['method']], $finalSignalArguments);
+                call_user_func_array($callable, $finalSignalArguments);
             }
         }
     }
@@ -191,9 +208,15 @@ class Dispatcher
     /**
      * Returns all slots which are connected with the given signal
      *
-     * @param string $signalClassName Name of the class containing the signal
+     * @param class-string $signalClassName Name of the class containing the signal
      * @param string $signalName Name of the signal
-     * @return array An array of arrays with slot information
+     * @return array<int,array{
+     *      class: ?class-string,
+     *      method: string,
+     *      object: ?object,
+     *      passSignalInformation: bool,
+     *      useSignalInformationObject: bool,
+     *  }> An array of arrays with slot information
      * @api
      */
     public function getSlots(string $signalClassName, string $signalName): array
@@ -204,7 +227,13 @@ class Dispatcher
     /**
      * Returns all signals with its slots
      *
-     * @return array An array of arrays with slot information
+     * @return array<class-string,array<string,array<int,array{
+     *      class: ?class-string,
+     *      method: string,
+     *      object: ?object,
+     *      passSignalInformation: bool,
+     *      useSignalInformationObject: bool,
+     *  }>>> An array of arrays with slot information
      * @api
      */
     public function getSignals(): array

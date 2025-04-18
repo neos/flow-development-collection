@@ -25,10 +25,10 @@ abstract class ArgumentsHelper
      *
      * The order of merging is GET, POST, FILES, with later items overriding earlier ones.
      *
-     * @param array $getArguments Arguments as found in $_GET
-     * @param array $postArguments Arguments as found in $_POST
-     * @param array $untangledFiles Untangled $_FILES as provided by \Neos\Flow\Http\Helper\UploadedFilesHelper::untangleFilesArray
-     * @return array the unified arguments
+     * @param array<mixed> $getArguments Arguments as found in $_GET
+     * @param array<mixed> $postArguments Arguments as found in $_POST
+     * @param array<mixed> $untangledFiles Untangled $_FILES as provided by \Neos\Flow\Http\Helper\UploadedFilesHelper::untangleFilesArray
+     * @return array<mixed> the unified arguments
      * @see \Neos\Flow\Http\Helper\UploadedFilesHelper::untangleFilesArray
      */
     public static function buildUnifiedArguments(array $getArguments, array $postArguments, array $untangledFiles): array
@@ -40,8 +40,9 @@ abstract class ArgumentsHelper
     }
 
     /**
-     * @param array ...$argumentArrays
-     * @return array
+     * @param array<mixed> $arguments
+     * @param array<mixed> ...$argumentArrays
+     * @return array<mixed>
      */
     public static function mergeArgumentArrays(array $arguments, array ...$argumentArrays): array
     {

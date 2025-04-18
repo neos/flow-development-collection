@@ -82,6 +82,15 @@ class SessionMetaDataStore
         }
 
         if (is_array($metaDataFromCache)) {
+            if (!is_string($metaDataFromCache['storageIdentifier'] ?? null)) {
+                throw new \Exception('Missing storageIdentifier', 1743874214);
+            }
+            if (!is_int($metaDataFromCache['lastActivityTimestamp'])) {
+                throw new \Exception('Missing lastActivityTimestamp', 1743874236);
+            }
+            if (!is_array($metaDataFromCache['tags'])) {
+                throw new \Exception('Missing tags', 1743874272);
+            }
             $metaDataFromCache = SessionMetaData::createFromSessionIdentifierStringAndOldArrayCacheFormat($sessionIdentifier->value, $metaDataFromCache);
             $this->writeDebounceCache[$metaDataFromCache->sessionIdentifier->value] = $metaDataFromCache;
             return $metaDataFromCache;
@@ -104,6 +113,15 @@ class SessionMetaDataStore
                 $this->writeDebounceCache[$sessionIdentifier] = $sessionMetaData;
                 yield $sessionIdentifier => $sessionMetaData;
             } elseif (is_array($sessionMetaData)) {
+                if (!is_string($sessionMetaData['storageIdentifier'] ?? null)) {
+                    throw new \Exception('Missing storageIdentifier', 1743874214);
+                }
+                if (!is_int($sessionMetaData['lastActivityTimestamp'])) {
+                    throw new \Exception('Missing lastActivityTimestamp', 1743874236);
+                }
+                if (!is_array($sessionMetaData['tags'])) {
+                    throw new \Exception('Missing tags', 1743874272);
+                }
                 $sessionMetaData = SessionMetaData::createFromSessionIdentifierStringAndOldArrayCacheFormat($sessionIdentifier, $sessionMetaData);
                 $this->writeDebounceCache[$sessionIdentifier] = $sessionMetaData;
                 yield $sessionIdentifier => $sessionMetaData;
@@ -125,7 +143,19 @@ class SessionMetaDataStore
                 $this->writeDebounceCache[$sessionIdentifier] = $sessionMetaData;
                 yield $sessionIdentifier => $sessionMetaData;
             } elseif (is_array($sessionMetaData)) {
-                $sessionMetaData = SessionMetaData::createFromSessionIdentifierStringAndOldArrayCacheFormat($sessionIdentifier, $sessionMetaData);
+                if (!is_string($sessionMetaData['storageIdentifier'] ?? null)) {
+                    throw new \Exception('Missing storageIdentifier', 1743874214);
+                }
+                if (!is_int($sessionMetaData['lastActivityTimestamp'])) {
+                    throw new \Exception('Missing lastActivityTimestamp', 1743874236);
+                }
+                if (!is_array($sessionMetaData['tags'])) {
+                    throw new \Exception('Missing tags', 1743874272);
+                }
+                $sessionMetaData = SessionMetaData::createFromSessionIdentifierStringAndOldArrayCacheFormat(
+                    $sessionIdentifier,
+                    $sessionMetaData
+                );
                 $this->writeDebounceCache[$sessionIdentifier] = $sessionMetaData;
                 yield $sessionIdentifier => $sessionMetaData;
             }

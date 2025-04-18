@@ -100,9 +100,9 @@ class LoggingAspect
     }
 
     /**
-     * @param array $collectedIdentifiers
+     * @param array<string> $collectedIdentifiers
      * @param TokenInterface $token
-     * @return array
+     * @return array<string>
      */
     protected function reduceTokenToAccountIdentifier(array $collectedIdentifiers, TokenInterface $token): array
     {
@@ -170,7 +170,7 @@ class LoggingAspect
 
     /**
      * @param JoinPointInterface $joinPoint
-     * @return array
+     * @return array<string,array{packageKey: string, className: string, methodName: string}>
      */
     protected function getLogEnvironmentFromJoinPoint(JoinPointInterface $joinPoint): array
     {

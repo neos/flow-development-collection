@@ -22,7 +22,7 @@ use Neos\Utility\TypeHandling;
 class CollectionValidator extends GenericObjectValidator
 {
     /**
-     * @var array
+     * @var array<string,mixed>
      */
     protected $supportedOptions = [
         'elementValidator' => [null, 'The validator type to use for the collection elements', 'string'],
@@ -52,7 +52,7 @@ class CollectionValidator extends GenericObjectValidator
     {
         if ($value instanceof \Doctrine\Common\Collections\AbstractLazyCollection && !$value->isInitialized()) {
             return;
-        } elseif ((is_object($value) && !TypeHandling::isCollectionType(get_class($value))) && !is_array($value)) {
+        } elseif (is_object($value) && !TypeHandling::isCollectionType(get_class($value))) {
             $this->addError('The given subject was not a collection.', 1317204797);
             return;
         } elseif (is_object($value) && $this->isValidatedAlready($value)) {
@@ -75,7 +75,9 @@ class CollectionValidator extends GenericObjectValidator
                 $collectionElementValidator->setValidatedInstancesContainer($this->validatedInstancesContainer);
             }
 
-            $this->getResult()->forProperty($index)->merge($collectionElementValidator->validate($collectionElement));
+            if ($this->getResult() && $collectionElementValidator) {
+                $this->getResult()->forProperty($index)->merge($collectionElementValidator->validate($collectionElement));
+            }
         }
     }
 }

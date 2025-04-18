@@ -54,7 +54,7 @@ abstract class AbstractGenerator
      * Get all class names inside this namespace and return them as array.
      *
      * @param string $namespace
-     * @return array Array of all class names inside a given namespace.
+     * @return array<int,class-string<AbstractViewHelper>> Array of all class names inside a given namespace.
      */
     protected function getClassNamesInNamespace($namespace)
     {
@@ -101,7 +101,7 @@ abstract class AbstractGenerator
      * @param \SimpleXMLElement $parentXmlNode Parent XML Node to add the child to
      * @param string $childNodeName Name of the child node
      * @param string $childNodeValue Value of the child node. Will be placed inside CDATA.
-     * @return \SimpleXMLElement the new element
+     * @return ?\SimpleXMLElement the new element
      */
     protected function addChildWithCData(\SimpleXMLElement $parentXmlNode, $childNodeName, $childNodeValue)
     {
@@ -110,8 +110,12 @@ abstract class AbstractGenerator
 
         $childNode = $domDocument->appendChild($domDocument->createElement($childNodeName));
         $childNode->appendChild($domDocument->createCDATASection($childNodeValue));
-        $childNodeTarget = $parentDomNode->ownerDocument->importNode($childNode, true);
-        $parentDomNode->appendChild($childNodeTarget);
-        return simplexml_import_dom($childNodeTarget);
+        $childNodeTarget = $parentDomNode->ownerDocument?->importNode($childNode, true);
+        if ($childNodeTarget instanceof \DOMNode) {
+            $parentDomNode->appendChild($childNodeTarget);
+            return simplexml_import_dom($childNodeTarget);
+        }
+
+        return null;
     }
 }

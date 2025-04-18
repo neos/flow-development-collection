@@ -66,7 +66,12 @@ class NumberParser
      */
     public function parseNumberWithCustomPattern($numberToParse, $format, Locale $locale, $strictMode = true)
     {
-        return $this->doParsingWithParsedFormat($numberToParse, $this->numbersReader->parseCustomFormat($format), $this->numbersReader->getLocalizedSymbolsForLocale($locale), $strictMode);
+        return $this->doParsingWithParsedFormat(
+            $numberToParse,
+            $this->numbersReader->parseCustomFormat($format),
+            $this->numbersReader->getLocalizedSymbolsForLocale($locale),
+            $strictMode
+        );
     }
 
     /**
@@ -82,7 +87,16 @@ class NumberParser
     public function parseDecimalNumber($numberToParse, Locale $locale, $formatLength = NumbersReader::FORMAT_LENGTH_DEFAULT, $strictMode = true)
     {
         NumbersReader::validateFormatLength($formatLength);
-        return $this->doParsingWithParsedFormat($numberToParse, $this->numbersReader->parseFormatFromCldr($locale, NumbersReader::FORMAT_TYPE_DECIMAL, $formatLength), $this->numbersReader->getLocalizedSymbolsForLocale($locale), $strictMode);
+        return $this->doParsingWithParsedFormat(
+            $numberToParse,
+            $this->numbersReader->parseFormatFromCldr(
+                $locale,
+                NumbersReader::FORMAT_TYPE_DECIMAL,
+                $formatLength
+            ),
+            $this->numbersReader->getLocalizedSymbolsForLocale($locale),
+            $strictMode
+        );
     }
 
     /**
@@ -98,15 +112,24 @@ class NumberParser
     public function parsePercentNumber($numberToParse, Locale $locale, $formatLength = NumbersReader::FORMAT_LENGTH_DEFAULT, $strictMode = true)
     {
         NumbersReader::validateFormatLength($formatLength);
-        return $this->doParsingWithParsedFormat($numberToParse, $this->numbersReader->parseFormatFromCldr($locale, NumbersReader::FORMAT_TYPE_PERCENT, $formatLength), $this->numbersReader->getLocalizedSymbolsForLocale($locale), $strictMode);
+        return $this->doParsingWithParsedFormat(
+            $numberToParse,
+            $this->numbersReader->parseFormatFromCldr(
+                $locale,
+                NumbersReader::FORMAT_TYPE_PERCENT,
+                $formatLength
+            ),
+            $this->numbersReader->getLocalizedSymbolsForLocale($locale),
+            $strictMode
+        );
     }
 
     /**
      * Parses number using parsed format, in strict or lenient mode.
      *
      * @param string $numberToParse Number to be parsed
-     * @param array $parsedFormat Parsed format (from NumbersReader)
-     * @param array $localizedSymbols An array with symbols to use
+     * @param array{negativePrefix?: string, negativeSuffix?: string, multiplier: int} $parsedFormat Parsed format (from NumbersReader)
+     * @param array{decimal: string} $localizedSymbols An array with symbols to use
      * @param boolean $strictMode Work mode (strict when true, lenient when false)
      * @return mixed Parsed float number or false on failure
      */
@@ -122,8 +145,8 @@ class NumberParser
      * and if any of them is not fullfiled, parsing fails (false is returned).
      *
      * @param string $numberToParse Number to be parsed
-     * @param array $parsedFormat Parsed format (from NumbersReader)
-     * @param array $localizedSymbols An array with symbols to use
+     * @param array<string,mixed> $parsedFormat Parsed format (from NumbersReader)
+     * @param array<string,mixed> $localizedSymbols An array with symbols to use
      * @return mixed Parsed float number or false on failure
      */
     protected function doParsingInStrictMode($numberToParse, array $parsedFormat, array $localizedSymbols)
@@ -184,7 +207,7 @@ class NumberParser
 
             $numberToParse = str_replace([$localizedSymbols['group'], $localizedSymbols['decimal']], ['', '.'], $numberToParse);
 
-            $positionOfDecimalSeparator = strpos($numberToParse, '.');
+            $positionOfDecimalSeparator = strpos($numberToParse, '.') ?: 0;
             $integerPart = substr($numberToParse, 0, $positionOfDecimalSeparator);
             $decimalPart = substr($numberToParse, $positionOfDecimalSeparator + 1);
         }
@@ -239,8 +262,8 @@ class NumberParser
      * 7. Try to match negative suffix after last digit
      *
      * @param string $numberToParse Number to be parsed
-     * @param array $parsedFormat Parsed format (from NumbersReader)
-     * @param array $localizedSymbols An array with symbols to use
+     * @param array{negativePrefix?: string, negativeSuffix?: string, multiplier: int} $parsedFormat Parsed format (from NumbersReader)
+     * @param array{decimal: string} $localizedSymbols An array with symbols to use
      * @return mixed Parsed float number or false on failure
      */
     protected function doParsingInLenientMode($numberToParse, array $parsedFormat, array $localizedSymbols)

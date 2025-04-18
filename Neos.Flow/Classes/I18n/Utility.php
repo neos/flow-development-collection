@@ -123,7 +123,9 @@ class Utility
         $directoryParts = explode('/', rtrim($directory, '/'));
         $lastDirectoryPart = array_pop($directoryParts);
 
-        if ($lastDirectoryPart !== null && preg_match(Locale::PATTERN_MATCH_LOCALEIDENTIFIER, $lastDirectoryPart) === 1) {
+        if (
+            preg_match(Locale::PATTERN_MATCH_LOCALEIDENTIFIER, $lastDirectoryPart) === 1
+        ) {
             return $lastDirectoryPart;
         }
 

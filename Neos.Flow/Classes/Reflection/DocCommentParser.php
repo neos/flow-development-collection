@@ -28,7 +28,7 @@ class DocCommentParser
 
     /**
      * An array of tag names and their values (multiple values are possible)
-     * @var array
+     * @var array<string,array<int,string>>
      */
     protected $tags = [];
 
@@ -47,9 +47,9 @@ class DocCommentParser
 
         $lines = explode(chr(10), $docComment);
         foreach ($lines as $line) {
-            $line = trim(preg_replace('/\*\/$/', '', $line));
+            $line = trim(preg_replace('/\*\/$/', '', $line) ?: '');
             if ($line !== '' && strpos($line, '* @') !== false) {
-                $this->parseTag(substr($line, strpos($line, '@')));
+                $this->parseTag(substr($line, strpos($line, '@') ?: 0));
             } elseif (count($this->tags) === 0) {
                 $this->description .= preg_replace('/\s*\\/?[\\\\*]*\s?(.*)$/', '$1', $line) . chr(10);
             }
@@ -60,7 +60,7 @@ class DocCommentParser
     /**
      * Returns the tags which have been previously parsed
      *
-     * @return array Array of tag names and their (multiple) values
+     * @return array<string,array<int,string>> Array of tag names and their (multiple) values
      */
     public function getTagsValues()
     {
@@ -73,7 +73,7 @@ class DocCommentParser
      * available.
      *
      * @param string $tagName The tag name to retrieve the values for
-     * @return array The tag's values
+     * @return array<int,string> The tag's values
      * @throws Exception
      */
     public function getTagValues($tagName)
@@ -116,7 +116,7 @@ class DocCommentParser
     {
         $tagAndValue = [];
         if (preg_match('/@[A-Za-z0-9\\\\]+\\\\([A-Za-z0-9]+)(?:\\((.*)\\))?$/', $line, $tagAndValue) === 0) {
-            $tagAndValue = preg_split('/\s/', $line, 2);
+            $tagAndValue = preg_split('/\s/', $line, 2) ?: [];
         } else {
             array_shift($tagAndValue);
         }

@@ -58,7 +58,7 @@ class NumberFormatter implements FormatterInterface
      *
      * @param mixed $value Formatter-specific variable to format (can be integer, \DateTime, etc)
      * @param Locale $locale Locale to use
-     * @param array $styleProperties Integer-indexed array of formatter-specific style properties (can be empty)
+     * @param array<mixed> $styleProperties Integer-indexed array of formatter-specific style properties (can be empty)
      * @return string String representation of $value provided, or (string)$value
      * @api
      */
@@ -181,12 +181,12 @@ class NumberFormatter implements FormatterInterface
      * as defined in CLDR specification.
      *
      * @param mixed $number Float or int, can be negative, can be NaN or infinite
-     * @param array $parsedFormat An array describing format (as in $parsedFormats property)
-     * @param array $symbols An array with symbols to use (as in $localeSymbols property)
+     * @param array<mixed>|false $parsedFormat An array describing format (as in $parsedFormats property)
+     * @param array<mixed> $symbols An array with symbols to use (as in $localeSymbols property)
      * @param string $currency Currency symbol to be inserted into formatted number (if applicable)
      * @return string Formatted number. Will return string-casted version of $number if pattern is false
      */
-    protected function doFormattingWithParsedFormat($number, array $parsedFormat, array $symbols, $currency = null)
+    protected function doFormattingWithParsedFormat($number, array|false $parsedFormat, array $symbols, $currency = null)
     {
         if ($parsedFormat === false) {
             return (string)$number;
@@ -232,8 +232,8 @@ class NumberFormatter implements FormatterInterface
         $integerPart = str_pad($integerPart, $parsedFormat['minIntegerDigits'], '0', STR_PAD_LEFT);
 
         if ($parsedFormat['primaryGroupingSize'] > 0 && strlen($integerPart) > $parsedFormat['primaryGroupingSize']) {
-            $primaryGroupOfIntegerPart = substr($integerPart, - $parsedFormat['primaryGroupingSize']);
-            $restOfIntegerPart = substr($integerPart, 0, - $parsedFormat['primaryGroupingSize']);
+            $primaryGroupOfIntegerPart = substr($integerPart, - (int)$parsedFormat['primaryGroupingSize']);
+            $restOfIntegerPart = substr($integerPart, 0, - (int)$parsedFormat['primaryGroupingSize']);
 
             // Pad the numbers with spaces from the left, so the length of the string is a multiply of secondaryGroupingSize (and str_split() can split on equal parts)
             $padLengthToGetEvenSize = (int)((strlen($restOfIntegerPart) + $parsedFormat['secondaryGroupingSize'] - 1) / $parsedFormat['secondaryGroupingSize']) * $parsedFormat['secondaryGroupingSize'];

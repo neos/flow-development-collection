@@ -143,7 +143,7 @@ class ObjectValidationAndDeDuplicationListener
      * Validates the given object and throws an exception if validation fails.
      *
      * @param object $object
-     * @param \SplObjectStorage $validatedInstancesContainer
+     * @param \SplObjectStorage<object,mixed> $validatedInstancesContainer
      * @return void
      * @throws ObjectValidationFailedException
      */
@@ -151,21 +151,18 @@ class ObjectValidationAndDeDuplicationListener
     {
         $className = $this->entityManager->getClassMetadata(get_class($object))->getName();
         $validator = $this->validatorResolver->getBaseValidatorConjunction($className, ['Persistence', 'Default']);
-        if ($validator === null) {
-            return;
-        }
 
         $validator->setValidatedInstancesContainer($validatedInstancesContainer);
         $validationResult = $validator->validate($object);
-        if ($validationResult->hasErrors()) {
+        if ($validationResult?->hasErrors()) {
             $errorMessages = '';
             $errorCount = 0;
-            $allErrors = $validationResult->getFlattenedErrors();
+            $allErrors = $validationResult->getFlattenedErrors() ?: [];
             foreach ($allErrors as $path => $errors) {
                 $errorMessages .= $path . ':' . PHP_EOL;
                 foreach ($errors as $error) {
                     $errorCount++;
-                    $errorMessages .= (string)$error . PHP_EOL;
+                    $errorMessages .= $error . PHP_EOL;
                 }
             }
             throw new ObjectValidationFailedException('An instance of "' . get_class($object) . '" failed to pass validation with ' . $errorCount . ' error(s): ' . PHP_EOL . $errorMessages, 1322585164);

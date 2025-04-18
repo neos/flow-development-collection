@@ -22,24 +22,24 @@ use Neos\Flow\Annotations as Flow;
 class UriTemplate
 {
     /**
-     * @var array
+     * @var array<string,mixed>
      */
     protected static $variables;
 
     /**
-     * @var array
+     * @var array<string,true>
      */
     protected static $operators = [
         '+' => true, '#' => true, '.' => true, '/' => true, ';' => true, '?' => true, '&' => true
     ];
 
     /**
-     * @var array
+     * @var array<int,string>
      */
     protected static $delimiters = [':', '/', '?', '#', '[', ']', '@', '!', '$', '&', '\'', '(', ')', '*', '+', ',', ';', '='];
 
     /**
-     * @var array
+     * @var array<int,string>
      */
     protected static $encodedDelimiters = ['%3A', '%2F', '%3F', '%23', '%5B', '%5D', '%40', '%21', '%24', '%26', '%27', '%28', '%29', '%2A', '%2B', '%2C', '%3B', '%3D'];
 
@@ -47,7 +47,7 @@ class UriTemplate
      * Expand the template string using the supplied variables
      *
      * @param string $template URI template to expand
-     * @param array $variables variables to use with the expansion
+     * @param array<string,mixed> $variables variables to use with the expansion
      * @return string
      */
     public static function expand($template, array $variables)
@@ -58,13 +58,13 @@ class UriTemplate
 
         self::$variables = $variables;
 
-        return preg_replace_callback('/\{([^\}]+)\}/', [UriTemplate::class, 'expandMatch'], $template);
+        return preg_replace_callback('/\{([^\}]+)\}/', [UriTemplate::class, 'expandMatch'], $template) ?: '';
     }
 
     /**
      * Process an expansion
      *
-     * @param array $matches matches found in preg_replace_callback
+     * @param array{1: string} $matches matches found in preg_replace_callback
      * @return string replacement string
      */
     protected static function expandMatch(array $matches)
@@ -98,7 +98,6 @@ class UriTemplate
             if (!array_key_exists($value['value'], self::$variables) || self::$variables[$value['value']] === null) {
                 continue;
             }
-
             $variable = self::$variables[$value['value']];
             $useQueryString = $queryStringShouldBeUsed;
 
@@ -106,7 +105,7 @@ class UriTemplate
                 $expanded = self::encodeArrayVariable($variable, $value, $parsed['operator'], $separator, $useQueryString);
             } else {
                 if ($value['modifier'] === ':') {
-                    $variable = substr($variable, 0, $value['position']);
+                    $variable = substr($variable, 0, $value['position'] ?? 0);
                 }
                 $expanded = rawurlencode($variable);
                 if ($parsed['operator'] === '+' || $parsed['operator'] === '#') {
@@ -137,7 +136,7 @@ class UriTemplate
      * Parse an expression into parts
      *
      * @param string $expression Expression to parse
-     * @return array associative array of parts
+     * @return array{operator: string, values: array<int,array{value: string, modifier: string, position?: int}>} associative array of parts
      */
     protected static function parseExpression($expression)
     {
@@ -169,6 +168,7 @@ class UriTemplate
             $expressionPart = $configuration;
         }
 
+        /** @phpstan-ignore return.type (values resolved by reference) */
         return [
             'operator' => $operator,
             'values' => $explodedExpression
@@ -178,8 +178,8 @@ class UriTemplate
     /**
      * Encode arrays for use in the expanded URI string
      *
-     * @param array $variable
-     * @param array $value
+     * @param array<mixed> $variable
+     * @param array<mixed> $value
      * @param string $operator
      * @param string $separator
      * @param bool $useQueryString
@@ -247,7 +247,7 @@ class UriTemplate
     /**
      * Determines if an array is associative, i.e. contains at least one key that is a string.
      *
-     * @param array $array
+     * @param array<mixed> $array
      * @return boolean
      */
     protected static function isAssociative(array $array)

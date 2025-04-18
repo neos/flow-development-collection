@@ -110,7 +110,7 @@ class ApcuBackend extends IndependentAbstractBackend implements TaggableBackendI
      *
      * @param string $entryIdentifier An identifier for this specific cache entry
      * @param string $data The data to be stored
-     * @param array $tags Tags to associate with this cache entry
+     * @param array<string> $tags Tags to associate with this cache entry
      * @param int|null $lifetime Lifetime of this cache entry in seconds. If NULL is specified, the default lifetime is used. "0" means unlimited lifetime.
      * @return void
      * @throws Exception if no cache frontend has been set.
@@ -263,7 +263,7 @@ class ApcuBackend extends IndependentAbstractBackend implements TaggableBackendI
      * Associates the identifier with the given tags
      *
      * @param string $entryIdentifier
-     * @param array $tags
+     * @param array<string> $tags
      * @return void
      */
     protected function addIdentifierToTags(string $entryIdentifier, array $tags)
@@ -391,6 +391,7 @@ class ApcuBackend extends IndependentAbstractBackend implements TaggableBackendI
      *
      * @return void
      * @api
+     * @phpstan-assert \APCUIterator $this->cacheEntriesIterator
      */
     #[\ReturnTypeWillChange]
     public function rewind()

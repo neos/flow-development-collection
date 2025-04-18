@@ -33,7 +33,7 @@ abstract class MediaTypes
     /**
      * A map of file extensions to Internet Media Types
      *
-     * @var array
+     * @var array<string,string>
      */
     private static $extensionToMediaType = [
         '3dml' => 'text/vnd.in3d.3dml',
@@ -1027,7 +1027,7 @@ abstract class MediaTypes
     /**
      * A map of Internet Media Types to file extensions
      *
-     * @var array
+     * @var array<string,array<string>>
      */
     private static $mediaTypeToFileExtension = [
         'application/andrew-inset' => ['ez'],
@@ -1821,13 +1821,13 @@ abstract class MediaTypes
      * Returns a Media Type based on the file content
      *
      * @param string $fileContent The file content do determine the media type from
-     * @return string The IANA Internet Media Type
+     * @return string|null The IANA Internet Media Type
      */
-    public static function getMediaTypeFromFileContent(string $fileContent): string
+    public static function getMediaTypeFromFileContent(string $fileContent): ?string
     {
         $fileInfo = new \finfo(FILEINFO_MIME);
-        $mediaType = self::trimMediaType($fileInfo->buffer($fileContent));
-        return isset(self::$mediaTypeToFileExtension[$mediaType]) ? $mediaType : 'application/octet-stream';
+        $mediaType = self::trimMediaType($fileInfo->buffer($fileContent) ?: '');
+        return ($mediaType === null || isset(self::$mediaTypeToFileExtension[$mediaType])) ? $mediaType : 'application/octet-stream';
     }
 
     /**
@@ -1846,7 +1846,7 @@ abstract class MediaTypes
      * Returns all possible filename extensions based on the given Media Type.
      *
      * @param string $mediaType The IANA Internet Media Type, for example "text/html"
-     * @return array The corresponding filename extensions, for example ("html", "htm")
+     * @return array<string> The corresponding filename extensions, for example ("html", "htm")
      * @api
      */
     public static function getFilenameExtensionsFromMediaType(string $mediaType): array
@@ -1867,7 +1867,7 @@ abstract class MediaTypes
      * "parameters" => an array of parameter names and values, array("charset" => "UTF-8")
      *
      * @param string $rawMediaType The raw media type, for example "application/json; charset=UTF-8"
-     * @return array An associative array with parsed information
+     * @return array{type: string, subtype: string, parameters: array<string,string>} An associative array with parsed information
      */
     public static function parseMediaType(string $rawMediaType): array
     {
@@ -1921,9 +1921,9 @@ abstract class MediaTypes
      * and subtype in the format "type/subtype".
      *
      * @param string $rawMediaType The full media type, for example "application/json; charset=UTF-8"
-     * @return string Just the type and subtype, for example "application/json"
+     * @return string|null Just the type and subtype, for example "application/json"
      */
-    public static function trimMediaType(string $rawMediaType)
+    public static function trimMediaType(string $rawMediaType): ?string
     {
         $pieces = self::parseMediaType($rawMediaType);
         return trim(sprintf('%s/%s', $pieces['type'], $pieces['subtype']), '/') ?: null;

@@ -13,8 +13,8 @@ namespace Neos\Flow\Persistence\Doctrine;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\Mapping\ClassMetadata;
 use Doctrine\ORM\QueryBuilder;
-use Doctrine\Persistence\Mapping\ClassMetadata;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Persistence\Exception\IllegalObjectTypeException;
 use Neos\Flow\Persistence\Exception\UnknownObjectException;
@@ -26,6 +26,7 @@ use Neos\Flow\Persistence\RepositoryInterface;
 /**
  * The Flow default Repository, based on Doctrine 2
  *
+ * @extends EntityRepository<object>
  * @api
  */
 abstract class Repository extends EntityRepository implements RepositoryInterface
@@ -50,7 +51,7 @@ abstract class Repository extends EntityRepository implements RepositoryInterfac
     protected $objectType;
 
     /**
-     * @var array
+     * @var array<string,QueryInterface::ORDER_ASCENDING|QueryInterface::ORDER_DESCENDING>
      */
     protected $defaultOrderings = [];
 
@@ -58,7 +59,7 @@ abstract class Repository extends EntityRepository implements RepositoryInterfac
      * Initializes a new Repository.
      *
      * @param EntityManagerInterface $entityManager The EntityManager to use.
-     * @param ClassMetadata|null $classMetadata The class descriptor.
+     * @param ClassMetadata<object>|null $classMetadata The class descriptor.
      */
     public function __construct(EntityManagerInterface $entityManager, ?ClassMetadata $classMetadata = null)
     {
@@ -70,7 +71,11 @@ abstract class Repository extends EntityRepository implements RepositoryInterfac
             }
             /** @var class-string $objectType */
             $this->objectType = $objectType;
+            /** @var ?ClassMetadata<object> $classMetadata */
             $classMetadata = $entityManager->getClassMetadata($this->objectType);
+        }
+        if (!$classMetadata) {
+            throw new \Exception('Unable to resolve class metadata for ' . $this->objectType);
         }
         parent::__construct($entityManager, $classMetadata);
         $this->entityManager = $this->_em;
@@ -97,9 +102,8 @@ abstract class Repository extends EntityRepository implements RepositoryInterfac
      */
     public function add($object): void
     {
-        if (!is_object($object) || !($object instanceof $this->objectType)) {
-            $type = (is_object($object) ? get_class($object) : gettype($object));
-            throw new IllegalObjectTypeException('The value given to add() was ' . $type . ' , however the ' . get_class($this) . ' can only store ' . $this->objectType . ' instances.', 1517408062);
+        if (!($object instanceof $this->objectType)) {
+            throw new IllegalObjectTypeException('The value given to add() was ' . get_class($object) . ' , however the ' . get_class($this) . ' can only store ' . $this->objectType . ' instances.', 1517408062);
         }
         $this->entityManager->persist($object);
     }
@@ -114,9 +118,8 @@ abstract class Repository extends EntityRepository implements RepositoryInterfac
      */
     public function remove($object): void
     {
-        if (!is_object($object) || !($object instanceof $this->objectType)) {
-            $type = (is_object($object) ? get_class($object) : gettype($object));
-            throw new IllegalObjectTypeException('The value given to remove() was ' . $type . ' , however the ' . get_class($this) . ' can only handle ' . $this->objectType . ' instances.', 1517408067);
+        if (!($object instanceof $this->objectType)) {
+            throw new IllegalObjectTypeException('The value given to remove() was ' . get_class($object) . ' , however the ' . get_class($this) . ' can only handle ' . $this->objectType . ' instances.', 1517408067);
         }
         $this->entityManager->remove($object);
     }
@@ -124,9 +127,10 @@ abstract class Repository extends EntityRepository implements RepositoryInterfac
     /**
      * Finds all entities in the repository.
      *
-     * @phpstan-ignore-next-line we don't satisfy the contract of doctrines repository as we don't return a simple array.
-     * @return QueryResultInterface The query result
+     * @return QueryResultInterface<object> The query result
      * @api
+     * (don't know how generics work here yet and ignoring method.childReturnType has no effect)
+     * @phpstan-ignore-next-line
      */
     public function findAll(): QueryResultInterface
     {
@@ -136,7 +140,7 @@ abstract class Repository extends EntityRepository implements RepositoryInterfac
     /**
      * Find all objects and return an IterableResult
      *
-     * @return iterable
+     * @return iterable<object>
      */
     public function findAllIterator(): iterable
     {
@@ -222,7 +226,7 @@ abstract class Repository extends EntityRepository implements RepositoryInterfac
      *  'bar' => \Neos\Flow\Persistence\QueryInterface::ORDER_DESCENDING
      * )
      *
-     * @param array $defaultOrderings The property names to order by by default
+     * @param array<string,QueryInterface::ORDER_ASCENDING|QueryInterface::ORDER_DESCENDING> $defaultOrderings The property names to order by by default
      * @return void
      * @api
      */
@@ -257,7 +261,7 @@ abstract class Repository extends EntityRepository implements RepositoryInterfac
      *  - countBy<PropertyName>($value, $caseSensitive = true)
      *
      * @param string $method Name of the method
-     * @param array $arguments The arguments
+     * @param array<mixed> $arguments The arguments
      * @return mixed The result of the repository method
      * @api
      */

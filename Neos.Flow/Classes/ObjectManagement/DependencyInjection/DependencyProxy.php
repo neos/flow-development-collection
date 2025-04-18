@@ -32,7 +32,7 @@ class DependencyProxy
     protected $builder;
 
     /**
-     * @var array
+     * @var array<int,mixed>
      */
     protected $propertyVariables = [];
 
@@ -91,7 +91,7 @@ class DependencyProxy
      * and returns the result of a call to the original method in the dependency
      *
      * @param string $methodName Name of the method to be called
-     * @param array $arguments An array of arguments to be passed to the method
+     * @param array<mixed> $arguments An array of arguments to be passed to the method
      * @return mixed
      */
     public function __call($methodName, array $arguments)

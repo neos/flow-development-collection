@@ -15,6 +15,7 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Package\Package;
 use Neos\Flow\Package\PackageManager;
+use TYPO3Fluid\Fluid\Core\ViewHelper\ViewHelperInterface;
 
 /**
  * Class ViewHelperResolver
@@ -49,17 +50,17 @@ class ViewHelperResolver extends \TYPO3Fluid\Fluid\Core\ViewHelper\ViewHelperRes
      * will look for classes in both namespaces starting
      * from the bottom.
      *
-     * @var array
+     * @var array<mixed>
      */
     protected $namespaces = [];
 
     /**
      * @Flow\InjectConfiguration(path="namespaces")
-     * @var array
+     * @var array<mixed>
      */
     protected $namespacesFromConfiguration;
 
-    public function initializeObject($reason)
+    public function initializeObject(int $reason): void
     {
         if ($reason === ObjectManagerInterface::INITIALIZATIONCAUSE_RECREATED) {
             return;
@@ -83,8 +84,9 @@ class ViewHelperResolver extends \TYPO3Fluid\Fluid\Core\ViewHelper\ViewHelperRes
     }
 
     /**
-     * @param string $viewHelperClassName
-     * @return \TYPO3Fluid\Fluid\Core\ViewHelper\ViewHelperInterface
+     * @template T of ViewHelperInterface
+     * @param class-string<T> $viewHelperClassName
+     * @return T
      */
     public function createViewHelperInstanceFromClassName($viewHelperClassName)
     {
@@ -125,7 +127,7 @@ class ViewHelperResolver extends \TYPO3Fluid\Fluid\Core\ViewHelper\ViewHelperRes
      * when you use this method you should always include the "f" namespace.
      *
      * @param string $identifier
-     * @param string|array $phpNamespace
+     * @param string|array<string>|null $phpNamespace
      * @return void
      */
     public function addNamespace($identifier, $phpNamespace)
@@ -149,7 +151,7 @@ class ViewHelperResolver extends \TYPO3Fluid\Fluid\Core\ViewHelper\ViewHelperRes
      * @param string $identifier
      * @param string $phpNamespace
      */
-    protected function addNamespaceInternal($identifier, $phpNamespace)
+    protected function addNamespaceInternal($identifier, $phpNamespace): void
     {
         if (!isset($this->namespaces[$identifier])) {
             $this->namespaces[$identifier] = [];

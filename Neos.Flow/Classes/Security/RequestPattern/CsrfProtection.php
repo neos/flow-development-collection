@@ -101,6 +101,9 @@ class CsrfProtection implements RequestPatternInterface
         }
 
         $controllerClassName = $this->objectManager->getClassNameByObjectName($request->getControllerObjectName());
+        if ($controllerClassName === false) {
+            throw new \Exception('Failed to resolve controller class name for ' . $request->getControllerObjectName(), 1743926779);
+        }
         $actionMethodName = $request->getControllerActionName() . 'Action';
 
         if (!$this->hasPolicyEntryForMethod($controllerClassName, $actionMethodName)) {

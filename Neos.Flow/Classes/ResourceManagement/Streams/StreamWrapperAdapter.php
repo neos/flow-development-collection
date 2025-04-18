@@ -28,7 +28,7 @@ use Neos\Flow\Reflection\ReflectionService;
 class StreamWrapperAdapter
 {
     /**
-     * @var array
+     * @var array<string,class-string<StreamWrapperInterface>> indexed by scheme
      */
     protected static $registeredStreamWrappers = [];
 
@@ -51,7 +51,6 @@ class StreamWrapperAdapter
     public static function initializeStreamWrapper($objectManager)
     {
         $streamWrapperClassNames = static::getStreamWrapperImplementationClassNames($objectManager);
-        /** @var StreamWrapperInterface $streamWrapperClassName */
         foreach ($streamWrapperClassNames as $streamWrapperClassName) {
             $scheme = $streamWrapperClassName::getScheme();
             if (in_array($scheme, stream_get_wrappers())) {
@@ -67,7 +66,7 @@ class StreamWrapperAdapter
      * earlier ones without warning.
      *
      * @param string $scheme
-     * @param string $objectName
+     * @param class-string<StreamWrapperInterface> $objectName
      * @return void
      */
     public static function registerStreamWrapper($scheme, $objectName)
@@ -78,7 +77,7 @@ class StreamWrapperAdapter
     /**
      * Returns the stream wrappers registered with this class.
      *
-     * @return array
+     * @return array<string,class-string<StreamWrapperInterface>> indexed by scheme
      */
     public static function getRegisteredStreamWrappers()
     {
@@ -226,7 +225,7 @@ class StreamWrapperAdapter
      * This method is called in response to stream_select().
      *
      * @param integer $cast_as Can be STREAM_CAST_FOR_SELECT when stream_select() is calling stream_cast() or STREAM_CAST_AS_STREAM when stream_cast() is called for other uses.
-     * @return resource Should return the underlying stream resource used by the wrapper, or false.
+     * @return resource|false Should return the underlying stream resource used by the wrapper, or false.
      */
     public function stream_cast($cast_as)
     {
@@ -401,7 +400,7 @@ class StreamWrapperAdapter
      *
      * This method is called in response to fstat().
      *
-     * @return array See http://php.net/stat
+     * @return array<string,int> See http://php.net/stat
      */
     public function stream_stat()
     {
@@ -476,7 +475,7 @@ class StreamWrapperAdapter
      *
      * @param string $path The file path or URL to stat. Note that in the case of a URL, it must be a :// delimited URL. Other URL forms are not supported.
      * @param integer $flags Holds additional flags set by the streams API.
-     * @return array Should return as many elements as stat() does. Unknown or unavailable values should be set to a rational value (usually 0).
+     * @return array<int|string, int>|false Should return as many elements as stat() does. Unknown or unavailable values should be set to a rational value (usually 0).
      */
     public function url_stat($path, $flags)
     {
@@ -488,7 +487,7 @@ class StreamWrapperAdapter
      * Returns all class names implementing the StreamWrapperInterface.
      *
      * @param ObjectManagerInterface $objectManager
-     * @return array Array of stream wrapper implementations
+     * @return array<class-string<StreamWrapperInterface>> Array of stream wrapper implementations
      * @Flow\CompileStatic
      */
     public static function getStreamWrapperImplementationClassNames(ObjectManagerInterface $objectManager)

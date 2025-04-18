@@ -92,7 +92,7 @@ class DateTimeConverter extends AbstractTypeConverter
     /**
      * If conversion is possible.
      *
-     * @param string|int|array $source
+     * @param string|int|array<mixed> $source
      * @param string $targetType
      * @return boolean
      */
@@ -101,21 +101,16 @@ class DateTimeConverter extends AbstractTypeConverter
         if (!is_callable([$targetType, 'createFromFormat'])) {
             return false;
         }
-        if (is_array($source)) {
-            return true;
-        }
-        if (is_integer($source)) {
-            return true;
-        }
-        return is_string($source);
+
+        return true;
     }
 
     /**
      * Converts $source to a \DateTime using the configured dateFormat
      *
-     * @param string|integer|array $source the string to be converted to a \DateTime object
+     * @param string|integer|array<string,mixed> $source the string to be converted to a \DateTime object
      * @param string $targetType must be "DateTime"
-     * @param array $convertedChildProperties not used currently
+     * @param array<string,mixed> $convertedChildProperties not used currently
      * @param PropertyMappingConfigurationInterface|null $configuration
      * @return \DateTimeInterface|null|Error
      * @throws InvalidPropertyMappingConfigurationException
@@ -171,7 +166,7 @@ class DateTimeConverter extends AbstractTypeConverter
         if ($date === false) {
             return new Error('The date "%s" was not recognized (for format "%s").', 1307719788, [$dateAsString, $dateFormat]);
         }
-        if (isset($source['hour'], $source['minute'], $source['second']) && is_array($source)) {
+        if (isset($source['hour'], $source['minute'], $source['second'])) {
             $date = $this->overrideTime($date, $source);
         }
         return $date;
@@ -179,7 +174,7 @@ class DateTimeConverter extends AbstractTypeConverter
 
     /**
      * Returns whether date information (day, month, year) are present as keys in $source.
-     * @param array $source
+     * @param array<string,mixed> $source
      * @return bool
      */
     protected function isDatePartKeysProvided(array $source)
@@ -215,7 +210,7 @@ class DateTimeConverter extends AbstractTypeConverter
      * Overrides hour, minute & second of the given date with the values in the $source array
      *
      * @param \DateTimeInterface $date
-     * @param array $source
+     * @param array<string,mixed> $source
      * @return \DateTimeInterface
      */
     protected function overrideTime(\DateTimeInterface $date, array $source)
@@ -223,7 +218,7 @@ class DateTimeConverter extends AbstractTypeConverter
         $hour = isset($source['hour']) ? (integer)$source['hour'] : 0;
         $minute = isset($source['minute']) ? (integer)$source['minute'] : 0;
         $second = isset($source['second']) ? (integer)$source['second'] : 0;
-        if ($date instanceof \DateTime || $date instanceof \DateTimeImmutable) {
+        if (is_callable([$date, 'setTime'])) {
             $date = $date->setTime($hour, $minute, $second);
         }
         return $date;

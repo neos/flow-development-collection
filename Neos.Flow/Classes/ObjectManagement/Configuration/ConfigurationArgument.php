@@ -49,7 +49,7 @@ class ConfigurationArgument
     /**
      * Constructor - sets the index, value and type of the argument
      *
-     * @param string $index Index of the argument
+     * @param integer $index Index of the argument
      * @param mixed $value Value of the argument
      * @param integer $type Type of the argument - one of the argument_TYPE_* constants
      */

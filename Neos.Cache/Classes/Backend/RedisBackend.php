@@ -79,7 +79,7 @@ class RedisBackend extends IndependentAbstractBackend implements TaggableBackend
     protected int $batchSize = 100000;
 
     /**
-     * @var \ArrayIterator|null
+     * @var \ArrayIterator<int,string>|null
      */
     private $entryIterator;
 
@@ -87,15 +87,13 @@ class RedisBackend extends IndependentAbstractBackend implements TaggableBackend
      * Constructs this backend
      *
      * @param EnvironmentConfiguration $environmentConfiguration
-     * @param array $options Configuration options - depends on the actual backend
+     * @param array<mixed> $options Configuration options - depends on the actual backend
      * @throws CacheException
      */
     public function __construct(EnvironmentConfiguration $environmentConfiguration, array $options)
     {
         parent::__construct($environmentConfiguration, $options);
-        if (!$this->redis instanceof \Redis) {
-            $this->redis = $this->getRedisClient();
-        }
+        $this->redis = $this->getRedisClient();
     }
 
     /**
@@ -103,7 +101,7 @@ class RedisBackend extends IndependentAbstractBackend implements TaggableBackend
      *
      * @param string $entryIdentifier An identifier for this specific cache entry
      * @param string $data The data to be stored
-     * @param array $tags Tags to associate with this cache entry. If the backend does not support tags, this option can be ignored.
+     * @param array<string> $tags Tags to associate with this cache entry. If the backend does not support tags, this option can be ignored.
      * @param integer|null $lifetime Lifetime of this cache entry in seconds. If NULL is specified, the default lifetime is used. "0" means unlimited lifetime.
      * @throws \RuntimeException
      * @throws CacheException
@@ -425,7 +423,6 @@ class RedisBackend extends IndependentAbstractBackend implements TaggableBackend
             foreach ($iterator as $entryIdentifier) {
                 $this->redis->persist($this->getPrefixedIdentifier('entry:' . $entryIdentifier));
             }
-            /** @var array|bool $result */
             $result = $this->redis->exec();
             $this->redis->set($this->getPrefixedIdentifier('frozen'), 1);
         } while ($result === false);
@@ -510,7 +507,13 @@ class RedisBackend extends IndependentAbstractBackend implements TaggableBackend
 
     private function compress(string $value): string
     {
-        return $this->useCompression() ? gzencode($value, $this->compressionLevel) : $value;
+        if ($this->useCompression()) {
+            $value = gzencode($value, $this->compressionLevel);
+            if ($value === false) {
+                throw new \RuntimeException('Failed to compress value with gzencode', 1744534319);
+            }
+        }
+        return $value;
     }
 
     private function useCompression(): bool

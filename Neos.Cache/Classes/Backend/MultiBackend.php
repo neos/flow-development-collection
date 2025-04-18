@@ -30,7 +30,13 @@ class MultiBackend extends AbstractBackend
 {
     use BackendInstantiationTrait;
 
+    /**
+     * @var array<mixed>
+     */
     protected array $backendConfigurations = [];
+    /**
+     * @var array<int,BackendInterface>
+     */
     protected array $backends = [];
     protected bool $setInAllBackends = true;
     protected bool $debug = false;
@@ -41,17 +47,15 @@ class MultiBackend extends AbstractBackend
     protected ?LoggerInterface $logger = null;
     protected ?ThrowableStorageInterface $throwableStorage = null;
 
-    public function __construct(?EnvironmentConfiguration $environmentConfiguration = null, array $options = [])
+    public function __construct(EnvironmentConfiguration $environmentConfiguration, array $options = [])
     {
         parent::__construct($environmentConfiguration, $options);
 
         if ($this->logErrors && class_exists(Bootstrap::class) && Bootstrap::$staticObjectManager instanceof ObjectManagerInterface) {
             try {
                 $logger = Bootstrap::$staticObjectManager->get(LoggerInterface::class);
-                assert($logger instanceof LoggerInterface);
                 $this->logger = $logger;
                 $throwableStorage = Bootstrap::$staticObjectManager->get(ThrowableStorageInterface::class);
-                assert($throwableStorage instanceof ThrowableStorageInterface);
                 $this->throwableStorage = $throwableStorage;
             } catch (UnknownObjectException) {
                 // Logging might not be available during compile time
@@ -78,11 +82,15 @@ class MultiBackend extends AbstractBackend
     }
 
     /**
+     * @param array<mixed> $backendOptions
      * @throws Throwable
      */
     protected function buildSubBackend(string $backendClassName, array $backendOptions): ?BackendInterface
     {
         try {
+            if ($this->cache === null) {
+                throw new \RuntimeException('Cache frontend is not yet initialized', 1744535490);
+            }
             $backend = $this->instantiateBackend($backendClassName, $backendOptions, $this->environmentConfiguration);
             $backend->setCache($this->cache);
         } catch (Throwable $throwable) {
@@ -95,6 +103,7 @@ class MultiBackend extends AbstractBackend
 
     /**
      * @throws Throwable
+     * @param array<string> $tags
      */
     public function set(string $entryIdentifier, string $data, array $tags = [], ?int $lifetime = null): void
     {
@@ -204,6 +213,7 @@ class MultiBackend extends AbstractBackend
 
     /**
      * This setter is used by AbstractBackend::setProperties()
+     * @param array<mixed> $backendConfigurations
      */
     protected function setBackendConfigurations(array $backendConfigurations): void
     {

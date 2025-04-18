@@ -11,6 +11,7 @@ namespace Neos\Flow\Reflection;
  * source code.
  */
 
+use Neos\Cache\Frontend\VariableFrontend;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Cache\CacheManager;
 use Neos\Flow\Configuration\ConfigurationManager;
@@ -62,8 +63,16 @@ class ReflectionServiceFactory
         $reflectionService = new ReflectionService();
         $reflectionService->injectLogger($this->bootstrap->getEarlyInstance(PsrLoggerFactoryInterface::class)->get('systemLogger'));
         $reflectionService->injectSettings($settings);
-        $reflectionService->setReflectionDataRuntimeCache($cacheManager->getCache('Flow_Reflection_RuntimeData'));
-        $reflectionService->setClassSchemataRuntimeCache($cacheManager->getCache('Flow_Reflection_RuntimeClassSchemata'));
+        $runtimeDataCache = $cacheManager->getCache('Flow_Reflection_RuntimeData');
+        if (!$runtimeDataCache instanceof VariableFrontend) {
+            throw new \Exception('Cache Flow_Reflection_RuntimeData must have a VariableFrontend', 1743972055);
+        }
+        $reflectionService->setReflectionDataRuntimeCache($runtimeDataCache);
+        $runtimeClassSchemataCache = $cacheManager->getCache('Flow_Reflection_RuntimeClassSchemata');
+        if (!$runtimeClassSchemataCache instanceof VariableFrontend) {
+            throw new \Exception('Cache Flow_Reflection_RuntimeClassSchemata must have a VariableFrontend', 1743972058);
+        }
+        $reflectionService->setClassSchemataRuntimeCache($runtimeClassSchemataCache);
 
         $this->reflectionService = $reflectionService;
         return $reflectionService;

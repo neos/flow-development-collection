@@ -29,12 +29,13 @@ class LastOperation extends AbstractOperation
      * {@inheritdoc}
      *
      * @param FlowQuery $flowQuery the FlowQuery object
-     * @param array $arguments Ignored for this operation
+     * @param array<mixed> $arguments Ignored for this operation
      * @return void
      */
     public function evaluate(FlowQuery $flowQuery, array $arguments)
     {
         $context = $flowQuery->getContext();
+        $context = $context instanceof \Traversable ? iterator_to_array($context) : $context;
         if (count($context) > 0) {
             $flowQuery->setContext([end($context)]);
         } else {

@@ -16,6 +16,7 @@ namespace Neos\Flow\I18n\Cldr\Reader;
 use Neos\Flow\Annotations as Flow;
 use Neos\Cache\Frontend\VariableFrontend;
 use Neos\Flow\I18n\Cldr\CldrRepository;
+use Neos\Flow\I18n\Cldr\Reader\Exception\InvalidPluralRuleException;
 use Neos\Flow\I18n\Locale;
 
 /**
@@ -86,7 +87,7 @@ class PluralsReader
      *   subrule in chain. If current subrule is a last one (or only one), this
      *   element is set to false.
      *
-     * @var array
+     * @var array<mixed>
      */
     protected $rulesets;
 
@@ -94,7 +95,7 @@ class PluralsReader
      * An associative array holding information which ruleset is used by given
      * locale. One or more locales can use the same ruleset.
      *
-     * @var array
+     * @var array<mixed>
      */
     protected $rulesetsIndices;
 
@@ -223,7 +224,7 @@ class PluralsReader
      * Returns array of plural forms available for particular locale.
      *
      * @param Locale $locale Locale to return plural forms for
-     * @return array Plural forms' names (one, zero, two, few, many, other) available for language set in this model
+     * @return array<mixed> Plural forms' names (one, zero, two, few, many, other) available for language set in this model
      */
     public function getPluralForms(Locale $locale): array
     {
@@ -254,6 +255,9 @@ class PluralsReader
     protected function generateRulesets(): void
     {
         $model = $this->cldrRepository->getModel('supplemental/plurals');
+        if (!$model) {
+            throw new InvalidPluralRuleException('Missing plural rule model for supplemental/plurals', 1744411434);
+        }
         $pluralRulesSet = $model->getRawArray('plurals');
 
         $index = 0;
@@ -300,7 +304,7 @@ class PluralsReader
      * $rulesets property for details).
      *
      * @param string $rule
-     * @return array Parsed rule
+     * @return array<mixed> Parsed rule
      * @throws Exception\InvalidPluralRuleException When plural rule does not match regexp pattern
      */
     protected function parseRule(string $rule): array
@@ -319,12 +323,12 @@ class PluralsReader
 
                 $condition = [$matchedSubrule[3], (int)$matchedSubrule[4]];
                 if (!in_array($matchedSubrule[3], ['is', 'isnot'], true)) {
-                    $condition[2] = (int)$matchedSubrule[5];
+                    $condition[2] = (int)($matchedSubrule[5] ?? 0);
                 }
 
                 $subrule['condition'] = $condition;
 
-                if (isset($matchedSubrule[6]) && ($matchedSubrule[6] === 'and' || $matchedSubrule[6] === 'or')) {
+                if (isset($matchedSubrule[6])) {
                     $subrule['logicalOperator'] = $matchedSubrule[6];
                 } else {
                     $subrule['logicalOperator'] = false;

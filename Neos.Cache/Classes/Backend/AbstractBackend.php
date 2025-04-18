@@ -28,18 +28,18 @@ abstract class AbstractBackend implements BackendInterface
 
     /**
      * Reference to the cache frontend which uses this backend
-     * @var FrontendInterface
+     * @var ?FrontendInterface
      */
     protected $cache;
 
     /**
-     * @var string
+     * @var ?string
      */
     protected $cacheIdentifier;
 
     /**
-     * A prefix to seperate stored by appliaction context and cache
-     * @var string
+     * A prefix to separate stored by application context and cache
+     * @var ?string
      */
     protected $identifierPrefix;
 
@@ -58,20 +58,17 @@ abstract class AbstractBackend implements BackendInterface
      * Constructs this backend
      *
      * @param EnvironmentConfiguration $environmentConfiguration
-     * @param array $options Configuration options - depends on the actual backend
+     * @param array<mixed> $options Configuration options - depends on the actual backend
      * @api
      */
-    public function __construct(?EnvironmentConfiguration $environmentConfiguration = null, array $options = [])
+    public function __construct(EnvironmentConfiguration $environmentConfiguration, array $options = [])
     {
         $this->environmentConfiguration = $environmentConfiguration;
-
-        if (is_array($options) || $options instanceof \Iterator) {
-            $this->setProperties($options);
-        }
+        $this->setProperties($options);
     }
 
     /**
-     * @param array $properties
+     * @param array<mixed> $properties
      * @param boolean $throwExceptionIfPropertyNotSettable
      * @return void
      * @throws \InvalidArgumentException
@@ -117,7 +114,7 @@ abstract class AbstractBackend implements BackendInterface
     {
         $this->cache = $cache;
         $this->cacheIdentifier = $this->cache->getIdentifier();
-        $applicationIdentifier = $this->environmentConfiguration instanceof EnvironmentConfiguration ? $this->environmentConfiguration->getApplicationIdentifier() : '';
+        $applicationIdentifier = $this->environmentConfiguration->getApplicationIdentifier();
         $this->identifierPrefix = md5($applicationIdentifier) . ':' . $this->cacheIdentifier . ':';
     }
 

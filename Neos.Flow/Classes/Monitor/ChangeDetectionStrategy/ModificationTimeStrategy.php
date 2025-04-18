@@ -31,7 +31,7 @@ class ModificationTimeStrategy implements ChangeDetectionStrategyInterface, Stra
     protected $cache;
 
     /**
-     * @var array
+     * @var array<string,int>
      */
     protected $filesAndModificationTimes = [];
 
@@ -61,7 +61,7 @@ class ModificationTimeStrategy implements ChangeDetectionStrategyInterface, Stra
     public function setFileMonitor(FileMonitor $fileMonitor)
     {
         $this->fileMonitor = $fileMonitor;
-        $this->filesAndModificationTimes = json_decode($this->cache->get($this->fileMonitor->getIdentifier() . '_filesAndModificationTimes'), true);
+        $this->filesAndModificationTimes = json_decode($this->cache->get($this->fileMonitor->getIdentifier() . '_filesAndModificationTimes') ?: '', true, flags: JSON_THROW_ON_ERROR);
     }
 
     /**
@@ -120,7 +120,7 @@ class ModificationTimeStrategy implements ChangeDetectionStrategyInterface, Stra
     public function shutdownObject()
     {
         if ($this->modificationTimesChanged === true) {
-            $this->cache->set($this->fileMonitor->getIdentifier() . '_filesAndModificationTimes', json_encode($this->filesAndModificationTimes));
+            $this->cache->set($this->fileMonitor->getIdentifier() . '_filesAndModificationTimes', json_encode($this->filesAndModificationTimes, JSON_THROW_ON_ERROR));
         }
     }
 }

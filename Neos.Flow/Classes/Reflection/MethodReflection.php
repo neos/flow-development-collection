@@ -21,7 +21,7 @@ use Neos\Flow\Annotations as Flow;
 class MethodReflection extends \ReflectionMethod
 {
     /**
-     * @var DocCommentParser An instance of the doc comment parser
+     * @var ?DocCommentParser An instance of the doc comment parser
      */
     protected $docCommentParser;
 
@@ -66,7 +66,7 @@ class MethodReflection extends \ReflectionMethod
     /**
      * Returns an array of tags and their values
      *
-     * @return array Tags and values
+     * @return array<string,array<int,string>> Tags and values
      */
     public function getTagsValues()
     {
@@ -77,7 +77,7 @@ class MethodReflection extends \ReflectionMethod
      * Returns the values of the specified tag
      *
      * @param string $tag Tag name to check for
-     * @return array Values of the given tag
+     * @return array<int,string> Values of the given tag
      */
     public function getTagValues($tag)
     {
@@ -99,9 +99,6 @@ class MethodReflection extends \ReflectionMethod
      */
     public function getDeclaredReturnType()
     {
-        if (!is_callable([$this, 'getReturnType'])) {
-            return null;
-        }
         $type = $this->getReturnType();
         return $type !== null ? ltrim((string)$type, '?') : null;
     }
@@ -111,9 +108,6 @@ class MethodReflection extends \ReflectionMethod
      */
     public function isDeclaredReturnTypeNullable()
     {
-        if (!is_callable([$this, 'getReturnType'])) {
-            return false;
-        }
         $type = $this->getReturnType();
         return $type !== null && $type->allowsNull();
     }
@@ -127,8 +121,11 @@ class MethodReflection extends \ReflectionMethod
     protected function getDocCommentParser()
     {
         if (!is_object($this->docCommentParser)) {
-            $this->docCommentParser = new DocCommentParser;
-            $this->docCommentParser->parseDocComment($this->getDocComment());
+            $this->docCommentParser = new DocCommentParser();
+            $docComment = $this->getDocComment();
+            if ($docComment) {
+                $this->docCommentParser->parseDocComment($docComment);
+            }
         }
         return $this->docCommentParser;
     }

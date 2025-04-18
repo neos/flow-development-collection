@@ -128,79 +128,86 @@ class Result
     /**
      * Get all errors in the current Result object (non-recursive)
      *
-     * @param string $messageTypeFilter if specified only errors implementing the given class are returned
+     * @template T of Error
+     * @param class-string<T>|null $messageTypeFilter if specified only errors implementing the given class are returned
      * @return array<Error>
      * @api
      */
     public function getErrors(?string $messageTypeFilter = null): array
     {
-        return $this->filterMessages($this->errors, $messageTypeFilter);
+        return $this->filterMessages($this->errors, $messageTypeFilter ?: Error::class);
     }
 
     /**
      * Get all warnings in the current Result object (non-recursive)
      *
-     * @param string $messageTypeFilter if specified only warnings implementing the given class are returned
+     * @template T of Warning
+     * @param class-string<T>|null $messageTypeFilter if specified only warnings implementing the given class are returned
      * @return array<Warning>
      * @api
      */
     public function getWarnings(?string $messageTypeFilter = null): array
     {
-        return $this->filterMessages($this->warnings, $messageTypeFilter);
+        return $this->filterMessages($this->warnings, $messageTypeFilter ?: Warning::class);
     }
 
     /**
      * Get all notices in the current Result object (non-recursive)
      *
-     * @param string $messageTypeFilter if specified only notices implementing the given class are returned
+     * @template T of Notice
+     * @param class-string<T>|null $messageTypeFilter if specified only notices implementing the given class are returned
      * @return array<Notice>
      * @api
      */
     public function getNotices(?string $messageTypeFilter = null): array
     {
-        return $this->filterMessages($this->notices, $messageTypeFilter);
+        return $this->filterMessages($this->notices, $messageTypeFilter ?: Notice::class);
     }
 
     /**
      * Get the first error object of the current Result object (non-recursive)
      *
-     * @param string $messageTypeFilter if specified only errors implementing the given class are considered
-     * @return Error
+     * @template T of Error
+     * @param class-string<T>|null $messageTypeFilter if specified only errors implementing the given class are considered
+     * @return ($messageTypeFilter is null ? ?Error : ?T)
      * @api
      */
     public function getFirstError(?string $messageTypeFilter = null)
     {
         $matchingErrors = $this->filterMessages($this->errors, $messageTypeFilter);
-        reset($matchingErrors);
-        return current($matchingErrors);
+        $result = reset($matchingErrors);
+
+        return $result instanceof Error ? $result : null;
     }
 
     /**
      * Get the first warning object of the current Result object (non-recursive)
      *
-     * @param string $messageTypeFilter if specified only warnings implementing the given class are considered
-     * @return Warning
+     * @template T of Warning
+     * @param ?class-string<T> $messageTypeFilter if specified only warnings implementing the given class are considered
+     * @return ($messageTypeFilter is null ? ?Warning : ?T)
      * @api
      */
     public function getFirstWarning(?string $messageTypeFilter = null)
     {
-        $matchingWarnings = $this->filterMessages($this->warnings, $messageTypeFilter);
+        $matchingWarnings = $this->filterMessages($this->warnings, $messageTypeFilter ?: Warning::class);
         reset($matchingWarnings);
-        return current($matchingWarnings);
+        return current($matchingWarnings) ?: null;
     }
 
     /**
      * Get the first notice object of the current Result object (non-recursive)
      *
-     * @param string $messageTypeFilter if specified only notices implementing the given class are considered
-     * @return Notice
+     * @template T of Notice
+     * @param ?class-string<T> $messageTypeFilter if specified only notices implementing the given class are considered
+     * @return ($messageTypeFilter is null ? ?Notice : ?T)
      * @api
      */
     public function getFirstNotice(?string $messageTypeFilter = null)
     {
-        $matchingNotices = $this->filterMessages($this->notices, $messageTypeFilter);
+        $matchingNotices = $this->filterMessages($this->notices, $messageTypeFilter ?: Notice::class);
         reset($matchingNotices);
-        return current($matchingNotices);
+        return current($matchingNotices) ?: null;
     }
 
     /**
@@ -232,7 +239,7 @@ class Result
     /**
      * Internal use only!
      *
-     * @param array $pathSegments
+     * @param array<string> $pathSegments
      * @return Result
      */
     public function recurseThroughResult(array $pathSegments): Result
@@ -249,7 +256,6 @@ class Result
             $this->propertyResults[$propertyName] = $newResult;
         }
 
-        /** @var Result $result */
         $result = $this->propertyResults[$propertyName];
         return $result->recurseThroughResult($pathSegments);
     }
@@ -360,8 +366,9 @@ class Result
      * where the key is the property path where the error occurred, and the
      * value is a list of all errors (stored as array)
      *
-     * @param string $type
-     * @return array<string, array<int, Error>>
+     * @template T of Error
+     * @param class-string<T> $type
+     * @return array<string, array<int, T>>
      * @api
      */
     public function getFlattenedErrorsOfType(string $type): array
@@ -404,11 +411,11 @@ class Result
     /**
      * Flatten a tree of Result objects, based on a certain property.
      *
+     * @template T of Message
      * @param string $propertyName
-     * @param array $result The current result to be flattened
-     * @param array $level The property path in the format array('level1', 'level2', ...) for recursion
-     * @param string $messageTypeFilter If specified only messages implementing the given class name are taken into account
-     * @param-out array<string, array<int, mixed>> $result
+     * @param array<mixed> $result The current result to be flattened
+     * @param array<string> $level The property path in the format array('level1', 'level2', ...) for recursion
+     * @param ?class-string<T> $messageTypeFilter $messageTypeFilter If specified only messages implementing the given class name are taken into account
      * @return void
      */
     public function flattenTree(string $propertyName, array &$result, array $level = [], ?string $messageTypeFilter = null)
@@ -417,7 +424,6 @@ class Result
             $propertyPath = implode('.', $level);
             $result[$propertyPath] = $this->filterMessages($this->$propertyName, $messageTypeFilter);
         }
-        /** @var Result $subResult */
         foreach ($this->propertyResults as $subPropertyName => $subResult) {
             array_push($level, $subPropertyName);
             $subResult->flattenTree($propertyName, $result, $level, $messageTypeFilter);
@@ -426,9 +432,10 @@ class Result
     }
 
     /**
-     * @param Message[] $messages an array of Message instances to filter
-     * @param string $messageTypeFilter If specified only messages implementing the given class name are taken into account
-     * @return array the filtered message instances
+     * @template T of Message
+     * @param array<Message> $messages an array of Message instances to filter
+     * @param ?class-string<T> $messageTypeFilter If specified only messages implementing the given class name are taken into account
+     * @return ($messageTypeFilter is null ? array<Message> : array<T>) array the filtered message instances
      */
     protected function filterMessages(array $messages, ?string $messageTypeFilter = null): array
     {

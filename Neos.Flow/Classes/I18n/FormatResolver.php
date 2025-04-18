@@ -58,7 +58,7 @@ class FormatResolver
     /**
      * Array of concrete formatters used by this class.
      *
-     * @var array<FormatterInterface>
+     * @var array<string,FormatterInterface>
      */
     protected $formatters;
 
@@ -91,7 +91,7 @@ class FormatResolver
      * specific and they are directly passed to the formatter class.
      *
      * @param string $textWithPlaceholders String message with placeholder(s)
-     * @param array $arguments An array of values to replace placeholders with
+     * @param array<string,mixed> $arguments An array of values to replace placeholders with
      * @param Locale $locale Locale to use (NULL for default one)
      * @return string The $text with placeholders resolved
      * @throws Exception\InvalidFormatPlaceholderException When encountered incorrectly formatted placeholder
@@ -169,8 +169,14 @@ class FormatResolver
         if ($foundFormatter === false) {
             if ($this->objectManager->isRegistered($formatterType)) {
                 $possibleClassName = $formatterType;
+                if (!class_exists($possibleClassName)) {
+                    throw new \Exception('Invalid formatter ' . $possibleClassName, 1744413028);
+                }
             } else {
                 $possibleClassName = sprintf('Neos\Flow\I18n\Formatter\%sFormatter', ucfirst($formatterType));
+                if (!class_exists($possibleClassName)) {
+                    throw new \Exception('Invalid formatter ' . $possibleClassName, 1744413028);
+                }
                 if (!$this->objectManager->isRegistered($possibleClassName)) {
                     throw new Exception\UnknownFormatterException('Could not find formatter for "' . $formatterType . '".', 1278057791);
                 }
@@ -179,6 +185,9 @@ class FormatResolver
                 throw new Exception\InvalidFormatterException(sprintf('The resolved internationalization formatter class name "%s" does not implement "%s" as required.', $possibleClassName, FormatterInterface::class), 1358162557);
             }
             $foundFormatter = $this->objectManager->get($possibleClassName);
+        }
+        if (!$foundFormatter instanceof FormatterInterface) {
+            throw new \Exception('No valid formatter found, got ' . get_class($foundFormatter), 1744412948);
         }
 
         $this->formatters[$formatterType] = $foundFormatter;

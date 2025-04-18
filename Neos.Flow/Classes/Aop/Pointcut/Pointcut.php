@@ -41,13 +41,13 @@ class Pointcut implements PointcutFilterInterface
 
     /**
      * If this pointcut is based on a pointcut declaration, contains the name of the aspect class where the pointcut was declared
-     * @var string
+     * @var class-string
      */
-    protected $aspectClassName;
+    protected string $aspectClassName;
 
     /**
      * If this pointcut is based on a pointcut declaration, contains the name of the method acting as the pointcut identifier
-     * @var string
+     * @var ?string
      */
     protected $pointcutMethodName;
 
@@ -68,8 +68,8 @@ class Pointcut implements PointcutFilterInterface
      *
      * @param string $pointcutExpression A pointcut expression which configures the pointcut
      * @param PointcutFilterComposite $pointcutFilterComposite
-     * @param string $aspectClassName The name of the aspect class where the pointcut was declared (either explicitly or from an advice's pointcut expression)
-     * @param string $pointcutMethodName (optional) If the pointcut is created from a pointcut declaration, the name of the method declaring the pointcut must be passed
+     * @param class-string $aspectClassName The name of the aspect class where the pointcut was declared (either explicitly or from an advice's pointcut expression)
+     * @param ?string $pointcutMethodName (optional) If the pointcut is created from a pointcut declaration, the name of the method declaring the pointcut must be passed
      */
     public function __construct(string $pointcutExpression, PointcutFilterComposite $pointcutFilterComposite, string $aspectClassName, ?string $pointcutMethodName = null)
     {
@@ -83,9 +83,9 @@ class Pointcut implements PointcutFilterInterface
      * Checks if the given class and method match this pointcut.
      * Before each match run, reset() must be called to reset the circular references guard.
      *
-     * @param string $className Class to check against
-     * @param string $methodName Method to check against
-     * @param string $methodDeclaringClassName Name of the class the method was originally declared in
+     * @param class-string $className Class to check against
+     * @param ?string $methodName Method to check against
+     * @param ?class-string $methodDeclaringClassName Name of the class the method was originally declared in
      * @param mixed $pointcutQueryIdentifier Some identifier for this query - must at least differ from a previous identifier. Used for circular reference detection.
      * @return boolean true if class and method match this point cut, otherwise false
      * @throws CircularPointcutReferenceException if a circular pointcut reference was detected
@@ -119,7 +119,7 @@ class Pointcut implements PointcutFilterInterface
     /**
      * Returns the aspect class name where the pointcut was declared.
      *
-     * @return string The aspect class name where the pointcut was declared
+     * @return class-string The aspect class name where the pointcut was declared
      */
     public function getAspectClassName(): string
     {
@@ -129,9 +129,9 @@ class Pointcut implements PointcutFilterInterface
     /**
      * Returns the pointcut method name (if any was defined)
      *
-     * @return string The pointcut method name
+     * @return ?string The pointcut method name
      */
-    public function getPointcutMethodName(): string
+    public function getPointcutMethodName(): ?string
     {
         return $this->pointcutMethodName;
     }
@@ -149,7 +149,7 @@ class Pointcut implements PointcutFilterInterface
     /**
      * Returns runtime evaluations for the pointcut.
      *
-     * @return array Runtime evaluations
+     * @return array<mixed> Runtime evaluations
      */
     public function getRuntimeEvaluationsDefinition(): array
     {

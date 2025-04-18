@@ -54,7 +54,7 @@ class Cookie
     protected $name;
 
     /**
-     * @var string
+     * @var mixed
      */
     protected $value;
 
@@ -66,13 +66,13 @@ class Cookie
 
     /**
      * Number of seconds until the cookie expires (RFC 6265, 4.1.2.2)
-     * @var integer
+     * @var ?integer
      */
     protected $maximumAge;
 
     /**
      * Hosts to which this cookie will be sent (RFC 6265, 4.1.2.3)
-     * @var string
+     * @var ?string
      */
     protected $domain;
 
@@ -113,9 +113,9 @@ class Cookie
      *
      * @param string $name The cookie name as a valid token (RFC 2616)
      * @param mixed $value The value to store in the cookie. Must be possible to cast into a string.
-     * @param integer|\DateTime $expires Date and time after which this cookie expires.
-     * @param integer $maximumAge Number of seconds until the cookie expires.
-     * @param string $domain The host to which the user agent will send this cookie
+     * @param integer|\DateTimeInterface $expires Date and time after which this cookie expires.
+     * @param ?integer $maximumAge Number of seconds until the cookie expires.
+     * @param ?string $domain The host to which the user agent will send this cookie
      * @param string $path The path describing the scope of this cookie
      * @param boolean $secure If this cookie should only be sent through a "secure" channel by the user agent
      * @param boolean $httpOnly If this cookie should only be used through the HTTP protocol
@@ -123,24 +123,21 @@ class Cookie
      * @api
      * @throws \InvalidArgumentException
      */
-    public function __construct($name, $value = null, $expires = 0, $maximumAge = null, $domain = null, $path = '/', $secure = false, $httpOnly = true, $sameSite = null)
+    public function __construct($name, $value = null, int|\DateTimeInterface $expires = 0, ?int $maximumAge = null, $domain = null, $path = '/', $secure = false, $httpOnly = true, $sameSite = null)
     {
         if (preg_match(self::PATTERN_TOKEN, $name) !== 1) {
             throw new \InvalidArgumentException('The parameter "name" passed to the Cookie constructor must be a valid token as per RFC 2616, Section 2.2.', 1345101977);
         }
-        if ($expires instanceof \Datetime) {
+        if ($expires instanceof \DateTimeInterface) {
             $expires = $expires->getTimestamp();
         }
-        if (!is_int($expires)) {
-            throw new \InvalidArgumentException('The parameter "expires" passed to the Cookie constructor must be a unix timestamp or a DateTime object.', 1345108785);
-        }
-        if ($maximumAge !== null && !is_int($maximumAge)) {
+        if ($maximumAge !== null) {
             throw new \InvalidArgumentException('The parameter "maximumAge" passed to the Cookie constructor must be an integer value.', 1345108786);
         }
         if ($domain !== null && preg_match(self::PATTERN_DOMAIN, $domain) !== 1) {
             throw new \InvalidArgumentException('The parameter "domain" passed to the Cookie constructor must be a valid domain as per RFC 6265, Section 4.1.2.3.', 1345116246);
         }
-        if ($path !== null && preg_match(self::PATTERN_PATH, $path) !== 1) {
+        if (preg_match(self::PATTERN_PATH, $path) !== 1) {
             throw new \InvalidArgumentException('The parameter "path" passed to the Cookie constructor must be a valid path as per RFC 6265, Section 4.1.1.', 1345123078);
         }
 
@@ -329,7 +326,7 @@ class Cookie
     /**
      * Returns the domain this cookie is valid for.
      *
-     * @return string The domain name
+     * @return ?string The domain name
      * @api
      */
     public function getDomain()

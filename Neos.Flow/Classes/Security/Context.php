@@ -95,7 +95,7 @@ class Context
     protected $csrfProtectionStrategy = self::CSRF_ONE_PER_SESSION;
 
     /**
-     * @var array
+     * @var array<int,string>
      */
     protected $tokenStatusLabels = [
         1 => 'no credentials given',
@@ -149,7 +149,7 @@ class Context
 
     /**
      * CSRF tokens that are valid during this request but will be gone after.
-     * @var array
+     * @var array<string,bool>
      */
     protected $csrfTokensRemovedAfterCurrentRequest = [];
 
@@ -193,7 +193,7 @@ class Context
      * Array of registered global objects that can be accessed as operands
      *
      * @Flow\InjectConfiguration("aop.globalObjects")
-     * @var array
+     * @var array<string,string>
      */
     protected $globalObjects = [];
 
@@ -253,7 +253,7 @@ class Context
     /**
      * Injects the configuration settings
      *
-     * @param array $settings
+     * @param array<string,mixed> $settings
      * @return void
      * @throws Exception
      */
@@ -624,7 +624,7 @@ class Context
 
     /**
      * @param Account $account
-     * @return array
+     * @return array<string,Role>
      */
     protected function collectRolesAndParentRolesFromAccount(Account $account): array
     {
@@ -640,7 +640,7 @@ class Context
 
     /**
      * @param Role $role
-     * @return array
+     * @return array<string,Role>
      */
     protected function collectParentRoles(Role $role): array
     {
@@ -692,6 +692,9 @@ class Context
             if (isset($requestPatternsByType[$patternType]) && $requestPatternsByType[$patternType] === true) {
                 continue;
             }
+            if (!$this->request) {
+                throw new \Exception('Cannot evaluate request pattern without a request', 1743927165);
+            }
             $requestPatternsByType[$patternType] = $requestPattern->matchRequest($this->request);
         }
         return !in_array(false, $requestPatternsByType, true);
@@ -704,7 +707,7 @@ class Context
      *
      * @param array<TokenInterface> $managerTokens Array of tokens provided by the authentication manager
      * @param array<TokenInterface> $sessionTokens Array of tokens restored from the session
-     * @return array Array of Authentication\TokenInterface objects
+     * @return array<string,TokenInterface> Array of Authentication\TokenInterface objects
      */
     protected function mergeTokens(array $managerTokens, array $sessionTokens)
     {
@@ -848,6 +851,7 @@ class Context
         $this->withoutAuthorizationChecks(function () use (&$contextHashSoFar) {
             foreach ($this->globalObjects as $globalObjectsRegisteredClassName) {
                 if (is_subclass_of($globalObjectsRegisteredClassName, CacheAwareInterface::class)) {
+                    /** @var class-string<CacheAwareInterface> $globalObjectsRegisteredClassName */
                     $globalObject = $this->objectManager->get($globalObjectsRegisteredClassName);
                     $contextHashSoFar .= '<' . $globalObject->getCacheEntryIdentifier();
                 }

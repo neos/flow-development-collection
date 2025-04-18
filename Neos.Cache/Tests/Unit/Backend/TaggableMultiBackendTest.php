@@ -5,7 +5,7 @@ namespace Neos\Cache\Tests\Unit\Backend;
 
 include_once(__DIR__ . '/../../BaseTestCase.php');
 
-use Neos\Cache\Backend\NullBackend;
+use Neos\Cache\Backend\TaggableBackendInterface;
 use Neos\Cache\Backend\TaggableMultiBackend;
 use Neos\Cache\EnvironmentConfiguration;
 use Neos\Cache\Tests\BaseTestCase;
@@ -17,7 +17,7 @@ class TaggableMultiBackendTest extends BaseTestCase
      */
     public function flushByTagReturnsCountOfFlushedEntries(): void
     {
-        $mockBuilder = $this->getMockBuilder(NullBackend::class);
+        $mockBuilder = $this->getMockBuilder(TaggableBackendInterface::class);
         $firstNullBackendMock = $mockBuilder->getMock();
         $secondNullBackendMock = $mockBuilder->getMock();
         $thirdNullBackendMock = $mockBuilder->getMock();

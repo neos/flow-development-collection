@@ -36,7 +36,7 @@ abstract class AbstractWidgetController extends ActionController
     /**
      * Configuration for this widget.
      *
-     * @var array
+     * @var array<mixed>
      * @api
      */
     protected $widgetConfiguration;
@@ -60,7 +60,6 @@ abstract class AbstractWidgetController extends ActionController
      */
     public function processRequest(ActionRequest $request): ResponseInterface
     {
-        /** @var WidgetContext $widgetContext */
         $widgetContext = $request->getInternalArgument('__widgetContext');
         if (!$widgetContext instanceof WidgetContext) {
             throw new WidgetContextNotFoundException('The widget context could not be found in the request.', 1307450180);

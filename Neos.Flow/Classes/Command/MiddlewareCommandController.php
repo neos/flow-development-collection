@@ -22,7 +22,7 @@ final class MiddlewareCommandController extends CommandController
 {
     /**
      * @Flow\InjectConfiguration(path="http.middlewares")
-     * @var array
+     * @var array<mixed>
      */
     protected $chainConfiguration;
 

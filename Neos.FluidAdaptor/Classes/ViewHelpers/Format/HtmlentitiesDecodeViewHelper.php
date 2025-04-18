@@ -79,7 +79,7 @@ class HtmlentitiesDecodeViewHelper extends AbstractViewHelper
     /**
      * Applies html_entity_decode() on the specified value.
      *
-     * @param array $arguments
+     * @param array<string,mixed> $arguments
      * @param \Closure $renderChildrenClosure
      * @param RenderingContextInterface $renderingContext
      * @return string|mixed

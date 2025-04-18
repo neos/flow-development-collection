@@ -133,7 +133,7 @@ class SimpleCache implements CacheInterface
     }
 
     /**
-     * @param iterable $keys
+     * @param iterable<string> $keys
      * @param mixed $default
      * @return iterable<string, mixed>
      * @throws InvalidArgumentException
@@ -149,7 +149,7 @@ class SimpleCache implements CacheInterface
     }
 
     /**
-     * @param iterable $values
+     * @param iterable<string> $values
      * @param null|int|\DateInterval $ttl
      * @return bool
      * @throws Exception
@@ -171,7 +171,7 @@ class SimpleCache implements CacheInterface
     }
 
     /**
-     * @param iterable $keys
+     * @param iterable<string> $keys
      * @return bool
      * @throws InvalidArgumentException
      * @throws Exception
@@ -180,7 +180,7 @@ class SimpleCache implements CacheInterface
     {
         foreach ($keys as $key) {
             $this->delete($key);
-        };
+        }
 
         return true;
     }

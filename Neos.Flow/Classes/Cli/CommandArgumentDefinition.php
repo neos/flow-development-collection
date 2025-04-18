@@ -62,7 +62,7 @@ class CommandArgumentDefinition
     public function getDashedName(): string
     {
         $dashedName = ucfirst($this->name);
-        $dashedName = preg_replace('/([A-Z][a-z0-9]+)/', '$1-', $dashedName);
+        $dashedName = preg_replace('/([A-Z][a-z0-9]+)/', '$1-', $dashedName) ?: '';
         return '--' . strtolower(substr($dashedName, 0, -1));
     }
 

@@ -13,6 +13,7 @@ namespace Neos\Flow\Security\Authorization;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
+use Neos\Flow\Security\Authorization\Privilege\Parameter\PrivilegeParameterInterface;
 use Neos\Flow\Security\Authorization\Privilege\PrivilegeInterface;
 use Neos\Flow\Security\Context;
 use Neos\Flow\Security\Policy\Role;
@@ -111,7 +112,7 @@ class PrivilegeManager implements PrivilegeManagerInterface
      * Returns true if access is granted on the given privilege target in the current security context
      *
      * @param string $privilegeTargetIdentifier The identifier of the privilege target to decide on
-     * @param array $privilegeParameters Optional array of privilege parameters (simple key => value array)
+     * @param array<PrivilegeParameterInterface> $privilegeParameters Optional array of privilege parameters (simple key => value array)
      * @return boolean true if access is granted, false otherwise
      */
     public function isPrivilegeTargetGranted($privilegeTargetIdentifier, array $privilegeParameters = [])
@@ -124,7 +125,7 @@ class PrivilegeManager implements PrivilegeManagerInterface
      *
      * @param array<Role> $roles The roles that should be evaluated
      * @param string $privilegeTargetIdentifier The identifier of the privilege target to decide on
-     * @param array $privilegeParameters Optional array of privilege parameters (simple key => value array)
+     * @param array<PrivilegeParameterInterface> $privilegeParameters Optional array of privilege parameters (simple key => value array)
      * @return boolean true if access is granted, false otherwise
      */
     public function isPrivilegeTargetGrantedForRoles(array $roles, $privilegeTargetIdentifier, array $privilegeParameters = [])
@@ -134,7 +135,6 @@ class PrivilegeManager implements PrivilegeManagerInterface
         };
 
         $privileges = array_map($privilegeMapper, $roles);
-        /** @var PrivilegePermissionResult $result */
         $result = array_reduce($privileges, [$this, 'applyPrivilegeToResult'], new PrivilegePermissionResult());
 
         if ($result->getDenies() === 0 && $result->getGrants() > 0) {

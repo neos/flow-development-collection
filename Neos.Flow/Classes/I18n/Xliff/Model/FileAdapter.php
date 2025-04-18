@@ -29,6 +29,8 @@ use Psr\Log\LoggerInterface;
  * numbers. Leaving it this way in .xlf files, makes it possible to easily convert
  * them to .po (e.g. using xliff2po from Translation Toolkit), edit with Poedit,
  * and convert back to .xlf without any information loss (using po2xliff).
+ *
+ * @phpstan-type XliffRecord array{fileIdentifier: string, sourceLocale?: Locale, translationUnits?: array<string,array<int,array{source: string, target: string}>>}
  */
 class FileAdapter
 {
@@ -39,9 +41,9 @@ class FileAdapter
     protected $i18nLogger;
 
     /**
-     * @var array
+     * @var XliffRecord
      */
-    protected $fileData = [];
+    protected array $fileData;
 
     /**
      * @var Locale
@@ -50,7 +52,7 @@ class FileAdapter
 
 
     /**
-     * @param array $fileData
+     * @param XliffRecord $fileData
      * @param Locale $requestedLocale
      */
     public function __construct(array $fileData, Locale $requestedLocale)
@@ -69,7 +71,7 @@ class FileAdapter
      *
      * @param string $source Label in original language ("source" tag in XLIFF)
      * @param integer $pluralFormIndex Index of plural form to use (starts with 0)
-     * @return mixed Translated label or false on failure
+     * @return string|false Translated label or false on failure
      */
     public function getTargetBySource($source, $pluralFormIndex = 0)
     {
@@ -117,21 +119,14 @@ class FileAdapter
             return false;
         }
 
-        if (!isset($this->fileData['translationUnits'][$transUnitId][$pluralFormIndex]['target'])) {
-            $this->i18nLogger->log(
-                'The target translation was empty for the trans-unit element with the id "' . $transUnitId . '" and the plural form index "' . $pluralFormIndex . '" in ' . $this->fileData['fileIdentifier'],
-                LOG_DEBUG
-            );
-        }
-
         return $this->fileData['translationUnits'][$transUnitId][$pluralFormIndex]['target'];
     }
 
     /**
-     * @return array
+     * @return array<string,array<int,array{source: string, target: string}>>
      */
     public function getTranslationUnits(): array
     {
-        return $this->fileData['translationUnits'];
+        return $this->fileData['translationUnits'] ?? [];
     }
 }

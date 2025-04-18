@@ -32,13 +32,13 @@ class SliceOperation extends AbstractOperation
      * {@inheritdoc}
      *
      * @param FlowQuery $flowQuery the FlowQuery object
-     * @param array $arguments A mandatory start and optional end index in the context, negative indices indicate an offset from the start or end respectively
+     * @param array<mixed> $arguments A mandatory start and optional end index in the context, negative indices indicate an offset from the start or end respectively
      * @return void
      */
     public function evaluate(FlowQuery $flowQuery, array $arguments)
     {
         $context = $flowQuery->getContext();
-        if ($context instanceof \Iterator) {
+        if ($context instanceof \Traversable) { /** @todo fix me in 8.3+ */
             $context = iterator_to_array($context);
         }
         if (isset($arguments[0]) && isset($arguments[1])) {

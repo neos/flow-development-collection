@@ -24,7 +24,7 @@ class FalseConditionGenerator implements SqlGeneratorInterface
      * Returns an SQL query part that is basically a no-op in order to match no entity
      *
      * @param DoctrineSqlFilter $sqlFilter
-     * @param ClassMetadata $targetEntity
+     * @param ClassMetadata<object> $targetEntity
      * @param string $targetTableAlias
      * @return string
      */

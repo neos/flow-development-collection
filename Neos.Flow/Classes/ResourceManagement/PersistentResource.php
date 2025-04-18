@@ -179,7 +179,7 @@ class PersistentResource implements ResourceMetaDataInterface, CacheAwareInterfa
         $this->throwExceptionIfProtected();
 
         $pathInfo = UnicodeFunctions::pathinfo($filename);
-        $extension = (isset($pathInfo['extension']) ? '.' . strtolower($pathInfo['extension']) : '');
+        $extension = '.' . strtolower($pathInfo['extension']);
         $this->filename = $pathInfo['filename'] . $extension;
         $this->mediaType = Utility\MediaTypes::getMediaTypeFromFilename($this->filename);
     }
@@ -298,10 +298,10 @@ class PersistentResource implements ResourceMetaDataInterface, CacheAwareInterfa
      * @return void
      * @api
      */
-    public function setSha1($sha1)
+    public function setSha1(string $sha1)
     {
         $this->throwExceptionIfProtected();
-        if (!is_string($sha1) || preg_match('/[A-Fa-f0-9]{40}/', $sha1) !== 1) {
+        if (preg_match('/[A-Fa-f0-9]{40}/', $sha1) !== 1) {
             throw new \InvalidArgumentException('Specified invalid hash to setSha1()', 1362564220);
         }
         $this->sha1 = strtolower($sha1);
@@ -330,9 +330,9 @@ class PersistentResource implements ResourceMetaDataInterface, CacheAwareInterfa
             $temporaryPathAndFilename .= '-' . microtime(true);
 
             if (function_exists('posix_getpid')) {
-                $temporaryPathAndFilename .= '-' . str_pad(posix_getpid(), 10);
+                $temporaryPathAndFilename .= '-' . str_pad((string)posix_getpid(), 10);
             } else {
-                $temporaryPathAndFilename .= '-' . (string) getmypid();
+                $temporaryPathAndFilename .= '-' . getmypid();
             }
 
             $temporaryPathAndFilename = trim($temporaryPathAndFilename);
@@ -364,7 +364,9 @@ class PersistentResource implements ResourceMetaDataInterface, CacheAwareInterfa
     {
         if ($this->lifecycleEventsActive) {
             $collection = $this->resourceManager->getCollection($this->collectionName);
-            $collection->getTarget()->publishResource($this, $collection);
+            if ($collection) {
+                $collection->getTarget()->publishResource($this, $collection);
+            }
         }
     }
 
