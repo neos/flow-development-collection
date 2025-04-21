@@ -65,6 +65,11 @@ class RoutingMiddleware implements MiddlewareInterface
             $matchResults['@package'] = $this->packageManager->getCaseSensitivePackageKey($matchResults['@package']);
         }
 
+        if (isset($matchResults['@requestTags'])) {
+            $request = $request->withAttribute(ServerRequestAttributes::REQUEST_TAGS, $matchResults['@requestTags']);
+            unset($matchResults['@requestTags']);
+        }
+
         return $next->handle($request->withAttribute(ServerRequestAttributes::ROUTING_RESULTS, $matchResults));
     }
 }

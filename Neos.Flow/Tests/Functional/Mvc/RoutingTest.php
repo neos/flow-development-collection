@@ -13,6 +13,7 @@ namespace Neos\Flow\Tests\Functional\Mvc;
 
 use GuzzleHttp\Psr7\Uri;
 use Neos\Flow\Configuration\ConfigurationManager;
+use Neos\Flow\Http\ServerRequestAttributes;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\Exception\NoMatchingRouteException;
 use Neos\Flow\Mvc\Routing\Dto\RouteParameters;
@@ -22,6 +23,7 @@ use Neos\Flow\Mvc\Routing\Route;
 use Neos\Flow\Mvc\Routing\TestingRoutesProvider;
 use Neos\Flow\Tests\Functional\Mvc\Fixtures\Controller\ActionControllerTestAController;
 use Neos\Flow\Tests\Functional\Mvc\Fixtures\Controller\RoutingTestAController;
+use Neos\Flow\Tests\Functional\Mvc\Fixtures\Controller\StandardController;
 use Neos\Flow\Tests\FunctionalTestCase;
 use Neos\Utility\Arrays;
 use Psr\Http\Message\ServerRequestFactoryInterface;
@@ -96,6 +98,26 @@ class RoutingTest extends FunctionalTestCase
         $actionRequest = $this->createActionRequest($request, $matchResults);
         self::assertEquals(ActionControllerTestAController::class, $actionRequest->getControllerObjectName());
         self::assertEquals('second', $actionRequest->getControllerActionName());
+    }
+
+    public function testRouteCanProvideRequestTags()
+    {
+        $requestUri = 'http://localhost/neos/flow/test/routetags';
+        $request = $this->serverRequestFactory->createServerRequest('GET', new Uri($requestUri));
+        $matchResults = $this->router->route(new RouteContext($request, RouteParameters::createEmpty()));
+        $this->assertTrue(isset($matchResults['@requestTags']), 'Route tags should be set.');
+        $request = $request->withAttribute(ServerRequestAttributes::REQUEST_TAGS, $matchResults['@requestTags']);
+        $actionRequest = $this->createActionRequest($request, $matchResults);
+        self::assertEquals(StandardController::class, $actionRequest->getControllerObjectName());
+        self::assertCount(2, $actionRequest->getRequestTags());
+        $expectedTags = [
+            ['Security', 'Neos.Neos:Backend'],
+            ['Something', 'Neos.Flow:Testing']
+        ];
+        foreach ($actionRequest->getRequestTags() as $i => $tag) {
+            self::assertEquals($expectedTags[$i][0], $tag->type);
+            self::assertEquals($expectedTags[$i][1], $tag->value);
+        }
     }
 
     /**

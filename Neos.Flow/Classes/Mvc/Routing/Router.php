@@ -97,6 +97,9 @@ class Router implements RouterInterface
                 $matchResults = $route->getMatchResults();
                 $this->routerCachingService->storeMatchResults($routeContext, $matchResults, $route->getMatchedTags(), $route->getMatchedLifetime());
                 $this->logger->debug(sprintf('Router route(): Route "%s" matched the request "%s (%s)".', $route->getName(), $httpRequest->getUri(), $httpRequest->getMethod()));
+                if ($route->getRequestTags() !== []) {
+                    $matchResults['@requestTags'] = json_encode($route->getRequestTags(), JSON_THROW_ON_ERROR);
+                }
                 return $matchResults;
             }
         }
