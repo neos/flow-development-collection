@@ -1505,7 +1505,7 @@ class ReflectionService
         }
 
         if (
-            isset($this->classReflectionData[$className][self::DATA_CLASS_METHODS][$methodName][self::DATA_METHOD_PARAMETERS][$parameter->getName()][self::DATA_PARAMETER_TYPE]) && class_exists($parameterAnnotation[0]) &&
+            isset($this->classReflectionData[$className][self::DATA_CLASS_METHODS][$methodName][self::DATA_METHOD_PARAMETERS][$parameter->getName()][self::DATA_PARAMETER_TYPE]) &&
             $this->classReflectionData[$className][self::DATA_CLASS_METHODS][$methodName][self::DATA_METHOD_PARAMETERS][$parameter->getName()][self::DATA_PARAMETER_TYPE] !== $this->cleanClassName($parameterAnnotation[0])
         ) {
             $this->log('  Wrong type in @param for "' . $method->getName() . '::' . $parameter->getName() . '": "' . $parameterAnnotation[0] . '"', LogLevel::DEBUG);
@@ -1545,7 +1545,7 @@ class ReflectionService
 
         // we try to find the class relative to the current namespace...
         $possibleFullyQualifiedClassName = sprintf('%s\\%s', $class->getNamespaceName(), $typeWithoutNull);
-        if (class_exists($possibleFullyQualifiedClassName) || interface_exists($possibleFullyQualifiedClassName, false)) {
+        if (class_exists($possibleFullyQualifiedClassName) || interface_exists($possibleFullyQualifiedClassName)) {
             return $possibleFullyQualifiedClassName . ($isNullable ? '|null' : '');
         }
 

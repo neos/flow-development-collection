@@ -778,9 +778,6 @@ class ProxyClassBuilder
         $interfaceNames = [];
         foreach ($interfaceIntroductions as $introduction) {
             $interfaceName = '\\' . $introduction->getInterfaceName();
-            if (!class_exists($interfaceName)) {
-                throw new \InvalidArgumentException('Invalid interface name ' . $interfaceName, 1744492473);
-            }
             $interfaceNames[] = $interfaceName;
         }
         return $interfaceNames;
