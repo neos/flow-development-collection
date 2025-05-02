@@ -29,13 +29,13 @@ class Configuration
 
     /**
      * Name of the object
-     * @var string $objectName
+     * @var ?string $objectName
      */
     protected $objectName;
 
     /**
      * Name of the class the object is based on
-     * @var class-string $className
+     * @var ?class-string $className
      */
     protected $className;
 
@@ -107,7 +107,7 @@ class Configuration
     /**
      * The constructor
      *
-     * @param string $objectName The unique identifier of the object
+     * @param ?string $objectName The unique identifier of the object
      * @param ?class-string $className Name of the class which provides the functionality of this object
      * @todo fix the weird test case that is the only thing ever putting null in $className,
      * @see \Neos\Flow\Tests\Unit\ObjectManagement\Configuration\ConfigurationTest::setUp())
@@ -122,7 +122,7 @@ class Configuration
         }
 
         $this->objectName = $objectName;
-        /** @var class-string $className */
+        /** @var ?class-string $className */
         $className = ($className === null ? $objectName : $className);
         $this->className = $className;
     }
@@ -142,7 +142,7 @@ class Configuration
     /**
      * Returns the object name
      *
-     * @return string object name
+     * @return ?string object name
      */
     public function getObjectName()
     {
@@ -157,13 +157,14 @@ class Configuration
      */
     public function setClassName($className)
     {
+        \Neos\Flow\var_dump($className, 'setter');
         $this->className = $className;
     }
 
     /**
      * Returns the class name
      *
-     * @return class-string Name of the implementing class of this object
+     * @return ?class-string Name of the implementing class of this object
      */
     public function getClassName()
     {

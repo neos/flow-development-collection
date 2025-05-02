@@ -168,9 +168,6 @@ class PointcutExpressionParser
                     case 'filter':
                     case 'setting':
                         $parseMethodName = 'parseDesignator' . ucfirst($pointcutDesignator);
-                        if (!class_exists($signaturePattern)) {
-                            throw new \Exception('Cannot resolve signature pattern class ' . $signaturePattern, 1744487844);
-                        }
                         $this->$parseMethodName($operator, $signaturePattern, $pointcutFilterComposite);
                         break;
                     case 'evaluate':
@@ -197,9 +194,6 @@ class PointcutExpressionParser
     {
         $annotationPropertyConstraints = [];
         $this->parseAnnotationPattern($annotationPattern, $annotationPropertyConstraints);
-        if (!class_exists($annotationPattern)) {
-            throw new \InvalidArgumentException('Cannot resolve annotation pattern class ' . $annotationPattern, 1744491903);
-        }
 
         $filter = new PointcutClassAnnotatedWithFilter($annotationPattern, $annotationPropertyConstraints);
         $filter->injectReflectionService($this->reflectionService);
@@ -237,9 +231,6 @@ class PointcutExpressionParser
         $annotationPropertyConstraints = [];
         $this->parseAnnotationPattern($annotationPattern, $annotationPropertyConstraints);
 
-        if (!class_exists($annotationPattern)) {
-            throw new \InvalidArgumentException('Invalid annotation pattern ' . $annotationPattern . ', must be an existing class', 1744490385);
-        }
         $filter = new PointcutMethodAnnotatedWithFilter($annotationPattern, $annotationPropertyConstraints);
         $filter->injectReflectionService($this->reflectionService);
         $filter->injectLogger($this->objectManager->get(PsrLoggerFactoryInterface::class)->get('systemLogger'));

@@ -183,7 +183,7 @@ class ReflectionService
      *         28?: true,
      *     }>,
      *     27?: true,
-     * }>
+     * }|bool>
      */
     protected array $classReflectionData = [];
 
@@ -300,7 +300,7 @@ class ReflectionService
         }
         $className = $this->cleanClassName($className);
 
-        return array_key_exists($className, $this->classReflectionData);
+        return isset($this->classReflectionData[$className]) && is_array($this->classReflectionData[$className]);
     }
 
     /**
@@ -491,7 +491,7 @@ class ReflectionService
         }
         $annotations = $this->getClassAnnotations($className, $annotationClassName);
 
-        return $annotations[0] ?? null;
+        return $annotations === [] ? null : reset($annotations);
     }
 
     /**
@@ -1229,6 +1229,9 @@ class ReflectionService
      */
     protected function reflectClass(string $className): void
     {
+        if ($className === 'Neos\Flow\Aop\Exception') {
+            var_dump('huhu');
+        }
         $this->log(sprintf('Reflecting class %s', $className), LogLevel::DEBUG);
 
         $className = $this->cleanClassName($className);
@@ -1242,16 +1245,20 @@ class ReflectionService
         }
 
         if (!isset($this->classReflectionData[$className][self::DATA_INTERFACE_IMPLEMENTATIONS]) && $class->isInterface()) {
+            /** @phpstan-ignore offsetAccess.nonOffsetAccessible (@todo properly handle boolean case) */
             $this->classReflectionData[$className][self::DATA_INTERFACE_IMPLEMENTATIONS] = [];
         }
 
         if ($class->isAbstract() || $class->isInterface()) {
+            /** @phpstan-ignore offsetAccess.nonOffsetAccessible (@todo properly handle boolean case) */
             $this->classReflectionData[$className][self::DATA_CLASS_ABSTRACT] = true;
         }
         if ($class->isFinal()) {
+            /** @phpstan-ignore offsetAccess.nonOffsetAccessible (@todo properly handle boolean case) */
             $this->classReflectionData[$className][self::DATA_CLASS_FINAL] = true;
         }
         if ($class->isReadOnly()) {
+            /** @phpstan-ignore offsetAccess.nonOffsetAccessible (@todo properly handle boolean case) */
             $this->classReflectionData[$className][self::DATA_CLASS_READONLY] = true;
         }
 
@@ -1266,6 +1273,7 @@ class ReflectionService
         foreach ($this->annotationReader->getClassAnnotations($class) as $annotation) {
             $annotationClassName = get_class($annotation);
             $this->annotatedClasses[$annotationClassName][$className] = true;
+            /** @phpstan-ignore offsetAccess.nonOffsetAccessible (@todo properly handle boolean case) */
             $this->classReflectionData[$className][self::DATA_CLASS_ANNOTATIONS][] = $annotation;
         }
 
@@ -1275,6 +1283,7 @@ class ReflectionService
                 continue;
             }
             $this->annotatedClasses[$annotationClassName][$className] = true;
+            /** @phpstan-ignore offsetAccess.nonOffsetAccessible (@todo properly handle boolean case) */
             $this->classReflectionData[$className][self::DATA_CLASS_ANNOTATIONS][] = $attribute->newInstance();
         }
 
@@ -1303,6 +1312,7 @@ class ReflectionService
         }
 
         $propertyName = $property->getName();
+        /** @phpstan-ignore offsetAccess.nonOffsetAccessible (@todo properly handle boolean case) */
         $this->classReflectionData[$className][self::DATA_CLASS_PROPERTIES][$propertyName] = [];
         if ($property->hasType()) {
             $this->classReflectionData[$className][self::DATA_CLASS_PROPERTIES][$propertyName][self::DATA_PROPERTY_TYPE] = trim((string)$property->getType(), '?');
@@ -1379,6 +1389,8 @@ class ReflectionService
         if (!$this->isClassReflected($parentClassName)) {
             $this->loadOrReflectClassIfNecessary($parentClassName);
         }
+
+        /** @phpstan-ignore offsetAccess.nonOffsetAccessible (@todo properly handle boolean case) */
         $this->classReflectionData[$parentClassName][self::DATA_CLASS_SUBCLASSES][$className] = true;
     }
 
@@ -1399,6 +1411,7 @@ class ReflectionService
             $this->loadOrReflectClassIfNecessary($interfaceName);
         }
 
+        /** @phpstan-ignore offsetAccess.nonOffsetAccessible (@todo properly handle boolean case) */
         $this->classReflectionData[$interfaceName][self::DATA_INTERFACE_IMPLEMENTATIONS][$className] = true;
     }
 
@@ -1411,11 +1424,14 @@ class ReflectionService
     {
         $methodName = $method->getName();
         if ($method->isFinal()) {
+            /** @phpstan-ignore offsetAccess.nonOffsetAccessible (@todo properly handle boolean case) */
             $this->classReflectionData[$className][self::DATA_CLASS_METHODS][$methodName][self::DATA_METHOD_FINAL] = true;
         }
         if ($method->isStatic()) {
+            /** @phpstan-ignore offsetAccess.nonOffsetAccessible (@todo properly handle boolean case) */
             $this->classReflectionData[$className][self::DATA_CLASS_METHODS][$methodName][self::DATA_METHOD_STATIC] = true;
         }
+        /** @phpstan-ignore offsetAccess.nonOffsetAccessible (@todo properly handle boolean case) */
         $this->classReflectionData[$className][self::DATA_CLASS_METHODS][$methodName][self::DATA_METHOD_VISIBILITY] = $this->extractVisibility($method);
 
         foreach ($this->getMethodAnnotations($className, $methodName) as $methodAnnotation) {
@@ -1471,6 +1487,7 @@ class ReflectionService
         $methodName = $method->getName();
         $paramAnnotations = $method->isTaggedWith('param') ? $method->getTagValues('param') : [];
 
+        /** @phpstan-ignore offsetAccess.nonOffsetAccessible (@todo properly handle boolean case) */
         $this->classReflectionData[$className][self::DATA_CLASS_METHODS][$methodName][self::DATA_METHOD_PARAMETERS][$parameter->getName()] = $this->convertParameterReflectionToArray($parameter, $method);
         if (!isset($this->settings['logIncorrectDocCommentHints']) || $this->settings['logIncorrectDocCommentHints'] !== true) {
             return;
@@ -1528,7 +1545,7 @@ class ReflectionService
 
         // we try to find the class relative to the current namespace...
         $possibleFullyQualifiedClassName = sprintf('%s\\%s', $class->getNamespaceName(), $typeWithoutNull);
-        if (class_exists($possibleFullyQualifiedClassName) || interface_exists($possibleFullyQualifiedClassName)) {
+        if (class_exists($possibleFullyQualifiedClassName) || interface_exists($possibleFullyQualifiedClassName, false)) {
             return $possibleFullyQualifiedClassName . ($isNullable ? '|null' : '');
         }
 
@@ -1622,11 +1639,7 @@ class ReflectionService
         }
 
         $possibleRepositoryClassName = str_replace('\\Model\\', '\\Repository\\', $className) . 'Repository';
-        if (
-            class_exists($possibleRepositoryClassName)
-            && is_subclass_of($possibleRepositoryClassName, RepositoryInterface::class)
-            && $this->isClassReflected($possibleRepositoryClassName) === true
-        ) {
+        if ($this->isClassReflected($possibleRepositoryClassName) === true) {
             $classSchema->setRepositoryClassName($possibleRepositoryClassName);
         }
 
@@ -1941,7 +1954,7 @@ class ReflectionService
                 break;
             }
         }
-        if (!isset($parameterInformation[self::DATA_PARAMETER_TYPE]) && $parameterType !== null && class_exists($parameterType)) {
+        if (!isset($parameterInformation[self::DATA_PARAMETER_TYPE]) && $parameterType !== null) {
             $parameterInformation[self::DATA_PARAMETER_TYPE] = $this->cleanClassName($parameterType);
         } elseif (!isset($parameterInformation[self::DATA_PARAMETER_TYPE])) {
             $parameterInformation[self::DATA_PARAMETER_TYPE] = 'mixed';
@@ -2105,12 +2118,7 @@ class ReflectionService
      */
     protected function cleanClassName(string $className): string
     {
-        $className = ltrim($className, '\\');
-        if (!class_exists($className)) {
-            throw new \Exception('Invalid class ' . $className, 1744047892);
-        }
-
-        return $className;
+        return ltrim($className, '\\');
     }
 
     /**

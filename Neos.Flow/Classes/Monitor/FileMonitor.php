@@ -377,10 +377,7 @@ class FileMonitor
     protected function loadDetectedDirectoriesAndFiles()
     {
         if ($this->directoriesAndFiles === null) {
-            $this->directoriesAndFiles = json_decode($this->cache->get($this->identifier . '_directoriesAndFiles') ?: '', true, flags: JSON_THROW_ON_ERROR);
-            if (!is_array($this->directoriesAndFiles)) {
-                $this->directoriesAndFiles = [];
-            }
+            $this->directoriesAndFiles = json_decode($this->cache->get($this->identifier . '_directoriesAndFiles') ?: '', true) ?: [];
         }
     }
 

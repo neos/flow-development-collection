@@ -221,14 +221,19 @@ class ProxyClassBuilder
     {
         $className = $objectConfiguration->getClassName();
 
+        /** @phpstan-ignore argument.type (class name will not be null, trust me, bro) */
         if ($this->reflectionService->hasMethod($className, '__sleep')) {
             return '';
         }
 
+        /** @phpstan-ignore argument.type (class name will not be null, trust me, bro) */
         $scopeAnnotation = $this->reflectionService->getClassAnnotation($className, Flow\Scope::class);
+        /** @phpstan-ignore argument.type (class name will not be null, trust me, bro) */
         $transientProperties = $this->reflectionService->getPropertyNamesByAnnotation($className, Flow\Transient::class);
+        /** @phpstan-ignore argument.type (class name will not be null, trust me, bro) */
         $injectedProperties = $this->reflectionService->getPropertyNamesByAnnotation($className, Flow\Inject::class);
 
+        /** @phpstan-ignore argument.type (class name will not be null, trust me, bro) */
         $doBuildCode = $this->reflectionService->getClassAnnotation($className, Flow\Entity::class) !== null;
         $doBuildCode = $doBuildCode || (count($transientProperties) > 0);
         $doBuildCode = $doBuildCode || (count($injectedProperties) > 0);
@@ -239,7 +244,9 @@ class ProxyClassBuilder
         }
 
         $propertyVarTags = [];
+        /** @phpstan-ignore argument.type (class name will not be null, trust me, bro) */
         foreach ($this->reflectionService->getPropertyNamesByTag($className, 'var') as $propertyName) {
+            /** @phpstan-ignore argument.type (class name will not be null, trust me, bro) */
             $varTagValues = $this->reflectionService->getPropertyTagValues($className, $propertyName, 'var');
             $propertyVarTags[$propertyName] = $varTagValues[0] ?? null;
         }
@@ -280,6 +287,7 @@ class ProxyClassBuilder
 
         $assignments = [];
         $argumentConfigurations = $objectConfiguration->getArguments();
+        /** @phpstan-ignore argument.type (class name will not be null, trust me, bro) */
         $constructorParameterInfo = $this->reflectionService->getMethodParameters($objectConfiguration->getClassName(), '__construct');
         $argumentNumberToOptionalInfo = [];
 
@@ -450,11 +458,13 @@ class ProxyClassBuilder
             $preparedSetterArgument = '\Neos\Flow\Core\Bootstrap::$staticObjectManager->get(\'' . $propertyClassName . '\')';
         }
 
+        /** @phpstan-ignore argument.type (class name will not be null, trust me, bro) */
         $result = $this->buildSetterInjectionCode($className, $propertyName, $preparedSetterArgument);
         if ($result !== null) {
             return $result;
         }
 
+        /** @phpstan-ignore argument.type, argument.type (class name will not be null, trust me, bro) */
         return $this->buildLazyPropertyInjectionCode($propertyObjectName, $propertyClassName, $propertyName, $preparedSetterArgument);
     }
 
@@ -488,6 +498,7 @@ class ProxyClassBuilder
             $preparedSetterArgument = '\Neos\Flow\Core\Bootstrap::$staticObjectManager->get(\'' . $propertyObjectName . '\')';
         }
 
+        /** @phpstan-ignore argument.type (class name will not be null, trust me, bro) */
         $result = $this->buildSetterInjectionCode($className, $propertyName, $preparedSetterArgument);
         if ($result !== null) {
             return $result;
@@ -495,6 +506,7 @@ class ProxyClassBuilder
 
         # Disable lazy property injection, see https://github.com/neos/flow-development-collection/issues/2114
         if ($propertyConfiguration->isLazyLoading() && $this->objectConfigurations[$propertyObjectName]->getScope() !== Configuration::SCOPE_PROTOTYPE) {
+            /** @phpstan-ignore argument.type (class name will not be null, trust me, bro) */
             return $this->buildLazyPropertyInjectionCode($propertyObjectName, $propertyClassName, $propertyName, $preparedSetterArgument);
         }
 
@@ -519,6 +531,7 @@ class ProxyClassBuilder
             $preparedSetterArgument = '\Neos\Flow\Core\Bootstrap::$staticObjectManager->get(\Neos\Flow\Configuration\ConfigurationManager::class)->getConfiguration(\'' . $configurationType . '\')';
         }
 
+        /** @phpstan-ignore argument.type (class name will not be null, trust me, bro) */
         $result = $this->buildSetterInjectionCode($className, $propertyName, $preparedSetterArgument);
         if ($result !== null) {
             return $result;
@@ -538,6 +551,7 @@ class ProxyClassBuilder
     {
         $className = $objectConfiguration->getClassName();
         $preparedSetterArgument = '\Neos\Flow\Core\Bootstrap::$staticObjectManager->get(\Neos\Flow\Cache\CacheManager::class)->getCache(\'' . $cacheIdentifier . '\')';
+        /** @phpstan-ignore argument.type (class name will not be null, trust me, bro) */
         $result = $this->buildSetterInjectionCode($className, $propertyName, $preparedSetterArgument);
         if ($result !== null) {
             return $result;
@@ -603,6 +617,7 @@ class ProxyClassBuilder
     protected function buildLifecycleInitializationCode(Configuration $objectConfiguration, int $cause): string
     {
         $lifecycleInitializationMethodName = $objectConfiguration->getLifecycleInitializationMethodName();
+        /** @phpstan-ignore argument.type (class name will not be null, trust me, bro) */
         if (!$this->reflectionService->hasMethod($objectConfiguration->getClassName(), $lifecycleInitializationMethodName)) {
             return '';
         }
@@ -631,6 +646,7 @@ class ProxyClassBuilder
     protected function buildLifecycleShutdownCode(Configuration $objectConfiguration, int $cause): string
     {
         $lifecycleShutdownMethodName = $objectConfiguration->getLifecycleShutdownMethodName();
+        /** @phpstan-ignore argument.type (class name will not be null, trust me, bro) */
         if (!$this->reflectionService->hasMethod($objectConfiguration->getClassName(), $lifecycleShutdownMethodName)) {
             return '';
         }

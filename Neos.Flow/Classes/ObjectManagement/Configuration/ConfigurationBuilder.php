@@ -372,6 +372,7 @@ class ConfigurationBuilder
                 if (isset($objectNameOrConfiguration['factoryObjectName']) || isset($objectNameOrConfiguration['factoryMethodName'])) {
                     $objectName = null;
                 } else {
+                    /** @phpstan-ignore argument.type (class name will not be null, trust me, bro) */
                     $annotations = $this->reflectionService->getPropertyTagValues($parentObjectConfiguration->getClassName(), $propertyName, 'var');
                     if (count($annotations) !== 1) {
                         throw new InvalidObjectConfigurationException(sprintf('Object %s (%s), for property "%s", contains neither object name, nor factory object name, and nor is the property properly @var - annotated.', $parentObjectConfiguration->getClassName(), $parentObjectConfiguration->getConfigurationSourceHint(), $propertyName), 1297097815);
@@ -481,23 +482,27 @@ class ConfigurationBuilder
             }
 
             $className = $objectConfiguration->getClassName();
+            /** @phpstan-ignore argument.type (class name will not be null, trust me, bro) */
             if (!$this->reflectionService->hasMethod($className, '__construct')) {
                 continue;
             }
 
             foreach ($this->excludeClassesFromConstructorAutowiring as $excludeClassNameRegex) {
+                /** @phpstan-ignore argument.type (class name will not be null, trust me, bro) */
                 if ((preg_match('/' . $excludeClassNameRegex . '/', $className) === 1) && $objectConfiguration->getScope() === Configuration::SCOPE_PROTOTYPE) {
                     $objectConfiguration->setAutowiring(Configuration::AUTOWIRING_MODE_OFF);
                     continue 2;
                 }
             }
 
+            /** @phpstan-ignore argument.type (class name will not be null, trust me, bro) */
             $autowiringAnnotation = $this->reflectionService->getMethodAnnotation($className, '__construct', Flow\Autowiring::class);
             if ($autowiringAnnotation !== null && $autowiringAnnotation->enabled === false) {
                 continue;
             }
 
             $arguments = $objectConfiguration->getArguments();
+            /** @phpstan-ignore argument.type (class name will not be null, trust me, bro) */
             foreach ($this->reflectionService->getMethodParameters($className, '__construct') as $parameterName => $parameterInformation) {
                 $debuggingHint = '';
                 $index = $parameterInformation['position'] + 1;
@@ -556,6 +561,7 @@ class ConfigurationBuilder
             }
 
             try {
+                /** @phpstan-ignore argument.type (class name will not be null, trust me, bro) */
                 $classMethodNames = get_class_methods($className);
             } catch (\TypeError $error) {
                 throw new UnknownClassException(sprintf('The class "%s" defined in the object configuration for object "%s", defined in package: %s, does not exist.', $className, $objectConfiguration->getObjectName(), $objectConfiguration->getPackageKey()), 1352371372);
@@ -564,6 +570,7 @@ class ConfigurationBuilder
                 if (isset($methodName[6]) && strpos($methodName, 'inject') === 0 && $methodName[6] === strtoupper($methodName[6])) {
                     $propertyName = lcfirst(substr($methodName, 6));
 
+                    /** @phpstan-ignore argument.type (class name will not be null, trust me, bro) */
                     $autowiringAnnotation = $this->reflectionService->getMethodAnnotation($className, $methodName, Flow\Autowiring::class);
                     if ($autowiringAnnotation !== null && $autowiringAnnotation->enabled === false) {
                         continue;
@@ -578,6 +585,7 @@ class ConfigurationBuilder
                         if (array_key_exists($propertyName, $properties)) {
                             continue;
                         }
+                        /** @phpstan-ignore argument.type (class name will not be null, trust me, bro) */
                         $methodParameters = $this->reflectionService->getMethodParameters($className, $methodName);
                         if (count($methodParameters) !== 1) {
                             $this->logger->debug(sprintf('Could not autowire property %s because %s() expects %s instead of exactly 1 parameter.', $className . '::' . $propertyName, $methodName, (count($methodParameters) ?: 'none')));
@@ -593,22 +601,27 @@ class ConfigurationBuilder
                 }
             }
 
+            /** @phpstan-ignore argument.type (class name will not be null, trust me, bro) */
             foreach ($this->reflectionService->getPropertyNamesByAnnotation($className, Inject::class) as $propertyName) {
+                /** @phpstan-ignore argument.type (class name will not be null, trust me, bro) */
                 if ($this->reflectionService->isPropertyPrivate($className, $propertyName)) {
                     throw new ObjectException(sprintf('The property "%s" in class "%s" must not be private when annotated for injection.', $propertyName, $className), 1328109641);
                 }
                 if (!array_key_exists($propertyName, $properties)) {
                     /** @var Inject $injectAnnotation */
+                    /** @phpstan-ignore argument.type (class name will not be null, trust me, bro) */
                     $injectAnnotation = $this->reflectionService->getPropertyAnnotation($className, $propertyName, Inject::class);
                     $enableLazyInjection = $injectAnnotation->lazy;
                     $objectName = $injectAnnotation->name;
                     if ($objectName === null) {
+                        /** @phpstan-ignore argument.type (class name will not be null, trust me, bro) */
                         $objectName = $this->reflectionService->getPropertyType($className, $propertyName);
                         if ($objectName !== null) {
                             $enableLazyInjection = false; # See:  https://github.com/neos/flow-development-collection/issues/2114
                         }
                     }
                     if ($objectName === null) {
+                        /** @phpstan-ignore argument.type (class name will not be null, trust me, bro) */
                         $objectName = trim(implode('', $this->reflectionService->getPropertyTagValues($className, $propertyName, 'var')), ' \\');
                     }
                     $configurationProperty = new ConfigurationProperty($propertyName, $objectName, ConfigurationProperty::PROPERTY_TYPES_OBJECT, null, $enableLazyInjection);
@@ -616,10 +629,13 @@ class ConfigurationBuilder
                 }
             }
 
+            /** @phpstan-ignore argument.type (class name will not be null, trust me, bro) */
             foreach ($this->reflectionService->getPropertyNamesByAnnotation($className, InjectConfiguration::class) as $propertyName) {
+                /** @phpstan-ignore argument.type (class name will not be null, trust me, bro) */
                 if ($this->reflectionService->isPropertyPrivate($className, $propertyName)) {
                     throw new ObjectException(sprintf('The property "%s" in class "%s" must not be private when annotated for configuration injection.', $propertyName, $className), 1416765599);
                 }
+                /** @phpstan-ignore argument.type (class name will not be null, trust me, bro) */
                 if ($this->reflectionService->isPropertyPromoted($className, $propertyName)) {
                     continue;
                 }
@@ -627,6 +643,7 @@ class ConfigurationBuilder
                     continue;
                 }
                 /** @var InjectConfiguration $injectConfigurationAnnotation */
+                /** @phpstan-ignore argument.type (class name will not be null, trust me, bro) */
                 $injectConfigurationAnnotation = $this->reflectionService->getPropertyAnnotation($className, $propertyName, InjectConfiguration::class);
                 if (!$objectConfiguration->getPackageKey()) {
                     throw new \Exception('Missing package key', 1744231440);
@@ -641,7 +658,9 @@ class ConfigurationBuilder
                 );
             }
 
+            /** @phpstan-ignore argument.type (class name will not be null, trust me, bro) */
             foreach ($this->reflectionService->getPropertyNamesByAnnotation($className, InjectCache::class) as $propertyName) {
+                /** @phpstan-ignore argument.type (class name will not be null, trust me, bro) */
                 if ($this->reflectionService->isPropertyPrivate($className, $propertyName)) {
                     throw new ObjectException(sprintf('The property "%s" in class "%s" must not be private when annotated for cache injection.', $propertyName, $className), 1416765599);
                 }
@@ -649,11 +668,14 @@ class ConfigurationBuilder
                     continue;
                 }
                 /** @var InjectCache $injectCacheAnnotation */
+                /** @phpstan-ignore argument.type (class name will not be null, trust me, bro) */
                 $injectCacheAnnotation = $this->reflectionService->getPropertyAnnotation($className, $propertyName, InjectCache::class);
                 $properties[$propertyName] = new ConfigurationProperty($propertyName, ['identifier' => $injectCacheAnnotation->identifier], ConfigurationProperty::PROPERTY_TYPES_CACHE);
             }
 
+            /** @phpstan-ignore argument.type (class name will not be null, trust me, bro) */
             foreach ($this->reflectionService->getPropertyNamesByAnnotation($className, InjectCache::class) as $propertyName) {
+                /** @phpstan-ignore argument.type (class name will not be null, trust me, bro) */
                 if ($this->reflectionService->isPropertyPrivate($className, $propertyName)) {
                     throw new ObjectException(sprintf('The property "%s" in class "%s" must not be private when annotated for cache injection.', $propertyName, $className), 1416765599);
                 }
@@ -661,6 +683,7 @@ class ConfigurationBuilder
                     continue;
                 }
                 /** @var InjectCache $injectCacheAnnotation */
+                /** @phpstan-ignore argument.type (class name will not be null, trust me, bro) */
                 $injectCacheAnnotation = $this->reflectionService->getPropertyAnnotation($className, $propertyName, InjectCache::class);
                 $properties[$propertyName] = new ConfigurationProperty($propertyName, ['identifier' => $injectCacheAnnotation->identifier], ConfigurationProperty::PROPERTY_TYPES_CACHE);
             }

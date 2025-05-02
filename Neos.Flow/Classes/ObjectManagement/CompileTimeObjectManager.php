@@ -80,7 +80,7 @@ class CompileTimeObjectManager extends ObjectManager
     protected array $objectNameBuildStack = [];
 
     /**
-     * @var array<int,array<int,class-string>>
+     * @var array<int,array<int,class-string|null>>
      */
     protected array $cachedClassNamesByScope = [];
 
@@ -215,7 +215,7 @@ class CompileTimeObjectManager extends ObjectManager
      * Returns a list of class names, which are configured with the given scope
      *
      * @param integer $scope One of the ObjectConfiguration::SCOPE_ constants
-     * @return array<int,class-string> An array of class names configured with the given scope
+     * @return array<int,class-string|null> An array of class names configured with the given scope
      */
     public function getClassNamesByScope(int $scope): array
     {
@@ -341,7 +341,7 @@ class CompileTimeObjectManager extends ObjectManager
      *     l: string,
      *     s: int,
      *     p: ?string,
-     *     c: class-string,
+     *     c: ?class-string,
      *     f?: array{0: string, 1: string},
      *     fa?: array<int,array{
      *         t: int,
@@ -355,6 +355,9 @@ class CompileTimeObjectManager extends ObjectManager
         $objects = [];
         foreach ($this->objectConfigurations as $objectConfiguration) {
             $objectName = $objectConfiguration->getObjectName();
+            if ($objectName === null) {
+                continue;
+            }
             $objects[$objectName] = [
                 self::KEY_LOWERCASE_NAME => strtolower($objectName),
                 self::KEY_SCOPE => $objectConfiguration->getScope(),

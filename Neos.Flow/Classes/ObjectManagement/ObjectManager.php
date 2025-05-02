@@ -31,7 +31,7 @@ use Neos\Flow\Security\Context;
  *     s: int,
  *     f?: array{0: string, 1: string},
  *     fa?: array<int,array{t: int, v: mixed}>,
- *     c: class-string,
+ *     c: ?class-string,
  *     p: ?string,
  *     l: string,
  * }
@@ -329,10 +329,10 @@ class ObjectManager implements ObjectManagerInterface
      * Returns the implementation class name for the specified object
      *
      * @param string $objectName The object name
-     * @return class-string<object>|false The class name corresponding to the given object name or false if no such object is registered
+     * @return class-string<object>|null|false The class name corresponding to the given object name or false if no such object is registered
      * @api
      */
-    public function getClassNameByObjectName($objectName): string|false
+    public function getClassNameByObjectName($objectName): string|null|false
     {
         if (!isset($this->objects[$objectName])) {
             return class_exists($objectName) ? $objectName : false;
@@ -514,7 +514,7 @@ class ObjectManager implements ObjectManagerInterface
      *      s: int,
      *      f?: array{0: string, 1: string},
      *      fa?: array<int,array{t: int, v: mixed}>,
-     *      c?: class-string,
+     *      c?: ?class-string,
      *      p: ?string,
      *      l: string,
      *  }>
