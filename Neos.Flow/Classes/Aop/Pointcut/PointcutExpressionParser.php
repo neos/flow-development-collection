@@ -168,9 +168,6 @@ class PointcutExpressionParser
                     case 'filter':
                     case 'setting':
                         $parseMethodName = 'parseDesignator' . ucfirst($pointcutDesignator);
-                        if (!class_exists($signaturePattern)) {
-                            throw new \Exception('Cannot resolve signature pattern class ' . $signaturePattern, 1744487844);
-                        }
                         $this->$parseMethodName($operator, $signaturePattern, $pointcutFilterComposite);
                         break;
                     case 'evaluate':
