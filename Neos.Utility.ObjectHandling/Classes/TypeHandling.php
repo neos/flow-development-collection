@@ -192,9 +192,9 @@ abstract class TypeHandling
      * Return simple type or class for object
      *
      * @param mixed $value
-     * @return ($value is object ? class-string : ?string)
+     * @return ($value is object ? class-string : string)
      */
-    public static function getTypeForValue($value): ?string
+    public static function getTypeForValue($value): string
     {
         if (is_object($value)) {
             if ($value instanceof Proxy) {
