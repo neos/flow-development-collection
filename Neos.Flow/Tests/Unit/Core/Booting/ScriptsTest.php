@@ -27,11 +27,11 @@ use Neos\Flow\Tests\UnitTestCase;
  */
 class ScriptsMock extends Scripts
 {
-    protected static function ensureCLISubrequestsUseCurrentlyRunningPhpBinary($phpBinaryPathAndFilename)
+    protected static function ensureCLISubrequestsUseCurrentlyRunningPhpBinary($phpBinaryPathAndFilename): void
     {
     }
 
-    protected static function ensureWebSubrequestsUseCurrentlyRunningPhpVersion($phpCommand)
+    protected static function ensureWebSubrequestsUseCurrentlyRunningPhpVersion($phpCommand): void
     {
     }
 
