@@ -830,7 +830,7 @@ class ReflectionService
         }
         $className = $this->cleanClassName($className);
 
-        return new MethodReflection($className, $methodName)->getTagsValues();
+        return (new MethodReflection($className, $methodName))->getTagsValues();
     }
 
     /**

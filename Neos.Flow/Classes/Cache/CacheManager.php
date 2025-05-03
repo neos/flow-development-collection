@@ -361,7 +361,7 @@ class CacheManager
                 continue;
             }
             $fileContents = file_get_contents($pathAndFilename) ?: '';
-            $className = new PhpAnalyzer($fileContents)->extractFullyQualifiedClassName();
+            $className = (new PhpAnalyzer($fileContents))->extractFullyQualifiedClassName();
             if ($className === null) {
                 continue;
             }
