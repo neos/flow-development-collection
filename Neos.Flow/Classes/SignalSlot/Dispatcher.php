@@ -119,9 +119,6 @@ class Dispatcher
             $object = $slotClassNameOrObject;
             $method = ($slotClassNameOrObject instanceof \Closure) ? '__invoke' : $slotMethodName;
         } else {
-            if (!class_exists($slotClassNameOrObject)) {
-                throw new \Exception('Unkown class ' . $slotClassNameOrObject, 1743926351);
-            }
             if ($slotMethodName === '') {
                 throw new \InvalidArgumentException('The slot method name must not be empty (except for closures).', 1229531659);
             }
