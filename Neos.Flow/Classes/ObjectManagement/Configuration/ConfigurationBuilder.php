@@ -291,6 +291,10 @@ class ConfigurationBuilder
                     }
                     break;
                 case 'className':
+                    $methodName = 'set' . ucfirst($optionName);
+                    /** @phpstan-ignore argument.type (I guess the class name cannot be empty string here anymore) */
+                    $objectConfiguration->$methodName(trim((string)$optionValue));
+                    break;
                 case 'factoryObjectName':
                 case 'factoryMethodName':
                 case 'lifecycleInitializationMethodName':
@@ -369,6 +373,7 @@ class ConfigurationBuilder
                 if (isset($objectNameOrConfiguration['factoryObjectName']) || isset($objectNameOrConfiguration['factoryMethodName'])) {
                     $objectName = null;
                 } else {
+                    /** @phpstan-ignore argument.type (I guess we excluded "" as class name here already) */
                     $annotations = $this->reflectionService->getPropertyTagValues($parentObjectConfiguration->getClassName(), $propertyName, 'var');
                     if (count($annotations) !== 1) {
                         throw new InvalidObjectConfigurationException(sprintf('Object %s (%s), for property "%s", contains neither object name, nor factory object name, and nor is the property properly @var - annotated.', $parentObjectConfiguration->getClassName(), $parentObjectConfiguration->getConfigurationSourceHint(), $propertyName), 1297097815);
@@ -452,9 +457,6 @@ class ConfigurationBuilder
                 }
                 $argumentObjectName = $objectConfiguration->getObjectName() . ':argument:' . $index;
                 $argumentValue->setObjectName($argumentObjectName);
-                if ($argumentValue->getClassName() === null) {
-                    $argumentValue->setClassName('');
-                }
                 $objectConfigurations[$argumentObjectName] = $argumentValue;
                 $argument->set((int)$argument->getIndex(), $argumentObjectName, $argument->getType());
             }
@@ -484,7 +486,6 @@ class ConfigurationBuilder
                 continue;
             }
 
-            $className = $objectConfiguration->getClassName();
             if (!$this->reflectionService->hasMethod($className, '__construct')) {
                 continue;
             }

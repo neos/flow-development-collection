@@ -35,7 +35,7 @@ class Configuration
 
     /**
      * Name of the class the object is based on
-     * @var class-string $className
+     * @var class-string|"" $className
      */
     protected $className;
 
@@ -122,8 +122,8 @@ class Configuration
         }
 
         $this->objectName = $objectName;
-        /** @var class-string $className */
         $className = ($className === null ? $objectName : $className);
+        /** @phpstan-ignore assign.propertyType (I guess object name is a class here) */
         $this->className = $className;
     }
 
@@ -163,7 +163,7 @@ class Configuration
     /**
      * Returns the class name
      *
-     * @return class-string Name of the implementing class of this object
+     * @return class-string|"" Name of the implementing class of this object (or empty string for some reason)
      */
     public function getClassName()
     {

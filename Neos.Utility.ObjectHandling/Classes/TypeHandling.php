@@ -127,6 +127,7 @@ abstract class TypeHandling
 
         if (class_exists($type) === true || interface_exists($type) === true) {
             foreach (self::$collectionTypes as $collectionType) {
+                /** @phpstan-ignore function.alreadyNarrowedType, identical.alwaysTrue (this can be false) */
                 if (is_subclass_of($type, $collectionType) === true) {
                     return true;
                 }

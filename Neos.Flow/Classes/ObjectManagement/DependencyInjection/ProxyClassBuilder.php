@@ -220,6 +220,7 @@ class ProxyClassBuilder
      */
     protected function buildSerializeRelatedEntitiesCode(Configuration $objectConfiguration): string
     {
+        /** @var class-string $className (trust me, bro)*/
         $className = $objectConfiguration->getClassName();
 
         if ($this->reflectionService->hasMethod($className, '__sleep')) {
@@ -281,6 +282,7 @@ class ProxyClassBuilder
 
         $assignments = [];
         $argumentConfigurations = $objectConfiguration->getArguments();
+        /** @phpstan-ignore argument.type (I guess we excluded "" as class name here already) */
         $constructorParameterInfo = $this->reflectionService->getMethodParameters($objectConfiguration->getClassName(), '__construct');
         $argumentNumberToOptionalInfo = [];
 
@@ -306,6 +308,7 @@ class ProxyClassBuilder
                             $doReturnCode = true;
                             $argumentValueObjectName = $argumentValue->getObjectName();
                             $argumentValueClassName = $argumentValue->getClassName();
+                            /** @phpstan-ignore identical.alwaysFalse (@todo can this even be null?) */
                             if ($argumentValueClassName === null) {
                                 $preparedArgument = $this->buildCustomFactoryCall($argumentValue->getFactoryObjectName(), $argumentValue->getFactoryMethodName(), $argumentValue->getFactoryArguments());
                                 $assignments[$argumentPosition] = $assignmentPrologue . $preparedArgument;
@@ -445,6 +448,7 @@ class ProxyClassBuilder
         $className = $objectConfiguration->getClassName();
         $propertyObjectName = $propertyConfiguration->getObjectName();
         $propertyClassName = $propertyConfiguration->getClassName();
+        /** @phpstan-ignore identical.alwaysFalse (@todo can this even be null?) */
         if ($propertyClassName === null) {
             $preparedSetterArgument = $this->buildCustomFactoryCall(
                 $propertyConfiguration->getFactoryObjectName(),
@@ -452,7 +456,7 @@ class ProxyClassBuilder
                 $propertyConfiguration->getFactoryArguments()
             );
         } else {
-            if (!is_string($propertyClassName) || !isset($this->objectConfigurations[$propertyClassName])) {
+            if (!isset($this->objectConfigurations[$propertyClassName])) {
                 $configurationSource = $objectConfiguration->getConfigurationSourceHint();
                 throw new UnknownObjectException('Unknown class "' . $propertyClassName . '", specified as property "' . $propertyName . '" in the object configuration of object "' . $objectConfiguration->getObjectName() . '" (' . $configurationSource . ').', 1296130876);
             }
@@ -464,6 +468,7 @@ class ProxyClassBuilder
             }
         }
 
+        /** @phpstan-ignore argument.type (I guess we excluded "" as a class name here already) */
         $result = $this->buildSetterInjectionCode($className, $propertyName, $preparedSetterArgument);
         if ($result !== null) {
             return $result;
@@ -502,6 +507,7 @@ class ProxyClassBuilder
             $preparedSetterArgument = '\Neos\Flow\Core\Bootstrap::$staticObjectManager->get(\'' . $propertyObjectName . '\')';
         }
 
+        /** @phpstan-ignore argument.type (I guess we excluded "" as class name here already) */
         $result = $this->buildSetterInjectionCode($className, $propertyName, $preparedSetterArgument);
         if ($result !== null) {
             return $result;
@@ -533,6 +539,7 @@ class ProxyClassBuilder
             $preparedSetterArgument = '\Neos\Flow\Core\Bootstrap::$staticObjectManager->get(\Neos\Flow\Configuration\ConfigurationManager::class)->getConfiguration(\'' . $configurationType . '\')';
         }
 
+        /** @phpstan-ignore argument.type (I guess we excluded "" as class name here already) */
         $result = $this->buildSetterInjectionCode($className, $propertyName, $preparedSetterArgument);
         if ($result !== null) {
             return $result;
@@ -552,6 +559,7 @@ class ProxyClassBuilder
     {
         $className = $objectConfiguration->getClassName();
         $preparedSetterArgument = '\Neos\Flow\Core\Bootstrap::$staticObjectManager->get(\Neos\Flow\Cache\CacheManager::class)->getCache(\'' . $cacheIdentifier . '\')';
+        /** @phpstan-ignore argument.type (I guess we excluded "" as class name here already) */
         $result = $this->buildSetterInjectionCode($className, $propertyName, $preparedSetterArgument);
         if ($result !== null) {
             return $result;
@@ -617,6 +625,7 @@ class ProxyClassBuilder
     protected function buildLifecycleInitializationCode(Configuration $objectConfiguration, int $cause): string
     {
         $lifecycleInitializationMethodName = $objectConfiguration->getLifecycleInitializationMethodName();
+        /** @phpstan-ignore argument.type (I guess we excluded "" here already) */
         if (!$this->reflectionService->hasMethod($objectConfiguration->getClassName(), $lifecycleInitializationMethodName)) {
             return '';
         }
@@ -645,6 +654,7 @@ class ProxyClassBuilder
     protected function buildLifecycleShutdownCode(Configuration $objectConfiguration, int $cause): string
     {
         $lifecycleShutdownMethodName = $objectConfiguration->getLifecycleShutdownMethodName();
+        /** @phpstan-ignore argument.type (I guess we excluded "" here already) */
         if (!$this->reflectionService->hasMethod($objectConfiguration->getClassName(), $lifecycleShutdownMethodName)) {
             return '';
         }

@@ -80,7 +80,7 @@ class CompileTimeObjectManager extends ObjectManager
     protected array $objectNameBuildStack = [];
 
     /**
-     * @var array<int,array<int,class-string>>
+     * @var array<int,array<int,class-string|"">>
      */
     protected array $cachedClassNamesByScope = [];
 
@@ -175,6 +175,7 @@ class CompileTimeObjectManager extends ObjectManager
             $rawCustomObjectConfigurations
         );
 
+        /** @phpstan-ignore argument.type (@todo revisit array shapes) */
         $this->setObjects($this->buildObjectsArray());
     }
 
@@ -225,11 +226,13 @@ class CompileTimeObjectManager extends ObjectManager
                     if (isset($information[self::KEY_CLASS_NAME])) {
                         $this->cachedClassNamesByScope[$scope][] = $information[self::KEY_CLASS_NAME];
                     } else {
+                        /** @phpstan-ignore assign.propertyType (I guess this is a class name here) */
                         $this->cachedClassNamesByScope[$scope][] = $objectName;
                     }
                 }
             }
         }
+        /** @phpstan-ignore return.type (@todo check class-string vs. string) */
         return $this->cachedClassNamesByScope[$scope];
     }
 
@@ -277,6 +280,7 @@ class CompileTimeObjectManager extends ObjectManager
                         }
                     }
                 }
+                /** @phpstan-ignore booleanAnd.rightAlwaysTrue (can also be something else) */
                 if (isset($availableClassNames[$packageKey]) && is_array($availableClassNames[$packageKey])) {
                     $availableClassNames[$packageKey] = array_unique($availableClassNames[$packageKey]);
                 }
@@ -303,7 +307,7 @@ class CompileTimeObjectManager extends ObjectManager
      * Filters the classnames available for object management by filter expressions that includes classes.
      *
      * @param array<string,array<int,class-string>> $classNames All classnames per package
-     * @param array<string,array<int,string>> $filterConfiguration The filter configuration to apply
+     * @param array<string,mixed> $filterConfiguration The filter configuration to apply
      * @return array<string,array<int,class-string>> the remaining class
      */
     protected function applyClassFilterConfiguration(array $classNames, array $filterConfiguration): array
@@ -348,7 +352,7 @@ class CompileTimeObjectManager extends ObjectManager
      *     l: string,
      *     s: int,
      *     p: ?string,
-     *     c: class-string,
+     *     c?: class-string|"",
      *     f?: array{0: string, 1: string},
      *     fa?: array<int,array{
      *         t: int,

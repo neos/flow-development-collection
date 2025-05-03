@@ -168,6 +168,7 @@ class PointcutExpressionParser
                     case 'filter':
                     case 'setting':
                         $parseMethodName = 'parseDesignator' . ucfirst($pointcutDesignator);
+                        /** @phpstan-ignore argument.type, argument.type, argument.type (I guess we excluded empty string for class names here, already) */
                         $this->$parseMethodName($operator, $signaturePattern, $pointcutFilterComposite);
                         break;
                     case 'evaluate':

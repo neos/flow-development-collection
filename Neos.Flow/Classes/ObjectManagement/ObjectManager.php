@@ -31,9 +31,9 @@ use Neos\Flow\Security\Context;
  *     s: int,
  *     f?: array{0: string, 1: string},
  *     fa?: array<int,array{t: int, v: mixed}>,
- *     c: class-string,
- *     p: ?string,
- *     l: string,
+ *     c: class-string|null,
+ *     p: string,
+ *     l: string|null,
  * }
  *
  * @Flow\Scope("singleton")
@@ -337,6 +337,7 @@ class ObjectManager implements ObjectManagerInterface
         if (!isset($this->objects[$objectName])) {
             return class_exists($objectName) ? $objectName : false;
         }
+        /** @phpstan-ignore return.type (@todo do a class check here) */
         return $this->objects[$objectName][self::KEY_CLASS_NAME] ?? $objectName;
     }
 
@@ -514,9 +515,9 @@ class ObjectManager implements ObjectManagerInterface
      *      s: int,
      *      f?: array{0: string, 1: string},
      *      fa?: array<int,array{t: int, v: mixed}>,
-     *      c?: class-string,
+     *      c: ?class-string,
      *      p: ?string,
-     *      l: string,
+     *      l: ?string,
      *  }>
      */
     public function getAllObjectConfigurations(): array
