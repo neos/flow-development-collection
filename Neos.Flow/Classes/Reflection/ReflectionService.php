@@ -300,7 +300,7 @@ class ReflectionService
         }
         $className = $this->cleanClassName($className);
 
-        return array_key_exists($className, $this->classReflectionData);
+        return isset($this->classReflectionData[$className]) && is_array($this->classReflectionData[$className]);
     }
 
     /**
@@ -1224,7 +1224,7 @@ class ReflectionService
         }
 
         $class = new ClassReflection($className);
-        if (!array_key_exists($className, $this->classReflectionData)) {
+        if (!isset($this->classReflectionData[$className]) || !is_array($this->classReflectionData[$className])) {
             $this->classReflectionData[$className] = [];
         }
 
@@ -2087,12 +2087,7 @@ class ReflectionService
      */
     protected function cleanClassName(string $className): string
     {
-        $className = ltrim($className, '\\');
-        if (!class_exists($className)) {
-            throw new \Exception('Invalid class ' . $className, 1744047892);
-        }
-
-        return $className;
+        return ltrim($className, '\\');
     }
 
     /**
