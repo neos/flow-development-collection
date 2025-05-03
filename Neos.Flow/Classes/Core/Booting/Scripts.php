@@ -78,9 +78,8 @@ class Scripts
     public static function initializeClassLoader(Bootstrap $bootstrap)
     {
         $proxyClassLoader = new ProxyClassLoader($bootstrap->getContext());
-        $proxyClassLoaderCallback = [$proxyClassLoader, 'loadClass'];
-        /** @phpstan-ignore argument.type (should work out just fine) */
-        spl_autoload_register($proxyClassLoaderCallback, true, true);
+        /** @phpstan-ignore argument.type (we return boolean in the closure but void is expected) */
+        spl_autoload_register($proxyClassLoader->loadClass(...), true, true);
         $bootstrap->setEarlyInstance(ProxyClassLoader::class, $proxyClassLoader);
 
         if (!self::useClassLoader($bootstrap)) {
@@ -101,9 +100,8 @@ class Scripts
         ];
 
         $classLoader = new ClassLoader($initialClassLoaderMappings);
-        $classLoaderCallback = [$classLoader, 'loadClass'];
-        /** @phpstan-ignore argument.type (should work out just fine) */
-        spl_autoload_register($classLoaderCallback, true);
+        /** @phpstan-ignore argument.type (we return boolean in the closure but void is expected) */
+        spl_autoload_register($classLoader->loadClass(...), true);
         $bootstrap->setEarlyInstance(ClassLoader::class, $classLoader);
         $classLoader->setConsiderTestsNamespace(true);
     }
