@@ -13,7 +13,6 @@ namespace Neos\Flow\Configuration\Loader;
  * source code.
  */
 
-use http\Encoding\Stream\Deflate;
 use Neos\Flow\Configuration\ConfigurationManager;
 use Neos\Flow\Configuration\Exception as ConfigurationException;
 use Neos\Flow\Configuration\Exception\InvalidConfigurationException;

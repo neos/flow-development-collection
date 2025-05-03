@@ -120,7 +120,7 @@ class CldrRepository
 
         $filesInHierarchy = $this->findLocaleChain($locale, $directoryPath);
 
-        if (($this->models[$directoryPath] ?? null) instanceof CldrModel)  {
+        if (($this->models[$directoryPath] ?? null) instanceof CldrModel) {
             throw new \Exception('Directory path ' . $directoryPath . ' is already occupied', 1744414384);
         }
 

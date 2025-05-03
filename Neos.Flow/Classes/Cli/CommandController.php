@@ -12,11 +12,8 @@ namespace Neos\Flow\Cli;
  */
 
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Command\HelpCommandController;
-use Neos\Flow\Mvc\Controller\AbstractController;
 use Neos\Flow\Mvc\Controller\Argument;
 use Neos\Flow\Mvc\Controller\Arguments;
-use Neos\Flow\Mvc\Exception\CommandException;
 use Neos\Flow\Mvc\Exception\InvalidArgumentTypeException;
 use Neos\Flow\Mvc\Exception\NoSuchCommandException;
 use Neos\Flow\Cli\Exception\StopCommandException;

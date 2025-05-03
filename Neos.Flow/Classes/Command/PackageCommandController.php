@@ -15,7 +15,6 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Cli\CommandController;
 use Neos\Flow\Composer\ComposerUtility;
 use Neos\Flow\Package\PackageInterface;
-use Neos\Flow\Package\PackageKeyAwareInterface;
 use Neos\Flow\Package\PackageManager;
 
 /**

@@ -107,7 +107,7 @@ class FileBasedSimpleKeyProvider extends AbstractProvider
     protected function validateCredentials(PasswordTokenInterface $authenticationToken): void
     {
         $key = $this->fileBasedSimpleKeyService->getKey($this->options['keyName']);
-        if (!$this->hashService->validatePassword($authenticationToken->getPassword(),$key)) {
+        if (!$this->hashService->validatePassword($authenticationToken->getPassword(), $key)) {
             $authenticationToken->setAuthenticationStatus(TokenInterface::WRONG_CREDENTIALS);
             return;
         }

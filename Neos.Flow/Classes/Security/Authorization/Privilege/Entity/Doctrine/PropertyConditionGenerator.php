@@ -254,8 +254,8 @@ class PropertyConditionGenerator implements SqlGeneratorInterface
         } elseif ($targetEntity->isSingleValuedAssociation($targetEntityPropertyName) === true && $targetEntity->isAssociationInverseSide($targetEntityPropertyName) === true) {
             throw new InvalidQueryRewritingConstraintException(
                 'Single valued properties from the inverse side are not supported in a content security constraint path! Got: "'
-                    . $this->path . ' ' . $this->operator . ' ' . json_encode($this->operandDefinition) . '"'
-                , 1416397754
+                    . $this->path . ' ' . $this->operator . ' ' . json_encode($this->operandDefinition) . '"',
+                1416397754
             );
         } elseif ($targetEntity->isCollectionValuedAssociation($targetEntityPropertyName) === true) {
             return $this->getSqlForPropertyContains($sqlFilter, $quoteStrategy, $targetEntity, $targetTableAlias, $targetEntityPropertyName);

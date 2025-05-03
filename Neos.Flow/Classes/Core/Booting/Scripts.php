@@ -57,9 +57,6 @@ use Neos\Flow\Utility\Environment;
 use Neos\Utility\Files;
 use Neos\Utility\OpcodeCacheHelper;
 use Neos\Flow\Exception as FlowException;
-use Psr\Http\Message\RequestInterface;
-
-use function Symfony\Component\String\s;
 
 /**
  * Initialization scripts for modules of the Flow package

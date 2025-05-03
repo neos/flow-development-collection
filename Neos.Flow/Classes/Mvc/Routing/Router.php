@@ -20,7 +20,6 @@ use Neos\Flow\Mvc\Exception\InvalidRouteSetupException;
 use Neos\Flow\Mvc\Exception\NoMatchingRouteException;
 use Neos\Flow\Mvc\Routing\Dto\ResolveContext;
 use Neos\Flow\Mvc\Routing\Dto\RouteContext;
-use Neos\Flow\Mvc\Routing\Dto\UriConstraints;
 use Psr\Http\Message\UriInterface;
 use Psr\Log\LoggerInterface;
 

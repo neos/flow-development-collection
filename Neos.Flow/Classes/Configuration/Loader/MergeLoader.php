@@ -16,7 +16,6 @@ namespace Neos\Flow\Configuration\Loader;
 use Neos\Flow\Configuration\Source\YamlSource;
 use Neos\Flow\Core\ApplicationContext;
 use Neos\Flow\Package\FlowPackageInterface;
-use Neos\Flow\Package\PackageInterface;
 use Neos\Utility\Arrays;
 
 class MergeLoader implements LoaderInterface

@@ -12,7 +12,6 @@ namespace Neos\FluidAdaptor\View;
  */
 
 use Neos\FluidAdaptor\Exception;
-use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\Controller\ControllerContext;
 use Neos\Flow\Mvc\View\ViewInterface;
 use Neos\FluidAdaptor\Core\Rendering\RenderingContext;

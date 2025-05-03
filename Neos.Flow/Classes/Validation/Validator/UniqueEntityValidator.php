@@ -16,7 +16,6 @@ use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Flow\Reflection\ClassSchema;
 use Neos\Utility\ObjectAccess;
 use Neos\Flow\Reflection\ReflectionService;
-use Neos\Utility\TypeHandling;
 use Neos\Flow\Validation\Exception\InvalidValidationOptionsException;
 
 /**

@@ -15,7 +15,6 @@ use Neos\FluidAdaptor\Core\Cache\CacheAdaptor;
 use Neos\FluidAdaptor\Core\Parser\TemplateParser;
 use Neos\FluidAdaptor\Core\Parser\TemplateProcessor\EscapingFlagProcessor;
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\Controller\ControllerContext;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\FluidAdaptor\Core\Parser\Interceptor\ResourceInterceptor;

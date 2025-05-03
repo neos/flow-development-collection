@@ -16,7 +16,6 @@ namespace Neos\Flow\Utility;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Core\ApplicationContext;
 use Neos\Flow\Core\Bootstrap;
-use Neos\Flow\Error\Exception as ErrorException;
 use Neos\Flow\Utility\Exception as UtilityException;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Utility\Exception\FilesException;

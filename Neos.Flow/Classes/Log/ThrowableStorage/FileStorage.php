@@ -10,7 +10,6 @@ use Neos\Flow\Log\PlainTextFormatter;
 use Neos\Flow\Log\ThrowableStorageInterface;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Utility\Files;
-use Psr\Http\Message\RequestInterface;
 
 /**
  * Stores detailed information about throwables into files.
