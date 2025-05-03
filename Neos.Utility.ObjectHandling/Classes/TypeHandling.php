@@ -127,11 +127,8 @@ abstract class TypeHandling
 
         if (class_exists($type) === true || interface_exists($type) === true) {
             foreach (self::$collectionTypes as $collectionType) {
-                if (class_exists($collectionType)) {
-                    /** @var class-string<\Traversable<mixed>> $collectionType */
-                    if (is_subclass_of($type, $collectionType) === true) {
-                        return true;
-                    }
+                if (is_subclass_of($type, $collectionType) === true) {
+                    return true;
                 }
             }
         }
