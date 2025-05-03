@@ -61,7 +61,7 @@ class ModificationTimeStrategy implements ChangeDetectionStrategyInterface, Stra
     public function setFileMonitor(FileMonitor $fileMonitor)
     {
         $this->fileMonitor = $fileMonitor;
-        $this->filesAndModificationTimes = json_decode($this->cache->get($this->fileMonitor->getIdentifier() . '_filesAndModificationTimes') ?: '', true, flags: JSON_THROW_ON_ERROR);
+        $this->filesAndModificationTimes = json_decode($this->cache->get($this->fileMonitor->getIdentifier() . '_filesAndModificationTimes') ?: '', true);
     }
 
     /**
