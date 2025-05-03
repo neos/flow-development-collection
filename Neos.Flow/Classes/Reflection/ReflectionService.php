@@ -1229,9 +1229,6 @@ class ReflectionService
      */
     protected function reflectClass(string $className): void
     {
-        if ($className === 'Neos\Flow\Aop\Exception') {
-            var_dump('huhu');
-        }
         $this->log(sprintf('Reflecting class %s', $className), LogLevel::DEBUG);
 
         $className = $this->cleanClassName($className);

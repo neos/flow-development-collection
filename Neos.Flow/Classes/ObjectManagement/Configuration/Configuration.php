@@ -157,7 +157,6 @@ class Configuration
      */
     public function setClassName($className)
     {
-        \Neos\Flow\var_dump($className, 'setter');
         $this->className = $className;
     }
 
