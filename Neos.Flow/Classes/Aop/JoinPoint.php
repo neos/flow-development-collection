@@ -47,7 +47,7 @@ class JoinPoint implements JoinPointInterface
 
     /**
      * The advice chain for this join point
-     * @var ?Advice\AdviceChain
+     * @var Advice\AdviceChain|null
      */
     protected $adviceChain;
 
@@ -59,7 +59,7 @@ class JoinPoint implements JoinPointInterface
 
     /**
      * The exception thrown (only used for After Throwing advices)
-     * @var ?\Exception
+     * @var \Exception|null
      */
     protected $exception = null;
 
@@ -70,9 +70,9 @@ class JoinPoint implements JoinPointInterface
      * @param string $className Class name of the target class this join point refers to
      * @param string $methodName Method name of the target method which is about to or has been invoked
      * @param array<mixed> $methodArguments Array of method arguments which have been passed to the target method
-     * @param ?Advice\AdviceChain $adviceChain The advice chain for this join point
+     * @param Advice\AdviceChain|null $adviceChain The advice chain for this join point
      * @param mixed $result The result of the method invocations (only used for After Returning advices)
-     * @param ?\Exception $exception The exception thrown (only used for After Throwing advices)
+     * @param \Exception|null $exception The exception thrown (only used for After Throwing advices)
      */
     public function __construct($proxy, string $className, string $methodName, array $methodArguments, ?Advice\AdviceChain $adviceChain = null, $result = null, ?\Exception $exception = null)
     {
