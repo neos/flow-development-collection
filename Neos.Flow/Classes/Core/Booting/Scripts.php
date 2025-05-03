@@ -197,10 +197,9 @@ class Scripts
 
         $packageManager->initialize($bootstrap);
         if (self::useClassLoader($bootstrap)) {
-            $bootstrap->getEarlyInstance(ClassLoader::class)->setPackages(array_filter(
-                $packageManager->getAvailablePackages(),
-                fn (PackageInterface&PackageKeyAwareInterface $package) => $package instanceof Package,
-            ));
+            $bootstrap->getEarlyInstance(ClassLoader::class)->setPackages(
+                $packageManager->getAvailablePackages()
+            );
         }
     }
 

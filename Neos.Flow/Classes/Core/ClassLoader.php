@@ -12,7 +12,7 @@ namespace Neos\Flow\Core;
  */
 
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Package;
+use Neos\Flow\Package\PackageInterface;
 use Neos\Utility\Files;
 
 /**
@@ -191,12 +191,13 @@ class ClassLoader
     /**
      * Sets the available packages
      *
-     * @param array<Package> $activePackages An array of \Neos\Flow\Package\Package objects
+     * @param array<PackageInterface> $activePackages
      * @return void
      */
     public function setPackages(array $activePackages)
     {
-        foreach ($activePackages as $packageKey => $package) {
+        foreach ($activePackages as $package) {
+            /** @phpstan-ignore method.notFound (not part of the interface) */
             foreach ($package->getFlattenedAutoloadConfiguration() as $configuration) {
                 $this->createNamespaceMapEntry($configuration['namespace'], $configuration['classPath'], $configuration['mappingType']);
             }
