@@ -110,7 +110,8 @@ class ProxyClassBuilder
         foreach ($this->objectConfigurations as $objectName => $objectConfiguration) {
             $className = $objectConfiguration->getClassName();
             if (
-                $objectName !== $className
+                $className === ''
+                || $objectName !== $className
                 || $this->compiler->hasCacheEntryForClass($className) === true
                 || $this->reflectionService->isClassAbstract($className)
             ) {
@@ -304,7 +305,11 @@ class ProxyClassBuilder
                         if ($argumentValue instanceof Configuration) {
                             $doReturnCode = true;
                             $argumentValueObjectName = $argumentValue->getObjectName();
-                            if ($this->objectConfigurations[$argumentValueObjectName]->getScope() === Configuration::SCOPE_PROTOTYPE) {
+                            $argumentValueClassName = $argumentValue->getClassName();
+                            if ($argumentValueClassName === null) {
+                                $preparedArgument = $this->buildCustomFactoryCall($argumentValue->getFactoryObjectName(), $argumentValue->getFactoryMethodName(), $argumentValue->getFactoryArguments());
+                                $assignments[$argumentPosition] = $assignmentPrologue . $preparedArgument;
+                            } elseif ($this->objectConfigurations[$argumentValueObjectName]->getScope() === Configuration::SCOPE_PROTOTYPE) {
                                 $assignments[$argumentPosition] = $assignmentPrologue . 'new \\' . $argumentValueObjectName . '(' . $this->buildMethodParametersCode($argumentValue->getArguments()) . ')';
                             } else {
                                 $assignments[$argumentPosition] = $assignmentPrologue . '\Neos\Flow\Core\Bootstrap::$staticObjectManager->get(\'' . $argumentValueObjectName . '\')';
@@ -440,14 +445,23 @@ class ProxyClassBuilder
         $className = $objectConfiguration->getClassName();
         $propertyObjectName = $propertyConfiguration->getObjectName();
         $propertyClassName = $propertyConfiguration->getClassName();
-        if (!isset($this->objectConfigurations[$propertyClassName])) {
-            $configurationSource = $objectConfiguration->getConfigurationSourceHint();
-            throw new UnknownObjectException('Unknown class "' . $propertyClassName . '", specified as property "' . $propertyName . '" in the object configuration of object "' . $objectConfiguration->getObjectName() . '" (' . $configurationSource . ').', 1296130876);
-        }
-        if ($this->objectConfigurations[$propertyClassName]->getScope() === Configuration::SCOPE_PROTOTYPE) {
-            $preparedSetterArgument = 'new \\' . $propertyClassName . '(' . $this->buildMethodParametersCode($propertyConfiguration->getArguments()) . ')';
+        if ($propertyClassName === null) {
+            $preparedSetterArgument = $this->buildCustomFactoryCall(
+                $propertyConfiguration->getFactoryObjectName(),
+                $propertyConfiguration->getFactoryMethodName(),
+                $propertyConfiguration->getFactoryArguments()
+            );
         } else {
-            $preparedSetterArgument = '\Neos\Flow\Core\Bootstrap::$staticObjectManager->get(\'' . $propertyClassName . '\')';
+            if (!is_string($propertyClassName) || !isset($this->objectConfigurations[$propertyClassName])) {
+                $configurationSource = $objectConfiguration->getConfigurationSourceHint();
+                throw new UnknownObjectException('Unknown class "' . $propertyClassName . '", specified as property "' . $propertyName . '" in the object configuration of object "' . $objectConfiguration->getObjectName() . '" (' . $configurationSource . ').', 1296130876);
+            }
+
+            if ($this->objectConfigurations[$propertyClassName]->getScope() === Configuration::SCOPE_PROTOTYPE) {
+                $preparedSetterArgument = 'new \\' . $propertyClassName . '(' . $this->buildMethodParametersCode($propertyConfiguration->getArguments()) . ')';
+            } else {
+                $preparedSetterArgument = '\Neos\Flow\Core\Bootstrap::$staticObjectManager->get(\'' . $propertyClassName . '\')';
+            }
         }
 
         $result = $this->buildSetterInjectionCode($className, $propertyName, $preparedSetterArgument);

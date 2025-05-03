@@ -196,7 +196,7 @@ class ConfigurationBuilder
         // only if the interface doesn't have a specifically configured scope (i.e. is prototype so far)
         foreach (array_keys($interfaceNames) as $interfaceName) {
             $implementationClassName = $objectConfigurations[$interfaceName]->getClassName();
-            if (isset($objectConfigurations[$implementationClassName]) && $objectConfigurations[$interfaceName]->getScope() === Configuration::SCOPE_PROTOTYPE) {
+            if ($implementationClassName !== '' && isset($objectConfigurations[$implementationClassName]) && $objectConfigurations[$interfaceName]->getScope() === Configuration::SCOPE_PROTOTYPE) {
                 $objectConfigurations[$interfaceName]->setScope($objectConfigurations[$implementationClassName]->getScope());
             }
         }
@@ -291,9 +291,6 @@ class ConfigurationBuilder
                     }
                     break;
                 case 'className':
-                    /** @var class-string $optionValue */
-                    $objectConfiguration->setClassName($optionValue);
-                    break;
                 case 'factoryObjectName':
                 case 'factoryMethodName':
                 case 'lifecycleInitializationMethodName':
@@ -455,6 +452,9 @@ class ConfigurationBuilder
                 }
                 $argumentObjectName = $objectConfiguration->getObjectName() . ':argument:' . $index;
                 $argumentValue->setObjectName($argumentObjectName);
+                if ($argumentValue->getClassName() === null) {
+                    $argumentValue->setClassName('');
+                }
                 $objectConfigurations[$argumentObjectName] = $argumentValue;
                 $argument->set((int)$argument->getIndex(), $argumentObjectName, $argument->getType());
             }
@@ -472,6 +472,10 @@ class ConfigurationBuilder
     protected function autowireArguments(array $objectConfigurations): void
     {
         foreach ($objectConfigurations as $objectConfiguration) {
+            $className = $objectConfiguration->getClassName();
+            if ($className === '') {
+                continue;
+            }
             if ($objectConfiguration->getAutowiring() === Configuration::AUTOWIRING_MODE_OFF) {
                 continue;
             }
@@ -550,6 +554,10 @@ class ConfigurationBuilder
         foreach ($objectConfigurations as $objectConfiguration) {
             $className = $objectConfiguration->getClassName();
             $properties = $objectConfiguration->getProperties();
+
+            if ($className === '') {
+                continue;
+            }
 
             if ($objectConfiguration->getAutowiring() === Configuration::AUTOWIRING_MODE_OFF) {
                 continue;

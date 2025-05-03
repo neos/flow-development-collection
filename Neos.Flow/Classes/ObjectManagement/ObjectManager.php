@@ -287,7 +287,7 @@ class ObjectManager implements ObjectManagerInterface
         }
 
         foreach ($this->objects as $objectName => $information) {
-            if ($information[self::KEY_LOWERCASE_NAME] === $lowerCasedObjectName) {
+            if (isset($information[self::KEY_LOWERCASE_NAME]) && $information[self::KEY_LOWERCASE_NAME] === $lowerCasedObjectName) {
                 $this->cachedLowerCasedObjectNames[$lowerCasedObjectName] = $objectName;
                 return $objectName;
             }
@@ -309,12 +309,12 @@ class ObjectManager implements ObjectManagerInterface
      */
     public function getObjectNameByClassName($className): string|false
     {
-        if ((!isset($this->objects[$className][self::KEY_CLASS_NAME]) || $this->objects[$className][self::KEY_CLASS_NAME] === $className)) {
+        if (isset($this->objects[$className]) && (!isset($this->objects[$className][self::KEY_CLASS_NAME]) || $this->objects[$className][self::KEY_CLASS_NAME] === $className)) {
             return $className;
         }
 
         foreach ($this->objects as $objectName => $information) {
-            if ($information[self::KEY_CLASS_NAME] === $className) {
+            if (isset($information[self::KEY_CLASS_NAME]) && $information[self::KEY_CLASS_NAME] === $className) {
                 return $objectName;
             }
         }
@@ -337,17 +337,17 @@ class ObjectManager implements ObjectManagerInterface
         if (!isset($this->objects[$objectName])) {
             return class_exists($objectName) ? $objectName : false;
         }
-        return $this->objects[$objectName][self::KEY_CLASS_NAME];
+        return $this->objects[$objectName][self::KEY_CLASS_NAME] ?? $objectName;
     }
 
     /**
      * Returns the key of the package the specified object is contained in.
      *
      * @param string $objectName The object name
-     * @return string|false|null The package key or false if no such object exists or null if no key was assigned
+     * @return string|false The package key or false if no such object exists or null if no key was assigned
      * @internal
      */
-    public function getPackageKeyByObjectName($objectName): string|false|null
+    public function getPackageKeyByObjectName($objectName): string|false
     {
         return (isset($this->objects[$objectName]) ? $this->objects[$objectName][self::KEY_PACKAGE] : false);
     }

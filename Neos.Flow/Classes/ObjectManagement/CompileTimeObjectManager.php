@@ -220,9 +220,13 @@ class CompileTimeObjectManager extends ObjectManager
     public function getClassNamesByScope(int $scope): array
     {
         if (!isset($this->cachedClassNamesByScope[$scope])) {
-            foreach ($this->objects as $information) {
+            foreach ($this->objects as $objectName => $information) {
                 if ($information[self::KEY_SCOPE] === $scope) {
-                    $this->cachedClassNamesByScope[$scope][] = $information[self::KEY_CLASS_NAME];
+                    if (isset($information[self::KEY_CLASS_NAME])) {
+                        $this->cachedClassNamesByScope[$scope][] = $information[self::KEY_CLASS_NAME];
+                    } else {
+                        $this->cachedClassNamesByScope[$scope][] = $objectName;
+                    }
                 }
             }
         }
@@ -273,7 +277,7 @@ class CompileTimeObjectManager extends ObjectManager
                         }
                     }
                 }
-                if (isset($availableClassNames[$packageKey])) {
+                if (isset($availableClassNames[$packageKey]) && is_array($availableClassNames[$packageKey])) {
                     $availableClassNames[$packageKey] = array_unique($availableClassNames[$packageKey]);
                 }
             }
@@ -308,6 +312,9 @@ class CompileTimeObjectManager extends ObjectManager
             if (!array_key_exists($packageKey, $classNames)) {
                 $this->logger?->debug('The package "' . $packageKey . '" specified in the setting "Neos.Flow.object.includeClasses" was either excluded or is not loaded.');
                 continue;
+            }
+            if (!is_array($filterExpressions)) {
+                throw new InvalidConfigurationTypeException('The value given for setting "Neos.Flow.object.includeClasses.\'' . $packageKey . '\'" is  invalid. It should be an array of expressions. Check the syntax in the YAML file.', 1422357272);
             }
 
             $classesForPackageUnderInspection = $classNames[$packageKey];
@@ -360,7 +367,9 @@ class CompileTimeObjectManager extends ObjectManager
                 self::KEY_SCOPE => $objectConfiguration->getScope(),
                 self::KEY_PACKAGE => $objectConfiguration->getPackageKey()
             ];
-            $objects[$objectName][self::KEY_CLASS_NAME] = $objectConfiguration->getClassName();
+            if ($objectConfiguration->getClassName() !== $objectName) {
+                $objects[$objectName][self::KEY_CLASS_NAME] = $objectConfiguration->getClassName();
+            }
             if ($objectConfiguration->isCreatedByFactory()) {
                 $objects[$objectName][self::KEY_FACTORY] = [
                     $objectConfiguration->getFactoryObjectName(),
