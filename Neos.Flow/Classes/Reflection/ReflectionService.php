@@ -183,7 +183,7 @@ class ReflectionService
      *         28?: true,
      *     }>,
      *     27?: true,
-     * }|bool>
+     * }|false>
      */
     protected array $classReflectionData = [];
 
@@ -1246,15 +1246,15 @@ class ReflectionService
         }
 
         if ($class->isAbstract() || $class->isInterface()) {
-            /** @phpstan-ignore offsetAccess.nonOffsetAccessible (In this case, this is an array, trust me, bro) */
+            /** @phpstan-ignore offsetAccess.nonOffsetAccessible (is not false, todo simplify structure to always be an array) */
             $this->classReflectionData[$className][self::DATA_CLASS_ABSTRACT] = true;
         }
         if ($class->isFinal()) {
-            /** @phpstan-ignore offsetAccess.nonOffsetAccessible (In this case, this is an array, trust me, bro) */
+            /** @phpstan-ignore offsetAccess.nonOffsetAccessible (is not false, todo simplify structure to always be an array) */
             $this->classReflectionData[$className][self::DATA_CLASS_FINAL] = true;
         }
         if ($class->isReadOnly()) {
-            /** @phpstan-ignore offsetAccess.nonOffsetAccessible (In this case, this is an array, trust me, bro) */
+            /** @phpstan-ignore offsetAccess.nonOffsetAccessible (is not false, todo simplify structure to always be an array) */
             $this->classReflectionData[$className][self::DATA_CLASS_READONLY] = true;
         }
 
@@ -1269,7 +1269,7 @@ class ReflectionService
         foreach ($this->annotationReader->getClassAnnotations($class) as $annotation) {
             $annotationClassName = get_class($annotation);
             $this->annotatedClasses[$annotationClassName][$className] = true;
-            /** @phpstan-ignore offsetAccess.nonOffsetAccessible (In this case, this is an array, trust me, bro) */
+            /** @phpstan-ignore offsetAccess.nonOffsetAccessible (is not false, todo simplify structure to always be an array) */
             $this->classReflectionData[$className][self::DATA_CLASS_ANNOTATIONS][] = $annotation;
         }
 
@@ -1279,7 +1279,7 @@ class ReflectionService
                 continue;
             }
             $this->annotatedClasses[$annotationClassName][$className] = true;
-            /** @phpstan-ignore offsetAccess.nonOffsetAccessible (In this case, this is an array, trust me, bro) */
+            /** @phpstan-ignore offsetAccess.nonOffsetAccessible (is not false, todo simplify structure to always be an array) */
             $this->classReflectionData[$className][self::DATA_CLASS_ANNOTATIONS][] = $attribute->newInstance();
         }
 
@@ -1308,7 +1308,7 @@ class ReflectionService
         }
 
         $propertyName = $property->getName();
-        /** @phpstan-ignore offsetAccess.nonOffsetAccessible (In this case, this is an array, trust me, bro) */
+        /** @phpstan-ignore offsetAccess.nonOffsetAccessible (is not false, todo simplify structure to always be an array) */
         $this->classReflectionData[$className][self::DATA_CLASS_PROPERTIES][$propertyName] = [];
         if ($property->hasType()) {
             $this->classReflectionData[$className][self::DATA_CLASS_PROPERTIES][$propertyName][self::DATA_PROPERTY_TYPE] = trim((string)$property->getType(), '?');
@@ -1386,7 +1386,7 @@ class ReflectionService
             $this->loadOrReflectClassIfNecessary($parentClassName);
         }
 
-        /** @phpstan-ignore offsetAccess.nonOffsetAccessible (In this case, this is an array, trust me, bro) */
+        /** @phpstan-ignore offsetAccess.nonOffsetAccessible (is not false, todo simplify structure to always be an array) */
         $this->classReflectionData[$parentClassName][self::DATA_CLASS_SUBCLASSES][$className] = true;
     }
 
@@ -1407,7 +1407,7 @@ class ReflectionService
             $this->loadOrReflectClassIfNecessary($interfaceName);
         }
 
-        /** @phpstan-ignore offsetAccess.nonOffsetAccessible (In this case, this is an array, trust me, bro) */
+        /** @phpstan-ignore offsetAccess.nonOffsetAccessible (is not false, todo simplify structure to always be an array) */
         $this->classReflectionData[$interfaceName][self::DATA_INTERFACE_IMPLEMENTATIONS][$className] = true;
     }
 
@@ -1420,14 +1420,14 @@ class ReflectionService
     {
         $methodName = $method->getName();
         if ($method->isFinal()) {
-            /** @phpstan-ignore offsetAccess.nonOffsetAccessible (In this case, this is an array, trust me, bro) */
+            /** @phpstan-ignore offsetAccess.nonOffsetAccessible (is not false, todo simplify structure to always be an array) */
             $this->classReflectionData[$className][self::DATA_CLASS_METHODS][$methodName][self::DATA_METHOD_FINAL] = true;
         }
         if ($method->isStatic()) {
-            /** @phpstan-ignore offsetAccess.nonOffsetAccessible (In this case, this is an array, trust me, bro) */
+            /** @phpstan-ignore offsetAccess.nonOffsetAccessible (is not false, todo simplify structure to always be an array) */
             $this->classReflectionData[$className][self::DATA_CLASS_METHODS][$methodName][self::DATA_METHOD_STATIC] = true;
         }
-        /** @phpstan-ignore offsetAccess.nonOffsetAccessible (In this case, this is an array, trust me, bro) */
+        /** @phpstan-ignore offsetAccess.nonOffsetAccessible (is not false, todo simplify structure to always be an array) */
         $this->classReflectionData[$className][self::DATA_CLASS_METHODS][$methodName][self::DATA_METHOD_VISIBILITY] = $this->extractVisibility($method);
 
         foreach ($this->getMethodAnnotations($className, $methodName) as $methodAnnotation) {
@@ -1459,6 +1459,7 @@ class ReflectionService
                 }
             }
         }
+        /** @phpstan-ignore offsetAccess.nonOffsetAccessible (is not false, todo simplify structure to always be an array) */
         $this->classReflectionData[$className][self::DATA_CLASS_METHODS][$methodName][self::DATA_METHOD_DECLARED_RETURN_TYPE] = $returnType;
 
         foreach ($method->getParameters() as $parameter) {
@@ -1483,7 +1484,7 @@ class ReflectionService
         $methodName = $method->getName();
         $paramAnnotations = $method->isTaggedWith('param') ? $method->getTagValues('param') : [];
 
-        /** @phpstan-ignore offsetAccess.nonOffsetAccessible (In this case, this is an array, trust me, bro) */
+        /** @phpstan-ignore offsetAccess.nonOffsetAccessible (is not false, todo simplify structure to always be an array) */
         $this->classReflectionData[$className][self::DATA_CLASS_METHODS][$methodName][self::DATA_METHOD_PARAMETERS][$parameter->getName()] = $this->convertParameterReflectionToArray($parameter, $method);
         if (!isset($this->settings['logIncorrectDocCommentHints']) || $this->settings['logIncorrectDocCommentHints'] !== true) {
             return;
