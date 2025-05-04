@@ -187,9 +187,6 @@ class Session implements CookieEnabledInterface
     {
         if ($this->started === false) {
             $this->sessionMetaData = SessionMetaData::createWithTimestamp($this->now);
-            if (!$this->sessionCookiePath) {
-                throw new \Exception('Cannot start a session without a path');
-            }
             $this->sessionCookie = new Cookie($this->sessionCookieName, $this->sessionMetaData->sessionIdentifier->value, 0, $this->sessionCookieLifetime, $this->sessionCookieDomain, $this->sessionCookiePath, $this->sessionCookieSecure, $this->sessionCookieHttpOnly, $this->sessionCookieSameSite);
             $this->started = true;
 

@@ -77,7 +77,7 @@ class Cookie
     protected $domain;
 
     /**
-     * @var string
+     * @var ?string
      */
     protected $path;
 
@@ -116,14 +116,14 @@ class Cookie
      * @param integer|\DateTimeInterface $expires Date and time after which this cookie expires.
      * @param ?integer $maximumAge Number of seconds until the cookie expires.
      * @param ?string $domain The host to which the user agent will send this cookie
-     * @param string $path The path describing the scope of this cookie
+     * @param ?string $path The path describing the scope of this cookie
      * @param boolean $secure If this cookie should only be sent through a "secure" channel by the user agent
      * @param boolean $httpOnly If this cookie should only be used through the HTTP protocol
      * @param string $sameSite If this cookie should restricted to a first-party or top-level navigation or third-party context
      * @api
      * @throws \InvalidArgumentException
      */
-    public function __construct($name, $value = null, int|\DateTimeInterface $expires = 0, ?int $maximumAge = null, $domain = null, $path = '/', $secure = false, $httpOnly = true, $sameSite = null)
+    public function __construct($name, $value = null, int|\DateTimeInterface $expires = 0, ?int $maximumAge = null, $domain = null, ?string $path = '/', $secure = false, $httpOnly = true, $sameSite = null)
     {
         if (preg_match(self::PATTERN_TOKEN, $name) !== 1) {
             throw new \InvalidArgumentException('The parameter "name" passed to the Cookie constructor must be a valid token as per RFC 2616, Section 2.2.', 1345101977);
@@ -134,7 +134,7 @@ class Cookie
         if ($domain !== null && preg_match(self::PATTERN_DOMAIN, $domain) !== 1) {
             throw new \InvalidArgumentException('The parameter "domain" passed to the Cookie constructor must be a valid domain as per RFC 6265, Section 4.1.2.3.', 1345116246);
         }
-        if (preg_match(self::PATTERN_PATH, $path) !== 1) {
+        if ($path !== null && preg_match(self::PATTERN_PATH, $path) !== 1) {
             throw new \InvalidArgumentException('The parameter "path" passed to the Cookie constructor must be a valid path as per RFC 6265, Section 4.1.1.', 1345123078);
         }
 
@@ -334,7 +334,7 @@ class Cookie
     /**
      * Returns the path this cookie is valid for.
      *
-     * @return string The path
+     * @return ?string The path
      * @api
      */
     public function getPath()
