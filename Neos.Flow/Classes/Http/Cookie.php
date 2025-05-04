@@ -131,9 +131,6 @@ class Cookie
         if ($expires instanceof \DateTimeInterface) {
             $expires = $expires->getTimestamp();
         }
-        if ($maximumAge !== null) {
-            throw new \InvalidArgumentException('The parameter "maximumAge" passed to the Cookie constructor must be an integer value.', 1345108786);
-        }
         if ($domain !== null && preg_match(self::PATTERN_DOMAIN, $domain) !== 1) {
             throw new \InvalidArgumentException('The parameter "domain" passed to the Cookie constructor must be a valid domain as per RFC 6265, Section 4.1.2.3.', 1345116246);
         }
