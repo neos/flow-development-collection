@@ -344,7 +344,6 @@ class DatetimeParser
      * @param array<mixed> $parsedFormat Format parsed by DatesReader
      * @param array<mixed> $localizedLiterals Array of date / time literals from CLDR
      * @return array<string,mixed> Array of parsed date and / or time elements (can be array of NULLs if nothing was parsed)
-     * @throws Exception\InvalidParseStringException
      * @throws InvalidArgumentException When unexpected symbol found in format
      * @see DatesReader
      */

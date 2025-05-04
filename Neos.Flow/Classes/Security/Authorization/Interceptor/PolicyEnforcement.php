@@ -96,6 +96,7 @@ class PolicyEnforcement implements InterceptorInterface
 
         try {
             $this->authenticationManager->authenticate();
+            /** @phpstan-ignore catch.neverThrown (exception is not part of the api, can occur if the user was deleted) */
         } catch (EntityNotFoundException $exception) {
             throw new AuthenticationRequiredException('Could not authenticate. Looks like a broken session.', 1358971444, $exception);
         } catch (NoTokensAuthenticatedException $noTokensAuthenticatedException) {

@@ -41,9 +41,6 @@ use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
  */
 class IfHasErrorsViewHelper extends AbstractConditionViewHelper
 {
-    /**
-     * @throws \Neos\FluidAdaptor\Core\ViewHelper\Exception
-     */
     public function initializeArguments(): void
     {
         $this->registerArgument('then', 'mixed', 'Value to be returned if the condition if met.', false);

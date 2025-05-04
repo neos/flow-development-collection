@@ -42,7 +42,7 @@ class CurlEngine implements RequestEngineInterface
      *
      * @param integer $optionName One of the CURLOPT_* constants
      * @param mixed $value The value to set
-     * @throws \InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     public function setOption($optionName, $value): void
     {

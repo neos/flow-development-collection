@@ -304,7 +304,6 @@ class ConfigurationManager
      * This method writes the current configuration into a cache file if Flow was configured to do so.
      *
      * @return void
-     * @throws Exception\InvalidConfigurationException
      * @throws Exception\InvalidConfigurationTypeException
      * @throws FilesException
      */

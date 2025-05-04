@@ -268,7 +268,6 @@ class Route
      *
      * @param string $uriPattern
      * @return void
-     * @throws \InvalidArgumentException
      */
     public function setUriPattern(string $uriPattern)
     {

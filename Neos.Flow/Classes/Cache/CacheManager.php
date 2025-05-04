@@ -150,7 +150,6 @@ class CacheManager
      * @todo enforce via extractor
      * @param array<string,CacheConfiguration> $cacheConfigurations The cache configurations to set
      * @return void
-     * @throws \InvalidArgumentException
      */
     public function setCacheConfigurations(array $cacheConfigurations): void
     {

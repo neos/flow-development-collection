@@ -192,7 +192,6 @@ class TransientSession implements SessionInterface
      * @param string $tag The tag – must match be a valid cache frontend tag
      * @return void
      * @throws Exception\SessionNotStartedException
-     * @throws \InvalidArgumentException
      * @api
      */
     public function addTag(string $tag): void
