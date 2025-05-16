@@ -315,15 +315,20 @@ class ArrayHelper implements ProtectedContextAwareInterface
     /**
      * Removes duplicate values from an array
      *
+     *  Usage example for options:
+     *
+     *  Array.unique(value, 'SORT_REGULAR')
+     *
      * @param iterable $array The input array
+     * @param string $option The constant name for sorting behavior ('SORT_STRING', 'SORT_REGULAR', 'SORT_NUMERIC', 'SORT_LOCALE_STRING')
      * @return array The filtered array.
      */
-    public function unique(iterable $array): array
+    public function unique(iterable $array, string $option = 'SORT_STRING'): array
     {
         if ($array instanceof \Traversable) {
             $array = iterator_to_array($array);
         }
-        return array_unique($array);
+        return array_unique($array, constant($option));
     }
 
     /**
