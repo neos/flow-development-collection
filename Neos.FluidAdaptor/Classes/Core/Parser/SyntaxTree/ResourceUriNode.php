@@ -11,53 +11,73 @@ namespace Neos\FluidAdaptor\Core\Parser\SyntaxTree;
  * source code.
  */
 
+use Neos\Flow\I18n\Service;
+use Neos\Flow\ResourceManagement\Exception;
+use Neos\Flow\ResourceManagement\ResourceManager;
 use Neos\FluidAdaptor\Core\Parser\Interceptor\ResourceInterceptor;
-use Neos\FluidAdaptor\Core\ViewHelper\ViewHelperResolver;
-use Neos\FluidAdaptor\ViewHelpers\Uri\ResourceViewHelper;
-use TYPO3Fluid\Fluid\Core\Parser\SyntaxTree\ViewHelperNode;
-use TYPO3Fluid\Fluid\Core\Parser\SyntaxTree\NodeInterface;
+use Neos\FluidAdaptor\Core\Rendering\RenderingContext;
+use Neos\FluidAdaptor\Core\ViewHelper\Exception\InvalidVariableException;
+use TYPO3Fluid\Fluid\Core\Parser\SyntaxTree\AbstractNode;
+use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
 
 /**
  * A special ViewHelperNode that works via injections and is created by the ResourceInterceptor
  *
  * @see ResourceInterceptor
  */
-class ResourceUriNode extends ViewHelperNode
+class ResourceUriNode extends AbstractNode
 {
     /**
-     * @var array<NodeInterface>
+     * @var ResourceManager|null
      */
-    protected $arguments = [];
+    protected ?ResourceManager $resourceManager;
 
-    /**
-     * @var ViewHelperResolver
-     */
-    protected $viewHelperResolver;
+    protected ?Service $i18nService;
 
-    /**
-     * @var string
-     */
-    protected $viewHelperClassName = ResourceViewHelper::class;
-
-    /**
-     * @param ViewHelperResolver $viewHelperResolver
-     */
-    public function injectViewHelperResolver(ViewHelperResolver $viewHelperResolver)
+    public function injectResourceManager(ResourceManager $resourceManager): void
     {
-        $this->viewHelperResolver = $viewHelperResolver;
-        $this->uninitializedViewHelper = $this->viewHelperResolver->createViewHelperInstanceFromClassName($this->viewHelperClassName);
-        /** @phpstan-ignore-next-line we use internal api */
-        $this->uninitializedViewHelper->setViewHelperNode($this);
-        $this->argumentDefinitions = $this->viewHelperResolver->getArgumentDefinitionsForViewHelper($this->uninitializedViewHelper);
+        $this->resourceManager = $resourceManager;
+    }
+
+    public function injectService(Service $i18nService): void
+    {
+        $this->i18nService = $i18nService;
+    }
+
+    public function __construct(
+        public readonly string $path,
+        public readonly string|null $package
+    ) {
     }
 
     /**
-     * Constructor.
-     *
-     * @param NodeInterface[] $arguments Arguments of view helper - each value is a RootNode.
+     * @param RenderingContextInterface $renderingContext
+     * @return string
+     * @throws InvalidVariableException
      */
-    public function __construct(array $arguments)
+    public function evaluate(RenderingContextInterface $renderingContext): string
     {
-        $this->arguments = $arguments;
+        $package = $this->package;
+        $path = $this->path;
+        if ($package === null) {
+            /** @var RenderingContext $renderingContext */
+            $package = $renderingContext->getControllerContext()?->getRequest()?->getControllerPackageKey() ?? null;
+        }
+        if (str_starts_with($path, 'resource://')) {
+            try {
+                [$package, $path] = $this->resourceManager->getPackageAndPathByPublicPath($path);
+            } catch (Exception $e) {
+                throw new InvalidVariableException(sprintf('The specified path "%s" does not point to a public resource.', $path), 1386458851, $e);
+            }
+        }
+
+        $resourcePath = 'resource://' . $package . '/Public/' . $this->path;
+        $localizedResourcePathData = $this->i18nService->getLocalizedFilename($resourcePath);
+        $matches = [];
+        if (preg_match('#resource://([^/]+)/Public/(.*)#', current($localizedResourcePathData), $matches) === 1) {
+            [$_, $package, $path] = $matches;
+        }
+
+        return $this->resourceManager->getPublicPackageResourceUri($package, $path);
     }
 }

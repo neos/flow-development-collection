@@ -11,11 +11,9 @@ namespace Neos\FluidAdaptor\View;
  * source code.
  */
 
-use Neos\Flow\Mvc\View\ViewInterface;
-
 /**
  * A standard Flow view based on Fluid.
  */
-class TemplateView extends AbstractTemplateView implements ViewInterface
+class TemplateView extends AbstractTemplateView
 {
 }

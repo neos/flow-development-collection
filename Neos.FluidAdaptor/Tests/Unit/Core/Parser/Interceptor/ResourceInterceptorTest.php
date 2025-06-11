@@ -50,9 +50,7 @@ class ResourceInterceptorTest extends UnitTestCase
         self::assertCount(3, $resultingNodeTree->getChildNodes());
         foreach ($resultingNodeTree->getChildNodes() as $parserNode) {
             if ($parserNode instanceof ResourceUriNode) {
-                self::assertEquals([
-                    'path' => $path
-                ], $parserNode->getArguments());
+                self::assertEquals($path, $parserNode->path);
             }
         }
     }
@@ -122,10 +120,8 @@ class ResourceInterceptorTest extends UnitTestCase
         self::assertCount(3, $resultingNodeTree->getChildNodes());
         foreach ($resultingNodeTree->getChildNodes() as $parserNode) {
             if ($parserNode instanceof ResourceUriNode) {
-                self::assertEquals([
-                    'path' => $expectedPath,
-                    'package' => $expectedPackageKey
-                ], $parserNode->getArguments());
+                self::assertEquals($expectedPath, $parserNode->path);
+                self::assertEquals($expectedPackageKey, $parserNode->package);
             }
         }
     }

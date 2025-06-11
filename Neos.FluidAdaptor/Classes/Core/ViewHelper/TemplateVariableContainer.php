@@ -28,11 +28,8 @@ class TemplateVariableContainer extends StandardVariableProvider
      *
      * This sadly mostly copies the parent method to add handling for
      * subjects of type TemplateObjectAccessInterface.
-     *
-     * @param string $path
-     * @return mixed
      */
-    public function getByPath($path)
+    public function getByPath(string $path): mixed
     {
         // begin copy of parent method
         $subject = $this->variables;

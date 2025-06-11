@@ -15,6 +15,7 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Package\Package;
 use Neos\Flow\Package\PackageManager;
+use TYPO3Fluid\Fluid\Core\ViewHelper\ViewHelperInterface;
 
 /**
  * Class ViewHelperResolver
@@ -51,7 +52,7 @@ class ViewHelperResolver extends \TYPO3Fluid\Fluid\Core\ViewHelper\ViewHelperRes
      *
      * @var array
      */
-    protected $namespaces = [];
+    protected array $namespaces = [];
 
     /**
      * @Flow\InjectConfiguration(path="namespaces")
@@ -86,7 +87,7 @@ class ViewHelperResolver extends \TYPO3Fluid\Fluid\Core\ViewHelper\ViewHelperRes
      * @param string $viewHelperClassName
      * @return \TYPO3Fluid\Fluid\Core\ViewHelper\ViewHelperInterface
      */
-    public function createViewHelperInstanceFromClassName($viewHelperClassName)
+    public function createViewHelperInstanceFromClassName(string $viewHelperClassName): ViewHelperInterface
     {
         return $this->objectManager->get($viewHelperClassName);
     }
@@ -123,12 +124,8 @@ class ViewHelperResolver extends \TYPO3Fluid\Fluid\Core\ViewHelper\ViewHelperRes
      * you need to remove or replace previously added namespaces. Be aware
      * that setNamespaces() also removes the default "f" namespace, so
      * when you use this method you should always include the "f" namespace.
-     *
-     * @param string $identifier
-     * @param string|array $phpNamespace
-     * @return void
      */
-    public function addNamespace($identifier, $phpNamespace)
+    public function addNamespace(string $identifier, array|string|null $phpNamespace): void
     {
         if ($phpNamespace === null) {
             $this->namespaces[$identifier] = null;

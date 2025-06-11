@@ -61,13 +61,6 @@ class TemplatePaths extends \TYPO3Fluid\Fluid\View\TemplatePaths
      */
     protected $packageManager;
 
-    public function __construct(array $options = [])
-    {
-        foreach ($options as $optionName => $optionValue) {
-            $this->setOption($optionName, $optionValue);
-        }
-    }
-
     /**
      * @param PackageManager $packageManager
      */
@@ -119,9 +112,9 @@ class TemplatePaths extends \TYPO3Fluid\Fluid\View\TemplatePaths
     /**
      * Resolves the template root to be used inside other paths.
      *
-     * @return array Path(s) to template root directory
+     * @return string[]
      */
-    public function getTemplateRootPaths()
+    public function getTemplateRootPaths(): array
     {
         if ($this->templateRootPaths !== []) {
             return $this->templateRootPaths;
@@ -140,9 +133,9 @@ class TemplatePaths extends \TYPO3Fluid\Fluid\View\TemplatePaths
     }
 
     /**
-     * @return array
+     * @return string[]
      */
-    public function getLayoutRootPaths()
+    public function getLayoutRootPaths(): array
     {
         if ($this->layoutRootPaths !== []) {
             return $this->layoutRootPaths;
@@ -160,7 +153,10 @@ class TemplatePaths extends \TYPO3Fluid\Fluid\View\TemplatePaths
         return [$layoutRootPath];
     }
 
-    public function getPartialRootPaths()
+    /**
+     * @return string[]
+     */
+    public function getPartialRootPaths(): array
     {
         if ($this->partialRootPaths !== []) {
             return $this->partialRootPaths;
@@ -217,10 +213,9 @@ class TemplatePaths extends \TYPO3Fluid\Fluid\View\TemplatePaths
      * @param string $controller
      * @param string $action
      * @param string $format
-     * @return mixed|string
      * @throws Exception\InvalidTemplateResourceException
      */
-    public function resolveTemplateFileForControllerAndActionAndFormat($controller, $action, $format = null)
+    public function resolveTemplateFileForControllerAndActionAndFormat(string $controller, string $action, ?string $format = null): null|string
     {
         if ($this->templatePathAndFilename) {
             return $this->templatePathAndFilename;
@@ -229,7 +224,7 @@ class TemplatePaths extends \TYPO3Fluid\Fluid\View\TemplatePaths
         $action = ucfirst($action);
 
         $paths = $this->getTemplateRootPaths();
-        if (isset($this->options['templatePathAndFilenamePattern'])) {
+        if (!empty($this->options['templatePathAndFilenamePattern'])) {
             $paths = $this->expandGenericPathPattern($this->options['templatePathAndFilenamePattern'], array_merge($this->patternReplacementVariables, [
                 'controllerName' => $controller,
                 'action' => $action,
@@ -262,15 +257,15 @@ class TemplatePaths extends \TYPO3Fluid\Fluid\View\TemplatePaths
      * @return string Path and filename of layout files
      * @throws Exception\InvalidTemplateResourceException
      */
-    public function getLayoutPathAndFilename($layoutName = 'Default')
+    public function getLayoutPathAndFilename(string $layoutName = 'Default'): string
     {
-        if (isset($this->options['layoutPathAndFilename'])) {
+        if (!empty($this->options['layoutPathAndFilename'])) {
             return $this->options['layoutPathAndFilename'];
         }
         $layoutName = ucfirst($layoutName);
 
         $paths = $this->getLayoutRootPaths();
-        if (isset($this->options['layoutPathAndFilenamePattern'])) {
+        if (!empty($this->options['layoutPathAndFilenamePattern'])) {
             $paths = $this->expandGenericPathPattern($this->options['layoutPathAndFilenamePattern'], array_merge($this->patternReplacementVariables, [
                 'layout' => $layoutName
             ]), true, true);
@@ -291,14 +286,14 @@ class TemplatePaths extends \TYPO3Fluid\Fluid\View\TemplatePaths
      * @return string the full path which should be used. The path definitely exists.
      * @throws InvalidTemplateResourceException
      */
-    public function getPartialPathAndFilename($partialName)
+    public function getPartialPathAndFilename(string $partialName): string
     {
         $patternReplacementVariables = array_merge($this->patternReplacementVariables, [
             'partial' => $partialName,
         ]);
 
-        if (strpos($partialName, ':') !== false) {
-            list($packageKey, $actualPartialName) = explode(':', $partialName);
+        if (str_contains($partialName, ':')) {
+            [$packageKey, $actualPartialName] = explode(':', $partialName);
             /** @var FlowPackageInterface $package */
             $package = $this->packageManager->getPackage($packageKey);
             $patternReplacementVariables['package'] = $packageKey;
@@ -321,7 +316,7 @@ class TemplatePaths extends \TYPO3Fluid\Fluid\View\TemplatePaths
      * @param string $packageName
      * @return string
      */
-    protected function getPackagePath($packageName)
+    protected function getPackagePath(string $packageName): string
     {
         if ($this->packageManager === null) {
             return '';
@@ -344,7 +339,7 @@ class TemplatePaths extends \TYPO3Fluid\Fluid\View\TemplatePaths
      * @param string $path
      * @return string
      */
-    protected function sanitizePath($path)
+    protected function sanitizePath($path): string
     {
         if (empty($path)) {
             return '';
@@ -522,17 +517,21 @@ class TemplatePaths extends \TYPO3Fluid\Fluid\View\TemplatePaths
         }
     }
 
+    public function setOptions(array $options = []): void
+    {
+        foreach ($options as $optionName => $optionValue) {
+            $this->setOption($optionName, $optionValue);
+        }
+    }
+
     /**
      * Returns a unique identifier for the given file in the format
      * <PackageKey>_<SubPackageKey>_<ControllerName>_<prefix>_<SHA1>
      * The SH1 hash is a checksum that is based on the file path and last modification date
      *
-     * @param string|null $pathAndFilename
-     * @param string $prefix
-     * @return string
      * @throws InvalidTemplateResourceException
      */
-    protected function createIdentifierForFile($pathAndFilename, $prefix)
+    protected function createIdentifierForFile(?string $pathAndFilename, string $prefix): string
     {
         $pathAndFilename = (string)$pathAndFilename;
         $templateModifiedTimestamp = 0;

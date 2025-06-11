@@ -27,14 +27,7 @@ class CacheAdaptor implements FluidCacheInterface
      */
     protected $flowCache;
 
-    /**
-     * Gets an entry from the cache or NULL if the
-     * entry does not exist.
-     *
-     * @param string $name
-     * @return string
-     */
-    public function get($name)
+    public function get(string $name): mixed
     {
         if ($this->flowCache->has($name)) {
             $this->flowCache->requireOnce($name);
@@ -43,45 +36,21 @@ class CacheAdaptor implements FluidCacheInterface
         return $this->flowCache->getWrapped($name);
     }
 
-    /**
-     * Set or updates an entry identified by $name
-     * into the cache.
-     *
-     * @param string $name
-     * @param string $value
-     */
-    public function set($name, $value)
+    public function set(string $name, mixed $value): void
     {
-        // we need to strip the first line with the php header as the flow cache adds that again.
         $this->flowCache->set($name, substr($value, strpos($value, "\n") + 1));
     }
 
-    /**
-     * Flushes the cache either by entry or flushes
-     * the entire cache if no entry is provided.
-     *
-     * @param string|null $name
-     * @return bool|null
-     */
-    public function flush($name = null)
+    public function flush(?string $name = null): void
     {
-        if ($name !== null) {
-            return $this->flowCache->remove($name);
-        } else {
+        if ($name === null) {
             $this->flowCache->flush();
-            return null;
+            return;
         }
+        $this->flowCache->remove($name);
     }
 
-    /**
-     * Get an instance of FluidCacheWarmerInterface which
-     * can warm up template files that would normally be
-     * cached on-the-fly to this FluidCacheInterface
-     * implementaion.
-     *
-     * @return FluidCacheWarmerInterface
-     */
-    public function getCacheWarmer()
+    public function getCacheWarmer(): FluidCacheWarmerInterface
     {
         return new StandardCacheWarmer();
     }

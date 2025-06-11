@@ -62,7 +62,7 @@ class TemplateViewTest extends UnitTestCase
         $templateRootPaths = ['/foo/bar/', 'baz/'];
         $templateView->setOption('templateRootPaths', $templateRootPaths);
 
-        $actual = $templateView->getTemplatePaths()->getTemplateRootPaths();
+        $actual = $templateView->getRenderingContext()->getTemplatePaths()->getTemplateRootPaths();
         self::assertEquals($templateRootPaths, $actual, 'A set template root path was not returned correctly.');
     }
 
@@ -76,7 +76,7 @@ class TemplateViewTest extends UnitTestCase
         $partialRootPaths = ['/foo/bar/', 'baz/'];
         $templateView->setOption('partialRootPaths', $partialRootPaths);
 
-        $actual = $templateView->getTemplatePaths()->getPartialRootPaths();
+        $actual = $templateView->getRenderingContext()->getTemplatePaths()->getPartialRootPaths();
         self::assertEquals($partialRootPaths, $actual, 'A set partial root path was not returned correctly.');
     }
 
@@ -90,7 +90,7 @@ class TemplateViewTest extends UnitTestCase
         $layoutRootPaths = ['/foo/bar/', 'baz/'];
         $templateView->setOption('layoutRootPaths', $layoutRootPaths);
 
-        $actual = $templateView->getTemplatePaths()->getLayoutRootPaths();
+        $actual = $templateView->getRenderingContext()->getTemplatePaths()->getLayoutRootPaths();
         self::assertEquals($layoutRootPaths, $actual, 'A set layout root path was not returned correctly.');
     }
 }

@@ -12,7 +12,6 @@ namespace Neos\FluidAdaptor\Core\Rendering;
  */
 
 use Neos\FluidAdaptor\Core\Cache\CacheAdaptor;
-use Neos\FluidAdaptor\Core\Parser\TemplateParser;
 use Neos\FluidAdaptor\Core\Parser\TemplateProcessor\EscapingFlagProcessor;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\ActionRequest;
@@ -28,6 +27,7 @@ use TYPO3Fluid\Fluid\Core\Parser\Configuration;
 use TYPO3Fluid\Fluid\Core\Parser\SyntaxTree\Expression\CastingExpressionNode;
 use TYPO3Fluid\Fluid\Core\Parser\SyntaxTree\Expression\MathExpressionNode;
 use TYPO3Fluid\Fluid\Core\Parser\SyntaxTree\Expression\TernaryExpressionNode;
+use TYPO3Fluid\Fluid\Core\Parser\TemplateParser;
 use TYPO3Fluid\Fluid\Core\Parser\TemplateProcessor\PassthroughSourceModifierTemplateProcessor;
 use TYPO3Fluid\Fluid\Core\Rendering\RenderingContext as FluidRenderingContext;
 
@@ -93,7 +93,9 @@ class RenderingContext extends FluidRenderingContext implements FlowAwareRenderi
             new PassthroughSourceModifierTemplateProcessor(),
             new NamespaceDetectionTemplateProcessor()
         ]);
-        $this->setTemplatePaths(new TemplatePaths($options));
+        $templatePaths = new TemplatePaths();
+        $templatePaths->setOptions($options);
+        $this->setTemplatePaths($templatePaths);
         $this->setVariableProvider(new TemplateVariableContainer());
     }
 

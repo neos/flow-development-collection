@@ -42,7 +42,9 @@ class ObjectAccessTest extends \PHPUnit\Framework\TestCase
         $this->dummyObject = new DummyClassWithGettersAndSetters();
         $this->dummyObject->setProperty('string1');
         $this->dummyObject->setAnotherProperty(42);
+        $original = error_reporting(E_ALL & ~E_DEPRECATED);
         $this->dummyObject->shouldNotBePickedUp = true;
+        error_reporting($original);
     }
 
     /**
@@ -560,7 +562,7 @@ class ObjectAccessTest extends \PHPUnit\Framework\TestCase
     public function setPropertyUsingDirectAccessWorksOnPrivatePropertyOfProxyParent()
     {
         $proxyObject = new ProxiedClassWithPrivateProperty();
- 
+
         ObjectAccess::setProperty($proxyObject, 'property', 'changed', true);
         self::assertEquals('changed', $proxyObject->getProperty());
     }

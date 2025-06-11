@@ -11,6 +11,8 @@ namespace Neos\FluidAdaptor\Core\Parser\Interceptor;
  * source code.
  */
 
+use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Mvc\Routing\Router;
 use Neos\Flow\Package\FlowPackageKey;
 use Neos\FluidAdaptor\Core\Parser\SyntaxTree\ResourceUriNode;
 use TYPO3Fluid\Fluid\Core\Parser\InterceptorInterface;
@@ -40,7 +42,7 @@ class ResourceInterceptor implements InterceptorInterface
      *
      * @var string
      */
-    const PATTERN_SPLIT_AT_RESOURCE_URIS = '!
+    private const PATTERN_SPLIT_AT_RESOURCE_URIS = '!
 		(
 			(?:[^"\'(\s]+/      # URL part: A string with no quotes, no opening parentheses and no whitespace
 			)*                  # a URL consists of multiple URL parts
@@ -55,15 +57,21 @@ class ResourceInterceptor implements InterceptorInterface
      * @var string
      * @see \Neos\Flow\Package\FlowPackageKey::PATTERN
      */
-    const PATTERN_MATCH_RESOURCE_URI = '!(?:../)*(?:(?P<Package>[A-Za-z0-9]+\.(?:[A-Za-z0-9][\.a-z0-9]*)+)/Resources/)?Public/(?P<Path>[^"]+)!';
+    private const PATTERN_MATCH_RESOURCE_URI = '!(?:../)*(?:(?P<Package>[A-Za-z0-9]+\.(?:[A-Za-z0-9][\.a-z0-9]*)+)/Resources/)?Public/(?P<Path>[^"]+)!';
 
     /**
      * The default package key to use when rendering resource links without a
      * package key in the source URL.
      *
-     * @var string
+     * @var string|null
      */
-    protected $defaultPackageKey;
+    protected ?string $defaultPackageKey = null;
+
+    /**
+     * @Flow\Inject
+     * @var Router
+     */
+    protected Router $router;
 
     /**
      * Set the default package key to use for resource URIs.
@@ -72,7 +80,7 @@ class ResourceInterceptor implements InterceptorInterface
      * @return void
      * @throws \InvalidArgumentException
      */
-    public function setDefaultPackageKey($defaultPackageKey)
+    public function setDefaultPackageKey(string $defaultPackageKey): void
     {
         if (!FlowPackageKey::isPackageKeyValid($defaultPackageKey)) {
             throw new \InvalidArgumentException('The given argument was not a valid package key.', 1277287099);
@@ -89,12 +97,9 @@ class ResourceInterceptor implements InterceptorInterface
      * @param ParsingState $parsingState the current parsing state. Not needed in this interceptor.
      * @return NodeInterface the modified node
      */
-    public function process(NodeInterface $node, $interceptorPosition, ParsingState $parsingState)
+    public function process(NodeInterface $node, $interceptorPosition, ParsingState $parsingState): NodeInterface
     {
-        if (!$node instanceof TextNode) {
-            return $node;
-        }
-        if (strpos($node->getText(), 'Public/') === false) {
+        if (!$node instanceof TextNode || !str_contains($node->getText(), 'Public/')) {
             return $node;
         }
         $textParts = preg_split(self::PATTERN_SPLIT_AT_RESOURCE_URIS, $node->getText(), -1, PREG_SPLIT_NO_EMPTY | PREG_SPLIT_DELIM_CAPTURE);
@@ -106,14 +111,13 @@ class ResourceInterceptor implements InterceptorInterface
                     'path' => new TextNode($matches['Path'])
                 ];
 
-                if ($this->defaultPackageKey !== null) {
-                    $arguments['package'] = new TextNode($this->defaultPackageKey);
-                }
+                $packageKey = $this->defaultPackageKey;
+
                 if (isset($matches['Package']) && FlowPackageKey::isPackageKeyValid($matches['Package'])) {
-                    $arguments['package'] = new TextNode($matches['Package']);
+                    $packageKey = $matches['Package'];
                 }
 
-                $resourceUriNode = new ResourceUriNode($arguments);
+                $resourceUriNode = new ResourceUriNode($matches['Path'], $packageKey);
                 $node->addChildNode($resourceUriNode);
             } else {
                 $textNode = new TextNode($part);
