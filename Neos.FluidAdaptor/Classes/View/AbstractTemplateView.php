@@ -110,9 +110,6 @@ abstract class AbstractTemplateView extends \TYPO3Fluid\Fluid\View\AbstractTempl
      */
     protected $controllerContext;
 
-    /**
-     * @phpstan-ignore-next-line we are incompatible with the fluid view and should use composition instead
-     */
     public function render($actionName = null): StreamInterface
     {
         return $this->createStream(parent::render($actionName));

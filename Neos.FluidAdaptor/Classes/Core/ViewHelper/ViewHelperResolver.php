@@ -50,7 +50,7 @@ class ViewHelperResolver extends \TYPO3Fluid\Fluid\Core\ViewHelper\ViewHelperRes
      * will look for classes in both namespaces starting
      * from the bottom.
      *
-     * @var array
+     * @var array<string, string[]|null>
      */
     protected array $namespaces = [];
 
