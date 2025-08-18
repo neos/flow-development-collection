@@ -46,7 +46,7 @@ class ResourceUriNode extends AbstractNode
 
     public function __construct(
         public readonly string $path,
-        public readonly string|null $package
+        public readonly string $package
     ) {
     }
 
@@ -59,9 +59,9 @@ class ResourceUriNode extends AbstractNode
     {
         $package = $this->package;
         $path = $this->path;
-        if ($package === null) {
+        if ($package === '') {
             /** @var RenderingContext $renderingContext */
-            $package = $renderingContext->getControllerContext()?->getRequest()?->getControllerPackageKey() ?? null;
+            $package = $renderingContext->getControllerContext()?->getRequest()?->getControllerPackageKey();
         }
         if (str_starts_with($path, 'resource://')) {
             try {

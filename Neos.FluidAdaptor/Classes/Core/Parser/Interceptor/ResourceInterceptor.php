@@ -42,7 +42,7 @@ class ResourceInterceptor implements InterceptorInterface
      *
      * @var string
      */
-    private const PATTERN_SPLIT_AT_RESOURCE_URIS = '!
+    private const string PATTERN_SPLIT_AT_RESOURCE_URIS = '!
 		(
 			(?:[^"\'(\s]+/      # URL part: A string with no quotes, no opening parentheses and no whitespace
 			)*                  # a URL consists of multiple URL parts
@@ -57,15 +57,15 @@ class ResourceInterceptor implements InterceptorInterface
      * @var string
      * @see \Neos\Flow\Package\FlowPackageKey::PATTERN
      */
-    private const PATTERN_MATCH_RESOURCE_URI = '!(?:../)*(?:(?P<Package>[A-Za-z0-9]+\.(?:[A-Za-z0-9][\.a-z0-9]*)+)/Resources/)?Public/(?P<Path>[^"]+)!';
+    private const string PATTERN_MATCH_RESOURCE_URI = '!(?:../)*(?:(?P<Package>[A-Za-z0-9]+\.(?:[A-Za-z0-9][\.a-z0-9]*)+)/Resources/)?Public/(?P<Path>[^"]+)!';
 
     /**
      * The default package key to use when rendering resource links without a
      * package key in the source URL.
      *
-     * @var string|null
+     * @var string
      */
-    protected ?string $defaultPackageKey = null;
+    protected string $defaultPackageKey = '';
 
     /**
      * @Flow\Inject

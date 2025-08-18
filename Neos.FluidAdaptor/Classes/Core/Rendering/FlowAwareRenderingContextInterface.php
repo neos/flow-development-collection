@@ -24,10 +24,10 @@ interface FlowAwareRenderingContextInterface
     /**
      * @return ObjectManagerInterface
      */
-    public function getObjectManager();
+    public function getObjectManager(): ObjectManagerInterface;
 
     /**
      * @return ControllerContext
      */
-    public function getControllerContext();
+    public function getControllerContext(): ControllerContext;
 }

@@ -34,7 +34,7 @@ abstract class AbstractTagBasedViewHelper extends AbstractViewHelper
      *
      * @var array
      */
-    private static $tagAttributes = [];
+    private static array $tagAttributes = [];
 
     /**
      * Tag builder instance
@@ -42,7 +42,7 @@ abstract class AbstractTagBasedViewHelper extends AbstractViewHelper
      * @var TagBuilder
      * @api
      */
-    protected $tag = null;
+    protected TagBuilder $tag;
 
     /**
      * Name of the tag to be created by this view helper
@@ -68,7 +68,7 @@ abstract class AbstractTagBasedViewHelper extends AbstractViewHelper
      * @param TagBuilder $tag
      * @return void
      */
-    public function injectTagBuilder(TagBuilder $tag)
+    public function injectTagBuilder(TagBuilder $tag): void
     {
         $this->tag = $tag;
         $this->tag->setTagName($this->tagName);

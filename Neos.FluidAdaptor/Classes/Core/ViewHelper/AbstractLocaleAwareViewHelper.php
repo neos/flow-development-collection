@@ -50,7 +50,7 @@ abstract class AbstractLocaleAwareViewHelper extends AbstractViewHelper
      * @throws InvalidVariableException
      * @return I18n\Locale|null The locale to use or NULL if locale should not be used
      */
-    protected function getLocale()
+    protected function getLocale(): ?I18n\Locale
     {
         if (!$this->hasArgument('forceLocale')) {
             return null;

@@ -111,14 +111,10 @@ class TemplateVariableContainer extends StandardVariableProvider
     {
         $normalizedPath = strtolower($path);
 
-        if (in_array($normalizedPath, ['true', 'on', 'yes'])) {
-            return true;
-        }
-
-        if (in_array($normalizedPath, ['false', 'off', 'no'])) {
-            return false;
-        }
-
-        return null;
+        return match (true) {
+            (in_array($normalizedPath, ['true', 'on', 'yes'])) => true,
+            (in_array($normalizedPath, ['false', 'off', 'no'])) => false,
+            default => null
+        };
     }
 }

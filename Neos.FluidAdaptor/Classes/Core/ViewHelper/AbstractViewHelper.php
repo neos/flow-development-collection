@@ -28,33 +28,32 @@ use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper as FluidAbstractViewHelp
 abstract class AbstractViewHelper extends FluidAbstractViewHelper
 {
     /**
-     * @var FlowAwareRenderingContextInterface&RenderingContextInterface
+     * @var FlowAwareRenderingContextInterface|RenderingContextInterface
      */
     protected $renderingContext;
 
     /**
      * Controller Context to use
      *
-     * @var ControllerContext
-     * @api
+     * @var ControllerContext|null
      */
-    protected $controllerContext;
+    protected ControllerContext|null $controllerContext = null;
 
     /**
-     * @var ObjectManagerInterface
+     * @var ObjectManagerInterface|null
      */
-    protected $objectManager;
+    protected ObjectManagerInterface|null $objectManager = null;
 
     /**
-     * @var LoggerInterface
+     * @var LoggerInterface|null
      */
-    protected $logger;
+    protected LoggerInterface|null $logger;
 
     /**
      * @param FlowAwareRenderingContextInterface&RenderingContextInterface $renderingContext
      * @return void
      */
-    public function setRenderingContext(RenderingContextInterface $renderingContext)
+    public function setRenderingContext(RenderingContextInterface $renderingContext): void
     {
         $this->renderingContext = $renderingContext;
         $this->templateVariableContainer = $renderingContext->getVariableProvider();
