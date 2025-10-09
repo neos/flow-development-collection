@@ -1,0 +1,394 @@
+========
+Flow 8.4
+========
+
+This release of Flow comes with some great new features, bugfixes and a lot of modernisation of the existing code base.
+
+As usual, we worked hard to keep this release as backwards compatible as possible but, since it's a major release, some of the changes might require manual
+adjustments. So please make sure to carefully read the upgrade instructions below.
+
+
+************
+New Features
+************
+
+FEATURE: Add option to set username for RedisBackend
+----------------------------------------------------
+
+Adds an optional option to specify an username in the configuration options for the redis backend. Added basic test cases for redis authentication.
+
+**Review instructions**
+This PR re-opens https://github.com/neos/flow-development-collection/pull/3347 and addresses the stated feedback
+
+FEATURE: Add CLDR-based date, time, and datetime formatting methods with "formatLength"
+---------------------------------------------------------------------------------------
+
+Adds feature to format dates, times and datetimes with the CLDR "Basic Formats" (known as "Format length" in Flow) to the Date Eel helper. 
+
+This feature was already implemented in fluids format viewhelper before.
+
+See:
+* https://cldr.unicode.org/translation/date-time/date-time-patterns#basic-date-formats
+* https://cldr.unicode.org/translation/date-time/date-time-patterns#basic-time-formats
+* https://neos.readthedocs.io/en/stable/References/ViewHelpers/FluidAdaptor.html#f-format-date
+
+FEATURE: Introduce --help flag option for existing CLI commands
+---------------------------------------------------------------
+
+**Upgrade instructions**
+
+_None_
+
+**Review instructions**
+
+This change introduces a new way of using the help function for existing Flow/Neos CLI commands.
+
+Currently you always used:
+
+```bash
+./flow help user:create
+```
+
+With this change it is possible to use the new ``--help`` flag as an alternative at **the end** of a CLI command:
+
+```bash
+./flow user:create --help
+```
+
+But of course the first way will also still work!
+
+### Demo
+
+https://github.com/neos/flow-development-collection/assets/39345336/4f93f5cf-0435-4344-b37a-0a76b6df7824
+
+
+FEATURE: Introduce EEL tracer for handling Neos9 deprecations
+-------------------------------------------------------------
+
+Related https://github.com/neos/neos-development-collection/issues/5022
+
+In todays weekly @bwaidelich and me discussed a concrete way how to log deprecations like ``node.indentifier`` in Neos 8.4 and 9.0
+
+The idea is to add a tracer to eel, that will be implemented in Fusion. Technically we would need to add an abstraction to Neos.Fusion as well to not access the Node from there as this is architecturally illegal but to simplify the code and in light that this is just considered for temporary time we propose to implement it as such:
+
+```php
+<?php
+
+namespace Neos\\Fusion\\Core;
+
+use Neos\\Flow\\Annotations as Flow;
+use Psr\\Log\\LoggerInterface;
+
+final class Neos9RuntimeMigrationTracer implements EelInvocationTracerInterface
+{
+    /** @Flow\\Inject */
+    protected LoggerInterface $logger;
+
+    private const DEPRECATED_NODE_PROPERTIES = [
+        'identifier' => true,
+        'nodetype' => true,
+        // ...
+    ];
+
+    public function __construct(
+        private readonly string $eelExpression,
+        private readonly bool $showMercy
+    ) {
+    }
+
+    public function recordPropertyAccess(object $object, string $propertyName): void
+    {
+        if (
+            $object instanceof \\Neos\\ContentRepository\\Domain\\Model\\Node
+            && array_key_exists(strtolower($propertyName), self::DEPRECATED_NODE_PROPERTIES)
+        ) {
+            $this->logDeprecationOrThrowException(
+                sprintf('"node.%s" is deprecated in "%s"', $propertyName, $this->eelExpression)
+            );
+        }
+    }
+
+    public function recordMethodCall(object $object, string $methodName): void
+    {
+    }
+
+    private function logDeprecationOrThrowException(string $message): void
+    {
+        if ($this->showMercy) {
+            $this->logger->debug($message);
+        } else {
+            throw new \\RuntimeException($message);
+        }
+    }
+}
+```
+
+
+and instantiate this ``Neos9RuntimeMigrationTracer`` (name tbd) in ``\\Neos\\Fusion\\Core\\Runtime::evaluateEelExpression``
+
+```diff
+- return EelUtility::evaluateEelExpression($expression, $this->eelEvaluator, $contextVariables);
++ $tracer =.$this->settings['enableDeprecationTracer'] ? new Neos9RuntimeMigrationTracer($expression, $this->settings['strictEelMode'] ?? false) : null;
++ return EelUtility::evaluateEelExpression($expression, $this->eelEvaluator, $contextVariables, $tracer);
+```
+
+
+
+**Upgrade instructions**
+
+
+FEATURE: Support doctrine/dbal 2.x and 3.x
+------------------------------------------
+
+Declares compatibility with ``doctrine/dbal`` 3.x (in addition to the already supported versions ``2.13+``) and adjusts affected code such that it works with both versions
+
+**Upgrade instructions**
+
+Any code that (heavily) uses Doctrine DBAL specifics should be checked for compatibility issues. Even if things still work, you may want to replace things deprecated in Doctrine DBAL 3. See https://www.doctrine-project.org/2020/11/17/dbal-3.0.0.html
+
+One example: You need to replace, as the ``json_array`` type is removed in Doctrine DBAL 3.0.
+```php
+@ORM\\Column(type="json_array", nullable=true)
+```
+with
+```php
+@ORM\\Column(type="flow_json_array", nullable=true)
+```
+
+**Review instructions**
+
+We allow now version 3 of ``doctrine/dbal`` but still only support ``doctrine/orm`` in version 2.
+
+Related Neos 9 part https://github.com/neos/flow-development-collection/pull/2637
+
+FEATURE: Introduce PHP 8.2 DNF type support
+-------------------------------------------
+
+The Reflection Service now supports Disjunctive Normal Form (DNF) types for method arguments.
+
+See: https://www.php.net/releases/8.2/en.php#dnf_types
+
+
+
+Related issue: `#3026 <https://github.com/neos/flow-development-collection/issues/3026>`_
+
+FEATURE: Consider PHP attributes in proxy method building
+---------------------------------------------------------
+
+Added support for preserving PHP 8 attributes in generated proxy class methods. This feature enables correct argument passing from attributes to proxied methods which allows developers to use attributes instead of annotations in most cases.
+
+
+
+Related issue: `#3075 <https://github.com/neos/flow-development-collection/issues/3075>`_
+
+FEATURE: Add `Flow\InjectCache` Attribute / Annotation for property injection
+-----------------------------------------------------------------------------
+
+In many cases an ``Objects.yaml`` is created just to inject caches which can feel a bit cumbersome as one already had specified the cache in ``Caches.yaml``.
+
+To address this the new ``@Flow\\InjectCache`` annotation allows to assign a cache frontend of a configured cache directly to a property without having to configure the ``Objects.yaml`` at all.
+
+```php
+    #[Flow\\InjectCache(identifier: 'Flow_Mvc_Routing_Resolve')]
+    protected VariableFrontend $cache;
+```
+
+
+FEATURE: Add more information for object arguments in debugging
+---------------------------------------------------------------
+
+For stacktraces in exceptions and logs we now render some representation of content for objects to ease debugging with DTOs.
+
+Specifically we will try to obtain a string representation for such an object by using either in this order:
+
+- a string cast if __toString() is available
+- json_encode if it is JsonSerializable
+- json_encode on the array of public properties
+
+For readability json_encode will be limited to the first level, also all of those string representations will be cut off after 100 characters.
+
+If any of those options works we will also shorten the className to avoid this output becoming overly long.
+
+Note that we use JSON_PARTIAL_OUTPUT_ON_ERROR to make sure some output is provided. This might lead to partial or weird outputs depending on the object structure, but might still provide pointers for debugging.
+
+
+
+Related issue: `#3165 <https://github.com/neos/flow-development-collection/issues/3165>`_
+
+9.0 FEATURE: Add `unique` flowQuery operation
+---------------------------------------------
+
+This operation applies ``array_unique`` to the current flowQuery context.
+
+While the same could previously achieved via ``Array.unique()`` the flow query operation can be placed in an operation chain without extra wrapping.
+
+**Review instructions**
+
+There is also a node specific implementation of the ``unique`` operation in https://github.com/neos/neos-development-collection/pull/4355
+
+I know the php code looks oldish but the style is in line with the other flowQuery operations around. 
+
+
+FEATURE: Add `getAccessorByPath` to `Neos\Utility\Arrays` for type safe accessing of array values
+-------------------------------------------------------------------------------------------------
+
+_**Please note that this is an experimental feature and the API is not stable yet.**_
+
+The array utility allows to create a type safe accessor via ``Arrays::getAccessorByPath($arrayValue, 'your.path')``. The accessor provides the following methods that will either return the requested type or throw a ``\\UnexpectedValueException``.  
+
+* ``int(): int``
+* ``float(): float``
+* ``number(): int|float``
+* ``string(): string``
+* ``classString(): string`` - with annotation for class-string
+* ``array(): array``
+* ``instanceOf(string $className): object`` - with annotation for dynamic type
+* ``intOrNull(): ?int``
+* ``floatOrNull(): ?float``
+* ``numberOrNull(): null|int|float``
+* ``stringOrNull(): ?string``
+* ``classStringOrNull(): ?string`` - with annotation for class-string | null
+* ``arrayOrNull(): ?array``
+* ``instanceOfOrNull(string $className): ?object`` - with annotation for dynamic type | null
+
+This will allow to write code that accesses settings via pathes without checking every level for existence still beeing type safe and accessible for static analysis.
+
+This can be used together with settingInjection.
+
+```php
+public function injectSettings(array $settings): void
+{
+   $this->limit = Arrays::getAccessorByPath($settings, 'limit')->intOrNull();
+}
+```
+
+
+
+**Review instructions**
+
+It may look inefficient to manually throw TypeErrors that in many cases would be thrown automatically because of the declared return types. However this is not a performance issue as those are never on the happy-path and the created TypeError provides additional informations to help understand and fix problems faster.
+
+Inspired by https://github.com/PackageFactory/extractor
+
+
+Related issue: `#3164 <https://github.com/neos/flow-development-collection/issues/3164>`_
+
+FEATURE: Exclude classes from constructor autowiring
+----------------------------------------------------
+
+Classes can now explicitly be excluded from constructor autowiring through a new setting.
+
+The setting accepts an array of fully qualified class names, each class name being a regular expression. Classes of scope prototype which expect objects to be passed to their constructor are usually considered for autowiring which results in a proxy class being generated.
+
+This option allows to exclude classes from this process. This is useful for classes like data transfer objects, read models, commands, events and value objects which usually don't rely on dependency injection.
+
+Flow cannot reliably detect weather a prototype class depends on autowiring for constructor arguments or not. Use this option to optimize your application to avoid the small but measurable overhead of proxy generation for those kinds of classes.
+
+Note that if there are other reasons than constructor injection which require a proxy class to be generated, the proxy class will be generated no matter what.
+
+This change partly reverts `#3050 <https://github.com/neos/flow-development-collection/issues/3050>`_because now proxy classes _are_ generated for prototype classes by default. Otherwise a lot of existing Flow applications would not work correctly anymore.
+
+resolves: #3049
+
+FEATURE: Replace self with static in proxy classes
+--------------------------------------------------
+
+Factory methods which use code like new self() for creating a new instance are now handled correctly in proxy classes. The compiler automatically replaces "self" keywords with "static" in the rendered proxy class file to make this possible.
+
+This implementation has not been optimized for performance.
+
+
+
+Related issue: `#3059 <https://github.com/neos/flow-development-collection/issues/3059>`_
+
+FEATURE: Support private constructors in proxy classes
+------------------------------------------------------
+
+Flow now can correctly build proxy classes for classes with private constructors. Previously, such classes caused errors and proxy class building had to be disabled with the ``Proxy(false)`` annotation. Now classes with private constructors can take advantage of setter and property injection and are considered for advices through the AOP framework.
+
+
+
+Related issue: `#3058 <https://github.com/neos/flow-development-collection/issues/3058>`_
+
+FEATURE: Add support for readonly classes
+-----------------------------------------
+
+Flow now respects readonly classes during proxy class building and makes sure that proxy classes are readonly as well.
+
+resolves: #3025
+
+********************
+Upgrade Instructions
+********************
+
+This section contains instructions for upgrading your Flow **8.3**
+based applications to Flow **8.4**.
+
+In general just make sure to run the following commands:
+
+To clear all file caches::
+
+ ./flow flow:cache:flush --force
+
+If you have additional cache backends configured, make sure to flush them too.
+
+To apply core migrations::
+
+  ./flow flow:core:migrate <Package-Key>
+
+For every package you have control over (see `Upgrading existing code`_ below).
+
+To validate/fix the database encoding, apply pending migrations and to (re)publish file resources::
+
+ ./flow database:setcharset
+ ./flow doctrine:migrate
+ ./flow resource:publish
+
+If you are upgrading from a lower version than 8.3, be sure to read the
+upgrade instructions from the previous Release Notes first.
+
+Upgrading your Packages
+=======================
+
+Upgrading existing code
+-----------------------
+
+There have been major API changes in Flow 8.4 which require your code to be adjusted. As with earlier changes to Flow
+that required code changes on the user side we provide a code migration tool.
+
+Given you have a Flow system with your (outdated) package in place you should run the following before attempting to fix
+anything by hand::
+
+ ./flow core:migrate Acme.Demo
+
+This will adjust the package code automatically and/or output further information.
+Read the output carefully and manually adjust the code if needed.
+
+To see all the other helpful options this command provides, make sure to run::
+
+ ./flow help core:migrate
+
+Also make sure to read about the `Potentially breaking changes`_ below.
+
+Inside core:migrate
+^^^^^^^^^^^^^^^^^^^
+
+The tool roughly works like this:
+
+* Collect all code migrations from packages
+
+* Collect all files from the specified package
+* For each migration
+
+  * Check for clean git working copy (otherwise skip it)
+  * Check if migration is needed (looks for Migration footers in commit messages)
+  * Apply migration and commit the changes
+
+Afterwards you probably get a list of warnings and notes from the
+migrations, check those to see if anything needs to be done manually.
+
+Check the created commits and feel free to amend as needed, should
+things be missing or wrong. The only thing you must keep in place from
+the generated commits is the migration data in ``composer.json``. It is
+used to detect if a migration has been applied already, so if you drop
+it, things might get out of hands in the future.
