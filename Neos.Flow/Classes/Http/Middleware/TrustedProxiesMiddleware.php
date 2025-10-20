@@ -253,7 +253,7 @@ class TrustedProxiesMiddleware implements MiddlewareInterface
             return false;
         }
 
-        $ipAddress = $server['REMOTE_ADDR'];
+        $clientIpAddress = $server['REMOTE_ADDR'];
         $trustedIpHeaders = $this->getTrustedProxyHeaderValues(self::HEADER_CLIENT_IP, $request);
         $trustedIpHeader = [];
         while ($trustedIpHeaders->valid()) {
@@ -261,26 +261,26 @@ class TrustedProxiesMiddleware implements MiddlewareInterface
             if ($trustedIpHeader === null || empty($this->settings['proxies'])) {
                 return $server['REMOTE_ADDR'];
             }
-            $ipAddress = reset($trustedIpHeader);
-            if (filter_var($ipAddress, FILTER_VALIDATE_IP, FILTER_FLAG_NO_RES_RANGE | FILTER_FLAG_NO_PRIV_RANGE) !== false) {
+            $clientIpAddress = reset($trustedIpHeader);
+            if (filter_var($clientIpAddress, FILTER_VALIDATE_IP, FILTER_FLAG_NO_RES_RANGE) !== false) {
                 break;
             }
             $trustedIpHeaders->next();
         }
 
         if ($this->settings['proxies'] === '*') {
-            return $ipAddress;
+            return $clientIpAddress;
         }
 
-        $ipAddress = false;
+        $clientIpAddress = false;
         foreach (array_reverse($trustedIpHeader) as $headerIpAddress) {
             $portPosition = strpos($headerIpAddress, ':');
-            $ipAddress = $portPosition !== false ? substr($headerIpAddress, 0, $portPosition) : $headerIpAddress;
-            if (!$this->ipIsTrustedProxy($ipAddress)) {
+            $clientIpAddress = $portPosition !== false ? substr($headerIpAddress, 0, $portPosition) : $headerIpAddress;
+            if (!$this->ipIsTrustedProxy($clientIpAddress)) {
                 break;
             }
         }
 
-        return $ipAddress;
+        return $clientIpAddress;
     }
 }
