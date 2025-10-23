@@ -303,7 +303,7 @@ class ContentStream implements StreamInterface
      *     if no bytes are available.
      * @throws \RuntimeException if an error occurs.
      */
-    public function read(int $length)
+    public function read($length)
     {
         $this->ensureResourceReadable();
 
