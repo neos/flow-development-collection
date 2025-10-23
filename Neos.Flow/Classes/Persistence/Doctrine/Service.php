@@ -497,10 +497,8 @@ class Service
             foreach ($availableVersions->getItems() as $availableMigration) {
                 $this->mark($output, $availableMigration->getVersion(), true, $executedMigrations, !$markAsMigrated, $overrideMigrationFolderName);
             }
-        } elseif ($version !== null) {
-            $this->mark($output, new Version($version), false, $executedMigrations, !$markAsMigrated, $overrideMigrationFolderName);
         } else {
-            throw InvalidOptionUsage::new('You must specify the version or use the --all argument.');
+            $this->mark($output, new Version($version), false, $executedMigrations, !$markAsMigrated, $overrideMigrationFolderName);
         }
     }
 
