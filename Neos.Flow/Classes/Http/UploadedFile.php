@@ -173,13 +173,14 @@ class UploadedFile implements UploadedFileInterface
      * @see http://php.net/is_uploaded_file
      * @see http://php.net/move_uploaded_file
      * @param string $targetPath Path to which to move the uploaded file.
+     * @return void
      * @throws RuntimeException if the upload was not successful.
      * @throws InvalidArgumentException if the $path specified is invalid.
      * @throws RuntimeException on any error during the move operation, or on
      *     the second or subsequent call to the method.
      * @api PSR-7
      */
-    public function moveTo(string $targetPath): void
+    public function moveTo($targetPath)
     {
         $this->throwExceptionIfNotAccessible();
 
