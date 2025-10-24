@@ -196,8 +196,11 @@ class ResourceManager
      * @throws Exception
      * @api
      */
-    public function importResourceFromContent(string $content, $filename, $collectionName = ResourceManager::DEFAULT_PERSISTENT_COLLECTION_NAME, $forcedPersistenceObjectIdentifier = null)
+    public function importResourceFromContent($content, $filename, $collectionName = ResourceManager::DEFAULT_PERSISTENT_COLLECTION_NAME, $forcedPersistenceObjectIdentifier = null)
     {
+        if (!is_string($content)) {
+            throw new Exception(sprintf('Tried to import content into the resource collection "%s" but the given content was a %s instead of a string.', $collectionName, gettype($content)), 1380878115);
+        }
         $this->initialize();
 
         if (!isset($this->collections[$collectionName])) {
