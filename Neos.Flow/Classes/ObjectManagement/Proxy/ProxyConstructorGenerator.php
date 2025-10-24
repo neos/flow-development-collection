@@ -20,9 +20,10 @@ final class ProxyConstructorGenerator extends ProxyMethodGenerator
 
     /**
      * @param array<mixed> $parameters
+     * @param ?DocBlockGenerator $docBlock
      * @phpstan-ignore constructor.unusedParameter
      */
-    public function __construct($name = null, array $parameters = [], $flags = self::FLAG_PUBLIC, $body = null, ?DocBlockGenerator $docBlock = null)
+    public function __construct($name = null, array $parameters = [], $flags = self::FLAG_PUBLIC, $body = null, $docBlock = null)
     {
         if ($docBlock === null) {
             $docBlock = new DocBlockGenerator();

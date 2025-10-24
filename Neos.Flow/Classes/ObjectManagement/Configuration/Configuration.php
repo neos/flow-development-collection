@@ -224,9 +224,9 @@ class Configuration
      * @return void
      * @throws \InvalidArgumentException
      */
-    public function setFactoryMethodName(string $methodName)
+    public function setFactoryMethodName($methodName)
     {
-        if ($methodName === '') {
+        if (!is_string($methodName) || $methodName === '') {
             throw new \InvalidArgumentException('No valid factory method name specified.', 1229700126);
         }
         $this->factoryMethodName = $methodName;
