@@ -78,7 +78,7 @@ class Context
      */
     public function getAndWrap($path = null)
     {
-        return $this->wrap($this->get($path ?: '') ?: '');
+        return $this->wrap($this->get($path));
     }
 
     /**

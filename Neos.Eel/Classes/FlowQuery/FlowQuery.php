@@ -138,8 +138,9 @@ class FlowQuery implements ProtectedContextAwareInterface, \IteratorAggregate, \
      * to successfully run unit tests (hacky!)
      *
      * @param OperationResolverInterface $operationResolver
+     * @return void
      */
-    public function setOperationResolver(OperationResolverInterface $operationResolver): void
+    public function setOperationResolver(OperationResolverInterface $operationResolver)
     {
         $this->operationResolver = $operationResolver;
     }

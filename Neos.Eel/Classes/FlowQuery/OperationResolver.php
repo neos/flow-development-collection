@@ -52,8 +52,10 @@ class OperationResolver implements OperationResolverInterface
 
     /**
      * Initializer, building up $this->operations and $this->finalOperationNames
+     *
+     * @return void
      */
-    public function initializeObject(): void
+    public function initializeObject()
     {
         $operationsAndFinalOperationNames = static::buildOperationsAndFinalOperationNames($this->objectManager);
         $this->operations = $operationsAndFinalOperationNames[0];
