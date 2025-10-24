@@ -294,14 +294,14 @@ class Session implements CookieEnabledInterface
         if ($this->started !== true) {
             throw new Exception\SessionNotStartedException('Tried to renew the session identifier, but the session has not been started yet.', 1351182429);
         }
+        if ($this->remote === true) {
+            throw new Exception\OperationNotSupportedException(sprintf('Tried to renew the session identifier on a remote session (%s).', $this->sessionMetaData->sessionIdentifier->value), 1354034230);
+        }
         if (!$this->sessionMetaData) {
             throw new \Exception('Missing session metadata');
         }
         if (!$this->sessionCookie) {
             throw new \Exception('Missing session cookie');
-        }
-        if ($this->remote === true) {
-            throw new Exception\OperationNotSupportedException(sprintf('Tried to renew the session identifier on a remote session (%s).', $this->sessionMetaData->sessionIdentifier->value), 1354034230);
         }
 
         $this->sessionMetaDataStore->remove($this->sessionMetaData);
