@@ -169,7 +169,7 @@ class RsaWalletServicePhp implements RsaWalletServiceInterface
      * @return OpenSslRsaKey The public key
      * @throws InvalidKeyPairIdException If the given fingerprint identifies no valid key pair
      */
-    public function getPublicKey(string $fingerprint): OpenSslRsaKey
+    public function getPublicKey($fingerprint)
     {
         if (!isset($this->keys[$fingerprint])) {
             throw new InvalidKeyPairIdException('Invalid keypair fingerprint given', 1231438860);
@@ -212,7 +212,7 @@ class RsaWalletServicePhp implements RsaWalletServiceInterface
      * @throws DecryptionNotAllowedException If the given fingerprint identifies a keypair for encrypted passwords
      * @throws SecurityException If decryption failed for some other reason
      */
-    public function decrypt(string $cypher, string $fingerprint): string
+    public function decrypt($cypher, $fingerprint)
     {
         if (!isset($this->keys[$fingerprint])) {
             throw new InvalidKeyPairIdException('Invalid keypair fingerprint given', 1231438861);
@@ -235,7 +235,7 @@ class RsaWalletServicePhp implements RsaWalletServiceInterface
      * @return string The signature of the given plaintext
      * @throws InvalidKeyPairIdException If the given fingerprint identifies no valid keypair
      */
-    public function sign(string $plaintext, string $fingerprint): string
+    public function sign($plaintext, $fingerprint)
     {
         if (!isset($this->keys[$fingerprint])) {
             throw new InvalidKeyPairIdException('Invalid keypair fingerprint given', 1299095799);
@@ -257,7 +257,7 @@ class RsaWalletServicePhp implements RsaWalletServiceInterface
      * @return boolean true if the signature is correct for the given plaintext and public key
      * @throws InvalidKeyPairIdException
      */
-    public function verifySignature(string $plaintext, string $signature, string $fingerprint): bool
+    public function verifySignature($plaintext, $signature, $fingerprint)
     {
         if (!isset($this->keys[$fingerprint])) {
             throw new InvalidKeyPairIdException('Invalid keypair fingerprint given', 1304959763);
@@ -279,7 +279,7 @@ class RsaWalletServicePhp implements RsaWalletServiceInterface
      * @return boolean true if the password is correct
      * @throws InvalidKeyPairIdException If the given fingerprint identifies no valid keypair
      */
-    public function checkRSAEncryptedPassword(string $encryptedPassword, string $passwordHash, string $salt, string $fingerprint): bool
+    public function checkRSAEncryptedPassword($encryptedPassword, $passwordHash, $salt, $fingerprint)
     {
         if (!isset($this->keys[$fingerprint])) {
             throw new InvalidKeyPairIdException('Invalid keypair fingerprint given', 1233655216);
@@ -296,7 +296,7 @@ class RsaWalletServicePhp implements RsaWalletServiceInterface
      * @param string $fingerprint The fingerprint
      * @throws InvalidKeyPairIdException If the given fingerprint identifies no valid key pair
      */
-    public function destroyKeypair(string $fingerprint): void
+    public function destroyKeypair($fingerprint)
     {
         if (!isset($this->keys[$fingerprint])) {
             throw new InvalidKeyPairIdException('Invalid keypair fingerprint given', 1231438863);

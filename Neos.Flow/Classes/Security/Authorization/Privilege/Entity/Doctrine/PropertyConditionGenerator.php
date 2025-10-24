@@ -239,7 +239,7 @@ class PropertyConditionGenerator implements SqlGeneratorInterface
      * @throws InvalidQueryRewritingConstraintException
      * @throws \Exception
      */
-    public function getSql(DoctrineSqlFilter $sqlFilter, ORMClassMetadata $targetEntity, $targetTableAlias)
+    public function getSql(DoctrineSqlFilter $sqlFilter, ClassMetadata $targetEntity, $targetTableAlias)
     {
         $pivot = strpos($this->path, '.');
         $targetEntityPropertyName = ($pivot ? substr($this->path, 0, $pivot) : $this->path);

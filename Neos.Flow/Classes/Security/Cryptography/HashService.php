@@ -72,8 +72,12 @@ class HashService
      * @return string The hash of the string
      * @throws InvalidArgumentForHashGenerationException if something else than a string was given as parameter
      */
-    public function generateHmac(string $string): string
+    public function generateHmac($string)
     {
+        if (!is_string($string)) {
+            throw new InvalidArgumentForHashGenerationException('A hash can only be generated for a string, but "' . gettype($string) . '" was given.', 1255069587);
+        }
+
         return hash_hmac('sha1', $string, $this->getEncryptionKey());
     }
 
@@ -117,8 +121,11 @@ class HashService
      * @throws InvalidHashException if the hash did not fit to the data.
      * @todo Mark as API once it is more stable
      */
-    public function validateAndStripHmac(string $string): string
+    public function validateAndStripHmac($string)
     {
+        if (!is_string($string)) {
+            throw new InvalidArgumentForHashGenerationException('A hash can only be validated for a string, but "' . gettype($string) . '" was given.', 1320829762);
+        }
         if (strlen($string) < 40) {
             throw new InvalidArgumentForHashGenerationException('A hashed string must contain at least 40 characters, the given string was only ' . strlen($string) . ' characters long.', 1320830276);
         }

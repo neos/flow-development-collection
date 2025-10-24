@@ -13,6 +13,7 @@ namespace Neos\Flow\Tests\Unit\Security\Authentication;
 
 use Neos\Flow\ObjectManagement\ObjectManager;
 use Neos\Flow\Security\Authentication\AuthenticationProviderResolver;
+use Neos\Flow\Security\Authentication\Provider\TestingProvider;
 use Neos\Flow\Security\Exception\NoAuthenticationProviderFoundException;
 use Neos\Flow\Tests\UnitTestCase;
 
@@ -40,7 +41,7 @@ class AuthenticationProviderResolverTest extends UnitTestCase
      */
     public function resolveProviderReturnsTheCorrectProviderForAShortName()
     {
-        $longClassNameForTest = 'Neos\Flow\Security\Authentication\Provider\ValidShortName';
+        $longClassNameForTest = TestingProvider::class;
 
         $getCaseSensitiveObjectNameCallback = function () use ($longClassNameForTest) {
             $args = func_get_args();
@@ -56,9 +57,9 @@ class AuthenticationProviderResolverTest extends UnitTestCase
         $mockObjectManager->expects(self::any())->method('getClassNameByObjectName')->will(self::returnCallBack($getCaseSensitiveObjectNameCallback));
 
         $providerResolver = new AuthenticationProviderResolver($mockObjectManager);
-        $providerClass = $providerResolver->resolveProviderClass('ValidShortName');
+        $providerClass = $providerResolver->resolveProviderClass('TestingProvider');
 
-        self::assertEquals($longClassNameForTest, $providerClass, 'The wrong classname has been resolved');
+        self::assertEquals(TestingProvider::class, $providerClass, 'The wrong classname has been resolved');
     }
 
     /**
@@ -67,11 +68,11 @@ class AuthenticationProviderResolverTest extends UnitTestCase
     public function resolveProviderReturnsTheCorrectProviderForACompleteClassName()
     {
         $mockObjectManager = $this->getMockBuilder(ObjectManager::class)->disableOriginalConstructor()->getMock();
-        $mockObjectManager->expects(self::any())->method('getClassNameByObjectName')->with('existingProviderClass')->will(self::returnValue('existingProviderClass'));
+        $mockObjectManager->expects(self::any())->method('getClassNameByObjectName')->with(TestingProvider::class)->will(self::returnValue(TestingProvider::class));
 
         $providerResolver = new AuthenticationProviderResolver($mockObjectManager);
-        $providerClass = $providerResolver->resolveProviderClass('existingProviderClass');
+        $providerClass = $providerResolver->resolveProviderClass(TestingProvider::class);
 
-        self::assertEquals('existingProviderClass', $providerClass, 'The wrong classname has been resolved');
+        self::assertEquals(TestingProvider::class, $providerClass, 'The wrong classname has been resolved');
     }
 }

@@ -47,8 +47,9 @@ class SessionDataContainer
      * Set the current list of security tokens with their data.
      *
      * @param array<TokenInterface> $securityTokens
+     * @return void
      */
-    public function setSecurityTokens(array $securityTokens): void
+    public function setSecurityTokens(array $securityTokens)
     {
         foreach ($securityTokens as $token) {
             if ($token instanceof SessionlessTokenInterface) {
@@ -72,8 +73,9 @@ class SessionDataContainer
      * set the list of currently active CSRF tokens.
      *
      * @param array<string,string|bool> $csrfProtectionTokens
+     * @return void
      */
-    public function setCsrfProtectionTokens(array $csrfProtectionTokens): void
+    public function setCsrfProtectionTokens(array $csrfProtectionTokens)
     {
         $this->csrfProtectionTokens = $csrfProtectionTokens;
     }
