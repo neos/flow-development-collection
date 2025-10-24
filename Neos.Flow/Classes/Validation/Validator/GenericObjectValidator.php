@@ -35,7 +35,7 @@ class GenericObjectValidator extends AbstractValidator implements ObjectValidato
     protected $propertyValidators = [];
 
     /**
-     * @var \SplObjectStorage<object,mixed>
+     * @var ?\SplObjectStorage<object,mixed>
      */
     protected $validatedInstancesContainer;
 

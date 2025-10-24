@@ -39,7 +39,7 @@ abstract class AbstractCompositeValidator implements ObjectValidatorInterface, \
     protected $validators;
 
     /**
-     * @var \SplObjectStorage<object,mixed>
+     * @var ?\SplObjectStorage<object,mixed>
      */
     protected $validatedInstancesContainer;
 
@@ -102,7 +102,7 @@ abstract class AbstractCompositeValidator implements ObjectValidatorInterface, \
      */
     public function addValidator(ValidatorInterface $validator)
     {
-        if ($validator instanceof ObjectValidatorInterface) {
+        if ($validator instanceof ObjectValidatorInterface && isset($this->validatedInstancesContainer)) {
             $validator->setValidatedInstancesContainer($this->validatedInstancesContainer);
         }
         $this->validators->attach($validator);
@@ -115,7 +115,7 @@ abstract class AbstractCompositeValidator implements ObjectValidatorInterface, \
      * @throws NoSuchValidatorException
      * @api
      */
-    public function removeValidator(ValidatorInterface $validator): void
+    public function removeValidator(ValidatorInterface $validator)
     {
         if (!$this->validators->contains($validator)) {
             throw new NoSuchValidatorException('Cannot remove validator because its not in the conjunction.', 1207020177);
