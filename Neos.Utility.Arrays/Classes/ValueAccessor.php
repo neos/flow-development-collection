@@ -189,7 +189,11 @@ final readonly class ValueAccessor
         throw $this->createTypeError(sprintf('is not an instance of %s or null', $className));
     }
 
-    private function createTypeError(string $message): \UnexpectedValueException
+    /**
+     * @param string $message
+     * @return \UnexpectedValueException
+     */
+    private function createTypeError($message): \UnexpectedValueException
     {
         return new \UnexpectedValueException(get_debug_type($this->value) . ' ' . $message . ($this->additionalErrorMessage ? ' ' . $this->additionalErrorMessage : ''));
     }

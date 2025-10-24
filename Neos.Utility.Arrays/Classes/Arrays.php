@@ -179,11 +179,11 @@ abstract class Arrays
      * of only integer)
      *
      * @param array<mixed> $array the array to reduce
-     * @param callable $function the reduce function with the same order of parameters as in the native array_reduce (i.e. accumulator first, then current array element)
+     * @param string $function the reduce function with the same order of parameters as in the native array_reduce (i.e. accumulator first, then current array element)
      * @param mixed $initial the initial accumulator value
      * @return mixed
      */
-    public static function array_reduce(array $array, callable $function, $initial = null)
+    public static function array_reduce(array $array, string $function, $initial = null)
     {
         $accumulator = $initial;
         foreach ($array as $value) {
@@ -241,10 +241,15 @@ abstract class Arrays
      * @return array<mixed>|\ArrayAccess<int|string, mixed> The modified array or object
      * @throws \InvalidArgumentException
      */
-    public static function setValueByPath(array|\ArrayAccess $subject, array|string $path, $value)
+    public static function setValueByPath($subject, $path, $value)
     {
+        if (!is_array($subject) && !($subject instanceof \ArrayAccess)) {
+            throw new \InvalidArgumentException('setValueByPath() expects $subject to be array or an object implementing \ArrayAccess, "' . (is_object($subject) ? get_class($subject) : gettype($subject)) . '" given.', 1306424308);
+        }
         if (is_string($path)) {
             $path = explode('.', $path);
+        } elseif (!is_array($path)) {
+            throw new \InvalidArgumentException('setValueByPath() expects $path to be string or array, "' . gettype($path) . '" given.', 1305111499);
         }
         $key = array_shift($path);
         if (count($path) === 0) {
@@ -266,10 +271,12 @@ abstract class Arrays
      * @return array<mixed> The modified array
      * @throws \InvalidArgumentException
      */
-    public static function unsetValueByPath(array $array, array|string $path): array
+    public static function unsetValueByPath(array $array, $path): array
     {
         if (is_string($path)) {
             $path = explode('.', $path);
+        } elseif (!is_array($path)) {
+            throw new \InvalidArgumentException('unsetValueByPath() expects $path to be string or array, "' . gettype($path) . '" given.', 1305111513);
         }
         $key = array_shift($path);
         if (count($path) === 0) {
