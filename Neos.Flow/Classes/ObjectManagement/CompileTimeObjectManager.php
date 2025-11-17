@@ -15,7 +15,6 @@ namespace Neos\Flow\ObjectManagement;
 use Neos\Cache\Exception as CacheException;
 use Neos\Cache\Frontend\VariableFrontend;
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Composer\ComposerUtility;
 use Neos\Flow\Configuration\ConfigurationManager;
 use Neos\Flow\Configuration\Exception\InvalidConfigurationTypeException;
 use Neos\Flow\ObjectManagement\Configuration\Configuration;
@@ -25,7 +24,6 @@ use Neos\Flow\ObjectManagement\Configuration\ConfigurationProperty as Property;
 use Neos\Flow\ObjectManagement\Exception\InvalidObjectConfigurationException;
 use Neos\Flow\ObjectManagement\Exception\UnknownObjectException;
 use Neos\Flow\ObjectManagement\Exception\WrongScopeException;
-use Neos\Flow\Package\FlowPackageInterface;
 use Neos\Flow\Package\PackageInterface;
 use Neos\Flow\Package\PackageKeyAwareInterface;
 use Neos\Flow\Reflection\ReflectionService;
@@ -231,106 +229,18 @@ class CompileTimeObjectManager extends ObjectManager
      * "all available class names". If the respective Flow settings say so, also function test classes
      * are registered.
      *
-     * For performance reasons this function ignores classes whose name ends with "Exception".
-     *
      * @param array<string, PackageInterface&PackageKeyAwareInterface> $packages A list of packages to consider
      * @return array<string, array<class-string>> A list of class names which were discovered in the given packages
      *
      * @throws InvalidConfigurationTypeException
+     * @see PackageClassFileProvider::build()
      */
     protected function registerClassFiles(array $packages): array
     {
         $allSettings = $this->configurationManager?->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS) ?? [];
-        $includeClassesConfiguration = [];
-        if (isset($allSettings['Neos']['Flow']['object']['includeClasses'])) {
-            if (!is_array($allSettings['Neos']['Flow']['object']['includeClasses'])) {
-                throw new InvalidConfigurationTypeException('The setting "Neos.Flow.object.includeClasses" is invalid, it must be an array if set. Check the syntax in the YAML file.', 1422357285);
-            }
-
-            $includeClassesConfiguration = $allSettings['Neos']['Flow']['object']['includeClasses'];
-        }
-
-        $availableClassNames = ['' => ['DateTime']];
-
-        $shouldRegisterFunctionalTestClasses = (bool)($allSettings['Neos']['Flow']['object']['registerFunctionalTestClasses'] ?? false);
-
-        foreach ($packages as $packageKey => $package) {
-            $packageType = (string)$package->getComposerManifest('type');
-            if (isset($includeClassesConfiguration[$packageKey]) || ComposerUtility::isFlowPackageType($packageType)) {
-                foreach ($package->getClassFiles() as $fullClassName => $path) {
-                    if (!str_ends_with($fullClassName, 'Exception')) {
-                        $availableClassNames[$packageKey][] = $fullClassName;
-                    }
-                }
-                if ($package instanceof FlowPackageInterface && $shouldRegisterFunctionalTestClasses) {
-                    foreach ($package->getFunctionalTestsClassFiles() as $fullClassName => $path) {
-                        if (!str_ends_with($fullClassName, 'Exception')) {
-                            $availableClassNames[$packageKey][] = $fullClassName;
-                        }
-                    }
-                }
-                if (isset($availableClassNames[$packageKey])) {
-                    $availableClassNames[$packageKey] = array_unique($availableClassNames[$packageKey]);
-                }
-            }
-        }
-        return $this->filterClassNamesFromConfiguration($availableClassNames, $includeClassesConfiguration);
-    }
-
-    /**
-     * Given an array of class names by package key this filters out classes that
-     * have been configured to be included by object management.
-     *
-     * @param array<string, array<class-string>> $classNames 2-level array - key of first level is package key, value of second level is classname (FQN)
-     * @param array<string, array<string>> $includeClassesConfiguration array of includeClasses configurations
-     * @return array<string, array<class-string>> The input array with all configured to be included in object management added in
-     * @throws InvalidConfigurationTypeException
-     */
-    protected function filterClassNamesFromConfiguration(array $classNames, array $includeClassesConfiguration): array
-    {
-        return $this->applyClassFilterConfiguration($classNames, $includeClassesConfiguration);
-    }
-
-    /**
-     * Filters the classnames available for object management by filter expressions that includes classes.
-     *
-     * @param array<string, array<class-string>> $classNames All classnames per package
-     * @param array<string, array<string>> $filterConfiguration The filter configuration to apply
-     * @return array<string, array<class-string>> the remaining class
-     * @throws InvalidConfigurationTypeException
-     */
-    protected function applyClassFilterConfiguration(array $classNames, array $filterConfiguration): array
-    {
-        foreach ($filterConfiguration as $packageKey => $filterExpressions) {
-            if (!array_key_exists($packageKey, $classNames)) {
-                $this->logger->debug('The package "' . $packageKey . '" specified in the setting "Neos.Flow.object.includeClasses" was either excluded or is not loaded.');
-                continue;
-            }
-            if (!is_array($filterExpressions)) {
-                throw new InvalidConfigurationTypeException('The value given for setting "Neos.Flow.object.includeClasses.\'' . $packageKey . '\'" is  invalid. It should be an array of expressions. Check the syntax in the YAML file.', 1422357272);
-            }
-
-            $classesForPackageUnderInspection = $classNames[$packageKey];
-            $classNames[$packageKey] = [];
-
-            foreach ($filterExpressions as $filterExpression) {
-                $classesForPackageUnderInspection = array_filter(
-                    $classesForPackageUnderInspection,
-                    static function ($className) use ($filterExpression) {
-                        $match = preg_match('/' . $filterExpression . '/', $className);
-                        return $match === 1;
-                    }
-                );
-                $classNames[$packageKey] = array_merge($classNames[$packageKey], $classesForPackageUnderInspection);
-                $classesForPackageUnderInspection = $classNames[$packageKey];
-            }
-
-            if ($classNames[$packageKey] === []) {
-                unset($classNames[$packageKey]);
-            }
-        }
-
-        return $classNames;
+        $packageClassFileProvider = new PackageClassFileProvider();
+        $packageClassFileProvider->injectLogger($this->logger);
+        return $packageClassFileProvider->build($packages, $allSettings['Neos']['Flow']['object'] ?? []);
     }
 
     /**
