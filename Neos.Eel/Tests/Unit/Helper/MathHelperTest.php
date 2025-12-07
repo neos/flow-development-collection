@@ -211,7 +211,7 @@ class MathHelperTest extends \Neos\Flow\Tests\UnitTestCase
         ]);
         $result = $evaluator->evaluate($method, $context);
         if ($expected === static::NAN) {
-            self::assertTrue(is_nan($result), 'Expected NAN, got value "' . $result . '"');
+            self::assertTrue(is_nan($result), 'Expected NAN, got value "' . get_debug_type($result) . '"');
         } else {
             self::assertEqualsWithDelta($expected, $result, 0.001, 'Rounded value did not match');
         }
