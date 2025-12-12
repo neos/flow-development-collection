@@ -52,12 +52,14 @@ Neos:
         #
         excludeClassesFromConstructorAutowiring: []
 
-        # This is a forward compatibility setting, preventing constructor arguments to be autowired
-        # if they are not declared singleton or session when this setting is false.
+        # This is a forward compatibility setting when used with "false" preventing constructor arguments to be autowired
+        # if they are not declared singleton or session.
         #
         # BEWARE of dragons, Flow code should be fine, but Neos might still contain such constructs.
         # Manual full cache flush is necessary after changing this setting.
         #
+        # Relying on the legacy behaviour is deprecated and will be logged to the system log as debug entry.
+        #
         # In the future autowiring of prototypes should no longer be an option as it makes no sense.
         # Use a factory class if you need this otherwise.
-        prototypeAutowiring: true
+        constructorAutowiringWithPrototypes: true

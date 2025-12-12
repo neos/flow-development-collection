@@ -224,7 +224,6 @@ class ProxyClassBuilder
      */
     protected function buildSerializeRelatedEntitiesCode(Configuration $objectConfiguration, bool $forceSerializationCode): string
     {
-        /** @var class-string $className */
         $className = $objectConfiguration->getClassName();
         $forceSerializationCode = $forceSerializationCode === false ? ($this->reflectionService->getClassAnnotation($className, Flow\Proxy::class)?->forceSerializationCode ?? false) : true;
         $scopeAnnotation = $this->reflectionService->getClassAnnotation($className, Flow\Scope::class);
@@ -327,8 +326,8 @@ class ProxyClassBuilder
                                 throw new UnknownObjectException('The object "' . $argumentValue . '" which was specified as an argument in the object configuration of object "' . $objectConfiguration->getObjectName() . '" does not exist.', 1264669967);
                             }
 
-                            $prototypeAutowiring = $this->configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'Neos.Flow.object.dependencyInjection.prototypeAutowiring') ?? true;
-                            if ($prototypeAutowiring === false && $argumentObjectConfiguration->getScope() === Configuration::SCOPE_PROTOTYPE) {
+                            $constructorAutowiringWithPrototypes = $this->configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'Neos.Flow.object.dependencyInjection.constructorAutowiringWithPrototypes') ?? true;
+                            if ($constructorAutowiringWithPrototypes === false && $argumentObjectConfiguration->getScope() === Configuration::SCOPE_PROTOTYPE) {
                                 break;
                             }
 
