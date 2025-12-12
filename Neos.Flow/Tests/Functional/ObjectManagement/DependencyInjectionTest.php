@@ -19,6 +19,7 @@ use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\Flow175\ClassWithTransi
 use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\PrototypeClassA;
 use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\PrototypeClassH;
 use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\PrototypeClassL;
+use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\SingletonClassH;
 use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\SingletonClassA;
 use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\ValueObjectClassA;
 use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\ValueObjectClassB;
@@ -362,5 +363,18 @@ class DependencyInjectionTest extends FunctionalTestCase
 
         $object = new PrototypeClassL('override');
         self::assertSame('override', $object->value);
+    }
+
+    /**
+     * @test
+     */
+    public function constructorObjectInjectionOfNullableInterface(): void
+    {
+        $object = $this->objectManager->get(SingletonClassH::class);
+        self::assertInstanceOf(ProxyInterface::class, $object);
+        self::assertSame(null, $object->interfaceA);
+
+        $object = new SingletonClassH(null);
+        self::assertSame(null, $object->interfaceA);
     }
 }
