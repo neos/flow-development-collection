@@ -41,12 +41,11 @@ class StandaloneViewTest extends UnitTestCase
 
     protected function setUp(): void
     {
-        $this->standaloneView = $this->getAccessibleMock(\Neos\FluidAdaptor\View\StandaloneView::class, ['dummy']);
-
         $this->mockRequest = $this->getMockBuilder(\Neos\Flow\Mvc\ActionRequest::class)->disableOriginalConstructor()->getMock();
-        $this->mockControllerContext = $this->getMockBuilder(\Neos\Flow\Mvc\Controller\ControllerContext::class)->disableOriginalConstructor()->getMock();
-        $this->mockControllerContext->expects(self::any())->method('getRequest')->will(self::returnValue($this->mockRequest));
-        $this->inject($this->standaloneView, 'controllerContext', $this->mockControllerContext);
+        $this->standaloneView = new StandaloneView($this->mockRequest);
+//        $this->mockControllerContext = $this->getMockBuilder(\Neos\Flow\Mvc\Controller\ControllerContext::class)->disableOriginalConstructor()->getMock();
+//        $this->mockControllerContext->expects(self::any())->method('getRequest')->will(self::returnValue($this->mockRequest));
+//        $this->inject($this->standaloneView, 'controllerContext', $this->mockControllerContext);
     }
 
     /**
@@ -59,7 +58,7 @@ class StandaloneViewTest extends UnitTestCase
         mkdir('vfs://MyLayouts');
         \file_put_contents('vfs://MyLayouts/NotAFolder', 'foo');
         $this->standaloneView->setLayoutRootPath('vfs://MyLayouts/NotAFolder');
-        $this->standaloneView->getTemplatePaths()->getLayoutSource();
+        $this->standaloneView->getRenderingContext()->getTemplatePaths()->getLayoutSource();
     }
 
     /**
@@ -71,7 +70,7 @@ class StandaloneViewTest extends UnitTestCase
         vfsStreamWrapper::register();
         mkdir('vfs://MyLayouts/NotAFile');
         $this->standaloneView->setLayoutRootPath('vfs://MyLayouts');
-        $this->standaloneView->getTemplatePaths()->getLayoutSource('NotAFile');
+        $this->standaloneView->getRenderingContext()->getTemplatePaths()->getLayoutSource('NotAFile');
     }
 
     /**
@@ -84,7 +83,7 @@ class StandaloneViewTest extends UnitTestCase
         mkdir('vfs://MyPartials');
         \file_put_contents('vfs://MyPartials/NotAFolder', 'foo');
         $this->standaloneView->setPartialRootPath('vfs://MyPartials/NotAFolder');
-        $this->standaloneView->getTemplatePaths()->getPartialSource('SomePartial');
+        $this->standaloneView->getRenderingContext()->getTemplatePaths()->getPartialSource('SomePartial');
     }
 
     /**
@@ -96,6 +95,6 @@ class StandaloneViewTest extends UnitTestCase
         vfsStreamWrapper::register();
         mkdir('vfs://MyPartials/NotAFile');
         $this->standaloneView->setPartialRootPath('vfs://MyPartials');
-        $this->standaloneView->getTemplatePaths()->getPartialSource('NotAFile');
+        $this->standaloneView->getRenderingContext()->getTemplatePaths()->getPartialSource('NotAFile');
     }
 }

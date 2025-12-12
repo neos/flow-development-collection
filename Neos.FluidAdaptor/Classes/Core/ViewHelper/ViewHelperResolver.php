@@ -15,6 +15,7 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Package\Package;
 use Neos\Flow\Package\PackageManager;
+use TYPO3Fluid\Fluid\Core\ViewHelper\ViewHelperInterface;
 
 /**
  * Class ViewHelperResolver
@@ -49,9 +50,9 @@ class ViewHelperResolver extends \TYPO3Fluid\Fluid\Core\ViewHelper\ViewHelperRes
      * will look for classes in both namespaces starting
      * from the bottom.
      *
-     * @var array
+     * @var array<string, string[]|null>
      */
-    protected $namespaces = [];
+    protected array $namespaces = [];
 
     /**
      * @Flow\InjectConfiguration(path="namespaces")
@@ -59,7 +60,7 @@ class ViewHelperResolver extends \TYPO3Fluid\Fluid\Core\ViewHelper\ViewHelperRes
      */
     protected $namespacesFromConfiguration;
 
-    public function initializeObject($reason)
+    public function initializeObject($reason): void
     {
         if ($reason === ObjectManagerInterface::INITIALIZATIONCAUSE_RECREATED) {
             return;
@@ -69,7 +70,7 @@ class ViewHelperResolver extends \TYPO3Fluid\Fluid\Core\ViewHelper\ViewHelperRes
         foreach ($this->packageManager->getAvailablePackages() as $package) {
             foreach ($package->getNamespaces() as $namespace) {
                 $viewHelperNamespace = $namespace;
-                if (strpos(strrev($namespace), '\\') !== 0) {
+                if (str_ends_with($namespace, '\\') === false) {
                     $viewHelperNamespace .= '\\';
                 }
                 $viewHelperNamespace .= 'ViewHelpers';
@@ -82,79 +83,13 @@ class ViewHelperResolver extends \TYPO3Fluid\Fluid\Core\ViewHelper\ViewHelperRes
         }
     }
 
-    /**
-     * @param string $viewHelperClassName
-     * @return \TYPO3Fluid\Fluid\Core\ViewHelper\ViewHelperInterface
-     */
-    public function createViewHelperInstanceFromClassName($viewHelperClassName)
+    public function createViewHelperInstanceFromClassName(string $viewHelperClassName): ViewHelperInterface
     {
-        return $this->objectManager->get($viewHelperClassName);
-    }
-
-    /**
-     * Add a PHP namespace where ViewHelpers can be found and give
-     * it an alias/identifier.
-     *
-     * The provided namespace can be either a single namespace or
-     * an array of namespaces, as strings. The identifier/alias is
-     * always a single, alpha-numeric ASCII string.
-     *
-     * Calling this method multiple times with different PHP namespaces
-     * for the same alias causes that namespace to be *extended*,
-     * meaning that the PHP namespace you provide second, third etc.
-     * are also used in lookups and are used *first*, so that if any
-     * of the namespaces you add contains a class placed and named the
-     * same way as one that exists in an earlier namespace, then your
-     * class gets used instead of the earlier one.
-     *
-     * Example:
-     *
-     * $resolver->addNamespace('my', 'My\Package\ViewHelpers');
-     * // Any ViewHelpers under this namespace can now be accessed using for example {my:example()}
-     * // Now, assuming you also have an ExampleViewHelper class in a different
-     * // namespace and wish to make that ExampleViewHelper override the other:
-     * $resolver->addNamespace('my', 'My\OtherPackage\ViewHelpers');
-     * // Now, since ExampleViewHelper exists in both places but the
-     * // My\OtherPackage\ViewHelpers namespace was added *last*, Fluid
-     * // will find and use My\OtherPackage\ViewHelpers\ExampleViewHelper.
-     *
-     * Alternatively, setNamespaces() can be used to reset and redefine
-     * all previously added namespaces - which is great for cases where
-     * you need to remove or replace previously added namespaces. Be aware
-     * that setNamespaces() also removes the default "f" namespace, so
-     * when you use this method you should always include the "f" namespace.
-     *
-     * @param string $identifier
-     * @param string|array $phpNamespace
-     * @return void
-     */
-    public function addNamespace($identifier, $phpNamespace)
-    {
-        if ($phpNamespace === null) {
-            $this->namespaces[$identifier] = null;
-            return;
+        $possibleViewHelper = $this->objectManager->get($viewHelperClassName);
+        if ($possibleViewHelper instanceof ViewHelperInterface) {
+            return $possibleViewHelper;
         }
 
-        if (!is_array($phpNamespace)) {
-            $this->addNamespaceInternal($identifier, $phpNamespace);
-            return;
-        }
-
-        foreach ($phpNamespace as $namespace) {
-            $this->addNamespaceInternal($identifier, $namespace);
-        }
-    }
-
-    /**
-     * @param string $identifier
-     * @param string $phpNamespace
-     */
-    protected function addNamespaceInternal($identifier, $phpNamespace)
-    {
-        if (!isset($this->namespaces[$identifier])) {
-            $this->namespaces[$identifier] = [];
-        }
-
-        $this->namespaces[$identifier] = array_unique(array_merge($this->namespaces[$identifier], [$phpNamespace]));
+        throw new \RuntimeException('Given ViewHelper class "' . $viewHelperClassName . '" does not implement ViewHelperInterface');
     }
 }

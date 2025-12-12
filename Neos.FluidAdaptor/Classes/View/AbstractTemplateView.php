@@ -85,12 +85,12 @@ abstract class AbstractTemplateView extends \TYPO3Fluid\Fluid\View\AbstractTempl
             'string'
         ],
         'templatePathAndFilename' => [
-            null,
+            '',
             'Path and filename of the template file. If set,  overrides the templatePathAndFilenamePattern',
             'string'
         ],
         'layoutPathAndFilename' => [
-            null,
+            '',
             'Path and filename of the layout file. If set, overrides the layoutPathAndFilenamePattern',
             'string'
         ]
@@ -110,9 +110,6 @@ abstract class AbstractTemplateView extends \TYPO3Fluid\Fluid\View\AbstractTempl
      */
     protected $controllerContext;
 
-    /**
-     * @phpstan-ignore-next-line we are incompatible with the fluid view and should use composition instead
-     */
     public function render($actionName = null): StreamInterface
     {
         return $this->createStream(parent::render($actionName));
@@ -147,12 +144,8 @@ abstract class AbstractTemplateView extends \TYPO3Fluid\Fluid\View\AbstractTempl
      * @param array $options
      * @throws Exception
      */
-    public function __construct(?array $options = null)
+    public function __construct(array $options = [])
     {
-        if ($options === null) {
-            $options = [];
-        }
-
         $this->validateOptions($options);
         $this->setOptions($options);
 
@@ -168,7 +161,7 @@ abstract class AbstractTemplateView extends \TYPO3Fluid\Fluid\View\AbstractTempl
      */
     public function setTemplatePathAndFilename($templatePathAndFilename)
     {
-        $this->getTemplatePaths()->setTemplatePathAndFilename($templatePathAndFilename);
+        $this->baseRenderingContext->getTemplatePaths()->setTemplatePathAndFilename($templatePathAndFilename);
     }
 
     /**
@@ -184,8 +177,7 @@ abstract class AbstractTemplateView extends \TYPO3Fluid\Fluid\View\AbstractTempl
             $renderingContext->setControllerContext($controllerContext);
         }
 
-
-        $paths = $this->getTemplatePaths();
+        $paths = $this->baseRenderingContext->getTemplatePaths();
         $request = $controllerContext->getRequest();
 
         if (!$request instanceof ActionRequest) {
@@ -210,11 +202,11 @@ abstract class AbstractTemplateView extends \TYPO3Fluid\Fluid\View\AbstractTempl
      * @return string rendered template for the section
      * @throws \Neos\FluidAdaptor\View\Exception\InvalidSectionException
      */
-    public function renderSection($sectionName, array $variables = [], $ignoreUnknown = false)
+    public function renderSection($sectionName, array|\ArrayAccess $variables = [], $ignoreUnknown = false)
     {
         // FIXME: We should probably give variables explicitly to this method.
-        if ($variables === []) {
-            $variables = $this->getRenderingContext()->getVariableProvider()->getAll();
+        if (empty($variables)) {
+            $variables = $this->getCurrentRenderingContext()->getVariableProvider()->getAll();
         }
 
         return parent::renderSection($sectionName, $variables, $ignoreUnknown);
@@ -300,5 +292,14 @@ abstract class AbstractTemplateView extends \TYPO3Fluid\Fluid\View\AbstractTempl
         if ($this->baseRenderingContext instanceof RenderingContext) {
             $this->baseRenderingContext->setOption($optionName, $value);
         }
+    }
+
+    /**
+     * @deprecated Use $this->getRenderingContext()->getTemplatePaths()
+     * @see RenderingContext::getTemplatePaths()
+     */
+    public function getTemplatePaths(): \TYPO3Fluid\Fluid\View\TemplatePaths
+    {
+        return $this->baseRenderingContext->getTemplatePaths();
     }
 }

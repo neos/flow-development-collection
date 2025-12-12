@@ -12,7 +12,6 @@ namespace Neos\FluidAdaptor\Core\Rendering;
  */
 
 use Neos\FluidAdaptor\Core\Cache\CacheAdaptor;
-use Neos\FluidAdaptor\Core\Parser\TemplateParser;
 use Neos\FluidAdaptor\Core\Parser\TemplateProcessor\EscapingFlagProcessor;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\ActionRequest;
@@ -28,6 +27,7 @@ use TYPO3Fluid\Fluid\Core\Parser\Configuration;
 use TYPO3Fluid\Fluid\Core\Parser\SyntaxTree\Expression\CastingExpressionNode;
 use TYPO3Fluid\Fluid\Core\Parser\SyntaxTree\Expression\MathExpressionNode;
 use TYPO3Fluid\Fluid\Core\Parser\SyntaxTree\Expression\TernaryExpressionNode;
+use TYPO3Fluid\Fluid\Core\Parser\TemplateParser;
 use TYPO3Fluid\Fluid\Core\Parser\TemplateProcessor\PassthroughSourceModifierTemplateProcessor;
 use TYPO3Fluid\Fluid\Core\Rendering\RenderingContext as FluidRenderingContext;
 
@@ -52,14 +52,14 @@ class RenderingContext extends FluidRenderingContext implements FlowAwareRenderi
     ];
 
     /**
-     * @var ControllerContext
+     * @var ControllerContext|null
      */
-    protected $controllerContext;
+    protected ControllerContext|null $controllerContext = null;
 
     /**
-     * @var ObjectManagerInterface
+     * @var ObjectManagerInterface|null
      */
-    protected $objectManager;
+    protected ObjectManagerInterface|null $objectManager = null;
 
     /**
      * @Flow\Inject
@@ -74,9 +74,9 @@ class RenderingContext extends FluidRenderingContext implements FlowAwareRenderi
     protected $cache;
 
     /**
-     * @var Configuration
+     * @var Configuration|null
      */
-    protected $parserConfiguration;
+    protected Configuration|null $parserConfiguration = null;
 
     /**
      * RenderingContext constructor.
@@ -93,14 +93,16 @@ class RenderingContext extends FluidRenderingContext implements FlowAwareRenderi
             new PassthroughSourceModifierTemplateProcessor(),
             new NamespaceDetectionTemplateProcessor()
         ]);
-        $this->setTemplatePaths(new TemplatePaths($options));
+        $templatePaths = new TemplatePaths();
+        $templatePaths->setOptions($options);
+        $this->setTemplatePaths($templatePaths);
         $this->setVariableProvider(new TemplateVariableContainer());
     }
 
     /**
      * @param ObjectManagerInterface $objectManager
      */
-    public function injectObjectManager(ObjectManagerInterface $objectManager)
+    public function injectObjectManager(ObjectManagerInterface $objectManager): void
     {
         $this->objectManager = $objectManager;
     }
@@ -108,7 +110,7 @@ class RenderingContext extends FluidRenderingContext implements FlowAwareRenderi
     /**
      * @return ControllerContext
      */
-    public function getControllerContext()
+    public function getControllerContext(): ControllerContext
     {
         return $this->controllerContext;
     }
@@ -116,7 +118,7 @@ class RenderingContext extends FluidRenderingContext implements FlowAwareRenderi
     /**
      * @param ControllerContext $controllerContext
      */
-    public function setControllerContext($controllerContext)
+    public function setControllerContext(ControllerContext $controllerContext): void
     {
         $this->controllerContext = $controllerContext;
         $request = $controllerContext->getRequest();
@@ -136,7 +138,7 @@ class RenderingContext extends FluidRenderingContext implements FlowAwareRenderi
     /**
      * @return ObjectManagerInterface
      */
-    public function getObjectManager()
+    public function getObjectManager(): ObjectManagerInterface
     {
         return $this->objectManager;
     }
@@ -146,7 +148,7 @@ class RenderingContext extends FluidRenderingContext implements FlowAwareRenderi
      *
      * @return Configuration
      */
-    public function buildParserConfiguration()
+    public function buildParserConfiguration(): Configuration
     {
         if ($this->parserConfiguration === null) {
             $this->parserConfiguration = parent::buildParserConfiguration();
@@ -164,7 +166,7 @@ class RenderingContext extends FluidRenderingContext implements FlowAwareRenderi
      * @return void
      * @throws \Neos\Flow\Mvc\Exception
      */
-    public function setOption($optionName, $value)
+    public function setOption(string $optionName, $value): void
     {
         if ($this->templatePaths instanceof TemplatePaths) {
             $this->templatePaths->setOption($optionName, $value);

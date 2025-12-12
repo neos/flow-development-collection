@@ -111,7 +111,7 @@ abstract class AbstractWidgetViewHelper extends AbstractViewHelper implements Ch
         $this->initialize();
         $this->initializeWidgetContext();
 
-        return $this->callRenderMethod();
+        return $this->render();
     }
 
     /**

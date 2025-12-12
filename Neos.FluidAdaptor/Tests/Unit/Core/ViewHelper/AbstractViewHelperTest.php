@@ -15,11 +15,11 @@ use Neos\Flow\Mvc\Controller\ControllerContext;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Reflection\ReflectionService;
 use Neos\Flow\Tests\UnitTestCase;
+use Neos\FluidAdaptor\Core\Rendering\RenderingContext;
 use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
 use Neos\FluidAdaptor\Core\ViewHelper\TemplateVariableContainer;
 use Neos\FluidAdaptor\View\TemplateView;
 use TYPO3Fluid\Fluid\Core\ViewHelper\ArgumentDefinition;
-use TYPO3Fluid\Fluid\Core\ViewHelper\Exception;
 use TYPO3Fluid\Fluid\Core\ViewHelper\ViewHelperVariableContainer;
 
 require_once(__DIR__ . '/../Fixtures/TestViewHelper.php');
@@ -108,41 +108,6 @@ class AbstractViewHelperTest extends UnitTestCase
     /**
      * @test
      */
-    public function overrideArgumentOverwritesExistingArgumentDefinition(): void
-    {
-        $this->mockReflectionService->expects(self::any())->method('getMethodParameters')->willReturn([]);
-
-        $viewHelper = $this->getAccessibleMock(AbstractViewHelper::class, ['render'], [], '', false);
-        $viewHelper->injectObjectManager($this->mockObjectManager);
-
-        $name = 'argumentName';
-        $description = 'argument description';
-        $overriddenDescription = 'overwritten argument description';
-        $type = 'string';
-        $overriddenType = 'integer';
-        $isRequired = true;
-        $expected = new ArgumentDefinition($name, $overriddenType, $overriddenDescription, $isRequired);
-
-        $viewHelper->_call('registerArgument', $name, $type, $description, $isRequired);
-        $viewHelper->_call('overrideArgument', $name, $overriddenType, $overriddenDescription, $isRequired);
-        self::assertEquals($viewHelper->prepareArguments(), [$name => $expected], 'Argument definitions not returned correctly. The original ArgumentDefinition could not be overridden.');
-    }
-
-    /**
-     * @test
-     */
-    public function overrideArgumentThrowsExceptionWhenTryingToOverwriteAnNonexistingArgument(): void
-    {
-        $this->expectException(Exception::class);
-        $viewHelper = $this->getAccessibleMock(AbstractViewHelper::class, ['render'], [], '', false);
-        $viewHelper->injectObjectManager($this->mockObjectManager);
-
-        $viewHelper->_call('overrideArgument', 'argumentName', 'string', 'description', true);
-    }
-
-    /**
-     * @test
-     */
     public function prepareArgumentsCallsInitializeArguments(): void
     {
         $this->mockReflectionService->expects(self::any())->method('getMethodParameters')->willReturn([]);
@@ -221,22 +186,22 @@ class AbstractViewHelperTest extends UnitTestCase
     public function initializeArgumentsAndRenderCallsTheCorrectSequenceOfMethods(): void
     {
         $calls = [];
-        $viewHelper = $this->getAccessibleMock(AbstractViewHelper::class, ['validateArguments', 'initialize', 'callRenderMethod']);
+        $viewHelper = $this->getAccessibleMock(AbstractViewHelper::class, ['validateArguments', 'initialize', 'render']);
         $viewHelper->expects(self::atLeastOnce())->method('validateArguments')->willReturnCallback(function () use (&$calls) {
             $calls[] = 'validateArguments';
         });
         $viewHelper->expects(self::atLeastOnce())->method('initialize')->willReturnCallback(function () use (&$calls) {
             $calls[] = 'initialize';
         });
-        $viewHelper->expects(self::atLeastOnce())->method('callRenderMethod')->willReturnCallback(function () use (&$calls) {
-            $calls[] = 'callRenderMethod';
+        $viewHelper->expects(self::atLeastOnce())->method('render')->willReturnCallback(function () use (&$calls) {
+            $calls[] = 'render';
             return 'Output';
         });
 
         $expectedOutput = 'Output';
         $actualOutput = $viewHelper->initializeArgumentsAndRender(['argument1' => 'value1']);
         self::assertEquals($expectedOutput, $actualOutput);
-        self::assertEquals(['validateArguments', 'initialize', 'callRenderMethod'], $calls);
+        self::assertEquals(['validateArguments', 'initialize', 'render'], $calls);
     }
 
     /**
@@ -249,6 +214,7 @@ class AbstractViewHelperTest extends UnitTestCase
         $controllerContext = $this->getMockBuilder(ControllerContext::class)->disableOriginalConstructor()->getMock();
 
         $dummyView = new TemplateView([]);
+        /** @var RenderingContext $renderingContext */
         $renderingContext = $dummyView->getRenderingContext();
         $renderingContext->setVariableProvider($templateVariableContainer);
         $renderingContext->setViewHelperVariableContainer($viewHelperVariableContainer);

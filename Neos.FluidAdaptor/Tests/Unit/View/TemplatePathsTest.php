@@ -4,6 +4,7 @@ namespace Neos\FluidAdaptor\Tests\Unit\View;
 use GuzzleHttp\Psr7\ServerRequest;
 use GuzzleHttp\Psr7\Uri;
 use Neos\FluidAdaptor\View\Exception\InvalidTemplateResourceException;
+use Neos\FluidAdaptor\Tests\Unit\View\Fixtures\TemplatePathsTestAccessor;
 use org\bovigo\vfs\vfsStreamWrapper;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\Controller\ControllerContext;
@@ -43,7 +44,11 @@ class TemplatePathsTest extends UnitTestCase
         return $mockControllerContext;
     }
 
-    public function expandGenericPathPatternDataProvider()
+    /**
+     * Test data provider
+     * @return array[]
+     */
+    public function expandGenericPathPatternDataProvider(): array
     {
         return [
             // bubbling controller & subpackage parts and optional format
@@ -476,8 +481,8 @@ class TemplatePathsTest extends UnitTestCase
             $options['layoutRootPaths'] = $layoutRootPaths;
         }
 
-        /** @var TemplatePaths $templatePaths */
-        $templatePaths = $this->getAccessibleMock(TemplatePaths::class, ['dummy'], [$options], '', true);
+        $templatePaths = new TemplatePaths();
+        $templatePaths->setOptions($options);
         $patternReplacementVariables = [
             'packageKey' => $package,
             'subPackageKey' => $subPackage,
@@ -485,7 +490,8 @@ class TemplatePathsTest extends UnitTestCase
             'format' => $format
         ];
 
-        $actualResult = $templatePaths->_call('expandGenericPathPattern', $pattern, $patternReplacementVariables, $bubbleControllerAndSubpackage, $formatIsOptional);
+        $accessor = new TemplatePathsTestAccessor($templatePaths);
+        $actualResult = $accessor->expandGenericPathPattern($pattern, $patternReplacementVariables, $bubbleControllerAndSubpackage, $formatIsOptional);
         self::assertEquals($expectedResult, $actualResult);
     }
 
@@ -498,11 +504,11 @@ class TemplatePathsTest extends UnitTestCase
             'templateRootPaths' => ['Resources/Private/']
         ];
 
-        /** @var TemplatePaths $templatePaths */
-        $templatePaths = $this->getAccessibleMock(TemplatePaths::class, null, [$options], '', true);
-
+        $templatePaths = new TemplatePaths();
+        $templatePaths->setOptions($options);
         $expected = ['Resources/Private/Templates/My/@action.html'];
-        $actual = $templatePaths->_call('expandGenericPathPattern', '@templateRoot/Templates/@subpackage/@controller/@action.@format', [
+        $accessor = new TemplatePathsTestAccessor($templatePaths);
+        $actual = $accessor->expandGenericPathPattern('@templateRoot/Templates/@subpackage/@controller/@action.@format', [
             'subPackageKey' => null,
             'controllerName' => 'My',
             'format' => 'html'
@@ -519,10 +525,10 @@ class TemplatePathsTest extends UnitTestCase
             'templateRootPaths' => ['Resources/Private/']
         ];
 
-        /** @var TemplatePaths $templatePaths */
-        $templatePaths = $this->getAccessibleMock(TemplatePaths::class, null, [$options], '', true);
-
-        $actual = $templatePaths->_call('expandGenericPathPattern', '@templateRoot/Templates/@subpackage/@controller/@action.@format', [
+        $templatePaths = new TemplatePaths();
+        $templatePaths->setOptions($options);
+        $accessor = new TemplatePathsTestAccessor($templatePaths);
+        $actual = $accessor->expandGenericPathPattern('@templateRoot/Templates/@subpackage/@controller/@action.@format', [
             'subPackageKey' => 'MySubPackage',
             'controllerName' => 'My',
             'format' => 'html'
@@ -543,10 +549,10 @@ class TemplatePathsTest extends UnitTestCase
             'templateRootPaths' => ['Resources/Private/']
         ];
 
-        /** @var TemplatePaths $templatePaths */
-        $templatePaths = $this->getAccessibleMock(TemplatePaths::class, null, [$options], '', true);
-
-        $actual = $templatePaths->_call('expandGenericPathPattern', '@templateRoot/Templates/@subpackage/@controller/@action.@format', [
+        $templatePaths = new TemplatePaths();
+        $templatePaths->setOptions($options);
+        $accessor = new TemplatePathsTestAccessor($templatePaths);
+        $actual = $accessor->expandGenericPathPattern('@templateRoot/Templates/@subpackage/@controller/@action.@format', [
             'subPackageKey' => 'MySubPackage',
             'controllerName' => 'My',
             'format' => 'html'
@@ -568,10 +574,10 @@ class TemplatePathsTest extends UnitTestCase
             'templateRootPaths' => ['Resources/Private/']
         ];
 
-        /** @var TemplatePaths $templatePaths */
-        $templatePaths = $this->getAccessibleMock(TemplatePaths::class, null, [$options], '', true);
-
-        $actual = $templatePaths->_call('expandGenericPathPattern', '@templateRoot/Templates/@subpackage/@controller/@action.@format', [
+        $templatePaths = new TemplatePaths();
+        $templatePaths->setOptions($options);
+        $accessor = new TemplatePathsTestAccessor($templatePaths);
+        $actual = $accessor->expandGenericPathPattern('@templateRoot/Templates/@subpackage/@controller/@action.@format', [
             'subPackageKey' => 'MySubPackage',
             'controllerName' => 'My',
             'format' => 'html'
@@ -597,16 +603,9 @@ class TemplatePathsTest extends UnitTestCase
         mkdir('vfs://MyPartials');
         \file_put_contents('vfs://MyPartials/SomePartial', 'contentsOfSomePartial');
 
-        $paths = [
-            'vfs://NonExistentDir/UnknowFile.html',
-            'vfs://MyPartials/SomePartial.html',
-            'vfs://MyPartials/SomePartial'
-        ];
-
-        $templatePaths = $this->getAccessibleMock(TemplatePaths::class, ['expandGenericPathPattern'], [[
-            'partialPathAndFilenamePattern' => '@partialRoot/@subpackage/@partial.@format'
-        ]], '', true);
-        $templatePaths->expects(self::once())->method('expandGenericPathPattern')->with('@partialRoot/@subpackage/@partial.@format', ['partial' => 'SomePartial', 'format' => 'html'], true, true)->will(self::returnValue($paths));
+        $templatePaths = new TemplatePaths();
+        $templatePaths->setOption('partialPathAndFilenamePattern', '@partialRoot/@subpackage/@partial.@format');
+        $templatePaths->setPatternReplacementVariables(['partialRoot' => 'vfs://MyPartials']);
 
         self::assertSame('contentsOfSomePartial', $templatePaths->getPartialSource('SomePartial'));
     }
@@ -620,24 +619,17 @@ class TemplatePathsTest extends UnitTestCase
         mkdir('vfs://MyTemplates');
         file_put_contents('vfs://MyTemplates/MyCoolAction.html', 'contentsOfMyCoolAction');
 
-        $paths = [
-            'vfs://NonExistentDir/UnknownFile.html',
-            'vfs://MyTemplates/@action.html',
-            'vfs://MyTemplates/MyCoolAction.html'
-        ];
+        $templatePaths = new TemplatePaths();
+        $templatePaths->setOptions([
+            'templatePathAndFilenamePattern' => '@templateRoot/@subpackage/@controller/@action.@format'
+        ]);
 
-        $templatePaths = $this->getAccessibleMock(TemplatePaths::class, ['expandGenericPathPattern'], [
-            [
-                'templatePathAndFilenamePattern' => '@templateRoot/@subpackage/@controller/@action.@format'
-            ]
-        ], '', true);
-
-        $templatePaths->expects(self::once())->method('expandGenericPathPattern')->with('@templateRoot/@subpackage/@controller/@action.@format', [
+        $templatePaths->setPatternReplacementVariables([
+            'templateRoot' => 'vfs://MyTemplates',
             'controllerName' => '',
             'action' => 'MyCoolAction',
             'format' => 'html'
-        ], false, false)->will(self::returnValue($paths));
-
+        ]);
         self::assertSame('contentsOfMyCoolAction', $templatePaths->getTemplateSource('', 'myCoolAction'));
     }
 
@@ -653,18 +645,14 @@ class TemplatePathsTest extends UnitTestCase
             'vfs://NonExistentDir/AnotherUnknownFile.html',
         ];
 
-        $templatePaths = $this->getAccessibleMock(TemplatePaths::class, ['expandGenericPathPattern'], [
-            [
-                'templatePathAndFilenamePattern' => '@templateRoot/@subpackage/@controller/@action.@format'
-            ]
-        ], '', true);
-
-        $templatePaths->expects(self::once())->method('expandGenericPathPattern')->with('@templateRoot/@subpackage/@controller/@action.@format', [
+        $templatePaths = new TemplatePaths();
+        $templatePaths->setOption('templatePathAndFilenamePattern', '@templateRoot/@subpackage/@controller/@action.@format');
+        $templatePaths->setPatternReplacementVariables([
+            'templateRoot' => 'vfs://MyTemplates',
             'controllerName' => '',
             'action' => 'MyCoolAction',
             'format' => 'html'
-        ], false, false)->will(self::returnValue($paths));
-
+        ]);
         $templatePaths->getTemplateSource('', 'myCoolAction');
     }
 
@@ -681,17 +669,8 @@ class TemplatePathsTest extends UnitTestCase
             'vfs://MyTemplates/NotAFile'
         ];
 
-        $templatePaths = $this->getAccessibleMock(TemplatePaths::class, ['expandGenericPathPattern'], [
-            [
-                'templatePathAndFilenamePattern' => '@templateRoot/@subpackage/@controller/@action.@format'
-            ]
-        ], '', true);
-
-        $templatePaths->expects(self::once())->method('expandGenericPathPattern')->with('@templateRoot/@subpackage/@controller/@action.@format', [
-            'controllerName' => '',
-            'action' => 'MyCoolAction',
-            'format' => 'html'
-        ], false, false)->will(self::returnValue($paths));
+        $templatePaths = new TemplatePaths();
+        $templatePaths->setOption('templatePathAndFilenamePattern', '@templateRoot/@subpackage/@controller/@action.@format');
 
         $templatePaths->getTemplateSource('', 'myCoolAction');
     }
@@ -705,9 +684,10 @@ class TemplatePathsTest extends UnitTestCase
         mkdir('vfs://MyTemplates');
         file_put_contents('vfs://MyTemplates/MyCoolAction.html', 'contentsOfMyCoolAction');
 
-        $templatePaths = $this->getAccessibleMock(TemplatePaths::class, ['dummy'], [['templatePathAndFilename' => 'vfs://MyTemplates/MyCoolAction.html']]);
+        $templatePaths = new TemplatePaths();
+        $templatePaths->setOptions(['templatePathAndFilename' => 'vfs://MyTemplates/MyCoolAction.html']);
 
-        self::assertSame('contentsOfMyCoolAction', $templatePaths->_call('getTemplateSource'));
+        self::assertSame('contentsOfMyCoolAction', $templatePaths->getTemplateSource());
     }
 
     /**
@@ -717,22 +697,9 @@ class TemplatePathsTest extends UnitTestCase
     {
         $this->expectException(InvalidTemplateResourceException::class);
         vfsStreamWrapper::register();
-        $paths = [
-            'vfs://NonExistentDir/UnknownFile.html',
-            'vfs://NonExistentDir/AnotherUnknownFile.html',
-        ];
 
-        /** @var TemplatePaths $templatePaths */
-        $templatePaths = $this->getAccessibleMock(TemplatePaths::class, ['expandGenericPathPattern'], [
-            [
-                'layoutPathAndFilenamePattern' => '@layoutRoot/@layout.@format'
-            ]
-        ], '', true);
-
-        $templatePaths->expects(self::once())->method('expandGenericPathPattern')->with('@layoutRoot/@layout.@format', [
-            'layout' => 'Default',
-            'format' => 'html'
-        ], true, true)->will(self::returnValue($paths));
+        $templatePaths = new TemplatePaths();
+        $templatePaths->setOption('templatePathAndFilenamePattern', '@layoutRoot/@layout.@format');
 
         $templatePaths->getLayoutSource();
     }
@@ -745,22 +712,11 @@ class TemplatePathsTest extends UnitTestCase
         $this->expectException(InvalidTemplateResourceException::class);
         vfsStreamWrapper::register();
         mkdir('vfs://MyTemplates/NotAFile');
-        $paths = [
-            'vfs://NonExistentDir/UnknownFile.html',
-            'vfs://MyTemplates/NotAFile'
-        ];
 
-        /** @var TemplatePaths $templatePaths */
-        $templatePaths = $this->getAccessibleMock(TemplatePaths::class, ['expandGenericPathPattern'], [
-            [
-                'layoutPathAndFilenamePattern' => '@layoutRoot/@layout.@format'
-            ]
-        ], '', true);
-
-        $templatePaths->expects(self::once())->method('expandGenericPathPattern')->with('@layoutRoot/@layout.@format', [
-            'layout' => 'SomeLayout',
-            'format' => 'html'
-        ], true, true)->will(self::returnValue($paths));
+        $templatePaths = new TemplatePaths();
+        $templatePaths->setOptions([
+            'layoutPathAndFilenamePattern' => '@layoutRoot/@layout.@format'
+        ]);
 
         $templatePaths->getLayoutSource('SomeLayout');
     }
@@ -772,22 +728,11 @@ class TemplatePathsTest extends UnitTestCase
     {
         $this->expectException(InvalidTemplateResourceException::class);
         vfsStreamWrapper::register();
-        $paths = [
-            'vfs://NonExistentDir/UnknownFile.html',
-            'vfs://NonExistentDir/AnotherUnknownFile.html',
-        ];
 
-        /** @var TemplatePaths $templatePaths */
-        $templatePaths = $this->getAccessibleMock(TemplatePaths::class, ['expandGenericPathPattern'], [
-            [
-                'partialPathAndFilenamePattern' => '@partialRoot/@subpackage/@partial.@format'
-            ]
-        ], '', true);
-
-        $templatePaths->expects(self::once())->method('expandGenericPathPattern')->with('@partialRoot/@subpackage/@partial.@format', [
-            'partial' => 'SomePartial',
-            'format' => 'html'
-        ], true, true)->will(self::returnValue($paths));
+        $templatePaths = new TemplatePaths();
+        $templatePaths->setOptions([
+            'partialPathAndFilenamePattern' => '@partialRoot/@subpackage/@partial.@format'
+        ]);
 
         $templatePaths->getPartialSource('SomePartial');
     }
@@ -800,22 +745,11 @@ class TemplatePathsTest extends UnitTestCase
         $this->expectException(InvalidTemplateResourceException::class);
         vfsStreamWrapper::register();
         mkdir('vfs://MyTemplates/NotAFile');
-        $paths = [
-            'vfs://NonExistentDir/UnknownFile.html',
-            'vfs://MyTemplates/NotAFile'
-        ];
 
-        /** @var TemplatePaths $templatePaths */
-        $templatePaths = $this->getAccessibleMock(TemplatePaths::class, ['expandGenericPathPattern'], [
-            [
-                'partialPathAndFilenamePattern' => '@partialRoot/@subpackage/@partial.@format'
-            ]
-        ], '', true);
-
-        $templatePaths->expects(self::once())->method('expandGenericPathPattern')->with('@partialRoot/@subpackage/@partial.@format', [
-            'partial' => 'SomePartial',
-            'format' => 'html'
-        ], true, true)->will(self::returnValue($paths));
+        $templatePaths = new TemplatePaths();
+        $templatePaths->setOptions([
+            'partialPathAndFilenamePattern' => '@partialRoot/@subpackage/@partial.@format'
+        ]);
 
         $templatePaths->getPartialSource('SomePartial');
     }

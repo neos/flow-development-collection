@@ -75,7 +75,7 @@ class StandaloneView extends AbstractTemplateView
     /**
      * Constructor
      *
-     * @param ActionRequest $request The current action request. If none is specified it will be created from the environment.
+     * @param ActionRequest|null $request The current action request. If none is specified it will be created from the environment.
      * @param array $options
      * @throws \Neos\FluidAdaptor\Exception
      */
@@ -90,7 +90,7 @@ class StandaloneView extends AbstractTemplateView
      *
      * @return void
      */
-    public function initializeObject()
+    public function initializeObject(): void
     {
         if ($this->request === null) {
             $requestHandler = $this->bootstrap->getActiveRequestHandler();
@@ -116,7 +116,7 @@ class StandaloneView extends AbstractTemplateView
     /**
      * @param string $templateName
      */
-    public function setTemplate($templateName)
+    public function setTemplate($templateName): void
     {
         $this->baseRenderingContext->setControllerAction($templateName);
     }
@@ -128,7 +128,7 @@ class StandaloneView extends AbstractTemplateView
      * @return void
      * @api
      */
-    public function setFormat($format)
+    public function setFormat($format): void
     {
         $this->request->setFormat($format);
         $this->baseRenderingContext->getTemplatePaths()->setFormat($format);

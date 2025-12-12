@@ -35,26 +35,25 @@ abstract class AbstractViewHelper extends FluidAbstractViewHelper
     /**
      * Controller Context to use
      *
-     * @var ControllerContext
-     * @api
+     * @var ControllerContext|null
      */
-    protected $controllerContext;
+    protected ControllerContext|null $controllerContext = null;
 
     /**
-     * @var ObjectManagerInterface
+     * @var ObjectManagerInterface|null
      */
-    protected $objectManager;
+    protected ObjectManagerInterface|null $objectManager = null;
 
     /**
-     * @var LoggerInterface
+     * @var LoggerInterface|null
      */
-    protected $logger;
+    protected LoggerInterface|null $logger;
 
     /**
      * @param FlowAwareRenderingContextInterface&RenderingContextInterface $renderingContext
      * @return void
      */
-    public function setRenderingContext(RenderingContextInterface $renderingContext)
+    public function setRenderingContext(RenderingContextInterface $renderingContext): void
     {
         $this->renderingContext = $renderingContext;
         $this->templateVariableContainer = $renderingContext->getVariableProvider();

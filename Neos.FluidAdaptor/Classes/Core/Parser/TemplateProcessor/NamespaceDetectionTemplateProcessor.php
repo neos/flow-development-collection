@@ -53,11 +53,8 @@ class NamespaceDetectionTemplateProcessor extends FluidNamespaceDetectionTemplat
      * Pre-process the template source before it is
      * returned to the TemplateParser or passed to
      * the next TemplateProcessorInterface instance.
-     *
-     * @param string $templateSource
-     * @return string
      */
-    public function preProcessSource($templateSource)
+    public function preProcessSource(string $templateSource): string
     {
         $templateSource = $this->protectCDataSectionsFromParser($templateSource);
         $templateSource = $this->registerNamespacesFromTemplateSource($templateSource);
