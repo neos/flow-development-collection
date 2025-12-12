@@ -23,6 +23,8 @@ use Neos\FluidAdaptor\Tests\Unit\ViewHelpers\ViewHelperBaseTestcase;
  */
 class CurrencyViewHelperTest extends ViewHelperBaseTestcase
 {
+    protected $viewHelper;
+
     protected function setUp(): void
     {
         parent::setUp();

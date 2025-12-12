@@ -13,12 +13,14 @@ namespace Neos\Flow\Tests\Unit\ObjectManagement\Proxy;
 
 require_once(__DIR__ . '/../Fixture/FooBarAnnotation.php');
 
+use Neos\Flow\Annotations\Entity;
 use Neos\Flow\Annotations\Inject;
 use Neos\Flow\Annotations\Scope;
 use Neos\Flow\Annotations\Session;
 use Neos\Flow\Annotations\Signal;
 use Neos\Flow\Annotations\Validate;
 use Neos\Flow\ObjectManagement\Proxy\Compiler;
+use Neos\Flow\Tests\Unit\ObjectManagement\Fixture\ExampleEnum;
 use Neos\Flow\Tests\Unit\ObjectManagement\Fixture\FooBarAnnotation;
 use Neos\Flow\Tests\UnitTestCase;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -101,6 +103,79 @@ class CompilerTest extends UnitTestCase
     public function renderAnnotationRendersCorrectly($annotation, $expectedString): void
     {
         self::assertEquals($expectedString, Compiler::renderAnnotation($annotation));
+    }
+
+    public function attributes(): \Generator
+    {
+        $simple = $this->createMock(\ReflectionAttribute::class);
+        $simple->expects($this->any())->method('getName')->willReturn('Neos\Flow\Annotations\Entity');
+        $simple->expects($this->any())->method('getArguments')->willReturn([]);
+
+        yield 'L ' . __LINE__ . ': simple' => [
+            'attribute' => $simple,
+            'expectedResult' => '#[\Neos\Flow\Annotations\Entity]'
+        ];
+
+        $singleArgument = $this->createMock(\ReflectionAttribute::class);
+        $singleArgument->expects($this->any())->method('getName')->willReturn('Neos\Flow\Annotations\Scope');
+        $singleArgument->expects($this->any())->method('getArguments')->willReturn(['singleton']);
+
+        yield 'L ' . __LINE__ . ': with single argument' => [
+            'attribute' => $singleArgument,
+            'expectedResult' => '#[\Neos\Flow\Annotations\Scope(\'singleton\')]'
+        ];
+
+        $namedArguments = $this->createMock(\ReflectionAttribute::class);
+        $namedArguments->expects($this->any())->method('getName')->willReturn('Neos\Flow\Annotations\Inject');
+        $namedArguments->expects($this->any())->method('getArguments')->willReturn(['name' => 'SomeClass', 'lazy' => false]);
+
+        yield 'L ' . __LINE__ . ': with named arguments' => [
+            'attribute' => $namedArguments,
+            'expectedResult' => '#[\Neos\Flow\Annotations\Inject(name: \'SomeClass\', lazy: false)]'
+        ];
+
+        $nestedAttribute = $this->createMock(\ReflectionAttribute::class);
+        $nestedAttribute->expects($this->any())->method('getName')->willReturn('Neos\Flow\Annotations\Example');
+        $nestedAttribute->expects($this->any())->method('getArguments')->willReturn([
+            'attribute' => new Entity(),
+            'enum' => ExampleEnum::Foo,
+        ]);
+
+        yield 'L ' . __LINE__ . ': with nested attribute' => [
+            'attribute' => $nestedAttribute,
+            'expectedResult' => '#[\Neos\Flow\Annotations\Example(attribute: new \Neos\Flow\Annotations\Entity(), enum: \\Neos\Flow\Tests\Unit\ObjectManagement\Fixture\ExampleEnum::Foo)]'
+        ];
+
+        $nestedArrayOfAttributes = $this->createMock(\ReflectionAttribute::class);
+        $nestedArrayOfAttributes->expects($this->any())->method('getName')->willReturn('Neos\Flow\Annotations\Example');
+        $nestedArrayOfAttributes->expects($this->any())->method('getArguments')->willReturn([
+            'nestedArrayOfAttributes' => [new Entity(), new Scope('singleton'), new Inject(name: "SomeClass", lazy: false)]
+        ]);
+
+        yield 'L ' . __LINE__ . ': nested array arguments' => [
+            'attribute' => $nestedArrayOfAttributes,
+            'expectedResult' => '#[\Neos\Flow\Annotations\Example(nestedArrayOfAttributes: [new \Neos\Flow\Annotations\Entity(), new \Neos\Flow\Annotations\Scope(value: \'singleton\'), new \Neos\Flow\Annotations\Inject(name: \'SomeClass\', lazy: false)])]'
+        ];
+
+        $nestedNamedArrayArgumentAttribute = $this->createMock(\ReflectionAttribute::class);
+        $nestedNamedArrayArgumentAttribute->expects($this->any())->method('getName')->willReturn('Neos\Flow\Annotations\Example');
+        $nestedNamedArrayArgumentAttribute->expects($this->any())->method('getArguments')->willReturn([
+            'nestedNamedArray' => ['foo' => new Entity(), 'bar' => new Scope('singleton'), 'baz' => new Inject(name: "SomeClass", lazy: false)]
+        ]);
+
+        yield 'L ' . __LINE__ . ': nested array arguments' => [
+            'attribute' => $nestedNamedArrayArgumentAttribute,
+            'expectedResult' => '#[\Neos\Flow\Annotations\Example(nestedNamedArray: [\'foo\' => new \Neos\Flow\Annotations\Entity(), \'bar\' => new \Neos\Flow\Annotations\Scope(value: \'singleton\'), \'baz\' => new \Neos\Flow\Annotations\Inject(name: \'SomeClass\', lazy: false)])]'
+        ];
+    }
+
+    /**
+     * @dataProvider attributes()
+     * @test
+     */
+    public function renderAttributesRendersCorrectly(\ReflectionAttribute $attribute, string $expectedResult): void
+    {
+        $this->assertSame($expectedResult, Compiler::renderAttribute($attribute));
     }
 
     public function stripOpeningPhpTagCorrectlyStripsPhpTagDataProvider(): array

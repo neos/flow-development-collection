@@ -21,7 +21,7 @@ use Neos\FluidAdaptor\Core\Widget\AbstractWidgetController;
 class AutocompleteController extends AbstractWidgetController
 {
     /**
-     * @var array
+     * @var array<string,mixed>
      */
     protected $configuration = ['limit' => 10];
 
@@ -82,6 +82,6 @@ class AutocompleteController extends AbstractWidgetController
                 'value' => $val
             ];
         }
-        return json_encode($output);
+        return json_encode($output, JSON_THROW_ON_ERROR);
     }
 }

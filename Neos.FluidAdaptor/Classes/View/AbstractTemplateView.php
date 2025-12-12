@@ -12,7 +12,6 @@ namespace Neos\FluidAdaptor\View;
  */
 
 use Neos\FluidAdaptor\Exception;
-use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\Controller\ControllerContext;
 use Neos\Flow\Mvc\View\ViewInterface;
 use Neos\FluidAdaptor\Core\Rendering\RenderingContext;
@@ -36,7 +35,7 @@ abstract class AbstractTemplateView extends \TYPO3Fluid\Fluid\View\AbstractTempl
      *         ...
      *     )
      *
-     * @var array
+     * @var array<string,mixed>
      */
     protected $supportedOptions = [
         'templateRootPathPattern' => [
@@ -101,7 +100,7 @@ abstract class AbstractTemplateView extends \TYPO3Fluid\Fluid\View\AbstractTempl
      *
      * @see $supportedOptions
      *
-     * @var array
+     * @var array<string,mixed>
      */
     protected $options = [];
 
@@ -124,6 +123,9 @@ abstract class AbstractTemplateView extends \TYPO3Fluid\Fluid\View\AbstractTempl
         return parent::assign($key, $value);
     }
 
+    /**
+     * @param array<string,mixed> $values
+     */
     public function assignMultiple(array $values): self
     {
         // layer to fix incompatibility error with typo3 fluid interface
@@ -133,7 +135,7 @@ abstract class AbstractTemplateView extends \TYPO3Fluid\Fluid\View\AbstractTempl
     /**
      * Factory method to create an instance with given options.
      *
-     * @param array $options
+     * @param array<string,mixed> $options
      * @return static
      */
     public static function createWithOptions(array $options): self
@@ -144,7 +146,7 @@ abstract class AbstractTemplateView extends \TYPO3Fluid\Fluid\View\AbstractTempl
     /**
      * Set default options based on the supportedOptions provided
      *
-     * @param array $options
+     * @param array<string,mixed>|null $options
      * @throws Exception
      */
     public function __construct(?array $options = null)
@@ -184,13 +186,8 @@ abstract class AbstractTemplateView extends \TYPO3Fluid\Fluid\View\AbstractTempl
             $renderingContext->setControllerContext($controllerContext);
         }
 
-
         $paths = $this->getTemplatePaths();
         $request = $controllerContext->getRequest();
-
-        if (!$request instanceof ActionRequest) {
-            return;
-        }
 
         $paths->setFormat($request->getFormat());
 
@@ -205,7 +202,7 @@ abstract class AbstractTemplateView extends \TYPO3Fluid\Fluid\View\AbstractTempl
      * Renders a given section.
      *
      * @param string $sectionName Name of section to render
-     * @param array $variables The variables to use
+     * @param array<string,mixed> $variables The variables to use
      * @param boolean $ignoreUnknown Ignore an unknown section and just return an empty string
      * @return string rendered template for the section
      * @throws \Neos\FluidAdaptor\View\Exception\InvalidSectionException
@@ -217,13 +214,14 @@ abstract class AbstractTemplateView extends \TYPO3Fluid\Fluid\View\AbstractTempl
             $variables = $this->getRenderingContext()->getVariableProvider()->getAll();
         }
 
+        /** @phpstan-ignore argument.type (we assume Fluid actually supports \ArrayAccess here, too) */
         return parent::renderSection($sectionName, $variables, $ignoreUnknown);
     }
 
     /**
      * Validate options given to this view.
      *
-     * @param array $options
+     * @param array<string,mixed> $options
      * @return void
      * @throws Exception
      */
@@ -250,7 +248,7 @@ abstract class AbstractTemplateView extends \TYPO3Fluid\Fluid\View\AbstractTempl
      * Merges the given options with the default values
      * and sets the resulting options in this object.
      *
-     * @param array $options
+     * @param array<string,mixed> $options
      * @return void
      */
     protected function setOptions(array $options)

@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace Neos\Flow\Tests\Functional\Persistence\Fixtures;
 
 /*
@@ -46,33 +48,33 @@ class EntityWithIndexedRelation
     }
 
     /**
-     * @param \Doctrine\Common\Collections\Collection $annotatedIdentitiesEntities
+     * @param Collection $annotatedIdentitiesEntities
      */
-    public function setAnnotatedIdentitiesEntities($annotatedIdentitiesEntities)
+    public function setAnnotatedIdentitiesEntities($annotatedIdentitiesEntities): void
     {
         $this->annotatedIdentitiesEntities = $annotatedIdentitiesEntities;
     }
 
     /**
-     * @return \Doctrine\Common\Collections\Collection
+     * @return ArrayCollection|Collection
      */
-    public function getAnnotatedIdentitiesEntities()
+    public function getAnnotatedIdentitiesEntities(): ArrayCollection|Collection
     {
         return $this->annotatedIdentitiesEntities;
     }
 
     /**
-     * @param \Doctrine\Common\Collections\Collection $relatedIndexEntities
+     * @param Collection $relatedIndexEntities
      */
-    public function setRelatedIndexEntities($relatedIndexEntities)
+    public function setRelatedIndexEntities($relatedIndexEntities): void
     {
         $this->relatedIndexEntities = $relatedIndexEntities;
     }
 
     /**
-     * @return \Doctrine\Common\Collections\Collection
+     * @return ArrayCollection|Collection
      */
-    public function getRelatedIndexEntities()
+    public function getRelatedIndexEntities(): ArrayCollection|Collection
     {
         return $this->relatedIndexEntities;
     }
@@ -81,7 +83,7 @@ class EntityWithIndexedRelation
      * @param string $sorting
      * @param RelatedIndexEntity $relatedIndexEntity
      */
-    public function setRelatedIndexEntity($sorting, RelatedIndexEntity $relatedIndexEntity)
+    public function setRelatedIndexEntity($sorting, RelatedIndexEntity $relatedIndexEntity): void
     {
         $relatedIndexEntity->setSorting($sorting);
         $relatedIndexEntity->setEntityWithIndexedRelation($this);

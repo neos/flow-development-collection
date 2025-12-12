@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace Neos\Flow\Tests\Functional\Persistence\Fixtures;
 
 /*
@@ -35,7 +37,7 @@ class AnnotatedIdentitiesEntity
     /**
      * @param string $author
      */
-    public function setAuthor($author)
+    public function setAuthor($author): void
     {
         $this->author = $author;
     }
@@ -43,7 +45,7 @@ class AnnotatedIdentitiesEntity
     /**
      * @return string
      */
-    public function getAuthor()
+    public function getAuthor(): string
     {
         return $this->author;
     }
@@ -51,7 +53,7 @@ class AnnotatedIdentitiesEntity
     /**
      * @param string $title
      */
-    public function setTitle($title)
+    public function setTitle($title): void
     {
         $this->title = $title;
     }
@@ -59,7 +61,7 @@ class AnnotatedIdentitiesEntity
     /**
      * @return string
      */
-    public function getTitle()
+    public function getTitle(): string
     {
         return $this->title;
     }

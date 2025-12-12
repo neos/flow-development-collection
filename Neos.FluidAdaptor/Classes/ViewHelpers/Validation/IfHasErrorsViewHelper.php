@@ -70,7 +70,7 @@ class IfHasErrorsViewHelper extends AbstractConditionViewHelper
     }
 
     /**
-     * @param null $arguments
+     * @param array<mixed> $arguments
      * @param FlowAwareRenderingContextInterface&RenderingContextInterface $renderingContext
      * @return boolean
      */

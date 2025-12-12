@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace Neos\Flow\Tests\Functional\Persistence\Doctrine;
 
 /*
@@ -21,7 +23,7 @@ use Neos\Flow\Tests\FunctionalTestCase;
 class AggregateTest extends FunctionalTestCase
 {
     /**
-     * @var boolean
+     * @var bool
      */
     protected static $testablePersistenceEnabled = true;
 
@@ -42,7 +44,7 @@ class AggregateTest extends FunctionalTestCase
     {
         parent::setUp();
         if (!$this->persistenceManager instanceof PersistenceManager) {
-            $this->markTestSkipped('Doctrine persistence is not enabled');
+            static::markTestSkipped('Doctrine persistence is not enabled');
         }
         $this->postRepository = $this->objectManager->get(Fixtures\PostRepository::class);
         $this->commentRepository = $this->objectManager->get(Fixtures\CommentRepository::class);
@@ -51,7 +53,7 @@ class AggregateTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function entitiesWithinAggregateAreRemovedAutomaticallyWithItsRootEntity()
+    public function entitiesWithinAggregateAreRemovedAutomaticallyWithItsRootEntity(): void
     {
         $image = new Fixtures\Image();
         $post = new Fixtures\Post();
@@ -74,7 +76,7 @@ class AggregateTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function entitiesWithOwnRepositoryAreNotRemovedIfRelatedRootEntityIsRemoved()
+    public function entitiesWithOwnRepositoryAreNotRemovedIfRelatedRootEntityIsRemoved(): void
     {
         $comment = new Fixtures\Comment();
         $this->commentRepository->add($comment);
@@ -102,7 +104,7 @@ class AggregateTest extends FunctionalTestCase
      *
      * @test
      */
-    public function valueObjectsAreNotCascadeRemovedWhenARelatedEntityIsDeleted()
+    public function valueObjectsAreNotCascadeRemovedWhenARelatedEntityIsDeleted(): void
     {
         $post1 = new Fixtures\Post();
         $post1->setAuthor(new Fixtures\TestValueObject('Some Name'));
@@ -124,7 +126,7 @@ class AggregateTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function unidirectionalOneToManyRelationsAreMapped()
+    public function unidirectionalOneToManyRelationsAreMapped(): void
     {
         $tag1 = new Fixtures\Tag('Tag1');
         $tag2 = new Fixtures\Tag('Tag2');
@@ -148,7 +150,7 @@ class AggregateTest extends FunctionalTestCase
         $this->persistenceManager->clearState();
 
         $retrievedTag2 = $this->persistenceManager->getObjectByIdentifier($tag2identifier, Fixtures\Tag::class);
-        self::assertTrue($retrievedTag2 === null, 'Tag not deleted');
+        self::assertNull($retrievedTag2, 'Tag not deleted');
 
         $post = $this->postRepository->find($postIdentifier);
         $this->postRepository->remove($post);
@@ -156,6 +158,6 @@ class AggregateTest extends FunctionalTestCase
         $this->persistenceManager->clearState();
 
         $retrievedTag1 = $this->persistenceManager->getObjectByIdentifier($tag1identifier, Fixtures\Tag::class);
-        self::assertTrue($retrievedTag1 === null, 'Tag not orphan removed');
+        self::assertNull($retrievedTag1, 'Tag not orphan removed');
     }
 }

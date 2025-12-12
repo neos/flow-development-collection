@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace Neos\Flow\Tests\Functional\Persistence\Aspect;
 
 /*
@@ -21,7 +23,7 @@ use Neos\Flow\Tests\FunctionalTestCase;
 class PersistenceMagicAspectTest extends FunctionalTestCase
 {
     /**
-     * @var boolean
+     * @var bool
      */
     protected static $testablePersistenceEnabled = true;
 
@@ -32,23 +34,23 @@ class PersistenceMagicAspectTest extends FunctionalTestCase
     {
         parent::setUp();
         if (!$this->persistenceManager instanceof PersistenceManager) {
-            $this->markTestSkipped('Doctrine persistence is not enabled');
+            static::markTestSkipped('Doctrine persistence is not enabled');
         }
     }
 
     /**
      * @test
      */
-    public function aspectIntroducesUuidIdentifierToEntities()
+    public function aspectIntroducesUuidIdentifierToEntities(): void
     {
         $entity = new Fixtures\AnnotatedIdentitiesEntity();
-        $this->assertStringMatchesFormat('%x%x%x%x%x%x%x%x-%x%x%x%x-%x%x%x%x-%x%x%x%x-%x%x%x%x%x%x%x%x', $this->persistenceManager->getIdentifierByObject($entity));
+        static::assertStringMatchesFormat('%x%x%x%x%x%x%x%x-%x%x%x%x-%x%x%x%x-%x%x%x%x-%x%x%x%x%x%x%x%x', $this->persistenceManager->getIdentifierByObject($entity));
     }
 
     /**
      * @test
      */
-    public function aspectDoesNotIntroduceUuidIdentifierToEntitiesWithCustomIdProperties()
+    public function aspectDoesNotIntroduceUuidIdentifierToEntitiesWithCustomIdProperties(): void
     {
         $entity = new Fixtures\AnnotatedIdEntity();
         self::assertNull($this->persistenceManager->getIdentifierByObject($entity));
@@ -57,11 +59,11 @@ class PersistenceMagicAspectTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function valueHashIsGeneratedForValueObjects()
+    public function valueHashIsGeneratedForValueObjects(): void
     {
         $valueObject = new Fixtures\TestValueObject('value');
 
-        $this->assertObjectHasProperty('Persistence_Object_Identifier', $valueObject);
+        static::assertObjectHasProperty('Persistence_Object_Identifier', $valueObject);
         self::assertNotEmpty($this->persistenceManager->getIdentifierByObject($valueObject));
     }
 
@@ -69,13 +71,13 @@ class PersistenceMagicAspectTest extends FunctionalTestCase
      * @test
      * @dataProvider sameValueObjectDataProvider
      */
-    public function valueObjectsWithTheSamePropertyValuesAreEqual($closure)
+    public function valueObjectsWithTheSamePropertyValuesAreEqual(\Closure $closure): void
     {
         [$valueObject1, $valueObject2] = $closure();
         self::assertEquals($this->persistenceManager->getIdentifierByObject($valueObject1), $this->persistenceManager->getIdentifierByObject($valueObject2));
     }
 
-    public function sameValueObjectDataProvider()
+    public function sameValueObjectDataProvider(): array
     {
         // These need to be provided as closures so that the construction happens inside the test and not outside of the test environment.
         return [
@@ -89,13 +91,13 @@ class PersistenceMagicAspectTest extends FunctionalTestCase
      * @test
      * @dataProvider differentValueObjectDataProvider
      */
-    public function valueObjectWithDifferentPropertyValuesAreNotEqual($closure)
+    public function valueObjectWithDifferentPropertyValuesAreNotEqual(\Closure $closure): void
     {
         [$valueObject1, $valueObject2] = $closure();
         self::assertNotEquals($this->persistenceManager->getIdentifierByObject($valueObject1), $this->persistenceManager->getIdentifierByObject($valueObject2));
     }
 
-    public function differentValueObjectDataProvider()
+    public function differentValueObjectDataProvider(): array
     {
         // These need to be provided as closures so that the construction happens inside the test and not outside of the test environment.
         return [
@@ -108,7 +110,7 @@ class PersistenceMagicAspectTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function valueHashMustBeUniqueForEachClassIndependentOfPropertiesOrValues()
+    public function valueHashMustBeUniqueForEachClassIndependentOfPropertiesOrValues(): void
     {
         $valueObject1 = new Fixtures\TestValueObjectWithConstructorLogic('value1', 'value2');
         $valueObject2 = new Fixtures\TestValueObjectWithConstructorLogicAndInversedPropertyOrder('value2', 'value1');
@@ -119,7 +121,7 @@ class PersistenceMagicAspectTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function transientPropertiesAreDisregardedForValueHashGeneration()
+    public function transientPropertiesAreDisregardedForValueHashGeneration(): void
     {
         $valueObject1 = new Fixtures\TestValueObjectWithTransientProperties('value1', 'thisDoesntRegardPersistenceWhatSoEver');
         $valueObject2 = new Fixtures\TestValueObjectWithTransientProperties('value1', 'reallyThisPropertyIsTransient');
@@ -130,7 +132,7 @@ class PersistenceMagicAspectTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function dateTimeIsDifferentDependingOnTheTimeZone()
+    public function dateTimeIsDifferentDependingOnTheTimeZone(): void
     {
         $valueObject1 = new Fixtures\TestValueObjectWithDateTimeProperty(new \DateTime('01.01.2013 00:00', new \DateTimeZone('GMT')));
         $valueObject2 = new Fixtures\TestValueObjectWithDateTimeProperty(new \DateTime('01.01.2013 00:00', new \DateTimeZone('CEST')));
@@ -143,7 +145,7 @@ class PersistenceMagicAspectTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function subValueObjectsAreIncludedInTheValueHash()
+    public function subValueObjectsAreIncludedInTheValueHash(): void
     {
         $subValueObject1 = new Fixtures\TestValueObject('value');
         $subValueObject2 = new Fixtures\TestValueObject('value');

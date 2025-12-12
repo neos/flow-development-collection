@@ -16,7 +16,6 @@ use Neos\Flow\Composer\Exception\MissingPackageManifestException;
 use Neos\Flow\Package\Package;
 use org\bovigo\vfs\vfsStream;
 use Neos\Flow\Package\PackageManager;
-use Neos\Utility\ObjectAccess;
 use Neos\Flow\Tests\UnitTestCase;
 
 /**
@@ -37,7 +36,6 @@ class PackageTest extends UnitTestCase
         ComposerUtility::flushCaches();
         vfsStream::setup('Packages');
         $this->mockPackageManager = $this->getMockBuilder(\Neos\Flow\Package\PackageManager::class)->disableOriginalConstructor()->getMock();
-        ObjectAccess::setProperty($this->mockPackageManager, 'composerManifestData', [], true);
     }
 
     /**

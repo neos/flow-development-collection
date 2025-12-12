@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace Neos\Flow\Tests\Functional\Persistence\Fixtures;
 
 /*
@@ -42,15 +44,15 @@ class SubEntity extends SuperEntity
      * @param TestEntity $parentEntity
      * @return void
      */
-    public function setParentEntity(TestEntity $parentEntity)
+    public function setParentEntity(TestEntity $parentEntity): void
     {
         $this->parentEntity = $parentEntity;
     }
 
     /**
-     * @return TestEntity
+     * @return ?TestEntity
      */
-    public function getParentEntity()
+    public function getParentEntity(): ?TestEntity
     {
         return $this->parentEntity;
     }
@@ -58,7 +60,7 @@ class SubEntity extends SuperEntity
     /**
      * @return \DateTime
      */
-    public function getDate()
+    public function getDate(): \DateTime
     {
         return $this->date;
     }
@@ -66,7 +68,7 @@ class SubEntity extends SuperEntity
     /**
      * @param \DateTime $date
      */
-    public function setDate($date)
+    public function setDate($date): void
     {
         $this->date = $date;
     }
@@ -74,7 +76,7 @@ class SubEntity extends SuperEntity
     /**
      * @return string
      */
-    public function getSomeProperty()
+    public function getSomeProperty(): string
     {
         return $this->someProperty;
     }
@@ -82,7 +84,7 @@ class SubEntity extends SuperEntity
     /**
      * @param string $someProperty
      */
-    public function setSomeProperty($someProperty)
+    public function setSomeProperty($someProperty): void
     {
         $this->someProperty = $someProperty;
     }

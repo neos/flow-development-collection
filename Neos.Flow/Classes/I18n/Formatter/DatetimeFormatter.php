@@ -252,13 +252,15 @@ class DatetimeFormatter implements FormatterInterface
                 }
                 return $this->padString($year, $formatLengthOfSubformat);
             case 'E':
+            case 'c':
+                $formatType = ($subformat[0] === 'c') ? 'stand-alone' : 'format';
                 $day = strtolower($dateTime->format('D'));
                 if ($formatLengthOfSubformat <= 3) {
-                    return $localizedLiterals['days']['format']['abbreviated'][$day];
+                    return $localizedLiterals['days'][$formatType]['abbreviated'][$day];
                 } elseif ($formatLengthOfSubformat === 4) {
-                    return $localizedLiterals['days']['format']['wide'][$day];
+                    return $localizedLiterals['days'][$formatType]['wide'][$day];
                 } else {
-                    return $localizedLiterals['days']['format']['narrow'][$day];
+                    return $localizedLiterals['days'][$formatType]['narrow'][$day];
                 }
                 // no break
             case 'w':

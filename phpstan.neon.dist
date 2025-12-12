@@ -1,10 +1,6 @@
 parameters:
-    level: 3
+    level: 8
     paths:
-        - Neos.Cache/Classes
-        - Neos.Eel/Classes
-        - Neos.Error.Messages/Classes
-        - Neos.Flow/Classes
         - Neos.Flow.Log/Classes
         - Neos.FluidAdaptor/Classes
         - Neos.Http.Factories/Classes
@@ -29,3 +25,6 @@ parameters:
             - Neos.Eel/Classes/InterpretedEelParser.php
             - Neos.Eel/Classes/CompilingEelParser.php
             - Neos.Flow/Classes/Security/Authorization/Privilege/Entity/Doctrine/EntityPrivilegeExpressionEvaluator.php
+    scanDirectories:
+        - Neos.Flow/Tests
+        - Neos.Flow/Classes/Error

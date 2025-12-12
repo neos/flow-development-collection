@@ -452,7 +452,7 @@ class TemplatePathsTest extends UnitTestCase
      * @param string $pattern
      * @param string $expectedResult
      */
-    public function expandGenericPathPatternTests($package, $subPackage, $controller, $format, $templateRootPath, ?array $templateRootPaths = null, $partialRootPath, ?array $partialRootPaths = null, $layoutRootPath, ?array $layoutRootPaths = null, $bubbleControllerAndSubpackage, $formatIsOptional, $pattern, $expectedResult)
+    public function expandGenericPathPatternTests($package, $subPackage, $controller, $format, $templateRootPath, ?array $templateRootPaths, $partialRootPath, ?array $partialRootPaths, $layoutRootPath, ?array $layoutRootPaths, $bubbleControllerAndSubpackage, $formatIsOptional, $pattern, $expectedResult)
     {
         $options = [];
         if ($templateRootPath !== null) {

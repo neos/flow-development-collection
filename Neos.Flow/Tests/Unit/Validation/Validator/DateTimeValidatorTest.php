@@ -24,10 +24,9 @@ class DateTimeValidatorTest extends AbstractValidatorTestcase
 {
     protected $validatorClassName = DateTimeValidator::class;
 
-    /**
-     * @var Locale
-     */
-    protected $sampleLocale;
+    protected Locale $sampleLocale;
+
+    protected mixed $mockObjectManagerReturnValues;
 
     protected $mockDatetimeParser;
 

@@ -51,7 +51,7 @@ class StandaloneView extends AbstractTemplateView
     protected $environment;
 
     /**
-     * @var ActionRequest
+     * @var ?ActionRequest
      */
     protected $request;
 
@@ -64,7 +64,7 @@ class StandaloneView extends AbstractTemplateView
     /**
      * Factory method to create an instance with given options.
      *
-     * @param array $options
+     * @param array<string,mixed> $options
      * @return static
      */
     public static function createWithOptions(array $options): self
@@ -75,8 +75,8 @@ class StandaloneView extends AbstractTemplateView
     /**
      * Constructor
      *
-     * @param ActionRequest $request The current action request. If none is specified it will be created from the environment.
-     * @param array $options
+     * @param ?ActionRequest $request The current action request. If none is specified it will be created from the environment.
+     * @param array<string,mixed> $options
      * @throws \Neos\FluidAdaptor\Exception
      */
     public function __construct(?ActionRequest $request = null, array $options = [])
@@ -115,6 +115,7 @@ class StandaloneView extends AbstractTemplateView
 
     /**
      * @param string $templateName
+     * @return void
      */
     public function setTemplate($templateName)
     {
@@ -130,6 +131,9 @@ class StandaloneView extends AbstractTemplateView
      */
     public function setFormat($format)
     {
+        if (!$this->request) {
+            throw new \Exception('Cannot set format without a request', 1743856310);
+        }
         $this->request->setFormat($format);
         $this->baseRenderingContext->getTemplatePaths()->setFormat($format);
     }
@@ -137,18 +141,18 @@ class StandaloneView extends AbstractTemplateView
     /**
      * Returns the format of the current request (defaults is "html")
      *
-     * @return string $format
+     * @return ?string $format
      * @api
      */
     public function getFormat()
     {
-        return $this->request->getFormat();
+        return $this->request?->getFormat();
     }
 
     /**
      * Returns the current request object
      *
-     * @return ActionRequest
+     * @return ?ActionRequest
      */
     public function getRequest()
     {
@@ -177,12 +181,20 @@ class StandaloneView extends AbstractTemplateView
     /**
      * Returns the absolute path to a Fluid template file if it was specified with setTemplatePathAndFilename() before
      *
-     * @return string Fluid template path
+     * @return ?string Fluid template path
      * @api
      */
     public function getTemplatePathAndFilename()
     {
-        return $this->baseRenderingContext->getTemplatePaths()->resolveTemplateFileForControllerAndActionAndFormat($this->request->getControllerName(), $this->request->getControllerActionName(), $this->request->getFormat());
+        return $this->request
+            ? $this->baseRenderingContext
+                ->getTemplatePaths()
+                ->resolveTemplateFileForControllerAndActionAndFormat(
+                    $this->request->getControllerName(),
+                    $this->request->getControllerActionName(),
+                    $this->request->getFormat()
+                )
+            : null;
     }
 
     /**
@@ -225,7 +237,7 @@ class StandaloneView extends AbstractTemplateView
     /**
      * Resolves the layout root to be used inside other paths.
      *
-     * @return array Fluid layout root paths
+     * @return array<string> Fluid layout root paths
      * @throws InvalidTemplateResourceException
      * @api
      */
@@ -262,7 +274,7 @@ class StandaloneView extends AbstractTemplateView
     /**
      * Returns the absolute path to the folder that contains Fluid partial files
      *
-     * @return array Fluid partial root paths
+     * @return array<string> Fluid partial root paths
      * @throws InvalidTemplateResourceException
      * @api
      */

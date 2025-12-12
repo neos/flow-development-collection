@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace Neos\Flow\Tests\Functional\Persistence\Doctrine;
 
 use Neos\Flow\Persistence\Doctrine\PersistenceManager;
@@ -10,7 +12,7 @@ use Neos\Flow\Tests\FunctionalTestCase;
 class ValueObjectTest extends FunctionalTestCase
 {
     /**
-     * @var boolean
+     * @var bool
      */
     protected static $testablePersistenceEnabled = true;
 
@@ -21,7 +23,7 @@ class ValueObjectTest extends FunctionalTestCase
     {
         parent::setUp();
         if (!$this->persistenceManager instanceof PersistenceManager) {
-            $this->markTestSkipped('Doctrine persistence is not enabled');
+            static::markTestSkipped('Doctrine persistence is not enabled');
         }
     }
 
@@ -36,7 +38,7 @@ class ValueObjectTest extends FunctionalTestCase
      *
      * @test
      */
-    public function valueObjectsGetDeduplicatedAndCanBePersisted()
+    public function valueObjectsGetDeduplicatedAndCanBePersisted(): void
     {
         for ($i = 0; $i < 2; $i++) {
             $testEntity = new TestEntity();

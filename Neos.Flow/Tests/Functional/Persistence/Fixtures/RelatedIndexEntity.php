@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace Neos\Flow\Tests\Functional\Persistence\Fixtures;
 
 /*
@@ -36,7 +38,7 @@ class RelatedIndexEntity
     /**
      * @return string
      */
-    public function getSorting()
+    public function getSorting(): string
     {
         return $this->sorting;
     }
@@ -44,7 +46,7 @@ class RelatedIndexEntity
     /**
      * @param string $sorting
      */
-    public function setSorting($sorting)
+    public function setSorting($sorting): void
     {
         $this->sorting = $sorting;
     }
@@ -52,7 +54,7 @@ class RelatedIndexEntity
     /**
      * @param EntityWithIndexedRelation $entityWithIndexedRelation
      */
-    public function setEntityWithIndexedRelation($entityWithIndexedRelation)
+    public function setEntityWithIndexedRelation($entityWithIndexedRelation): void
     {
         $this->entityWithIndexedRelation = $entityWithIndexedRelation;
     }
@@ -60,7 +62,7 @@ class RelatedIndexEntity
     /**
      * @return EntityWithIndexedRelation
      */
-    public function getEntityWithIndexedRelation()
+    public function getEntityWithIndexedRelation(): EntityWithIndexedRelation
     {
         return $this->entityWithIndexedRelation;
     }

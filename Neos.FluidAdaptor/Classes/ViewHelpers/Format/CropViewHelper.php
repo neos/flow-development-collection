@@ -78,7 +78,7 @@ class CropViewHelper extends AbstractViewHelper
     }
 
     /**
-     * @param array $arguments
+     * @param array<string,mixed> $arguments
      * @param \Closure $renderChildrenClosure
      * @param RenderingContextInterface $renderingContext
      * @return string

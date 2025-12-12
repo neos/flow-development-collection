@@ -32,6 +32,7 @@ class AbstractBackendTest extends UnitTestCase
         $this->backendClassName = 'ConcreteBackend_' . md5(uniqid(mt_rand(), true));
         eval('
 			class ' . $this->backendClassName . ' extends \Neos\Flow\Log\Backend\AbstractBackend {
+				protected $someOption;
 				public function open(): void {}
 				public function append(string $message, int $severity = 1, $additionalData = NULL, string $packageKey = NULL, string $className = NULL, string $methodName = NULL): void {}
 				public function close(): void {}

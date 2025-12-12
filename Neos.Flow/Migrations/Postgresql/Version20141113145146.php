@@ -19,7 +19,9 @@ class Version20141113145146 extends AbstractMigration
         $this->abortIf(!($this->connection->getDatabasePlatform() instanceof PostgreSQLPlatform));
 
         // skip execution of corresponding sql queries if migration has been applied already (see https://review.typo3.org/36299)
-        $this->skipIf(array_key_exists('roleidentifiers', $this->sm->listTableColumns('typo3_flow_security_account')), 'Migration not needed, already applied earlier.');
+        if(array_key_exists('roleidentifiers', $this->sm->listTableColumns('typo3_flow_security_account'))) {
+            return;
+        }
 
         $this->addSql("ALTER TABLE typo3_flow_security_account_roles_join DROP CONSTRAINT fk_adf11bbc23a1047c");
         $this->addSql("ALTER TABLE typo3_flow_security_policy_role_parentroles_join DROP CONSTRAINT fk_d459c58e23a1047c");

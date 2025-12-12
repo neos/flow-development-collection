@@ -26,7 +26,7 @@ class SchemaGenerator
      * Generate a schema for the given value
      *
      * @param mixed $value value to create a schema for
-     * @return array schema as array structure
+     * @return array<string,mixed> schema as array structure
      */
     public function generate($value): array
     {
@@ -62,8 +62,8 @@ class SchemaGenerator
     /**
      * Create a schema for a dictionary
      *
-     * @param array $dictionaryValue
-     * @return array
+     * @param array<mixed> $dictionaryValue
+     * @return array{type: string, properties: array<mixed>}
      */
     protected function generateDictionarySchema(array $dictionaryValue): array
     {
@@ -78,8 +78,8 @@ class SchemaGenerator
     /**
      * Create a schema for an array structure
      *
-     * @param array $arrayValue
-     * @return array schema
+     * @param array<mixed> $arrayValue
+     * @return array<string,mixed> schema
      */
     protected function generateArraySchema(array $arrayValue): array
     {
@@ -96,7 +96,7 @@ class SchemaGenerator
      * Create a schema for a given string
      *
      * @param string $stringValue
-     * @return array
+     * @return array<string,mixed>
      */
     protected function generateStringSchema(string $stringValue): array
     {
@@ -122,7 +122,7 @@ class SchemaGenerator
      * Compact an array of items to avoid adding the same value more than once.
      * If the result contains only one item, that item is returned directly.
      *
-     * @param array $values array of values
+     * @param array<mixed> $values array of values
      * @return mixed
      */
     protected function filterDuplicatesFromArray(array $values)

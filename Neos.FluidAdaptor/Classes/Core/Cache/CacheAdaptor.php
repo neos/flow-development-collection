@@ -49,6 +49,7 @@ class CacheAdaptor implements FluidCacheInterface
      *
      * @param string $name
      * @param string $value
+     * @return void
      */
     public function set($name, $value)
     {

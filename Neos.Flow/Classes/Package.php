@@ -71,10 +71,11 @@ class Package extends BasePackage
         $dispatcher = $bootstrap->getSignalSlotDispatcher();
 
         $dispatcher->connect(Mvc\Dispatcher::class, 'afterControllerInvocation', function ($request) use ($bootstrap) {
-            // No auto-persistence if there is no PersistenceManager registered
+            // No auto-persistence if there is no PersistenceManager loaded
             // This signal will not be fired at compile time, as it's only emitted for web requests which happen at runtime.
             if (
-                $bootstrap->getObjectManager()->has(Persistence\PersistenceManagerInterface::class)
+                /** @phpstan-ignore-next-line the object manager interface doesn't specify this method */
+                $bootstrap->getObjectManager()->hasInstance(Persistence\PersistenceManagerInterface::class)
             ) {
                 if (SecurityHelper::hasSafeMethod($request->getHttpRequest()) !== true) {
                     $bootstrap->getObjectManager()->get(Persistence\PersistenceManagerInterface::class)->persistAll();
@@ -86,9 +87,10 @@ class Package extends BasePackage
         });
 
         $dispatcher->connect(Cli\Dispatcher::class, 'afterControllerInvocation', function () use ($bootstrap) {
-            // No auto-persistence if there is no PersistenceManager registered or during compile time
+            // No auto-persistence if there is no PersistenceManager loaded or during compile time
             if (
-                $bootstrap->getObjectManager()->has(Persistence\PersistenceManagerInterface::class)
+                /** @phpstan-ignore-next-line the object manager interface doesn't specify this method */
+                $bootstrap->getObjectManager()->hasInstance(Persistence\PersistenceManagerInterface::class)
                 && !($bootstrap->getObjectManager() instanceof CompileTimeObjectManager)
             ) {
                 $bootstrap->getObjectManager()->get(Persistence\PersistenceManagerInterface::class)->persistAll();

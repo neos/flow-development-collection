@@ -251,7 +251,7 @@ function PropertyNameFilter_Identifier (&$result, $sub) {
 		$result['Identifier'] = $sub['text'];
 	}
 
-/* PathFilter: ( '/' ( Identifier ( '/' Identifier )* )? ) | ( Identifier '/' Identifier ( '/' Identifier )* ) */
+/* PathFilter: ( '/' ( ObjectIdentifier  ( '/' ObjectIdentifier  )* )? ) | ( ObjectIdentifier  '/' ObjectIdentifier  ( '/' ObjectIdentifier )* ) */
 protected $match_PathFilter_typestack = array('PathFilter');
 function match_PathFilter ($stack = array()) {
 	$matchrule = "PathFilter"; $result = $this->construct($matchrule, $matchrule, null);
@@ -270,7 +270,7 @@ function match_PathFilter ($stack = array()) {
 			$pos_39 = $this->pos;
 			$_38 = NULL;
 			do {
-				$matcher = 'match_'.'Identifier'; $key = $matcher; $pos = $this->pos;
+				$matcher = 'match_'.'ObjectIdentifier'; $key = $matcher; $pos = $this->pos;
 				$subres = ( $this->packhas( $key, $pos ) ? $this->packread( $key, $pos ) : $this->packwrite( $key, $pos, $this->$matcher(array_merge($stack, array($result))) ) );
 				if ($subres !== FALSE) { $this->store( $result, $subres ); }
 				else { $_38 = FALSE; break; }
@@ -284,7 +284,7 @@ function match_PathFilter ($stack = array()) {
 							$result["text"] .= '/';
 						}
 						else { $_36 = FALSE; break; }
-						$matcher = 'match_'.'Identifier'; $key = $matcher; $pos = $this->pos;
+						$matcher = 'match_'.'ObjectIdentifier'; $key = $matcher; $pos = $this->pos;
 						$subres = ( $this->packhas( $key, $pos ) ? $this->packread( $key, $pos ) : $this->packwrite( $key, $pos, $this->$matcher(array_merge($stack, array($result))) ) );
 						if ($subres !== FALSE) {
 							$this->store( $result, $subres );
@@ -318,7 +318,7 @@ function match_PathFilter ($stack = array()) {
 		$this->pos = $pos_31;
 		$_49 = NULL;
 		do {
-			$matcher = 'match_'.'Identifier'; $key = $matcher; $pos = $this->pos;
+			$matcher = 'match_'.'ObjectIdentifier'; $key = $matcher; $pos = $this->pos;
 			$subres = ( $this->packhas( $key, $pos ) ? $this->packread( $key, $pos ) : $this->packwrite( $key, $pos, $this->$matcher(array_merge($stack, array($result))) ) );
 			if ($subres !== FALSE) { $this->store( $result, $subres ); }
 			else { $_49 = FALSE; break; }
@@ -327,7 +327,7 @@ function match_PathFilter ($stack = array()) {
 				$result["text"] .= '/';
 			}
 			else { $_49 = FALSE; break; }
-			$matcher = 'match_'.'Identifier'; $key = $matcher; $pos = $this->pos;
+			$matcher = 'match_'.'ObjectIdentifier'; $key = $matcher; $pos = $this->pos;
 			$subres = ( $this->packhas( $key, $pos ) ? $this->packread( $key, $pos ) : $this->packwrite( $key, $pos, $this->$matcher(array_merge($stack, array($result))) ) );
 			if ($subres !== FALSE) { $this->store( $result, $subres ); }
 			else { $_49 = FALSE; break; }
@@ -341,7 +341,7 @@ function match_PathFilter ($stack = array()) {
 						$result["text"] .= '/';
 					}
 					else { $_47 = FALSE; break; }
-					$matcher = 'match_'.'Identifier'; $key = $matcher; $pos = $this->pos;
+					$matcher = 'match_'.'ObjectIdentifier'; $key = $matcher; $pos = $this->pos;
 					$subres = ( $this->packhas( $key, $pos ) ? $this->packread( $key, $pos ) : $this->packwrite( $key, $pos, $this->$matcher(array_merge($stack, array($result))) ) );
 					if ($subres !== FALSE) { $this->store( $result, $subres ); }
 					else { $_47 = FALSE; break; }

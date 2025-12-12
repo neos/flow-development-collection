@@ -1,0 +1,96 @@
+`9.0.4 (2025-11-07) <https://github.com/neos/flow-development-collection/releases/tag/9.0.4>`_
+==============================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`FEATURE: Add option to set username for RedisBackend <https://github.com/neos/flow-development-collection/pull/3393>`_
+-----------------------------------------------------------------------------------------------------------------------
+
+Adds an optional option to specify an username in the configuration options for the redis backend. Added basic test cases for redis authentication.
+
+**Review instructions**
+This PR re-opens https://github.com/neos/flow-development-collection/pull/3347 and addresses the stated feedback
+
+* Packages: ``Cache``
+
+`BUGFIX: Support ORM attributes <https://github.com/neos/flow-development-collection/pull/3508>`_
+-------------------------------------------------------------------------------------------------
+
+Hopefully fixes `#2602 <https://github.com/neos/flow-development-collection/issues/2602>`_and allows to use PHP attributes to configure Doctrine ORM, not only annotations like before.
+
+**Upgrade instructions**
+
+No change should be needed.
+
+
+* Packages: ``Flow``
+
+`BUGFIX: Handle enums and attributes (Objects) in attribute arguments for proxy classes <https://github.com/neos/flow-development-collection/pull/3512>`_
+---------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Handle Enums nested Attributes (actually any Objects) in attribute arguments for proxy classes.
+
+Currently the Attributes for generated proxy classes have some limitations:
+- Class Attributes: attribute values are exported via var_export which creates invalid code for attributes containing Enums or other Attributes as arguments
+- Method Attributes: attributes of type Object will yield an UnsupportedAttribute Exception
+
+This change addresses that by:
+- creating Enums in generated code
+- creating Objects via new () by inferring the constructor arguments from properties and getters
+- handling this recursively in arrays
+
+!!! This on itself does not add attribute support for persistence. * See: `#3508 <https://github.com/neos/flow-development-collection/issues/3508>`_ for that !!!
+
+resolves: `#3511 <https://github.com/neos/flow-development-collection/issues/3511>`_
+relates: `#3075 <https://github.com/neos/flow-development-collection/issues/3075>`_
+
+**Upgrade instructions**
+
+No changes are needed only cases that previously yielded errors should work now.
+
+**Review instructions**
+
+The inference of constructor arguments from values obtained via ObjectAccess is close but not perfect. However it works in the cases we want to support like Doctrine Table Attributes and probably most other cases aswell. 
+
+
+* Packages: ``Flow``
+
+`BUGFIX: Silence warnings in SimpleFileBackend <https://github.com/neos/flow-development-collection/pull/3513>`_
+----------------------------------------------------------------------------------------------------------------
+
+``SimpleFileBackend`` does ``fopen()`` in a few places. It wraps it into a try-catch clause and checks the result, but it still produces a warning if the file does not exist:
+
+``Warning: fopen(/application/Data/Temporary/…): Failed to open stream: No such file or directory``
+
+The only way to suppress that warning is to use the shut-up operator (``@``) in these places.
+
+See `#3438 <https://github.com/neos/flow-development-collection/issues/3438>`_
+
+
+* Packages: ``Cache``
+
+`BUGFIX: Support IPv6 in `getTrustedClientIpAddress()` <https://github.com/neos/flow-development-collection/pull/3491>`_
+------------------------------------------------------------------------------------------------------------------------
+
+When using IPv6, the method incorrectly returns invalid results. For an IPv6 address like ``2001:db8:cafe::17`` it would return ``2001``, which is wrong.
+
+
+* Packages: ``Flow``
+
+`TASK: More adjustments to correctly check parent class chains in proxies <https://github.com/neos/flow-development-collection/pull/3509>`_
+-------------------------------------------------------------------------------------------------------------------------------------------
+
+Follow up to: #3503
+
+* Packages: ``Flow``
+
+`TASK: Fix PHP deprecation warnings in unit tests <https://github.com/neos/flow-development-collection/pull/3514>`_
+-------------------------------------------------------------------------------------------------------------------
+
+
+
+* Packages: ``Flow``
+
+`Detailed log <https://github.com/neos/flow-development-collection/compare/9.0.3...9.0.4>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace Neos\Flow\Tests\Functional\Persistence\Doctrine;
 
 /*
@@ -11,6 +13,7 @@ namespace Neos\Flow\Tests\Functional\Persistence\Doctrine;
  * source code.
  */
 
+use Neos\Flow\Core\Bootstrap;
 use Neos\Flow\Persistence\Doctrine\PersistenceManager;
 use Neos\Flow\Tests\Functional\Persistence\Fixtures;
 use Neos\Flow\Tests\FunctionalTestCase;
@@ -21,7 +24,7 @@ use Neos\Flow\Tests\FunctionalTestCase;
 class LazyLoadingTest extends FunctionalTestCase
 {
     /**
-     * @var boolean
+     * @var bool
      */
     protected static $testablePersistenceEnabled = true;
 
@@ -42,7 +45,7 @@ class LazyLoadingTest extends FunctionalTestCase
     {
         parent::setUp();
         if (!$this->persistenceManager instanceof PersistenceManager) {
-            $this->markTestSkipped('Doctrine persistence is not enabled');
+            static::markTestSkipped('Doctrine persistence is not enabled');
         }
         $this->postRepository = $this->objectManager->get(Fixtures\PostRepository::class);
         $this->testEntityRepository = $this->objectManager->get(Fixtures\TestEntityRepository::class);
@@ -51,7 +54,7 @@ class LazyLoadingTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function dependencyInjectionIsCorrectlyInitializedEvenIfADoctrineProxyGetsInitializedOnTheFlyFromTheOutside()
+    public function dependencyInjectionIsCorrectlyInitializedEvenIfADoctrineProxyGetsInitializedOnTheFlyFromTheOutside(): void
     {
         $entity = new Fixtures\TestEntity();
         $entity->setName('Andi');
@@ -77,7 +80,7 @@ class LazyLoadingTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function aopIsCorrectlyInitializedEvenIfADoctrineProxyGetsInitializedOnTheFlyFromTheOutside()
+    public function aopIsCorrectlyInitializedEvenIfADoctrineProxyGetsInitializedOnTheFlyFromTheOutside(): void
     {
         $entity = new Fixtures\TestEntity();
         $entity->setName('Andi');
@@ -97,13 +100,13 @@ class LazyLoadingTest extends FunctionalTestCase
 
         $loadedRelatedEntity = $loadedEntity->getRelatedEntity();
 
-        self::assertEquals($loadedRelatedEntity->sayHello(), 'Hello Andi!');
+        self::assertEquals('Hello Andi!', $loadedRelatedEntity->sayHello());
     }
 
     /**
      * @test
      */
-    public function shutdownObjectMethodIsRegisterdForDoctrineProxy()
+    public function shutdownObjectMethodIsRegisteredForDoctrineProxy(): void
     {
         $image = new Fixtures\Image();
         $post = new Fixtures\Post();
@@ -115,8 +118,7 @@ class LazyLoadingTest extends FunctionalTestCase
 
         $postIdentifier = $this->persistenceManager->getIdentifierByObject($post);
 
-        unset($post);
-        unset($image);
+        unset($post, $image);
 
         /*
          * When hydrating the post a DoctrineProxy is generated for the image.
@@ -136,7 +138,7 @@ class LazyLoadingTest extends FunctionalTestCase
          * When shutting down the ObjectManager shutdownObject() on Fixtures\Image is called
          * and toggles the state on the cleanupObject
          */
-        \Neos\Flow\Core\Bootstrap::$staticObjectManager->shutdown();
+        Bootstrap::$staticObjectManager->shutdown();
 
         self::assertTrue($cleanupObject->getState());
     }

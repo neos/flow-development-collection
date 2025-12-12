@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace Neos\Flow\Tests\Functional\Persistence\Fixtures;
 
 /*
@@ -26,7 +28,7 @@ class TestEntityAspect
      * @param JoinPointInterface $joinPoint
      * @return string
      */
-    public function concreteMethodInAbstractClassAdvice(JoinPointInterface $joinPoint)
+    public function concreteMethodInAbstractClassAdvice(JoinPointInterface $joinPoint): string
     {
         $result = $joinPoint->getAdviceChain()->proceed($joinPoint);
         return $result . ' Andi!';

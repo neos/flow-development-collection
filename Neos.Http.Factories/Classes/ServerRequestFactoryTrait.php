@@ -56,6 +56,7 @@ trait ServerRequestFactoryTrait
 
     /**
      * @inheritDoc
+     * @param array<mixed> $serverParams
      */
     public function createServerRequest(string $method, $uri, array $serverParams = []): ServerRequestInterface
     {

@@ -420,7 +420,7 @@ class ProxyClassBuilder
 
         if (!$this->reflectionService->hasMethod($targetClassName, '__wakeup')) {
             $proxyClass->getMethod('__wakeup')->addPostParentCallCode(<<<PHP
-            if (method_exists(get_parent_class(\$this), '__wakeup') && is_callable([parent::class, '__wakeup'])) parent::__wakeup();
+            if (method_exists(parent::class, '__wakeup') && is_callable([parent::class, '__wakeup'])) parent::__wakeup();
             PHP);
         }
         $proxyClass->addTraits(['\\' . AdvicesTrait::class]);
@@ -494,7 +494,7 @@ class ProxyClassBuilder
             return $treatedSubClasses;
         }
 
-        $callBuildMethodsAndAdvicesArrayCode = "        if (method_exists(get_parent_class(\$this), 'Flow_Aop_Proxy_buildMethodsAndAdvicesArray') && is_callable([parent::class, 'Flow_Aop_Proxy_buildMethodsAndAdvicesArray'])) parent::Flow_Aop_Proxy_buildMethodsAndAdvicesArray();\n";
+        $callBuildMethodsAndAdvicesArrayCode = "        if (method_exists(parent::class, 'Flow_Aop_Proxy_buildMethodsAndAdvicesArray') && is_callable([parent::class, 'Flow_Aop_Proxy_buildMethodsAndAdvicesArray'])) parent::Flow_Aop_Proxy_buildMethodsAndAdvicesArray();\n";
         $proxyClass->getConstructor()->addPreParentCallCode($callBuildMethodsAndAdvicesArrayCode);
         $proxyClass->getMethod('__wakeup')->addPreParentCallCode($callBuildMethodsAndAdvicesArrayCode);
 

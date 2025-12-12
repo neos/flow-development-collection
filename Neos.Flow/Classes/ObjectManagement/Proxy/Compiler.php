@@ -19,6 +19,7 @@ use Neos\Flow\ObjectManagement\CompileTimeObjectManager;
 use Neos\Flow\ObjectManagement\Exception\ProxyCompilerException;
 use Neos\Flow\Reflection\ReflectionService;
 use Neos\Flow\Tests\BaseTestCase;
+use Neos\Utility\ObjectAccess;
 use ReflectionAttribute;
 use ReflectionClass;
 
@@ -289,16 +290,64 @@ return ' . var_export($this->storedProxyClasses, true) . ';';
         if (count($attribute->getArguments()) > 0) {
             $argumentsAsString = [];
             foreach ($attribute->getArguments() as $argumentName => $argumentValue) {
-                $renderedArgumentValue = var_export($argumentValue, true);
-                if (is_numeric($argumentName)) {
-                    $argumentsAsString[] = $renderedArgumentValue;
+                $argumentAsString = self::renderAttributeArgument($argumentValue);
+                if (is_int($argumentName)) {
+                    $argumentsAsString[] = $argumentAsString;
                 } else {
-                    $argumentsAsString[] = "$argumentName: $renderedArgumentValue";
+                    $argumentsAsString[] = "$argumentName: $argumentAsString";
                 }
             }
             $attributeAsString .= '(' . implode(', ', $argumentsAsString) . ')';
         }
         return "#[$attributeAsString]";
+    }
+
+    private static function renderAttributeArgument(mixed $value): string
+    {
+        if (is_object($value)) {
+            $reflectionClass = new ReflectionClass($value);
+            if ($reflectionClass->isEnum()) {
+                return '\\' . $reflectionClass->getName() . '::' . $value->name;
+            } else {
+                $fullyQualifiedName = '\\' . $reflectionClass->getName();
+                $constructor = $reflectionClass->getConstructor();
+                if (!$constructor) {
+                    return "new {$fullyQualifiedName}()";
+                }
+
+                // Try to reconstruct named arguments by matching constructor parameter names
+                // to public properties or getters ... this is obviously not perfect but probably
+                // ok in most attributes
+                $constructorParameters = [];
+                foreach ($constructor->getParameters() as $parameter) {
+                    $parameterName = $parameter->getName();
+                    $parameterValue = ObjectAccess::getProperty($value, $parameterName);
+                    if ($parameter->isDefaultValueAvailable()) {
+                        if ($parameterValue !== $parameter->getDefaultValue()) {
+                            $parameterValueAsString = self::renderAttributeArgument($parameterValue);
+                            $constructorParameters[$parameterName] = "{$parameterName}: {$parameterValueAsString}";
+                        }
+                    } else {
+                        $parameterValueAsString = self::renderAttributeArgument($parameterValue);
+                        $constructorParameters[$parameterName] = "{$parameterName}: {$parameterValueAsString}";
+                    }
+                }
+
+                return "new {$fullyQualifiedName}(" . implode(', ', $constructorParameters) . ")";
+            }
+        } elseif (is_array($value)) {
+            $argumentsAsString = [];
+            foreach ($value as $subkey => $subvalue) {
+                $argumentAsString = self::renderAttributeArgument($subvalue);
+                if (is_int($subkey)) {
+                    $argumentsAsString[] = $argumentAsString;
+                } else {
+                    $argumentsAsString[] = "'$subkey' => $argumentAsString";
+                }
+            }
+            return '[' . implode(', ', $argumentsAsString) . ']';
+        }
+        return var_export($value, true);
     }
 
     /**

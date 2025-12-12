@@ -62,7 +62,7 @@ PropertyNameFilter: Identifier
 		$result['Identifier'] = $sub['text'];
 	}
 
-PathFilter: ( '/' ( Identifier ( '/' Identifier )* )? ) | ( Identifier '/' Identifier ( '/' Identifier )* )
+PathFilter: ( '/' ( ObjectIdentifier  ( '/' ObjectIdentifier  )* )? ) | ( ObjectIdentifier  '/' ObjectIdentifier  ( '/' ObjectIdentifier )* )
 
 AttributeFilter:
   '[' S

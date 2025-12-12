@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace Neos\Flow\Tests\Functional\Persistence\Fixtures;
 
 /*
@@ -14,19 +16,19 @@ namespace Neos\Flow\Tests\Functional\Persistence\Fixtures;
 class CleanupObject
 {
     /**
-     * @var boolean
+     * @var bool
      */
     protected $state = false;
 
-    public function toggleState()
+    public function toggleState(): void
     {
         $this->state = !$this->state;
     }
 
     /**
-     * @return boolean
+     * @return bool
      */
-    public function getState()
+    public function getState(): bool
     {
         return $this->state;
     }

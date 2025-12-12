@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace Neos\Flow\Tests\Functional\Persistence\Doctrine;
 
 /*
@@ -21,7 +23,7 @@ use Neos\Flow\Tests\FunctionalTestCase;
 class PersistClonedRelatedEntitiesTest extends FunctionalTestCase
 {
     /**
-     * @var boolean
+     * @var bool
      */
     protected static $testablePersistenceEnabled = true;
 
@@ -37,7 +39,7 @@ class PersistClonedRelatedEntitiesTest extends FunctionalTestCase
     {
         parent::setUp();
         if (!$this->persistenceManager instanceof PersistenceManager) {
-            $this->markTestSkipped('Doctrine persistence is not enabled');
+            static::markTestSkipped('Doctrine persistence is not enabled');
         }
         $this->testEntityRepository = $this->objectManager->get(Fixtures\TestEntityRepository::class);
     }
@@ -45,7 +47,7 @@ class PersistClonedRelatedEntitiesTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function relatedEntitiesCanBePersistedWhenFetchedAsDoctrineProxy()
+    public function relatedEntitiesCanBePersistedWhenFetchedAsDoctrineProxy(): void
     {
         $entity = new Fixtures\TestEntity();
         $entity->setName('Andi');
@@ -74,7 +76,7 @@ class PersistClonedRelatedEntitiesTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function embeddablesInsideClonedProxiedEntitiesAreCorrectlyLoaded()
+    public function embeddablesInsideClonedProxiedEntitiesAreCorrectlyLoaded(): void
     {
         $entity = new Fixtures\TestEntity();
         $entity->setName('Andi');

@@ -45,6 +45,7 @@ abstract class AbstractConditionViewHelper extends AbstractViewHelper
 
     /**
      * Initializes the "then" and "else" arguments
+     * @return void
      */
     public function initializeArguments()
     {
@@ -66,18 +67,19 @@ abstract class AbstractConditionViewHelper extends AbstractViewHelper
      * subclasses that will be using this base class in the future. Let this
      * be a warning if someone considers changing this method signature!
      *
-     * @param array|NULL $arguments
+     * @param array<mixed>|NULL $arguments
      * @param RenderingContextInterface $renderingContext
      * @return boolean
      * @api
      */
     protected static function evaluateCondition($arguments, RenderingContextInterface $renderingContext)
     {
-        return (boolean)$arguments['condition'];
+        // fallback value derived from registerArgument default value
+        return (boolean)($arguments['condition'] ?? false);
     }
 
     /**
-     * @param array $arguments
+     * @param array<string,mixed> $arguments
      * @param \Closure $renderChildrenClosure
      * @param RenderingContextInterface $renderingContext
      * @return mixed
@@ -103,8 +105,8 @@ abstract class AbstractConditionViewHelper extends AbstractViewHelper
     }
 
     /**
-     * @param array $closures
-     * @param array $conditionClosures
+     * @param array<mixed> $closures
+     * @param array<mixed> $conditionClosures
      * @param RenderingContextInterface $renderingContext
      * @return string
      */
@@ -236,7 +238,7 @@ abstract class AbstractConditionViewHelper extends AbstractViewHelper
 
     /**
      * @param boolean $isConditionFullfilled
-     * @param array $arguments
+     * @param array<string,mixed> $arguments
      * @param RenderingContextInterface $renderingContext
      * @return mixed
      */

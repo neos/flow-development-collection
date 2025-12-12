@@ -33,7 +33,7 @@ abstract class PdoHelper
      * @param \PDO $databaseHandle
      * @param string $pdoDriver
      * @param string $pathAndFilename
-     * @param array $replacePairs every key in this array will be replaced with the corresponding value in the loaded SQL (example: ['###CACHE_TABLE_NAME###' => 'caches', '###TAGS_TABLE_NAME###' => 'tags'])
+     * @param array<string,string> $replacePairs every key in this array will be replaced with the corresponding value in the loaded SQL (example: ['###CACHE_TABLE_NAME###' => 'caches', '###TAGS_TABLE_NAME###' => 'tags'])
      * @return void
      */
     public static function importSql(\PDO $databaseHandle, string $pdoDriver, string $pathAndFilename, array $replacePairs = [])
@@ -46,13 +46,13 @@ abstract class PdoHelper
         } else {
             $sql = file($pathAndFilename, FILE_IGNORE_NEW_LINES & FILE_SKIP_EMPTY_LINES);
             // Remove MySQL style key length delimiters (yuck!) if we are not setting up a MySQL db
-            if ($pdoDriver !== 'mysql') {
+            if ($sql !== false && $pdoDriver !== 'mysql') {
                 $sql = preg_replace('/"\([0-9]+\)/', '"', $sql);
             }
         }
 
         $statement = '';
-        foreach ($sql as $line) {
+        foreach ($sql ?: [] as $line) {
             $statement .= ' ' . trim(strtr($line, $replacePairs));
             if (substr($statement, -1) === ';') {
                 $databaseHandle->exec($statement);

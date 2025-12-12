@@ -868,7 +868,7 @@ class Scripts
 
         // Try to resolve which binary file PHP is pointing to
         $output = [];
-        exec(join(' ', $command), $output, $result);
+        exec(implode(' ', $command), $output, $result);
 
         if ($result === 0 && count($output) === 1) {
             // Resolve any wrapper
@@ -938,12 +938,13 @@ class Scripts
         EOF;
         $command[] = '2>&1'; // Output errors in response
 
-        exec(join(' ', $command), $output, $result);
+        $commandString = implode(' ', $command);
+        exec($commandString, $output, $result);
 
         $phpInformation = json_decode($output[0] ?? '{}', true) ?: [];
 
         if ($result !== 0 || ($phpInformation['sapi'] ?? null) !== 'cli') {
-            throw new Exception\SubProcessException(sprintf('PHP binary might not exist or is not suitable for cli usage. Command `%s` didnt succeed.', $phpCommand), 1689676967447);
+            throw new Exception\SubProcessException(sprintf('PHP binary might not exist or is not suitable for CLI usage. Command `%s` did not succeed.', $commandString), 1689676967447);
         }
 
         /**

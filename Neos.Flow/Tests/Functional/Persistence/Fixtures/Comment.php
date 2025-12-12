@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace Neos\Flow\Tests\Functional\Persistence\Fixtures;
 
 /*
@@ -30,7 +32,7 @@ class Comment
      * @return string
      * @ORM\PrePersist
      */
-    public function getContent()
+    public function getContent(): string
     {
         return $this->content;
     }
@@ -39,7 +41,7 @@ class Comment
      * @param string $content
      * @return void
      */
-    public function setContent($content)
+    public function setContent($content): void
     {
         $this->content = $content;
     }

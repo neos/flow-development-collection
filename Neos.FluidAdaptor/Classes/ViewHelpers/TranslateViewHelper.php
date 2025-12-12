@@ -15,7 +15,6 @@ namespace Neos\FluidAdaptor\ViewHelpers;
 use Neos\Flow\I18n\Exception\InvalidLocaleIdentifierException;
 use Neos\Flow\I18n\Locale;
 use Neos\Flow\I18n\Translator;
-use Neos\Flow\Mvc\ActionRequest;
 use Neos\FluidAdaptor\Core\ViewHelper;
 use Neos\FluidAdaptor\Core\ViewHelper\Exception as ViewHelperException;
 
@@ -122,9 +121,7 @@ class TranslateViewHelper extends ViewHelper\AbstractViewHelper
         }
         if ($package === null) {
             $request = $this->renderingContext->getControllerContext()->getRequest();
-            if ($request instanceof ActionRequest) {
-                $package = $request->getControllerPackageKey();
-            }
+            $package = $request->getControllerPackageKey();
             if (empty($package)) {
                 throw new ViewHelperException(
                     'The current package key can\'t be resolved. Make sure to initialize the Fluid view with a proper ActionRequest and/or specify the "package" argument when using the f:translate ViewHelper',
@@ -150,6 +147,7 @@ class TranslateViewHelper extends ViewHelper\AbstractViewHelper
 
     /**
      * @param Translator $translator
+     * @return void
      */
     public function injectTranslator(Translator $translator)
     {
