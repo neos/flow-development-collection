@@ -160,7 +160,7 @@ class Configuration
     /**
      * Returns the class name
      *
-     * @return string Name of the implementing class of this object
+     * @return class-string Name of the implementing class of this object
      */
     public function getClassName()
     {

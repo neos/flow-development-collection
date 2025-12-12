@@ -109,10 +109,10 @@ trait ObjectSerializationTrait
      */
     private function Flow_searchForEntitiesAndStoreIdentifierArray(string $path, mixed $propertyValue, string $originalPropertyName): bool
     {
-        $foundEntity = false;
+        $entityWasFound = false;
         if (is_array($propertyValue) || ($propertyValue instanceof \ArrayObject || $propertyValue instanceof \SplObjectStorage)) {
             foreach ($propertyValue as $key => $value) {
-                $foundEntity = $foundEntity || $this->Flow_searchForEntitiesAndStoreIdentifierArray($path . '.' . $key, $value, $originalPropertyName);
+                $entityWasFound = $entityWasFound || $this->Flow_searchForEntitiesAndStoreIdentifierArray($path . '.' . $key, $value, $originalPropertyName);
             }
         } elseif ($propertyValue instanceof DoctrineProxy || ($propertyValue instanceof PersistenceMagicInterface && !Bootstrap::$staticObjectManager->get(PersistenceManagerInterface::class)->isNewObject($propertyValue))) {
             if (!isset($this->Flow_Persistence_RelatedEntitiesContainer)) {
@@ -131,10 +131,10 @@ trait ObjectSerializationTrait
             if ($path !== '') {
                 $this->$originalPropertyName = Arrays::setValueByPath($this->$originalPropertyName, $path, null);
             }
-            $foundEntity = true;
+            $entityWasFound = true;
         }
 
-        return $foundEntity;
+        return $entityWasFound;
     }
 
     /**

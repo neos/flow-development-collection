@@ -767,7 +767,6 @@ class ProxyClassBuilder
     protected function couldHaveEntityRelations(Configuration $objectConfiguration): bool
     {
         $result = false;
-        /** @var class-string $className */
         $className = $objectConfiguration->getClassName();
         $classPropertyNames = $this->reflectionService->getClassPropertyNames($className);
         foreach ($classPropertyNames as $propertyName) {
