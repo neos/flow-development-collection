@@ -118,7 +118,7 @@ class ProxyClassBuilder
             $constructorInjectionCode = $this->buildConstructorInjectionCode($objectConfiguration);
             $injectionCodeWasIntroduced = $constructorInjectionCode !== '';
 
-            $constructor = $proxyClass->getConstructor($injectionCodeWasIntroduced === false);
+            $constructor = $proxyClass->getConstructor(withOriginalArgumentSignature: $injectionCodeWasIntroduced === false);
             $constructor->addPreParentCallCode($this->buildSetInstanceCode($objectConfiguration));
 
             $constructor->addPreParentCallCode($constructorInjectionCode);

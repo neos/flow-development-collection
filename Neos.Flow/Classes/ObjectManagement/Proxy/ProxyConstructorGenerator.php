@@ -60,17 +60,12 @@ final class ProxyConstructorGenerator extends ProxyMethodGenerator
         $method->setDocBlock($docBlock);
 
         if ($withOriginalArgumentSignature) {
-            if ($reflectionMethod->getNumberOfParameters() === $reflectionMethod->getNumberOfRequiredParameters()) {
-                // Hotfix, we can only create the constructor method signature as originally if there are no default values involved.
-                // As laminas does not have support for promoted properties with default values yet:
-                // https://github.com/laminas/laminas-code/issues/182
-                foreach ($reflectionMethod->getParameters() as $reflectionParameter) {
-                    $method->setParameter(
-                        $reflectionParameter->isPromoted()
-                            ? PromotedParameterGenerator::fromReflection($reflectionParameter)
-                            : ParameterGenerator::fromReflection($reflectionParameter)
-                    );
-                }
+            foreach ($reflectionMethod->getParameters() as $reflectionParameter) {
+                $method->setParameter(
+                    $reflectionParameter->isPromoted()
+                        ? PromotedParameterGenerator::fromReflection($reflectionParameter)
+                        : ParameterGenerator::fromReflection($reflectionParameter)
+                );
             }
         }
 

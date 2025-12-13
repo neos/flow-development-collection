@@ -19,6 +19,10 @@ use Neos\Flow\Annotations as Flow;
 #[Flow\Scope("singleton")]
 class SingletonClassH
 {
+    /**
+     * @deprecated Singletons with a default value of null as constructor are deprecated, but we ensure that Flows object management does not crash.
+     * The property declaration is simply redundant as the dependency is always null and never set by the object management - even if there is a union with another type.
+     */
     public function __construct(
        public ?InterfaceA $interfaceA = null
     ) {

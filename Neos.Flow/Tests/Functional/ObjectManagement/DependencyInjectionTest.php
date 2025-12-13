@@ -16,6 +16,7 @@ use Neos\Flow\Configuration\ConfigurationManager;
 use Neos\Flow\ObjectManagement\Proxy\ProxyInterface;
 use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\FinalClassWithDependencies;
 use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\Flow175\ClassWithTransitivePrototypeDependency;
+use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\InterfaceAImplementation;
 use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\PrototypeClassA;
 use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\PrototypeClassH;
 use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\PrototypeClassL;
@@ -368,13 +369,20 @@ class DependencyInjectionTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function constructorObjectInjectionOfNullableInterface(): void
+    public function constructorObjectInjectionInSingletonWithDefaultNullValue(): void
     {
+        // FIXME Singletons with a default value of null as constructor are deprecated. The property declaration is simply redundant as the dependency is always null and never set by the object management - even if there is a union with another type.
         $object = $this->objectManager->get(SingletonClassH::class);
         self::assertInstanceOf(ProxyInterface::class, $object);
+        // no dependency as default is always null -> thus why its useless
         self::assertSame(null, $object->interfaceA);
 
+        // explicitly set to null - DEPRECATED don't instantiate singletons by hand
         $object = new SingletonClassH(null);
         self::assertSame(null, $object->interfaceA);
+
+        // explicitly provide dependency - DEPRECATED don't instantiate singletons by hand
+        $object = new SingletonClassH($this->objectManager->get(InterfaceAImplementation::class));
+        self::assertInstanceOf(InterfaceAImplementation::class, $object->interfaceA);
     }
 }
