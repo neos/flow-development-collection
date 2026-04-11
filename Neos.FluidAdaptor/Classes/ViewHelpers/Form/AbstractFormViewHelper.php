@@ -41,7 +41,7 @@ abstract class AbstractFormViewHelper extends AbstractTagBasedViewHelper
     /**
      * Prefixes / namespaces the given name with the form field prefix
      *
-     * @param string $fieldName field name to be prefixed
+     * @param ?string $fieldName field name to be prefixed
      * @return string namespaced field name
      */
     protected function prefixFieldName($fieldName)
@@ -68,13 +68,13 @@ abstract class AbstractFormViewHelper extends AbstractTagBasedViewHelper
      * Renders a hidden form field containing the technical identity of the given object.
      *
      * @param object $object Object to create the identity field for
-     * @param string $name Name
+     * @param ?string $name Name
      * @return string A hidden field containing the Identity (UUID in Flow) of the given object or empty string if the object is unknown to the persistence framework
      * @see \Neos\Flow\Mvc\Controller\Argument::setValue()
      */
     protected function renderHiddenIdentityField($object, $name)
     {
-        if (!is_object($object) || $this->persistenceManager->isNewObject($object)) {
+        if (!is_object($object) || $this->persistenceManager->isNewObject($object) || $name === null) {
             return '';
         }
         $identifier = $this->persistenceManager->getIdentifierByObject($object);

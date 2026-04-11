@@ -1,0 +1,24 @@
+`9.0.2 (2025-05-12) <https://github.com/neos/flow-development-collection/releases/tag/9.0.2>`_
+==============================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`BUGFIX: Replace skip migrations with simple return <https://github.com/neos/flow-development-collection/pull/3477>`_
+---------------------------------------------------------------------------------------------------------------------
+
+If we use the skip migrations feature of doctrine, the migrations never get marked as applied. Which leads to situations, where your migration status will never be clean. So I replaced all skipif with a simple return.
+
+See also: https://github.com/doctrine/migrations/issues/1179
+
+* Packages: ``Flow``
+
+`BUGFIX: Accept node names starting with numbers in fizzle parser <https://github.com/neos/flow-development-collection/pull/3476>`_
+-----------------------------------------------------------------------------------------------------------------------------------
+
+* Resolves: `#3475 <https://github.com/neos/flow-development-collection/issues/3475>`_ 
+
+* Packages: ``Eel``
+
+`Detailed log <https://github.com/neos/flow-development-collection/compare/9.0.1...9.0.2>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

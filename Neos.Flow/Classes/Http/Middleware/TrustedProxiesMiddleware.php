@@ -274,9 +274,20 @@ class TrustedProxiesMiddleware implements MiddlewareInterface
 
         $ipAddress = false;
         foreach (array_reverse($trustedIpHeader) as $headerIpAddress) {
-            $portPosition = strpos($headerIpAddress, ':');
-            $ipAddress = $portPosition !== false ? substr($headerIpAddress, 0, $portPosition) : $headerIpAddress;
-            if (!$this->ipIsTrustedProxy($ipAddress)) {
+            if (preg_match('/^\[([^]]+)]:(\d+)$/', $headerIpAddress, $matches)) { // IPv6 with port [ip]:port
+                $ipAddress = $matches[1];
+            } elseif (filter_var($headerIpAddress, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6)) { // IPv6 without port
+                $ipAddress = $headerIpAddress;
+            } elseif (strpos($headerIpAddress, ':') !== false) { // IPv4 with port
+                $parts = explode(':', $headerIpAddress);
+                if (count($parts) === 2) {
+                    $ipAddress = $parts[0];
+                }
+            } elseif (filter_var($headerIpAddress, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4)) { // IPv4 address
+                $ipAddress = $headerIpAddress;
+            }
+
+            if ($ipAddress !== false && !$this->ipIsTrustedProxy($ipAddress)) {
                 break;
             }
         }

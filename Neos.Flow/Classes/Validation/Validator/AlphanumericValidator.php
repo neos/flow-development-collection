@@ -17,7 +17,6 @@ use Neos\Flow\Annotations as Flow;
  * Validator for alphanumeric strings.
  *
  * @api
- * @Flow\Scope("singleton")
  */
 class AlphanumericValidator extends AbstractValidator
 {

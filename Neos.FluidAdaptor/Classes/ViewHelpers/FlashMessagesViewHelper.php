@@ -105,7 +105,7 @@ class FlashMessagesViewHelper extends AbstractTagBasedViewHelper
      * Render the flash messages as unsorted list. This is triggered if no "as" argument is given
      * to the ViewHelper.
      *
-     * @param list<Message> $flashMessages
+     * @param array<Message> $flashMessages
      * @return string
      */
     protected function renderAsList(array $flashMessages)
@@ -131,7 +131,7 @@ class FlashMessagesViewHelper extends AbstractTagBasedViewHelper
      * the flash messages are stored in the template inside the variable specified
      * in "as".
      *
-     * @param array $flashMessages
+     * @param array<Message> $flashMessages
      * @param string $as
      * @return string
      */

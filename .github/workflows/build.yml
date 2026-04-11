@@ -20,7 +20,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        php-versions: ['8.2', '8.3', '8.4']
+        php-versions: ['8.2', '8.3', '8.4', '8.5']
         # see https://mariadb.com/kb/en/mariadb-server-release-dates/
         # this should be a current release, e.g. the LTS version
         mariadb-versions: ['10.6']
@@ -59,6 +59,14 @@ jobs:
         ports:
           - "11211:11211"
         # options: --health-cmd "timeout 5 bash -c 'cat < /dev/null > /dev/udp/127.0.0.1/11211'" --health-interval 10s --health-timeout 5s --health-retries 5
+      postgres:
+        image: ${{ ( matrix.postgresql-versions != '' ) && format('postgres:{0}', matrix.postgresql-versions) || '' }}
+        env:
+          POSTGRES_DB: flow_functional_testing
+          POSTGRES_USER: neos
+          POSTGRES_PASSWORD: neos
+        ports:
+          - 5432:5432
 
     env:
       FLOW_CONTEXT: Testing
@@ -86,15 +94,6 @@ jobs:
           extensions: mbstring, xml, json, zlib, iconv, intl, pdo_sqlite, mysql, pgsql, redis, memcached, memcache, apcu
           coverage: xdebug #optional
           ini-values: date.timezone="Africa/Tunis", opcache.fast_shutdown=0, apc.enable_cli=on
-
-      - name: Setup PostgreSQL ${{ matrix.postgresql-versions }}
-        if: ${{ matrix.postgresql-versions != '' }}
-        uses: harmon758/postgresql-action@v1
-        with:
-          postgresql version: ${{ matrix.postgresql-versions }}
-          postgresql db: 'flow_functional_testing'
-          postgresql user: 'neos'
-          postgresql password: 'neos'
 
       - name: Setup MariaDB ${{ matrix.mariadb-versions }}
         if: ${{ matrix.mariadb-versions != '' }}

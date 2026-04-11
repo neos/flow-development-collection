@@ -58,4 +58,42 @@ class DocCommentParserTest extends UnitTestCase
 
         $this->assertEquals('Description goes here', $parser->getDescription());
     }
+
+    /**
+     * @test
+     */
+    public function annotationAsTagValue()
+    {
+        $parser = new DocCommentParser();
+        $parser->parseDocComment('/** @Flow\SkipCsrfProtection */');
+
+        // FIXME this automagic handling of annotations is wrong and causes bugs, this tests is just to document the current state, the concept of tags is overhauled and should be deprecated in favour of annotations and attributes
+        $this->assertEquals(['skipcsrfprotection' => []], $parser->getTagsValues());
+    }
+
+    /**
+     * @test
+     */
+    public function annotationAsTagValueOmitsNamespace()
+    {
+        $parser = new DocCommentParser();
+        $parser->parseDocComment('/** @SomeOtherNameSpace\SkipCsrfProtection */');
+
+        // FIXME this automagic handling of annotations is wrong and causes bugs, this tests is just to document the current state, the concept of tags is overhauled and should be deprecated in favour of annotations and attributes
+        $this->assertEquals(['skipcsrfprotection' => []], $parser->getTagsValues());
+    }
+
+    /**
+     * @test
+     */
+    public function annotationAsTagValueWithComments()
+    {
+        $parser = new DocCommentParser();
+        $parser->parseDocComment('/** @Flow\SkipCsrfProtection Some comment in this line */');
+
+        // FIXME this automagic handling of annotations is wrong and causes bugs, this tests is just to document the current state, the concept of tags is overhauled and should be deprecated in favour of annotations and attributes
+        $this->assertEquals(['flow\skipcsrfprotection' => [
+            'Some comment in this line'
+        ]], $parser->getTagsValues());
+    }
 }

@@ -15,27 +15,20 @@ namespace Neos\Flow\Log\Utility;
 
 use Neos\Flow\Core\Bootstrap;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
-use Neos\Flow\Package\PackageInterface;
 use Neos\Flow\Package\PackageKeyAwareInterface;
 use Neos\Flow\Package\PackageManager;
 use Neos\Flow\Annotations as Flow;
 
 abstract class LogEnvironment
 {
-    /**
-     * @var array
-     */
-    protected static $packageKeys = [];
+    protected static array $packageKeys = [];
 
-    /**
-     * @var bool
-     */
-    protected static $initialized = false;
+    protected static bool $initialized = false;
 
     /**
      * Returns an array containing the log environment variables
-     * under the key FLOW_LOG_ENVIRONMENT to be set as part of the additional data
-     * in an log method call.
+     * under the key FLOW_LOG_ENVIRONMENT to be set as part of
+     * the additional data in an log method call.
      *
      * @param string $methodName
      * @return array
@@ -43,8 +36,8 @@ abstract class LogEnvironment
     public static function fromMethodName(string $methodName): array
     {
         if (strpos($methodName, '::') > 0) {
-            list($className, $functionName) = explode('::', $methodName);
-        } elseif (substr($methodName, -9, 9) === '{closure}') {
+            [$className, $functionName] = explode('::', $methodName);
+        } elseif (str_ends_with($methodName, '{closure}')) {
             $className = substr($methodName, 0, -9);
             $functionName = '{closure}';
         } else {
@@ -61,9 +54,21 @@ abstract class LogEnvironment
     }
 
     /**
-     * @param string $className
-     * @return string
+     * Returns an array containing the log environment variables
+     * under the key FLOW_LOG_ENVIRONMENT to be set as part of the
+     * additional data in an log method call.
      */
+    public static function fromClassAndMethodName(string $className, string $methodName): array
+    {
+        return [
+            'FLOW_LOG_ENVIRONMENT' => [
+                'packageKey' => self::getPackageKeyFromClassName($className),
+                'className' => $className,
+                'methodName' => $methodName
+            ]
+        ];
+    }
+
     protected static function getPackageKeyFromClassName(string $className): string
     {
         $packageKeys = static::getPackageKeys();
@@ -73,7 +78,7 @@ abstract class LogEnvironment
         $packageKeyCandidate = $determinedPackageKey;
 
         foreach ($classPathArray as $classPathSegment) {
-            $packageKeyCandidate = $packageKeyCandidate . '.' . $classPathSegment;
+            $packageKeyCandidate .= '.' . $classPathSegment;
 
             if (!isset($packageKeys[$packageKeyCandidate])) {
                 continue;
@@ -86,7 +91,6 @@ abstract class LogEnvironment
     }
 
     /**
-     * @return array
      * @Flow\CompileStatic
      */
     protected static function getPackageKeys(): array
@@ -99,7 +103,6 @@ abstract class LogEnvironment
             /** @var PackageManager $packageManager */
             $packageManager = Bootstrap::$staticObjectManager->get(PackageManager::class);
 
-            /** @var PackageInterface $package */
             foreach ($packageManager->getAvailablePackages() as $package) {
                 if ($package instanceof PackageKeyAwareInterface) {
                     self::$packageKeys[$package->getPackageKey()] = true;

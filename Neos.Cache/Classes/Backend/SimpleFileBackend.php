@@ -221,7 +221,7 @@ class SimpleFileBackend extends IndependentAbstractBackend implements PhpCapable
             // In the worst case, the unlink will just fail due to concurrent access and the caller needs to deal with that.
             return unlink($fileName);
         }
-        $file = fopen($fileName, 'rb');
+        $file = @fopen($fileName, 'rb');
         if ($file === false) {
             return false;
         }
@@ -542,7 +542,7 @@ class SimpleFileBackend extends IndependentAbstractBackend implements PhpCapable
                 // It's important that we use the 'c' flag below, as `fopen` will otherwise truncate the file
                 // if it already exists. If we used 'w' and then didn't get the lock, the file would end up empty.
                 // https://www.php.net/manual/en/function.fopen.php#refsect1-function.fopen-parameters
-                $file = fopen($cacheEntryPathAndFilename, 'cb');
+                $file = @fopen($cacheEntryPathAndFilename, 'cb');
                 if ($file === false) {
                     continue;
                 }

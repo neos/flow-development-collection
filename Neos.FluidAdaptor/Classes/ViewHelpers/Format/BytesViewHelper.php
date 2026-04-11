@@ -72,7 +72,7 @@ class BytesViewHelper extends AbstractLocaleAwareViewHelper
 
     /**
      * @param float $bytes
-     * @return array<int, float|string>
+     * @return array{0: float, 1: string}
      */
     protected static function maximizeUnit(float $bytes): array
     {

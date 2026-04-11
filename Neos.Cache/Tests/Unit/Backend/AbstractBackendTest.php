@@ -36,6 +36,7 @@ class AbstractBackendTest extends BaseTestCase
         class_exists(AbstractBackend::class);
         $className = 'ConcreteBackend_' . md5(uniqid(mt_rand(), true));
         eval('
+            #[\AllowDynamicProperties]
             class ' . $className . ' extends \Neos\Cache\Backend\AbstractBackend {
                 public function set(string $entryIdentifier, string $data, array $tags = [], int $lifetime = NULL): void {}
                 public function get(string $entryIdentifier): string {}

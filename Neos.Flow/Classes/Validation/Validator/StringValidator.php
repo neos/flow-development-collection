@@ -17,7 +17,6 @@ use Neos\Flow\Annotations as Flow;
  * Validator for strings.
  *
  * @api
- * @Flow\Scope("singleton")
  */
 class StringValidator extends AbstractValidator
 {

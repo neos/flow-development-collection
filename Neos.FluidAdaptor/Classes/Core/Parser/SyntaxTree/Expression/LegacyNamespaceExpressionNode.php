@@ -24,14 +24,14 @@ class LegacyNamespaceExpressionNode extends AbstractExpressionNode implements Ex
      * Pattern which detects namespace declarations made inline.
      * syntax, e.g. {namespace neos=TYPO3\Neos\ViewHelpers}.
      */
-    public static $detectionExpression = '/{namespace\\s*([a-z0-9]+)\\s*=\\s*([a-z0-9_\\\\]+)\\s*}/i';
+    public static string $detectionExpression = '/{namespace\\s*([a-z0-9]+)\\s*=\\s*([a-z0-9_\\\\]+)\\s*}/i';
 
     /**
      * Evaluates the expression stored in this node, in the context of $renderingcontext.
      *
      * @param RenderingContextInterface $renderingContext
      * @param string $expression
-     * @param array $matches
+     * @param array<int,mixed> $matches
      * @return mixed
      */
     public static function evaluateExpression(RenderingContextInterface $renderingContext, $expression, array $matches)

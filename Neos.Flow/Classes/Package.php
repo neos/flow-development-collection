@@ -18,7 +18,8 @@ use Neos\Flow\Configuration\Source\YamlSource;
 use Neos\Flow\Core\Booting\Step;
 use Neos\Flow\Http\Helper\SecurityHelper;
 use Neos\Flow\ObjectManagement\CompileTimeObjectManager;
-use Neos\Flow\ObjectManagement\Proxy;
+use Neos\Flow\ObjectManagement\Proxy\Compiler;
+use Neos\Flow\ObjectManagement\Proxy\XdebugPathMappingBuilder;
 use Neos\Flow\Package\Package as BasePackage;
 use Neos\Flow\Package\PackageManager;
 use Neos\Flow\Reflection\ReflectionService;
@@ -71,10 +72,11 @@ class Package extends BasePackage
         $dispatcher = $bootstrap->getSignalSlotDispatcher();
 
         $dispatcher->connect(Mvc\Dispatcher::class, 'afterControllerInvocation', function ($request) use ($bootstrap) {
-            // No auto-persistence if there is no PersistenceManager registered
+            // No auto-persistence if there is no PersistenceManager loaded
             // This signal will not be fired at compile time, as it's only emitted for web requests which happen at runtime.
             if (
-                $bootstrap->getObjectManager()->has(Persistence\PersistenceManagerInterface::class)
+                /** @phpstan-ignore-next-line the object manager interface doesn't specify this method */
+                $bootstrap->getObjectManager()->hasInstance(Persistence\PersistenceManagerInterface::class)
             ) {
                 if (SecurityHelper::hasSafeMethod($request->getHttpRequest()) !== true) {
                     $bootstrap->getObjectManager()->get(Persistence\PersistenceManagerInterface::class)->persistAll();
@@ -86,9 +88,10 @@ class Package extends BasePackage
         });
 
         $dispatcher->connect(Cli\Dispatcher::class, 'afterControllerInvocation', function () use ($bootstrap) {
-            // No auto-persistence if there is no PersistenceManager registered or during compile time
+            // No auto-persistence if there is no PersistenceManager loaded or during compile time
             if (
-                $bootstrap->getObjectManager()->has(Persistence\PersistenceManagerInterface::class)
+                /** @phpstan-ignore-next-line the object manager interface doesn't specify this method */
+                $bootstrap->getObjectManager()->hasInstance(Persistence\PersistenceManagerInterface::class)
                 && !($bootstrap->getObjectManager() instanceof CompileTimeObjectManager)
             ) {
                 $bootstrap->getObjectManager()->get(Persistence\PersistenceManagerInterface::class)->persistAll();
@@ -170,10 +173,11 @@ class Package extends BasePackage
         $dispatcher->connect(AuthenticationProviderManager::class, 'successfullyAuthenticated', Context::class, 'refreshRoles');
         $dispatcher->connect(AuthenticationProviderManager::class, 'loggedOut', Context::class, 'refreshTokens');
 
-        $dispatcher->connect(Proxy\Compiler::class, 'compiledClasses', function (array $classNames) use ($bootstrap) {
+        $dispatcher->connect(Compiler::class, 'afterCompile', XdebugPathMappingBuilder::class, 'buildFromCompiledClasses');
+        $dispatcher->connect(Compiler::class, 'afterCompile', function (array $compiledClasses) use ($bootstrap) {
             $annotationsCacheFlusher = $bootstrap->getObjectManager()->get(AnnotationsCacheFlusher::class);
             $annotationsCacheFlusher->registerAnnotation(Route::class, ['Flow_Mvc_Routing_Route', 'Flow_Mvc_Routing_Resolve']);
-            $annotationsCacheFlusher->flushConfigurationCachesByCompiledClass($classNames);
+            $annotationsCacheFlusher->flushConfigurationCachesByCompiledClass(array_keys($compiledClasses));
         });
     }
 }

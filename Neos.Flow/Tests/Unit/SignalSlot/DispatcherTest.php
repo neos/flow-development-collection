@@ -219,7 +219,7 @@ class DispatcherTest extends UnitTestCase
     public function dispatchRetrievesSlotInstanceFromTheObjectManagerIfOnlyAClassNameWasSpecified(): void
     {
         $slotClassName = 'Mock_' . md5(uniqid((string)mt_rand(), true));
-        eval('class ' . $slotClassName . ' { function slot($foo, $baz) { $this->arguments = array($foo, $baz); } }');
+        eval('#[\AllowDynamicProperties]'. chr(10) . 'class ' . $slotClassName . ' { function slot($foo, $baz) { $this->arguments = array($foo, $baz); } }');
         $mockSlot = new $slotClassName();
 
         $mockObjectManager = $this->createMock(ObjectManagerInterface::class);

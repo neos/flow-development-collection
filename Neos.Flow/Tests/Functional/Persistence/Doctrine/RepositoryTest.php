@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace Neos\Flow\Tests\Functional\Persistence\Doctrine;
 
 /*
@@ -24,7 +26,7 @@ use Neos\Flow\Tests\FunctionalTestCase;
 class RepositoryTest extends FunctionalTestCase
 {
     /**
-     * @var boolean
+     * @var bool
      */
     protected static $testablePersistenceEnabled = true;
 
@@ -50,14 +52,14 @@ class RepositoryTest extends FunctionalTestCase
     {
         parent::setUp();
         if (!$this->persistenceManager instanceof PersistenceManager) {
-            $this->markTestSkipped('Doctrine persistence is not enabled');
+            static::markTestSkipped('Doctrine persistence is not enabled');
         }
     }
 
     /**
      * @test
      */
-    public function modificationsOnRetrievedEntitiesAreNotPersistedAutomatically()
+    public function modificationsOnRetrievedEntitiesAreNotPersistedAutomatically(): void
     {
         $this->postRepository = $this->objectManager->get(Fixtures\PostRepository::class);
 
@@ -88,7 +90,7 @@ class RepositoryTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function modificationsOnRetrievedEntitiesArePersistedIfUpdateHasBeenCalled()
+    public function modificationsOnRetrievedEntitiesArePersistedIfUpdateHasBeenCalled(): void
     {
         $this->postRepository = $this->objectManager->get(Fixtures\PostRepository::class);
 
@@ -112,7 +114,7 @@ class RepositoryTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function instancesOfTheManagedTypeCanBeAddedAndRetrieved()
+    public function instancesOfTheManagedTypeCanBeAddedAndRetrieved(): void
     {
         $this->superEntityRepository = $this->objectManager->get(Fixtures\SuperEntityRepository::class);
 
@@ -129,7 +131,7 @@ class RepositoryTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function subTypesOfTheManagedTypeCanBeAddedAndRetrieved()
+    public function subTypesOfTheManagedTypeCanBeAddedAndRetrieved(): void
     {
         $this->superEntityRepository = $this->objectManager->get(Fixtures\SuperEntityRepository::class);
 
@@ -146,7 +148,7 @@ class RepositoryTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function subTypesOfTheManagedTypeCanBeRemoved()
+    public function subTypesOfTheManagedTypeCanBeRemoved(): void
     {
         $this->superEntityRepository = $this->objectManager->get(Fixtures\SuperEntityRepository::class);
 
@@ -167,7 +169,7 @@ class RepositoryTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function subTypesOfTheManagedTypeCanBeUpdated()
+    public function subTypesOfTheManagedTypeCanBeUpdated(): void
     {
         $this->superEntityRepository = $this->objectManager->get(Fixtures\SuperEntityRepository::class);
 
@@ -191,7 +193,7 @@ class RepositoryTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function countAllCountsSubTypesOfTheManagedType()
+    public function countAllCountsSubTypesOfTheManagedType(): void
     {
         $this->superEntityRepository = $this->objectManager->get(Fixtures\SuperEntityRepository::class);
 
@@ -211,7 +213,7 @@ class RepositoryTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function findAllReturnsSubTypesOfTheManagedType()
+    public function findAllReturnsSubTypesOfTheManagedType(): void
     {
         $this->superEntityRepository = $this->objectManager->get(Fixtures\SuperEntityRepository::class);
 
@@ -231,7 +233,7 @@ class RepositoryTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function findAllIteratorReturnsSubTypesOfTheManagedType()
+    public function findAllIteratorReturnsSubTypesOfTheManagedType(): void
     {
         $this->superEntityRepository = $this->objectManager->get(Fixtures\SuperEntityRepository::class);
 
@@ -258,7 +260,7 @@ class RepositoryTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function findByIdentifierReturnsSubTypesOfTheManagedType()
+    public function findByIdentifierReturnsSubTypesOfTheManagedType(): void
     {
         $this->superEntityRepository = $this->objectManager->get(Fixtures\SuperEntityRepository::class);
 
@@ -276,7 +278,7 @@ class RepositoryTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function addingASuperTypeToAMoreSpecificRepositoryThrowsAnException()
+    public function addingASuperTypeToAMoreSpecificRepositoryThrowsAnException(): void
     {
         $this->expectException(IllegalObjectTypeException::class);
         $this->subSubEntityRepository = $this->objectManager->get(Fixtures\SubSubEntityRepository::class);
@@ -288,7 +290,7 @@ class RepositoryTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function usingASpecificRepositoryForSubTypesWorks()
+    public function usingASpecificRepositoryForSubTypesWorks(): void
     {
         $this->superEntityRepository = $this->objectManager->get(Fixtures\SuperEntityRepository::class);
         $this->subSubEntityRepository = $this->objectManager->get(Fixtures\SubSubEntityRepository::class);
@@ -309,7 +311,7 @@ class RepositoryTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function findAllReturnsQueryResult()
+    public function findAllReturnsQueryResult(): void
     {
         $this->postRepository = $this->objectManager->get(Fixtures\PostRepository::class);
         self::assertInstanceOf(Repository::class, $this->postRepository, 'Repository under test should be a Doctrine Repository');

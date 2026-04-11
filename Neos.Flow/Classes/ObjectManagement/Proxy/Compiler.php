@@ -18,9 +18,9 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Flow\ObjectManagement\CompileTimeObjectManager;
 use Neos\Flow\ObjectManagement\Exception\ProxyCompilerException;
 use Neos\Flow\Reflection\ReflectionService;
+use Neos\Flow\SignalSlot\Dispatcher as SignalSlotDispatcher;
 use Neos\Flow\Tests\BaseTestCase;
-use ReflectionAttribute;
-use ReflectionClass;
+use Neos\Utility\ObjectAccess;
 
 /**
  * Builder for proxy classes which are used to implement Dependency Injection and
@@ -50,6 +50,11 @@ class Compiler
      * @var ReflectionService
      */
     protected $reflectionService;
+
+    /**
+     * @var SignalSlotDispatcher
+     */
+    private $signalSlotDispatcher;
 
     /**
      * @var array
@@ -116,6 +121,15 @@ class Compiler
     }
 
     /**
+     * @param SignalSlotDispatcher $signalSlotDispatcher
+     * @return void
+     */
+    public function injectSignalSlotDispatcher(SignalSlotDispatcher $signalSlotDispatcher)
+    {
+        $this->signalSlotDispatcher = $signalSlotDispatcher;
+    }
+
+    /**
      * Returns a proxy class object for the specified original class.
      *
      * If no such proxy class has been created yet by this renderer,
@@ -136,7 +150,7 @@ class Compiler
             return false;
         }
 
-        $classReflection = new ReflectionClass($fullClassName);
+        $classReflection = new \ReflectionClass($fullClassName);
         if ($classReflection->isInternal() === true) {
             return false;
         }
@@ -191,31 +205,34 @@ class Compiler
         $compiledClasses = [];
         foreach ($this->objectManager->getRegisteredClassNames() as $fullOriginalClassNames) {
             foreach ($fullOriginalClassNames as $fullOriginalClassName) {
+                $proxyClassIdentifier = str_replace('\\', '_', $fullOriginalClassName);
+                $class = new \ReflectionClass($fullOriginalClassName);
+                $classPathAndFilename = $class->getFileName();
                 if (isset($this->proxyClasses[$fullOriginalClassName])) {
                     $proxyClassCode = $this->proxyClasses[$fullOriginalClassName]->render();
                     if ($proxyClassCode !== '') {
-                        $class = new ReflectionClass($fullOriginalClassName);
-                        $classPathAndFilename = $class->getFileName();
                         $this->cacheOriginalClassFileAndProxyCode($fullOriginalClassName, $classPathAndFilename, $proxyClassCode);
-                        $this->storedProxyClasses[str_replace('\\', '_', $fullOriginalClassName)] = true;
-                        $compiledClasses[] = $fullOriginalClassName;
+                        $this->storedProxyClasses[$proxyClassIdentifier] = true;
+                        $compiledClasses[$fullOriginalClassName] = ['path' => $classPathAndFilename, 'proxyClassIdentifier' => $proxyClassIdentifier];
                     }
-                } elseif ($this->classesCache->has(str_replace('\\', '_', $fullOriginalClassName))) {
-                    $this->storedProxyClasses[str_replace('\\', '_', $fullOriginalClassName)] = true;
+                } elseif ($this->classesCache->has($proxyClassIdentifier)) {
+                    $this->storedProxyClasses[$proxyClassIdentifier] = true;
+                    $compiledClasses[$fullOriginalClassName] = ['path' => $classPathAndFilename, 'proxyClassIdentifier' => $proxyClassIdentifier];
                 }
             }
         }
-        $this->emitCompiledClasses($compiledClasses);
+        $this->emitAfterCompile($compiledClasses);
         return count($compiledClasses);
     }
 
     /**
-     * @param array<string> $classNames
+     * Signal emitted after the proxy classes have been compiled.
      *
-     * @Flow\Signal
+     * @param array<string, array{path: string, proxyClassIdentifier: string}> $compiledClasses The list of compiled classes with the classname as key and their original file path and cache identifier as value.
      */
-    public function emitCompiledClasses(array $classNames): void
+    public function emitAfterCompile(array $compiledClasses): void
     {
+        $this->signalSlotDispatcher->dispatch(__CLASS__, 'afterCompile', [$compiledClasses]);
     }
 
     /**
@@ -280,25 +297,73 @@ return ' . var_export($this->storedProxyClasses, true) . ';';
 
     /**
      * Render the source (string) form of a PHP Attribute.
-     * @param ReflectionAttribute $attribute
+     * @param \ReflectionAttribute $attribute
      * @return string
      */
-    public static function renderAttribute(ReflectionAttribute $attribute): string
+    public static function renderAttribute(\ReflectionAttribute $attribute): string
     {
         $attributeAsString = '\\' . $attribute->getName();
         if (count($attribute->getArguments()) > 0) {
             $argumentsAsString = [];
             foreach ($attribute->getArguments() as $argumentName => $argumentValue) {
-                $renderedArgumentValue = var_export($argumentValue, true);
-                if (is_numeric($argumentName)) {
-                    $argumentsAsString[] = $renderedArgumentValue;
+                $argumentAsString = self::renderAttributeArgument($argumentValue);
+                if (is_int($argumentName)) {
+                    $argumentsAsString[] = $argumentAsString;
                 } else {
-                    $argumentsAsString[] = "$argumentName: $renderedArgumentValue";
+                    $argumentsAsString[] = "$argumentName: $argumentAsString";
                 }
             }
             $attributeAsString .= '(' . implode(', ', $argumentsAsString) . ')';
         }
         return "#[$attributeAsString]";
+    }
+
+    private static function renderAttributeArgument(mixed $value): string
+    {
+        if (is_object($value)) {
+            $reflectionClass = new \ReflectionClass($value);
+            if ($reflectionClass->isEnum()) {
+                return '\\' . $reflectionClass->getName() . '::' . $value->name;
+            } else {
+                $fullyQualifiedName = '\\' . $reflectionClass->getName();
+                $constructor = $reflectionClass->getConstructor();
+                if (!$constructor) {
+                    return "new {$fullyQualifiedName}()";
+                }
+
+                // Try to reconstruct named arguments by matching constructor parameter names
+                // to public properties or getters ... this is obviously not perfect but probably
+                // ok in most attributes
+                $constructorParameters = [];
+                foreach ($constructor->getParameters() as $parameter) {
+                    $parameterName = $parameter->getName();
+                    $parameterValue = ObjectAccess::getProperty($value, $parameterName);
+                    if ($parameter->isDefaultValueAvailable()) {
+                        if ($parameterValue !== $parameter->getDefaultValue()) {
+                            $parameterValueAsString = self::renderAttributeArgument($parameterValue);
+                            $constructorParameters[$parameterName] = "{$parameterName}: {$parameterValueAsString}";
+                        }
+                    } else {
+                        $parameterValueAsString = self::renderAttributeArgument($parameterValue);
+                        $constructorParameters[$parameterName] = "{$parameterName}: {$parameterValueAsString}";
+                    }
+                }
+
+                return "new {$fullyQualifiedName}(" . implode(', ', $constructorParameters) . ")";
+            }
+        } elseif (is_array($value)) {
+            $argumentsAsString = [];
+            foreach ($value as $subkey => $subvalue) {
+                $argumentAsString = self::renderAttributeArgument($subvalue);
+                if (is_int($subkey)) {
+                    $argumentsAsString[] = $argumentAsString;
+                } else {
+                    $argumentsAsString[] = "'$subkey' => $argumentAsString";
+                }
+            }
+            return '[' . implode(', ', $argumentsAsString) . ']';
+        }
+        return var_export($value, true);
     }
 
     /**

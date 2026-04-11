@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace Neos\Flow\Tests\Functional\Persistence;
 
 /*
@@ -16,6 +18,7 @@ use Doctrine\ORM\Tools\SchemaTool;
 use Neos\Flow\Persistence\Doctrine\PersistenceManager;
 use Neos\Flow\Persistence\Doctrine\QueryResult;
 use Neos\Flow\Persistence\Exception;
+use Neos\Flow\Persistence\Exception\IllegalObjectTypeException;
 use Neos\Flow\Persistence\Exception\ObjectValidationFailedException;
 use Neos\Flow\Tests\FunctionalTestCase;
 use Neos\Utility\ObjectAccess;
@@ -27,7 +30,7 @@ use Neos\Utility\ObjectAccess;
 class PersistenceTest extends FunctionalTestCase
 {
     /**
-     * @var boolean
+     * @var bool
      */
     protected static $testablePersistenceEnabled = true;
 
@@ -48,13 +51,15 @@ class PersistenceTest extends FunctionalTestCase
 
     /**
      * @return void
+     * @throws \Neos\Flow\Exception
+     * @throws \Neos\Flow\Exception
      */
     protected function setUp(): void
     {
         $this->earlyEntityManager = self::$bootstrap->getObjectManager()->get(EntityManagerInterface::class);
         parent::setUp();
         if (!$this->persistenceManager instanceof PersistenceManager) {
-            $this->markTestSkipped('Doctrine persistence is not enabled');
+            static::markTestSkipped('Doctrine persistence is not enabled');
         }
         $this->testEntityRepository = new Fixtures\TestEntityRepository();
         $this->extendedTypesEntityRepository = new Fixtures\ExtendedTypesEntityRepository();
@@ -63,7 +68,7 @@ class PersistenceTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function entityManagerIsSingletonInstanceInPersistenceManager()
+    public function entityManagerIsSingletonInstanceInPersistenceManager(): void
     {
         $this->earlyEntityManager->persist(new Fixtures\TestEntity());
         self::assertTrue($this->persistenceManager->hasUnpersistedChanges());
@@ -72,7 +77,7 @@ class PersistenceTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function entitiesArePersistedAndReconstituted()
+    public function entitiesArePersistedAndReconstituted(): void
     {
         $this->removeExampleEntities();
         $this->insertExampleEntity();
@@ -84,7 +89,7 @@ class PersistenceTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function executingAQueryWillOnlyExecuteItLazily()
+    public function executingAQueryWillOnlyExecuteItLazily(): void
     {
         $this->removeExampleEntities();
         $this->insertExampleEntity();
@@ -101,7 +106,7 @@ class PersistenceTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function serializingAQueryResultWillResetCachedResult()
+    public function serializingAQueryResultWillResetCachedResult(): void
     {
         $this->removeExampleEntities();
         $this->insertExampleEntity();
@@ -115,26 +120,26 @@ class PersistenceTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function resultCanStillBeTraversedAfterSerialization()
+    public function resultCanStillBeTraversedAfterSerialization(): void
     {
         $this->removeExampleEntities();
         $this->insertExampleEntity();
 
         $allResults = $this->testEntityRepository->findAll();
-        self::assertEquals(1, count($allResults->toArray()), 'Not correct number of entities found before running test.');
+        self::assertCount(1, $allResults->toArray(), 'Not correct number of entities found before running test.');
 
         $unserializedResults = unserialize(serialize($allResults));
-        self::assertEquals(1, count($unserializedResults->toArray()));
+        self::assertCount(1, $unserializedResults->toArray());
         self::assertEquals('Flow', $unserializedResults[0]->getName());
     }
 
     /**
      * @test
      */
-    public function getFirstShouldNotHaveSideEffects()
+    public function getFirstShouldNotHaveSideEffects(): void
     {
         $this->removeExampleEntities();
-        $this->insertExampleEntity('Flow');
+        $this->insertExampleEntity();
         $this->insertExampleEntity('Neos');
 
         $allResults = $this->testEntityRepository->findAll();
@@ -147,7 +152,7 @@ class PersistenceTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function aClonedEntityWillGetANewIdentifier()
+    public function aClonedEntityWillGetANewIdentifier(): void
     {
         $testEntity = new Fixtures\TestEntity();
         $firstIdentifier = $this->persistenceManager->getIdentifierByObject($testEntity);
@@ -160,7 +165,7 @@ class PersistenceTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function persistedEntitiesLyingInArraysAreNotSerializedButReferencedByTheirIdentifierAndReloadedFromPersistenceOnWakeup()
+    public function persistedEntitiesLyingInArraysAreNotSerializedButReferencedByTheirIdentifierAndReloadedFromPersistenceOnWakeup(): void
     {
         $testEntityLyingInsideTheArray = new Fixtures\TestEntity();
         $testEntityLyingInsideTheArray->setName('Flow');
@@ -197,7 +202,7 @@ class PersistenceTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function objectsWithPersistedEntitiesCanBeSerializedMultipleTimes()
+    public function objectsWithPersistedEntitiesCanBeSerializedMultipleTimes(): void
     {
         $persistedEntity = new Fixtures\TestEntity();
         $persistedEntity->setName('Flow');
@@ -210,14 +215,14 @@ class PersistenceTest extends FunctionalTestCase
         for ($i = 0; $i < 2; $i++) {
             $serializedData = serialize($objectHoldingTheEntity);
             $unserializedObjectHoldingTheEntity = unserialize($serializedData);
-            $this->assertInstanceOf(Fixtures\TestEntity::class, $unserializedObjectHoldingTheEntity->testEntity);
+            static::assertInstanceOf(Fixtures\TestEntity::class, $unserializedObjectHoldingTheEntity->testEntity);
         }
     }
 
     /**
      * @test
      */
-    public function newEntitiesWhichAreNotAddedToARepositoryYetAreAlreadyKnownToGetObjectByIdentifier()
+    public function newEntitiesWhichAreNotAddedToARepositoryYetAreAlreadyKnownToGetObjectByIdentifier(): void
     {
         $expectedEntity = new Fixtures\TestEntity();
         $uuid = $this->persistenceManager->getIdentifierByObject($expectedEntity);
@@ -228,7 +233,7 @@ class PersistenceTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function valueObjectsWithTheSameValueAreOnlyPersistedOnce()
+    public function valueObjectsWithTheSameValueAreOnlyPersistedOnce(): void
     {
         $valueObject1 = new Fixtures\TestValueObject('sameValue');
         $valueObject2 = new Fixtures\TestValueObject('sameValue');
@@ -252,7 +257,7 @@ class PersistenceTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function alreadyPersistedValueObjectsAreCorrectlyReused()
+    public function alreadyPersistedValueObjectsAreCorrectlyReused(): void
     {
         $valueObject1 = new Fixtures\TestValueObject('sameValue');
         $testEntity1 = new Fixtures\TestEntity();
@@ -286,10 +291,10 @@ class PersistenceTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function embeddedValueObjectsAreActuallyEmbedded()
+    public function embeddedValueObjectsAreActuallyEmbedded(): void
     {
-        /* @var $entityManager EntityManagerInterface */
-        $entityManager = $this->objectManager->get(\Doctrine\ORM\EntityManagerInterface::class);
+        /* @var EntityManagerInterface $entityManager */
+        $entityManager = $this->objectManager->get(EntityManagerInterface::class);
         $schemaTool = new SchemaTool($entityManager);
         $classMetaData = $entityManager->getClassMetadata(Fixtures\TestEntity::class);
         self::assertTrue($classMetaData->hasField('embeddedValueObject.value'), 'ClassMetadata is not correctly embedded');
@@ -305,7 +310,7 @@ class PersistenceTest extends FunctionalTestCase
         $this->persistenceManager->persistAll();
         $this->persistenceManager->clearState();
 
-        /* @var $testEntity Fixtures\TestEntity */
+        /* @var Fixtures\TestEntity $testEntity */
         $testEntity = $this->testEntityRepository->findAll()->getFirst();
         self::assertEquals('someValue', $testEntity->getEmbeddedValueObject()->getValue());
     }
@@ -313,7 +318,7 @@ class PersistenceTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function validationIsDoneForNewEntities()
+    public function validationIsDoneForNewEntities(): void
     {
         $this->expectException(ObjectValidationFailedException::class);
         $this->removeExampleEntities();
@@ -325,7 +330,7 @@ class PersistenceTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function validationIsDoneForReconstitutedEntities()
+    public function validationIsDoneForReconstitutedEntities(): void
     {
         $this->expectException(ObjectValidationFailedException::class);
         $this->removeExampleEntities();
@@ -343,7 +348,7 @@ class PersistenceTest extends FunctionalTestCase
      *
      * @test
      */
-    public function validationIsDoneForReconstitutedEntitiesWhichAreLazyLoadingProxies()
+    public function validationIsDoneForReconstitutedEntitiesWhichAreLazyLoadingProxies(): void
     {
         $this->expectException(ObjectValidationFailedException::class);
         $this->removeExampleEntities();
@@ -367,7 +372,7 @@ class PersistenceTest extends FunctionalTestCase
      * @test
      * @doesNotPerformAssertions
      */
-    public function validationIsOnlyDoneForPropertiesWhichAreInTheDefaultOrPersistencePropertyGroup()
+    public function validationIsOnlyDoneForPropertiesWhichAreInTheDefaultOrPersistencePropertyGroup(): void
     {
         $this->removeExampleEntities();
         $this->insertExampleEntity();
@@ -384,7 +389,7 @@ class PersistenceTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function eventSubscribersAreProperlyExecuted()
+    public function eventSubscribersAreProperlyExecuted(): void
     {
         $this->removeExampleEntities();
         $this->insertExampleEntity();
@@ -398,7 +403,7 @@ class PersistenceTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function eventListenersAreProperlyExecuted()
+    public function eventListenersAreProperlyExecuted(): void
     {
         $this->removeExampleEntities();
         $this->insertExampleEntity();
@@ -412,7 +417,7 @@ class PersistenceTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function persistAllThrowsExceptionIfNonAllowedObjectsAreDirtyAndFlagIsSet()
+    public function persistAllThrowsExceptionIfNonAllowedObjectsAreDirtyAndFlagIsSet(): void
     {
         $this->expectException(Exception::class);
         $testEntity = new Fixtures\TestEntity();
@@ -424,7 +429,7 @@ class PersistenceTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function persistAllThrowsExceptionIfNonAllowedObjectsAreUpdatedAndFlagIsSet()
+    public function persistAllThrowsExceptionIfNonAllowedObjectsAreUpdatedAndFlagIsSet(): void
     {
         $this->expectException(Exception::class);
         $this->removeExampleEntities();
@@ -441,7 +446,7 @@ class PersistenceTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function persistAllThrowsNoExceptionIfAllowedObjectsAreDirtyAndFlagIsSet()
+    public function persistAllThrowsNoExceptionIfAllowedObjectsAreDirtyAndFlagIsSet(): void
     {
         $testEntity = new Fixtures\TestEntity();
         $testEntity->setName('Surfer girl');
@@ -455,7 +460,7 @@ class PersistenceTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function extendedTypesEntityIsIsReconstitutedWithProperties()
+    public function extendedTypesEntityIsIsReconstitutedWithProperties(): void
     {
         $extendedTypesEntity = new Fixtures\ExtendedTypesEntity();
 
@@ -480,7 +485,7 @@ class PersistenceTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function jsonArrayIsPersistedAndIsReconstituted()
+    public function jsonArrayIsPersistedAndIsReconstituted(): void
     {
         $extendedTypesEntity = new Fixtures\ExtendedTypesEntity();
         $extendedTypesEntity->setJsonArray(['foo' => 'bar']);
@@ -500,7 +505,7 @@ class PersistenceTest extends FunctionalTestCase
      * @test
      * @see http://doctrine-orm.readthedocs.org/en/latest/cookbook/working-with-datetime.html#default-timezone-gotcha
      */
-    public function dateTimeIsPersistedAndIsReconstitutedWithTimeDiffIfSystemTimeZoneDifferentToDateTimeObjectsTimeZone()
+    public function dateTimeIsPersistedAndIsReconstitutedWithTimeDiffIfSystemTimeZoneDifferentToDateTimeObjectsTimeZone(): void
     {
         // Make sure running in specific mode independent from testing env settings
         ini_set('date.timezone', 'Arctic/Longyearbyen');
@@ -527,7 +532,7 @@ class PersistenceTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function dateTimeIsPersistedAndIsReconstituted()
+    public function dateTimeIsPersistedAndIsReconstituted(): void
     {
         $dateTimeTz = new \DateTime('2008-11-16 19:03:30', new \DateTimeZone(ini_get('date.timezone')));
         $extendedTypesEntity = new Fixtures\ExtendedTypesEntity();
@@ -547,7 +552,7 @@ class PersistenceTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function immutableDateTimeIsPersistedAndIsReconstituted()
+    public function immutableDateTimeIsPersistedAndIsReconstituted(): void
     {
         $dateTimeTz = new \DateTimeImmutable('2008-11-16 19:03:30', new \DateTimeZone(ini_get('date.timezone')));
         $extendedTypesEntity = new Fixtures\ExtendedTypesEntity();
@@ -569,7 +574,7 @@ class PersistenceTest extends FunctionalTestCase
      * See #1673
      * @test
      */
-    public function dateTimeInterfaceIsPersistedAndIsReconstitutedAsDateTime()
+    public function dateTimeInterfaceIsPersistedAndIsReconstitutedAsDateTime(): void
     {
         $dateTimeTz = new \DateTimeImmutable('2008-11-16 19:03:30', new \DateTimeZone(ini_get('date.timezone')));
         $extendedTypesEntity = new Fixtures\ExtendedTypesEntity();
@@ -595,9 +600,9 @@ class PersistenceTest extends FunctionalTestCase
      * But since flow does not support multiple db endpoints this is a test just for mysql.
      * In case of mysql, Doctrine handles datetimetz fields simply the same way as datetime does (pure string with date and time but without tz)
      */
-    public function dateTimeTzIsPersistedAndIsReconstituted()
+    public function dateTimeTzIsPersistedAndIsReconstituted(): void
     {
-        $this->markTestIncomplete('We need different tests at least for two types of database. 1. mysql without timezone support. 2. a db with timezone support.');
+        static::markTestIncomplete('We need different tests at least for two types of database. 1. mysql without timezone support. 2. a db with timezone support.');
 
         // Make sure running in specific mode independent from testing env settings
         ini_set('date.timezone', 'Arctic/Longyearbyen');
@@ -624,7 +629,7 @@ class PersistenceTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function dateIsPersistedAndIsReconstituted()
+    public function dateIsPersistedAndIsReconstituted(): void
     {
         $dateTime = new \DateTime('2008-11-16 19:03:30');
         $extendedTypesEntity = new Fixtures\ExtendedTypesEntity();
@@ -642,7 +647,7 @@ class PersistenceTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function timeIsPersistedAndIsReconstituted()
+    public function timeIsPersistedAndIsReconstituted(): void
     {
         $dateTime = new \DateTime('2008-11-16 19:03:30');
         $extendedTypesEntity = new Fixtures\ExtendedTypesEntity();
@@ -660,7 +665,7 @@ class PersistenceTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function simpleArrayIsPersistedAndIsReconstituted()
+    public function simpleArrayIsPersistedAndIsReconstituted(): void
     {
         $extendedTypesEntity = new Fixtures\ExtendedTypesEntity();
         $extendedTypesEntity->setSimpleArray(['foo' => 'bar']);
@@ -679,7 +684,7 @@ class PersistenceTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function hasUnpersistedChangesReturnsTrueAfterObjectUpdate()
+    public function hasUnpersistedChangesReturnsTrueAfterObjectUpdate(): void
     {
         $this->removeExampleEntities();
         $this->insertExampleEntity();
@@ -696,8 +701,10 @@ class PersistenceTest extends FunctionalTestCase
      * Helper which inserts example data into the database.
      *
      * @param string $name
+     * @throws IllegalObjectTypeException
+     * @throws IllegalObjectTypeException
      */
-    protected function insertExampleEntity($name = 'Flow')
+    protected function insertExampleEntity($name = 'Flow'): void
     {
         $testEntity = new Fixtures\TestEntity();
         $testEntity->setName($name);
@@ -710,7 +717,7 @@ class PersistenceTest extends FunctionalTestCase
     /**
      * Remove all example entities to enforce a clean state
      */
-    protected function removeExampleEntities()
+    protected function removeExampleEntities(): void
     {
         $this->testEntityRepository->removeAll();
         $this->persistenceManager->persistAll();
@@ -720,9 +727,9 @@ class PersistenceTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function doctrineEmbeddablesAreActuallyEmbedded()
+    public function doctrineEmbeddablesAreActuallyEmbedded(): void
     {
-        /* @var $entityManager EntityManagerInterface */
+        /* @var EntityManagerInterface $entityManager */
         $entityManager = $this->objectManager->get(EntityManagerInterface::class);
         $schemaTool = new SchemaTool($entityManager);
         $metaData = $entityManager->getClassMetadata(Fixtures\TestEntity::class);
@@ -739,7 +746,7 @@ class PersistenceTest extends FunctionalTestCase
         $this->persistenceManager->persistAll();
         $this->persistenceManager->clearState();
 
-        /* @var $testEntity Fixtures\TestEntity */
+        /* @var Fixtures\TestEntity $testEntity */
         $testEntity = $this->testEntityRepository->findAll()->getFirst();
         self::assertEquals('someValue', $testEntity->getEmbedded()->getValue());
     }

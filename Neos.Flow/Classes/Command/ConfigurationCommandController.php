@@ -73,16 +73,16 @@ class ConfigurationCommandController extends CommandController
             if ($path !== '') {
                 $configuration = Arrays::getValueByPath($configuration, $path);
             }
-            $configuration = self::truncateArrayAtDepth($configuration, $depth);
             $typeAndPath = $type . ($path ? ': ' . $path : '');
             if ($configuration === null) {
                 $this->outputLine('<b>Configuration "%s" was empty!</b>', [$typeAndPath]);
-            } else {
-                $yaml = Yaml::dump($configuration, 99);
-                $this->outputLine('<b>Configuration "%s":</b>', [$typeAndPath]);
-                $this->outputLine();
-                $this->outputLine($yaml . chr(10));
+                return;
             }
+            $configuration = is_array($configuration) ? self::truncateArrayAtDepth($configuration, $depth) : $configuration;
+            $yaml = Yaml::dump($configuration, 99);
+            $this->outputLine('<b>Configuration "%s":</b>', [$typeAndPath]);
+            $this->outputLine();
+            $this->outputLine($yaml . chr(10));
         } else {
             $this->outputLine('<b>Configuration type "%s" was not found!</b>', [$type]);
             $this->outputLine('<b>Available configuration types:</b>');

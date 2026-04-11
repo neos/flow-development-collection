@@ -26,7 +26,7 @@ class PaginateController extends AbstractWidgetController
     protected $objects;
 
     /**
-     * @var array
+     * @var array<string,mixed>
      */
     protected $configuration = ['itemsPerPage' => 10, 'insertAbove' => false, 'insertBelow' => true, 'maximumNumberOfLinks' => 99];
 
@@ -56,12 +56,12 @@ class PaginateController extends AbstractWidgetController
     protected $numberOfPages = 1;
 
     /**
-     * @var float
+     * @var integer
      */
     protected $displayRangeStart;
 
     /**
-     * @var float
+     * @var integer
      */
     protected $displayRangeEnd;
 
@@ -117,22 +117,30 @@ class PaginateController extends AbstractWidgetController
             $maximumNumberOfLinks = $this->numberOfPages;
         }
         $delta = floor($maximumNumberOfLinks / 2);
-        $this->displayRangeStart = $this->currentPage - $delta;
-        $this->displayRangeEnd = $this->currentPage + $delta + ($maximumNumberOfLinks % 2 === 0 ? 1 : 0);
-        if ($this->displayRangeStart < 1) {
-            $this->displayRangeEnd -= $this->displayRangeStart - 1;
+        $displayRangeStart = $this->currentPage - $delta;
+        $displayRangeEnd = $this->currentPage + $delta + ($maximumNumberOfLinks % 2 === 0 ? 1 : 0);
+        if ($displayRangeStart < 1) {
+            $displayRangeEnd -= $displayRangeStart - 1;
         }
-        if ($this->displayRangeEnd > $this->numberOfPages) {
-            $this->displayRangeStart -= ($this->displayRangeEnd - $this->numberOfPages);
+        if ($displayRangeEnd > $this->numberOfPages) {
+            $displayRangeStart -= ($displayRangeEnd - $this->numberOfPages);
         }
-        $this->displayRangeStart = (integer)max($this->displayRangeStart, 1);
-        $this->displayRangeEnd = (integer)min($this->displayRangeEnd, $this->numberOfPages);
+        $this->displayRangeStart = (integer)max($displayRangeStart, 1);
+        $this->displayRangeEnd = (integer)min($displayRangeEnd, $this->numberOfPages);
     }
 
     /**
-     * Returns an array with the keys "pages", "current", "numberOfPages", "nextPage" & "previousPage"
-     *
-     * @return array
+     * @return array{
+     *     pages: list<array{number: int, isCurrent: bool}>,
+     *     current: int,
+     *     numberOfPages: int,
+     *     displayRangeStart: float,
+     *     displayRangeEnd: float,
+     *     hasLessPages: bool,
+     *     hasMorePages: bool,
+     *     nextPage?: int,
+     *     previousPage?: int,
+     * }
      */
     protected function buildPagination()
     {

@@ -106,7 +106,7 @@ class HtmlentitiesViewHelperTest extends ViewHelperBaseTestcase
      */
     public function renderRespectsEncodingArgument()
     {
-        $source = utf8_decode('Some special characters: &©"\'');
+        $source = mb_convert_encoding('Some special characters: &©"\'', 'ISO-8859-1', 'UTF-8');
         $expectedResult = 'Some special characters: &amp;&copy;&quot;\'';
         $this->viewHelper = $this->prepareArguments($this->viewHelper, ['value' => $source, 'keepQuotes' => false, 'encoding' => 'ISO-8859-1']);
         $actualResult = $this->viewHelper->render();

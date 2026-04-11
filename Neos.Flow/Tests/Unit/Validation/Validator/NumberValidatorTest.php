@@ -30,7 +30,7 @@ class NumberValidatorTest extends AbstractValidatorTestcase
      */
     protected $sampleLocale;
 
-    protected $numberParser;
+    protected $mockNumberParser;
 
     /**
      * @return void

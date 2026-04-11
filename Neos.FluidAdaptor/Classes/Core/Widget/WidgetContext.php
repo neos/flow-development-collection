@@ -48,7 +48,7 @@ class WidgetContext
      * controller as $this->widgetConfiguration, if being inside an AJAX
      * request
      *
-     * @var array
+     * @var array<mixed>
      */
     protected $ajaxWidgetConfiguration;
 
@@ -57,7 +57,7 @@ class WidgetContext
      * controller as $this->widgetConfiguration, if being inside a non-AJAX
      * request
      *
-     * @var array
+     * @var array<mixed>
      */
     protected $nonAjaxWidgetConfiguration;
     /**
@@ -71,7 +71,7 @@ class WidgetContext
      * The child nodes of the Widget ViewHelper.
      * Only available inside non-AJAX requests.
      *
-     * @var RootNode
+     * @var ?RootNode
      * @Flow\Transient
      */
     protected $viewHelperChildNodes;
@@ -80,7 +80,7 @@ class WidgetContext
      * The rendering context of the ViewHelperChildNodes.
      * Only available inside non-AJAX requests.
      *
-     * @var RenderingContextInterface
+     * @var ?RenderingContextInterface
      * @Flow\Transient
      */
     protected $viewHelperChildNodeRenderingContext;
@@ -120,7 +120,7 @@ class WidgetContext
     }
 
     /**
-     * @return array
+     * @return array<mixed>
      */
     public function getWidgetConfiguration()
     {
@@ -132,7 +132,7 @@ class WidgetContext
     }
 
     /**
-     * @param array $ajaxWidgetConfiguration
+     * @param array<mixed> $ajaxWidgetConfiguration
      * @return void
      */
     public function setAjaxWidgetConfiguration(array $ajaxWidgetConfiguration)
@@ -141,7 +141,7 @@ class WidgetContext
     }
 
     /**
-     * @param array $nonAjaxWidgetConfiguration
+     * @param array<mixed> $nonAjaxWidgetConfiguration
      * @return void
      */
     public function setNonAjaxWidgetConfiguration(array $nonAjaxWidgetConfiguration)
@@ -178,7 +178,7 @@ class WidgetContext
     }
 
     /**
-     * @return RootNode
+     * @return ?RootNode
      */
     public function getViewHelperChildNodes()
     {
@@ -186,7 +186,7 @@ class WidgetContext
     }
 
     /**
-     * @return RenderingContextInterface
+     * @return RenderingContextInterface|null
      */
     public function getViewHelperChildNodeRenderingContext()
     {

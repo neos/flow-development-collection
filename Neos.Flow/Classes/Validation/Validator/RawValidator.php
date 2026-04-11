@@ -17,7 +17,6 @@ use Neos\Flow\Annotations as Flow;
  * A validator which accepts any input.
  *
  * @api
- * @Flow\Scope("singleton")
  */
 class RawValidator extends AbstractValidator
 {

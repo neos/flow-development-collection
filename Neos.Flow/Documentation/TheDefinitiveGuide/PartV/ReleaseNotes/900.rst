@@ -7,7 +7,7 @@ This release of Flow comes with some great new features, bugfixes and a lot of m
 As usual, we worked hard to keep this release as backwards compatible as possible but, since it's a major release, some of the changes might require manual
 adjustments. So please make sure to carefully read the upgrade instructions below.
 
-Flow 9.0 also increases the minimal required PHP version to **7.3**.
+Flow 9.0 also increases the minimal required PHP version to **8.2**.
 ************
 New Features
 ************

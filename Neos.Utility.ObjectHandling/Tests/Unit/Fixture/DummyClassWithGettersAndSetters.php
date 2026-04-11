@@ -15,6 +15,7 @@ namespace Neos\Utility\ObjectHandling\Tests\Unit\Fixture;
  * Fixture class with getters and setters
  *
  */
+#[\AllowDynamicProperties]
 class DummyClassWithGettersAndSetters
 {
     protected $property;

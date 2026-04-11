@@ -47,6 +47,7 @@ final readonly class ValueAccessor
 
     /**
      * @internal You should use {@see ValueAccessor::forValue} instead
+     * @param array<mixed> $path
      */
     public static function forValueInPath(mixed $value, array|string $path): self
     {
@@ -97,6 +98,9 @@ final readonly class ValueAccessor
         throw $this->createTypeError("is not a class-string");
     }
 
+    /**
+     * @return array<mixed>
+     */
     public function array(): array
     {
         if (is_array($this->value)) {
@@ -161,6 +165,9 @@ final readonly class ValueAccessor
         throw $this->createTypeError("is not a class-string");
     }
 
+    /**
+     * @return array<mixed>|null
+     */
     public function arrayOrNull(): ?array
     {
         if (is_array($this->value) || is_null($this->value)) {
@@ -182,6 +189,10 @@ final readonly class ValueAccessor
         throw $this->createTypeError(sprintf('is not an instance of %s or null', $className));
     }
 
+    /**
+     * @param string $message
+     * @return \UnexpectedValueException
+     */
     private function createTypeError($message): \UnexpectedValueException
     {
         return new \UnexpectedValueException(get_debug_type($this->value) . ' ' . $message . ($this->additionalErrorMessage ? ' ' . $this->additionalErrorMessage : ''));

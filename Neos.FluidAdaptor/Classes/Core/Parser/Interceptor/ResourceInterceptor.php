@@ -97,7 +97,7 @@ class ResourceInterceptor implements InterceptorInterface
         if (strpos($node->getText(), 'Public/') === false) {
             return $node;
         }
-        $textParts = preg_split(self::PATTERN_SPLIT_AT_RESOURCE_URIS, $node->getText(), -1, PREG_SPLIT_NO_EMPTY | PREG_SPLIT_DELIM_CAPTURE);
+        $textParts = preg_split(self::PATTERN_SPLIT_AT_RESOURCE_URIS, $node->getText(), -1, PREG_SPLIT_NO_EMPTY | PREG_SPLIT_DELIM_CAPTURE) ?: [];
         $node = new RootNode();
         foreach ($textParts as $part) {
             $matches = [];
@@ -109,7 +109,7 @@ class ResourceInterceptor implements InterceptorInterface
                 if ($this->defaultPackageKey !== null) {
                     $arguments['package'] = new TextNode($this->defaultPackageKey);
                 }
-                if (isset($matches['Package']) && FlowPackageKey::isPackageKeyValid($matches['Package'])) {
+                if (FlowPackageKey::isPackageKeyValid($matches['Package'])) {
                     $arguments['package'] = new TextNode($matches['Package']);
                 }
 
@@ -127,7 +127,7 @@ class ResourceInterceptor implements InterceptorInterface
     /**
      * This interceptor wants to hook into text nodes.
      *
-     * @return array Array of INTERCEPT_* constants
+     * @return array<int,int> Array of INTERCEPT_* constants
      */
     public function getInterceptionPoints()
     {

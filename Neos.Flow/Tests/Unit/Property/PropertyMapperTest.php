@@ -32,6 +32,7 @@ require_once(__DIR__ . '/../Fixtures/ClassWithSetters.php');
 class PropertyMapperTest extends UnitTestCase
 {
     protected $mockConfiguration;
+    protected static ?\WeakMap $mockTypeConverterNames = null;
 
     /**
      * Sets up this test case
@@ -99,12 +100,17 @@ class PropertyMapperTest extends UnitTestCase
     protected function getMockTypeConverter($name = '', $canConvertFrom = true, array $properties = [], $typeOfSubObject = '')
     {
         $mockTypeConverter = $this->createMock(TypeConverterInterface::class);
-        $mockTypeConverter->_name = $name;
         $mockTypeConverter->expects(self::any())->method('canConvertFrom')->will(self::returnValue($canConvertFrom));
         $mockTypeConverter->expects(self::any())->method('convertFrom')->will(self::returnValue($name));
         $mockTypeConverter->expects(self::any())->method('getSourceChildPropertiesToBeConverted')->will(self::returnValue($properties));
 
         $mockTypeConverter->expects(self::any())->method('getTypeOfChildProperty')->will(self::returnValue($typeOfSubObject));
+
+        if (self::$mockTypeConverterNames === null) {
+            self::$mockTypeConverterNames = new \WeakMap();
+        }
+        self::$mockTypeConverterNames[$mockTypeConverter] = $name;
+
         return $mockTypeConverter;
     }
 
@@ -171,7 +177,7 @@ class PropertyMapperTest extends UnitTestCase
         $propertyMapper = $this->getAccessibleMock(PropertyMapper::class, ['dummy']);
         $propertyMapper->_set('typeConverters', $typeConverters);
         $actualTypeConverter = $propertyMapper->_call('findTypeConverter', $source, $targetType, $this->mockConfiguration);
-        self::assertSame($expectedTypeConverter, $actualTypeConverter->_name);
+        self::assertSame($expectedTypeConverter, self::$mockTypeConverterNames[$actualTypeConverter]);
     }
 
     /**
@@ -361,7 +367,7 @@ class PropertyMapperTest extends UnitTestCase
             if ($shouldFailWithException) {
                 $this->fail('Expected exception ' . $shouldFailWithException . ' which was not thrown.');
             }
-            self::assertSame($expectedTypeConverter, $actualTypeConverter->_name);
+            self::assertSame($expectedTypeConverter, self::$mockTypeConverterNames[$actualTypeConverter]);
         } catch (\Exception $e) {
             if ($shouldFailWithException === false) {
                 throw $e;

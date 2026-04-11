@@ -1,0 +1,39 @@
+`9.1.0 (2025-12-17) <https://github.com/neos/flow-development-collection/releases/tag/9.1.0>`_
+==============================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`TASK: Raise PhpStan to level 8 - Part 1 <https://github.com/neos/flow-development-collection/pull/3515>`_
+----------------------------------------------------------------------------------------------------------
+
+Raise PhpStan to level 8 for: 
+
+- ``Neos.Flow.Log``
+- ``Neos.FluidAdaptor``
+- ``Neos.Http.Factories``
+- ``Neos.Kickstarter``
+- ``Neos.Utility.Arrays``
+- ``Neos.Utility.Files``
+- ``Neos.Utility.MediaTypes``
+- ``Neos.Utility.ObjectHandling``
+- ``Neos.Utility.OpcodeCache``
+- ``Neos.Utility.Pdo``
+- ``Neos.Utility.Schema``
+- ``Neos.Utility.Unicode``
+
+**Upgrade instructions**
+
+No changes needed.
+
+**Review instructions**
+
+This the first of multiple PRs to cherry pick the changes from https://github.com/neos/flow-development-collection/pull/3474 from @nezaniel and @mhsdesign step by step and fix issues and breakiness. 
+
+This is intended to be unbreaky but be the foundation for future refactorings that can at least partly be automated once we have really solid type informations. 
+
+
+* Packages: ``Flow.Log``
+
+`Detailed log <https://github.com/neos/flow-development-collection/compare/9.0.5...9.1.0>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

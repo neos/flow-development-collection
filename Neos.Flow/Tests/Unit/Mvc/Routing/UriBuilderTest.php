@@ -61,15 +61,17 @@ class UriBuilderTest extends UnitTestCase
     protected $mockSubSubRequest;
 
     /**
+     * @var Http\BaseUriProvider|\PHPUnit\Framework\MockObject\MockObject
+     */
+    protected $mockBaseUriProvider;
+
+    /**
      * Sets up the test case
      *
      */
     protected function setUp(): void
     {
         $this->mockHttpRequest = $this->getMockBuilder(ServerRequestInterface::class)->disableOriginalConstructor()->getMock();
-
-
-
 
         $this->mockBaseUri = $this->getMockBuilder(UriInterface::class)->getMock();
         $this->mockBaseUriProvider = $this->createMock(Http\BaseUriProvider::class);

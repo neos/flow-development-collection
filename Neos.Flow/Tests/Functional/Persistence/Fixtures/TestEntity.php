@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace Neos\Flow\Tests\Functional\Persistence\Fixtures;
 
 /*
@@ -91,7 +93,7 @@ class TestEntity
     /**
      * @return string
      */
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
@@ -100,7 +102,7 @@ class TestEntity
      * @param string $name
      * @return void
      */
-    public function setName($name)
+    public function setName($name): void
     {
         $this->name = $name;
     }
@@ -108,7 +110,7 @@ class TestEntity
     /**
      * @return string
      */
-    public function getDescription()
+    public function getDescription(): string
     {
         return $this->description;
     }
@@ -116,7 +118,7 @@ class TestEntity
     /**
      * @param string $description
      */
-    public function setDescription($description)
+    public function setDescription($description): void
     {
         $this->description = $description;
     }
@@ -125,7 +127,7 @@ class TestEntity
      * @param array $arrayProperty
      * @return void
      */
-    public function setArrayProperty($arrayProperty)
+    public function setArrayProperty($arrayProperty): void
     {
         $this->arrayProperty = $arrayProperty;
     }
@@ -133,7 +135,7 @@ class TestEntity
     /**
      * @return array
      */
-    public function getArrayProperty()
+    public function getArrayProperty(): array
     {
         return $this->arrayProperty;
     }
@@ -141,7 +143,7 @@ class TestEntity
     /**
      * @return string
      */
-    public function sayHello()
+    public function sayHello(): string
     {
         return 'Hello';
     }
@@ -150,15 +152,15 @@ class TestEntity
      * @param TestEntity $relatedEntity
      * @return void
      */
-    public function setRelatedEntity(TestEntity $relatedEntity)
+    public function setRelatedEntity(TestEntity $relatedEntity): void
     {
         $this->relatedEntity = $relatedEntity;
     }
 
     /**
-     * @return TestEntity
+     * @return ?TestEntity
      */
-    public function getRelatedEntity()
+    public function getRelatedEntity(): ?TestEntity
     {
         return $this->relatedEntity;
     }
@@ -167,7 +169,7 @@ class TestEntity
      * @param Collection<ImportedSubEntity> $subEntities
      * @return void
      */
-    public function setSubEntities(Collection $subEntities)
+    public function setSubEntities(Collection $subEntities): void
     {
         $this->subEntities = $subEntities;
     }
@@ -176,15 +178,15 @@ class TestEntity
      * @param ImportedSubEntity $subEntity
      * @return void
      */
-    public function addSubEntity(ImportedSubEntity $subEntity)
+    public function addSubEntity(ImportedSubEntity $subEntity): void
     {
         $this->subEntities->add($subEntity);
     }
 
     /**
-     * @return Collection<ImportedSubEntity>
+     * @return ArrayCollection|Collection
      */
-    public function getRelatedEntities()
+    public function getRelatedEntities(): ArrayCollection|Collection
     {
         return $this->subEntities;
     }
@@ -192,7 +194,7 @@ class TestEntity
     /**
      * @return ObjectManagerInterface
      */
-    public function getObjectManager()
+    public function getObjectManager(): ObjectManagerInterface
     {
         return $this->objectManager;
     }
@@ -201,7 +203,7 @@ class TestEntity
      * @param TestValueObject $relatedValueObject
      * @return void
      */
-    public function setRelatedValueObject($relatedValueObject)
+    public function setRelatedValueObject($relatedValueObject): void
     {
         $this->relatedValueObject = $relatedValueObject;
     }
@@ -209,7 +211,7 @@ class TestEntity
     /**
      * @return TestValueObject
      */
-    public function getRelatedValueObject()
+    public function getRelatedValueObject(): TestValueObject
     {
         return $this->relatedValueObject;
     }
@@ -217,7 +219,7 @@ class TestEntity
     /**
      * @return TestEmbeddable
      */
-    public function getEmbedded()
+    public function getEmbedded(): TestEmbeddable
     {
         return $this->embedded;
     }
@@ -225,7 +227,7 @@ class TestEntity
     /**
      * @param TestEmbeddable $embedded
      */
-    public function setEmbedded($embedded)
+    public function setEmbedded($embedded): void
     {
         $this->embedded = $embedded;
     }
@@ -234,7 +236,7 @@ class TestEntity
      * @param TestEmbeddedValueObject $embeddedValueObject
      * @return void
      */
-    public function setEmbeddedValueObject($embeddedValueObject)
+    public function setEmbeddedValueObject($embeddedValueObject): void
     {
         $this->embeddedValueObject = $embeddedValueObject;
     }
@@ -242,7 +244,7 @@ class TestEntity
     /**
      * @return TestEmbeddedValueObject
      */
-    public function getEmbeddedValueObject()
+    public function getEmbeddedValueObject(): TestEmbeddedValueObject
     {
         return $this->embeddedValueObject;
     }

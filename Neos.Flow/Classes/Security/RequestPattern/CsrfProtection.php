@@ -107,7 +107,10 @@ class CsrfProtection implements RequestPatternInterface
             $this->logger->debug(sprintf('CSRF: No token required, method %s::%s() is not restricted by a policy.', $controllerClassName, $actionMethodName));
             return false;
         }
-        if ($this->reflectionService->isMethodTaggedWith($controllerClassName, $actionMethodName, 'skipcsrfprotection')) {
+        if (
+            $this->reflectionService->isMethodTaggedWith($controllerClassName, $actionMethodName, 'skipcsrfprotection') ||
+            $this->reflectionService->isMethodAnnotatedWith($controllerClassName, $actionMethodName, Flow\SkipCsrfProtection::class)
+        ) {
             $this->logger->debug(sprintf('CSRF: No token required, method %s::%s() is tagged with a "skipcsrfprotection" annotation', $controllerClassName, $actionMethodName));
             return false;
         }

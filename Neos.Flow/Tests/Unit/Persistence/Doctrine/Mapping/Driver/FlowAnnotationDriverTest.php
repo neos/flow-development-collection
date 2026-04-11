@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace Neos\Flow\Tests\Unit\Persistence\Doctrine\Mapping\Driver;
 
 /*
@@ -14,6 +16,10 @@ namespace Neos\Flow\Tests\Unit\Persistence\Doctrine\Mapping\Driver;
 use Neos\Flow\Persistence\Doctrine\Mapping\Driver\FlowAnnotationDriver;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Flow\Security;
+use PHPUnit\Framework\MockObject\MockObject;
+use Doctrine\ORM\EntityManager;
+use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\Platforms\AbstractPlatform;
 
 /**
  * Testcase for the Flow annotation driver
@@ -25,10 +31,9 @@ class FlowAnnotationDriverTest extends UnitTestCase
      *
      * @return array
      */
-    public function classNameToTableNameMappings()
+    public function classNameToTableNameMappings(): array
     {
         return [
-            [\Neos\Party\Domain\Model\Person::class, 'neos_party_domain_model_person'],
             ['SomePackage\Domain\Model\Blob', 'somepackage_domain_model_blob'],
             [Security\Policy\Role::class, 'neos_flow_security_policy_role'],
             [Security\Account::class, 'neos_flow_security_account'],
@@ -40,10 +45,11 @@ class FlowAnnotationDriverTest extends UnitTestCase
      * @test
      * @dataProvider classNameToTableNameMappings
      */
-    public function testInferTableNameFromClassName($className, $tableName)
+    public function testInferTableNameFromClassName($className, $tableName): void
     {
+        /** @var FlowAnnotationDriver|MockObject $driver */
         $driver = $this->getAccessibleMock(FlowAnnotationDriver::class, ['getMaxIdentifierLength']);
-        $driver->expects(self::any())->method('getMaxIdentifierLength')->will(self::returnValue(64));
+        $driver->expects(self::any())->method('getMaxIdentifierLength')->willReturn(64);
         self::assertEquals($tableName, $driver->inferTableNameFromClassName($className));
     }
 
@@ -52,10 +58,9 @@ class FlowAnnotationDriverTest extends UnitTestCase
      *
      * @return array
      */
-    public function classAndPropertyNameToJoinTableNameMappings()
+    public function classAndPropertyNameToJoinTableNameMappings(): array
     {
         return [
-            [64, \Neos\Party\Domain\Model\Person::class, 'propertyName', 'neos_party_domain_model_person_propertyname_join'],
             [64, 'SomePackage\Domain\Model\Blob', 'propertyName', 'somepackage_domain_model_blob_propertyname_join'],
             [64, Security\Policy\Role::class, 'propertyName', 'neos_flow_security_policy_role_propertyname_join'],
             [64, Security\Account::class, 'propertyName', 'neos_flow_security_account_propertyname_join'],
@@ -69,11 +74,12 @@ class FlowAnnotationDriverTest extends UnitTestCase
      * @test
      * @dataProvider classAndPropertyNameToJoinTableNameMappings
      */
-    public function testInferJoinTableNameFromClassAndPropertyName($maxIdentifierLength, $className, $propertyName, $expectedTableName)
+    public function testInferJoinTableNameFromClassAndPropertyName($maxIdentifierLength, $className, $propertyName, $expectedTableName): void
     {
         $driver = $this->getAccessibleMock(FlowAnnotationDriver::class, ['getMaxIdentifierLength']);
-        $driver->expects(self::any())->method('getMaxIdentifierLength')->will(self::returnValue($maxIdentifierLength));
+        $driver->method('getMaxIdentifierLength')->willReturn($maxIdentifierLength);
 
+        /** @noinspection PhpUndefinedMethodInspection */
         $actualTableName = $driver->_call('inferJoinTableNameFromClassAndPropertyName', $className, $propertyName);
         self::assertEquals($expectedTableName, $actualTableName);
         self::assertTrue(strlen($actualTableName) <= $maxIdentifierLength);
@@ -82,17 +88,19 @@ class FlowAnnotationDriverTest extends UnitTestCase
     /**
      * @test
      */
-    public function getMaxIdentifierLengthAsksDoctrineForValue()
+    public function getMaxIdentifierLengthAsksDoctrineForValue(): void
     {
-        $mockDatabasePlatform = $this->getMockForAbstractClass('Doctrine\DBAL\Platforms\AbstractPlatform', [], '', true, true, true, ['getMaxIdentifierLength']);
-        $mockDatabasePlatform->expects(self::atLeastOnce())->method('getMaxIdentifierLength')->will(self::returnValue(2048));
-        $mockConnection = $this->getMockBuilder('Doctrine\DBAL\Connection')->disableOriginalConstructor()->getMock();
-        $mockConnection->expects(self::atLeastOnce())->method('getDatabasePlatform')->will(self::returnValue($mockDatabasePlatform));
-        $mockEntityManager = $this->getMockBuilder('Doctrine\ORM\EntityManager')->disableOriginalConstructor()->getMock();
-        $mockEntityManager->expects(self::atLeastOnce())->method('getConnection')->will(self::returnValue($mockConnection));
+        $mockDatabasePlatform = $this->getMockForAbstractClass(AbstractPlatform::class, [], '', true, true, true, ['getMaxIdentifierLength']);
+        $mockDatabasePlatform->expects(self::atLeastOnce())->method('getMaxIdentifierLength')->willReturn(2048);
+        $mockConnection = $this->getMockBuilder(Connection::class)->disableOriginalConstructor()->getMock();
+        $mockConnection->expects(self::atLeastOnce())->method('getDatabasePlatform')->willReturn($mockDatabasePlatform);
+        $mockEntityManager = $this->getMockBuilder(EntityManager::class)->disableOriginalConstructor()->getMock();
+        $mockEntityManager->expects(self::atLeastOnce())->method('getConnection')->willReturn($mockConnection);
 
         $driver = $this->getAccessibleMock(FlowAnnotationDriver::class, ['dummy']);
+        /** @noinspection PhpUndefinedMethodInspection */
         $driver->_set('entityManager', $mockEntityManager);
+        /** @noinspection PhpUndefinedMethodInspection */
         self::assertEquals(2048, $driver->_call('getMaxIdentifierLength'));
     }
 }

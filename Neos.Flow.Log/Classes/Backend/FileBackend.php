@@ -27,7 +27,7 @@ class FileBackend extends AbstractBackend
 {
     /**
      * An array of severity labels, indexed by their integer constant
-     * @var array
+     * @var array<int,string>
      */
     protected $severityLabels;
 
@@ -191,10 +191,14 @@ class FileBackend extends AbstractBackend
      */
     protected function rotateLogFile(): void
     {
-        if (file_exists($this->logFileUrl . '.lock')) {
+        $lockResource = fopen($this->logFileUrl . '.lock', 'w+');
+        if ($lockResource === false) {
+            throw new \RuntimeException(sprintf('Fatal: cannot open/create file "%s".', $this->logFileUrl . '.lock'), 1765550110);
+        }
+
+        $exclusiveNonBlockingLockResult = flock($lockResource, LOCK_EX | LOCK_NB);
+        if ($exclusiveNonBlockingLockResult === false) {
             return;
-        } else {
-            touch($this->logFileUrl . '.lock');
         }
 
         if ($this->logFilesToKeep === 0) {

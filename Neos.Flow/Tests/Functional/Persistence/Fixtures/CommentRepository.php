@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace Neos\Flow\Tests\Functional\Persistence\Fixtures;
 
 /*
@@ -23,5 +25,5 @@ class CommentRepository extends Repository
     /**
      * @var string
      */
-    const ENTITY_CLASSNAME = Comment::class;
+    public const ENTITY_CLASSNAME = Comment::class;
 }

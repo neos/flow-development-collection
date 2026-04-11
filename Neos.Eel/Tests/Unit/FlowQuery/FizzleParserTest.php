@@ -90,6 +90,7 @@ class FizzleParserTest extends \Neos\Flow\Tests\UnitTestCase
         $parser->assertMatches('Filter', '/sites/foo');
         $parser->assertMatches('Filter', 'foo/bar');
         $parser->assertMatches('Filter', 'foo/node_1234-5678');
+        $parser->assertMatches('Filter', 'foo/1234-node-5678');
         $parser->assertMatches('Filter', '/');
         $parser->assertDoesntMatch('Filter', 'foo/');
         $parser->assertDoesntMatch('Filter', '/foo/');

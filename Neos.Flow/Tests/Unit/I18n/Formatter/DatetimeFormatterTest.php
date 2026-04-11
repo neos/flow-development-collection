@@ -89,6 +89,7 @@ class DatetimeFormatterTest extends UnitTestCase
             [['QQ', 'yy', 'LLLL', 'D', 'F', 'EEEE'], '0210January1612Thursday'],
             [['QQQ', 'MMMMM', 'EEEEE', 'w', 'k'], 'Q26T2318'],
             [['GGGGG', 'K', 'S', 'W', 'qqqq', 'GGGG', 'V'], 'A6032nd quarterAnno Domini'],
+            [['QQ', 'yy', 'LLLL', 'D', 'F', 'ccc'], '0210January1612Thu'],
         ];
     }
 

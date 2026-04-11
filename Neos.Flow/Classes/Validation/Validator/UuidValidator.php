@@ -17,7 +17,6 @@ use Neos\Flow\Annotations as Flow;
  * Validator for Universally Unique Identifiers.
  *
  * @api
- * @Flow\Scope("singleton")
  */
 class UuidValidator extends AbstractValidator
 {

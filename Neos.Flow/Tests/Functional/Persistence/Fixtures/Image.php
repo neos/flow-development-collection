@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace Neos\Flow\Tests\Functional\Persistence\Fixtures;
 
 /*
@@ -36,7 +38,7 @@ class Image
     /**
      * @return string
      */
-    public function getData()
+    public function getData(): string
     {
         return $this->data;
     }
@@ -45,7 +47,7 @@ class Image
      * @param string $data
      * @return void
      */
-    public function setData($data)
+    public function setData($data): void
     {
         $this->data = $data;
     }
@@ -53,20 +55,20 @@ class Image
     /**
      * @return CleanupObject
      */
-    public function getRelatedObject()
+    public function getRelatedObject(): CleanupObject
     {
         return $this->relatedObject;
     }
 
     /**
-     * @param CleanupObject $relatedObject
+     * @param CleanupObject|null $relatedObject
      */
-    public function setRelatedObject(?CleanupObject $relatedObject = null)
+    public function setRelatedObject(?CleanupObject $relatedObject = null): void
     {
         $this->relatedObject = $relatedObject;
     }
 
-    public function shutdownObject()
+    public function shutdownObject(): void
     {
         if ($this->relatedObject instanceof CleanupObject) {
             $this->relatedObject->toggleState();

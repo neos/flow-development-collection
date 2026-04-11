@@ -19,7 +19,9 @@ class Version20141113173712 extends AbstractMigration
         $this->abortIf(!($this->connection->getDatabasePlatform() instanceof MySQLPlatform));
 
         // skip execution of corresponding sql queries if migration has been applied already (see https://review.typo3.org/36299)
-        $this->skipIf(array_key_exists('roleidentifiers', $this->sm->listTableColumns('typo3_flow_security_account')), 'Migration not needed, already applied earlier.');
+        if(array_key_exists('roleidentifiers', $this->sm->listTableColumns('typo3_flow_security_account'))) {
+            return;
+        }
 
         $this->addSql("ALTER TABLE typo3_flow_security_account ADD roleidentifiers LONGTEXT DEFAULT NULL COMMENT '(DC2Type:simple_array)'");
         $this->addSql("ALTER TABLE typo3_flow_security_account_roles_join DROP FOREIGN KEY FK_ADF11BBC23A1047C");

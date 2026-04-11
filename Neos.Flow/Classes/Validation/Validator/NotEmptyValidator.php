@@ -17,7 +17,6 @@ use Neos\Flow\Annotations as Flow;
  * Validator for not empty values.
  *
  * @api
- * @Flow\Scope("singleton")
  */
 class NotEmptyValidator extends AbstractValidator
 {

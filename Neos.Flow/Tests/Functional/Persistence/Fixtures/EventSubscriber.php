@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace Neos\Flow\Tests\Functional\Persistence\Fixtures;
 
 /*
@@ -11,6 +13,9 @@ namespace Neos\Flow\Tests\Functional\Persistence\Fixtures;
  * source code.
  */
 
+use Doctrine\ORM\Event\OnFlushEventArgs;
+use Doctrine\ORM\Event\PostFlushEventArgs;
+use Doctrine\ORM\Event\PreFlushEventArgs;
 use Neos\Flow\Annotations as Flow;
 use Doctrine\ORM\Events;
 
@@ -32,22 +37,22 @@ class EventSubscriber implements \Doctrine\Common\EventSubscriber
      *
      * @return array
      */
-    public function getSubscribedEvents()
+    public function getSubscribedEvents(): array
     {
         return [Events::preFlush, Events::onFlush, Events::postFlush];
     }
 
-    public function preFlush(\Doctrine\ORM\Event\PreFlushEventArgs $args)
+    public function preFlush(PreFlushEventArgs $args): void
     {
         $this->preFlushCalled = true;
     }
 
-    public function onFlush(\Doctrine\ORM\Event\OnFlushEventArgs $args)
+    public function onFlush(OnFlushEventArgs $args): void
     {
         $this->onFlushCalled = true;
     }
 
-    public function postFlush(\Doctrine\ORM\Event\PostFlushEventArgs $args)
+    public function postFlush(PostFlushEventArgs $args): void
     {
         $this->postFlushCalled = true;
     }
