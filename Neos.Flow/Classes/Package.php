@@ -163,5 +163,25 @@ class Package extends BasePackage
             $annotationsCacheFlusher = $bootstrap->getObjectManager()->get(AnnotationsCacheFlusher::class);
             $annotationsCacheFlusher->flushConfigurationCachesByCompiledClass(array_keys($compiledClasses));
         });
+
+        // Restore the xdebug path mapping file from persisted data when the
+        // proxy cache is warm (no afterCompile signal) but the map directory
+        // was wiped (e.g. docker container restart, manual cleanup).
+        $dispatcher->connect(Core\Booting\Sequence::class, 'afterInvokeStep', function (Step $step) use ($bootstrap) {
+            if ($step->getIdentifier() !== 'neos.flow:objectmanagement:runtime') {
+                return;
+            }
+            $objectManager = $bootstrap->getObjectManager();
+            $builder = $objectManager->get(XdebugPathMappingBuilder::class);
+            // XdebugPathMappingBuilder sits in the Neos\Flow\ObjectManagement
+            // namespace, which Compiler::$excludedSubPackages excludes from
+            // proxy generation. Runtime ObjectManager::get() returns a bare
+            // instance without DI, so setters must be invoked manually here.
+            $configurationManager = $objectManager->get(Configuration\ConfigurationManager::class);
+            $builder->injectBootstrap($bootstrap);
+            $builder->injectCacheManager($objectManager->get(Cache\CacheManager::class));
+            $builder->injectSettings($configurationManager->getConfiguration(Configuration\ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'Neos.Flow'));
+            $builder->buildFromPersistedDataIfMapMissing();
+        });
     }
 }

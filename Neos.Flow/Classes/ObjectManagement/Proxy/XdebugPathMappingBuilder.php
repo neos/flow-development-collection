@@ -15,6 +15,7 @@ namespace Neos\Flow\ObjectManagement\Proxy;
 use Neos\Cache\Backend\SimpleFileBackend;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Cache\CacheManager;
+use Neos\Flow\Core\Bootstrap;
 use Neos\Utility\Files;
 
 /**
@@ -22,11 +23,19 @@ use Neos\Utility\Files;
  */
 class XdebugPathMappingBuilder
 {
+    private const PERSISTED_DATA_FILENAME = '.xdebug-pathmap-data.serialized';
+
     /**
      * @Flow\Inject
      * @var CacheManager
      */
     protected $cacheManager;
+
+    /**
+     * @Flow\Inject
+     * @var Bootstrap
+     */
+    protected $bootstrap;
 
     /**
      * @var array
@@ -47,6 +56,11 @@ class XdebugPathMappingBuilder
         $this->cacheManager = $cacheManager;
     }
 
+    public function injectBootstrap(Bootstrap $bootstrap): void
+    {
+        $this->bootstrap = $bootstrap;
+    }
+
     /**
      * @param array<string, array{path: string, proxyClassIdentifier: string}> $compiledClasses
      * @return void
@@ -61,12 +75,61 @@ class XdebugPathMappingBuilder
             return;
         }
 
-        $cacheBackend = $this->cacheManager->getCache('Flow_Object_Classes')->getBackend();
-        if (!$cacheBackend instanceof SimpleFileBackend) {
+        $cacheDirectory = $this->getProxyCacheDirectory();
+        if ($cacheDirectory === null) {
             return;
         }
-        $cacheDirectory = $cacheBackend->getCacheDirectory();
 
+        // Persist the input data next to the proxy class cache. The proxy cache
+        // directory is typically mounted/persisted on the host, whereas the map
+        // output directory may live only in the container layer. Persisting here
+        // lets us re-emit the map after a restart without re-compiling.
+        file_put_contents(
+            Files::concatenatePaths([$cacheDirectory, self::PERSISTED_DATA_FILENAME]),
+            serialize($compiledClasses)
+        );
+
+        $this->writeMapFile($cacheDirectory, $compiledClasses);
+    }
+
+    /**
+     * Re-writes the path mapping file from previously persisted data when the
+     * map file is missing. Intended to recover from situations where the proxy
+     * cache is still warm (so no compile signal fires) but the `.xdebug/` map
+     * directory was wiped (e.g. docker container restart, manual cleanup).
+     */
+    public function buildFromPersistedDataIfMapMissing(): void
+    {
+        if (!$this->isXdebugPathMappingEnabled()) {
+            return;
+        }
+        $mapFilePath = $this->getMapFilePath();
+        if ($mapFilePath === null || file_exists($mapFilePath)) {
+            return;
+        }
+
+        $cacheDirectory = $this->getProxyCacheDirectory();
+        if ($cacheDirectory === null) {
+            return;
+        }
+
+        $persistedDataPath = Files::concatenatePaths([$cacheDirectory, self::PERSISTED_DATA_FILENAME]);
+        if (!file_exists($persistedDataPath)) {
+            return;
+        }
+
+        $compiledClasses = unserialize((string)file_get_contents($persistedDataPath), ['allowed_classes' => false]);
+        if (!is_array($compiledClasses) || $compiledClasses === []) {
+            return;
+        }
+        $this->writeMapFile($cacheDirectory, $compiledClasses);
+    }
+
+    /**
+     * @param array<string, array{path: string, proxyClassIdentifier: string}> $compiledClasses
+     */
+    private function writeMapFile(string $cacheDirectory, array $compiledClasses): void
+    {
         $mappingFileLines = [
             '# Created by Flow Framework during compile time proxy generation.',
             '#',
@@ -88,11 +151,30 @@ class XdebugPathMappingBuilder
         // Add an empty line to the end of the file
         $mappingFileLines[] = '';
 
+        $mapFilePath = $this->getMapFilePath();
+        if ($mapFilePath === null) {
+            return;
+        }
         Files::createDirectoryRecursively($this->getXdebugMappingFilePath());
-        file_put_contents(
-            Files::concatenatePaths([$this->getXdebugMappingFilePath(), 'flow.map']),
-            implode("\n", $mappingFileLines)
-        );
+        file_put_contents($mapFilePath, implode("\n", $mappingFileLines));
+    }
+
+    private function getProxyCacheDirectory(): ?string
+    {
+        $cacheBackend = $this->cacheManager->getCache('Flow_Object_Classes')->getBackend();
+        if (!$cacheBackend instanceof SimpleFileBackend) {
+            return null;
+        }
+        return $cacheBackend->getCacheDirectory();
+    }
+
+    private function getMapFilePath(): ?string
+    {
+        if ($this->bootstrap === null) {
+            return null;
+        }
+        $contextIdentifier = str_replace(['/', '\\'], '_', (string)$this->bootstrap->getContext());
+        return Files::concatenatePaths([$this->getXdebugMappingFilePath(), 'flow-' . $contextIdentifier . '.map']);
     }
 
     private function isXdebugPathMappingEnabled(): bool
