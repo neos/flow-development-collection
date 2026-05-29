@@ -296,20 +296,17 @@ class ValidatorResolver
             }
             $conjunctionValidator->addValidator($objectValidator);
             foreach ($this->reflectionService->getClassPropertyNames($targetClassName) as $classPropertyName) {
+                if ($this->reflectionService->isPropertyAnnotatedWith($targetClassName, $classPropertyName, Flow\IgnoreValidation::class)) {
+                    continue;
+                }
+
                 $classPropertyTagsValues = $this->reflectionService->getPropertyTagsValues($targetClassName, $classPropertyName);
                 if (!isset($classPropertyTagsValues['var'])) {
-                    try {
-                        $propertyReflection = new PropertyReflection($targetClassName, $classPropertyName);
-                    } catch (\ReflectionException $e) {
-                        throw new \RuntimeException(sprintf('Failed reflecting property %s from class %s while building base a validator conjunction: %s', $classPropertyName, $targetClassName, $e->getMessage()), 1651570561);
-                    }
-
-                    if (!$propertyReflection->hasType()) {
+                    $type = $this->reflectionService->getPropertyType($targetClassName, $classPropertyName);
+                    if ($type === null) {
                         throw new \InvalidArgumentException(sprintf('Failed building base validator conjunction for property %s in class %s because there is no @var annotation and no type declaration.', $classPropertyName, $targetClassName), 1363778104);
                     }
-                    /** @var \ReflectionNamedType $type */
-                    $type = $propertyReflection->getType();
-                    $classPropertyTagsValues['var'][] = $type->getName();
+                    $classPropertyTagsValues['var'][] = $this->reflectionService->getPropertyType($targetClassName, $classPropertyName);
                 }
                 try {
                     $parsedType = TypeHandling::parseType(trim(implode('', $classPropertyTagsValues['var']), ' \\'));
@@ -317,9 +314,6 @@ class ValidatorResolver
                     throw new \InvalidArgumentException(sprintf(' @var annotation of ' . $exception->getMessage(), 'class "' . $targetClassName . '", property "' . $classPropertyName . '"'), 1315564744, $exception);
                 }
 
-                if ($this->reflectionService->isPropertyAnnotatedWith($targetClassName, $classPropertyName, Flow\IgnoreValidation::class)) {
-                    continue;
-                }
                 if ($classSchema !== null
                     && $classSchema->hasProperty($classPropertyName)
                     && $classSchema->isPropertyTransient($classPropertyName)

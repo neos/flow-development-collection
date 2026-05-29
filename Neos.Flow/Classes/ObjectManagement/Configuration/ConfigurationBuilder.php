@@ -339,26 +339,50 @@ class ConfigurationBuilder
     protected function parsePropertyOfTypeObject($propertyName, $objectNameOrConfiguration, Configuration $parentObjectConfiguration)
     {
         if (is_array($objectNameOrConfiguration)) {
-            if (isset($objectNameOrConfiguration['name'])) {
-                $objectName = $objectNameOrConfiguration['name'];
-                unset($objectNameOrConfiguration['name']);
-            } else {
-                if (isset($objectNameOrConfiguration['factoryObjectName']) || isset($objectNameOrConfiguration['factoryMethodName'])) {
-                    $objectName = null;
-                } else {
-                    $annotations = $this->reflectionService->getPropertyTagValues($parentObjectConfiguration->getClassName(), $propertyName, 'var');
-                    if (count($annotations) !== 1) {
-                        throw new InvalidObjectConfigurationException(sprintf('Object %s (%s), for property "%s", contains neither object name, nor factory object name, and nor is the property properly @var - annotated.', $parentObjectConfiguration->getClassName(), $parentObjectConfiguration->getConfigurationSourceHint(), $propertyName), 1297097815);
-                    }
-                    $objectName = $annotations[0];
-                }
-            }
+            $objectName = $this->determineObjectNameOfProperty($objectNameOrConfiguration, $parentObjectConfiguration->getClassName(), $propertyName, $parentObjectConfiguration->getConfigurationSourceHint());
+            unset($objectNameOrConfiguration['name']);
             $objectConfiguration = $this->parseConfigurationArray($objectName, $objectNameOrConfiguration, $parentObjectConfiguration->getConfigurationSourceHint() . ', property "' . $propertyName . '"');
             $property = new ConfigurationProperty($propertyName, $objectConfiguration, ConfigurationProperty::PROPERTY_TYPES_OBJECT);
         } else {
             $property = new ConfigurationProperty($propertyName, $objectNameOrConfiguration, ConfigurationProperty::PROPERTY_TYPES_OBJECT);
         }
         return $property;
+    }
+
+    /**
+     * @param $objectNameOrConfiguration
+     * @param $parentClassName
+     * @param $propertyName
+     * @param string $configurationSourceHint
+     * @return string
+     * @throws InvalidObjectConfigurationException
+     * @throws \Neos\Flow\Reflection\Exception\ClassLoadingForReflectionFailedException
+     * @throws \Neos\Flow\Reflection\Exception\InvalidClassException
+     * @throws \ReflectionException
+     */
+    protected function determineObjectNameOfProperty($objectNameOrConfiguration, $parentClassName, $propertyName, string $configurationSourceHint): string
+    {
+        if (isset($objectNameOrConfiguration['name'])) {
+            return $objectNameOrConfiguration['name'];
+        }
+
+        if (isset($objectNameOrConfiguration['factoryObjectName']) || isset($objectNameOrConfiguration['factoryMethodName'])) {
+            return '';
+        }
+
+        $varTags = $this->reflectionService->getPropertyTagValues($parentClassName, $propertyName, 'var');
+        if (count($varTags) > 1) {
+            throw new InvalidObjectConfigurationException(sprintf('Object %s (%s), for property "%s", contains neither object name, nor factory object name, and nor is the property properly @var - annotated.', $parentClassName, $configurationSourceHint, $propertyName), 1297097815);
+        }
+        if (count($varTags) === 1) {
+            return $varTags[0];
+        }
+        $typeHint = $this->reflectionService->getPropertyType($parentClassName, $propertyName);
+        if ($typeHint === null) {
+            throw new InvalidObjectConfigurationException(sprintf('Object %s (%s), for property "%s", contains neither object name, nor factory object name, and neither is the property properly type hinted or @var - tagged.', $parentClassName, $configurationSourceHint, $propertyName), 1779793488);
+        }
+
+        return $typeHint;
     }
 
     /**
@@ -590,6 +614,7 @@ class ConfigurationBuilder
                             $enableLazyInjection = false; # See:  https://github.com/neos/flow-development-collection/issues/2114
                         }
                     }
+                    // This is already a fallback, getPropertyType is used first.
                     if ($objectName === null) {
                         $objectName = trim(implode('', $this->reflectionService->getPropertyTagValues($className, $propertyName, 'var')), ' \\');
                     }

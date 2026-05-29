@@ -398,6 +398,10 @@ class ProxyClassBuilder
             $propertyName = $propertyIntroduction->getPropertyName();
             $declaringAspectClassName = $propertyIntroduction->getDeclaringAspectClassName();
             $possiblePropertyTypes = $this->reflectionService->getPropertyTagValues($declaringAspectClassName, $propertyName, 'var');
+            if (count($possiblePropertyTypes) === 0) {
+                $typeHint = $this->reflectionService->getPropertyType($declaringAspectClassName, $propertyName);
+                $possiblePropertyTypes = $typeHint !== null ? [$typeHint] : [];
+            }
             if (count($possiblePropertyTypes) > 0 && !$this->reflectionService->isPropertyAnnotatedWith($declaringAspectClassName, $propertyName, Flow\Transient::class)) {
                 $classSchema = $this->reflectionService->getClassSchema($targetClassName);
                 $classSchema?->addProperty($propertyName, $possiblePropertyTypes[0]);
