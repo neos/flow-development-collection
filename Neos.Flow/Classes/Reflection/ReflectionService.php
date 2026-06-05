@@ -1320,11 +1320,9 @@ class ReflectionService
             $this->classesByMethodAnnotations[$annotationClassName][$className][$methodName] = $methodName;
         }
 
-        $returnType = $method->getDeclaredReturnType();
-        $applyLeadingSlashIfNeeded = static function (string $type): string {
-            if (!in_array($type, ['self', 'parent', 'static', 'null', 'callable', 'void', 'never', 'iterable', 'object', 'resource', 'mixed'])
-                && !TypeHandling::isSimpleType($type)
-            ) {
+        $returnType= $method->getDeclaredReturnType();
+        $applyLeadingSlashIfNeeded = function (string $type): string {
+            if ($type[0] !== '\\' && TypeHandling::isUserDefinedType($type)) {
                 return '\\' . $type;
             }
             return $type;
@@ -1415,8 +1413,8 @@ class ReflectionService
             return 'array<' . $this->expandType($class, $elementType) . '>' . ($isNullable ? '|null' : '');
         }
 
-        // skip simple types and types with fully qualified namespaces
-        if ($type === 'mixed' || $type[0] === '\\' || TypeHandling::isSimpleType($type)) {
+        // skip non user-defined types and types with fully qualified namespaces
+        if ($typeWithoutNull[0] === '\\' || !TypeHandling::isUserDefinedType($typeWithoutNull)) {
             return TypeHandling::normalizeType($typeWithoutNull) . ($isNullable ? '|null' : '');
         }
 
@@ -1777,7 +1775,7 @@ class ReflectionService
         }
 
         $parameterType = $this->renderParameterType($parameter->getType());
-        if ($parameterType !== null && !TypeHandling::isSimpleType($parameterType)) {
+        if ($parameterType !== null && TypeHandling::isUserDefinedType($parameterType)) {
             // We use parameter type here to make class_alias usage work and return the hinted class name instead of the alias
             $parameterInformation[self::DATA_PARAMETER_CLASS] = $parameterType;
         } elseif ($parameterType === 'array') {
