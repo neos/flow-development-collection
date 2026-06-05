@@ -1320,9 +1320,9 @@ class ReflectionService
             $this->classesByMethodAnnotations[$annotationClassName][$className][$methodName] = $methodName;
         }
 
-        $returnType= $method->getDeclaredReturnType();
+        $returnType = $method->getDeclaredReturnType();
         $applyLeadingSlashIfNeeded = function (string $type): string {
-            if ($type[0] !== '\\' && TypeHandling::isUserDefinedType($type)) {
+            if (str_starts_with($type, '\\') && TypeHandling::isUserDefinedType($type)) {
                 return '\\' . $type;
             }
             return $type;
