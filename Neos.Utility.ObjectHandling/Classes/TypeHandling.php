@@ -28,7 +28,7 @@ abstract class TypeHandling
     /**
      * A type pattern to detect literal types.
      */
-    const LITERAL_TYPE_PATTERN = '/^(?:integer|int|float|double|boolean|bool|string)$/';
+    const LITERAL_TYPE_PATTERN = '/^(?:integer|int|float|double|boolean|bool|string|true|false|null)$/';
 
     /**
      * A type pattern to detect scalar types.

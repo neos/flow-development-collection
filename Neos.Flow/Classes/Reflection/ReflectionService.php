@@ -1322,7 +1322,7 @@ class ReflectionService
 
         $returnType = $method->getDeclaredReturnType();
         $applyLeadingSlashIfNeeded = function (string $type): string {
-            if (str_starts_with($type, '\\') && TypeHandling::isUserDefinedType($type)) {
+            if (!str_starts_with($type, '\\') && TypeHandling::isUserDefinedType($type)) {
                 return '\\' . $type;
             }
             return $type;
