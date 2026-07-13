@@ -93,11 +93,13 @@ class RequestBuilder
             }
         }
         $firstArgument = count($rawCommandLineArguments) ? trim(array_shift($rawCommandLineArguments)) : null;
-        if (
-            $firstArgument === null
-            || $firstArgument === '--help'
-        ) {
+        if ($firstArgument === null) {
             $request->setControllerCommandName('helpStub');
+
+            return $request;
+        }
+        if ($firstArgument === '--help') {
+            $request->setControllerCommandName('help');
 
             return $request;
         }

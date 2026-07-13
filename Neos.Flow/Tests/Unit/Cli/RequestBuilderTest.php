@@ -101,6 +101,17 @@ class RequestBuilderTest extends UnitTestCase
     }
 
     /**
+     * @test
+     */
+    public function helpOptionDisplaysCommandOverview()
+    {
+        $request = $this->requestBuilder->build('--help');
+
+        self::assertSame(HelpCommandController::class, $request->getControllerObjectName());
+        self::assertSame('help', $request->getControllerCommandName());
+    }
+
+    /**
      * Checks if a CLI request specifying some "console style" (--my-argument=value) arguments results in the expected request object
      *
      * @test
