@@ -28,7 +28,22 @@ abstract class TypeHandling
     /**
      * A type pattern to detect literal types.
      */
-    const LITERAL_TYPE_PATTERN = '/^(?:integer|int|float|double|boolean|bool|string)$/';
+    const LITERAL_TYPE_PATTERN = '/^(?:integer|int|float|double|boolean|bool|string|true|false|null)$/';
+
+    /**
+     * A type pattern to detect scalar types.
+     */
+    const SCALAR_TYPE_PATTERN = '/^(?:int|float|bool|string)$/';
+
+    /**
+     * @var array<string>
+     */
+    protected static $builtInTypes = ['null', 'array', 'object', 'resource', 'never', 'void', 'self', 'parent', 'static'];
+
+    /**
+     * @var array<string>
+     */
+    protected static $builtInTypeAliases = ['mixed', 'iterable'];
 
     /**
      * @var array<int,string|class-string<\Traversable<mixed>>>
@@ -96,10 +111,84 @@ abstract class TypeHandling
      *
      * @param string $type
      * @return boolean
+     * @deprecated use isLiteralType()
      */
     public static function isLiteral(string $type): bool
     {
+        return self::isLiteralType($type);
+    }
+
+    /**
+     * Returns true if the $type is a scalar type.
+     *
+     * @param string $type
+     * @return bool
+     */
+    public static function isScalarType(string $type): bool
+    {
+        return preg_match(self::SCALAR_TYPE_PATTERN, $type) === 1;
+    }
+
+    /**
+     * Returns true if the $type is a built-in type.
+     *
+     * @param string $type
+     * @return bool
+     */
+    public static function isBuiltInType(string $type): bool
+    {
+        if (self::isScalarType($type)) {
+            return true;
+        }
+
+        return in_array($type, self::$builtInTypes, true);
+    }
+
+    /**
+     * Returns true if the $type is a literal type.
+     *
+     * @param string $type
+     * @return bool
+     */
+    public static function isLiteralType(string $type): bool
+    {
         return preg_match(self::LITERAL_TYPE_PATTERN, $type) === 1;
+    }
+
+    /**
+     * Returns true if the $type is callable.
+     *
+     * @param string $type
+     * @return bool
+     */
+    public static function isCallableType(string $type): bool
+    {
+        return $type === 'callable';
+    }
+
+    /**
+     * Returns true if the $type is a built-in type alias.
+     *
+     * @param string $type
+     * @return bool
+     */
+    public static function isBuiltInTypeAlias(string $type): bool
+    {
+        return in_array($type, self::$builtInTypeAliases, true);
+    }
+
+    /**
+     * Returns true if the $type is user-defined.
+     *
+     * @param string $type
+     * @return bool
+     */
+    public static function isUserDefinedType(string $type): bool
+    {
+        return !self::isBuiltInType($type)
+            && !self::isLiteralType($type)
+            && !self::isCallableType($type)
+            && !self::isBuiltInTypeAlias($type);
     }
 
     /**
@@ -107,10 +196,15 @@ abstract class TypeHandling
      *
      * @param string $type
      * @return boolean
+     * @deprecated use isBuiltInType(), isLiteralType(), isCallableType() or isBuiltInTypeAlias()
      */
     public static function isSimpleType(string $type): bool
     {
-        return in_array(self::normalizeType($type), ['array', 'string', 'float', 'integer', 'boolean', 'null', 'false', 'true'], true);
+        $normalizedType = self::normalizeType($type);
+
+        return $normalizedType === 'array'
+            || self::isLiteralType($type)
+            || in_array($normalizedType, ['null', 'false', 'true'], true);
     }
 
     /**
