@@ -21,7 +21,6 @@ use Neos\Flow\Core\ApplicationContext;
 use Neos\Flow\ObjectManagement\Configuration\Configuration as ObjectConfiguration;
 use Neos\Flow\ObjectManagement\Configuration\ConfigurationArgument;
 use Neos\Flow\ObjectManagement\Configuration\ConfigurationArgument as ObjectConfigurationArgument;
-use Neos\Flow\ObjectManagement\DependencyInjection\DependencyProxy;
 use Neos\Flow\Security\Context;
 
 /**
@@ -43,6 +42,7 @@ class ObjectManager implements ObjectManagerInterface
     protected const KEY_CLASS_NAME = 'c';
     protected const KEY_PACKAGE = 'p';
     protected const KEY_LOWERCASE_NAME = 'l';
+    protected const KEY_OBJECTNAMES_PROVIDED = 'o';
 
     /**
      * The configuration context for this Flow run
@@ -55,11 +55,6 @@ class ObjectManager implements ObjectManagerInterface
      * @var array<string, array<string,mixed>>
      */
     protected array $objects = [];
-
-    /**
-     * @var array<DependencyInjection\DependencyProxy>
-     */
-    protected array $dependencyProxies = [];
 
     /**
      * @var array<string, bool>
@@ -107,6 +102,18 @@ class ObjectManager implements ObjectManagerInterface
      */
     public function setObjects(array $objects): void
     {
+        // Remember for each implementation class which interfaces it provides, so that the instance of
+        // a singleton can be registered for all of its object names as soon as it has been created.
+        foreach ($objects as $objectName => $configuration) {
+            $className = $configuration[self::KEY_CLASS_NAME] ?? '';
+            if ($className === '' || $className === $objectName || !isset($objects[$className])) {
+                continue;
+            }
+            if (interface_exists($objectName)) {
+                $objects[$className][self::KEY_OBJECTNAMES_PROVIDED][] = $objectName;
+            }
+        }
+
         $this->objects = $objects;
         $this->objects[ObjectManagerInterface::class][self::KEY_INSTANCE] = $this;
         $this->objects[get_class($this)][self::KEY_INSTANCE] = $this;
@@ -196,12 +203,13 @@ class ObjectManager implements ObjectManagerInterface
         }
 
         if (isset($this->objects[$objectName][self::KEY_FACTORY])) {
-            if ($this->objects[$objectName][self::KEY_SCOPE] === ObjectConfiguration::SCOPE_PROTOTYPE) {
+            if ($this->isPrototype($objectName)) {
                 return $this->buildObjectByFactory($objectName);
             }
 
-            $this->objects[$objectName][self::KEY_INSTANCE] = $this->buildObjectByFactory($objectName);
-            return $this->objects[$objectName][self::KEY_INSTANCE];
+            $instance = $this->buildObjectByFactory($objectName);
+            $this->registerInstance($objectName, get_class($instance), $instance);
+            return $instance;
         }
 
         $className = $this->getClassNameByObjectName($objectName);
@@ -222,86 +230,66 @@ class ObjectManager implements ObjectManagerInterface
             return $this->objects[$objectName][self::KEY_INSTANCE];
         }
 
-        if (!isset($this->objects[$objectName]) || $this->objects[$objectName][self::KEY_SCOPE] === ObjectConfiguration::SCOPE_PROTOTYPE) {
+        if ($this->isPrototype($objectName)) {
             return $this->instantiateClass($className, $this->autowireConstructorArguments($objectName, $className, $constructorArguments));
         }
 
-        return $this->instantiateRegisteredObject($objectName, $className);
-    }
-
-    /**
-     * Creates the instance of a singleton or session scoped object and registers it *before* its
-     * constructor arguments are resolved and its constructor is called.
-     *
-     * Objects of these scopes may depend on each other, directly or through a chain of other
-     * objects. Registering the instance first makes sure that a re-entrant call to get() for the
-     * same object – triggered while resolving its dependencies – returns the instance which is
-     * currently being built, instead of trying to build a second one and running into the
-     * circular dependency guard of instantiateClass().
-     *
-     * @param string $objectName Name of the object to instantiate
-     * @param class-string $className Name of the class implementing the object
-     * @return object The object
-     * @throws Exception\CannotBuildObjectException
-     * @throws \Throwable
-     */
-    protected function instantiateRegisteredObject(string $objectName, string $className): object
-    {
-        $classReflection = new \ReflectionClass($className);
-        if ($classReflection->isInternal()) {
-            $instance = $this->instantiateClass($className, $this->autowireConstructorArguments($objectName, $className, []));
-            $this->registerInstance($objectName, $className, $instance);
-            return $instance;
-        }
-
-        $instance = $classReflection->newInstanceWithoutConstructor();
+        $instance = $this->createLazyInstance($objectName, $className);
         $this->registerInstance($objectName, $className, $instance);
-        try {
-            $constructorArguments = $this->autowireConstructorArguments($objectName, $className, []);
-            if ($classReflection->hasMethod('__construct')) {
-                $instance->__construct(...$constructorArguments);
-            }
-        } catch (\Throwable $throwable) {
-            $this->unregisterInstance($objectName, $className);
-            throw $throwable;
-        }
         return $instance;
     }
 
     /**
+     * Creates the instance of a singleton or session scoped object as a lazy proxy. The actual
+     * object, and with it its dependencies, is only built once the proxy is used for the first time.
+     *
+     * Objects of these scopes may depend on each other, directly or through a chain of other
+     * objects. Because the proxy is registered before anything is built, a re-entrant call to
+     * get() for an object whose proxy is currently being initialized returns that very proxy
+     * instead of trying to build a second instance.
+     *
+     * Classes which are internal or extend an internal class cannot be made lazy by PHP, they
+     * are built right away.
+     *
+     * @param string $objectName Name of the object to instantiate
+     * @param class-string $className Name of the class implementing the object
+     * @return object The object, usually a lazy proxy
+     * @throws Exception\CannotBuildObjectException
+     * @throws \ReflectionException
+     */
+    protected function createLazyInstance(string $objectName, string $className): object
+    {
+        $builder = function () use ($objectName, $className): object {
+            return $this->instantiateClass($className, $this->autowireConstructorArguments($objectName, $className, []));
+        };
+        if ($this->hasInternalClassInAncestry($className)) {
+            return $builder();
+        }
+        return $this->buildLazyProxy($className, $builder);
+    }
+
+    /**
      * Registers the given instance for the object name and – if the implementation class is
-     * registered as a singleton of its own – for the class name as well, so that requesting
-     * the class directly returns the same instance.
+     * registered as a singleton of its own – for the class name and for all interfaces the class
+     * provides, so that requesting any of them returns the same instance.
      *
      * @param class-string $className
      */
     protected function registerInstance(string $objectName, string $className, object $instance): void
     {
         $this->objects[$objectName][self::KEY_INSTANCE] = $instance;
-        if ($this->classIsRegisteredAsSingleton($objectName, $className)) {
-            $this->objects[$className][self::KEY_INSTANCE] = $instance;
+        if (($this->objects[$className][self::KEY_SCOPE] ?? null) !== ObjectConfiguration::SCOPE_SINGLETON) {
+            return;
+        }
+        $this->objects[$className][self::KEY_INSTANCE] = $instance;
+        foreach ($this->objects[$className][self::KEY_OBJECTNAMES_PROVIDED] ?? [] as $providedObjectName) {
+            $this->objects[$providedObjectName][self::KEY_INSTANCE] = $instance;
         }
     }
 
-    /**
-     * @param class-string $className
-     */
-    protected function unregisterInstance(string $objectName, string $className): void
+    protected function isPrototype(string $objectName): bool
     {
-        unset($this->objects[$objectName][self::KEY_INSTANCE]);
-        if ($this->classIsRegisteredAsSingleton($objectName, $className)) {
-            unset($this->objects[$className][self::KEY_INSTANCE]);
-        }
-    }
-
-    /**
-     * @param class-string $className
-     */
-    protected function classIsRegisteredAsSingleton(string $objectName, string $className): bool
-    {
-        return $objectName !== $className
-            && isset($this->objects[$className])
-            && $this->objects[$className][self::KEY_SCOPE] === ObjectConfiguration::SCOPE_SINGLETON;
+        return !isset($this->objects[$objectName]) || $this->objects[$objectName][self::KEY_SCOPE] === ObjectConfiguration::SCOPE_PROTOTYPE;
     }
 
     /**
@@ -409,10 +397,8 @@ class ObjectManager implements ObjectManagerInterface
      */
     public function getClassNameByObjectName($objectName): string|false
     {
-        if (!isset($this->objects[$objectName])) {
-            return class_exists($objectName) ? $objectName : false;
-        }
-        return $this->objects[$objectName][self::KEY_CLASS_NAME] ?? $objectName;
+        $possibleClassName = $this->objects[$objectName][self::KEY_CLASS_NAME] ?? $objectName;
+        return class_exists($possibleClassName) ? $possibleClassName : false;
     }
 
     /**
@@ -479,49 +465,6 @@ class ObjectManager implements ObjectManagerInterface
     {
         return $this->objects[$objectName][self::KEY_INSTANCE] ?? null;
     }
-
-    /**
-     * This method is used internally to retrieve either an actual (singleton) instance
-     * of the specified dependency or, if no instance exists yet, a Dependency Proxy
-     * object which automatically triggers the creation of an instance as soon as
-     * it is used the first time.
-     *
-     * Internally used by the injectProperties method of generated proxy classes.
-     *
-     * @param string $hash
-     * @param mixed &$propertyReferenceVariable Reference of the variable to inject into once the proxy is activated
-     * @return object|null
-     */
-    public function getLazyDependencyByHash(string $hash, mixed &$propertyReferenceVariable): ?object
-    {
-        if (!isset($this->dependencyProxies[$hash])) {
-            return null;
-        }
-        $this->dependencyProxies[$hash]->_addPropertyVariable($propertyReferenceVariable);
-        return $this->dependencyProxies[$hash];
-    }
-
-    /**
-     * Creates a new DependencyProxy class for a dependency built through code
-     * identified through "hash" for a dependency of class $className. The
-     * closure in $builder contains code for actually creating the dependency
-     * instance once it needs to be materialized.
-     *
-     * Internally used by the injectProperties method of generated proxy classes.
-     *
-     * @param string $hash An md5 hash over the code needed to actually build the dependency instance
-     * @param mixed &$propertyReferenceVariable A first variable where the dependency needs to be injected into
-     * @param string $className Name of the class of the dependency which eventually will be instantiated
-     * @param \Closure $builder An anonymous function which creates the instance to be injected
-     * @return DependencyProxy
-     */
-    public function createLazyDependency(string $hash, mixed &$propertyReferenceVariable, string $className, \Closure $builder): DependencyProxy
-    {
-        $this->dependencyProxies[$hash] = new DependencyProxy($className, $builder);
-        $this->dependencyProxies[$hash]->_addPropertyVariable($propertyReferenceVariable);
-        return $this->dependencyProxies[$hash];
-    }
-
 
     /**
      * Unsets the instance of the given object
@@ -599,11 +542,15 @@ class ObjectManager implements ObjectManagerInterface
      * to build an instance. Arguments which were defined in the object configuration are
      * passed to the factory method.
      *
+     * Singletons and session scoped objects are returned as a lazy proxy, if their class is
+     * known and can be made lazy: the factory is only invoked once the object is used.
+     *
      * @param string $objectName Name of the object to build
      * @return object The built object
      * @throws Exception\UnknownObjectException
      * @throws InvalidConfigurationTypeException
      * @throws Exception\CannotBuildObjectException
+     * @throws \ReflectionException
      */
     protected function buildObjectByFactory(string $objectName): object
     {
@@ -626,10 +573,50 @@ class ObjectManager implements ObjectManagerInterface
         }
 
         if ($factory !== null) {
-            return $factory->$factoryMethodName(...$factoryMethodArguments);
+            $builder = static function () use ($factory, $factoryMethodName, $factoryMethodArguments): object {
+                return $factory->$factoryMethodName(...$factoryMethodArguments);
+            };
+        } else {
+            $builder = static function () use ($factoryMethodName, $factoryMethodArguments): object {
+                return $factoryMethodName(...$factoryMethodArguments);
+            };
         }
 
-        return $factoryMethodName(...$factoryMethodArguments);
+        $className = $this->getClassNameByObjectName($objectName);
+        if ($this->isPrototype($objectName) || $className === false || $this->hasInternalClassInAncestry($className)) {
+            return $builder();
+        }
+
+        return $this->buildLazyProxy($className, $builder);
+    }
+
+    /**
+     * PHP cannot create lazy objects of internal classes, nor of classes which extend one.
+     *
+     * @param class-string $className
+     * @throws \ReflectionException
+     */
+    protected function hasInternalClassInAncestry(string $className): bool
+    {
+        $reflectionClass = new \ReflectionClass($className);
+        while ($reflectionClass !== false) {
+            if ($reflectionClass->isInternal()) {
+                return true;
+            }
+            $reflectionClass = $reflectionClass->getParentClass();
+        }
+        return false;
+    }
+
+    /**
+     * @param class-string $className
+     * @param \Closure(): object $builder Creates the actual instance once the proxy is used for the first time
+     * @throws \ReflectionException
+     */
+    protected function buildLazyProxy(string $className, \Closure $builder): object
+    {
+        /** @phpstan-ignore method.notFound */
+        return (new \ReflectionClass($className))->newLazyProxy($builder);
     }
 
     /**

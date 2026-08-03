@@ -11,7 +11,6 @@ use Doctrine\DBAL\Types\JsonType as DoctrineJsonType;
 use Doctrine\ORM\Mapping\Entity as ORMEntity;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Core\Bootstrap;
-use Neos\Flow\ObjectManagement\DependencyInjection\DependencyProxy;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Flow\Property\Exception\TypeConverterException;
 use Neos\Flow\Property\TypeConverter\DenormalizingObjectConverter;
@@ -180,7 +179,7 @@ class JsonArrayType extends DoctrineJsonType
             if (is_array($value)) {
                 $this->encodeObjectReferences($value);
             }
-            if (!is_object($value) || ($value instanceof DependencyProxy)) {
+            if (!is_object($value)) {
                 continue;
             }
 
