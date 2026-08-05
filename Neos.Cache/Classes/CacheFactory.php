@@ -57,7 +57,11 @@ class CacheFactory implements CacheFactoryInterface
      */
     public function create(string $cacheIdentifier, string $cacheObjectName, string $backendObjectName, array $backendOptions = []): FrontendInterface
     {
-        $backend = $this->instantiateBackend($backendObjectName, $backendOptions, $this->environmentConfiguration);
+        try {
+            $backend = $this->instantiateBackend($backendObjectName, $backendOptions, $this->environmentConfiguration);
+        } catch (\Throwable $throwable) {
+            throw new \RuntimeException(sprintf('Cannot instantiate backend "%s" for cache "%s"', $backendObjectName, $cacheIdentifier), 1773330049, $throwable);
+        }
         $cache = $this->instantiateCache($cacheIdentifier, $cacheObjectName, $backend);
         $backend->setCache($cache);
 

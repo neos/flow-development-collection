@@ -152,13 +152,13 @@ final class AttributeRoutesProvider implements RoutesProviderInterface
                             'uriPattern' => $annotation->uriPattern,
                             'httpMethods' => $annotation->httpMethods,
                             'defaults' => Arrays::arrayMergeRecursiveOverrule(
-                                [
+                                array_filter([
                                     '@package' => $controllerPackageKey,
                                     '@subpackage' => $subPackage,
                                     '@controller' => $controller,
                                     '@action' => $action,
                                     '@format' => 'html'
-                                ],
+                                ], fn ($value) => $value !== null),
                                 $annotation->defaults ?? []
                             )
                         ];

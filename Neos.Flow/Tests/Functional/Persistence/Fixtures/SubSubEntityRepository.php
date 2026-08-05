@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace Neos\Flow\Tests\Functional\Persistence\Fixtures;
 
 /*
@@ -24,7 +26,7 @@ class SubSubEntityRepository extends Repository
     /**
      * @var string
      */
-    const ENTITY_CLASSNAME = SubSubEntity::class;
+    public const ENTITY_CLASSNAME = SubSubEntity::class;
 
     public function findAll(): QueryResultInterface
     {

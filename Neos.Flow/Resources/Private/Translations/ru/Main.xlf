@@ -3,32 +3,41 @@
   <file original="" product-name="Neos.Flow" source-language="en" datatype="plaintext" target-language="ru">
     <body>
       <trans-unit id="authentication.required" xml:space="preserve" approved="yes">
-				<source>Authentication required</source>
-			<target state="final">Требуется проверка подлинности</target></trans-unit>
+        <source>Authentication required</source>
+        <target state="final">Требуется проверка подлинности</target>
+      </trans-unit>
       <trans-unit id="authentication.username" xml:space="preserve" approved="yes">
-				<source>Username</source>
-			<target state="final">Имя пользователя</target></trans-unit>
+        <source>Username</source>
+        <target state="final">Имя пользователя</target>
+      </trans-unit>
       <trans-unit id="authentication.password" xml:space="preserve" approved="yes">
-				<source>Password</source>
-			<target state="final">Пароль</target></trans-unit>
+        <source>Password</source>
+        <target state="final">Пароль</target>
+      </trans-unit>
       <trans-unit id="authentication.new-password" xml:space="preserve" approved="yes">
-				<source>New password</source>
-			<target state="final">Новый пароль</target></trans-unit>
+        <source>New password</source>
+        <target state="final">Новый пароль</target>
+      </trans-unit>
       <trans-unit id="authentication.login" xml:space="preserve" approved="yes">
-				<source>Login</source>
-			<target state="final">Вход в систему</target></trans-unit>
+        <source>Login</source>
+        <target state="final">Вход в систему</target>
+      </trans-unit>
       <trans-unit id="authentication.logout" xml:space="preserve" approved="yes">
-				<source>Logout</source>
-			<target state="final">Выйти из системы</target></trans-unit>
+        <source>Logout</source>
+        <target state="final">Выйти из системы</target>
+      </trans-unit>
       <trans-unit id="update" xml:space="preserve" approved="yes">
-				<source>Update</source>
-			<target state="final">Обновить</target></trans-unit>
+        <source>Update</source>
+        <target state="final">Обновить</target>
+      </trans-unit>
       <trans-unit id="submit" xml:space="preserve" approved="yes">
-				<source>Submit</source>
-			<target state="final">Отправить</target></trans-unit>
+        <source>Submit</source>
+        <target state="final">Отправить</target>
+      </trans-unit>
       <trans-unit id="configurationSchemaValidator.anErrorOccurredDuringValidationOfTheConfiguration.body" xml:space="preserve">
-				<source>The configuration type "{0}" was not found. Only the following configuration types are supported: "{1}"</source>
-			<target state="needs-translation">The configuration type "{0}" was not found. Only the following configuration types are supported: "{1}"</target></trans-unit>
+        <source>The configuration type "{0}" was not found. Only the following configuration types are supported: "{1}"</source>
+        <target state="needs-translation" state-qualifier="leveraged-mt">Тип конфигурации "{0}" не найден. Поддерживаются только следующие типы конфигурации: "{1}"</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

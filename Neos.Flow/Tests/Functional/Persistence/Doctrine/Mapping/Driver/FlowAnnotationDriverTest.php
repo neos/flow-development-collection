@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace Neos\Flow\Tests\Functional\Persistence\Doctrine\Mapping\Driver;
 
 /*
@@ -11,7 +13,12 @@ namespace Neos\Flow\Tests\Functional\Persistence\Doctrine\Mapping\Driver;
  * source code.
  */
 
+use Doctrine\DBAL\Schema\SchemaException;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\Events;
+use Doctrine\ORM\Mapping\ClassMetadataInfo;
+use Doctrine\ORM\Mapping\MappingException;
+use Doctrine\ORM\Tools\Exception\NotSupported;
 use Doctrine\ORM\Tools\SchemaTool;
 use Neos\Flow\Persistence\Doctrine\Mapping\Driver\FlowAnnotationDriver;
 use Neos\Flow\Persistence\Doctrine\PersistenceManager;
@@ -34,14 +41,15 @@ class FlowAnnotationDriverTest extends FunctionalTestCase
     {
         parent::setUp();
         if (!$this->persistenceManager instanceof PersistenceManager) {
-            $this->markTestSkipped('Doctrine persistence is not enabled');
+            static::markTestSkipped('Doctrine persistence is not enabled');
         }
     }
 
     /**
      * @test
+     * @throws MappingException
      */
-    public function lifecycleEventAnnotationsAreDetected()
+    public function lifecycleEventAnnotationsAreDetected(): void
     {
         $classMetadata = new ClassMetadata(Fixtures\Post::class);
         $driver = $this->objectManager->get(FlowAnnotationDriver::class);
@@ -51,8 +59,9 @@ class FlowAnnotationDriverTest extends FunctionalTestCase
 
     /**
      * @test
+     * @throws MappingException
      */
-    public function lifecycleEventAnnotationsAreDetectedWithoutHasLifecycleCallbacks()
+    public function lifecycleEventAnnotationsAreDetectedWithoutHasLifecycleCallbacks(): void
     {
         $classMetadata = new ClassMetadata(Fixtures\Comment::class);
         $driver = $this->objectManager->get(FlowAnnotationDriver::class);
@@ -62,48 +71,52 @@ class FlowAnnotationDriverTest extends FunctionalTestCase
 
     /**
      * @test
+     * @throws MappingException
      */
-    public function lifecycleCallbacksAreNotRegisteredForUnproxiedEntities()
+    public function lifecycleCallbacksAreNotRegisteredForUnproxiedEntities(): void
     {
         $classMetadata = new ClassMetadata(Fixtures\UnproxiedTestEntity::class);
         $driver = $this->objectManager->get(FlowAnnotationDriver::class);
         $driver->loadMetadataForClass(Fixtures\UnproxiedTestEntity::class, $classMetadata);
-        self::assertFalse($classMetadata->hasLifecycleCallbacks(\Doctrine\ORM\Events::postLoad));
+        self::assertFalse($classMetadata->hasLifecycleCallbacks(Events::postLoad));
     }
 
     /**
      * @test
+     * @throws MappingException
      */
-    public function inheritanceTypeIsNotChangedIfNoSubclassesOfNonAbstractClassExist()
+    public function inheritanceTypeIsNotChangedIfNoSubclassesOfNonAbstractClassExist(): void
     {
         $classMetadata = new ClassMetadata(Fixtures\Post::class);
         $driver = $this->objectManager->get(FlowAnnotationDriver::class);
         $driver->loadMetadataForClass(Fixtures\Post::class, $classMetadata);
-        self::assertSame(\Doctrine\ORM\Mapping\ClassMetadata::INHERITANCE_TYPE_JOINED, $classMetadata->inheritanceType);
+        self::assertSame(ClassMetadataInfo::INHERITANCE_TYPE_JOINED, $classMetadata->inheritanceType);
     }
 
     /**
      * @test
+     * @throws MappingException
      */
-    public function inheritanceTypeIsSetToNoneIfNoSubclassesOfAbstractClassExist()
+    public function inheritanceTypeIsSetToNoneIfNoSubclassesOfAbstractClassExist(): void
     {
         $classMetadata = new ClassMetadata(Fixtures\AbstractEntity::class);
         $driver = $this->objectManager->get(FlowAnnotationDriver::class);
         $driver->loadMetadataForClass(Fixtures\AbstractEntity::class, $classMetadata);
-        self::assertSame(\Doctrine\ORM\Mapping\ClassMetadata::INHERITANCE_TYPE_NONE, $classMetadata->inheritanceType);
+        self::assertSame(ClassMetadataInfo::INHERITANCE_TYPE_NONE, $classMetadata->inheritanceType);
     }
 
     /**
      * @test
+     * @throws MappingException
      */
-    public function compositePrimaryKeyOverEntityRelationIsRegistered()
+    public function compositePrimaryKeyOverEntityRelationIsRegistered(): void
     {
         $classMetadata = new ClassMetadata(Fixtures\CompositeKeyTestEntity::class);
         $driver = $this->objectManager->get(FlowAnnotationDriver::class);
         $driver->loadMetadataForClass(Fixtures\CompositeKeyTestEntity::class, $classMetadata);
         self::assertTrue($classMetadata->isIdentifierComposite);
         self::assertTrue($classMetadata->containsForeignIdentifier);
-        self::assertEquals($classMetadata->identifier, ['name', 'relatedEntity']);
+        self::assertEquals(['name', 'relatedEntity'], $classMetadata->identifier);
     }
 
     /**
@@ -113,8 +126,9 @@ class FlowAnnotationDriverTest extends FunctionalTestCase
      * - using joincolumn without name on single associations uses the property name
      *
      * @test
+     * @throws MappingException
      */
-    public function columnNamesAreBuiltCorrectly()
+    public function columnNamesAreBuiltCorrectly(): void
     {
         $expectedTitleMapping = [
             'fieldName' => 'title',
@@ -176,7 +190,7 @@ class FlowAnnotationDriverTest extends FunctionalTestCase
         }
 
         $commentAssociationMapping = $classMetadata->getAssociationMapping('comment');
-        self::assertEquals(1, count($commentAssociationMapping['joinColumns']));
+        self::assertCount(1, $commentAssociationMapping['joinColumns']);
         foreach (array_keys($expectedCommentAssociationMapping) as $key) {
             self::assertEquals($expectedCommentAssociationMapping[$key], $commentAssociationMapping[$key], 'mapping for "comment" not as expected');
         }
@@ -186,8 +200,9 @@ class FlowAnnotationDriverTest extends FunctionalTestCase
      * The "related_post_id" column given manually must be kept.
      *
      * @test
+     * @throws MappingException
      */
-    public function joinColumnAnnotationsAreObserved()
+    public function joinColumnAnnotationsAreObserved(): void
     {
         $expectedRelatedAssociationMapping = [
             'fieldName' => 'related',
@@ -237,8 +252,9 @@ class FlowAnnotationDriverTest extends FunctionalTestCase
      * The "indexBy" annotation of EntityWithIndexedRelation must be kept
      *
      * @test
+     * @throws MappingException
      */
-    public function doctrineIndexByAnnotationIsObserved()
+    public function doctrineIndexByAnnotationIsObserved(): void
     {
         $classMetadata = new ClassMetadata(Fixtures\EntityWithIndexedRelation::class);
         $driver = $this->objectManager->get(FlowAnnotationDriver::class);
@@ -257,8 +273,9 @@ class FlowAnnotationDriverTest extends FunctionalTestCase
 
     /**
      * @test
+     * @throws MappingException
      */
-    public function introducedPropertiesAreObservedCorrectly()
+    public function introducedPropertiesAreObservedCorrectly(): void
     {
         $classMetadata = new ClassMetadata(TargetClass04::class);
         $driver = $this->objectManager->get(FlowAnnotationDriver::class);
@@ -272,8 +289,11 @@ class FlowAnnotationDriverTest extends FunctionalTestCase
 
     /**
      * @test
+     * @throws SchemaException
+     * @throws NotSupported
+     * @throws MappingException
      */
-    public function oneToOneRelationsAreMappedCorrectly()
+    public function oneToOneRelationsAreMappedCorrectly(): void
     {
         $classMetadata = new ClassMetadata(Fixtures\OneToOneEntity::class);
         $driver = $this->objectManager->get(FlowAnnotationDriver::class);
@@ -303,10 +323,9 @@ class FlowAnnotationDriverTest extends FunctionalTestCase
         $entityManager = $this->objectManager->get(EntityManagerInterface::class);
         $schemaTool = new SchemaTool($entityManager);
         $schema = $schemaTool->getSchemaFromMetadata([$entityManager->getClassMetadata(Fixtures\OneToOneEntity2::class)]);
-        /* @var $foreignKey \Doctrine\DBAL\Schema\ForeignKeyConstraint */
         foreach ($schema->getTable('persistence_onetooneentity2')->getForeignKeys() as $foreignKey) {
             if ($foreignKey->getForeignTableName() === 'persistence_onetooneentity') {
-                self::assertTrue(false);
+                self::fail();
             }
         }
     }

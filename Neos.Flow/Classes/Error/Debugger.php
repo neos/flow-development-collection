@@ -399,6 +399,17 @@ class Debugger
      */
     protected static function getBacktraceCodePlaintext(array $trace, bool $includeCode = true): string
     {
+        $exception = new \Exception();
+        $callstack = $exception->getTraceAsString();
+        if (substr_count($callstack, __METHOD__) > 3) {
+            $explanation = <<<'EOT'
+                There seems to be an error while rendering the stack trace, see https://github.com/neos/neos-development-collection/issues/5576 .
+                This might happen due to broken __toString() methods: an error occurs -> we generate the log here -> call __toString() again -> error occurs again -> we generate the log here again -> call __toString() again -> ...
+                Inspect the other log file in Data/Logs/Exceptions with the same creation time to find the original error.
+            EOT;
+            return __METHOD__ . " already on the call stack 3 times, aborting now\n" . $explanation;
+        }
+
         $backtraceCode = '';
         foreach ($trace as $index => $step) {
             $class = isset($step['class']) ? $step['class'] . '::' : '';

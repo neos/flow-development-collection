@@ -25,7 +25,11 @@ class Version20110923125535 extends AbstractMigration
         $this->addSql("CREATE INDEX IDX_B4D45B323CB65D1 ON typo3_flow3_resource_resource (resourcepointer)");
 
         if ($this->isPartyPackageInstalled()) {
-            $this->addSql("ALTER TABLE typo3_flow3_security_account DROP FOREIGN KEY typo3_flow3_security_account_ibfk_1");
+            foreach ($this->sm->listTableForeignKeys('typo3_flow3_security_account') as $foreignKey) {
+                if (in_array('party_abstractparty', array_map('strtolower', $foreignKey->getLocalColumns()), true)) {
+                    $this->addSql("ALTER TABLE typo3_flow3_security_account DROP FOREIGN KEY " . $foreignKey->getName());
+                }
+            }
             $this->addSql("DROP INDEX IDX_44D0753B38110E12 ON typo3_flow3_security_account");
         }
         $this->addSql("ALTER TABLE typo3_flow3_security_account CHANGE party_abstractparty party VARCHAR(40) DEFAULT NULL");
@@ -50,7 +54,11 @@ class Version20110923125535 extends AbstractMigration
         $this->addSql("CREATE INDEX IDX_11FFD19FD0275681 ON typo3_flow3_resource_resource (flow3_resource_resourcepointer)");
 
         if ($this->isPartyPackageInstalled()) {
-            $this->addSql("ALTER TABLE typo3_flow3_security_account DROP FOREIGN KEY typo3_flow3_security_account_ibfk_1");
+            foreach ($this->sm->listTableForeignKeys('typo3_flow3_security_account') as $foreignKey) {
+                if (in_array('party', array_map('strtolower', $foreignKey->getLocalColumns()), true)) {
+                    $this->addSql("ALTER TABLE typo3_flow3_security_account DROP FOREIGN KEY " . $foreignKey->getName());
+                }
+            }
             $this->addSql("DROP INDEX IDX_65EFB31C89954EE0 ON typo3_flow3_security_account");
         }
         $this->addSql("ALTER TABLE typo3_flow3_security_account CHANGE party party_abstractparty VARCHAR(40) DEFAULT NULL");

@@ -39,6 +39,7 @@ class AdvisedMethodInterceptorBuilder extends AbstractMethodInterceptorBuilder
         }
 
         $declaringClassName = $methodMetaInformation[$methodName]['declaringClassName'];
+        $declaredReturnType = ($declaringClassName !== null) ? $this->reflectionService->getMethodDeclaredReturnType($declaringClassName, $methodName) : null;
         $proxyMethod = $this->compiler->getProxyClass($targetClassName)->getMethod($methodName);
         if ($proxyMethod->getVisibility() === ProxyMethodGenerator::VISIBILITY_PRIVATE) {
             throw new Exception(sprintf('The %s cannot build interceptor code for private method %s::%s(). Please change the scope to at least protected or adjust the pointcut expression in the corresponding aspect.', __CLASS__, $targetClassName, $methodName), 1593070574);
@@ -49,7 +50,8 @@ class AdvisedMethodInterceptorBuilder extends AbstractMethodInterceptorBuilder
         }
 
         $groupedAdvices = $methodMetaInformation[$methodName]['groupedAdvices'];
-        $advicesCode = $this->buildAdvicesCode($groupedAdvices, $methodName, $targetClassName, $declaringClassName);
+        $advicesCode = $this->buildAdvicesCode($groupedAdvices, $methodName, $targetClassName, $declaringClassName, $declaredReturnType);
+        $neverThrowCode = $declaredReturnType === 'never' ? 'throw new \RuntimeException(\'Possible bug in around advice proxy code for method ' . $targetClassName . '::' . $methodName . '() with return type "never". This point should never be reached. 👻\', 1761038455);' : '';
 
         $proxyMethod->addPreParentCallCode(<<<PHP
         if (isset(\$this->Flow_Aop_Proxy_methodIsInAdviceMode['{$methodName}'])) {
@@ -65,6 +67,7 @@ class AdvisedMethodInterceptorBuilder extends AbstractMethodInterceptorBuilder
             }
             unset(\$this->Flow_Aop_Proxy_methodIsInAdviceMode['{$methodName}']);
         }
+        {$neverThrowCode}
         PHP);
     }
 }

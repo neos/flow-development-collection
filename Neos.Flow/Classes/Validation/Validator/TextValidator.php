@@ -17,7 +17,6 @@ use Neos\Flow\Annotations as Flow;
  * Validator for "plain" text.
  *
  * @api
- * @Flow\Scope("singleton")
  */
 class TextValidator extends AbstractValidator
 {

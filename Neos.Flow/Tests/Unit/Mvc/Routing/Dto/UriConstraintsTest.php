@@ -42,6 +42,9 @@ class UriConstraintsTest extends UnitTestCase
 
             ['constraints' => [UriConstraints::CONSTRAINT_HOST => 'some-domain.tld'], 'templateUri' => 'http://some-domain.tld', 'forceAbsoluteUri' => false, 'expectedUri' => '/'],
             ['constraints' => [UriConstraints::CONSTRAINT_HOST => 'some-other-domain.tld'], 'templateUri' => 'http://some-domain.tld', 'forceAbsoluteUri' => false, 'expectedUri' => 'http://some-other-domain.tld/'],
+            // 'localhost' is HTTP_DEFAULT_HOST — an explicit withHost('localhost') must not be overwritten by the base URI host
+            ['constraints' => [UriConstraints::CONSTRAINT_HOST => 'localhost', UriConstraints::CONSTRAINT_PATH => '/some-path'], 'templateUri' => 'http://other.localhost:8081', 'forceAbsoluteUri' => false, 'expectedUri' => 'http://localhost:8081/some-path'],
+            ['constraints' => [UriConstraints::CONSTRAINT_HOST => 'localhost', UriConstraints::CONSTRAINT_PATH => '/some-path'], 'templateUri' => 'http://other.localhost:8081', 'forceAbsoluteUri' => true, 'expectedUri' => 'http://localhost:8081/some-path'],
 
             ['constraints' => [UriConstraints::CONSTRAINT_HOST_PREFIX => ['prefix' => 'en.', 'replacePrefixes' => []]], 'templateUri' => 'http://some-domain.tld', 'forceAbsoluteUri' => false, 'expectedUri' => 'http://en.some-domain.tld/'],
             ['constraints' => [UriConstraints::CONSTRAINT_HOST_PREFIX => ['prefix' => 'en.', 'replacePrefixes' => []]], 'templateUri' => 'http://en.some-domain.tld', 'forceAbsoluteUri' => false, 'expectedUri' => 'http://en.en.some-domain.tld/'],

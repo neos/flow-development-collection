@@ -63,6 +63,9 @@ class HashService
     public function injectSettings(array $settings)
     {
         $this->strategySettings = $settings['security']['cryptography']['hashingStrategies'];
+        if (!empty($settings['security']['cryptography']['encryptionKey'])) {
+            $this->encryptionKey = $settings['security']['cryptography']['encryptionKey'];
+        }
     }
 
     /**

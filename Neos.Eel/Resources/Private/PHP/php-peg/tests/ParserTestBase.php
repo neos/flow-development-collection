@@ -8,7 +8,10 @@ include_once "$base/Parser.php";
 
 class ParserTestWrapper {
 
-	function __construct($testcase, $class) {
+    private mixed $testcase;
+    private mixed $class;
+
+    function __construct($testcase, $class) {
 		$this->testcase = $testcase;
 		$this->class = $class;
 	}

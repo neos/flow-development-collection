@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace Neos\Flow\Tests\Functional\Persistence\Fixtures;
 
 /*
@@ -12,7 +14,6 @@ namespace Neos\Flow\Tests\Functional\Persistence\Fixtures;
  */
 
 use Doctrine\ORM\Mapping as ORM;
-use Neos\Flow\Annotations as Flow;
 
 /**
  * A simple Doctrine ORM 2.5 embeddable for persistence tests
@@ -40,7 +41,7 @@ class TestEmbeddable
     /**
      * @return string
      */
-    public function getValue()
+    public function getValue(): string
     {
         return $this->value;
     }

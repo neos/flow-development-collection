@@ -7,6 +7,10 @@ properties:
     additionalProperties:
       type: array
       items: { type: string, required: true }
+  'proxy':
+    type: dictionary
+    properties:
+      'enableXdebugPathMapping': { type: boolean, required: true }
   'dependencyInjection':
     type: dictionary
     additionalProperties: false

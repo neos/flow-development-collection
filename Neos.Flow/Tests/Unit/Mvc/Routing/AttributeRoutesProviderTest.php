@@ -110,7 +110,6 @@ class AttributeRoutesProviderTest extends UnitTestCase
         $expectedRoute1->setUriPattern('my/path');
         $expectedRoute1->setDefaults([
             '@package' => 'Vendor.Example',
-            '@subpackage' => null,
             '@controller' => 'Example',
             '@action' => 'special',
             '@format' => 'html',
@@ -121,7 +120,6 @@ class AttributeRoutesProviderTest extends UnitTestCase
         $expectedRoute2->setUriPattern('my/other/path');
         $expectedRoute2->setDefaults([
             '@package' => 'Vendor.Example',
-            '@subpackage' => null,
             '@controller' => 'Example',
             '@action' => 'special',
             '@format' => 'html',

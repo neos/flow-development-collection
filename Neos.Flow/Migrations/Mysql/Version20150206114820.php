@@ -22,7 +22,11 @@ class Version20150206114820 extends AbstractMigration
         $this->abortIf(!($this->connection->getDatabasePlatform() instanceof MySQLPlatform));
 
         if ($this->isPartyPackageInstalled()) {
-            $this->addSql("ALTER TABLE typo3_flow_security_account DROP FOREIGN KEY typo3_flow_security_account_ibfk_1");
+            foreach ($this->sm->listTableForeignKeys('typo3_flow_security_account') as $foreignKey) {
+                if (in_array('party', array_map('strtolower', $foreignKey->getLocalColumns()), true)) {
+                    $this->addSql("ALTER TABLE typo3_flow_security_account DROP FOREIGN KEY " . $foreignKey->getName());
+                }
+            }
             $indexes = $this->sm->listTableIndexes('typo3_flow_security_account');
             if (array_key_exists('idx_65efb31c89954ee0', $indexes)) {
                 $this->addSql("DROP INDEX IDX_65EFB31C89954EE0 ON typo3_flow_security_account");

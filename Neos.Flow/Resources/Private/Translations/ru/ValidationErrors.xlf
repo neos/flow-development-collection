@@ -41,7 +41,7 @@
       </trans-unit>
       <trans-unit id="1324315115" xml:space="preserve">
         <source>The given date must be before {0,datetime,dateTime}</source>
-        <target state="needs-translation">Дата должна быть раньше чем {formatLatestDate}</target>
+        <target state="needs-translation" state-qualifier="leveraged-mt">Дата должна быть раньше чем {0,datetime,dateTime}</target>
       </trans-unit>
       <!-- DateTimeValidator -->
       <trans-unit id="1281454676" xml:space="preserve" approved="yes">

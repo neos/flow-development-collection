@@ -42,7 +42,6 @@ class EntityPrivilegeExpressionEvaluator extends CompilingEvaluator
         if (!function_exists($functionName)) {
             $code = $this->generateEvaluatorCode($expression);
             $functionDeclaration = 'function ' . $functionName . '($context){return ' . $code . ';}';
-            $this->newExpressions[$functionName] = $functionDeclaration;
             eval($functionDeclaration);
         }
 

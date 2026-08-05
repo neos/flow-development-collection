@@ -191,10 +191,11 @@ class FileBackend extends AbstractBackend
      */
     protected function rotateLogFile(): void
     {
-        if (file_exists($this->logFileUrl . '.lock')) {
+        $lockResource = fopen($this->logFileUrl . '.lock', 'w+');
+
+        $exclusiveNonBlockingLockResult = flock($lockResource, LOCK_EX | LOCK_NB);
+        if ($exclusiveNonBlockingLockResult === false) {
             return;
-        } else {
-            touch($this->logFileUrl . '.lock');
         }
 
         if ($this->logFilesToKeep === 0) {

@@ -209,13 +209,13 @@ class Query implements QueryInterface
 
             if (stripos($dbalException->getMessage(), 'no database selected') !== false) {
                 $message = 'No database name was specified in the configuration.';
-                $exception = new DatabaseConnectionException($message, $dbalException->getCode());
+                $exception = new DatabaseConnectionException($message, $dbalException->getCode(), $dbalException);
             } elseif (stripos($dbalException->getMessage(), 'table') !== false && stripos($dbalException->getMessage(), 'not') !== false && stripos($dbalException->getMessage(), 'exist') !== false) {
                 $message = 'A table or view seems to be missing from the database.';
-                $exception = new DatabaseStructureException($message, $dbalException->getCode());
+                $exception = new DatabaseStructureException($message, $dbalException->getCode(), $dbalException);
             } else {
                 $message = 'An error occurred in the Database Abstraction Layer.';
-                $exception = new DatabaseException($message, $dbalException->getCode());
+                $exception = new DatabaseException($message, $dbalException->getCode(), $dbalException);
             }
 
             throw $exception;
@@ -226,14 +226,14 @@ class Query implements QueryInterface
             if (stripos($pdoException->getMessage(), 'unknown database') !== false
                 || (stripos($pdoException->getMessage(), 'database') !== false && strpos($pdoException->getMessage(), 'not') !== false && strpos($pdoException->getMessage(), 'exist') !== false)) {
                 $message = 'The database which was specified in the configuration does not exist.';
-                $exception = new DatabaseConnectionException($message, $pdoException->getCode());
+                $exception = new DatabaseConnectionException($message, $pdoException->getCode(), $pdoException);
             } elseif (stripos($pdoException->getMessage(), 'access denied') !== false
                 || stripos($pdoException->getMessage(), 'connection refused') !== false) {
                 $message = 'The database username / password specified in the configuration seem to be wrong.';
-                $exception = new DatabaseConnectionException($message, $pdoException->getCode());
+                $exception = new DatabaseConnectionException($message, $pdoException->getCode(), $pdoException);
             } else {
                 $message = 'An error occurred while using the PDO Driver: ' . $pdoException->getMessage();
-                $exception = new DatabaseException($message, $pdoException->getCode());
+                $exception = new DatabaseException($message, $pdoException->getCode(), $pdoException);
             }
 
             throw $exception;
@@ -272,7 +272,7 @@ class Query implements QueryInterface
             $this->logger->error($message, LogEnvironment::fromMethodName(__METHOD__));
             return 0;
         } catch (\PDOException $pdoException) {
-            throw new DatabaseConnectionException($pdoException->getMessage(), (int)$pdoException->getCode());
+            throw new DatabaseConnectionException($pdoException->getMessage(), (int)$pdoException->getCode(), $pdoException);
         }
     }
 

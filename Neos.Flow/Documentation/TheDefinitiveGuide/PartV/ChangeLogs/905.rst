@@ -1,0 +1,134 @@
+`9.0.5 (2025-12-12) <https://github.com/neos/flow-development-collection/releases/tag/9.0.5>`_
+==============================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`BUGFIX: Prevent premature connection to database before `PersistenceManager::persistAllowedObjects` <https://github.com/neos/flow-development-collection/pull/3489>`_
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+For every simple GET request ``persistAllowedObjects`` is called via the Package.php in flow. This results in building a db connection, even if there is nothing to do.
+
+We first check if the ``entityManager`` is open and if the entity manager has not been used (something is heavily cached via middle-ware or sth) flows objectmanagement retrieves the entity manger.
+
+Now in this retrieval process - even though doctrines connection is lazy itself - the connection will be made forcefully see ``\\Neos\\Flow\\Persistence\\Doctrine\\EntityManagerFactory::create`` line 120 (https://github.com/neos/flow-development-collection/blob/`11e2348125dd8286ff9ccc088e5d187dc9143bf5 <https://github.com/neos/flow-development-collection/commit/11e2348125dd8286ff9ccc088e5d187dc9143bf5>``_/Neos.Flow/Classes/Persistence/Doctrine/EntityManagerFactory.php#L120) or https://github.com/neos/flow-development-collection/blob/``d93b6b09ca2071c87812a9ef4bc120201c44608a <https://github.com/neos/flow-development-collection/commit/d93b6b09ca2071c87812a9ef4bc120201c44608a>`_/Neos.Flow/Classes/Persistence/Doctrine/EntityManagerConfiguration.php#L229
+
+This is ironic because if there is no connection - or no entity manager in the first place, the current process cannot have made any changes to the transaction.
+
+**Upgrade instructions**
+
+
+* Packages: ``.github`` ``Eel`` ``Flow``
+
+`BUGFIX: `configuration:show` with non array value crashing when accesed via `--path` <https://github.com/neos/flow-development-collection/pull/3501>`_
+-------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+fixup like https://github.com/neos/flow-development-collection/pull/3483
+
+a bool for example
+
+```
+flow configuration:show --path Neos.Neos.Ui.frontendDevelopmentMode
+```
+
+should output ``true``
+
+but
+
+> Neos\\Flow\\Command\\ConfigurationCommandController_Original::truncateArrayAtDepth(): Argument `#1 <https://github.com/neos/flow-development-collection/issues/1>`_($array) must be of type array, true given
+
+**Upgrade instructions**
+
+
+* Packages: ``FluidAdaptor`` ``Flow``
+
+`BUGFIX: Avoid passing null to strtolower() <https://github.com/neos/flow-development-collection/pull/3525>`_
+-------------------------------------------------------------------------------------------------------------
+
+Avoids ``Deprecated: strtolower(): Passing null to parameter ``#1 <https://github.com/neos/flow-development-collection/issues/1>``_($string) of type string is deprecated`` warnings, in case the arguments have not been set.
+
+
+* Packages: ``FluidAdaptor``
+
+`BUGFIX: Fix race condition during log rotation -> the `.lock` file is not properly locked <https://github.com/neos/flow-development-collection/pull/3521>`_
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+See https://discuss.neos.io/t/unlink-system-development-log-10-no-such-file/7140/2
+
+Multiple processes writing logs can easily run into the following error when its time to rotate the logs:
+
+```
+Warning: rename(Data/Logs/System_Development.log.3,Data/Logs/System_Development.log.4): No such file or directory in Packages/Framework/Neos.Flow.Log/Classes/Backend/FileBackend.php line 217
+
+  Type: Neos\\Flow\\Error\\Exception
+  Code: 1
+  File: Packages/Framework/Neos.Flow/Classes/Error/ErrorHandler.php
+  Line: 80
+```
+
+During log rotation we attempt to use a lock via ``file_exists`` but its not an atomic operation how we use it https://github.com/neos/flow-development-collection/blob/`54cea0a2cafb9ee1475ae2fdbc1fd3a1830ddc86 <https://github.com/neos/flow-development-collection/commit/54cea0a2cafb9ee1475ae2fdbc1fd3a1830ddc86>``_/Neos.Flow.Log/Classes/Backend/FileBackend.php#L194-L198 ``file_exists`` could be true for two processes at the same time in a race condition and both processes would ``touch` (create) the lock file.
+
+Instead, we need to use a atomic locking via ``flock``
+
+```
+$lockResource = fopen($this->logFileUrl . '.lock', 'w+');
+
+$exclusiveNonBlockingLockResult = flock($lockResource, LOCK_EX | LOCK_NB);
+if ($exclusiveNonBlockingLockResult === false) {
+   // someone else is on it
+   return;
+}
+
+// do something only this process is supposed to do...
+
+if (!flock($setupLockResource, LOCK_UN)) {
+    throw new \\RuntimeException('failed to release lock');
+}
+```
+
+Tested on MacOs with 3 simultaneous shells running each a flow command that writes logs in a shell while loop.
+
+I hope windows supports ``flock($lockResource, LOCK_EX | LOCK_NB);`` to exclusively claim a lock without waiting for it if its claimed.
+
+**Upgrade instructions**
+
+
+* Packages: ``Flow.Log``
+
+`BUGFIX: Check also for SkipCsrfProtection annotation <https://github.com/neos/flow-development-collection/pull/3520>`_
+-----------------------------------------------------------------------------------------------------------------------
+
+We currently check only for the "tag" ``@skipcsrfprotection``, any (action) method annotated with  ``@Flow\\SkipCsrfProtection`` is only part of the times handled correctly.
+
+Attributes ``#[Flow\\SkipCsrfProtection]`` or an annotation with comment on the same line ``@Flow\\SkipCsrfProtection Some explanation`` are not handled currently.
+
+Obviously this is not intended, rather using the tag should be avoided.
+
+This adds the check for reflected annotations/attributes.
+
+**Review instructions**
+
+The root cause for this behaviour is that we just never used ``isAnnotatedWith`` but only relied on ``isTaggedWith`` to interpret if a method is tagged. The tagging parsing is custom done via ``DocCommentParser`` and utterly broken https://github.com/neos/flow-development-collection/pull/3520#issuecomment-3518076068 in that it attempts to convert annotations to tags by dropping the namespace but only if no comments exist on that line.
+
+* Packages: ``Flow``
+
+`TASK: Add missing symfony polyfill replacements due to php82 version <https://github.com/neos/flow-development-collection/pull/3531>`_
+---------------------------------------------------------------------------------------------------------------------------------------
+
+This change might need adjustments if one has a composer ``replacement`` in ones distribution as flow failed to provide it earlier. Updating could then cause a conflict as composer - i believe - only respects one replace directive to exist per package.
+
+**Upgrade instructions**
+
+Remove these replacements in your own composer.json
+
+
+`TASK: Run pipeline with PHP8.5 <https://github.com/neos/flow-development-collection/pull/3527>`_
+-------------------------------------------------------------------------------------------------
+
+
+
+* Packages: ``Flow`` ``.github`` ``Eel``
+
+`Detailed log <https://github.com/neos/flow-development-collection/compare/9.0.4...9.0.5>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

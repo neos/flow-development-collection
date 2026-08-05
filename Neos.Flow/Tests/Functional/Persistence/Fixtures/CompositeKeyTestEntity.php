@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace Neos\Flow\Tests\Functional\Persistence\Fixtures;
 
 /*
@@ -39,7 +41,7 @@ class CompositeKeyTestEntity
     /**
      * @return string
      */
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
@@ -48,7 +50,7 @@ class CompositeKeyTestEntity
      * @param string $name
      * @return void
      */
-    public function setName($name)
+    public function setName($name): void
     {
         $this->name = $name;
     }
@@ -57,7 +59,7 @@ class CompositeKeyTestEntity
      * @param TestEntity $relatedEntity
      * @return void
      */
-    public function setRelatedEntity(TestEntity $relatedEntity)
+    public function setRelatedEntity(TestEntity $relatedEntity): void
     {
         $this->relatedEntity = $relatedEntity;
     }
@@ -65,7 +67,7 @@ class CompositeKeyTestEntity
     /**
      * @return TestEntity
      */
-    public function getRelatedEntity()
+    public function getRelatedEntity(): TestEntity
     {
         return $this->relatedEntity;
     }

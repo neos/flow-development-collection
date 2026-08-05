@@ -3,7 +3,7 @@
 Flow TypeConverter Reference
 ============================
 
-This reference was automatically generated from code on 2025-02-11
+This reference was automatically generated from code on 2026-08-03
 
 
 .. _`Flow TypeConverter Reference: ArrayConverter`:
@@ -72,6 +72,36 @@ Converts Doctrine collections to arrays
 :Priority: 1
 :Target type: array
 :Source type: Doctrine\Common\Collections\Collection
+
+
+
+
+
+.. _`Flow TypeConverter Reference: BackedEnumToIntConverter`:
+
+BackedEnumToIntConverter
+------------------------
+
+
+
+:Priority: 
+:Target type: integer
+:Source type: BackedEnum
+
+
+
+
+
+.. _`Flow TypeConverter Reference: BackedEnumToStringConverter`:
+
+BackedEnumToStringConverter
+---------------------------
+
+
+
+:Priority: 
+:Target type: string
+:Source type: BackedEnum
 
 
 
@@ -434,6 +464,22 @@ This converter transforms strings to role instances
 :Target type: Neos\Flow\Security\Policy\Role
 :Source type: string
 
+
+
+
+
+.. _`Flow TypeConverter Reference: ScalarTypeToBackedEnumConverter`:
+
+ScalarTypeToBackedEnumConverter
+-------------------------------
+
+
+
+:Priority: 
+:Target type: BackedEnum
+:Source types:
+ * string
+ * integer
 
 
 

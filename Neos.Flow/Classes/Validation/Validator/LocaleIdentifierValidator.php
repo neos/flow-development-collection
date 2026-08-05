@@ -20,7 +20,6 @@ use Neos\Flow\I18n\Locale;
  * This validator validates a string based on the expressions of the
  * Flow I18n implementation.
  *
- * @Flow\Scope("singleton")
  */
 class LocaleIdentifierValidator extends AbstractValidator
 {

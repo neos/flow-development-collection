@@ -313,6 +313,11 @@ final class UriConstraints
     {
         $uri = new Uri('');
         $uriPath = '';
+        // Track whether the host was explicitly set by a constraint. This is needed because
+        // Guzzle's Uri::validateState() auto-assigns 'localhost' as the host whenever withScheme()
+        // is called with 'http' or 'https' and the host is empty. Without this flag we cannot
+        // distinguish between a Guzzle-default 'localhost' and an intentionally set host.
+        $hostSetByConstraint = false;
         if (isset($this->constraints[self::CONSTRAINT_SCHEME]) && $this->constraints[self::CONSTRAINT_SCHEME] !== $baseUri->getScheme()) {
             $forceAbsoluteUri = true;
             $uri = $uri->withScheme($this->constraints[self::CONSTRAINT_SCHEME]);
@@ -320,9 +325,10 @@ final class UriConstraints
         if (isset($this->constraints[self::CONSTRAINT_HOST]) && $this->constraints[self::CONSTRAINT_HOST] !== $baseUri->getHost()) {
             $forceAbsoluteUri = true;
             $uri = $uri->withHost($this->constraints[self::CONSTRAINT_HOST]);
+            $hostSetByConstraint = true;
         }
         if (isset($this->constraints[self::CONSTRAINT_HOST_PREFIX])) {
-            $host = !empty($uri->getHost()) ? $uri->getHost() : $baseUri->getHost();
+            $host = $hostSetByConstraint ? $uri->getHost() : $baseUri->getHost();
             $originalHost = $host;
             $prefix = $this->constraints[self::CONSTRAINT_HOST_PREFIX]['prefix'];
             $replacePrefixes = $this->constraints[self::CONSTRAINT_HOST_PREFIX]['replacePrefixes'];
@@ -336,10 +342,11 @@ final class UriConstraints
             if ($host !== $originalHost) {
                 $forceAbsoluteUri = true;
                 $uri = $uri->withHost($host);
+                $hostSetByConstraint = true;
             }
         }
         if (isset($this->constraints[self::CONSTRAINT_HOST_SUFFIX])) {
-            $host = !empty($uri->getHost()) ? $uri->getHost() : $baseUri->getHost();
+            $host = $hostSetByConstraint ? $uri->getHost() : $baseUri->getHost();
             $originalHost = $host;
             $suffix = $this->constraints[self::CONSTRAINT_HOST_SUFFIX]['suffix'];
             $replaceSuffixes = $this->constraints[self::CONSTRAINT_HOST_SUFFIX]['replaceSuffixes'];
@@ -358,6 +365,7 @@ final class UriConstraints
             if ($host !== $originalHost) {
                 $forceAbsoluteUri = true;
                 $uri = $uri->withHost($host);
+                $hostSetByConstraint = true;
             }
         }
         if (isset($this->constraints[self::CONSTRAINT_PORT]) && ($forceAbsoluteUri || $this->constraints[self::CONSTRAINT_PORT] !== $baseUri->getPort()) && ($baseUri->getPort() !== null || $this->constraints[self::CONSTRAINT_PORT] !== UriHelper::getDefaultPortForScheme($this->constraints[self::CONSTRAINT_SCHEME] ?? $baseUri->getScheme()))) {
@@ -397,11 +405,15 @@ final class UriConstraints
         $uri = $uri->withPath('/' . ltrim($uriPath, '/'));
 
         if ($forceAbsoluteUri) {
+            if (!$hostSetByConstraint) {
+                // No host constraint was applied: use the explicit CONSTRAINT_HOST value if one was
+                // set (it matched the baseUri host so the block above was skipped) or fall back to
+                // the baseUri host. This also corrects Guzzle's validateState() auto-assigning
+                // 'localhost' when withScheme('http'/'https') was called on a host-less URI.
+                $uri = $uri->withHost($this->constraints[self::CONSTRAINT_HOST] ?? $baseUri->getHost());
+            }
             if (empty($uri->getScheme())) {
                 $uri = $uri->withScheme($baseUri->getScheme());
-            }
-            if (empty($uri->getHost()) || $uri->getHost() === self::HTTP_DEFAULT_HOST) {
-                $uri = $uri->withHost($baseUri->getHost());
             }
             if (!isset($this->constraints[self::CONSTRAINT_PORT]) && $uri->getPort() === null) {
                 $port = $baseUri->getPort() ?? UriHelper::getDefaultPortForScheme($uri->getScheme());

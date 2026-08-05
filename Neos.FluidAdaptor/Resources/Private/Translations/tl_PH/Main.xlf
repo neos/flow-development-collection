@@ -3,11 +3,13 @@
   <file original="" product-name="Neos.FluidAdaptor" source-language="en" datatype="plaintext" target-language="tl">
     <body>
       <trans-unit id="widget.paginate.previous" xml:space="preserve">
-				<source>previous</source>
-			<target state="needs-translation">previous</target></trans-unit>
+        <source>previous</source>
+        <target state="needs-translation" state-qualifier="leveraged-mt">previous</target>
+      </trans-unit>
       <trans-unit id="widget.paginate.next" xml:space="preserve">
-				<source>next</source>
-			<target state="needs-translation">next</target></trans-unit>
+        <source>next</source>
+        <target state="needs-translation" state-qualifier="leveraged-mt">next</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

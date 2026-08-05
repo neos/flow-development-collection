@@ -41,7 +41,7 @@ class AdvisedConstructorInterceptorBuilder extends AbstractMethodInterceptorBuil
         $proxyMethod = $this->compiler->getProxyClass($targetClassName)->getConstructor();
 
         $groupedAdvices = $methodMetaInformation[$methodName]['groupedAdvices'];
-        $advicesCode = $this->buildAdvicesCode($groupedAdvices, $methodName, $targetClassName, $declaringClassName);
+        $advicesCode = $this->buildAdvicesCode($groupedAdvices, $methodName, $targetClassName, $declaringClassName, null);
 
         $proxyMethod->addPreParentCallCode(<<<PHP
         if (isset(\$this->Flow_Aop_Proxy_methodIsInAdviceMode['{$methodName}'])) {

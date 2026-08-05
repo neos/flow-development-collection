@@ -11,6 +11,7 @@ namespace Neos\Flow\Tests\Functional\Aop;
  * source code.
  */
 
+use Neos\Flow\Tests\Functional\Aop\Fixtures\TargetClassWithNeverReturnType;
 use Neos\Flow\Tests\Functional\Aop\Fixtures\TargetClassWithPhp7Features;
 use Neos\Flow\Tests\Functional\Aop\Fixtures\TargetClassWithPhp8Features;
 use Neos\Flow\Tests\FunctionalTestCase;
@@ -390,5 +391,37 @@ class FrameworkTest extends FunctionalTestCase
 
         $this->expectExceptionCode(1686132896);
         $targetClass->alwaysNever();
+    }
+
+    /**
+     * @test
+     */
+    public function methodWithNeverReturnTypeCanBeAdvised(): void
+    {
+        $targetClass = new TargetClassWithNeverReturnType();
+
+        try {
+            $targetClass->methodThatThrows();
+        } catch (\Exception) {
+        } finally {
+            self::assertTrue($targetClass->beforeAdviceWasInvoked, 'Before advice should be invoked for never-returning method methodThatThrows()');
+            self::assertTrue($targetClass->afterThrowingAdviceWasInvoked, 'AfterThrowing advice should be invoked for never-returning method methodThatThrows()');
+        }
+    }
+
+    /**
+     * @test
+     */
+    public function methodWithNeverReturnTypeCanBeAroundAdvised(): void
+    {
+        $target = new TargetClassWithNeverReturnType();
+
+        try {
+            $target->aroundAdvicedMethodThatThrows();
+        } catch (\Exception $e) {
+            self::assertSame(1761036724, $e->getCode());
+        } finally {
+            self::assertTrue($target->aroundAdviceWasInvoked, 'Around advice should be invoked for never-returning method aroundAdvicedMethodThatThrows()');
+        }
     }
 }

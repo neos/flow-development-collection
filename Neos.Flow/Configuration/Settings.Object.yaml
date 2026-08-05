@@ -61,3 +61,9 @@ Neos:
         # In the future autowiring of prototypes should no longer be an option as it makes no sense.
         # Use a factory class if you need this otherwise.
         prototypeAutowiring: true
+
+      proxy:
+        # If enabled, a mapping file for Xdebug (>= v3.5) will be created in the .xdebug directory
+        # of the Flow root. This file can be used to map proxy classes to their original
+        # source files for debugging. Should only be enabled in development environments.
+        enableXdebugPathMapping: false

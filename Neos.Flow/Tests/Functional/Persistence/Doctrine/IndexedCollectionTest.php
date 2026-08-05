@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace Neos\Flow\Tests\Functional\Persistence\Doctrine;
 
 /*
@@ -31,7 +33,7 @@ class IndexedCollectionTest extends FunctionalTestCase
     {
         parent::setUp();
         if (!$this->persistenceManager instanceof PersistenceManager) {
-            $this->markTestSkipped('Doctrine persistence is not enabled');
+            static::markTestSkipped('Doctrine persistence is not enabled');
         }
     }
 
@@ -40,7 +42,7 @@ class IndexedCollectionTest extends FunctionalTestCase
      *
      * @test
      */
-    public function collectionsWithIndexAttributeAreIndexed()
+    public function collectionsWithIndexAttributeAreIndexed(): void
     {
         $entityWithIndexedRelation = new Fixtures\EntityWithIndexedRelation();
         for ($i = 0; $i < 3; $i++) {
@@ -62,7 +64,7 @@ class IndexedCollectionTest extends FunctionalTestCase
 
         $entityWithIndexedRelation = $this->persistenceManager->getObjectByIdentifier($id, Fixtures\EntityWithIndexedRelation::class);
         for ($i = 0; $i < 3; $i++) {
-            self::assertArrayHasKey('Author' . (string) $i, $entityWithIndexedRelation->getAnnotatedIdentitiesEntities());
+            self::assertArrayHasKey('Author' . $i, $entityWithIndexedRelation->getAnnotatedIdentitiesEntities());
         }
         self::assertArrayNotHasKey(0, $entityWithIndexedRelation->getAnnotatedIdentitiesEntities());
 

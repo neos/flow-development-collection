@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace Neos\Flow\Tests\Functional\Persistence\Fixtures;
 
 /*
@@ -82,7 +84,7 @@ class Post
      * @return string
      * @ORM\PrePersist
      */
-    public function getTitle()
+    public function getTitle(): string
     {
         return $this->title;
     }
@@ -91,7 +93,7 @@ class Post
      * @param string $title
      * @return void
      */
-    public function setTitle($title)
+    public function setTitle($title): void
     {
         $this->title = $title;
     }
@@ -99,7 +101,7 @@ class Post
     /**
      * @param Image $image
      */
-    public function setImage($image)
+    public function setImage($image): void
     {
         $this->image = $image;
     }
@@ -107,7 +109,7 @@ class Post
     /**
      * @return Image
      */
-    public function getImage()
+    public function getImage(): Image
     {
         return $this->image;
     }
@@ -116,7 +118,7 @@ class Post
      * @param $comment
      * @return void
      */
-    public function setComment($comment)
+    public function setComment($comment): void
     {
         $this->comment = $comment;
     }
@@ -124,7 +126,7 @@ class Post
     /**
      * @return Comment
      */
-    public function getComment()
+    public function getComment(): Comment
     {
         return $this->comment;
     }
@@ -132,7 +134,7 @@ class Post
     /**
      * @param Tag $tag
      */
-    public function addTag(Tag $tag)
+    public function addTag(Tag $tag): void
     {
         $this->tags->add($tag);
     }
@@ -140,15 +142,15 @@ class Post
     /**
      * @param Tag $tag
      */
-    public function removeTag(Tag $tag)
+    public function removeTag(Tag $tag): void
     {
         $this->tags->removeElement($tag);
     }
 
     /**
-     * @return Collection
+     * @return ArrayCollection|Collection
      */
-    public function getTags()
+    public function getTags(): ArrayCollection|Collection
     {
         return $this->tags;
     }
@@ -156,7 +158,7 @@ class Post
     /**
      * @return TestValueObject
      */
-    public function getAuthor()
+    public function getAuthor(): TestValueObject
     {
         return $this->author;
     }
@@ -164,7 +166,7 @@ class Post
     /**
      * @param TestValueObject $author
      */
-    public function setAuthor(TestValueObject $author)
+    public function setAuthor(TestValueObject $author): void
     {
         $this->author = $author;
     }

@@ -22,7 +22,6 @@ use Neos\Flow\Annotations as Flow;
  * Validator for email addresses
  *
  * @api
- * @Flow\Scope("singleton")
  */
 class EmailAddressValidator extends AbstractValidator
 {

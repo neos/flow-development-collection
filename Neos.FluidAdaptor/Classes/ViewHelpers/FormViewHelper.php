@@ -144,9 +144,9 @@ class FormViewHelper extends AbstractFormViewHelper
         }
         $this->tag->addAttribute('action', $this->getFormActionUri());
 
-        if (strtolower($this->arguments['method']) === 'get') {
+        if (strtolower((string)$this->arguments['method']) === 'get') {
             $this->tag->addAttribute('method', 'get');
-        } elseif (strtolower($this->arguments['method']) === 'dialog') {
+        } elseif (strtolower((string)$this->arguments['method']) === 'dialog') {
             $this->tag->addAttribute('method', 'dialog');
         } else {
             $this->tag->addAttribute('method', 'post');
@@ -162,13 +162,13 @@ class FormViewHelper extends AbstractFormViewHelper
         $formContent = $this->renderChildren();
 
         $requiredEnctype = $this->viewHelperVariableContainer->get(FormViewHelper::class, 'required-enctype');
-        if ($requiredEnctype !== '' && $requiredEnctype !== strtolower($this->arguments['enctype'])) {
+        if ($requiredEnctype !== '' && $requiredEnctype !== strtolower((string)$this->arguments['enctype'])) {
             throw new WrongEnctypeException('The form you are trying to render requires an enctype of "' . $requiredEnctype . '". Please specify the correct enctype when using file uploads.', 1522706399);
         }
 
         // wrap hidden field in div container in order to create XHTML valid output
         $content = chr(10) . '<div style="display: none">';
-        if (strtolower($this->arguments['method']) === 'get') {
+        if (strtolower((string)$this->arguments['method']) === 'get') {
             $content .= $this->renderHiddenActionUriQueryParameters();
         }
         $content .= $this->renderHiddenIdentityField($this->arguments['object'], $this->getFormObjectName());
@@ -542,7 +542,7 @@ class FormViewHelper extends AbstractFormViewHelper
      */
     protected function renderCsrfTokenField()
     {
-        if (strtolower($this->arguments['method']) === 'get') {
+        if (strtolower((string)$this->arguments['method']) === 'get') {
             return '';
         }
         if (!$this->securityContext->isInitialized() || !$this->authenticationManager->isAuthenticated()) {

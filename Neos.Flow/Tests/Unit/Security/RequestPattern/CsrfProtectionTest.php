@@ -21,6 +21,7 @@ use Neos\Flow\Security\Authorization\Privilege\Method\MethodPrivilegeInterface;
 use Neos\Flow\Security;
 use Neos\Flow\Tests\UnitTestCase;
 use Psr\Log\LoggerInterface;
+use Neos\Flow\Annotations as Flow;
 
 /**
  * Testcase for the CsrfProtection request pattern
@@ -51,7 +52,7 @@ class CsrfProtectionTest extends UnitTestCase
     /**
      * @test
      */
-    public function matchRequestReturnsFalseIfTheTargetActionIsTaggedWithSkipCsrfProtection()
+    public function matchRequestReturnsFalseIfTheTargetActionIsAnnotatedWithSkipCsrfProtection()
     {
         $controllerObjectName = 'SomeControllerObjectName';
         $controllerActionName = 'list';
@@ -69,7 +70,7 @@ class CsrfProtectionTest extends UnitTestCase
         $mockObjectManager->expects(self::once())->method('getClassNameByObjectName')->with($controllerObjectName)->will(self::returnValue($controllerObjectName));
 
         $mockReflectionService = $this->createMock(ReflectionService::class);
-        $mockReflectionService->expects(self::once())->method('isMethodTaggedWith')->with($controllerObjectName, $controllerActionName . 'Action', 'skipcsrfprotection')->will(self::returnValue(true));
+        $mockReflectionService->expects(self::once())->method('isMethodAnnotatedWith')->with($controllerObjectName, $controllerActionName . 'Action', Flow\SkipCsrfProtection::class)->will(self::returnValue(true));
 
         $mockPrivilege = $this->createMock(MethodPrivilegeInterface::class);
         $mockPrivilege->expects(self::once())->method('matchesMethod')->with($controllerObjectName, $controllerActionName . 'Action')->will(self::returnValue(true));

@@ -21,6 +21,7 @@ use Neos\Flow\Mvc\Routing\Dto\RouteContext;
 use Neos\Flow\Mvc\Routing\Route;
 use Neos\Flow\Mvc\Routing\TestingRoutesProvider;
 use Neos\Flow\Tests\Functional\Mvc\Fixtures\Controller\ActionControllerTestAController;
+use Neos\Flow\Tests\Functional\Mvc\Fixtures\Controller\RoutingAnnotationTestBController;
 use Neos\Flow\Tests\Functional\Mvc\Fixtures\Controller\RoutingTestAController;
 use Neos\Flow\Tests\FunctionalTestCase;
 use Neos\Utility\Arrays;
@@ -48,11 +49,27 @@ class RoutingTest extends FunctionalTestCase
         parent::setUp();
         $this->serverRequestFactory = $this->objectManager->get(ServerRequestFactoryInterface::class);
 
+        $routeSettings = $this->objectManager->get(ConfigurationManager::class)
+            ->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'Neos.Flow.mvc.routes');
+
         if (
-            ($this->objectManager->get(ConfigurationManager::class)
-                ->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'Neos.Flow.mvc.routes')['Neos.Flow'] ?? false) !== true
+            ($routeSettings['Neos.Flow'] ?? false) !== true
+            || !is_array($routeSettings['Neos.Flow:TestingAttributes'] ?? null)
         ) {
-            self::markTestSkipped(sprintf('In this distribution the Flow routes are not included into the global configuration and thus cannot be tested. Please set in Neos.Flow.mvc.routes "Neos.Flow": true.'));
+            self::markTestSkipped(<<<'EOF'
+            In this distribution the Neos.Flow or Flow\Annotation routes are not included into the global configuration and thus cannot be tested:
+            
+            Neos:
+              Flow:
+                mvc:
+                  routes:
+                    "Neos.Flow:TestingAttributes":
+                      providerFactory: Neos\Flow\Mvc\Routing\AttributeRoutesProviderFactory
+                      providerOptions:
+                        classNames:
+                          - Neos\Flow\Tests\Functional\Mvc\Fixtures\Controller\*Controller
+                    "Neos.Flow": true
+            EOF);
         }
     }
 
@@ -96,6 +113,19 @@ class RoutingTest extends FunctionalTestCase
         $actionRequest = $this->createActionRequest($request, $matchResults);
         self::assertEquals(ActionControllerTestAController::class, $actionRequest->getControllerObjectName());
         self::assertEquals('second', $actionRequest->getControllerActionName());
+    }
+
+    /**
+     * @test
+     */
+    public function routeToControllerWithAnnotatedAction()
+    {
+        $requestUri = 'http://localhost/neos/flow/test/annotation';
+        $request = $this->serverRequestFactory->createServerRequest('GET', new Uri($requestUri));
+        $matchResults = $this->router->route(new RouteContext($request, RouteParameters::createEmpty()));
+        $actionRequest = $this->createActionRequest($request, $matchResults);
+        self::assertEquals(RoutingAnnotationTestBController::class, $actionRequest->getControllerObjectName());
+        self::assertEquals('annotated', $actionRequest->getControllerActionName());
     }
 
     /**
@@ -358,6 +388,24 @@ class RoutingTest extends FunctionalTestCase
         $actualResult = $this->router->resolve(new ResolveContext($baseUri, $routeValues, false, '', RouteParameters::createEmpty()));
 
         self::assertSame('/neos/flow/test/http/foo', (string)$actualResult);
+    }
+
+    /**
+     * @test
+     */
+    public function routerMatchesRouteFromAnnotation()
+    {
+        $routeValues = [
+            '@package' => 'Neos.Flow',
+            '@subpackage' => 'Tests\Functional\Mvc\Fixtures',
+            '@controller' => 'RoutingAnnotationTestB',
+            '@action' => 'annotated',
+            '@format' => 'html'
+        ];
+        $baseUri = new Uri('http://localhost');
+        $actualResult = $this->router->resolve(new ResolveContext($baseUri, $routeValues, false, '', RouteParameters::createEmpty()));
+
+        self::assertSame('/neos/flow/test/annotation', (string)$actualResult);
     }
 
     /**

@@ -3,9 +3,9 @@
   <file original="" product-name="Neos.Flow" source-language="en" datatype="plaintext" target-language="fi">
     <body>
       <!-- AlphanumericValidator -->
-      <trans-unit id="1221551320" xml:space="preserve" approved="yes">
-				<source>Only regular characters (a to z, umlauts, ...) and numbers are allowed.</source>
-        <target state="final">Ainoastaan kirjaimet ja numerot ovat sallittuja</target>
+      <trans-unit id="1221551320" xml:space="preserve" approved="no">
+        <source>Only regular characters (a to z, umlauts, ...) and numbers are allowed.</source>
+        <target state="translated">Vain tavalliset merkit (a–z, ääkköset, ...) ja numerot ovat sallittuja.</target>
       </trans-unit>
       <!-- BooleanValueValidator -->
       <trans-unit id="1361044943" xml:space="preserve" approved="yes">
@@ -247,6 +247,10 @@
       <trans-unit id="1328029362" xml:space="preserve" approved="yes">
 				<source>The image orientation "{0}" is not allowed</source>
         <target state="final">Kuvan suunta "{0}" ei ole sallittu</target>
+      </trans-unit>
+      <trans-unit id="1327865764" xml:space="preserve">
+        <source>The file extension "{0}" is not allowed.</source>
+        <target state="translated">Tiedostopääte "{0}" ei ole sallittu.</target>
       </trans-unit>
     </body>
   </file>

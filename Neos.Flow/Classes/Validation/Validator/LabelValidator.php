@@ -21,7 +21,6 @@ use Neos\Flow\Annotations as Flow;
  * line characters or HTML tags. This validator is for such uses.
  *
  * @api
- * @Flow\Scope("singleton")
  */
 class LabelValidator extends AbstractValidator
 {

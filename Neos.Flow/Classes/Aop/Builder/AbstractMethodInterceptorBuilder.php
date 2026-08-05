@@ -156,7 +156,7 @@ abstract class AbstractMethodInterceptorBuilder
      * @param string|null $declaringClassName Name of the declaring class. This is usually the same as the $targetClassName. However, it is the introduction interface for introduced methods.
      * @return string PHP code to be used in the method interceptor
      */
-    protected function buildAdvicesCode(array $groupedAdvices, ?string $methodName = null, ?string $targetClassName = null, ?string $declaringClassName = null): string
+    protected function buildAdvicesCode(array $groupedAdvices, ?string $methodName, ?string $targetClassName, ?string $declaringClassName, ?string $declaredReturnType): string
     {
         $advicesCode = $this->buildMethodArgumentsArrayCode($declaringClassName, $methodName, ($methodName === '__construct'));
 
@@ -184,9 +184,18 @@ abstract class AbstractMethodInterceptorBuilder
                 $adviceChain = $adviceChains[\'Neos\Flow\Aop\Advice\AroundAdvice\'];
                 $adviceChain->rewind();
                 $joinPoint = new \Neos\Flow\Aop\JoinPoint($this, \'' . $targetClassName . '\', \'' . $methodName . '\', $methodArguments, $adviceChain);
+';
+            if ($declaredReturnType === 'never') {
+                $advicesCode .= '
+                $adviceChain->proceed($joinPoint);
+                $methodArguments = $joinPoint->getMethodArguments();
+';
+            } else {
+                $advicesCode .= '
                 $result = $adviceChain->proceed($joinPoint);
                 $methodArguments = $joinPoint->getMethodArguments();
 ';
+            }
         } else {
             $advicesCode .= '
                 $joinPoint = new \Neos\Flow\Aop\JoinPoint($this, \'' . $targetClassName . '\', \'' . $methodName . '\', $methodArguments);
@@ -195,7 +204,7 @@ abstract class AbstractMethodInterceptorBuilder
 ';
         }
 
-        if (isset($groupedAdvices[\Neos\Flow\Aop\Advice\AfterReturningAdvice::class])) {
+        if (isset($groupedAdvices[\Neos\Flow\Aop\Advice\AfterReturningAdvice::class]) && $declaredReturnType !== 'never') {
             $advicesCode .= '
                 if (isset($this->Flow_Aop_Proxy_targetMethodsAndGroupedAdvices[\'' . $methodName . '\'][\'Neos\Flow\Aop\Advice\AfterReturningAdvice\'])) {
                     $advices = $this->Flow_Aop_Proxy_targetMethodsAndGroupedAdvices[\'' . $methodName . '\'][\'Neos\Flow\Aop\Advice\AfterReturningAdvice\'];

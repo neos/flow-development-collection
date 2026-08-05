@@ -17,7 +17,6 @@ use Neos\Flow\Annotations as Flow;
  * Validator for floats.
  *
  * @api
- * @Flow\Scope("singleton")
  */
 class FloatValidator extends AbstractValidator
 {

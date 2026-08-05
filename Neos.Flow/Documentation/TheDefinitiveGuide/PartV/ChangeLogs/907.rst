@@ -1,0 +1,240 @@
+`9.0.7 (2026-08-03) <https://github.com/neos/flow-development-collection/releases/tag/9.0.7>`_
+==============================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`FEATURE: Add setting for encryption key <https://github.com/neos/flow-development-collection/pull/3426>`_
+----------------------------------------------------------------------------------------------------------
+
+With this the encryption key can be defined in a setting. When defined it is not received from cache anymore.
+
+```yaml
+Neos:
+  Flow:
+    security:
+      cryptography:
+        encryptionKey: 'something-random-usually-40-chars-long'
+```
+
+Ideally set this from an environment variable, so it doesn't have to be in your codebase…
+
+* Resolves: `#3425 <https://github.com/neos/flow-development-collection/issues/3425>`_
+
+**Upgrade instructions**
+
+None – but feel free to use the new feature. For existing projects, set the encryption key to the value found in the cache, ``Data/Persistent/Cache/Data/Flow_Security_Cryptography_HashService/encryptionKey`` usually.
+
+**Review instructions**
+
+Set the new setting to a non-empty string and see that ``\\Neos\\Flow\\Security\\Cryptography\\HashService::generateHmac()`` returns a Hmac generated with your new encryption key.
+
+
+* Packages: ``Flow``
+
+`BUGFIX: Allow encryptionkey to be empty in schema validation <https://github.com/neos/flow-development-collection/pull/3574>`_
+-------------------------------------------------------------------------------------------------------------------------------
+
+Fixes validation issues in pipeline due to `#3426 <https://github.com/neos/flow-development-collection/issues/3426>`_
+
+* Packages: ``Flow``
+
+`BUGFIX: Context aware path mapping for xdebug <https://github.com/neos/flow-development-collection/pull/3568>`_
+----------------------------------------------------------------------------------------------------------------
+
+This PR generates the mapping files per FlowContext. This ensures the mapping works even after context switching.
+
+Replaces #3562
+
+* Packages: ``Flow``
+
+`BUGFIX: Declare implicitly nullable argument as actually nullable <https://github.com/neos/flow-development-collection/pull/3569>`_
+------------------------------------------------------------------------------------------------------------------------------------
+
+To make phpstan happy in php 8.4 and 8.5
+
+
+* Packages: ``.github`` ``Flow``
+
+`BUGFIX: `#[Flow\Route]` Annotation unset `@subpackage` instead of `null` <https://github.com/neos/flow-development-collection/pull/3540>`_
+-------------------------------------------------------------------------------------------------------------------------------------------
+
+There is an inconsistency with defined routes which can lead to not properly working resolving, so we herby leave out the ``@subpackage`` declaration as it should be instead of specifying the key without value.
+
+If a route is defined manually configuration following things are logged in routes:match
+
+```
+Name: My.Api :: Configuration
+Pattern: api/news
+
+Results:
+  @package: My.Api
+  @controller: News
+  @action: getNews
+
+Matched Controller: ...
+```
+
+But the result is different when using the RouteAnnotation, then the ``@subpackage`` is apparently set which again can confuse the resolving.
+
+```
+Name: My.Api :: News :: getNews
+Pattern: api/news
+
+Results:
+  @package: My.Api
+  @subpackage:
+  @controller: News
+  @action: getNews
+  @format: html
+
+Matched Controller: ...
+```
+
+I found out that during resolving the ``@subpackage`` must be set explicitly to an empty string and cannot be left out or set to null.
+
+**Upgrade instructions**
+
+
+* Packages: ``Flow``
+
+`BUGFIX: Support never return types in AOP proxies <https://github.com/neos/flow-development-collection/pull/3505>`_
+--------------------------------------------------------------------------------------------------------------------
+
+This adjusts proxy class building for AOP proxies so that the generate code correctly advises methods which have a "never" return type.
+
+* Resolves: `#3451 <https://github.com/neos/flow-development-collection/issues/3451>`_
+
+* Packages: ``Flow``
+
+`BUGFIX: Retain original PDO exceptions in Query <https://github.com/neos/flow-development-collection/pull/3560>`_
+------------------------------------------------------------------------------------------------------------------
+
+This helps debugging, otherwise important debugging information can get lost with the original
+exception.
+
+* Packages: ``Flow``
+
+`BUGFIX: Check foreign keys explicit before removal <https://github.com/neos/flow-development-collection/pull/3565>`_
+---------------------------------------------------------------------------------------------------------------------
+
+After fixing `#3543 <https://github.com/neos/flow-development-collection/issues/3543>`_we introduced an incompatibility with MySQL 8.x. This replaces the proprietary "IF EXISTS" with explit check of FK existence to be compatible with both databases.
+
+It also added the MySQL database to the ci pipeline.
+
+* Packages: ``Flow`` ``.github``
+
+`BUGFIX: Remove unused variable assignment <https://github.com/neos/flow-development-collection/pull/3463>`_
+------------------------------------------------------------------------------------------------------------
+
+Fixes https://github.com/neos/flow-development-collection/issues/3395
+
+Without the fix, there are warnings in current PHP versions.
+
+* Packages: ``Flow``
+
+`BUGFIX: out of memory error when using AbsorbingHandler <https://github.com/neos/flow-development-collection/pull/3486>`_
+--------------------------------------------------------------------------------------------------------------------------
+
+Exceptions while rendering error stack traces no longer exhaust all memory and crash.
+
+Resolves https://github.com/neos/flow-development-collection/issues/3487
+
+**Review instructions**
+
+You find details in https://github.com/neos/flow-development-collection/issues/3487
+
+- ~~Tests have been created, run and adjusted as needed~~
+- [x] The PR is created against the `lowest maintained branch <https://www.neos.io/features/release-roadmap.html>`_
+    - bug was introduced in _9.0_
+- [ ] Reviewer - PR Title is brief but complete and starts with ``FEATURE|TASK|BUGFIX``
+- [ ] Reviewer - The first section explains the change briefly for change-logs
+- [ ] Reviewer - Breaking Changes are marked with ``!!!`` and have upgrade-instructions
+
+* Packages: ``Flow``
+
+`BUGFIX: Add debug info to exception if backend creation fails <https://github.com/neos/flow-development-collection/pull/3542>`_
+--------------------------------------------------------------------------------------------------------------------------------
+
+we use ``setProperties`` in the AbstractBackend to map all options to the backend class. Now there might be a setter for that option but the value is not guaranteed to match the type.
+
+Now a type error is thrown which itself doesnt give a hint where something is wrong:
+
+> Neos\\Cache\\Backend\\RedisBackend::setHostname(): Argument `#1 <https://github.com/neos/flow-development-collection/issues/1>`_($hostname) must be of type string, false given
+
+I have encountered this many times especially in combination with Caches configured with env variables that are not set and thus ``false``.
+
+**Upgrade instructions**
+
+
+* Packages: ``Flow`` ``Cache``
+
+`BUGFIX: build correct node uri for multisite setup for localhost <https://github.com/neos/flow-development-collection/pull/3548>`_
+-----------------------------------------------------------------------------------------------------------------------------------
+
+When using a multi-site setup and linking from one site to another, the uri generation in development does not work correctly.
+
+**Scenario:**
+I have a neos site "main" with domain localhost, and "other" at domain other.localhost and want to link a node from main on other. 
+
+**Expected behaviour:**
+The generated link points to "localhost/some-node"
+
+**Actual behaviour:**
+The generated link points to "other.localhost/some-node"
+
+**Changes:**
+check if ``CONSTRAINT_HOST`` has been set before falling back to base uri
+
+**Upgrade instructions**
+There should be no breaking changes
+
+**Review instructions**
+- 
+
+
+* Packages: ``Flow``
+
+`BUGFIX: Explicitly normalize FK constraint names after table renames for MariaDB 12 compatibility <https://github.com/neos/flow-development-collection/pull/3541>`_
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+MariaDB 12.x stopped auto-renaming InnoDB FK constraint names during RENAME TABLE. Two migrations that rename the resource_resource table were followed by downstream migrations expecting the new constraint name — which never materialized on MariaDB 12.x.                                       
+
+To get both versions working we now drop both possible index-name versions directly after the rename and recreate the index with the new - expected name.
+
+For better visibility, consitency and support I also changed the pipeline:
+* Add build configurations for PHP 8.5 with MariaDB 12.3 and Postgres 18
+* Change default version for MariaDB to latest LTS 11.8
+
+* Fixes: `#3543 <https://github.com/neos/flow-development-collection/issues/3543>`_ 
+
+* Packages: ``Flow`` ``.github``
+
+`TASK: Use migrations in pipeline and fixed migrations for MariaDB 12.x <https://github.com/neos/flow-development-collection/pull/3571>`_
+-----------------------------------------------------------------------------------------------------------------------------------------
+
+**What I did**
+
+Some old Flow migrations dropped foreign keys by their hardcoded auto-generated names (e.g. ``..._ibfk_1``). These names are no longer reliable: on MariaDB 12+, renaming a table no longer renames its auto-generated foreign key/index names along with it, so the constraint names the migrations expect may not exist and the migrations fail.
+
+Instead of relying on hardcoded constraint names, the affected migrations now look up the actual foreign keys on the table via the schema manager and drop the one defined on the relevant column. This works regardless of what the constraint is actually named, making the migrations compatible with MySQL, MariaDB < 12 and MariaDB ≥ 12 alike.
+
+**Why the CI change**
+
+Until now this breakage went unnoticed because the pipeline never executed the Doctrine migrations. The build workflow now runs ``./flow doctrine:migrate`` before the functional tests, so the full migration chain is verified on every build.
+
+* Packages: ``.github`` ``Flow``
+
+`TASK: Overhaul CI jobs to support multiple databases and parallel execution <https://github.com/neos/flow-development-collection/pull/3566>`_
+----------------------------------------------------------------------------------------------------------------------------------------------
+
+This splits the build job in different actions, do have reusable actions and allow run multiple independent jobs in parallel. Also I added the support for defining the database used as service per job.
+
+This allows us running matrix jobs for all supported PHP Versions in combination with supported database systems and versions.
+
+I also updated the deprecated checkout actions.
+
+* Packages: ``Flow`` ``.github``
+
+`Detailed log <https://github.com/neos/flow-development-collection/compare/9.0.6...9.0.7>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

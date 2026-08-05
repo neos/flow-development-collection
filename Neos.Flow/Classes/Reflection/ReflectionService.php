@@ -1584,16 +1584,21 @@ class ReflectionService
             return false;
         }
 
-        if (!$this->isPropertyTaggedWith($className, $propertyName, 'var')) {
-            return false;
-        }
-
         $varTagValues = $this->getPropertyTagValues($className, $propertyName, 'var');
         if (count($varTagValues) > 1) {
             throw new InvalidPropertyTypeException('More than one @var annotation given for "' . $className . '::$' . $propertyName . '"', 1367334366);
         }
+        // We need var tags for typed arrays or collections as those cannot be
+        // expressed natively so they have to take precedence
+        if (count($varTagValues) === 0) {
+            $declaredType = $this->getPropertyType($className, $propertyName);
+        } else {
+            $declaredType = strtok(trim(current($varTagValues), " \n\t"), " \n\t");
+        }
 
-        $declaredType = strtok(trim(current($varTagValues), " \n\t"), " \n\t");
+        if (!$declaredType) {
+            return false;
+        }
 
         if ($this->isPropertyAnnotatedWith($className, $propertyName, ORM\Id::class)) {
             $skipArtificialIdentity = true;

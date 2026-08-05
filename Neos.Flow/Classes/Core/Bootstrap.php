@@ -480,7 +480,7 @@ class Bootstrap
         }
 
         if (!defined('FLOW_PATH_ROOT')) {
-            $rootPath = isset($_SERVER['FLOW_ROOTPATH']) ? $_SERVER['FLOW_ROOTPATH'] : false;
+            $rootPath = $_SERVER['FLOW_ROOTPATH'] ?? false;
             if ($rootPath === false && isset($_SERVER['REDIRECT_FLOW_ROOTPATH'])) {
                 $rootPath = $_SERVER['REDIRECT_FLOW_ROOTPATH'];
             }
@@ -530,7 +530,7 @@ class Bootstrap
         define('FLOW_PATH_PACKAGES', FLOW_PATH_ROOT . 'Packages/');
 
         if (!defined('FLOW_PATH_TEMPORARY_BASE')) {
-            define('FLOW_PATH_TEMPORARY_BASE', self::getEnvironmentConfigurationSetting('FLOW_PATH_TEMPORARY_BASE') ?: FLOW_PATH_DATA . '/Temporary');
+            define('FLOW_PATH_TEMPORARY_BASE', self::getEnvironmentConfigurationSetting('FLOW_PATH_TEMPORARY_BASE') ?: FLOW_PATH_DATA . 'Temporary');
             $temporaryDirectoryPath = Environment::composeTemporaryDirectoryName(FLOW_PATH_TEMPORARY_BASE, $this->context);
             define('FLOW_PATH_TEMPORARY', $temporaryDirectoryPath);
         }
@@ -613,7 +613,9 @@ class Bootstrap
             return $variableValue;
         }
 
-        $variableValue = getenv('REDIRECT_' . $variableName);
+        $redirectVariableName = 'REDIRECT_' . $variableName;
+
+        $variableValue = getenv($redirectVariableName);
         if ($variableValue !== false) {
             return $variableValue;
         }
@@ -622,8 +624,8 @@ class Bootstrap
             return $_SERVER[$variableName];
         }
 
-        if (isset($_SERVER['REDIRECT_' . $variableName])) {
-            return $_SERVER['REDIRECT_' . $variableName];
+        if (isset($_SERVER[$redirectVariableName])) {
+            return $_SERVER[$redirectVariableName];
         }
 
         return null;
