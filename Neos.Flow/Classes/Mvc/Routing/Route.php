@@ -153,6 +153,11 @@ class Route
     protected $httpMethods = [];
 
     /**
+     * @var array<int, string>
+     */
+    protected array $requestTags = [];
+
+    /**
      * Indicates whether this route is parsed.
      * For better performance, routes are only parsed if needed.
      *
@@ -204,6 +209,10 @@ class Route
         if (isset($configuration['httpMethods'])) {
             $route->setHttpMethods($configuration['httpMethods']);
         }
+        if (isset($configuration['requestTags'])) {
+            $route->setRequestTags($configuration['requestTags']);
+        }
+
         return $route;
     }
 
@@ -370,6 +379,16 @@ class Route
     public function getHttpMethods()
     {
         return $this->httpMethods;
+    }
+
+    public function getRequestTags(): array
+    {
+        return $this->requestTags;
+    }
+
+    public function setRequestTags(array $requestTags): void
+    {
+        $this->requestTags = $requestTags;
     }
 
     /**

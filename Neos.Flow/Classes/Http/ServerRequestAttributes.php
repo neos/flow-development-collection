@@ -32,4 +32,6 @@ final class ServerRequestAttributes
      * @internal Don't use this. The ActionRequest is supposed to only exist inside the MVC dispatch context.
      */
     public const ACTION_REQUEST = 'actionRequest';
+
+    public const REQUEST_TAGS = 'requestTags';
 }

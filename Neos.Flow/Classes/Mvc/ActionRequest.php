@@ -12,6 +12,7 @@ namespace Neos\Flow\Mvc;
  */
 
 use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Http\ServerRequestAttributes;
 use Neos\Http\Factories\FlowUploadedFile;
 use Psr\Http\Message\ServerRequestInterface as HttpRequestInterface;
 use Neos\Flow\ObjectManagement\Exception\UnknownObjectException;
@@ -105,6 +106,8 @@ class ActionRequest
      */
     protected $format = '';
 
+    protected RequestTags $requestTags;
+
     /**
      * The parent request – either another sub ActionRequest a main ActionRequest or null
      * @var ?ActionRequest
@@ -130,6 +133,7 @@ class ActionRequest
      */
     protected function __construct()
     {
+        $this->requestTags = RequestTags::empty();
     }
 
     /**
@@ -139,6 +143,10 @@ class ActionRequest
     public static function fromHttpRequest(HttpRequestInterface $request): ActionRequest
     {
         $mainActionRequest = new ActionRequest();
+        if ($request->getAttribute(ServerRequestAttributes::REQUEST_TAGS)) {
+            $mainActionRequest->setRequestTags(RequestTags::fromString($request->getAttribute(ServerRequestAttributes::REQUEST_TAGS)));
+        }
+
         $mainActionRequest->httpRequest = $request;
         return $mainActionRequest;
     }
@@ -648,6 +656,16 @@ class ActionRequest
     public function getFormat(): string
     {
         return $this->format;
+    }
+
+    public function getRequestTags(): RequestTags
+    {
+        return $this->requestTags;
+    }
+
+    public function setRequestTags(RequestTags $requestTags): void
+    {
+        $this->requestTags = $requestTags;
     }
 
     /**
