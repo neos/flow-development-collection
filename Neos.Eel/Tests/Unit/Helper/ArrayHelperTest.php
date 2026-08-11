@@ -19,6 +19,27 @@ use Neos\Eel\Tests\Unit\Fixtures\TestArrayIterator;
  */
 class ArrayHelperTest extends \Neos\Flow\Tests\UnitTestCase
 {
+    public function includesExamples()
+    {
+        return [
+            'included' => [['a', 'b', 'c'], 'a',  0, true],
+            'not included' => [['a', 'b', 'c'], 'd',  0, false],
+            'cut containing start part' => [['a', 'b', 'c'], 'a',  1, false],
+            'cut containing end part' => [['a', 'b', 'c'], 'a',  -2, false],
+        ];
+    }
+
+    /**
+     * @test
+     * @dataProvider includesExamples
+     */
+    public function includesWorks($string, $searchString, $fromIndex, $expected)
+    {
+        $helper = new ArrayHelper();
+        $result = $helper->includes($string, $searchString, $fromIndex);
+        self::assertSame($expected, $result);
+    }
+
     public function concatExamples()
     {
         return [
