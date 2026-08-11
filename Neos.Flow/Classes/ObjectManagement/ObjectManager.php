@@ -164,7 +164,7 @@ class ObjectManager implements ObjectManagerInterface
      * @param string $objectName
      * @return bool
      */
-    public function has($objectName): bool
+    public function has(string $objectName): bool
     {
         return $this->isRegistered($objectName);
     }
@@ -200,7 +200,7 @@ class ObjectManager implements ObjectManagerInterface
      * @throws InvalidConfigurationTypeException
      * @api
      */
-    public function get($objectName, ...$constructorArguments): object
+    public function get(string $objectName, ...$constructorArguments): object
     {
         if (!empty($constructorArguments) && isset($this->objects[$objectName]) && $this->objects[$objectName][self::KEY_SCOPE] !== ObjectConfiguration::SCOPE_PROTOTYPE) {
             throw new \InvalidArgumentException('You cannot provide constructor arguments for singleton objects via get(). If you need to pass arguments to the constructor, define them in the Objects.yaml configuration.', 1298049934);

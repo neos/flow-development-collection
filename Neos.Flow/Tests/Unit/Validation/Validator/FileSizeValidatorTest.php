@@ -38,7 +38,7 @@ class FileSizeValidatorTest extends AbstractValidatorTestcase
         return $mock;
     }
 
-    protected function createUploadedFileInterfaceMock(string $filesize): UploadedFileInterface
+    protected function createUploadedFileInterfaceMock(int $filesize): UploadedFileInterface
     {
         $mock = $this->createMock(UploadedFileInterface::class);
         $mock->expects($this->once())->method('getSize')->willReturn($filesize);

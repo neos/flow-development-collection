@@ -50,7 +50,7 @@ interface ObjectManagerInterface extends ContainerInterface
      * @return T The object instance
      * @api
      */
-    public function get($objectName, ...$constructorArguments);
+    public function get(string $objectName, ...$constructorArguments);
 
     /**
      * This is the PSR-11 ContainerInterface equivalent to `isRegistered`.
@@ -59,7 +59,7 @@ interface ObjectManagerInterface extends ContainerInterface
      * @return bool
      * @see isRegistered
      */
-    public function has($objectName);
+    public function has(string $objectName): bool;
 
     /**
      * Returns true if an object with the given name has already

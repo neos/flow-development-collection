@@ -8,7 +8,7 @@
     ],
     "require": {
         "php": "^8.2",
-        "psr/http-factory": "^1.0",
+        "psr/http-factory": "^2.0",
         "guzzlehttp/psr7": "^1.8.4 || ^2.1.1"
     },
     "autoload": {
