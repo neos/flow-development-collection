@@ -14,6 +14,8 @@ namespace Neos\Eel\FlowQuery;
 use Neos\Eel\Exception;
 use Neos\Eel\ProtectedContextAwareInterface;
 use Neos\Flow\Annotations as Flow;
+use Neos\Utility\Exception\PropertyNotAccessibleException;
+use Neos\Utility\ObjectAccess;
 
 /**
  * FlowQuery is jQuery for PHP, a selector and traversal engine for object sets.
@@ -177,6 +179,19 @@ class FlowQuery implements ProtectedContextAwareInterface, \IteratorAggregate, \
             $flowQuery->setOperationResolver($this->operationResolver); // Only needed for unit tests; hacky!
             return $flowQuery;
         }
+    }
+
+    public function __get($name): mixed
+    {
+        $value = $this->__call('get', [0]);
+        if (is_array($value) || is_object($value)) {
+            try {
+                return ObjectAccess::getProperty($value, $name);
+            } catch (PropertyNotAccessibleException $exception) {
+                return null;
+            }
+        }
+        return null;
     }
 
     /**
