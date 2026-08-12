@@ -42,5 +42,14 @@ interface RequestHandlerInterface
      * @return integer The priority of the request handler
      * @api
      */
-    public function getPriority();
+    public static function getPriority(): int;
+
+    /**
+     * This is the API to create an instance of a request handler the bootstrap will use internally.
+     *
+     * @param Bootstrap $bootstrap
+     * @return self
+     * @api
+     */
+    public static function fromBootstrap(Bootstrap $bootstrap): self;
 }

@@ -10,6 +10,7 @@ declare(strict_types=1);
 namespace Neos\Flow\Testing\RequestHandler;
 
 use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Core\Bootstrap;
 use Neos\Flow\Core\RequestHandlerInterface;
 use Neos\Flow\Tests\PhpBench\Core\BootstrapBench;
 
@@ -24,6 +25,15 @@ use Neos\Flow\Tests\PhpBench\Core\BootstrapBench;
  */
 final class EmptyRequestHandler implements RequestHandlerInterface
 {
+    public static function fromBootstrap(Bootstrap $bootstrap): RequestHandlerInterface
+    {
+        return new self();
+    }
+
+    private function __construct()
+    {
+    }
+
     public function handleRequest(): void
     {
     }
@@ -33,7 +43,7 @@ final class EmptyRequestHandler implements RequestHandlerInterface
         return true;
     }
 
-    public function getPriority(): int
+    public static function getPriority(): int
     {
         return 0;
     }

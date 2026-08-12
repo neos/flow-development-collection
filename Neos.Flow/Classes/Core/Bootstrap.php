@@ -31,28 +31,22 @@ use Neos\Utility\Files;
  */
 class Bootstrap
 {
-    const RUNLEVEL_COMPILETIME = 'Compiletime';
-    const RUNLEVEL_RUNTIME = 'Runtime';
+    public const RUNLEVEL_COMPILETIME = 'Compiletime';
+    public const RUNLEVEL_RUNTIME = 'Runtime';
+
+    protected ApplicationContext $context;
 
     /**
-     * @var ApplicationContext
+     * @var array<int, class-string>
      */
-    protected $context;
+    private array $requestHandlerClassNames = [];
 
     /**
-     * @var array<class-string<RequestHandlerInterface>, RequestHandlerInterface>
+     * @var class-string<RequestHandlerInterface>|null
      */
-    protected $requestHandlers = [];
+    protected string|null $preselectedRequestHandlerClassName = null;
 
-    /**
-     * @var class-string<RequestHandlerInterface>
-     */
-    protected $preselectedRequestHandlerClassName;
-
-    /**
-     * @var RequestHandlerInterface
-     */
-    protected $activeRequestHandler;
+    protected RequestHandlerInterface $activeRequestHandler;
 
     /**
      * The same instance like $objectManager, but static, for use in the proxy classes.
@@ -144,17 +138,17 @@ class Bootstrap
     }
 
     /**
-     * Registers a request handler which can possibly handle a request.
-     * All registered request handlers will be queried if they can handle a request
-     * when the bootstrap's run() method is called.
+     *  Registers a request handler which can possibly handle a request.
+     *  All registered request handlers will be queried if they can handle a request
+     *  when the bootstrap's run() method is called.
      *
-     * @param RequestHandlerInterface $requestHandler
+     * @param class-string<RequestHandlerInterface> $className
      * @return void
-     * @api
      */
-    public function registerRequestHandler(RequestHandlerInterface $requestHandler)
+    public function registerRequestHandlerClassName(string $className): void
     {
-        $this->requestHandlers[get_class($requestHandler)] = $requestHandler;
+        // No checks at this point in time as we might not be able to autolaod the class yet.
+        $this->requestHandlerClassNames[] = $className;
     }
 
     /**
@@ -162,10 +156,15 @@ class Bootstrap
      * it will be used if it can handle the request – regardless of the priority
      * of this or other request handlers.
      *
+     * This will also register the classname as a possible request handler.
+     *
      * @param class-string<RequestHandlerInterface> $className
      */
-    public function setPreselectedRequestHandlerClassName(string $className)
+    public function setPreselectedRequestHandlerClassName(string $className): void
     {
+        if (!in_array($className, $this->requestHandlerClassNames, true)) {
+            $this->registerRequestHandlerClassName($className);
+        }
         $this->preselectedRequestHandlerClassName = $className;
     }
 
@@ -191,7 +190,7 @@ class Bootstrap
      * @param RequestHandlerInterface $requestHandler
      * @return void
      */
-    public function setActiveRequestHandler(RequestHandlerInterface $requestHandler)
+    public function setActiveRequestHandler(RequestHandlerInterface $requestHandler): void
     {
         $this->activeRequestHandler = $requestHandler;
     }
@@ -231,7 +230,7 @@ class Bootstrap
         $shortControllerIdentifier = implode(':', $commandIdentifierParts);
 
         foreach ($this->compiletimeCommands as $fullControllerIdentifier => $isCompiletimeCommandController) {
-            list($packageKey, $controllerName, $commandName) = explode(':', $fullControllerIdentifier);
+            [$packageKey, $controllerName, $commandName] = explode(':', $fullControllerIdentifier);
             $packageKeyParts = explode('.', $packageKey);
             $packageKeyPartsCount = count($packageKeyParts);
             for ($offset = 0; $offset < $packageKeyPartsCount; $offset++) {
@@ -404,27 +403,57 @@ class Bootstrap
      */
     protected function resolveRequestHandler(): RequestHandlerInterface
     {
-        if ($this->preselectedRequestHandlerClassName !== null && isset($this->requestHandlers[$this->preselectedRequestHandlerClassName])) {
-            $requestHandler = $this->requestHandlers[$this->preselectedRequestHandlerClassName];
+        if ($this->preselectedRequestHandlerClassName !== null) {
+            $requestHandler = $this->getRequestHandlerInstance($this->preselectedRequestHandlerClassName);
             if ($requestHandler->canHandleRequest()) {
                 return $requestHandler;
             }
         }
 
-        foreach ($this->requestHandlers as $requestHandler) {
+        /** @var RequestHandlerInterface|null $bestMatchingRequestHandler */
+        $bestMatchingRequestHandler = null;
+        $bestMatchingPriority = -9999;
+        foreach ($this->requestHandlerClassNames as $requestHandlerClassName) {
+            if ($bestMatchingPriority > $requestHandlerClassName::getPriority()) {
+                continue;
+            }
+
+            $requestHandler = $this->getRequestHandlerInstance($requestHandlerClassName);
             if ($requestHandler->canHandleRequest() > 0) {
-                $priority = $requestHandler->getPriority();
-                if (isset($suitableRequestHandlers[$priority])) {
+                $priority = $requestHandler::getPriority();
+                if ($bestMatchingPriority === $priority) {
                     throw new FlowException('More than one request handler with the same priority can handle the request, but only one handler may be active at a time!', 1176475350);
                 }
-                $suitableRequestHandlers[$priority] = $requestHandler;
+                $bestMatchingPriority = $priority;
+                $bestMatchingRequestHandler = $requestHandler;
             }
         }
-        if (empty($suitableRequestHandlers)) {
+
+        if (is_null($bestMatchingRequestHandler)) {
             throw new FlowException('No suitable request handler could be found for the current request. This is most likely a setup-problem, so please check your composer.json and/or try removing Configuration/PackageStates.php', 1464882543);
         }
-        ksort($suitableRequestHandlers);
-        return array_pop($suitableRequestHandlers);
+        return $bestMatchingRequestHandler;
+    }
+
+    /**
+     * @param class-string $className
+     * @return RequestHandlerInterface
+     */
+    private function getRequestHandlerInstance(string $className): RequestHandlerInterface
+    {
+        if (!in_array($className, $this->requestHandlerClassNames, true)) {
+            throw new FlowException(sprintf('A request handler "%s" was never registered', $className), 1719060769);
+        }
+
+        if (isset($this->earlyInstances[$className]) && $this->earlyInstances[$className] instanceof RequestHandlerInterface) {
+            return $this->earlyInstances[$className];
+        }
+
+        if (!in_array(RequestHandlerInterface::class, class_implements($className), true)) {
+            throw new FlowException(sprintf('The class "%s" registered as request handler must implement the RequestHandlerInterface interface.', $className), 1719132434);
+        }
+
+        return $className::fromBootstrap($this);
     }
 
     /**

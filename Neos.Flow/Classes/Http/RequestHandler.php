@@ -14,6 +14,7 @@ namespace Neos\Flow\Http;
 use GuzzleHttp\Psr7\ServerRequest;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Core\Bootstrap;
+use Neos\Flow\Core\RequestHandlerInterface;
 use Neos\Flow\Http\Helper\ResponseInformationHelper;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -52,13 +53,15 @@ class RequestHandler implements HttpRequestHandlerInterface
      */
     public $exit;
 
-    /**
-     * @param Bootstrap $bootstrap
-     */
-    public function __construct(Bootstrap $bootstrap)
+    public static function fromBootstrap(Bootstrap $bootstrap): RequestHandlerInterface
+    {
+        return new self($bootstrap);
+    }
+
+    private function __construct(Bootstrap $bootstrap)
     {
         $this->bootstrap = $bootstrap;
-        $this->exit = function () {
+        $this->exit = static function () {
             exit();
         };
     }
@@ -81,7 +84,7 @@ class RequestHandler implements HttpRequestHandlerInterface
      * @return integer The priority of the request handler.
      * @api
      */
-    public function getPriority()
+    public static function getPriority(): int
     {
         return 100;
     }
