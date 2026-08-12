@@ -16,7 +16,6 @@ namespace Neos\Flow\Tests\Functional\Property\TypeConverter;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use Neos\Flow\I18n\Exception\InvalidLocaleIdentifierException;
-use Neos\Flow\I18n\Locale;
 use Neos\Flow\Property\PropertyMappingConfiguration;
 use Neos\Flow\Property\TypeConverter\FloatConverter;
 use Neos\Flow\Tests\FunctionalTestCase;

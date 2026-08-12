@@ -14,7 +14,6 @@ namespace Neos\Flow\Tests\Functional\Security;
  * source code.
  */
 use PHPUnit\Framework\Attributes\Test;
-use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Security\Account;
 use Neos\Flow\Tests\FunctionalTestCase;
 

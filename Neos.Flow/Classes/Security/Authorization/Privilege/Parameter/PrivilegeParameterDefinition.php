@@ -11,8 +11,6 @@ namespace Neos\Flow\Security\Authorization\Privilege\Parameter;
  * source code.
  */
 
-use Neos\Flow\Annotations as Flow;
-
 /**
  * A privilege parameter definition
  */

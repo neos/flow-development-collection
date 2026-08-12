@@ -11,8 +11,6 @@ namespace Neos\Flow\Session;
  * source code.
  */
 
-use Neos\Flow\Annotations as Flow;
-
 /**
  * Interface for a session manager
  *

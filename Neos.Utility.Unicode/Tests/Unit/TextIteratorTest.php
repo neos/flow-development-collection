@@ -17,7 +17,6 @@ use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\Attributes\Test;
 use Neos\Utility\Unicode\Exception;
 use Neos\Utility\Unicode\TextIterator;
-use Neos\Utility\Unicode;
 
 /**
  * Testcase for the TextIterator port

@@ -15,7 +15,6 @@ namespace Neos\Utility\Arrays\Tests\Unit;
  */
 use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\Attributes\Test;
-use Neos\Utility\Arrays;
 use Neos\Utility\ValueAccessor;
 
 /**

@@ -18,7 +18,6 @@ use Neos\Flow\Session\TransientSession;
 use Neos\Flow\Session\SessionInterface;
 use Neos\Flow\Session\Exception\SessionNotStartedException;
 use Neos\Flow\Tests\UnitTestCase;
-use Neos\Flow\Session;
 
 /**
  * Testcase for the Transient Session implementation

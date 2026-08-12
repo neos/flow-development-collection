@@ -18,7 +18,6 @@ include_once(__DIR__ . '/../../BaseTestCase.php');
  * source code.
  */
 
-use Neos\Cache\Backend\BackendInterface;
 use Neos\Cache\Backend\PdoBackend;
 use Neos\Cache\EnvironmentConfiguration;
 use Neos\Cache\Tests\BaseTestCase;

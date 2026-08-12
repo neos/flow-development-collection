@@ -11,8 +11,6 @@ namespace Neos\Flow\ResourceManagement;
  * source code.
  */
 
-use Neos\Flow\Annotations as Flow;
-
 /**
  * Interface which defines the basic meta data getters and setters for PersistentResource
  * and Storage/Object objects.

@@ -22,7 +22,6 @@ use Neos\Flow\Command\HelpCommandController;
 use Neos\Flow\Mvc\Exception\InvalidArgumentMixingException;
 use Neos\Flow\Mvc\Exception\NoSuchCommandException;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
-use Neos\Flow\Reflection\ReflectionService;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Flow\Cli;
 

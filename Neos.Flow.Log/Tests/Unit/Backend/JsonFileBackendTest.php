@@ -16,7 +16,6 @@ namespace Neos\Flow\Log\Tests\Unit\Backend;
 use PHPUnit\Framework\Attributes\Test;
 use Neos\Flow\Log\Backend\JsonFileBackend;
 use org\bovigo\vfs\vfsStream;
-use org\bovigo\vfs\vfsStreamWrapper;
 use Neos\Flow\Tests\UnitTestCase;
 
 /**

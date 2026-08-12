@@ -11,8 +11,6 @@ namespace Neos\Flow\Tests\Functional\Reflection\Fixtures\Model;
  * source code.
  */
 
-use Neos\Flow\Annotations as Flow;
-
 /**
  * Just a Plain Old PHP Object as non-abstract base class for the Aggregate Root "EntityExtendingPlainObject"
  */

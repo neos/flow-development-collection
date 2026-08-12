@@ -12,7 +12,6 @@ namespace Neos\Flow\Tests\Functional\Persistence\FixturesPHP8;
  */
 
 use Doctrine\ORM\Mapping as ORM;
-use Neos\Flow\Annotations as Flow;
 
 /**
  * A simple Doctrine ORM 2.5 embeddable for persistence tests

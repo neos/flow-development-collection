@@ -22,7 +22,6 @@ use Neos\Http\Factories\UriFactory;
 use org\bovigo\vfs\vfsStream;
 use Neos\Cache\Backend\FileBackend;
 use Neos\Cache\EnvironmentConfiguration;
-use Neos\Flow\Core\Bootstrap;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Security\Context;
 use Neos\Flow\Session\Session;
@@ -30,8 +29,6 @@ use Neos\Flow\Session\SessionManager;
 use Neos\Cache\Frontend\VariableFrontend;
 use Neos\Flow\Http\Cookie;
 use Neos\Flow\Tests\UnitTestCase;
-use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\ServerRequestInterface;
 use Psr\Log\LoggerInterface;
 
 /**

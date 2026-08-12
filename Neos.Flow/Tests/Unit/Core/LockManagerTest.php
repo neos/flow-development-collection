@@ -16,7 +16,6 @@ namespace Neos\Flow\Tests\Unit\Core;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use org\bovigo\vfs\vfsStream;
-use org\bovigo\vfs\vfsStreamDirectory;
 use org\bovigo\vfs\vfsStreamFile;
 use Neos\Flow\Core\LockManager;
 use Neos\Flow\Tests\UnitTestCase;

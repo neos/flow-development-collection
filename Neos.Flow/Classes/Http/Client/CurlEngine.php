@@ -11,7 +11,6 @@ namespace Neos\Flow\Http\Client;
  * source code.
  */
 
-use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Http;
 use Neos\Flow\Http\InvalidArgumentException;
 use Psr\Http\Message\ResponseInterface;

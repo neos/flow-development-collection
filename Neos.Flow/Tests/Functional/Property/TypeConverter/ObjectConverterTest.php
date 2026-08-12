@@ -23,7 +23,6 @@ use Neos\Flow\Property\PropertyMappingConfiguration;
 use Neos\Flow\Property\TypeConverter\ObjectConverter;
 use Neos\Utility\ObjectAccess;
 use Neos\Flow\Tests\FunctionalTestCase;
-use Neos\Flow\Tests\Functional\Property\Fixtures;
 
 /**
  */

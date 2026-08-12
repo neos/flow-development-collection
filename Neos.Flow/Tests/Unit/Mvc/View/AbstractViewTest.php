@@ -15,7 +15,6 @@ namespace Neos\Flow\Tests\Unit\Mvc\View;
  */
 use PHPUnit\Framework\Attributes\Test;
 use Neos\Flow\Mvc\View\AbstractView;
-use Neos\Flow\Mvc;
 use Neos\Flow\Tests\UnitTestCase;
 
 /**

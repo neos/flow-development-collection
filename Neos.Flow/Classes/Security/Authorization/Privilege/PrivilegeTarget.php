@@ -11,7 +11,6 @@ namespace Neos\Flow\Security\Authorization\Privilege;
  * source code.
  */
 
-use Neos\Flow\Annotations as Flow;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Security\Authorization\Privilege\Parameter\PrivilegeParameterDefinition;
 use Neos\Flow\Security\Authorization\Privilege\Parameter\PrivilegeParameterInterface;

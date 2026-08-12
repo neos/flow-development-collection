@@ -17,7 +17,6 @@ use PHPUnit\Framework\Attributes\Test;
 use Neos\Flow\I18n\Locale;
 use Neos\Flow\I18n\Cldr\Reader\PluralsReader;
 use Neos\Flow\Tests\FunctionalTestCase;
-use Neos\Flow\I18n;
 
 final class PluralsReaderTest extends FunctionalTestCase
 {

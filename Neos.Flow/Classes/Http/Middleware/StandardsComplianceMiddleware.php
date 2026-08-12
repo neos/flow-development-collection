@@ -13,7 +13,6 @@ namespace Neos\Flow\Http\Middleware;
  * source code.
  */
 
-use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Http\Helper\ResponseInformationHelper;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;

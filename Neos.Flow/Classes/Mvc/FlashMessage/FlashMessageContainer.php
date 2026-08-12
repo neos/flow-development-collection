@@ -11,7 +11,6 @@ namespace Neos\Flow\Mvc\FlashMessage;
  * source code.
  */
 
-use Neos\Flow\Annotations as Flow;
 use Neos\Error\Messages\Message;
 
 /**

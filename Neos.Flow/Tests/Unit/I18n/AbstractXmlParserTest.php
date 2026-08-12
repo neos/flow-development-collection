@@ -17,7 +17,6 @@ use PHPUnit\Framework\Attributes\Test;
 use Neos\Flow\I18n\AbstractXmlParser;
 use Neos\Flow\I18n\Exception\InvalidXmlFileException;
 use Neos\Flow\Tests\UnitTestCase;
-use Neos\Flow\I18n;
 
 /**
  * Testcase for the AbstractXmlParser class

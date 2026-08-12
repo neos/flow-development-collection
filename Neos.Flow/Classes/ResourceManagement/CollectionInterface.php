@@ -11,7 +11,6 @@ namespace Neos\Flow\ResourceManagement;
  * source code.
  */
 
-use Neos\Flow\Annotations as Flow;
 use Neos\Flow\ResourceManagement\Storage\StorageInterface;
 use Neos\Flow\ResourceManagement\Storage\StorageObject;
 use Neos\Flow\ResourceManagement\Target\TargetInterface;

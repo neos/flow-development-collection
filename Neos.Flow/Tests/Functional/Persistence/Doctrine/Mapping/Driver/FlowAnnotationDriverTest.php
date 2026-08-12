@@ -31,7 +31,6 @@ use Doctrine\ORM\Tools\SchemaTool;
 use Neos\Flow\Persistence\Doctrine\Mapping\Driver\FlowAnnotationDriver;
 use Neos\Flow\Persistence\Doctrine\PersistenceManager;
 use Neos\Flow\Tests\Functional\Aop\Fixtures\TargetClass04;
-use Neos\Flow\Tests\Functional\Persistence\Fixtures;
 use Neos\Flow\Persistence\Doctrine\Mapping\ClassMetadata;
 use Neos\Flow\Tests\FunctionalTestCase;
 

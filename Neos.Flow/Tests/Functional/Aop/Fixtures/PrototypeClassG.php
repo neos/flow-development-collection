@@ -11,8 +11,6 @@ namespace Neos\Flow\Tests\Functional\Aop\Fixtures;
  * source code.
  */
 
-use Neos\Flow\Annotations as Flow;
-
 /**
  * A class of scope prototype (but without explicit scope annotation)
  */

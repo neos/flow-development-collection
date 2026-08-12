@@ -16,7 +16,6 @@ namespace Neos\Flow\Tests\Unit\Validation;
 use PHPUnit\Framework\Attributes\Test;
 use Neos\Flow\Annotations\Validate;
 use Neos\Flow\Annotations\IgnoreValidation;
-use Neos\Flow\Annotations;
 use Neos\Flow\Mvc\Controller\ActionController;
 use Neos\Flow\ObjectManagement\Configuration\Configuration;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;

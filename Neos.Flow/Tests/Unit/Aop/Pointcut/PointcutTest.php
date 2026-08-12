@@ -19,7 +19,6 @@ use Neos\Flow\Aop\Exception\CircularPointcutReferenceException;
 use Neos\Flow\Aop\Builder\ClassNameIndex;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Flow\Aop\Pointcut;
-use Neos\Flow\Aop;
 
 /**
  * Testcase for the default AOP Pointcut implementation

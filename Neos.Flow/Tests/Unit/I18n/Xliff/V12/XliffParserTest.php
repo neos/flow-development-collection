@@ -17,7 +17,6 @@ use PHPUnit\Framework\Attributes\Test;
 use Neos\Flow\I18n\Xliff\V12\XliffParser;
 use Neos\Flow\I18n\Xliff\Exception\InvalidXliffDataException;
 use Neos\Flow\Tests\UnitTestCase;
-use Neos\Flow\I18n;
 
 /**
  * Testcase for the XliffParser

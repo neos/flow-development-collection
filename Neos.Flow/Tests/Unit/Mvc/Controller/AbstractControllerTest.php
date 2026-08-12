@@ -33,7 +33,6 @@ use Neos\Flow\Mvc\Routing\UriBuilder;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Flow\Property\PropertyMapper;
 use Neos\Flow\Tests\UnitTestCase;
-use Neos\Flow\Cli;
 use Neos\Error\Messages as FlowError;
 
 /**

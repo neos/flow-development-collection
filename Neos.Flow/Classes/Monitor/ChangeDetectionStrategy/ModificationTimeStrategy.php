@@ -13,7 +13,6 @@ namespace Neos\Flow\Monitor\ChangeDetectionStrategy;
 
 use Neos\Cache\Frontend\StringFrontend;
 use Neos\Flow\Monitor\FileMonitor;
-use Neos\Flow\Annotations as Flow;
 
 /**
  * A change detection strategy based on modification times

@@ -21,7 +21,6 @@ use Neos\Flow\Security\Authorization\Interceptor\PolicyEnforcement;
 use Neos\Flow\Security\Authorization\Privilege\Method\MethodPrivilegeInterface;
 use Neos\Flow\Aop\JoinPointInterface;
 use Neos\Flow\Tests\UnitTestCase;
-use Neos\Flow\Security;
 
 /**
  * Testcase for the policy enforcement interceptor

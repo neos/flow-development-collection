@@ -16,7 +16,6 @@ namespace Neos\Flow\Tests\Unit\Mvc\Routing;
 use PHPUnit\Framework\Attributes\Test;
 use Neos\Flow\Mvc\Routing\StaticRoutePart;
 use Neos\Flow\Tests\UnitTestCase;
-use Neos\Flow\Mvc;
 
 /**
  * Testcase for the MVC Web Routing StaticRoutePart Class

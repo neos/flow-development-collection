@@ -23,7 +23,6 @@ use Neos\Flow\Tests\Functional\Persistence\Fixtures\TestValueObjectWithTransient
 use Neos\Flow\Tests\Functional\Persistence\Fixtures\TestValueObjectWithDateTimeProperty;
 use Neos\Flow\Tests\Functional\Persistence\Fixtures\TestValueObjectWithSubValueObjectProperties;
 use Neos\Flow\Persistence\Doctrine\PersistenceManager;
-use Neos\Flow\Tests\Functional\Persistence\Fixtures;
 use Neos\Flow\Tests\FunctionalTestCase;
 
 /**

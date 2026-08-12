@@ -17,7 +17,6 @@ use PHPUnit\Framework\Attributes\Test;
 use org\bovigo\vfs\vfsStream;
 use Neos\Flow\ObjectManagement\CompileTimeObjectManager;
 use Neos\Flow\Package\Package;
-use Neos\Flow\Package\PackageManager;
 use Neos\Flow\Tests\UnitTestCase;
 use Psr\Log\LoggerInterface;
 

@@ -17,7 +17,6 @@ use PHPUnit\Framework\Attributes\Test;
 use Neos\Flow\I18n\Xliff\Model\FileAdapter;
 use Neos\Flow\I18n\Locale;
 use Neos\Flow\Tests\UnitTestCase;
-use Neos\Flow\I18n;
 use Psr\Log\LoggerInterface;
 
 /**

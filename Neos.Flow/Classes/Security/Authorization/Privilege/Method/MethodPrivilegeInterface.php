@@ -11,7 +11,6 @@ namespace Neos\Flow\Security\Authorization\Privilege\Method;
  * source code.
  */
 
-use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Aop\Pointcut\PointcutFilterComposite;
 use Neos\Flow\Security\Authorization\Privilege\PrivilegeInterface;
 

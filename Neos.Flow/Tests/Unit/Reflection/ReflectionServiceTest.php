@@ -18,7 +18,6 @@ use Neos\Flow\Tests\Unit\Reflection\Fixture\FileWithNoClass;
 use Neos\Flow\Tests\Unit\Reflection\Fixture\ClassWithDifferentNameDifferent;
 use Neos\Flow\Tests\Unit\Reflection\Fixture\ClassWithAliasDependency;
 use Neos\Flow\Tests\Unit\Reflection\Fixture\AliasedClass;
-use Doctrine\Common\Annotations\Reader;
 use Neos\Flow\Reflection\Exception\ClassLoadingForReflectionFailedException;
 use Neos\Flow\Reflection\ReflectionService;
 use Neos\Flow\Tests\UnitTestCase;

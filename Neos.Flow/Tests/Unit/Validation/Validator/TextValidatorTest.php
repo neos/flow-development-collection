@@ -17,7 +17,6 @@ use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Neos\Flow\Validation\Error;
 use Neos\Flow\Validation\Validator\TextValidator;
-use Neos\Flow\Validation;
 
 require_once('AbstractValidatorTestcase.php');
 

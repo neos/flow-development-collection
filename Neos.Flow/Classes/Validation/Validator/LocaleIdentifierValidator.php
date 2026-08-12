@@ -11,7 +11,6 @@ namespace Neos\Flow\Validation\Validator;
  * source code.
  */
 
-use Neos\Flow\Annotations as Flow;
 use Neos\Flow\I18n\Locale;
 
 /**

@@ -11,8 +11,6 @@ namespace Neos\Flow\Tests\Functional\Property\Fixtures;
  * source code.
  */
 
-use Neos\Flow\Annotations as Flow;
-
 /**
  * A simple interface for PropertyMapper test
  */

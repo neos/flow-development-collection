@@ -12,7 +12,6 @@ namespace Neos\Flow\Tests\Functional\Reflection\Fixtures\Repository;
  */
 use Neos\Flow\Persistence\Repository;
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Persistence;
 
 /**
  * @Flow\Scope("singleton")

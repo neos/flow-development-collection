@@ -17,7 +17,6 @@ use PHPUnit\Framework\Attributes\Test;
 use Neos\Flow\Reflection\Exception;
 use Neos\Flow\Reflection\PropertyReflection;
 use Neos\Flow\Tests\UnitTestCase;
-use Neos\Flow\Reflection;
 
 /**
  * Testcase for PropertyReflection

@@ -19,8 +19,6 @@ use Neos\Flow\Http\Middleware\SecurityEntryPointMiddleware;
 use Neos\Flow\Http\ServerRequestAttributes;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\ActionRequestFactory;
-use Neos\Flow\Property\PropertyMapper;
-use Neos\Flow\Property\PropertyMappingConfiguration;
 use Neos\Flow\Security\Authentication\EntryPointInterface;
 use Neos\Flow\Security\Authentication\Token\TestingToken;
 use Neos\Flow\Security\Authentication\TokenInterface;

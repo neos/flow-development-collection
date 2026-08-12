@@ -18,7 +18,6 @@ use Neos\Flow\Tests\Functional\Persistence\Fixtures\AnnotatedIdentitiesEntity;
 use Neos\Flow\Tests\Functional\Persistence\Fixtures\RelatedIndexEntity;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Persistence\Doctrine\PersistenceManager;
-use Neos\Flow\Tests\Functional\Persistence\Fixtures;
 use Neos\Flow\Tests\FunctionalTestCase;
 
 /**

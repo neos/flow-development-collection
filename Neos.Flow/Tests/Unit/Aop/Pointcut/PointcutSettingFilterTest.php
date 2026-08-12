@@ -18,7 +18,6 @@ use Neos\Flow\Aop\Pointcut\PointcutSettingFilter;
 use Neos\Flow\Aop\Exception\InvalidPointcutExpressionException;
 use Neos\Flow\Configuration\ConfigurationManager;
 use Neos\Flow\Tests\UnitTestCase;
-use Neos\Flow\Aop;
 
 /**
  * Testcase for the Pointcut Setting Filter

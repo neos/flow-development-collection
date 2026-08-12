@@ -15,7 +15,6 @@ namespace Neos\Flow\Tests\Functional\Configuration;
  */
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
-use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Core\Bootstrap;
 use Neos\Flow\Tests\FunctionalTestCase;
 use Neos\Flow\Package\PackageManager;

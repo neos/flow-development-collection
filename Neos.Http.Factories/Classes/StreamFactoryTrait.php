@@ -4,7 +4,6 @@ declare(strict_types=1);
 namespace Neos\Http\Factories;
 
 use GuzzleHttp\Psr7\Stream;
-use Psr\Http\Message\StreamFactoryInterface;
 use Psr\Http\Message\StreamInterface;
 
 /**

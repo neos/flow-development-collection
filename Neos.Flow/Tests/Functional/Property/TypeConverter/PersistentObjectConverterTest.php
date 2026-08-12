@@ -18,7 +18,6 @@ use Neos\Flow\Tests\Functional\Property\Fixtures\TestEntityWithImmutableProperty
 use Neos\Flow\Property\Exception;
 use Neos\Flow\Property\PropertyMapper;
 use Neos\Flow\Tests\FunctionalTestCase;
-use Neos\Flow\Tests\Functional\Property\Fixtures;
 
 final class PersistentObjectConverterTest extends FunctionalTestCase
 {

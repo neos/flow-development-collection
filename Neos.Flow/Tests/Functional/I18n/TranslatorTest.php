@@ -17,7 +17,6 @@ use Neos\Flow\I18n\Translator;
 use Neos\Flow\I18n\Locale;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
-use Neos\Flow\I18n;
 use Neos\Flow\Tests\FunctionalTestCase;
 
 /**

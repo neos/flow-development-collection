@@ -19,7 +19,6 @@ use Neos\Flow\Security\Authorization\InterceptorInterface;
 use Neos\Flow\Security\Authorization\RequestFilter;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Tests\UnitTestCase;
-use Neos\Flow\Security;
 
 /**
  * Testcase for request filters

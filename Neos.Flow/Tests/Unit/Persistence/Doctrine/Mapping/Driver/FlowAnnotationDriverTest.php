@@ -18,7 +18,6 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use Neos\Flow\Persistence\Doctrine\Mapping\Driver\FlowAnnotationDriver;
 use Neos\Flow\Tests\UnitTestCase;
-use Neos\Flow\Security;
 use PHPUnit\Framework\MockObject\MockObject;
 use Doctrine\ORM\EntityManager;
 use Doctrine\DBAL\Connection;

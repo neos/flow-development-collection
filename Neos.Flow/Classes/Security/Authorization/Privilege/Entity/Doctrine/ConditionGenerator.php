@@ -11,7 +11,6 @@ namespace Neos\Flow\Security\Authorization\Privilege\Entity\Doctrine;
  * source code.
  */
 
-use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Security\Exception\InvalidPolicyException;
 
 /**

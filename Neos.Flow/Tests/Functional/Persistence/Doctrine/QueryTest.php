@@ -20,7 +20,6 @@ use Neos\Flow\Tests\Functional\Persistence\Fixtures\Post;
 use Neos\Flow\Tests\Functional\Persistence\Fixtures\Comment;
 use Neos\Flow\Persistence\Doctrine\PersistenceManager;
 use Neos\Flow\Persistence\Doctrine\Query;
-use Neos\Flow\Tests\Functional\Persistence\Fixtures;
 use Neos\Flow\Tests\Functional\Persistence\Fixtures\SubEntity;
 use Neos\Flow\Tests\Functional\Persistence\Fixtures\TestEntity;
 use Neos\Flow\Tests\Functional\Persistence\Fixtures\TestEntityRepository;

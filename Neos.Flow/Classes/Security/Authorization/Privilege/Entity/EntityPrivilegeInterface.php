@@ -12,7 +12,6 @@ namespace Neos\Flow\Security\Authorization\Privilege\Entity;
  */
 
 use Doctrine\Persistence\Mapping\ClassMetadata;
-use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Security\Authorization\Privilege\PrivilegeInterface;
 
 /**

@@ -11,8 +11,6 @@ namespace Neos\Flow\Tests\Functional\Reflection\Fixtures\Model;
  * source code.
  */
 
-use Neos\Flow\Annotations as Flow;
-
 /**
  * A model fixture which is used for testing the class schema building
  *

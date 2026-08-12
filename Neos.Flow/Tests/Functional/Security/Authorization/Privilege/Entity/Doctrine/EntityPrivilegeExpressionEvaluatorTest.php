@@ -24,8 +24,6 @@ use Neos\Flow\Security\Authorization\Privilege\Entity\Doctrine\EntityPrivilegeEx
 use Neos\Flow\Security\Authorization\Privilege\Entity\Doctrine\SqlFilter;
 use Neos\Flow\Tests\Functional\Security\Fixtures\TestEntityC;
 use Neos\Flow\Tests\FunctionalTestCase;
-use Neos\Eel;
-use Neos\Flow\Tests\Functional\Security\Fixtures;
 
 final class EntityPrivilegeExpressionEvaluatorTest extends FunctionalTestCase
 {

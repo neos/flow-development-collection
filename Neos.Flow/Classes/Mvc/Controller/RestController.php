@@ -11,7 +11,6 @@ namespace Neos\Flow\Mvc\Controller;
  * source code.
  */
 
-use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\ActionResponse;
 use Neos\Flow\Mvc\Exception\NoSuchActionException;

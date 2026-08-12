@@ -11,7 +11,6 @@ namespace Neos\Flow\Security\Authentication\Token;
  * source code.
  */
 
-use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\ActionRequest;
 
 /**

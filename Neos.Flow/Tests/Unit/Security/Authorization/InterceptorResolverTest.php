@@ -18,7 +18,6 @@ use Neos\Flow\Security\Exception\NoInterceptorFoundException;
 use Neos\Flow\Security\Authorization\InterceptorResolver;
 use Neos\Flow\ObjectManagement\ObjectManager;
 use Neos\Flow\Tests\UnitTestCase;
-use Neos\Flow\Security;
 
 /**
  * Testcase for the security interceptor resolver

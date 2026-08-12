@@ -25,7 +25,6 @@ use Neos\Flow\Reflection\ClassReflection;
 use Neos\Flow\Reflection\MethodReflection;
 use Neos\Flow\Reflection\PropertyReflection;
 use Neos\Flow\Tests\UnitTestCase;
-use Neos\Flow\Tests\Reflection\Fixture;
 
 /**
  * Testcase for ClassReflection

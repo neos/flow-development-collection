@@ -19,7 +19,6 @@ use PHPUnit\Framework\Attributes\Test;
 use Neos\Flow\Tests\Functional\I18n\Fixtures\SampleFormatter;
 use Neos\Flow\I18n\FormatResolver;
 use Neos\Flow\Tests\FunctionalTestCase;
-use Neos\Flow\I18n;
 
 /**
  * Testcase for the I18N placeholder replacing

@@ -11,7 +11,6 @@ namespace Neos\Flow\Tests\Functional\Configuration\Fixtures;
  * source code.
  */
 use Neos\Flow\Configuration\Source\YamlSource;
-use Neos\Flow\Annotations as Flow;
 
 class RootDirectoryIgnoringYamlSource extends YamlSource
 {

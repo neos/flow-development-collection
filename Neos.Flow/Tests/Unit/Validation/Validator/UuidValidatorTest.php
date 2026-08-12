@@ -16,7 +16,6 @@ namespace Neos\Flow\Tests\Unit\Validation\Validator;
 use PHPUnit\Framework\Attributes\Test;
 use Neos\Flow\Validation\Error;
 use Neos\Flow\Validation\Validator\UuidValidator;
-use Neos\Flow\Validation;
 
 require_once('AbstractValidatorTestcase.php');
 

@@ -16,7 +16,6 @@ namespace Neos\Flow\Tests\Functional\Utility;
 use PHPUnit\Framework\Attributes\Test;
 use Neos\Flow\Utility\Now;
 use Neos\Flow\Tests\FunctionalTestCase;
-use Neos\Flow\Utility;
 
 /**
  * Functional test for the Now class

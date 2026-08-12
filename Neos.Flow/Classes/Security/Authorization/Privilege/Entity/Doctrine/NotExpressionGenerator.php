@@ -13,7 +13,6 @@ namespace Neos\Flow\Security\Authorization\Privilege\Entity\Doctrine;
 
 use Doctrine\Persistence\Mapping\ClassMetadata;
 use Doctrine\ORM\Query\Filter\SQLFilter as DoctrineSqlFilter;
-use Neos\Flow\Annotations as Flow;
 
 /**
  * A sql generator to create a sql not condition.

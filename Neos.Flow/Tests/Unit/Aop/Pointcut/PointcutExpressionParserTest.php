@@ -24,7 +24,6 @@ use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Utility\ObjectAccess;
 use Neos\Flow\Reflection\ReflectionService;
 use Neos\Flow\Tests\UnitTestCase;
-use Neos\Flow\Aop;
 use Neos\Flow\Annotations as Flow;
 use Psr\Log\LoggerInterface;
 

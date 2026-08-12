@@ -19,7 +19,6 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use Neos\Flow\I18n\Parser\DatetimeParser;
 use Neos\Flow\Tests\UnitTestCase;
-use Neos\Flow\I18n;
 
 /**
  * Testcase for the DatetimeParser

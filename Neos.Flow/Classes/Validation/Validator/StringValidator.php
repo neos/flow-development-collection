@@ -11,8 +11,6 @@ namespace Neos\Flow\Validation\Validator;
  * source code.
  */
 
-use Neos\Flow\Annotations as Flow;
-
 /**
  * Validator for strings.
  *

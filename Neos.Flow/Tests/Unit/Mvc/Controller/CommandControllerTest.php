@@ -23,9 +23,7 @@ use Neos\Flow\Cli\ConsoleOutput;
 use Neos\Flow\Cli\Request;
 use Neos\Flow\Cli\Response;
 use Neos\Flow\Mvc\Controller\Arguments;
-use Neos\Flow\Reflection\ReflectionService;
 use Neos\Flow\Tests\UnitTestCase;
-use Neos\Flow\Mvc;
 
 /**
  * Testcase for the Command Controller

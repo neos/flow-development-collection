@@ -20,8 +20,6 @@ use Neos\Flow\SignalSlot\Dispatcher;
 use Neos\Flow\Aop\Advice\AbstractAdvice;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Tests\UnitTestCase;
-use Neos\Flow\SignalSlot;
-use Neos\Flow\Aop;
 
 /**
  * Testcase for the Abstract Method Interceptor Builder

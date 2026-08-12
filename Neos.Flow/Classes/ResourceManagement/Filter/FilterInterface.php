@@ -11,8 +11,6 @@ namespace Neos\Flow\ResourceManagement\Filter;
  * source code.
  */
 
-use Neos\Flow\Annotations as Flow;
-
 /**
  * Interface for a resource processing filter
  */

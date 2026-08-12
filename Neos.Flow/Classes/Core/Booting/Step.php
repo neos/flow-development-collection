@@ -11,7 +11,6 @@ namespace Neos\Flow\Core\Booting;
  * source code.
  */
 
-use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Core\Bootstrap;
 
 /**

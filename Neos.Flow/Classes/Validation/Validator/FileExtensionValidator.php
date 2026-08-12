@@ -13,7 +13,6 @@ namespace Neos\Flow\Validation\Validator;
  * source code.
  */
 
-use Neos\Flow\Annotations as Flow;
 use Neos\Flow\ResourceManagement\ResourceMetaDataInterface;
 use Psr\Http\Message\UploadedFileInterface;
 

@@ -11,7 +11,6 @@ namespace Neos\Flow\Tests\Functional\Security\Fixtures\Controller;
  * source code.
  */
 
-use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Exception as FlowException;
 use Neos\Flow\Security\Authentication\Controller\AbstractAuthenticationController;

@@ -13,7 +13,6 @@ namespace Neos\Flow\Tests\Functional\Reflection\Fixtures\Model;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Tests\Functional\Persistence\Fixtures as PF;
-use Neos\Flow\Tests\Functional\Reflection\Fixtures;
 use Doctrine\ORM\Mapping as ORM;
 
 /**

@@ -18,7 +18,6 @@ use Neos\Flow\Security\Context;
 use Neos\Flow\Security\Authorization\AfterInvocationManagerInterface;
 use Neos\Flow\Security\Authorization\Interceptor\AfterInvocation;
 use Neos\Flow\Tests\UnitTestCase;
-use Neos\Flow\Security;
 
 /**
  * Testcase for the policy enforcement interceptor

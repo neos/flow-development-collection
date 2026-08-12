@@ -11,8 +11,6 @@ namespace Neos\Flow\Tests\Functional\ObjectManagement\Fixtures;
  * source code.
  */
 
-use Neos\Flow\Annotations as Flow;
-
 class ClassImplementingInterfaceWithConstructor implements InterfaceWithConstructor
 {
     public function __construct(array $someArgument = [])

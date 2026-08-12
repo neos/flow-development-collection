@@ -18,7 +18,6 @@ use Neos\Flow\Aop\Pointcut\PointcutClassAnnotatedWithFilter;
 use Neos\Flow\Aop\Builder\ClassNameIndex;
 use Neos\Flow\Reflection\ReflectionService;
 use Neos\Flow\Tests\UnitTestCase;
-use Neos\Flow\Aop;
 
 /**
  * Testcase for the Pointcut Class-Annotated-With Filter

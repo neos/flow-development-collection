@@ -15,7 +15,6 @@ namespace Neos\Flow\Tests\Functional\I18n\Cldr;
  */
 use PHPUnit\Framework\Attributes\Test;
 use Neos\Flow\I18n\Locale;
-use Neos\Flow\I18n;
 use Neos\Flow\I18n\Cldr\CldrRepository;
 use Neos\Flow\Tests\FunctionalTestCase;
 use Neos\Utility\Files;

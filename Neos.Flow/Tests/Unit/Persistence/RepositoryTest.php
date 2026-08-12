@@ -23,7 +23,6 @@ use Neos\Flow\Persistence\QueryResultInterface;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Flow\Persistence\Exception\IllegalObjectTypeException;
 use Neos\Flow\Tests\UnitTestCase;
-use Neos\Flow\Persistence;
 
 require_once('Fixture/Repository/NonstandardEntityRepository.php');
 

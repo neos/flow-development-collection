@@ -11,7 +11,6 @@ namespace Neos\Flow\Tests\Unit\Cli\Fixtures\Command;
  * source code.
  */
 use Neos\Flow\Cli\Command;
-use Neos\Flow\Cli;
 
 /**
  * A mock CLI Command

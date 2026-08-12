@@ -26,7 +26,6 @@ use Neos\Flow\Security\Authentication\TokenAndProviderFactory;
 use Neos\Flow\Security\Authentication\TokenAndProviderFactoryInterface;
 use Neos\Flow\Security\Authentication\TokenInterface;
 use Neos\Flow\Security\Context;
-use Neos\Flow\Security\Policy;
 use Neos\Flow\Security\RequestPatternInterface;
 use Neos\Flow\Security\SessionDataContainer;
 use Neos\Flow\Session\SessionInterface;

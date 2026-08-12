@@ -21,8 +21,6 @@ use Neos\Flow\Aop\Advice\AroundAdvice;
 use Neos\Flow\Aop\Advice\AdviceChain;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Tests\UnitTestCase;
-use Neos\Flow\SignalSlot;
-use Neos\Flow\Aop;
 
 /**
  * Testcase for the Abstract Method Interceptor Builder

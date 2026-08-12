@@ -21,7 +21,6 @@ use Neos\Flow\I18n\Locale;
 use Neos\Cache\Frontend\VariableFrontend;
 use Neos\Flow\I18n\Cldr\Reader\PluralsReader;
 use Neos\Flow\Tests\UnitTestCase;
-use Neos\Flow\I18n;
 
 /**
  * Testcase for the PluralsReader

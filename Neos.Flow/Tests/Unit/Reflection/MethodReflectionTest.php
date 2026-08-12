@@ -17,7 +17,6 @@ use PHPUnit\Framework\Attributes\Test;
 use Neos\Flow\Reflection\MethodReflection;
 use Neos\Flow\Reflection\ClassReflection;
 use Neos\Flow\Reflection\ParameterReflection;
-use Neos\Flow\Reflection;
 use Neos\Flow\Tests\UnitTestCase;
 
 /**

@@ -11,7 +11,6 @@ namespace Neos\Flow\Cli;
  * source code.
  */
 
-use Neos\Flow\Annotations as Flow;
 use Symfony\Component\Console\Formatter\OutputFormatterStyle;
 use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Helper\QuestionHelper;

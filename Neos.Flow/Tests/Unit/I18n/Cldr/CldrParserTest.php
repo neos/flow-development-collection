@@ -16,7 +16,6 @@ namespace Neos\Flow\Tests\Unit\I18n\Cldr;
 use PHPUnit\Framework\Attributes\Test;
 use Neos\Flow\I18n\Cldr\CldrParser;
 use Neos\Flow\Tests\UnitTestCase;
-use Neos\Flow\I18n;
 
 /**
  * Testcase for the CldrParser

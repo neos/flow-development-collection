@@ -16,7 +16,6 @@ namespace Neos\Flow\Tests\Unit\I18n;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use Neos\Flow\I18n\Locale;
-use Neos\Flow\I18n;
 use Neos\Flow\I18n\LocaleTypeConverter;
 use Neos\Flow\Property\TypeConverterInterface;
 use Neos\Flow\Tests\UnitTestCase;

@@ -17,7 +17,6 @@ use PHPUnit\Framework\Attributes\Test;
 use Neos\Flow\Validation\Exception\InvalidValidationOptionsException;
 use Neos\Flow\Validation\Error;
 use Neos\Flow\Validation\Validator\RegularExpressionValidator;
-use Neos\Flow\Validation;
 
 require_once('AbstractValidatorTestcase.php');
 

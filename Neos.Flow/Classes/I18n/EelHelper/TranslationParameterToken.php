@@ -11,7 +11,6 @@ namespace Neos\Flow\I18n\EelHelper;
  * source code.
  */
 
-use Neos\Flow\Annotations as Flow;
 use Neos\Flow\I18n\Exception\IndexOutOfBoundsException;
 use Neos\Flow\I18n\Exception\InvalidFormatPlaceholderException;
 use Neos\Flow\I18n\Exception\InvalidLocaleIdentifierException;

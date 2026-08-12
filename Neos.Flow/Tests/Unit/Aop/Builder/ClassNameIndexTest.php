@@ -16,7 +16,6 @@ namespace Neos\Flow\Tests\Unit\Aop\Builder;
 use PHPUnit\Framework\Attributes\Test;
 use Neos\Flow\Aop\Builder\ClassNameIndex;
 use Neos\Flow\Tests\UnitTestCase;
-use Neos\Flow\Aop;
 
 /**
  * Testcase for the ClassNameIndex

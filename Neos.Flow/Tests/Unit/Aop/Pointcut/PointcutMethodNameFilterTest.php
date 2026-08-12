@@ -16,7 +16,6 @@ namespace Neos\Flow\Tests\Unit\Aop\Pointcut;
 use PHPUnit\Framework\Attributes\Test;
 use Neos\Flow\Aop\Pointcut\PointcutMethodNameFilter;
 use PHPUnit\Framework\MockObject\MockObject;
-use Neos\Flow\Aop;
 use Neos\Flow\Reflection\ReflectionService;
 use Neos\Flow\Tests\UnitTestCase;
 use Psr\Log\LoggerInterface;

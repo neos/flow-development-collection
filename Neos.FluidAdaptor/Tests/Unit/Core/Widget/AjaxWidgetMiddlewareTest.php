@@ -19,7 +19,6 @@ use GuzzleHttp\Psr7\Response;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\ActionRequestFactory;
 use Neos\Flow\Mvc\Dispatcher;
-use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Security\Context;
 use Neos\Flow\Security\Cryptography\HashService;
 use Neos\Flow\Tests\UnitTestCase;

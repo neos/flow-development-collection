@@ -31,7 +31,6 @@ use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Utility\ObjectAccess;
 use Neos\Flow\Tests\UnitTestCase;
-use Neos\Eel\FlowQuery\Operations;
 
 /**
  * FlowQuery test

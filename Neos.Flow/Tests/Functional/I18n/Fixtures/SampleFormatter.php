@@ -11,7 +11,6 @@ namespace Neos\Flow\Tests\Functional\I18n\Fixtures;
  * source code.
  */
 use Neos\Flow\I18n\Locale;
-use Neos\Flow\Annotations as Flow;
 use Neos\Flow\I18n\Formatter\FormatterInterface;
 use Neos\Flow\I18n;
 

@@ -4,7 +4,6 @@ declare(strict_types=1);
 namespace Neos\Http\Factories;
 
 use Psr\Http\Message\StreamInterface;
-use Psr\Http\Message\UploadedFileFactoryInterface;
 use Psr\Http\Message\UploadedFileInterface;
 
 /**

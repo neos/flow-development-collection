@@ -11,7 +11,6 @@ namespace Neos\Flow\Tests\Functional\Mvc\Fixtures\Controller;
  * source code.
  */
 
-use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\Controller\ActionController;
 use Neos\Error\Messages\Message;
 

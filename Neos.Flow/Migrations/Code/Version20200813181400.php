@@ -11,9 +11,6 @@ namespace Neos\Flow\Core\Migrations;
  * source code.
  */
 
-use Neos\Flow\Configuration\ConfigurationManager;
-use Neos\Flow\Log\PsrLoggerFactory;
-
 /**
  * Adjust "Settings.yaml" to new naming of settings (see https://github.com/neos/flow-development-collection/pull/2051)
  */
