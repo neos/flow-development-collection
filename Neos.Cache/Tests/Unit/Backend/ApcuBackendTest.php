@@ -354,6 +354,56 @@ class ApcuBackendTest extends BaseTestCase
     /**
      * @test
      */
+    public function iterationIsNotRestartedWhenAnEntryIsUpdatedWhileIterating()
+    {
+        $backend = $this->setUpBackend();
+        $cache = new VariableFrontend('UnitTestCache', $backend);
+
+        foreach (['first', 'second', 'third', 'fourth'] as $entryIdentifier) {
+            $cache->set($entryIdentifier, $entryIdentifier . 'Data');
+        }
+
+        $visitedEntryIdentifiers = [];
+        foreach ($cache->getIterator() as $entryIdentifier => $data) {
+            // update while in the middle of the iteration – a restart would visit earlier entries again
+            if (count($visitedEntryIdentifiers) === 2) {
+                $cache->set($entryIdentifier, 'updatedData');
+            }
+            $visitedEntryIdentifiers[] = $entryIdentifier;
+        }
+
+        sort($visitedEntryIdentifiers);
+        self::assertSame(['first', 'fourth', 'second', 'third'], $visitedEntryIdentifiers);
+    }
+
+    /**
+     * @test
+     */
+    public function iterationIsNotRestartedWhenAnEntryIsRemovedWhileIterating()
+    {
+        $backend = $this->setUpBackend();
+        $cache = new VariableFrontend('UnitTestCache', $backend);
+
+        foreach (['first', 'second', 'third', 'fourth'] as $entryIdentifier) {
+            $cache->set($entryIdentifier, $entryIdentifier . 'Data');
+        }
+
+        $visitedEntryIdentifiers = [];
+        foreach ($cache->getIterator() as $entryIdentifier => $data) {
+            // remove an entry that has been visited already, like SessionManager::collectGarbage() does
+            if (count($visitedEntryIdentifiers) === 2) {
+                $cache->remove($visitedEntryIdentifiers[0]);
+            }
+            $visitedEntryIdentifiers[] = $entryIdentifier;
+        }
+
+        sort($visitedEntryIdentifiers);
+        self::assertSame(['first', 'fourth', 'second', 'third'], $visitedEntryIdentifiers);
+    }
+
+    /**
+     * @test
+     */
     public function iterationResetsWhenDataFlushed()
     {
         $backend = $this->setUpBackend();

@@ -217,7 +217,6 @@ class PdoBackend extends IndependentAbstractBackend implements TaggableBackendIn
             }
 
             $this->databaseHandle->commit();
-            $this->cacheEntriesIterator = null;
         } catch (\Exception $exception) {
             $this->databaseHandle->rollBack();
 
@@ -283,7 +282,6 @@ class PdoBackend extends IndependentAbstractBackend implements TaggableBackendIn
         try {
             $rowsWereDeleted = $this->removeWithoutTransaction($entryIdentifier);
             $this->databaseHandle->commit();
-            $this->cacheEntriesIterator = null;
 
             return $rowsWereDeleted;
         } catch (\Exception $exception) {
@@ -340,7 +338,6 @@ class PdoBackend extends IndependentAbstractBackend implements TaggableBackendIn
             $statementHandle->execute([$this->context(), $this->cacheIdentifier]);
 
             $this->databaseHandle->commit();
-            $this->cacheEntriesIterator = null;
         } catch (\Exception $exception) {
             $this->databaseHandle->rollBack();
 
@@ -371,7 +368,6 @@ class PdoBackend extends IndependentAbstractBackend implements TaggableBackendIn
             $statementHandle->execute([$this->context(), $this->cacheIdentifier, $tag]);
 
             $this->databaseHandle->commit();
-            $this->cacheEntriesIterator = null;
 
             return $flushed;
         } catch (\Exception $exception) {
@@ -482,7 +478,6 @@ class PdoBackend extends IndependentAbstractBackend implements TaggableBackendIn
 
             throw $exception;
         }
-        $this->cacheEntriesIterator = null;
     }
 
     /**
@@ -611,6 +606,10 @@ class PdoBackend extends IndependentAbstractBackend implements TaggableBackendIn
      * Rewinds the cache entry iterator to the first element
      * and fetches cacheEntries.
      *
+     * The entries are fetched anew on every rewind, so this always yields an up-to-date view. That is why writing
+     * methods like set() and remove() must not reset the iterator: doing so would make a running iteration start
+     * over from the first entry whenever an entry is changed.
+     *
      * @return void
      * @api
      */
@@ -619,11 +618,6 @@ class PdoBackend extends IndependentAbstractBackend implements TaggableBackendIn
         try {
             $this->connect();
         } catch (Exception $e) {
-            return;
-        }
-
-        if ($this->cacheEntriesIterator !== null) {
-            $this->cacheEntriesIterator->rewind();
             return;
         }
 
