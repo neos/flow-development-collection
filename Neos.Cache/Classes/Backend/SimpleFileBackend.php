@@ -161,7 +161,6 @@ class SimpleFileBackend extends IndependentAbstractBackend implements PhpCapable
             if ($this->cacheEntryFileExtension === '.php') {
                 OpcodeCacheHelper::clearAllActive($cacheEntryPathAndFilename);
             }
-            $this->cacheFilesIterator = null;
             return;
         }
 
@@ -260,7 +259,6 @@ class SimpleFileBackend extends IndependentAbstractBackend implements PhpCapable
 
                 if ($result === true) {
                     clearstatcache(true, $cacheEntryPathAndFilename);
-                    $this->cacheFilesIterator = null;
                     return true;
                 }
             } catch (\Exception $e) {
@@ -281,7 +279,6 @@ class SimpleFileBackend extends IndependentAbstractBackend implements PhpCapable
     public function flush(): void
     {
         Files::emptyDirectoryRecursively($this->cacheDirectory);
-        $this->cacheFilesIterator = null;
     }
 
     /**
@@ -406,14 +403,16 @@ class SimpleFileBackend extends IndependentAbstractBackend implements PhpCapable
     /**
      * Rewinds the cache entry iterator to the first element
      *
+     * The directory is read anew on every rewind, so this always yields an up-to-date view. That is why writing
+     * methods like set() and remove() must not reset the iterator: doing so would make a running iteration start
+     * over from the first entry whenever an entry is changed.
+     *
      * @return void
      * @api
      */
     public function rewind(): void
     {
-        if ($this->cacheFilesIterator === null) {
-            $this->cacheFilesIterator = new \DirectoryIterator($this->cacheDirectory);
-        }
+        $this->cacheFilesIterator = new \DirectoryIterator($this->cacheDirectory);
         $this->cacheFilesIterator->rewind();
         while (substr($this->cacheFilesIterator->getFilename(), 0, 1) === '.' && $this->cacheFilesIterator->valid()) {
             $this->cacheFilesIterator->next();
