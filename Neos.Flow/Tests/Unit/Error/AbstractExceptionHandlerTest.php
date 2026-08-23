@@ -45,7 +45,7 @@ final class AbstractExceptionHandlerTest extends UnitTestCase
 
         $mockLogger = $this->createStub(LoggerInterface::class);
 
-        $exceptionHandler = $this->getMockForAbstractClass(AbstractExceptionHandler::class, [], '', false, true, true, ['echoExceptionCli']);
+        $exceptionHandler = $this->createPartialMock(AbstractExceptionHandler::class, ['echoExceptionWeb', 'echoExceptionCli']);
         /** @var AbstractExceptionHandler $exceptionHandler */
         $exceptionHandler->setOptions($options);
         $exceptionHandler->injectThrowableStorage($mockThrowableStorage);
@@ -85,7 +85,7 @@ final class AbstractExceptionHandlerTest extends UnitTestCase
         $mockThrowableStorage = $this->createMock(ThrowableStorageInterface::class);
         $mockThrowableStorage->expects($this->never())->method('logThrowable');
 
-        $exceptionHandler = $this->getMockForAbstractClass(AbstractExceptionHandler::class, [], '', false, true, true, ['echoExceptionCli']);
+        $exceptionHandler = $this->createPartialMock(AbstractExceptionHandler::class, ['echoExceptionWeb', 'echoExceptioncli']);
         /** @var AbstractExceptionHandler $exceptionHandler */
         $exceptionHandler->setOptions($options);
         $exceptionHandler->injectThrowableStorage($mockThrowableStorage);

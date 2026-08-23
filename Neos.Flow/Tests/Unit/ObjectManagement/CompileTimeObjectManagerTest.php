@@ -54,7 +54,7 @@ class CompileTimeObjectManagerTest extends UnitTestCase
                 ]
             ]
         ]);
-        $this->compileTimeObjectManager = $this->getAccessibleMock(CompileTimeObjectManager::class, ['dummy'], [], '', false);
+        $this->compileTimeObjectManager = $this->getAccessibleMock(CompileTimeObjectManager::class, [], [], '', false);
         $this->compileTimeObjectManager->injectLogger($this->createMock(LoggerInterface::class));
         $this->compileTimeObjectManager->injectConfigurationManager($mockConfigurationManager);
     }

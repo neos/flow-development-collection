@@ -35,7 +35,7 @@ final class AbstractTokenTest extends UnitTestCase
 
     protected function setUp(): void
     {
-        $this->token = $this->getMockForAbstractClass(AbstractToken::class);
+        $this->token = $this->createPartialMock(AbstractToken::class, ['updateCredentials']);
     }
 
     #[Test]
