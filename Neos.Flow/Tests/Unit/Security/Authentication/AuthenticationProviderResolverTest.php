@@ -29,7 +29,7 @@ class AuthenticationProviderResolverTest extends UnitTestCase
     {
         $this->expectException(NoAuthenticationProviderFoundException::class);
         $mockObjectManager = $this->getMockBuilder(ObjectManager::class)->disableOriginalConstructor()->getMock();
-        $mockObjectManager->expects(self::any())->method('getClassNameByObjectName')->will(self::returnValue(false));
+        $mockObjectManager->expects(self::any())->method('getClassNameByObjectName')->willReturn(false);
 
         $providerResolver = new AuthenticationProviderResolver($mockObjectManager);
 
@@ -52,7 +52,7 @@ class AuthenticationProviderResolverTest extends UnitTestCase
         };
 
         $mockObjectManager = $this->getMockBuilder(ObjectManager::class)->disableOriginalConstructor()->getMock();
-        $mockObjectManager->expects(self::any())->method('getClassNameByObjectName')->will(self::returnCallBack($getCaseSensitiveObjectNameCallback));
+        $mockObjectManager->expects(self::any())->method('getClassNameByObjectName')->willReturnCallback($getCaseSensitiveObjectNameCallback);
 
         $providerResolver = new AuthenticationProviderResolver($mockObjectManager);
         $providerClass = $providerResolver->resolveProviderClass('TestingProvider');
@@ -64,7 +64,7 @@ class AuthenticationProviderResolverTest extends UnitTestCase
     public function resolveProviderReturnsTheCorrectProviderForACompleteClassName()
     {
         $mockObjectManager = $this->getMockBuilder(ObjectManager::class)->disableOriginalConstructor()->getMock();
-        $mockObjectManager->expects(self::any())->method('getClassNameByObjectName')->with(TestingProvider::class)->will(self::returnValue(TestingProvider::class));
+        $mockObjectManager->expects(self::any())->method('getClassNameByObjectName')->with(TestingProvider::class)->willReturn(TestingProvider::class);
 
         $providerResolver = new AuthenticationProviderResolver($mockObjectManager);
         $providerClass = $providerResolver->resolveProviderClass(TestingProvider::class);

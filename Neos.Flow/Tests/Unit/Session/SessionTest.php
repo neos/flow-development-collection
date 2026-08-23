@@ -104,7 +104,7 @@ final class SessionTest extends UnitTestCase
         $mockRequestHandler->method('getHttpRequest')->willReturn($this->httpRequest);
 
         $this->mockBootstrap = $this->createMock(Bootstrap::class);
-        $this->mockBootstrap->expects(self::any())->method('getActiveRequestHandler')->will(self::returnValue($mockRequestHandler));
+        $this->mockBootstrap->expects(self::any())->method('getActiveRequestHandler')->willReturn($mockRequestHandler);
 
         $this->mockSecurityContext = $this->createMock(Context::class);
 

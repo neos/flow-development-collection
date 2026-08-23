@@ -130,7 +130,7 @@ final class DispatcherTest extends UnitTestCase
     #[Test]
     public function dispatchIgnoresStopExceptionsForFirstLevelActionRequests()
     {
-        $this->mockController->expects($this->atLeastOnce())->method('processRequest')->will(self::throwException(StopActionException::createForResponse(new Response(), '')));
+        $this->mockController->expects($this->atLeastOnce())->method('processRequest')->willThrowException(StopActionException::createForResponse(new Response(), ''));
 
         $this->dispatcher->dispatch($this->mockParentRequest);
     }
@@ -138,7 +138,7 @@ final class DispatcherTest extends UnitTestCase
     #[Test]
     public function dispatchCatchesStopExceptionOfActionRequestsAndRollsBackToTheParentRequest()
     {
-        $this->mockController->expects($this->atLeastOnce())->method('processRequest')->will(self::throwException(StopActionException::createForResponse(new Response(), '')));
+        $this->mockController->expects($this->atLeastOnce())->method('processRequest')->willThrowException(StopActionException::createForResponse(new Response(), ''));
 
         $this->dispatcher->dispatch($this->mockActionRequest);
     }
@@ -172,7 +172,7 @@ final class DispatcherTest extends UnitTestCase
     {
         $forwardException = ForwardException::createForNextRequest($this->mockActionRequest, '');
 
-        $this->mockController->expects(self::any())->method('processRequest')->with($this->mockActionRequest)->will(self::throwException($forwardException));
+        $this->mockController->expects(self::any())->method('processRequest')->with($this->mockActionRequest)->willThrowException($forwardException);
 
         $this->expectException(InfiniteLoopException::class);
 

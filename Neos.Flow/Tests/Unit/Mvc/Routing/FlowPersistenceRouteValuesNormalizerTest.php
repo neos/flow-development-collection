@@ -34,7 +34,7 @@ class FlowPersistenceRouteValuesNormalizerTest extends UnitTestCase
     public function normalizeObjectsConvertsAnObject()
     {
         $someObject = new \stdClass();
-        $this->persistenceManager->expects(self::once())->method('getIdentifierByObject')->with($someObject)->will(self::returnValue(123));
+        $this->persistenceManager->expects(self::once())->method('getIdentifierByObject')->with($someObject)->willReturn(123);
 
         $expectedResult = [['__identity' => 123]];
         $actualResult = $this->flowPersistenceRouteValuesNormalizer->normalizeObjects([$someObject]);
@@ -47,7 +47,7 @@ class FlowPersistenceRouteValuesNormalizerTest extends UnitTestCase
     {
         $this->expectException(UnknownObjectException::class);
         $someObject = new \stdClass();
-        $this->persistenceManager->expects(self::once())->method('getIdentifierByObject')->with($someObject)->will(self::returnValue(null));
+        $this->persistenceManager->expects(self::once())->method('getIdentifierByObject')->with($someObject)->willReturn(null);
 
         $this->flowPersistenceRouteValuesNormalizer->normalizeObjects([$someObject]);
     }
