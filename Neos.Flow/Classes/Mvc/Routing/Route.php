@@ -24,6 +24,7 @@ use Neos\Flow\Mvc\Routing\Dto\RouteContext;
 use Neos\Flow\Mvc\Routing\Dto\RouteLifetime;
 use Neos\Flow\Mvc\Routing\Dto\RouteTags;
 use Neos\Flow\Mvc\Routing\Dto\UriConstraints;
+use Neos\Flow\ObjectManagement\Configuration\Configuration;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Utility\Arrays;
@@ -754,7 +755,11 @@ class Route
                         throw new InvalidUriPatternException('the URI pattern "' . $this->uriPattern . '" of route "' . $this->getName() . '" contains successive Dynamic Route Parts, which is not allowed.', 1218446975);
                     }
                     if (isset($this->routePartsConfiguration[$routePartName]['handler'])) {
-                        $routePart = $this->objectManager->get($this->routePartsConfiguration[$routePartName]['handler']);
+                        $routePartHandlerObjectName = $this->routePartsConfiguration[$routePartName]['handler'];
+                        if ($this->objectManager->getScope($routePartHandlerObjectName) === Configuration::SCOPE_SINGLETON) {
+                            throw new InvalidRoutePartHandlerException(sprintf('routePart handlers must be prototypes but "%s" is a singleton in route "%s"', $routePartHandlerObjectName, $this->getName()), 1749742364);
+                        }
+                        $routePart = $this->objectManager->get($routePartHandlerObjectName);
                         if (!$routePart instanceof DynamicRoutePartInterface) {
                             throw new InvalidRoutePartHandlerException(sprintf('routePart handlers must implement "%s" in route "%s"', DynamicRoutePartInterface::class, $this->getName()), 1218480972);
                         }
