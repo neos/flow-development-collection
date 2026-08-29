@@ -451,6 +451,7 @@ class DoctrineCommandController extends CommandController
      * @param string|null $filterExpression Only include tables/sequences matching the filter expression regexp
      * @param boolean $force Generate migrations even if there are migrations left to execute
      * @param string|null $migrationFolder Provide alternative platform folder name (as in "Mysql"), otherwise configured connection is used.
+     * @param string $packageName Package to move the migration file to. If non-empty this command will be non-interactive and directly place the file in the provided package if available. You can provide "global" to keep it in the global migration folder.
      * @return void
      * @throws DBALException
      * @throws StopCommandException
@@ -460,7 +461,7 @@ class DoctrineCommandController extends CommandController
      * @see neos.flow:doctrine:migrationexecute
      * @see neos.flow:doctrine:migrationversion
      */
-    public function migrationGenerateCommand(bool $diffAgainstCurrent = true, ?string $filterExpression = null, bool $force = false, ?string $migrationFolder = null): void
+    public function migrationGenerateCommand(bool $diffAgainstCurrent = true, ?string $filterExpression = null, bool $force = false, ?string $migrationFolder = null, string $packageName = ''): void
     {
         if (!$this->isDatabaseConfigured()) {
             $this->outputLine('Doctrine migration generation has been SKIPPED, the driver and host backend options are not set in /Configuration/Settings.yaml.');
@@ -505,8 +506,17 @@ class DoctrineCommandController extends CommandController
                 $packages[$package->getPackageKey()] = $package;
             }
 
-            $selectedPackage = $this->output->select('Do you want to move the migration to one of these packages?', $choices, $choices[0]);
-            $this->outputLine();
+            $selectedPackage = $packageName === 'global' ? $choices[0] : $packageName;
+            if ($selectedPackage === '') {
+                /** @var string $selectedPackage */
+                $selectedPackage = $this->output->select('Do you want to move the migration to one of these packages?', $choices, $choices[0]);
+                $this->outputLine();
+            }
+
+            if ($packageName !== 'global' && !array_key_exists($selectedPackage, $packages)) {
+                $this->outputLine('<error>%s is not available, please provide a valid package.</error>', [$selectedPackage]);
+                $this->quit(1);
+            }
 
             $migrationPlatformFolderPart = $migrationFolder ?? $this->doctrineService->getMigrationFolderName();
 
