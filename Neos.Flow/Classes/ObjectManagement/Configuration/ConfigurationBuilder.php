@@ -87,6 +87,10 @@ class ConfigurationBuilder
                     continue;
                 }
 
+                if (method_exist('enum_exists') && enum_exists($classOrInterfaceName)) {
+                    continue;
+                }
+
                 if (interface_exists($classOrInterfaceName)) {
                     $interfaceName = $classOrInterfaceName;
                     $implementationClassName = $this->reflectionService->getDefaultImplementationClassNameForInterface($interfaceName);
