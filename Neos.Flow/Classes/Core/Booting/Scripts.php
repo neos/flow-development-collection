@@ -870,9 +870,9 @@ class Scripts
         $output = [];
         exec(implode(' ', $command), $output, $result);
 
-        if ($result === 0 && count($output) === 1) {
+        if ($result === 0 && $output !== []) {
             // Resolve any wrapper
-            $configuredPhpBinaryPathAndFilename = $output[0];
+            $configuredPhpBinaryPathAndFilename = end($output); // Last entry, skip possible emitted deprecations
         } else {
             // Resolve any symlinks that the configured php might be pointing to
             $configuredPhpBinaryPathAndFilename = realpath($phpBinaryPathAndFilename);
@@ -892,7 +892,7 @@ class Scripts
             // bypass with exec open_basedir restriction
             $output = [];
             exec(PHP_BINARY . ' -r "echo realpath(PHP_BINARY);"', $output);
-            $realPhpBinary = $output[0];
+            $realPhpBinary = end($output); // Last entry, skip possible emitted deprecations
         }
         if (strcmp($realPhpBinary, $configuredPhpBinaryPathAndFilename) !== 0) {
             throw new Exception\SubProcessException(sprintf(
@@ -941,7 +941,8 @@ class Scripts
         $commandString = implode(' ', $command);
         exec($commandString, $output, $result);
 
-        $phpInformation = json_decode($output[0] ?? '{}', true) ?: [];
+        $resultWithJson = end($output); // For multiple lines use the last line, to skip possible emitted deprecations
+        $phpInformation = $resultWithJson ? json_decode($resultWithJson, true) : false;
 
         if ($result !== 0 || ($phpInformation['sapi'] ?? null) !== 'cli') {
             throw new Exception\SubProcessException(sprintf('PHP binary might not exist or is not suitable for CLI usage. Command `%s` did not succeed.', $commandString), 1689676967447);
