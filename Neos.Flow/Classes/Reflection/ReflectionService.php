@@ -846,7 +846,22 @@ class ReflectionService
     public function getPropertyTagValues(string $className, string $propertyName, string $tag): array
     {
         $className = $this->prepareClassReflectionForUsage($className);
-        return $this->classReflectionData[$className][self::DATA_CLASS_PROPERTIES][$propertyName][self::DATA_PROPERTY_TAGS_VALUES][$tag] ?? [];
+        $tagValues = $this->classReflectionData[$className][self::DATA_CLASS_PROPERTIES][$propertyName][self::DATA_PROPERTY_TAGS_VALUES][$tag] ?? [];
+        if ($tag !== 'var') {
+            return $tagValues;
+        }
+
+        if ($tagValues !== []) {
+            return $tagValues;
+        }
+
+        // Upgrade behavior for "var" tag requests also considering the type hints as fallback.
+        $propertyType = $this->getPropertyType($className, $propertyName);
+        if ($propertyType !== null) {
+            return [$propertyType];
+        }
+
+        return [];
     }
 
     /**

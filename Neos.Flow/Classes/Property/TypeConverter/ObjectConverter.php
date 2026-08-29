@@ -156,8 +156,13 @@ class ObjectConverter extends AbstractTypeConverter
                     }
                     return $parsedType['type'] . ($parsedType['elementType'] !== null ? '<' . $parsedType['elementType'] . '>' : '');
                 }
+                $typeHint = $this->reflectionService->getPropertyType($targetType, $propertyName);
+                if ($typeHint !== null) {
+                    $parsedType = TypeHandling::parseType($typeHint);
+                    return $parsedType['type'];
+                }
 
-                throw new InvalidTargetException(sprintf('Public property "%s" had no proper type annotation (i.e. "@var") in target object of type "%s".', $propertyName, $targetType), 1406821818);
+                throw new InvalidTargetException(sprintf('Public property "%s" had no type hints or proper type tag (i.e. "@var") in target object of type "%s".', $propertyName, $targetType), 1406821818);
             }
         }
 
