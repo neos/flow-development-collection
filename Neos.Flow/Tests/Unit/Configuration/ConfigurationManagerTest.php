@@ -839,6 +839,34 @@ class ConfigurationManagerTest extends UnitTestCase
         }
     }
 
+    public function replaceVariablesInPhpStringReplacesFileMarkersDataProvider(): \Traversable
+    {
+        yield ['fileName' => 'test1', 'content' => 'foobar'];
+    }
+
+    /**
+     * @test
+     * @dataProvider replaceVariablesInPhpStringReplacesFileMarkersDataProvider
+     */
+    public function replaceVariablesInPhpStringReplacesFileMarkersTests(string $fileName, string $content): void
+    {
+        // create a temporary file with the content
+        $tempFile = tempnam(sys_get_temp_dir(), $fileName);
+        file_put_contents($tempFile, $content);
+
+        // create the setting dynamically since the file path is not known before
+        $setting = '%file:' . $tempFile . '%';
+
+        $settingsPhpString = var_export(['setting' => $setting], true);
+        $configurationManager = $this->getAccessibleConfigurationManager(['dummy']);
+        $processedPhpString = $configurationManager->_call('replaceVariablesInPhpString', $settingsPhpString);
+        $settings = eval('return ' . $processedPhpString . ';');
+
+        self::assertSame($content, $settings['setting']);
+
+        unlink($tempFile);
+    }
+
     /**
      * We expect that the context specific routes are loaded *first*
      *
