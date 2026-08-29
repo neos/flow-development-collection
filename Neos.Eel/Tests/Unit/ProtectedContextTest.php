@@ -227,4 +227,55 @@ class ProtectedContextTest extends UnitTestCase
         $evaluator->injectExpressionCache($stringFrontendMock);
         return $evaluator;
     }
+
+    public function protectedContextUnionProvider(): iterable
+    {
+        $firstContext = new ProtectedContext([
+            'Array' => [
+                'join' => \Closure::fromCallable("join")
+            ]
+        ]);
+        $firstContext->allow('Array.*');
+        $secondContext = new ProtectedContext([]);
+        yield 'union with empty context' => [
+            'firstContext' => $firstContext,
+            'secondContext' => $secondContext,
+            'expression' => "Array.join(['a'])",
+            'result' => 'a'
+        ];
+
+        $firstContext = new ProtectedContext([
+            'Array' => [
+                'join' => \Closure::fromCallable("join")
+            ]
+        ]);
+        $firstContext->allow("Array.join");
+        $secondContext = new ProtectedContext([
+            'Array' => [
+                'reverse' => \Closure::fromCallable("array_reverse")
+            ]
+        ]);
+        $secondContext->allow("Array.reverse");
+        yield 'union with other context with allowed methods' => [
+            'firstContext' => $firstContext,
+            'secondContext' => $secondContext,
+            'expression' => "Array.join(Array.reverse(['a']))",
+            'result' => 'a'
+        ];
+    }
+
+    /**
+     * @dataProvider protectedContextUnionProvider
+     * @test
+     */
+    public function protectedContextUnion(ProtectedContext $firstContext, ProtectedContext $secondContext, string $expression, mixed $result)
+    {
+        $evaluator = $this->createEvaluator();
+        $unionContext = $firstContext->union($secondContext);
+        self::assertInstanceOf(ProtectedContext::class, $unionContext);
+        self::assertEquals(
+            $result,
+            $evaluator->evaluate($expression, $unionContext)
+        );
+    }
 }

@@ -11,7 +11,9 @@ namespace Neos\Eel;
  * source code.
  */
 
+use Neos\Eel\Utility\DefaultContextConfiguration;
 use Neos\Flow\Annotations as Flow;
+use Neos\Utility\Arrays;
 
 /**
  * A protected evaluation context
@@ -23,10 +25,45 @@ use Neos\Flow\Annotations as Flow;
  */
 class ProtectedContext extends Context
 {
+    protected array $allowedMethods = [];
+
+    public static function fromDefaultContextConfiguration(DefaultContextConfiguration $defaultContextConfiguration
+    ): self {
+        $allowedMethods = [];
+        $defaultContextVariables = [];
+
+        foreach ($defaultContextConfiguration->toDefaultContextEntries() as $defaultContextEntry) {
+            $allowedMethods = [...$allowedMethods, ...$defaultContextEntry->getAllowedMethods()];
+            $defaultContextVariables = Arrays::setValueByPath(
+                $defaultContextVariables,
+                $defaultContextEntry->getPath(),
+                $defaultContextEntry->toContextValue()
+            );
+        }
+
+        $defaultContext = new self($defaultContextVariables);
+        $defaultContext->allow($allowedMethods);
+        return $defaultContext;
+    }
+
     /**
-     * @var array
+     * Union recursive with another (protected)context
+     * Only available, if both context hold arrays and not other primitives/objects
+     *
+     * The allowedMethods will also be merged with the other context
      */
-    protected $allowedMethods = [];
+    public function union(Context $other): static
+    {
+        $union = parent::union($other);
+
+        $allowedMethods = $this->allowedMethods;
+        if ($other instanceof ProtectedContext) {
+            $allowedMethods = Arrays::arrayMergeRecursiveOverrule($allowedMethods, $other->allowedMethods);
+        }
+        $union->allowedMethods = $allowedMethods;
+
+        return $union;
+    }
 
     /**
      * Call a method if it is allowed
@@ -105,28 +142,18 @@ class ProtectedContext extends Context
      *
      *   $context->allow('*');
      *
-     *   $context->allow(array('String.*', 'Array.reverse'));
+     *   $context->allow(['String.*', 'Array.reverse']);
      *
-     * @param array|string $pathOrMethods
-     * @return void
+     *   $context->allow([['String', '*'], ['Array', 'reverse']]);
+     *
      */
-    public function allow($pathOrMethods)
+    public function allow(array|string $pathOrMethods): void
     {
         if (!is_array($pathOrMethods)) {
             $pathOrMethods = [$pathOrMethods];
         }
         foreach ($pathOrMethods as $pathOrMethod) {
-            $parts = explode('.', $pathOrMethod);
-            $current = &$this->allowedMethods;
-            $count = count($parts);
-            for ($i = 0; $i < $count; $i++) {
-                if ($i === $count - 1) {
-                    $current[$parts[$i]] = true;
-                } else {
-                    $current[$parts[$i]] = [];
-                    $current = &$current[$parts[$i]];
-                }
-            }
+            $this->allowedMethods = Arrays::setValueByPath($this->allowedMethods, $pathOrMethod, true);
         }
     }
 }
