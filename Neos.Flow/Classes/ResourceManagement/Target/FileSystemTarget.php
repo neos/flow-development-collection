@@ -25,12 +25,13 @@ use Neos\Flow\ResourceManagement\Storage\StorageInterface;
 use Neos\Utility\Files;
 use Neos\Utility\Unicode\Functions as UnicodeFunctions;
 use Neos\Flow\ResourceManagement\Target\Exception as TargetException;
+use Psr\Http\Message\UriInterface;
 use Psr\Log\LoggerInterface;
 
 /**
  * A target which publishes resources to a specific directory in a file system.
  */
-class FileSystemTarget implements TargetInterface
+class FileSystemTarget implements TargetInterface, AbsoluteBaseUriAwareTarget
 {
     /**
      * @var array
@@ -71,7 +72,7 @@ class FileSystemTarget implements TargetInterface
      *
      * @var string
      */
-    protected $absoluteBaseUri;
+    protected string $absoluteBaseUri;
 
     /**
      * If the generated URI path segment containing the sha1 should be divided into multiple segments
@@ -106,12 +107,6 @@ class FileSystemTarget implements TargetInterface
     protected $messageCollector;
 
     /**
-     * @Flow\Inject
-     * @var BaseUriProvider
-     */
-    protected $baseUriProvider;
-
-    /**
      * Constructor
      *
      * @param string $name Name of this target instance, according to the resource settings
@@ -121,6 +116,15 @@ class FileSystemTarget implements TargetInterface
     {
         $this->name = $name;
         $this->options = $options;
+    }
+
+    public function setAbsoluteBaseUri(UriInterface $baseUri): void
+    {
+        if (($this->baseUri[0] ?? '') === '/' || str_contains($this->baseUri, '://')) {
+            $this->absoluteBaseUri = $this->baseUri;
+            return;
+        }
+        $this->absoluteBaseUri = (string)$baseUri . $this->baseUri;
     }
 
     /**
@@ -286,7 +290,7 @@ class FileSystemTarget implements TargetInterface
      */
     public function getPublicStaticResourceUri($relativePathAndFilename)
     {
-        return $this->getResourcesBaseUri() . $this->encodeRelativePathAndFilenameForUri($relativePathAndFilename);
+        return $this->absoluteBaseUri . $this->encodeRelativePathAndFilenameForUri($relativePathAndFilename);
     }
 
     /**
@@ -298,7 +302,7 @@ class FileSystemTarget implements TargetInterface
      */
     public function getPublicPersistentResourceUri(PersistentResource $resource)
     {
-        return $this->getResourcesBaseUri() . $this->encodeRelativePathAndFilenameForUri($this->getRelativePublicationPathAndFilename($resource));
+        return $this->absoluteBaseUri . $this->encodeRelativePathAndFilenameForUri($this->getRelativePublicationPathAndFilename($resource));
     }
 
     /**
@@ -389,36 +393,6 @@ class FileSystemTarget implements TargetInterface
             return;
         }
         Files::removeEmptyDirectoriesOnPath(dirname($targetPathAndFilename));
-    }
-
-    /**
-     * Returns the resolved absolute base URI for resources of this target.
-     *
-     * @return string The absolute base URI for resources in this target
-     */
-    protected function getResourcesBaseUri()
-    {
-        if ($this->absoluteBaseUri === null) {
-            $this->absoluteBaseUri = $this->detectResourcesBaseUri();
-        }
-
-        return $this->absoluteBaseUri;
-    }
-
-    /**
-     * Detects and returns the website's absolute base URI
-     *
-     * @return string The resolved resource base URI, @see getResourcesBaseUri()
-     * @throws \Neos\Flow\Http\Exception
-     */
-    protected function detectResourcesBaseUri()
-    {
-        if ($this->baseUri !== '' && ($this->baseUri[0] === '/' || strpos($this->baseUri, '://') !== false)) {
-            return $this->baseUri;
-        }
-
-        $httpBaseUri = (string)$this->baseUriProvider->getConfiguredBaseUriOrFallbackToCurrentRequest();
-        return $httpBaseUri . $this->baseUri;
     }
 
     /**
