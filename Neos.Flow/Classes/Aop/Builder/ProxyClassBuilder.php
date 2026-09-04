@@ -18,9 +18,9 @@ use Neos\Flow\Aop\AdvicesTrait;
 use Neos\Flow\Aop\AspectContainer;
 use Neos\Flow\Aop\Exception;
 use Neos\Flow\Aop\Exception\InvalidPointcutExpressionException;
+use Neos\Flow\Aop\Exception\InvalidTargetClassException;
 use Neos\Flow\Aop\Exception\VoidImplementationException;
 use Neos\Flow\Aop\Pointcut\Pointcut;
-use Neos\Flow\Aop\Pointcut\PointcutExpressionParser;
 use Neos\Flow\Aop\PropertyIntroduction;
 use Neos\Flow\Aop\TraitIntroduction;
 use Neos\Flow\Log\Utility\LogEnvironment;
@@ -33,8 +33,6 @@ use Neos\Flow\Reflection\Exception\InvalidClassException;
 use Neos\Flow\Reflection\PropertyReflection;
 use Neos\Flow\Reflection\ReflectionService;
 use Neos\Flow\Utility\Algorithms;
-use Neos\Flow\Utility\Exception as UtilityException;
-use Neos\Utility\Exception\FilesException;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -47,17 +45,13 @@ class ProxyClassBuilder
     protected Compiler $compiler;
     protected ReflectionService $reflectionService;
     protected LoggerInterface $logger;
-    protected PointcutExpressionParser $pointcutExpressionParser;
     protected VariableFrontend $objectConfigurationCache;
     protected CompileTimeObjectManager $objectManager;
-
-    /**
-     * Hardcoded list of Flow sub packages (first 15 characters) which must be immune to AOP proxying for security, technical or conceptual reasons.
-     */
-    protected array $excludedSubPackages = ['Neos\Flow\Aop\\', 'Neos\Flow\Cach', 'Neos\Flow\Erro', 'Neos\Flow\Log\\', 'Neos\Flow\Moni', 'Neos\Flow\Obje', 'Neos\Flow\Pack', 'Neos\Flow\Prop', 'Neos\Flow\Refl', 'Neos\Flow\Util', 'Neos\Flow\Vali'];
+    protected AspectContainerBuilder $aspectContainerBuilder;
 
     /**
      * A registry of all known aspects
+     * @var AspectContainer[]
      */
     protected array $aspectContainers = [];
 
@@ -77,11 +71,6 @@ class ProxyClassBuilder
     public function injectLogger(LoggerInterface $logger): void
     {
         $this->logger = $logger;
-    }
-
-    public function injectPointcutExpressionParser(PointcutExpressionParser $pointcutExpressionParser): void
-    {
-        $this->pointcutExpressionParser = $pointcutExpressionParser;
     }
 
     #[Flow\Autowiring(false)]
@@ -105,6 +94,11 @@ class ProxyClassBuilder
         $this->objectManager = $objectManager;
     }
 
+    public function injectAspectContainerBuilder(AspectContainerBuilder $aspectContainerBuilder): void
+    {
+        $this->aspectContainerBuilder = $aspectContainerBuilder;
+    }
+
     /**
      * Builds proxy class code which weaves advices into the respective target classes.
      *
@@ -120,26 +114,25 @@ class ProxyClassBuilder
      * a class which has been matched previously but just didn't have to be proxied,
      * the latter are kept track of by an "unproxiedClass-*" cache entry.
      *
-     * @throws \Neos\Cache\Exception
      * @throws CannotBuildObjectException
-     * @throws Exception
-     * @throws VoidImplementationException
      * @throws ClassLoadingForReflectionFailedException
-     * @throws UtilityException
-     * @throws InvalidPointcutExpressionException
-     * @throws FilesException
-     * @throws \ReflectionException
+     * @throws Exception
+     * @throws InvalidTargetClassException
      * @throws InvalidClassException
+     * @throws InvalidPointcutExpressionException
+     * @throws VoidImplementationException
+     * @throws \Neos\Cache\Exception
+     * @throws \ReflectionException
      */
     public function build(): void
     {
         $allAvailableClassNamesByPackage = $this->objectManager->getRegisteredClassNames();
-        $possibleTargetClassNames = $this->getProxyableClasses($allAvailableClassNamesByPackage);
-        $actualAspectClassNames = $this->reflectionService->getClassNamesByAnnotation(Flow\Aspect::class);
-        sort($possibleTargetClassNames);
-        sort($actualAspectClassNames);
 
-        $this->aspectContainers = $this->buildAspectContainers($actualAspectClassNames);
+
+        $this->aspectContainers = $this->aspectContainerBuilder->buildFromReflection();
+
+        $proxyableClassesFilter = new ProxyableClassesFilter();
+        $possibleTargetClassNames = $proxyableClassesFilter->getProxyableClasses($allAvailableClassNamesByPackage, array_keys($this->aspectContainers));
 
         $rebuildEverything = false;
         if ($this->objectConfigurationCache->has('allAspectClassesUpToDate') === false) {
@@ -204,161 +197,9 @@ class ProxyClassBuilder
     }
 
     /**
-     * Determines which of the given classes are potentially proxyable
-     * and returns their names in an array.
-     *
-     * @param array $classNamesByPackage Names of the classes to check
-     * @return array Names of classes which can be proxied
-     */
-    protected function getProxyableClasses(array $classNamesByPackage): array
-    {
-        $proxyableClasses = [];
-        foreach ($classNamesByPackage as $classNames) {
-            foreach ($classNames as $className) {
-                if (in_array(substr($className, 0, 15), $this->excludedSubPackages, true)) {
-                    continue;
-                }
-                if ($this->reflectionService->isClassAnnotatedWith($className, Flow\Aspect::class)) {
-                    continue;
-                }
-                $proxyableClasses[] = $className;
-            }
-        }
-        return $proxyableClasses;
-    }
-
-    /**
-     * /**
-     * Checks the annotations of the specified classes for aspect tags
-     * and creates an aspect with advisors accordingly.
-     *
-     * @param array $classNames Classes to check for aspect tags.
-     * @return array An array of Aop\AspectContainer for all aspects which were found.
-     * @throws Exception
-     * @throws FilesException
-     * @throws InvalidPointcutExpressionException
-     * @throws \ReflectionException
-     * @throws UtilityException
-     */
-    protected function buildAspectContainers(array $classNames): array
-    {
-        $aspectContainers = [];
-        foreach ($classNames as $aspectClassName) {
-            $aspectContainers[$aspectClassName] = $this->buildAspectContainer($aspectClassName);
-        }
-        return $aspectContainers;
-    }
-
-    /**
-     * Creates and returns an aspect from the annotations found in a class which
-     * is tagged as an aspect. The object acting as an advice will already be
-     * fetched (and therefore instantiated if necessary).
-     *
-     * @param string $aspectClassName Name of the class which forms the aspect, contains advices etc.
-     * @return AspectContainer The aspect container containing one or more advisors
-     * @throws Exception
-     * @throws InvalidPointcutExpressionException
-     * @throws UtilityException
-     * @throws FilesException
-     * @throws \ReflectionException
-     */
-    protected function buildAspectContainer(string $aspectClassName): AspectContainer
-    {
-        $aspectContainer = new AspectContainer($aspectClassName);
-        if (!class_exists($aspectClassName)) {
-            throw new Exception\InvalidTargetClassException(sprintf('The class "%s" is not loadable for AOP proxy building. This is most likely an inconsistency with the caches. Try running `./flow flow:cache:flush` and if that does not help, check the class exists and is correctly namespaced.', $aspectClassName), 1607422151);
-        }
-        $methodNames = get_class_methods($aspectClassName);
-
-        foreach ($methodNames as $methodName) {
-            foreach ($this->reflectionService->getMethodAnnotations($aspectClassName, $methodName) as $annotation) {
-                $annotationClass = get_class($annotation);
-                switch ($annotationClass) {
-                    case Flow\Around::class:
-                        $pointcutFilterComposite = $this->pointcutExpressionParser->parse($annotation->pointcutExpression, $this->renderSourceHint($aspectClassName, $methodName, $annotationClass));
-                        $advice = new Aop\Advice\AroundAdvice($aspectClassName, $methodName);
-                        $pointcut = new Pointcut($annotation->pointcutExpression, $pointcutFilterComposite, $aspectClassName);
-                        $advisor = new Aop\Advisor($advice, $pointcut);
-                        $aspectContainer->addAdvisor($advisor);
-                        break;
-                    case Flow\Before::class:
-                        $pointcutFilterComposite = $this->pointcutExpressionParser->parse($annotation->pointcutExpression, $this->renderSourceHint($aspectClassName, $methodName, $annotationClass));
-                        $advice = new Aop\Advice\BeforeAdvice($aspectClassName, $methodName);
-                        $pointcut = new Pointcut($annotation->pointcutExpression, $pointcutFilterComposite, $aspectClassName);
-                        $advisor = new Aop\Advisor($advice, $pointcut);
-                        $aspectContainer->addAdvisor($advisor);
-                        break;
-                    case Flow\AfterReturning::class:
-                        $pointcutFilterComposite = $this->pointcutExpressionParser->parse($annotation->pointcutExpression, $this->renderSourceHint($aspectClassName, $methodName, $annotationClass));
-                        $advice = new Aop\Advice\AfterReturningAdvice($aspectClassName, $methodName);
-                        $pointcut = new Pointcut($annotation->pointcutExpression, $pointcutFilterComposite, $aspectClassName);
-                        $advisor = new Aop\Advisor($advice, $pointcut);
-                        $aspectContainer->addAdvisor($advisor);
-                        break;
-                    case Flow\AfterThrowing::class:
-                        $pointcutFilterComposite = $this->pointcutExpressionParser->parse($annotation->pointcutExpression, $this->renderSourceHint($aspectClassName, $methodName, $annotationClass));
-                        $advice = new Aop\Advice\AfterThrowingAdvice($aspectClassName, $methodName);
-                        $pointcut = new Pointcut($annotation->pointcutExpression, $pointcutFilterComposite, $aspectClassName);
-                        $advisor = new Aop\Advisor($advice, $pointcut);
-                        $aspectContainer->addAdvisor($advisor);
-                        break;
-                    case Flow\After::class:
-                        $pointcutFilterComposite = $this->pointcutExpressionParser->parse($annotation->pointcutExpression, $this->renderSourceHint($aspectClassName, $methodName, $annotationClass));
-                        $advice = new Aop\Advice\AfterAdvice($aspectClassName, $methodName);
-                        $pointcut = new Pointcut($annotation->pointcutExpression, $pointcutFilterComposite, $aspectClassName);
-                        $advisor = new Aop\Advisor($advice, $pointcut);
-                        $aspectContainer->addAdvisor($advisor);
-                        break;
-                    case Flow\Pointcut::class:
-                        $pointcutFilterComposite = $this->pointcutExpressionParser->parse($annotation->expression, $this->renderSourceHint($aspectClassName, $methodName, $annotationClass));
-                        $pointcut = new Pointcut($annotation->expression, $pointcutFilterComposite, $aspectClassName, $methodName);
-                        $aspectContainer->addPointcut($pointcut);
-                        break;
-                }
-            }
-        }
-        $introduceAnnotation = $this->reflectionService->getClassAnnotation($aspectClassName, Flow\Introduce::class);
-        if ($introduceAnnotation instanceof Flow\Introduce) {
-            if ($introduceAnnotation->interfaceName === null && $introduceAnnotation->traitName === null) {
-                throw new Aop\Exception('The introduction in class "' . $aspectClassName . '" does neither contain an interface name nor a trait name, at least one is required.', 1172694761);
-            }
-            $pointcutFilterComposite = $this->pointcutExpressionParser->parse($introduceAnnotation->pointcutExpression, $this->renderSourceHint($aspectClassName, (string)$introduceAnnotation->interfaceName, Flow\Introduce::class));
-            $pointcut = new Pointcut($introduceAnnotation->pointcutExpression, $pointcutFilterComposite, $aspectClassName);
-
-            if ($introduceAnnotation->interfaceName !== null) {
-                $introduction = new Aop\InterfaceIntroduction($aspectClassName, $introduceAnnotation->interfaceName, $pointcut);
-                $aspectContainer->addInterfaceIntroduction($introduction);
-            }
-
-            if ($introduceAnnotation->traitName !== null) {
-                $introduction = new TraitIntroduction($aspectClassName, $introduceAnnotation->traitName, $pointcut);
-                $aspectContainer->addTraitIntroduction($introduction);
-            }
-        }
-
-        foreach ($this->reflectionService->getClassPropertyNames($aspectClassName) as $propertyName) {
-            $introduceAnnotation = $this->reflectionService->getPropertyAnnotation($aspectClassName, $propertyName, Flow\Introduce::class);
-            if ($introduceAnnotation !== null) {
-                $pointcutFilterComposite = $this->pointcutExpressionParser->parse($introduceAnnotation->pointcutExpression, $this->renderSourceHint($aspectClassName, $propertyName, Flow\Introduce::class));
-                $pointcut = new Pointcut($introduceAnnotation->pointcutExpression, $pointcutFilterComposite, $aspectClassName);
-                $introduction = new PropertyIntroduction($aspectClassName, $propertyName, $pointcut);
-                $aspectContainer->addPropertyIntroduction($introduction);
-            }
-        }
-        if (count($aspectContainer->getAdvisors()) < 1 &&
-            count($aspectContainer->getPointcuts()) < 1 &&
-            count($aspectContainer->getInterfaceIntroductions()) < 1 &&
-            count($aspectContainer->getTraitIntroductions()) < 1 &&
-            count($aspectContainer->getPropertyIntroductions()) < 1) {
-            throw new Aop\Exception('The class "' . $aspectClassName . '" is tagged to be an aspect but does not contain advices nor pointcut or introduction declarations.', 1169124534);
-        }
-        return $aspectContainer;
-    }
-
-    /**
      * Builds methods for a single AOP proxy class for the specified class.
      *
-     * @param string $targetClassName Name of the class to create a proxy class file for
+     * @param class-string $targetClassName Name of the class to create a proxy class file for
      * @param array $aspectContainers The array of aspect containers from the AOP Framework
      * @return bool true if the proxy class could be built, false otherwise.
      * @throws \ReflectionException
@@ -379,8 +220,8 @@ class ProxyClassBuilder
         $methodsFromIntroducedInterfaces = $this->getIntroducedMethodsFromInterfaceIntroductions($interfaceIntroductions);
 
         $interceptedMethods = [];
-        $this->addAdvisedMethodsToInterceptedMethods($interceptedMethods, array_merge($methodsFromTargetClass, $methodsFromIntroducedInterfaces), $targetClassName, $aspectContainers);
-        $this->addIntroducedMethodsToInterceptedMethods($interceptedMethods, $methodsFromIntroducedInterfaces);
+        $interceptedMethods = $this->addAdvisedMethodsToInterceptedMethods($interceptedMethods, array_merge($methodsFromTargetClass, $methodsFromIntroducedInterfaces), $targetClassName, $aspectContainers);
+        $interceptedMethods = $this->addIntroducedMethodsToInterceptedMethods($interceptedMethods, $methodsFromIntroducedInterfaces);
 
         if (count($interceptedMethods) < 1 && count($introducedInterfaces) < 1 && count($introducedTraits) < 1 && count($propertyIntroductions) < 1) {
             return false;
@@ -503,8 +344,8 @@ class ProxyClassBuilder
     /**
      * Returns the methods of the target class.
      *
-     * @param string $targetClassName Name of the target class
-     * @return array Method information with declaring class and method name pairs
+     * @param class-string $targetClassName Name of the target class
+     * @return array<array{0: class-string, 1: string}> Method information with declaring class and method name pairs
      * @throws \ReflectionException
      */
     protected function getMethodsFromTargetClass(string $targetClassName): array
@@ -594,13 +435,13 @@ class ProxyClassBuilder
      * Traverses all aspect containers, their aspects and their advisors and adds the
      * methods and their advices to the (usually empty) array of intercepted methods.
      *
-     * @param array &$interceptedMethods An array (empty or not) which contains the names of the intercepted methods and additional information
-     * @param array $methods An array of class and method names which are matched against the pointcut (class name = name of the class or interface the method was declared)
-     * @param string $targetClassName Name of the class the pointcut should match with
-     * @param array &$aspectContainers All aspects to take into consideration
-     * @return void
+     * @param array $interceptedMethods An array (empty or not) which contains the names of the intercepted methods and additional information
+     * @param array<array{0: class-string, 1: string}> $methods An array of class and method names which are matched against the pointcut (class name = name of the class or interface the method was declared)
+     * @param class-string $targetClassName Name of the class the pointcut should match with
+     * @param AspectContainer[] $aspectContainers All aspects to take into consideration
+     * @return array
      */
-    protected function addAdvisedMethodsToInterceptedMethods(array &$interceptedMethods, array $methods, string $targetClassName, array $aspectContainers): void
+    protected function addAdvisedMethodsToInterceptedMethods(array $interceptedMethods, array $methods, string $targetClassName, array $aspectContainers): array
     {
         $pointcutQueryIdentifier = 0;
 
@@ -629,17 +470,19 @@ class ProxyClassBuilder
                 }
             }
         }
+
+        return $interceptedMethods;
     }
 
     /**
      * Traverses all methods which were introduced by interfaces and adds them to the
      * intercepted methods array if they didn't exist already.
      *
-     * @param array &$interceptedMethods An array (empty or not) which contains the names of the intercepted methods and additional information
-     * @param array $methodsFromIntroducedInterfaces An array of class and method names from introduced interfaces
-     * @return void
+     * @param array $interceptedMethods An array (empty or not) which contains the names of the intercepted methods and additional information
+     * @param array<array{0: class-string, 1: string}> $methodsFromIntroducedInterfaces An array of class and method names from introduced interfaces
+     * @return array
      */
-    protected function addIntroducedMethodsToInterceptedMethods(array &$interceptedMethods, array $methodsFromIntroducedInterfaces): void
+    protected function addIntroducedMethodsToInterceptedMethods(array $interceptedMethods, array $methodsFromIntroducedInterfaces): array
     {
         foreach ($methodsFromIntroducedInterfaces as $interfaceAndMethodName) {
             [$interfaceName, $methodName] = $interfaceAndMethodName;
@@ -648,15 +491,17 @@ class ProxyClassBuilder
                 $interceptedMethods[$methodName]['declaringClassName'] = $interfaceName;
             }
         }
+
+        return $interceptedMethods;
     }
 
     /**
      * Traverses all aspect containers and returns an array of interface
      * introductions which match the target class.
      *
-     * @param array &$aspectContainers All aspects to take into consideration
-     * @param string $targetClassName Name of the class the pointcut should match with
-     * @return array array of interface names
+     * @param AspectContainer[] $aspectContainers All aspects to take into consideration
+     * @param class-string $targetClassName Name of the class the pointcut should match with
+     * @return Aop\InterfaceIntroduction[] array of interface names
      * @throws \Exception
      */
     protected function getMatchingInterfaceIntroductions(array $aspectContainers, string $targetClassName): array
@@ -680,7 +525,7 @@ class ProxyClassBuilder
      * Traverses all aspect containers and returns an array of property
      * introductions which match the target class.
      *
-     * @param array &$aspectContainers All aspects to take into consideration
+     * @param AspectContainer[] $aspectContainers All aspects to take into consideration
      * @param string $targetClassName Name of the class the pointcut should match with
      * @return array|PropertyIntroduction[] array of property introductions
      * @throws \Exception
@@ -706,15 +551,14 @@ class ProxyClassBuilder
      * Traverses all aspect containers and returns an array of trait
      * introductions which match the target class.
      *
-     * @param array &$aspectContainers All aspects to take into consideration
+     * @param AspectContainer[] $aspectContainers All aspects to take into consideration
      * @param string $targetClassName Name of the class the pointcut should match with
-     * @return array array of trait names
+     * @return string[] array of trait names
      * @throws \Exception
      */
     protected function getMatchingTraitNamesFromIntroductions(array $aspectContainers, string $targetClassName): array
     {
         $introductions = [];
-        /** @var AspectContainer $aspectContainer */
         foreach ($aspectContainers as $aspectContainer) {
             if (!$aspectContainer->getCachedTargetClassNameCandidates()->hasClassName($targetClassName)) {
                 continue;
@@ -734,8 +578,8 @@ class ProxyClassBuilder
     /**
      * Returns an array of interface names introduced by the given introductions
      *
-     * @param array $interfaceIntroductions An array of interface introductions
-     * @return array Array of interface names
+     * @param Aop\InterfaceIntroduction[] $interfaceIntroductions An array of interface introductions
+     * @return string[] Array of interface names
      */
     protected function getInterfaceNamesFromIntroductions(array $interfaceIntroductions): array
     {
@@ -749,8 +593,8 @@ class ProxyClassBuilder
     /**
      * Returns all methods declared by the introduced interfaces
      *
-     * @param array $interfaceIntroductions An array of Aop\InterfaceIntroduction
-     * @return array An array of method information (interface, method name)
+     * @param Aop\InterfaceIntroduction[] $interfaceIntroductions An array of Aop\InterfaceIntroduction
+     * @return array<int, array{0: class-string, 1: string}> An array of method information (interface, method name)
      * @throws Aop\Exception
      */
     protected function getIntroducedMethodsFromInterfaceIntroductions(array $interfaceIntroductions): array
@@ -769,13 +613,5 @@ class ProxyClassBuilder
             }
         }
         return $methods;
-    }
-
-    /**
-     * Renders a short message which gives a hint on where the currently parsed pointcut expression was defined.
-     */
-    protected function renderSourceHint(string $aspectClassName, string $methodName, string $tagName): string
-    {
-        return sprintf('%s::%s (%s advice)', $aspectClassName, $methodName, $tagName);
     }
 }

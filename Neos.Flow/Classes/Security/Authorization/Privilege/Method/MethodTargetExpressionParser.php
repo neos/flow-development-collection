@@ -12,6 +12,7 @@ namespace Neos\Flow\Security\Authorization\Privilege\Method;
  */
 
 use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Aop\AspectContainer;
 use Neos\Flow\Aop\Exception\InvalidPointcutExpressionException;
 use Neos\Flow\Aop\Pointcut\PointcutExpressionParser;
 use Neos\Flow\Aop\Pointcut\PointcutFilterComposite;
@@ -30,11 +31,10 @@ class MethodTargetExpressionParser extends PointcutExpressionParser
      * @param string $operator The operator
      * @param string $pointcutExpression The pointcut expression (value of the designator)
      * @param PointcutFilterComposite $pointcutFilterComposite An instance of the pointcut filter composite. The result (ie. the pointcut filter) will be added to this composite object.
-     * @param array &$trace
      * @return void
      * @throws InvalidPointcutExpressionException
      */
-    protected function parseDesignatorPointcut(string $operator, string $pointcutExpression, PointcutFilterComposite $pointcutFilterComposite, array &$trace = []): void
+    protected function parseDesignatorPointcut(string $operator, string $pointcutExpression, PointcutFilterComposite $pointcutFilterComposite, AspectContainer $aspectContainer): void
     {
         throw new InvalidPointcutExpressionException('The given method privilege target matcher contained an expression for a named pointcut. This not supported! Given expression: "' . $pointcutExpression . '".', 1222014591);
     }
