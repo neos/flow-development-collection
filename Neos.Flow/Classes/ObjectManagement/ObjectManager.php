@@ -222,25 +222,105 @@ class ObjectManager implements ObjectManagerInterface
             return $this->objects[$objectName][self::KEY_INSTANCE];
         }
 
-        // by object name
+        if (!isset($this->objects[$objectName]) || $this->objects[$objectName][self::KEY_SCOPE] === ObjectConfiguration::SCOPE_PROTOTYPE) {
+            return $this->instantiateClass($className, $this->autowireConstructorArguments($objectName, $className, $constructorArguments));
+        }
+
+        return $this->instantiateRegisteredObject($objectName, $className);
+    }
+
+    /**
+     * Creates the instance of a singleton or session scoped object and registers it *before* its
+     * constructor arguments are resolved and its constructor is called.
+     *
+     * Objects of these scopes may depend on each other, directly or through a chain of other
+     * objects. Registering the instance first makes sure that a re-entrant call to get() for the
+     * same object – triggered while resolving its dependencies – returns the instance which is
+     * currently being built, instead of trying to build a second one and running into the
+     * circular dependency guard of instantiateClass().
+     *
+     * @param string $objectName Name of the object to instantiate
+     * @param class-string $className Name of the class implementing the object
+     * @return object The object
+     * @throws Exception\CannotBuildObjectException
+     * @throws \Throwable
+     */
+    protected function instantiateRegisteredObject(string $objectName, string $className): object
+    {
+        $classReflection = new \ReflectionClass($className);
+        if ($classReflection->isInternal()) {
+            $instance = $this->instantiateClass($className, $this->autowireConstructorArguments($objectName, $className, []));
+            $this->registerInstance($objectName, $className, $instance);
+            return $instance;
+        }
+
+        $instance = $classReflection->newInstanceWithoutConstructor();
+        $this->registerInstance($objectName, $className, $instance);
+        try {
+            $constructorArguments = $this->autowireConstructorArguments($objectName, $className, []);
+            if ($classReflection->hasMethod('__construct')) {
+                $instance->__construct(...$constructorArguments);
+            }
+        } catch (\Throwable $throwable) {
+            $this->unregisterInstance($objectName, $className);
+            throw $throwable;
+        }
+        return $instance;
+    }
+
+    /**
+     * Registers the given instance for the object name and – if the implementation class is
+     * registered as a singleton of its own – for the class name as well, so that requesting
+     * the class directly returns the same instance.
+     *
+     * @param class-string $className
+     */
+    protected function registerInstance(string $objectName, string $className, object $instance): void
+    {
+        $this->objects[$objectName][self::KEY_INSTANCE] = $instance;
+        if ($this->classIsRegisteredAsSingleton($objectName, $className)) {
+            $this->objects[$className][self::KEY_INSTANCE] = $instance;
+        }
+    }
+
+    /**
+     * @param class-string $className
+     */
+    protected function unregisterInstance(string $objectName, string $className): void
+    {
+        unset($this->objects[$objectName][self::KEY_INSTANCE]);
+        if ($this->classIsRegisteredAsSingleton($objectName, $className)) {
+            unset($this->objects[$className][self::KEY_INSTANCE]);
+        }
+    }
+
+    /**
+     * @param class-string $className
+     */
+    protected function classIsRegisteredAsSingleton(string $objectName, string $className): bool
+    {
+        return $objectName !== $className
+            && isset($this->objects[$className])
+            && $this->objects[$className][self::KEY_SCOPE] === ObjectConfiguration::SCOPE_SINGLETON;
+    }
+
+    /**
+     * Resolves the constructor arguments configured for the given object – by object name and,
+     * if different, by class name – which were not passed explicitly.
+     *
+     * @param class-string $className
+     * @param array<mixed> $constructorArguments Arguments which were passed explicitly
+     * @return array<mixed> The complete list of constructor arguments
+     */
+    protected function autowireConstructorArguments(string $objectName, string $className, array $constructorArguments): array
+    {
         if (isset($this->objects[$objectName][self::KEY_CONSTRUCTOR_ARGUMENTS])) {
             $constructorArguments = $this->autowireArguments($this->objects[$objectName][self::KEY_CONSTRUCTOR_ARGUMENTS], $constructorArguments);
         }
-
-        // by class name
         if ($objectName !== $className && isset($this->objects[$className][self::KEY_CONSTRUCTOR_ARGUMENTS])) {
             $constructorArguments = $this->autowireArguments($this->objects[$className][self::KEY_CONSTRUCTOR_ARGUMENTS], $constructorArguments);
         }
-
-        if (!isset($this->objects[$objectName]) || $this->objects[$objectName][self::KEY_SCOPE] === ObjectConfiguration::SCOPE_PROTOTYPE) {
-            return $this->instantiateClass($className, $constructorArguments);
-        }
-
-        $this->objects[$objectName][self::KEY_INSTANCE] = $this->instantiateClass($className, $constructorArguments);
-        if ($objectName !== $className && isset($this->objects[$className]) && $this->objects[$className][self::KEY_SCOPE] === ObjectConfiguration::SCOPE_SINGLETON) {
-            $this->objects[$className][self::KEY_INSTANCE] = $this->objects[$objectName][self::KEY_INSTANCE];
-        }
-        return $this->objects[$objectName][self::KEY_INSTANCE];
+        return $constructorArguments;
     }
 
     /**
