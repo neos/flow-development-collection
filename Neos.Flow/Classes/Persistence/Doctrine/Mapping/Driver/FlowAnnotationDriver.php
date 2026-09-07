@@ -523,11 +523,17 @@ class FlowAnnotationDriver implements DoctrineMappingDriverInterface, PointcutFi
         foreach ($joinColumns as &$joinColumn) {
             if ($joinColumn['referencedColumnName'] === null || $joinColumn['referencedColumnName'] === 'id') {
                 if ($direction === self::MAPPING_REGULAR) {
-                    $idProperties = $this->reflectionService->getPropertyNamesByTag($mapping['targetEntity'], 'id');
+                    $idProperties = array_unique(array_merge(
+                        $this->reflectionService->getPropertyNamesByAnnotation($mapping['targetEntity'], ORM\Id::class),
+                        $this->reflectionService->getPropertyNamesByTag($mapping['targetEntity'], 'id')
+                    ));
                     $joinColumnName = $this->buildJoinTableColumnName($mapping['targetEntity']);
                 } else {
                     $className = $this->getUnproxiedClassName($property->getDeclaringClass()->getName());
-                    $idProperties = $this->reflectionService->getPropertyNamesByTag($className, 'id');
+                    $idProperties = array_unique(array_merge(
+                        $this->reflectionService->getPropertyNamesByAnnotation($mapping['targetEntity'], ORM\Id::class),
+                        $this->reflectionService->getPropertyNamesByTag($mapping['targetEntity'], 'id')
+                    ));
                     $joinColumnName = $this->buildJoinTableColumnName($className);
                 }
                 if (count($idProperties) === 0) {
