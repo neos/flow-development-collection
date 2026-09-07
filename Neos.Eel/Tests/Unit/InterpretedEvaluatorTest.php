@@ -17,6 +17,9 @@ namespace Neos\Eel\Tests\Unit;
 use Neos\Eel\Context;
 use Neos\Eel\InterpretedEvaluator;
 
+require_once "AbstractEvaluatorTestcase.php";
+
+
 /**
  * Interpreted evaluator test
  */

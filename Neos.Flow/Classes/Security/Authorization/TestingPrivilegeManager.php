@@ -68,7 +68,7 @@ class TestingPrivilegeManager extends PrivilegeManager
     /**
      * Set the decision override
      *
-     * @param boolean $overrideDecision true or false to override the decision, NULL to use the access decision voter manager
+     * @param boolean|null $overrideDecision true or false to override the decision, NULL to use the access decision voter manager
      * @return void
      */
     public function setOverrideDecision($overrideDecision)

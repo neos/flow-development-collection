@@ -10,6 +10,8 @@ $finder = (new PhpCsFixer\Finder())
         './Neos.Error.Messages/Tests',
         './Neos.Flow/Classes',
         './Neos.Flow/Tests',
+        './Neos.Flow.Testing/Classes',
+        './Neos.Flow.Testing/LegacyClasses',
         './Neos.Flow.Log/Classes',
         './Neos.Flow.Log/Tests',
         './Neos.FluidAdaptor/Classes',

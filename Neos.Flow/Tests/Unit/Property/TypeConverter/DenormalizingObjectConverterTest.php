@@ -24,6 +24,16 @@ use Neos\Flow\Tests\Unit\Property\TypeConverter\Fixture\StringBasedValueObject;
 use Neos\Flow\Tests\UnitTestCase;
 use PHPUnit\Framework\Attributes\Test;
 
+require_once "Fixture/ArrayBasedValueObject.php";
+require_once "Fixture/BooleanBasedValueObject.php";
+require_once "Fixture/BooleanBasedValueObjectWithLongName.php";
+require_once "Fixture/ExampleIntBackedEnum.php";
+require_once "Fixture/ExampleStringBackedEnum.php";
+require_once "Fixture/FloatBasedValueObject.php";
+require_once "Fixture/IntegerBasedValueObject.php";
+require_once "Fixture/IntegerBasedValueObjectWithLongName.php";
+require_once "Fixture/StringBasedValueObject.php";
+
 final class DenormalizingObjectConverterTest extends UnitTestCase
 {
     /**

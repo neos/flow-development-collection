@@ -23,6 +23,8 @@ use Neos\Flow\Tests\UnitTestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 
+require_once('Fixtures/NestedTestObject.php');
+
 /**
  * Testcase for the JSON view
  */

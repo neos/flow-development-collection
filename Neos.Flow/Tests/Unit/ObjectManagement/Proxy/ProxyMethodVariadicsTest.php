@@ -19,6 +19,8 @@ use Neos\Flow\Tests\UnitTestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 
+require_once(__DIR__ . '/../Fixture/ClassWithVariadicMethods.php');
+
 /**
  * Tests for the handling of variadic parameters in generated proxy methods
  */

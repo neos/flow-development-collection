@@ -14,6 +14,8 @@ namespace Neos\Utility\ObjectHandling\Tests\Unit\Fixture\Model;
 
 use Doctrine\ORM\Proxy\Proxy;
 
+require_once "Entity.php";
+
 /**
  * A class that is a Doctrine proxy
  */

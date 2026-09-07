@@ -13,7 +13,7 @@ use Neos\Utility\ObjectAccess;
  * Note that this interface is not actually implemented by the accessible proxy, but only provides IDE support.
  *
  * @deprecated you should not use this for testing. As it will couple the tests to highly to the internal implementation
- * and makes refactorings without rewriting major tests impossible.
+ * and makes refactorings without rewriting major tests impossible. Will be removed with Neos.Flow 10.
  */
 interface AccessibleProxyInterface
 {

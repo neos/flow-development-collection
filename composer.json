@@ -108,6 +108,12 @@
             "Neos\\Flow\\Log\\": [
                 "Neos.Flow.Log/Classes"
             ],
+            "Neos\\Flow\\Testing\\": [
+                "Neos.Flow.Testing/Classes"
+            ],
+            "Neos\\Flow\\Tests\\": [
+                "Neos.Flow.Testing/LegacyClasses"
+            ],
             "Neos\\Flow\\": [
                 "Neos.Flow/Classes"
             ],

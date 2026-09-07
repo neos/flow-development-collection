@@ -5,18 +5,40 @@ declare(strict_types=1);
 namespace Neos\Eel\Tests\Unit\Validation;
 
 use Neos\Eel\Validation\ExpressionSyntaxValidator;
-use Neos\Flow\Tests\Unit\Validation\Validator\AbstractValidatorTestcase;
+use Neos\Flow\Tests\UnitTestCase;
+use Neos\Flow\Validation\Validator\ValidatorInterface;
 use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Tests for the ExpressionSyntaxValidator
  */
-final class ExpressionSyntaxValidatorTest extends AbstractValidatorTestcase
+final class ExpressionSyntaxValidatorTest extends UnitTestCase
 {
     /**
      * @var string
      */
     protected $validatorClassName = ExpressionSyntaxValidator::class;
+
+    /**
+     *
+     * @var ValidatorInterface
+     */
+    protected $validator;
+
+    protected function setUp(): void
+    {
+        $this->validator = $this->getValidator();
+    }
+
+    protected function getValidator($options = [])
+    {
+        return $this->getAccessibleMock($this->validatorClassName, [], [$options], '', true);
+    }
+
+    protected function validatorOptions($options)
+    {
+        $this->validator = $this->getValidator($options);
+    }
 
     #[Test]
     public function validExpressionPasses()

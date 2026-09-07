@@ -12,6 +12,8 @@ namespace Neos\Flow\Tests\Unit\Reflection\Fixture;
  * source code.
  */
 
+require_once('ClassWithAlias.php');
+
 /**
  * Aliased class for the Reflection tests
  */

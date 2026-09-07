@@ -24,6 +24,9 @@ use Neos\Flow\Tests\UnitTestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 
+require_once "Fixtures/TestArrayIterator.php";
+require_once "Fixtures/TestObject.php";
+
 /**
  * Abstract evaluator test
  *
