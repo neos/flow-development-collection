@@ -136,8 +136,8 @@ readonly class ConfigurationBuilder
                     throw new InvalidObjectConfigurationException('Tried to configure unknown object "' . $objectName . '" in package "' . $packageKey . '". Please check your Objects.yaml.', 1184926175);
                 }
 
-                if (!$isVirtualObject && $objectName !== $newObjectConfiguration->getClassName() && !interface_exists($objectName, true)) {
-                    throw new InvalidObjectConfigurationException('Tried to set a differing class name for class "' . $objectName . '" in the object configuration of package "' . $packageKey . '". Setting "className" is only allowed for interfaces, please check your Objects.yaml."', 1295954589);
+                if (!$isVirtualObject && class_exists($objectName) && $objectName !== $newObjectConfiguration->getClassName() && !interface_exists($objectName, true)) {
+                    $this->logger->warning(sprintf('The class "%s" was configured to be injected as class "%s", this could be a misconfiguration and result in errors if the classes do not share common ancestry.', $objectName, $newObjectConfiguration->getClassName()));
                 }
 
                 if (empty($newObjectConfiguration->getClassName()) && !$newObjectConfiguration->isCreatedByFactory()) {

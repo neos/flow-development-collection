@@ -14,7 +14,6 @@ namespace Neos\Flow\Tests\Unit\ObjectManagement\Proxy;
 use Doctrine\Common\Collections\ArrayCollection;
 use Neos\Flow\Core\Bootstrap;
 use Neos\Flow\ObjectManagement\Configuration\Configuration;
-use Neos\Flow\ObjectManagement\DependencyInjection\DependencyProxy;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\ObjectManagement\Proxy\RelatedEntitiesContainer;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
@@ -179,16 +178,6 @@ class ObjectSerializationTraitTest extends UnitTestCase
         $propertiesToSerialize = $this->subject->serializeRelatedEntities([], ['objectProperty' => SomeImplementation::class]);
 
         self::assertContains('objectProperty', $propertiesToSerialize);
-    }
-
-    #[Test]
-    public function dependencyProxiesAreNotSerialized(): void
-    {
-        $this->subject->objectProperty = new DependencyProxy(SomeImplementation::class, static fn () => new SomeImplementation());
-
-        $propertiesToSerialize = $this->subject->serializeRelatedEntities([], ['objectProperty' => DependencyProxy::class]);
-
-        self::assertNotContains('objectProperty', $propertiesToSerialize);
     }
 
     #[Test]

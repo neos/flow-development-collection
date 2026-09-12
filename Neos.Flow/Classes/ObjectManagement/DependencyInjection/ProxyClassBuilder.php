@@ -105,7 +105,7 @@ class ProxyClassBuilder
             $injectPropertiesCode = $this->buildPropertyInjectionCode($objectConfiguration);
             if ($injectPropertiesCode !== []) {
                 $injectionCodeWasIntroduced = true;
-                $proxyClass->addTraits(['\\' . PropertyInjectionTrait::class]);
+                $proxyClass->addProperty('Flow_Injected_Properties', '[]', 'protected array');
                 $injectPropertiesMethod = $proxyClass->getMethod('Flow_Proxy_injectProperties');
                 $injectPropertiesMethod->addPreParentCallCode(implode(PHP_EOL, $injectPropertiesCode));
                 $injectPropertiesMethod->setVisibility(ProxyMethodGenerator::VISIBILITY_PRIVATE);
@@ -284,9 +284,8 @@ class ProxyClassBuilder
     protected function buildPropertyInjectionCodeByConfiguration(Configuration $objectConfiguration, $propertyName, Configuration $propertyConfiguration): array
     {
         $className = $objectConfiguration->getClassName();
-        $propertyObjectName = $propertyConfiguration->getObjectName();
         $propertyClassName = $propertyConfiguration->getClassName();
-        if ($propertyConfiguration->getFactoryObjectName()) {
+        if ($propertyConfiguration->isCreatedByFactory()) {
             $preparedSetterArgument = $this->buildCustomFactoryCall($propertyConfiguration->getFactoryObjectName(), $propertyConfiguration->getFactoryMethodName(), $propertyConfiguration->getFactoryArguments());
         } else {
             if (!isset($this->objectConfigurations[$propertyClassName])) {
@@ -305,7 +304,7 @@ class ProxyClassBuilder
             return $result;
         }
 
-        return $this->buildLazyPropertyInjectionCode($propertyObjectName, $propertyClassName, $propertyName, $preparedSetterArgument);
+        return ['$this->' . $propertyName . ' = ' . $preparedSetterArgument . ';'];
     }
 
     /**
@@ -342,11 +341,6 @@ class ProxyClassBuilder
         $result = $this->buildSetterInjectionCode($className, $propertyName, $preparedSetterArgument);
         if ($result !== null) {
             return $result;
-        }
-
-        # Disable lazy property injection, see https://github.com/neos/flow-development-collection/issues/2114
-        if ($propertyConfiguration->isLazyLoading() && $this->objectConfigurations[$propertyObjectName]->getScope() !== Configuration::SCOPE_PROTOTYPE) {
-            return $this->buildLazyPropertyInjectionCode($propertyObjectName, $propertyClassName, $propertyName, $preparedSetterArgument);
         }
 
         return ['$this->' . $propertyName . ' = ' . $preparedSetterArgument . ';'];
@@ -393,23 +387,6 @@ class ProxyClassBuilder
             return $result;
         }
         return ['$this->' . $propertyName . ' = ' . $preparedSetterArgument . ';'];
-    }
-
-    /**
-     * Builds code which injects a DependencyProxy instead of the actual dependency
-     *
-     * @param string $propertyObjectName Object name of the dependency to inject
-     * @param string $propertyClassName Class name of the dependency to inject
-     * @param string $propertyName Name of the property in the class to inject into
-     * @param string $preparedSetterArgument PHP code to use for retrieving the value to inject
-     * @return string[] PHP code
-     */
-    protected function buildLazyPropertyInjectionCode(string $propertyObjectName, string $propertyClassName, string $propertyName, string $preparedSetterArgument): array
-    {
-        $setterArgumentHash = "'" . md5($preparedSetterArgument) . "'";
-        $commands[] = '$this->Flow_Proxy_LazyPropertyInjection(\'' . $propertyObjectName . '\', \'' . $propertyClassName . '\', \'' . $propertyName . '\', ' . $setterArgumentHash . ', function() { return ' . $preparedSetterArgument . '; });';
-
-        return $commands;
     }
 
     /**

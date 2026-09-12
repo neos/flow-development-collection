@@ -21,7 +21,6 @@ use Doctrine\ORM\Configuration;
 use Doctrine\ORM\EntityManager;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Configuration\Exception\InvalidConfigurationException;
-use Neos\Flow\ObjectManagement\DependencyInjection\DependencyProxy;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Persistence\Doctrine\Logging\SqlLogger;
 use Neos\Flow\Persistence\Doctrine\Mapping\Driver\FlowAnnotationDriver;
@@ -168,9 +167,6 @@ class EntityManagerFactory
         }
 
         $logger = $sqlLoggerInstance->logger;
-        if ($logger instanceof DependencyProxy) {
-            $logger = $logger->_activateDependency();
-        }
         if (!$logger instanceof LoggerInterface) {
             throw new InvalidConfigurationException(sprintf('The SqlLogger needs to get a Psr LoggerInterface injected, got "%s"', get_class($logger)), 1720548075);
         }
