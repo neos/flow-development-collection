@@ -18,7 +18,6 @@ use GuzzleHttp\Psr7\Response;
 use GuzzleHttp\Psr7\ServerRequest;
 use GuzzleHttp\Psr7\Uri;
 use Neos\Flow\Mvc\ActionRequest;
-use Neos\Flow\Mvc\ActionResponse;
 use Neos\Flow\Mvc\Controller\MvcPropertyMappingConfigurationService;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\FluidAdaptor\Core\Widget\AbstractWidgetController;
@@ -39,11 +38,9 @@ final class AbstractWidgetControllerTest extends UnitTestCase
         /** @var ActionRequest $mockActionRequest */
         $mockActionRequest = $this->createMock(ActionRequest::class);
         $mockActionRequest->expects($this->atLeastOnce())->method('getInternalArgument')->with('__widgetContext')->willReturn((null));
-        $response = new ActionResponse();
 
-        /** @var AbstractWidgetController $abstractWidgetController */
-        $abstractWidgetController = $this->getMockForAbstractClass(AbstractWidgetController::class);
-        $abstractWidgetController->processRequest($mockActionRequest, $response);
+        $abstractWidgetController = new class () extends AbstractWidgetController {};
+        $abstractWidgetController->processRequest($mockActionRequest);
     }
 
     #[Test]
@@ -63,7 +60,7 @@ final class AbstractWidgetControllerTest extends UnitTestCase
         $mockActionRequest->expects($this->atLeastOnce())->method('getInternalArgument')->with('__widgetContext')->willReturn(($widgetContext));
 
         /** @var AbstractWidgetController|MockObject $abstractWidgetController */
-        $abstractWidgetController = $this->getAccessibleMock(AbstractWidgetController::class, ['resolveActionMethodName', 'initializeActionMethodArguments', 'initializeActionMethodValidators', 'mapRequestArgumentsToControllerArguments', 'detectFormat', 'resolveView', 'callActionMethod']);
+        $abstractWidgetController = $this->getAccessibleMock(AbstractWidgetController::class, ['resolveActionMethodName', 'initializeActionMethodArguments', 'initializeActionMethodValidators', 'mapRequestArgumentsToControllerArguments', 'resolveView', 'callActionMethod']);
         $abstractWidgetController->method('resolveActionMethodName')->willReturn('indexAction');
         $abstractWidgetController->_set('mvcPropertyMappingConfigurationService', $this->createMock(MvcPropertyMappingConfigurationService::class));
         $abstractWidgetController->expects($this->once())->method('callActionMethod')->willReturn(new Response());

@@ -47,37 +47,19 @@ abstract class BaseTestCase extends TestCase
      * @param string $mockClassName
      * @param boolean $callOriginalConstructor
      * @param boolean $callOriginalClone
-     * @param boolean $cloneArguments
+     * @param boolean $cloneArguments no longer has an effect
      * @return T&MockObject&AccessibleProxyInterface
      * @deprecated please don't use this {@see AccessibleProxyInterface}
      */
     protected function getAccessibleMock(string $originalClassName, array $methods = [], array $arguments = [], $mockClassName = '', $callOriginalConstructor = true, $callOriginalClone = true, $cloneArguments = false)
     {
         $mockBuilder = $this->getMockBuilder($this->buildAccessibleProxy($originalClassName));
-        // PHPUnit 10+ rejects onlyMethods() entries that don't exist on the class. Split
-        // off non-existing methods (e.g. AOP-emitted signal methods, magic methods) so they
-        // can be added via addMethods() instead of failing the mock build.
-        $existingMethods = [];
-        $addedMethods = [];
-        foreach ($methods as $method) {
-            if (method_exists($originalClassName, $method)) {
-                $existingMethods[] = $method;
-            } else {
-                $addedMethods[] = $method;
-            }
-        }
-        $mockBuilder->onlyMethods($existingMethods)->setConstructorArgs($arguments)->setMockClassName($mockClassName);
-        if ($addedMethods !== []) {
-            $mockBuilder->addMethods($addedMethods);
-        }
+        $mockBuilder->onlyMethods($methods)->setConstructorArgs($arguments)->setMockClassName($mockClassName);
         if ($callOriginalConstructor === false) {
             $mockBuilder->disableOriginalConstructor();
         }
         if ($callOriginalClone === false) {
             $mockBuilder->disableOriginalClone();
-        }
-        if ($cloneArguments === true) {
-            $mockBuilder->enableArgumentCloning();
         }
 
         $mockObject = $mockBuilder->getMock();
@@ -97,15 +79,40 @@ abstract class BaseTestCase extends TestCase
      * @param string $mockClassName
      * @param boolean $callOriginalConstructor
      * @param boolean $callOriginalClone
-     * @param boolean $callAutoload
+     * @param boolean $callAutoload no longer has an effect
      * @param array $mockedMethods
-     * @param boolean $cloneArguments
+     * @param boolean $cloneArguments no longer has an effect
      * @return T&MockObject&AccessibleProxyInterface
      * @deprecated please don't use this {@see AccessibleProxyInterface}
      */
     protected function getAccessibleMockForAbstractClass($originalClassName, array $arguments = [], $mockClassName = '', $callOriginalConstructor = true, $callOriginalClone = true, $callAutoload = true, $mockedMethods = [], $cloneArguments = false)
     {
-        return $this->getMockForAbstractClass($this->buildAccessibleProxy($originalClassName), $arguments, $mockClassName, $callOriginalConstructor, $callOriginalClone, $callAutoload, $mockedMethods, $cloneArguments);
+        $proxyClassName = $this->buildAccessibleProxy($originalClassName);
+        // The accessible proxy of an abstract class is abstract itself. PHPUnit only implements
+        // the methods passed to onlyMethods(), so the abstract ones have to be listed explicitly –
+        // otherwise the generated mock class is left with unimplemented abstract methods.
+        $abstractMethods = array_map(
+            static fn (\ReflectionMethod $method) => $method->getName(),
+            (new \ReflectionClass($proxyClassName))->getMethods(\ReflectionMethod::IS_ABSTRACT)
+        );
+
+        $mockBuilder = $this->getMockBuilder($proxyClassName);
+        $mockBuilder
+            ->onlyMethods(array_values(array_unique([...$mockedMethods, ...$abstractMethods])))
+            ->setConstructorArgs($arguments)
+            ->setMockClassName($mockClassName);
+        if ($callOriginalConstructor === false) {
+            $mockBuilder->disableOriginalConstructor();
+        }
+        if ($callOriginalClone === false) {
+            $mockBuilder->disableOriginalClone();
+        }
+
+        $mockObject = $mockBuilder->getMock();
+
+        $this->registerMockObject($mockObject);
+
+        return $mockObject;
     }
 
     /**
