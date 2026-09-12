@@ -30,7 +30,7 @@ final class RouteTags
     public const PATTERN_TAG = '/^[a-zA-Z0-9_%\-&]{1,250}$/';
 
     /**
-     * @var string[] numeric array of strings satisfying the PATTERN_TAG regex
+     * @var array<int,string> numeric array of strings satisfying the PATTERN_TAG regex
      */
     private $tags = [];
 
@@ -111,7 +111,8 @@ final class RouteTags
     /**
      * Checks the format of a given $tag string and throws an exception if it does not conform to the PATTERN_TAG regex
      *
-     * @param string $tag
+     * @param string|int|object $tag
+     * @return void
      * @throws \InvalidArgumentException
      */
     private static function validateTag($tag)
@@ -138,7 +139,7 @@ final class RouteTags
     /**
      * Returns the tags of this tag collection as value array
      *
-     * @return array
+     * @return array<int,string>
      */
     public function getTags(): array
     {

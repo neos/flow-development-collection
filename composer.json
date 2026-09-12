@@ -10,13 +10,18 @@
             "../../flow doctrine:migrate --quiet",
             "../../bin/behat -f progress -c Neos.Flow/Tests/Behavior/behat.yml"
         ],
+        "test:unit": [
+            "../../bin/phpunit -c ../../Build/BuildEssentials/PhpUnit/UnitTests.xml "
+        ],
+        "test": [
+            "@test:unit",
+            "@test:behavioral"
+        ],
         "lint:php-cs-fixer": "../../bin/php-cs-fixer check -v",
-        "lint:phpstan-legacy": "../../bin/phpstan analyse -c phpstan-legacy.neon.dist -v",
-        "lint:phpstan": "../../bin/phpstan analyse -c phpstan.neon.dist -v --memory-limit 256M",
+        "lint:phpstan": "../../bin/phpstan analyse -v",
         "lint": [
             "@lint:php-cs-fixer",
-            "@lint:phpstan",
-            "@lint:phpstan-legacy"
+            "@lint:phpstan"
         ],
         "fix:php-cs-fixer": "../../bin/php-cs-fixer fix",
         "fix": [

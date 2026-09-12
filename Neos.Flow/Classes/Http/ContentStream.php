@@ -60,6 +60,9 @@ class ContentStream implements StreamInterface
     public static function fromContents(string $contents): self
     {
         $handle = fopen('php://memory', 'r+');
+        if ($handle === false) {
+            throw new \RuntimeException('Failed to open php://memory', 1744451485);
+        }
         fwrite($handle, $contents);
         rewind($handle);
         return new static($handle);
@@ -72,12 +75,14 @@ class ContentStream implements StreamInterface
      */
     public function close()
     {
-        if (!$this->resource) {
+        if ($this->resource === null) {
             return;
         }
 
         $resource = $this->detach();
-        fclose($resource);
+        if ($resource !== null) {
+            fclose($resource);
+        }
     }
 
     /**
@@ -100,11 +105,12 @@ class ContentStream implements StreamInterface
      *
      * @param string|resource $stream
      * @param string $mode
+     * @return void
      */
     public function replace($stream, $mode = 'r')
     {
         $this->close();
-        if (!is_resource($stream)) {
+        if (is_string($stream)) {
             $stream = @fopen($stream, $mode);
         }
 
@@ -128,6 +134,7 @@ class ContentStream implements StreamInterface
 
         $stats = fstat($this->resource);
 
+        /** @phpstan-ignore offsetAccess.nonOffsetAccessible (size is available in fstat) */
         return $stats['size'];
     }
 
@@ -215,6 +222,7 @@ class ContentStream implements StreamInterface
      * If the stream is not seekable, this method will raise an exception;
      * otherwise, it will perform a seek(0).
      *
+     * @return bool
      * @see seek()
      * @link http://www.php.net/manual/en/function.fseek.php
      * @throws \RuntimeException on failure.
@@ -228,6 +236,7 @@ class ContentStream implements StreamInterface
      * Returns whether or not the stream is writable.
      *
      * @return bool
+     * @phpstan-assert-if-true resource $this->resource
      */
     public function isWritable()
     {
@@ -273,6 +282,7 @@ class ContentStream implements StreamInterface
      * Returns whether or not the stream is readable.
      *
      * @return bool
+     * @phpstan-assert-if-true resource $this->resource
      */
     public function isReadable()
     {
@@ -289,14 +299,14 @@ class ContentStream implements StreamInterface
     /**
      * Read data from the stream.
      *
-     * @param int $length Read up to $length bytes from the object and return
+     * @param int<1, max> $length Read up to $length bytes from the object and return
      *     them. Fewer than $length bytes may be returned if underlying stream
      *     call returns fewer bytes.
      * @return string Returns the data read from the stream, or an empty string
      *     if no bytes are available.
      * @throws \RuntimeException if an error occurs.
      */
-    public function read($length)
+    public function read(int $length)
     {
         $this->ensureResourceReadable();
 
@@ -342,6 +352,9 @@ class ContentStream implements StreamInterface
      */
     public function getMetadata($key = null)
     {
+        if (!$this->resource) {
+            return null;
+        }
         if ($key === null) {
             return stream_get_meta_data($this->resource);
         }
@@ -356,6 +369,8 @@ class ContentStream implements StreamInterface
 
     /**
      * Throw an exception if the current resource is not readable.
+     * @phpstan-assert resource $this->resource
+     * @return void
      */
     protected function ensureResourceReadable()
     {
@@ -366,6 +381,8 @@ class ContentStream implements StreamInterface
 
     /**
      * Throw an exception if the current resource is not valid.
+     * @phpstan-assert resource $this->resource
+     * @return void
      */
     protected function ensureResourceOpen()
     {
@@ -375,7 +392,9 @@ class ContentStream implements StreamInterface
     }
 
     /**
+     * @param mixed $resource
      * @return boolean
+     * @phpstan-assert-if-true resource $resource
      */
     protected function isValidResource($resource)
     {
@@ -407,9 +426,7 @@ class ContentStream implements StreamInterface
 
             return $this->getContents();
         } catch (\Exception $e) {
-            if ($this->logger instanceof LoggerInterface) {
-                $this->logger->error(sprintf('Tried to convert a http content stream to a string but an exception occured: [%s] - %s', $e->getCode(), $e->getMessage()), ['exception' => $e] + LogEnvironment::fromMethodName(__METHOD__));
-            }
+            $this->logger->error(sprintf('Tried to convert a http content stream to a string but an exception occured: [%s] - %s', $e->getCode(), $e->getMessage()), ['exception' => $e] + LogEnvironment::fromMethodName(__METHOD__));
             return '';
         }
     }

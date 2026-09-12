@@ -119,7 +119,7 @@ class IdentityRoutePart extends DynamicRoutePart
      * Otherwise the ObjectPathMappingRepository is asked for a matching ObjectPathMapping.
      * If that is found the identifier is stored in $this->value, otherwise this route part does not match.
      *
-     * @param string $value value to match, usually the current query path segment(s)
+     * @param string|null $value value to match, usually the current query path segment(s)
      * @return boolean true if value could be matched successfully, otherwise false
      * @api
      */
@@ -203,7 +203,10 @@ class IdentityRoutePart extends DynamicRoutePart
         } elseif ($value instanceof $this->objectType) {
             $identifier = $this->persistenceManager->getIdentifierByObject($value);
         }
-        if ($identifier === null || (!is_string($identifier) && !is_integer($identifier))) {
+        if ($identifier === null) {
+            return false;
+        }
+        if (!is_string($identifier) && !is_integer($identifier)) {
             return false;
         }
         $pathSegment = $this->getPathSegmentByIdentifier($identifier);
@@ -220,12 +223,15 @@ class IdentityRoutePart extends DynamicRoutePart
      * ObjectPathMapping is fetched from persistence.
      * If no ObjectPathMapping exists for the given identifier, a new ObjectPathMapping is created.
      *
-     * @param string $identifier the technical identifier of the object
-     * @return string|integer the resolved path segment(s)
+     * @param string|int $identifier the technical identifier of the object
+     * @return string|int|null the resolved path segment(s)
      * @throws InfiniteLoopException if no unique path segment could be found after 100 iterations
      */
     protected function getPathSegmentByIdentifier($identifier)
     {
+        if (is_int($identifier)) {
+            $identifier = (string)$identifier;
+        }
         if ($this->getUriPattern() === '') {
             return rawurlencode($identifier);
         }
@@ -278,7 +284,7 @@ class IdentityRoutePart extends DynamicRoutePart
                         $dateFormat = isset($dynamicPathSegmentParts[1]) ? trim($dynamicPathSegmentParts[1]) : 'Y-m-d';
                         $pathSegment .= $this->rewriteForUri($dynamicPathSegment->format($dateFormat));
                     } else {
-                        throw new InvalidUriPatternException(sprintf('Invalid uriPattern "%s" for route part "%s". Property "%s" must be of type string or \DateTime. "%s" given.', $this->getUriPattern(), $this->getName(), $propertyPath, is_object($dynamicPathSegment) ? get_class($dynamicPathSegment) : gettype($dynamicPathSegment)), 1316442409);
+                        throw new InvalidUriPatternException(sprintf('Invalid uriPattern "%s" for route part "%s". Property "%s" must be of type string or \DateTime. "%s" given.', $this->getUriPattern(), $this->getName(), $propertyPath, get_class($dynamicPathSegment)), 1316442409);
                     }
                 } else {
                     $pathSegment .= $this->rewriteForUri((string)$dynamicPathSegment);
@@ -292,7 +298,7 @@ class IdentityRoutePart extends DynamicRoutePart
      * Creates a new ObjectPathMapping and stores it in the repository
      *
      * @param string $pathSegment
-     * @param string|integer $identifier
+     * @param string $identifier
      * @return void
      */
     protected function storeObjectPathMapping($pathSegment, $identifier)
@@ -328,12 +334,12 @@ class IdentityRoutePart extends DynamicRoutePart
         $value = strtr($value, $transliteration);
 
         $spaceCharacter = '-';
-        $value = preg_replace('/[ \-+_]+/', $spaceCharacter, $value);
+        $value = preg_replace('/[ \-+_]+/', $spaceCharacter, $value) ?: '';
 
-        $value = preg_replace('/[^-a-z0-9.\\' . $spaceCharacter . ']/i', '', $value);
+        $value = preg_replace('/[^-a-z0-9.\\' . $spaceCharacter . ']/i', '', $value) ?: '';
 
-        $value = preg_replace('/\\' . $spaceCharacter . '{2,}/', $spaceCharacter, $value);
-        $value = trim($value, $spaceCharacter);
+        $value = preg_replace('/\\' . $spaceCharacter . '{2,}/', $spaceCharacter, $value) ?: '';
+        $value = trim($value, $spaceCharacter) ?: '';
 
         return $value;
     }

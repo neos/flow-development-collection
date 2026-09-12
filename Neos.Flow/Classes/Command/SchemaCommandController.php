@@ -76,7 +76,7 @@ class SchemaCommandController extends CommandController
 
         if ($verbose) {
             $this->outputLine();
-            if ($result->hasNotices()) {
+            if ($result->hasNotices() === true) {
                 $notices = $result->getFlattenedNotices();
                 $this->outputLine('<b>%d notices:</b>', [count($notices)]);
                 foreach ($notices as $path => $pathNotices) {

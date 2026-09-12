@@ -12,11 +12,17 @@ use Neos\Utility\ObjectAccess;
  * This is a mutable container to hold references to entities (class & identifier) for serialization.
  * Userland code should never (have to) interact with this, it is used in proxy classes only. You might
  * see references to it in serialized object strings.
+ *
+ * @phpstan-type RelatedEntityShape array{n:string, c:false|string, i:mixed, p:string}
+ * @implements \IteratorAggregate<int, RelatedEntityShape>
  * @internal
  */
 #[Flow\Proxy(false)]
 final class RelatedEntitiesContainer implements \IteratorAggregate
 {
+    /**
+     * @var array<string, RelatedEntityShape>
+     */
     protected array $e = [];
 
     public function getIterator(): \Generator

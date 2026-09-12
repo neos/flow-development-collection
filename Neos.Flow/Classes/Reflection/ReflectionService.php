@@ -495,6 +495,7 @@ class ReflectionService
     /**
      * Tells if the specified class implements the given interface
      *
+     * @todo can't this be replaces with is_subclass_of() ?
      * @throws ClassLoadingForReflectionFailedException
      * @throws InvalidClassException
      * @throws \ReflectionException
@@ -1095,7 +1096,7 @@ class ReflectionService
     /**
      * Returns the class schema for the given class
      *
-     * @param class-string|object $classNameOrObject
+     * @param string|object $classNameOrObject
      * @return ClassSchema|null
      */
     public function getClassSchema(string|object $classNameOrObject): ?ClassSchema
@@ -1611,7 +1612,11 @@ class ReflectionService
         }
 
         $possibleRepositoryClassName = str_replace('\\Model\\', '\\Repository\\', $className) . 'Repository';
-        if (class_exists($possibleRepositoryClassName) && $this->isClassReflected($possibleRepositoryClassName) === true) {
+        if (
+            class_exists($possibleRepositoryClassName)
+            && is_subclass_of($possibleRepositoryClassName, RepositoryInterface::class)
+            && $this->isClassReflected($possibleRepositoryClassName) === true
+        ) {
             $classSchema->setRepositoryClassName($possibleRepositoryClassName);
         }
 

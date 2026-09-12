@@ -25,7 +25,7 @@ class AbstractAdvice implements AdviceInterface
 {
     /**
      * Holds the name of the aspect object containing the advice
-     * @var string
+     * @var class-string
      */
     protected $aspectObjectName;
 
@@ -43,29 +43,29 @@ class AbstractAdvice implements AdviceInterface
 
     /**
      * A reference to the Object Manager
-     * @var ObjectManagerInterface
+     * @var ?ObjectManagerInterface
      */
     protected $objectManager;
 
     /**
      * Runtime evaluations definition array
-     * @var array
+     * @var array<mixed>
      */
     protected $runtimeEvaluationsDefinition;
 
     /**
      * Runtime evaluations function
-     * @var \Closure
+     * @var ?\Closure
      */
     protected $runtimeEvaluator;
 
     /**
      * Constructor
      *
-     * @param string $aspectObjectName Name of the aspect object containing the advice
+     * @param class-string $aspectObjectName Name of the aspect object containing the advice
      * @param string $adviceMethodName Name of the advice method
-     * @param ObjectManagerInterface $objectManager Only require if a runtime evaluations function is specified
-     * @param \Closure $runtimeEvaluator Runtime evaluations function
+     * @param ?ObjectManagerInterface $objectManager Only require if a runtime evaluations function is specified
+     * @param ?\Closure $runtimeEvaluator Runtime evaluations function
      */
     public function __construct(string $aspectObjectName, string $adviceMethodName, ?ObjectManagerInterface $objectManager = null, ?\Closure $runtimeEvaluator = null)
     {
@@ -87,6 +87,9 @@ class AbstractAdvice implements AdviceInterface
             return;
         }
 
+        if ($this->objectManager === null) {
+            throw new \RuntimeException('Object manager is missing', 1744496555);
+        }
         $adviceObject = $this->objectManager->get($this->aspectObjectName);
         $methodName = $this->adviceMethodName;
         $adviceObject->$methodName($joinPoint);
@@ -97,7 +100,7 @@ class AbstractAdvice implements AdviceInterface
     /**
      * Returns the aspect's object name which has been passed to the constructor
      *
-     * @return string The object name of the aspect
+     * @return class-string The object name of the aspect
      */
     public function getAspectObjectName(): string
     {
@@ -128,6 +131,9 @@ class AbstractAdvice implements AdviceInterface
     protected function emitAdviceInvoked($aspectObject, string $methodName, JoinPointInterface $joinPoint): void
     {
         if ($this->dispatcher === null) {
+            if ($this->objectManager === null) {
+                throw new \RuntimeException('Object manager is missing', 1744496534);
+            }
             $this->dispatcher = $this->objectManager->get(Dispatcher::class);
         }
 

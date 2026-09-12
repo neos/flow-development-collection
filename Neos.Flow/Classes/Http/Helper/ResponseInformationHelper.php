@@ -142,7 +142,7 @@ abstract class ResponseInformationHelper
      * Prepare array of header lines for this response
      *
      * @param ResponseInterface $response
-     * @return array
+     * @return array<int,string>
      */
     public static function prepareHeaders(ResponseInterface $response): array
     {
@@ -231,7 +231,7 @@ abstract class ResponseInformationHelper
         }
 
         if (!$response->hasHeader('Content-Length') && $response->getBody()->getSize() !== null) {
-            $response = $response->withHeader('Content-Length', $response->getBody()->getSize());
+            $response = $response->withHeader('Content-Length', (string)$response->getBody()->getSize());
         }
 
         if ($request->getMethod() === 'HEAD') {

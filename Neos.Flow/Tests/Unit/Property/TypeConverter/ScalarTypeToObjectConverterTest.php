@@ -28,6 +28,7 @@ use PHPUnit\Framework\Attributes\Test;
 require_once(__DIR__ . '/../../Fixtures/ClassWithStringConstructor.php');
 require_once(__DIR__ . '/../../Fixtures/ClassWithIntegerConstructor.php');
 require_once(__DIR__ . '/../../Fixtures/ClassWithBoolConstructor.php');
+require_once(__DIR__ . '/../../Fixtures/ClassWithFloatConstructor.php');
 
 /**
  * Test case for the ScalarTypeToObjectConverter

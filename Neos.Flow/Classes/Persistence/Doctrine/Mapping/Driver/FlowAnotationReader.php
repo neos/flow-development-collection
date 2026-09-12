@@ -33,8 +33,8 @@ class FlowAnotationReader implements Reader
     /**
      * Gets the annotations applied to a class.
      *
-     * @param ReflectionClass $class The ReflectionClass of the class from which the class annotations should be read.
-     * @return array<object> An array of Annotations.
+     * @param ReflectionClass<object> $class The ReflectionClass of the class from which the class annotations should be read.
+     * @return array<class-string, object> An array of Annotations.
      */
     public function getClassAnnotations(ReflectionClass $class)
     {
@@ -49,10 +49,10 @@ class FlowAnotationReader implements Reader
     /**
      * Gets a class annotation.
      *
-     * @param ReflectionClass $class The ReflectionClass of the class from which the class annotations should be read.
+     * @param ReflectionClass<object> $class The ReflectionClass of the class from which the class annotations should be read.
      * @param class-string<T> $annotationName The name of the annotation.
      * @return T|null The Annotation or NULL, if the requested annotation does not exist.
-     * @template T
+     * @template T of object
      */
     public function getClassAnnotation(ReflectionClass $class, $annotationName)
     {
@@ -87,21 +87,23 @@ class FlowAnotationReader implements Reader
     public function getMethodAnnotation(ReflectionMethod $method, $annotationName)
     {
         $className = $this->getUnproxiedClassName($method->class);
-        return $this->reflectionService->getMethodAnnotation($className, $method->getName(), $annotationName);
+        /** @var T|null $annotation */
+        $annotation = $this->reflectionService->getMethodAnnotation($className, $method->getName(), $annotationName);
+        return $annotation;
     }
 
     /**
      * Gets the annotations applied to a property.
      *
      * @param ReflectionProperty $property The ReflectionProperty of the property from which the annotations should be read.
-     * @return array<int,array<object>> An array of Annotations.
-     * @phpstan-ignore method.childReturnType
+     * @return array<class-string, object> An array of Annotations.
      */
     public function getPropertyAnnotations(ReflectionProperty $property)
     {
         $className = $this->getUnproxiedClassName($property->class);
         $indexedAnnotations = [];
         foreach ($this->reflectionService->getPropertyAnnotations($className, $property->getName()) as $annotation) {
+            /** @var object $annotation */
             $indexedAnnotations[get_class($annotation)] = $annotation;
         }
         return $indexedAnnotations;
@@ -113,22 +115,26 @@ class FlowAnotationReader implements Reader
      * @param ReflectionProperty $property The ReflectionProperty to read the annotations from.
      * @param class-string<T> $annotationName The name of the annotation.
      * @return T|null The Annotation or NULL, if the requested annotation does not exist.
-     * @template T
+     * @template T of object
      */
     public function getPropertyAnnotation(ReflectionProperty $property, $annotationName)
     {
         $className = $this->getUnproxiedClassName($property->class);
-        return $this->reflectionService->getPropertyAnnotation($className, $property->getName(), $annotationName);
+        /** @var T|null $annotation */
+        $annotation = $this->reflectionService->getPropertyAnnotation($className, $property->getName(), $annotationName);
+        return $annotation;
     }
 
     /**
      * Returns the classname after stripping a potentially present Compiler::ORIGINAL_CLASSNAME_SUFFIX.
      *
      * @param string $className
-     * @return string
+     * @return class-string
      */
     protected function getUnproxiedClassName($className)
     {
-        return preg_replace('/' . Compiler::ORIGINAL_CLASSNAME_SUFFIX . '$/', '', $className);
+        /** @var class-string $unproxiedClassName */
+        $unproxiedClassName = preg_replace('/' . Compiler::ORIGINAL_CLASSNAME_SUFFIX . '$/', '', $className);
+        return $unproxiedClassName;
     }
 }

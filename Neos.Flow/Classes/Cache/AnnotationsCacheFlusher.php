@@ -55,7 +55,7 @@ final class AnnotationsCacheFlusher
     /**
      * Caches to flush for a given annotation
      *
-     * @var array in the format [<AnnotationClassName> => [<CacheName_1>, <CacheName_2>]]
+     * @var array<class-string,list<string>> in the format [<AnnotationClassName> => [<CacheName_1>, <CacheName_2>]]
      */
     private $annotationToCachesMap = [];
 
@@ -82,8 +82,8 @@ final class AnnotationsCacheFlusher
     /**
      * Register an annotation that should trigger a cache flush
      *
-     * @param string $annotationClassName fully qualified class name of the annotation
-     * @param string[] $cacheNames Cache names to flush if a class containing the given annotation is compiled (e.g. ["Flow_Mvc_Routing_Route", Flow_Mvc_Routing_Resolve"])
+     * @param class-string $annotationClassName fully qualified class name of the annotation
+     * @param list<string> $cacheNames Cache names to flush if a class containing the given annotation is compiled (e.g. ["Flow_Mvc_Routing_Route", Flow_Mvc_Routing_Resolve"])
      */
     public function registerAnnotation(string $annotationClassName, array $cacheNames): void
     {
@@ -93,7 +93,7 @@ final class AnnotationsCacheFlusher
     /**
      * A slot that flushes caches as needed if classes with specific annotations have changed @see registerAnnotation()
      *
-     * @param array<string> $classNames The full class names of the classes that got compiled
+     * @param array<class-string> $classNames The full class names of the classes that got compiled
      * @return void
      * @throws NoSuchCacheException
      */

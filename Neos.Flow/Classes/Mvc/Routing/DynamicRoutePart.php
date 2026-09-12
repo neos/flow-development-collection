@@ -141,7 +141,7 @@ class DynamicRoutePart extends AbstractRoutePart implements DynamicRoutePartInte
      */
     protected function matchValue($value)
     {
-        if ($value === null || $value === '') {
+        if ($value === '') {
             return false;
         }
         return new MatchResult(rawurldecode($value));
@@ -158,7 +158,7 @@ class DynamicRoutePart extends AbstractRoutePart implements DynamicRoutePartInte
      */
     protected function removeMatchingPortionFromRequestPath(&$routePath, $valueToMatch)
     {
-        if ($valueToMatch !== null && $valueToMatch !== '') {
+        if ($valueToMatch !== '') {
             $routePath = substr($routePath, strlen($valueToMatch));
         }
     }
@@ -168,7 +168,7 @@ class DynamicRoutePart extends AbstractRoutePart implements DynamicRoutePartInte
      * If a corresponding element is found in $routeValues, this element is removed from the array.
      * @see resolveWithParameters()
      *
-     * @param array $routeValues An array with key/value pairs to be resolved by Dynamic Route Parts.
+     * @param array<mixed> $routeValues An array with key/value pairs to be resolved by Dynamic Route Parts.
      * @return bool|ResolveResult true or an instance of ResolveResult if current Route Part could be resolved, otherwise false
      */
     final public function resolve(array &$routeValues)
@@ -180,7 +180,7 @@ class DynamicRoutePart extends AbstractRoutePart implements DynamicRoutePartInte
      * Checks whether $routeValues contains elements which correspond to this Dynamic Route Part.
      * If a corresponding element is found in $routeValues, this element is removed from the array.
      *
-     * @param array $routeValues
+     * @param array<mixed> $routeValues
      * @param RouteParameters $parameters
      * @return bool|ResolveResult
      */
@@ -204,8 +204,8 @@ class DynamicRoutePart extends AbstractRoutePart implements DynamicRoutePartInte
      * Returns the route value of the current route part.
      * This method can be overridden by custom RoutePartHandlers to implement custom resolving mechanisms.
      *
-     * @param array $routeValues An array with key/value pairs to be resolved by Dynamic Route Parts.
-     * @return string|array|null value to resolve.
+     * @param array<mixed> $routeValues An array with key/value pairs to be resolved by Dynamic Route Parts.
+     * @return string|array<mixed>|null value to resolve.
      * @api
      */
     protected function findValueToResolve(array $routeValues)

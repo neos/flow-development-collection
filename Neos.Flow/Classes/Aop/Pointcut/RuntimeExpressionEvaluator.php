@@ -41,7 +41,7 @@ class RuntimeExpressionEvaluator
     /**
      * Currently existing runtime expressions loaded from cache.
      *
-     * @var array
+     * @var array<string,mixed>
      */
     protected $runtimeExpressions = [];
 

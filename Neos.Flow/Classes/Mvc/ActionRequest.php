@@ -73,7 +73,7 @@ class ActionRequest
     /**
      * The arguments for this request. They must be only simple types, no
      * objects allowed.
-     * @var array
+     * @var array<mixed>
      */
     protected $arguments = [];
 
@@ -82,14 +82,14 @@ class ActionRequest
      * All framework-internal arguments start with double underscore (__),
      * and are only used from within the framework. Not for user consumption.
      * Internal Arguments can be objects, in contrast to public arguments.
-     * @var array
+     * @var array<mixed>
      */
     protected $internalArguments = [];
 
     /**
      * Arguments and configuration for plugins – including widgets – which are
      * sub controllers to the controller referred to by this request.
-     * @var array
+     * @var array<mixed>
      */
     protected $pluginArguments = [];
 
@@ -164,10 +164,6 @@ class ActionRequest
      */
     public function getParentRequest(): ?ActionRequest
     {
-        if ($this->isMainRequest()) {
-            return null;
-        }
-
         return $this->parentRequest;
     }
 
@@ -207,6 +203,7 @@ class ActionRequest
      * HTTP request.
      *
      * @phpstan-assert-if-true null $this->getParentRequest()
+     * @phpstan-assert-if-false ActionRequest $this->getParentRequest()
      * @return boolean
      * @api
      */
@@ -301,10 +298,14 @@ class ActionRequest
             throw new UnknownObjectException('The object "' . $unknownCasedControllerObjectName . '" is not registered.', 1268844071);
         }
 
-        $this->controllerPackageKey = $this->objectManager->getPackageKeyByObjectName($controllerObjectName);
+        $controllerPackageKey = $this->objectManager->getPackageKeyByObjectName($controllerObjectName);
+        if (!$controllerPackageKey) {
+            throw new \Exception('Failed to resolve package key for controller ' . $controllerObjectName, 1744329205);
+        }
+        $this->controllerPackageKey = $controllerPackageKey;
 
         $matches = [];
-        $subject = substr($controllerObjectName, strlen($this->controllerPackageKey) + 1);
+        $subject = substr($controllerObjectName, strlen($controllerPackageKey) + 1);
         preg_match(
             '/
 			^(
@@ -319,7 +320,7 @@ class ActionRequest
         );
 
         $this->controllerSubpackageKey = $matches['subpackageKey'] ?? null;
-        $this->controllerName = $matches['controllerName'];
+        $this->controllerName = $matches['controllerName'] ?? '';
     }
 
     /**
@@ -445,6 +446,9 @@ class ActionRequest
         $controllerObjectName = $this->getControllerObjectName();
         if ($controllerObjectName !== '' && ($this->controllerActionName === strtolower($this->controllerActionName))) {
             $controllerClassName = $this->objectManager->getClassNameByObjectName($controllerObjectName);
+            if ($controllerClassName === false) {
+                throw new \Exception('Could not resolve controller class for ' . $controllerObjectName);
+            }
             $lowercaseActionMethodName = $this->controllerActionName . 'action';
             foreach (get_class_methods($controllerClassName) as $existingMethodName) {
                 if (strtolower($existingMethodName) === $lowercaseActionMethodName) {
@@ -513,7 +517,7 @@ class ActionRequest
      * Returns the value of the specified argument
      *
      * @param string $argumentName Name of the argument
-     * @return string|array Value of the argument
+     * @return string|array<mixed> Value of the argument
      * @throws Exception\NoSuchArgumentException if such an argument does not exist
      * @api
      */
@@ -543,7 +547,7 @@ class ActionRequest
      * The arguments array will be reset therefore any arguments
      * which existed before will be overwritten!
      *
-     * @param array $arguments An array of argument names and their values
+     * @param array<mixed> $arguments An array of argument names and their values
      * @return void
      * @throws Exception\InvalidArgumentNameException if an argument name is not a string
      * @throws Exception\InvalidArgumentTypeException if an argument value is an object
@@ -561,7 +565,7 @@ class ActionRequest
     /**
      * Returns an Array of arguments and their values
      *
-     * @return array Array of arguments and their values (which may be arguments and values as well)
+     * @return array<mixed> Array of arguments and their values (which may be arguments and values as well)
      * @api
      */
     public function getArguments(): array
@@ -587,7 +591,7 @@ class ActionRequest
      * Returns the internal arguments of the request, that is, all arguments whose
      * name starts with two underscores.
      *
-     * @return array
+     * @return array<mixed>
      */
     public function getInternalArguments(): array
     {
@@ -622,7 +626,7 @@ class ActionRequest
     /**
      * Returns an array of plugin argument configurations
      *
-     * @return array
+     * @return array<mixed>
      */
     public function getPluginArguments(): array
     {

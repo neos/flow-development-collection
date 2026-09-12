@@ -116,13 +116,14 @@ class RequestBuilder
 
             return $request;
         }
-        /** @var string $controllerObjectName */
-        $controllerObjectName = $this->objectManager->getObjectNameByClassName($command->getControllerClassName());
+        /** @todo what was this necessary for?
+         *$controllerObjectName = $this->objectManager->getObjectNameByClassName($command->getControllerClassName());
+         */
         $controllerCommandName = $command->getControllerCommandName();
-        $request->setControllerObjectName($controllerObjectName);
+        $request->setControllerObjectName($command->getControllerClassName());
         $request->setControllerCommandName($controllerCommandName);
 
-        list($commandLineArguments, $exceedingCommandLineArguments) = $this->parseRawCommandLineArguments($rawCommandLineArguments, $controllerObjectName, $controllerCommandName);
+        list($commandLineArguments, $exceedingCommandLineArguments) = $this->parseRawCommandLineArguments($rawCommandLineArguments, $command->getControllerClassName(), $controllerCommandName);
         $request->setArguments($commandLineArguments);
         $request->setExceedingArguments($exceedingCommandLineArguments);
 
@@ -133,10 +134,10 @@ class RequestBuilder
      * Takes an array of unparsed command line arguments and options and converts it separated
      * by named arguments, options and unnamed arguments.
      *
-     * @param array $rawCommandLineArguments The unparsed command parts (such as "--foo") as an array
+     * @param array<mixed> $rawCommandLineArguments The unparsed command parts (such as "--foo") as an array
      * @param string $controllerObjectName Object name of the designated command controller
      * @param string $controllerCommandName Command name of the recognized command (ie. method name without "Command" suffix)
-     * @return array All and exceeding command line arguments
+     * @return array{0: array<string,mixed>, 1: array<int,mixed>} All and exceeding command line arguments
      * @throws InvalidArgumentMixingException
      */
     protected function parseRawCommandLineArguments(array $rawCommandLineArguments, string $controllerObjectName, string $controllerCommandName): array
@@ -234,7 +235,7 @@ class RequestBuilder
      * Returns the value of the first argument of the given input array. Shifts the parsed argument off the array.
      *
      * @param string $currentArgument The current argument
-     * @param array &$rawCommandLineArguments Array of the remaining command line arguments
+     * @param array<mixed> &$rawCommandLineArguments Array of the remaining command line arguments
      * @param string $expectedArgumentType The expected type of the current argument, because booleans get special attention
      * @return mixed The value of the first argument
      */

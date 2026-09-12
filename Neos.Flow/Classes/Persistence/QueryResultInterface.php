@@ -15,6 +15,8 @@ namespace Neos\Flow\Persistence;
 /**
  * A lazy result list that is returned by Query::execute()
  *
+ * @extends \Iterator<mixed,object>
+ * @extends \ArrayAccess<mixed,object>
  * @api
  */
 interface QueryResultInterface extends \Countable, \Iterator, \ArrayAccess
@@ -38,7 +40,7 @@ interface QueryResultInterface extends \Countable, \Iterator, \ArrayAccess
     /**
      * Returns an array with the objects in the result set
      *
-     * @return array
+     * @return array<mixed>
      * @api
      */
     public function toArray(): array;

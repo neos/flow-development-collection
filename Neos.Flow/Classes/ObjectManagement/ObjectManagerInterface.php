@@ -111,7 +111,7 @@ interface ObjectManagerInterface extends ContainerInterface
      * Returns the implementation class name for the specified object
      *
      * @param string $objectName The object name
-     * @return class-string|false The class name corresponding to the given object name or false if no such object is registered
+     * @return class-string<object>|false The class name corresponding to the given object name or false if no such object is registered
      * @api
      */
     public function getClassNameByObjectName($objectName);
@@ -156,7 +156,7 @@ interface ObjectManagerInterface extends ContainerInterface
     /**
      * Returns all instances of objects with scope session
      *
-     * @return array
+     * @return array<int,object>
      */
     public function getSessionInstances();
 

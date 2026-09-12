@@ -22,13 +22,13 @@ class InterfaceIntroduction
 {
     /**
      * Name of the aspect declaring this introduction
-     * @var string
+     * @var class-string
      */
     protected $declaringAspectClassName;
 
     /**
      * Name of the introduced interface
-     * @var string
+     * @var interface-string
      */
     protected $interfaceName;
 
@@ -41,8 +41,8 @@ class InterfaceIntroduction
     /**
      * Constructor
      *
-     * @param string $declaringAspectClassName Name of the aspect containing the declaration for this introduction
-     * @param string $interfaceName Name of the interface to introduce
+     * @param class-string $declaringAspectClassName Name of the aspect containing the declaration for this introduction
+     * @param interface-string $interfaceName Name of the interface to introduce
      * @param Pointcut $pointcut The pointcut for this introduction
      */
     public function __construct(string $declaringAspectClassName, string $interfaceName, Pointcut $pointcut)
@@ -55,7 +55,7 @@ class InterfaceIntroduction
     /**
      * Returns the name of the introduced interface
      *
-     * @return string Name of the introduced interface
+     * @return interface-string Name of the introduced interface
      */
     public function getInterfaceName(): string
     {
@@ -75,7 +75,7 @@ class InterfaceIntroduction
     /**
      * Returns the object name of the aspect which declared this introduction
      *
-     * @return string The aspect object name
+     * @return class-string The aspect object name
      */
     public function getDeclaringAspectClassName(): string
     {

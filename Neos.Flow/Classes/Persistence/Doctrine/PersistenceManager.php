@@ -152,7 +152,7 @@ class PersistenceManager extends AbstractPersistenceManager
      */
     public function isNewObject($object): bool
     {
-        if (!$object instanceof PersistenceMagicInterface) {
+        if (!($object instanceof PersistenceMagicInterface)) {
             return true;
         }
 
@@ -308,6 +308,7 @@ class PersistenceManager extends AbstractPersistenceManager
         // "driver" is used only for Doctrine, thus we (mis-)use it here
         // additionally, when no path is set, skip this step, assuming no DB is needed
         if ($this->settings['backendOptions']['driver'] !== null && $this->settings['backendOptions']['path'] !== null) {
+            /** @phpstan-ignore instanceof.alwaysFalse (this may be a proxy)  */
             if ($this->entityManager instanceof DependencyProxy) {
                 $this->entityManager->_activateDependency();
             }

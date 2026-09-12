@@ -57,11 +57,11 @@ class TypedArrayConverter extends AbstractTypeConverter
     }
 
     /**
-     * @param array $source An array of objects/simple types
+     * @param array<mixed> $source An array of objects/simple types
      * @param string $targetType
-     * @param array $convertedChildProperties
+     * @param array<string,mixed> $convertedChildProperties
      * @param PropertyMappingConfigurationInterface|null $configuration
-     * @return array
+     * @return array<string,mixed>
      * @api
      */
     public function convertFrom($source, $targetType, array $convertedChildProperties = [], ?PropertyMappingConfigurationInterface $configuration = null)
@@ -73,7 +73,7 @@ class TypedArrayConverter extends AbstractTypeConverter
      * Returns the source, if it is an array, otherwise an empty array.
      *
      * @param mixed $source
-     * @return array
+     * @return array<mixed>
      */
     public function getSourceChildPropertiesToBeConverted($source)
     {
@@ -86,7 +86,7 @@ class TypedArrayConverter extends AbstractTypeConverter
      * @param string $targetType
      * @param string $propertyName
      * @param PropertyMappingConfigurationInterface $configuration
-     * @return string
+     * @return ?string
      */
     public function getTypeOfChildProperty($targetType, $propertyName, PropertyMappingConfigurationInterface $configuration)
     {

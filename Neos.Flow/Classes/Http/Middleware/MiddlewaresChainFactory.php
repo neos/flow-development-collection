@@ -33,7 +33,7 @@ class MiddlewaresChainFactory
     protected $objectManager;
 
     /**
-     * @param array $chainConfiguration
+     * @param array<mixed> $chainConfiguration
      * @return MiddlewaresChain
      * @throws Exception
      */

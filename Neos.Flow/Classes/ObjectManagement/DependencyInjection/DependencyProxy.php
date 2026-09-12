@@ -24,7 +24,7 @@ use Neos\Flow\Annotations as Flow;
 final class DependencyProxy
 {
     /**
-     * @var array
+     * @var array<mixed>
      */
     protected array $propertyVariables = [];
 
@@ -83,7 +83,7 @@ final class DependencyProxy
      * and returns the result of a call to the original method in the dependency
      *
      * @param string $methodName Name of the method to be called
-     * @param array $arguments An array of arguments to be passed to the method
+     * @param array<mixed> $arguments An array of arguments to be passed to the method
      * @return mixed
      */
     public function __call(string $methodName, array $arguments): mixed

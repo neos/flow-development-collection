@@ -44,8 +44,9 @@ class ProxyMethodGenerator extends MethodGenerator
     {
         $instance = parent::copyMethodSignature($reflectionMethod);
         assert($instance instanceof static);
-        if ($reflectionMethod->getDocComment() !== false) {
-            $instance->setDocBlock(DocBlockGenerator::fromReflection($reflectionMethod->getDocBlock()));
+        $docBlock = $reflectionMethod->getDocBlock();
+        if ($docBlock !== false) {
+            $instance->setDocBlock(DocBlockGenerator::fromReflection($docBlock));
         }
         $instance->fullOriginalClassName = $reflectionMethod->getDeclaringClass()->getName();
         $instance->attributesCode = $instance->buildAttributesCode($reflectionMethod);

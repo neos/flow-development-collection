@@ -272,7 +272,6 @@ class CacheCommandController extends CommandController
             $this->outputLine('<error>The following caches contain errors or warnings: %s</error>', [implode(', ', $erroneousCaches)]);
             $quiet || $this->outputLine('Use the <em>neos.flow:cache:show</em> Command for more information');
             $this->quit(1);
-            return;
         }
     }
 
@@ -292,7 +291,6 @@ class CacheCommandController extends CommandController
             $this->outputLine('<error>A Cache with id "%s" is not configured.</error>', [$cacheIdentifier]);
             $this->outputLine('Use the <i>neos.flow:cache:list</i> command to get a list of all configured Caches.');
             $this->quit(1);
-            return;
         }
         $cacheConfigurations = $this->cacheManager->getCacheConfigurations();
         $defaultConfiguration = $cacheConfigurations['Default'];
@@ -303,7 +301,7 @@ class CacheCommandController extends CommandController
         $this->outputLine('<b>Backend</b>: %s', [TypeHandling::getTypeForValue($cacheBackend)]);
         $options = $cacheConfiguration['backendOptions'] ?? $defaultConfiguration['backendOptions'];
         $this->outputLine('<b>Backend Options</b>:');
-        $this->outputLine(json_encode($options, JSON_PRETTY_PRINT));
+        $this->outputLine(json_encode($options, JSON_PRETTY_PRINT | JSON_THROW_ON_ERROR));
 
         if ($cacheBackend instanceof WithStatusInterface) {
             $this->outputLine();
@@ -314,7 +312,6 @@ class CacheCommandController extends CommandController
 
             if ($cacheStatus->hasErrors() || $cacheStatus->hasWarnings()) {
                 $this->quit(1);
-                return;
             }
         }
     }
@@ -339,20 +336,17 @@ class CacheCommandController extends CommandController
             $this->outputLine('<error>A Cache with id "%s" is not configured.</error>', [$cacheIdentifier]);
             $this->outputLine('Use the <i>neos.flow:cache:list</i> command to get a list of all configured Caches.');
             $this->quit(1);
-            return;
         }
         $cacheBackend = $cache->getBackend();
         if (!$cacheBackend instanceof WithSetupInterface) {
             $this->outputLine('<error>The Cache "%s" is configured to use the backend "%s" but this does not implement the WithSetupInterface.</error>', [$cacheIdentifier, TypeHandling::getTypeForValue($cacheBackend)]);
             $this->quit(1);
-            return;
         }
         $this->outputLine('Setting up backend <b>%s</b> for cache "%s"', [TypeHandling::getTypeForValue($cacheBackend), $cache->getIdentifier()]);
         $setupResult = $cacheBackend->setup();
         $this->renderResult($setupResult);
         if ($setupResult->hasErrors() || $setupResult->hasWarnings()) {
             $this->quit(1);
-            return;
         }
     }
 
@@ -391,7 +385,6 @@ class CacheCommandController extends CommandController
         }
         if ($hasErrorsOrWarnings) {
             $this->quit(1);
-            return;
         }
     }
 

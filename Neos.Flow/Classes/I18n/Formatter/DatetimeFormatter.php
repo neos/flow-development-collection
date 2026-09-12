@@ -49,7 +49,7 @@ class DatetimeFormatter implements FormatterInterface
      *
      * @param mixed $value Formatter-specific variable to format (can be integer, \DateTime, etc)
      * @param Locale $locale Locale to use
-     * @param array $styleProperties Integer-indexed array of formatter-specific style properties (can be empty)
+     * @param array<mixed> $styleProperties Integer-indexed array of formatter-specific style properties (can be empty)
      * @return string String representation of $value provided, or (string)$value
      * @api
      */
@@ -158,8 +158,8 @@ class DatetimeFormatter implements FormatterInterface
      * are replaced with elements from $localizedLiterals array.
      *
      * @param \DateTimeInterface $dateTime PHP object representing particular point in time
-     * @param array $parsedFormat An array describing format (as in $parsedFormats property)
-     * @param array $localizedLiterals An array with literals to use (as in $localizedLiterals property)
+     * @param array<mixed> $parsedFormat An array describing format (as in $parsedFormats property)
+     * @param array<mixed> $localizedLiterals An array with literals to use (as in $localizedLiterals property)
      * @return string Formatted date / time
      */
     protected function doFormattingWithParsedFormat(\DateTimeInterface $dateTime, array $parsedFormat, array $localizedLiterals)
@@ -192,7 +192,7 @@ class DatetimeFormatter implements FormatterInterface
      *
      * @param \DateTimeInterface $dateTime PHP object representing particular point in time
      * @param string $subformat One element of format string (e.g., 'yyyy', 'mm', etc)
-     * @param array $localizedLiterals Array of date / time literals from CLDR
+     * @param array<string,mixed> $localizedLiterals Array of date / time literals from CLDR
      * @return string Formatted part of date / time
      * @throws InvalidArgumentException When $subformat use symbol that is not recognized
      * @see \Neos\Flow\I18n\Cldr\Reader\DatesReader
@@ -211,25 +211,25 @@ class DatetimeFormatter implements FormatterInterface
                 if ($hour === 12) {
                     $hour = 0;
                 }
-                return $this->padString($hour, $formatLengthOfSubformat);
+                return $this->padString((string)$hour, $formatLengthOfSubformat);
             case 'k':
                 $hour = (int)($dateTime->format('G'));
                 if ($hour === 0) {
                     $hour = 24;
                 }
-                return $this->padString($hour, $formatLengthOfSubformat);
+                return $this->padString((string)$hour, $formatLengthOfSubformat);
             case 'a':
                 return $localizedLiterals['dayPeriods']['format']['wide'][$dateTime->format('a')];
             case 'm':
-                return $this->padString((int)($dateTime->format('i')), $formatLengthOfSubformat);
+                return $this->padString($dateTime->format('i'), $formatLengthOfSubformat);
             case 's':
-                return $this->padString((int)($dateTime->format('s')), $formatLengthOfSubformat);
+                return $this->padString($dateTime->format('s'), $formatLengthOfSubformat);
             case 'S':
-                return (string)round($dateTime->format('u'), $formatLengthOfSubformat);
+                return (string)round((int)$dateTime->format('u'), $formatLengthOfSubformat);
             case 'd':
                 return $this->padString($dateTime->format('j'), $formatLengthOfSubformat);
             case 'D':
-                return $this->padString(((int)$dateTime->format('z') + 1), $formatLengthOfSubformat);
+                return $this->padString((string)((int)$dateTime->format('z') + 1), $formatLengthOfSubformat);
             case 'F':
                 return (string)(int)(((int)$dateTime->format('j') + 6) / 7);
             case 'M':
@@ -237,7 +237,7 @@ class DatetimeFormatter implements FormatterInterface
                 $month = (int)$dateTime->format('n');
                 $formatType = ($subformat[0] === 'L') ? 'stand-alone' : 'format';
                 if ($formatLengthOfSubformat <= 2) {
-                    return $this->padString($month, $formatLengthOfSubformat);
+                    return $this->padString((string)$month, $formatLengthOfSubformat);
                 } elseif ($formatLengthOfSubformat === 3) {
                     return $localizedLiterals['months'][$formatType]['abbreviated'][$month];
                 } elseif ($formatLengthOfSubformat === 4) {
@@ -251,7 +251,7 @@ class DatetimeFormatter implements FormatterInterface
                 if ($formatLengthOfSubformat === 2) {
                     $year %= 100;
                 }
-                return $this->padString($year, $formatLengthOfSubformat);
+                return $this->padString((string)$year, $formatLengthOfSubformat);
             case 'E':
             case 'c':
                 $formatType = ($subformat[0] === 'c') ? 'stand-alone' : 'format';
@@ -273,7 +273,7 @@ class DatetimeFormatter implements FormatterInterface
                 $quarter = (int)($dateTime->format('n') / 3.1) + 1;
                 $formatType = ($subformat[0] === 'q') ? 'stand-alone' : 'format';
                 if ($formatLengthOfSubformat <= 2) {
-                    return $this->padString($quarter, $formatLengthOfSubformat);
+                    return $this->padString((string)$quarter, $formatLengthOfSubformat);
                 } elseif ($formatLengthOfSubformat === 3) {
                     return $localizedLiterals['quarters'][$formatType]['abbreviated'][$quarter];
                 } else {

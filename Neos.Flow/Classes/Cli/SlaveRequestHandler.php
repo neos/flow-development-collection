@@ -89,7 +89,7 @@ class SlaveRequestHandler implements RequestHandlerInterface
         try {
             $response = null;
             while (true) {
-                $commandLine = trim(fgets(STDIN));
+                $commandLine = trim(fgets(STDIN) ?: '');
                 $trimmedCommandLine = trim($commandLine);
                 $logger->info(sprintf('Received command "%s".', $trimmedCommandLine), LogEnvironment::fromMethodName(__METHOD__));
                 if ($commandLine === "QUIT\n") {

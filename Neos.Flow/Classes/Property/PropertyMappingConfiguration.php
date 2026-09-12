@@ -31,21 +31,21 @@ class PropertyMappingConfiguration implements PropertyMappingConfigurationInterf
      * 2. Dimension: Configuration Key
      * Value: Configuration Value
      *
-     * @var array
+     * @var array<class-string<TypeConverterInterface>,array<int|string,mixed>>
      */
     protected $configuration;
 
     /**
      * Stores the configuration for specific child properties.
      *
-     * @var array<PropertyMappingConfiguration>
+     * @var array<string,PropertyMappingConfiguration>
      */
     protected $subConfigurationForProperty = [];
 
     /**
      * Keys which should be renamed
      *
-     * @var array
+     * @var array<string,string>
      */
     protected $mapping = [];
 
@@ -57,21 +57,21 @@ class PropertyMappingConfiguration implements PropertyMappingConfigurationInterf
     /**
      * List of allowed property names to be converted
      *
-     * @var array
+     * @var array<string,string>
      */
     protected $propertiesToBeMapped = [];
 
     /**
      * List of property names to be skipped during property mapping
      *
-     * @var array
+     * @var array<string,string>
      */
     protected $propertiesToSkip = [];
 
     /**
      * List of disallowed property names which will be ignored while property mapping
      *
-     * @var array
+     * @var array<string,string>
      */
     protected $propertiesNotToBeMapped = [];
 
@@ -291,8 +291,8 @@ class PropertyMappingConfiguration implements PropertyMappingConfigurationInterf
     /**
      * Set all options for the given $typeConverter.
      *
-     * @param string $typeConverter class name of type converter
-     * @param array $options
+     * @param class-string<TypeConverterInterface> $typeConverter class name of type converter
+     * @param array<mixed> $options
      * @return PropertyMappingConfiguration this
      * @api
      */
@@ -307,7 +307,7 @@ class PropertyMappingConfiguration implements PropertyMappingConfigurationInterf
     /**
      * Set a single option (denoted by $optionKey) for the given $typeConverter.
      *
-     * @param string $typeConverter class name of type converter
+     * @param class-string<TypeConverterInterface> $typeConverter class name of type converter
      * @param int|string $optionKey
      * @param mixed $optionValue
      * @return PropertyMappingConfiguration this
@@ -327,13 +327,18 @@ class PropertyMappingConfiguration implements PropertyMappingConfigurationInterf
      * When setting an option on a subclassed type converter, this option must also be set on
      * all its parent type converters.
      *
-     * @param string $typeConverter The type converter class
-     * @return array Class names of type converters
+     * @param class-string<TypeConverterInterface> $typeConverter The type converter class
+     * @return array<int|string,class-string<TypeConverterInterface>> Class names of type converters
      */
     protected function getTypeConvertersWithParentClasses($typeConverter)
     {
         $typeConverterClasses = class_parents($typeConverter);
-        $typeConverterClasses = $typeConverterClasses === false ? [] : $typeConverterClasses;
+        $typeConverterClasses = $typeConverterClasses === false
+            ? []
+            : array_filter(
+                $typeConverterClasses,
+                fn (string $parentClassName): bool => is_subclass_of($parentClassName, TypeConverterInterface::class)
+            );
         $typeConverterClasses[] = $typeConverter;
         return $typeConverterClasses;
     }
@@ -356,7 +361,7 @@ class PropertyMappingConfiguration implements PropertyMappingConfigurationInterf
     /**
      * Traverse the property configuration. Only used by forProperty().
      *
-     * @param array $splittedPropertyPath
+     * @param array<string> $splittedPropertyPath
      * @return PropertyMappingConfiguration (or a subclass thereof)
      */
     public function traverseProperties(array $splittedPropertyPath)

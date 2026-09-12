@@ -165,8 +165,8 @@ class Result
     /**
      * Get the first error object of the current Result object (non-recursive)
      *
-     * @param string $messageTypeFilter if specified only errors implementing the given class are considered
-     * @return Error
+     * @param string|null $messageTypeFilter if specified only errors implementing the given class are considered
+     * @return Error|false
      * @api
      */
     public function getFirstError(?string $messageTypeFilter = null)
@@ -179,8 +179,8 @@ class Result
     /**
      * Get the first warning object of the current Result object (non-recursive)
      *
-     * @param string $messageTypeFilter if specified only warnings implementing the given class are considered
-     * @return Warning
+     * @param string|null $messageTypeFilter if specified only warnings implementing the given class are considered
+     * @return Warning|false
      * @api
      */
     public function getFirstWarning(?string $messageTypeFilter = null)
@@ -193,8 +193,8 @@ class Result
     /**
      * Get the first notice object of the current Result object (non-recursive)
      *
-     * @param string $messageTypeFilter if specified only notices implementing the given class are considered
-     * @return Notice
+     * @param string|null $messageTypeFilter if specified only notices implementing the given class are considered
+     * @return Notice|false
      * @api
      */
     public function getFirstNotice(?string $messageTypeFilter = null)
@@ -210,7 +210,7 @@ class Result
      * $result->forProperty('foo.bar')->getErrors() -- to get all errors
      * for property "foo.bar"
      *
-     * @param string $propertyPath
+     * @param string|null $propertyPath
      * @return Result
      * @api
      */
@@ -258,6 +258,7 @@ class Result
     /**
      * Does the current Result object have Errors? (Recursively)
      *
+     * @phpstan-assert-if-true Error $this->getFirstError()
      * @return boolean
      * @api
      */
@@ -283,6 +284,7 @@ class Result
     /**
      * Does the current Result object have Warnings? (Recursively)
      *
+     * @phpstan-assert-if-true Warning $this->getFirstWarning()
      * @return boolean
      * @api
      */
@@ -308,7 +310,8 @@ class Result
     /**
      * Does the current Result object have Notices? (Recursively)
      *
-     * @return boolean
+     * @return bool
+     * @phpstan-assert-if-true Notice $this->getFirstNotice()
      * @api
      */
     public function hasNotices()

@@ -57,7 +57,7 @@ class CldrModel
     protected $sourcePaths;
 
     /**
-     * @var array
+     * @var array<mixed>
      */
     protected $parsedData;
 
@@ -277,7 +277,7 @@ class CldrModel
      * Merging is done with inheritance in mind, as defined in CLDR specification.
      *
      * @param array<string> $sourcePaths Absolute paths to CLDR files (can be one file)
-     * @return array Parsed and merged data
+     * @return array<mixed> Parsed and merged data
      */
     protected function parseFiles(array $sourcePaths): array
     {
@@ -305,7 +305,7 @@ class CldrModel
      *
      * @param mixed $firstParsedData Part of data from first file (either array or string)
      * @param mixed $secondParsedData Part of data from second file (either array or string)
-     * @return array Data merged from two files
+     * @return array<mixed> Data merged from two files
      */
     protected function mergeTwoParsedFiles($firstParsedData, $secondParsedData)
     {
@@ -352,6 +352,9 @@ class CldrModel
                 }
 
                 $sourcePath = self::getAttributeValue($nodeString, 'path');
+                if (!is_string($sourcePath)) {
+                    throw new \Exception('source path must be string', 1744412220);
+                }
 
                 // Change relative path to absolute one
                 $sourcePath = str_replace('../', '', $sourcePath, $countOfJumpsToParentNode);

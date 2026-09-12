@@ -39,14 +39,15 @@ class TrustedProxiesMiddleware implements MiddlewareInterface
     public const HOST_PATTERN = '(?:host=(?<host>"[^"]+"|[0-9a-z_\.:\-]+))';
 
     /**
-     * @var array
+     * @var array{proxies: "*"|array<string>, headers?: string|array<string,string>}
      */
     protected $settings;
 
     /**
      * Injects the configuration settings
      *
-     * @param array $settings
+     * @todo enforce with extractor
+     * @param array<mixed> $settings
      * @return void
      * @throws InvalidConfigurationException
      */
@@ -114,8 +115,8 @@ class TrustedProxiesMiddleware implements MiddlewareInterface
     }
 
     /**
-     * @param array $array
-     * @return array
+     * @param array<string> $array
+     * @return array<int,string>
      */
     protected function unquoteArray($array): array
     {
@@ -126,8 +127,8 @@ class TrustedProxiesMiddleware implements MiddlewareInterface
 
     /**
      * @param string $type The header value type to retrieve from the Forwarded header value. One of the HEADER_* constants.
-     * @param array $headerValues The Forwarded header value, e.g. "for=192.168.178.5; host=www.acme.org:8080"
-     * @return array|null The array of values for the header type or null if the header
+     * @param array<string> $headerValues The Forwarded header value, e.g. "for=192.168.178.5; host=www.acme.org:8080"
+     * @return array<mixed>|null The array of values for the header type or null if the header
      */
     protected function getForwardedHeader($type, array $headerValues)
     {
@@ -140,6 +141,9 @@ class TrustedProxiesMiddleware implements MiddlewareInterface
             return null;
         }
         $headerValue = reset($headerValues);
+        if (!$headerValue) {
+            return null;
+        }
         preg_match_all('/' . $patterns[$type] . '/i', $headerValue, $matches);
         $matchedHeader = $this->unquoteArray($matches[1]);
         if ($matchedHeader === []) {
@@ -153,7 +157,7 @@ class TrustedProxiesMiddleware implements MiddlewareInterface
      *
      * @param string $type One of the HEADER_* constants
      * @param ServerRequestInterface $request The request to get the trusted proxy header from
-     * @return \Generator<array|null> Yields the array of the values for this header type or yields NULL if this header type should not be trusted
+     * @return \Generator<array<mixed>|null> Yields the array of the values for this header type or yields NULL if this header type should not be trusted
      */
     protected function getTrustedProxyHeaderValues($type, ServerRequestInterface $request)
     {

@@ -1,13 +1,7 @@
 parameters:
     level: 8
     paths:
-        - Neos.Flow/Classes/Reflection
-        - Neos.Flow/Classes/ResourceManagement
-        - Neos.Flow/Classes/Security
-        - Neos.Flow/Classes/Session
-        - Neos.Flow/Classes/SignalSlot
-        - Neos.Flow/Classes/Utility
-        - Neos.Flow/Classes/Validation
+        - Neos.Flow/Classes
         - Neos.Flow.Log/Classes
         - Neos.FluidAdaptor/Classes
         - Neos.Http.Factories/Classes

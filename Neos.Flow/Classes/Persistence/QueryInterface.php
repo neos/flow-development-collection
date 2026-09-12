@@ -130,7 +130,7 @@ interface QueryInterface
      *  'bar' => \Neos\Flow\Persistence\QueryInterface::ORDER_DESCENDING
      * )
      *
-     * @param array $orderings The property names to order by
+     * @param array<string,QueryInterface::ORDER_ASCENDING|QueryInterface::ORDER_DESCENDING> $orderings The property names to order by
      * @return QueryInterface
      * @api
      */
@@ -143,7 +143,7 @@ interface QueryInterface
      *  'bar' => \Neos\Flow\Persistence\QueryInterface::ORDER_DESCENDING
      * )
      *
-     * @return array
+     * @return array<string,QueryInterface::ORDER_ASCENDING|QueryInterface::ORDER_DESCENDING>
      * @api
      */
     public function getOrderings(): array;
