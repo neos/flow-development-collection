@@ -30,6 +30,9 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 
+require_once(__DIR__ . '/../Fixture/ExampleEnum.php');
+require_once(__DIR__ . '/../Fixture/FooBarAnnotation.php');
+
 /**
  * Test cases for the Proxy Compiler
  */

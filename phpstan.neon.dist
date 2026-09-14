@@ -8,6 +8,7 @@ parameters:
         - Neos.Flow/Classes/SignalSlot
         - Neos.Flow/Classes/Utility
         - Neos.Flow/Classes/Validation
+        - Neos.Flow.Testing/Classes
         - Neos.Flow.Log/Classes
         - Neos.FluidAdaptor/Classes
         - Neos.Http.Factories/Classes

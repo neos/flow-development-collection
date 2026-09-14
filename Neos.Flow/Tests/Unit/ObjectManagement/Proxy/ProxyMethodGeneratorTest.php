@@ -19,6 +19,9 @@ use Neos\Flow\Tests\UnitTestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 
+require_once(__DIR__ . '/../Fixture/ClassWithVariousMethods.php');
+require_once(__DIR__ . '/../Fixture/ClassWithVoidAndNeverMethods.php');
+
 /**
  * Test cases for the Proxy Method Generator
  */

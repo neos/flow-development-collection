@@ -10,6 +10,9 @@
         "neos/utility-unicode": "self.version",
         "neos/utility-objecthandling": "self.version"
     },
+    "require-dev": {
+        "neos/flow-testing": "self.version"
+    },
     "autoload": {
         "psr-4": {
             "Neos\\Eel\\": "Classes"

@@ -29,6 +29,8 @@ use Psr\Http\Message\ServerRequestFactoryInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 
+require_once(__DIR__ . '/../Fixtures/SpyRequestHandler.php');
+
 /**
  * Test case for the TrustedProxiesMiddleware
  */

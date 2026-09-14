@@ -20,6 +20,8 @@ use Neos\Flow\Tests\Unit\Mvc\Routing\Fixtures\UriArgumentObjectWithToString;
 use Neos\Flow\Tests\UnitTestCase;
 use PHPUnit\Framework\Attributes\Test;
 
+require_once('Fixtures/UriArgumentObjectWithToString.php');
+
 /**
  * Testcase for the MVC Web Routing DynamicRoutePart Class
  */

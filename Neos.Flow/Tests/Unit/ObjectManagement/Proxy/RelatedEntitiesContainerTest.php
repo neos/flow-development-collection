@@ -21,6 +21,9 @@ use Neos\Flow\Tests\UnitTestCase;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 
+require_once(__DIR__ . '/../Fixture/SomeEntity.php');
+require_once(__DIR__ . '/../Fixture/SomeEntityDoctrineProxy.php');
+
 /**
  * Test cases for the RelatedEntitiesContainer
  */

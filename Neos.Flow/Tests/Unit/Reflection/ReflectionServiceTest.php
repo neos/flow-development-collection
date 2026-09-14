@@ -22,6 +22,10 @@ use Neos\Flow\Tests\Unit\Reflection\Fixture\FileWithNoClass;
 use Neos\Flow\Tests\UnitTestCase;
 use PHPUnit\Framework\Attributes\Test;
 
+require_once("Fixture/AliasedClass.php");
+require_once("Fixture/ClassWithAliasDependency.php");
+require_once("Fixture/FileWithNoClass.php");
+
 /**
  * Testcase for the ReflectionService
  *

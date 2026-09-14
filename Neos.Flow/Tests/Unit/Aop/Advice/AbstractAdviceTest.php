@@ -21,6 +21,8 @@ use Neos\Flow\Tests\Unit\Aop\Advice\Fixtures\SomeClass;
 use Neos\Flow\Tests\UnitTestCase;
 use PHPUnit\Framework\Attributes\Test;
 
+require_once('Fixtures/SomeClass.php');
+
 /**
  * Testcase for the Abstract Method Interceptor Builder
  */

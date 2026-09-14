@@ -24,6 +24,7 @@ use PHPUnit\Framework\Attributes\Test;
  */
 
 require_once(__DIR__ . '/Fixture/BasicClass.php');
+require_once(__DIR__ . '/Fixture/StaticFactory.php');
 
 final class ObjectManagerTest extends UnitTestCase
 {

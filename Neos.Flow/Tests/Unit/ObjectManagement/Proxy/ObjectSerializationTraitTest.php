@@ -27,6 +27,12 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 
+require_once(__DIR__ . '/../Fixture/ClassUsingObjectSerializationTrait.php');
+require_once(__DIR__ . '/../Fixture/SomeEntity.php');
+require_once(__DIR__ . '/../Fixture/SomeEntityDoctrineProxy.php');
+require_once(__DIR__ . '/../Fixture/SomeInterface.php');
+require_once(__DIR__ . '/../Fixture/SomeImplementation.php');
+
 /**
  * Test cases for the ObjectSerializationTrait
  *

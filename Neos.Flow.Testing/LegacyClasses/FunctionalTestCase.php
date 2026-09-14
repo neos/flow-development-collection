@@ -13,6 +13,7 @@ namespace Neos\Flow\Tests;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Configuration\ConfigurationManager;
 use Neos\Flow\Core\Bootstrap;
@@ -49,6 +50,7 @@ use Psr\Http\Message\ServerRequestInterface as HttpRequest;
  * Subclass this base class if you want to take advantage of the framework
  * capabilities, for example are in need of the object manager.
  *
+ * @deprecated use \Neos\Flow\Testing\UnitTestCase instead. Will be removed with Neos.Flow 10.
  * @api
  */
 abstract class FunctionalTestCase extends BaseTestCase

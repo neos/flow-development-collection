@@ -21,6 +21,8 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 
+require_once "AbstractEvaluatorTestcase.php";
+
 /**
  * Compiling evaluator test
  */
