@@ -159,7 +159,7 @@ class ActionRequest
     /**
      * Returns the parent request
      *
-     * @return ActionRequest
+     * @return ActionRequest|null
      * @api
      */
     public function getParentRequest(): ?ActionRequest
