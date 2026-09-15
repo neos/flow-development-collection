@@ -159,7 +159,9 @@ class Service
      */
     public function compileProxies(): void
     {
-        Files::emptyDirectoryRecursively(Files::concatenatePaths([$this->environment->getPathToTemporaryDirectory(), 'Doctrine/Proxies']));
+        $proxyDirectory = Files::concatenatePaths([$this->environment->getPathToTemporaryDirectory(), 'Doctrine/Proxies']);
+        Files::createDirectoryRecursively($proxyDirectory);
+        Files::emptyDirectoryRecursively($proxyDirectory);
         $proxyFactory = $this->entityManager->getProxyFactory();
         $proxyFactory->generateProxyClasses($this->entityManager->getMetadataFactory()->getAllMetadata());
     }
