@@ -128,7 +128,6 @@ class PropertyMapper
         } catch (SecurityException $exception) { /** @phpstan-ignore catch.neverThrown (AOP I guess) */
             throw $exception;
         } catch (\Exception $exception) {
-            /** @phpstan-ignore greater.alwaysFalse (Not sure about this tbh) */
             throw new PropertyException('Could not convert target type "' . $targetType . '"' . (count($currentPropertyPath) > 0 ? ', at property path "' . implode('.', $currentPropertyPath) . '"' : '') . ': ' . $exception->getMessage(), 1297759968, $exception);
         }
     }

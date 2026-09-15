@@ -459,7 +459,6 @@ abstract class Files
         if (!is_int($bytes) && !is_float($bytes)) {
             if (is_numeric($bytes)) {
                 $bytes = (float)$bytes;
-                /** @phpstan-ignore else.unreachable (annotations may be wrong) */
             } else {
                 $bytes = 0;
             }
