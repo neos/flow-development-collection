@@ -151,7 +151,7 @@ class PersistenceManager extends AbstractPersistenceManager
      */
     public function isNewObject($object): bool
     {
-        if (!$object instanceof PersistenceMagicInterface) {
+        if (!($object instanceof PersistenceMagicInterface)) {
             return true;
         }
 

@@ -46,7 +46,7 @@ final class MigrationFinder extends Finder
                 $this->databasePlatformName
             ]);
             if (is_dir($path)) {
-                $files[] = glob($path . '/Version*.php');
+                $files[] = glob($path . '/Version*.php') ?: [];
             }
         }
 

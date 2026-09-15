@@ -60,7 +60,7 @@ class JsonArrayType extends DoctrineJsonType
      *
      * @param mixed $value The value to convert.
      * @param AbstractPlatform $platform The currently used database platform.
-     * @return array|null The PHP representation of the value.
+     * @return array<mixed>|null The PHP representation of the value.
      * @throws ConversionException
      * @throws TypeConverterException
      */
@@ -124,11 +124,15 @@ class JsonArrayType extends DoctrineJsonType
      * Traverses the $array and replaces known persisted objects (tuples of
      * type and identifier) with actual instances.
      *
+     * @param array<mixed> $array
      * @throws TypeConverterException
      */
     protected function decodeObjectReferences(array &$array): void
     {
-        assert($this->persistenceManager instanceof PersistenceManagerInterface);
+        $persistenceManager = $this->persistenceManager;
+        if (!$persistenceManager) {
+            throw new \Exception('PersistenceManager is missing', 1744138182);
+        }
 
         foreach ($array as &$value) {
             if (!is_array($value)) {
@@ -138,7 +142,7 @@ class JsonArrayType extends DoctrineJsonType
             if (isset($value['__value_object_value'], $value['__value_object_type'])) {
                 $value = self::deserializeValueObject($value);
             } elseif (isset($value['__flow_object_type'])) {
-                $value = $this->persistenceManager->getObjectByIdentifier($value['__identifier'], $value['__flow_object_type'], true);
+                $value = $persistenceManager->getObjectByIdentifier($value['__identifier'], $value['__flow_object_type'], true);
             } else {
                 $this->decodeObjectReferences($value);
             }
@@ -146,6 +150,7 @@ class JsonArrayType extends DoctrineJsonType
     }
 
     /**
+     * @param array<string,mixed> $serializedValueObject
      * @throws \InvalidArgumentException
      * @throws TypeConverterException
      */
@@ -168,12 +173,16 @@ class JsonArrayType extends DoctrineJsonType
      * Traverses the $array and replaces known persisted objects with a tuple of
      * type and identifier.
      *
+     * @param array<mixed> $array
      * @throws \RuntimeException
      * @throws \JsonException
      */
     protected function encodeObjectReferences(array &$array): void
     {
-        assert($this->persistenceManager instanceof PersistenceManagerInterface);
+        $persistenceManager = $this->persistenceManager;
+        if (!$persistenceManager) {
+            throw new \Exception('PersistenceManager is missing', 1744138137);
+        }
 
         foreach ($array as &$value) {
             if (is_array($value)) {
@@ -197,7 +206,7 @@ class JsonArrayType extends DoctrineJsonType
                 throw new \RuntimeException('Collection in array properties is not supported', 1375196581);
             } elseif ($value instanceof \ArrayObject) {
                 throw new \RuntimeException('ArrayObject in array properties is not supported', 1375196582);
-            } elseif ($this->persistenceManager->isNewObject($value) === false
+            } elseif ($persistenceManager->isNewObject($value) === false
                 && (
                     $this->reflectionService->isClassAnnotatedWith($propertyClassName, Flow\Entity::class)
                     || $this->reflectionService->isClassAnnotatedWith($propertyClassName, Flow\ValueObject::class)
@@ -206,7 +215,7 @@ class JsonArrayType extends DoctrineJsonType
             ) {
                 $value = [
                     '__flow_object_type' => $propertyClassName,
-                    '__identifier' => $this->persistenceManager->getIdentifierByObject($value)
+                    '__identifier' => $persistenceManager->getIdentifierByObject($value)
                 ];
             } elseif ($value instanceof \JsonSerializable
                 && DenormalizingObjectConverter::isDenormalizable(get_class($value))
@@ -219,6 +228,7 @@ class JsonArrayType extends DoctrineJsonType
     /**
      * @throws \RuntimeException
      * @throws \JsonException
+     * @return array<string,mixed>
      */
     public static function serializeValueObject(\JsonSerializable $valueObject): array
     {

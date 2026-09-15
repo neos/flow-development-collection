@@ -26,7 +26,7 @@ use Psr\Http\Message\ResponseInterface;
 class CurlEngine implements RequestEngineInterface
 {
     /**
-     * @var array
+     * @var array<int,mixed>
      */
     protected $options = [
         CURLOPT_RETURNTRANSFER => true,
@@ -43,6 +43,7 @@ class CurlEngine implements RequestEngineInterface
      *
      * @param integer $optionName One of the CURLOPT_* constants
      * @param mixed $value The value to set
+     * @return void
      * @throws \InvalidArgumentException
      */
     public function setOption($optionName, $value)
@@ -96,6 +97,9 @@ class CurlEngine implements RequestEngineInterface
                 curl_setopt($curlHandle, CURLOPT_PUT, true);
                 if ($content !== '') {
                     $inFileHandler = fopen('php://temp', 'r+');
+                    if ($inFileHandler === false) {
+                        throw new \RuntimeException('Failed to open php://temp', 1744451653);
+                    }
                     fwrite($inFileHandler, $content);
                     rewind($inFileHandler);
                     curl_setopt_array($curlHandle, [
@@ -112,7 +116,8 @@ class CurlEngine implements RequestEngineInterface
             default:
                 $body = $content !== '' ? $content : $request->getUri()->getQuery();
                 curl_setopt($curlHandle, CURLOPT_POSTFIELDS, $body);
-                curl_setopt($curlHandle, CURLOPT_CUSTOMREQUEST, $request->getMethod());
+                $method = $request->getMethod();
+                curl_setopt($curlHandle, CURLOPT_CUSTOMREQUEST, $method === '' ? null : $method);
         }
 
         $preparedHeaders = [];
@@ -135,7 +140,7 @@ class CurlEngine implements RequestEngineInterface
         }
 
         $curlResult = curl_exec($curlHandle);
-        if ($curlResult === false) {
+        if (!is_string($curlResult)) {
             throw new CurlEngineException(sprintf('cURL reported error code %s with message "%s". Last requested URL was "%s" (%s).', curl_errno($curlHandle), curl_error($curlHandle), curl_getinfo($curlHandle, CURLINFO_EFFECTIVE_URL), $request->getMethod()), 1338906040);
         }
 

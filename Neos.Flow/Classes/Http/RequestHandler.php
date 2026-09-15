@@ -37,7 +37,7 @@ class RequestHandler implements HttpRequestHandlerInterface
     protected $middlewaresChain;
 
     /**
-     * @var ServerRequestInterface
+     * @var ?ServerRequestInterface
      */
     protected $httpRequest;
 
@@ -90,6 +90,7 @@ class RequestHandler implements HttpRequestHandlerInterface
     /**
      * Handles a HTTP request
      *
+     * @phpstan-assert ServerRequest $this->httpRequest
      * @return void
      */
     public function handleRequest()
@@ -103,6 +104,7 @@ class RequestHandler implements HttpRequestHandlerInterface
         $this->middlewaresChain->onStep(function (ServerRequestInterface $request) {
             $this->httpRequest = $request;
         });
+        assert($this->httpRequest instanceof ServerRequestInterface);
         $this->httpResponse = $this->middlewaresChain->handle($this->httpRequest);
 
         $this->sendResponse($this->httpResponse);
@@ -113,7 +115,7 @@ class RequestHandler implements HttpRequestHandlerInterface
     /**
      * Returns the currently handled HTTP request
      *
-     * @return ServerRequestInterface
+     * @return ?ServerRequestInterface
      * @api
      */
     public function getHttpRequest()
@@ -148,6 +150,7 @@ class RequestHandler implements HttpRequestHandlerInterface
     /**
      * Send the HttpResponse of the component context to the browser and flush all output buffers.
      * @param ResponseInterface $response
+     * @return void
      */
     protected function sendResponse(ResponseInterface $response)
     {

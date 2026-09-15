@@ -52,6 +52,14 @@ class ProxyClassBuilder
      */
     protected array $objectConfigurations = [];
 
+    /**
+     * @param ReflectionService $reflectionService
+     * @param Compiler $compiler
+     * @param LoggerInterface $logger
+     * @param ConfigurationManager $configurationManager
+     * @param CacheManager $cacheManager
+     * @param CompileTimeObjectManager<object> $objectManager
+     */
     public function __construct(
         protected ReflectionService $reflectionService,
         protected Compiler $compiler,
@@ -78,9 +86,9 @@ class ProxyClassBuilder
         $this->objectConfigurations = $this->objectManager->getObjectConfigurations();
 
         foreach ($this->objectConfigurations as $objectName => $objectConfiguration) {
+            /** @var class-string $className */
             $className = $objectConfiguration->getClassName();
-            if ($className === ''
-                || $objectName !== $className
+            if ($objectName !== $className
                 || $this->compiler->hasCacheEntryForClass($className) === true
                 || $this->reflectionService->isClassAbstract($className)
             ) {
@@ -172,10 +180,11 @@ class ProxyClassBuilder
      */
     protected function buildSerializeRelatedEntitiesCode(Configuration $objectConfiguration, bool $forceSerializationCode): string
     {
-        /** @var class-string $className */
         $className = $objectConfiguration->getClassName();
+        if ($className == '') {
+            return '';
+        }
         $forceSerializationCode = $forceSerializationCode === false ? ($this->reflectionService->getClassAnnotation($className, Flow\Proxy::class)?->forceSerializationCode ?? false) : true;
-        /** @var Flow\Scope $scopeAnnotation */
         $scopeAnnotation = $this->reflectionService->getClassAnnotation($className, Flow\Scope::class);
         $transientProperties = $this->reflectionService->getPropertyNamesByAnnotation($className, Flow\Transient::class);
         $injectedProperties = $this->reflectionService->getPropertyNamesByAnnotation($className, Flow\Inject::class);
@@ -299,9 +308,11 @@ class ProxyClassBuilder
             }
         }
 
-        $result = $this->buildSetterInjectionCode($className, $propertyName, $preparedSetterArgument);
-        if ($result !== null) {
-            return $result;
+        if ($className !== '') {
+            $result = $this->buildSetterInjectionCode($className, $propertyName, $preparedSetterArgument);
+            if ($result !== null) {
+                return $result;
+            }
         }
 
         return ['$this->' . $propertyName . ' = ' . $preparedSetterArgument . ';'];
@@ -321,6 +332,9 @@ class ProxyClassBuilder
     public function buildPropertyInjectionCodeByString(Configuration $objectConfiguration, ConfigurationProperty $propertyConfiguration, string $propertyName, string $propertyObjectName): array
     {
         $className = $objectConfiguration->getClassName();
+        if ($className === '') {
+            throw new \Exception(sprintf("Empty classname configuration for object %s", $objectConfiguration->getObjectName()), 1784273303);
+        }
         if (!isset($this->objectConfigurations[$propertyObjectName])) {
             $configurationSource = $objectConfiguration->getConfigurationSourceHint();
             if (!isset($propertyObjectName[0])) {
@@ -363,9 +377,11 @@ class ProxyClassBuilder
             $preparedSetterArgument .= ', \'' . $configurationPath . '\'';
         }
         $preparedSetterArgument .= ')';
-        $result = $this->buildSetterInjectionCode($className, $propertyName, $preparedSetterArgument);
-        if ($result !== null) {
-            return $result;
+        if ($className !== '') {
+            $result = $this->buildSetterInjectionCode($className, $propertyName, $preparedSetterArgument);
+            if ($result !== null) {
+                return $result;
+            }
         }
         return ['$this->' . $propertyName . ' = ' . $preparedSetterArgument . ';'];
     }
@@ -382,9 +398,11 @@ class ProxyClassBuilder
     {
         $className = $objectConfiguration->getClassName();
         $preparedSetterArgument = $this->buildStaticObjectManagerCode(CacheManager::class) . '->getCache(\'' . $cacheIdentifier . '\')';
-        $result = $this->buildSetterInjectionCode($className, $propertyName, $preparedSetterArgument);
-        if ($result !== null) {
-            return $result;
+        if ($className !== '') {
+            $result = $this->buildSetterInjectionCode($className, $propertyName, $preparedSetterArgument);
+            if ($result !== null) {
+                return $result;
+            }
         }
         return ['$this->' . $propertyName . ' = ' . $preparedSetterArgument . ';'];
     }
@@ -430,12 +448,16 @@ class ProxyClassBuilder
     protected function buildLifecycleInitializationCode(Configuration $objectConfiguration, int $cause): string
     {
         $lifecycleInitializationMethodName = $objectConfiguration->getLifecycleInitializationMethodName();
-        if (!$this->reflectionService->hasMethod($objectConfiguration->getClassName(), $lifecycleInitializationMethodName)) {
+        $className = $objectConfiguration->getClassName();
+        if ($className === '') {
+            return '';
+        }
+        if (!$this->reflectionService->hasMethod($className, $lifecycleInitializationMethodName)) {
             return '';
         }
 
         $lifeCycleCode = '    $this->' . $lifecycleInitializationMethodName . '(' . $cause . ');';
-        return implode(PHP_EOL, $this->wrapLifeCycleChecksCode($objectConfiguration->getClassName(), $lifeCycleCode, $cause));
+        return implode(PHP_EOL, $this->wrapLifeCycleChecksCode($className, $lifeCycleCode, $cause));
     }
 
     /**
@@ -448,7 +470,11 @@ class ProxyClassBuilder
     protected function buildLifecycleShutdownCode(Configuration $objectConfiguration, int $cause): string
     {
         $lifecycleShutdownMethodName = $objectConfiguration->getLifecycleShutdownMethodName();
-        if (!$this->reflectionService->hasMethod($objectConfiguration->getClassName(), $lifecycleShutdownMethodName)) {
+        $className = $objectConfiguration->getClassName();
+        if ($className === '') {
+            return '';
+        }
+        if (!$this->reflectionService->hasMethod($className, $lifecycleShutdownMethodName)) {
             return '';
         }
 
@@ -480,10 +506,7 @@ class ProxyClassBuilder
     }
 
     /**
-     * FIXME: Not yet completely refactored to new proxy mechanism
-     *
-     * @param array $argumentConfigurations
-     * @return string
+     * @param array<int, ?ConfigurationArgument> $argumentConfigurations
      * @throws InvalidConfigurationTypeException
      */
     protected function buildMethodParametersCode(array $argumentConfigurations): string
@@ -495,7 +518,6 @@ class ProxyClassBuilder
                 $preparedArguments[] = 'NULL';
             } else {
                 $argumentValue = $argument->getValue();
-
                 switch ($argument->getType()) {
                     case ConfigurationArgument::ARGUMENT_TYPES_OBJECT:
                         if ($argumentValue instanceof Configuration) {
@@ -527,7 +549,8 @@ class ProxyClassBuilder
     }
 
     /**
-     * @param class-string $customFactoryObjectName
+     * @param string $customFactoryObjectName
+     * @param array<int, ?ConfigurationArgument> $arguments
      * @throws InvalidConfigurationTypeException
      */
     protected function buildCustomFactoryCall(string $customFactoryObjectName, string $customFactoryMethodName, array $arguments): string
@@ -581,10 +604,7 @@ class ProxyClassBuilder
             }
             $propertyType = $this->reflectionService->getPropertyType($className, $propertyName);
             if ($propertyType === null) {
-                $propertyType = $this->reflectionService->getPropertyTagValues($className, $propertyName, 'var');
-            }
-            if (isset($propertyType[0])) {
-                $propertyType = $propertyType[0];
+                $propertyType = $this->reflectionService->getPropertyTagValues($className, $propertyName, 'var')[0] ?? null;
             }
             if ($propertyType === null) {
                 continue;

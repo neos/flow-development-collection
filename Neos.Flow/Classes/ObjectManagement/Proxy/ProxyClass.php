@@ -89,10 +89,11 @@ class ProxyClass
      */
     public function __construct(string $fullOriginalClassName)
     {
-        if (!str_contains($fullOriginalClassName, '\\')) {
+        $namespaceSeperatorPosition = strrpos($fullOriginalClassName, '\\');
+        if ($namespaceSeperatorPosition === false) {
             $this->originalClassName = $fullOriginalClassName;
         } else {
-            $this->namespace = substr($fullOriginalClassName, 0, strrpos($fullOriginalClassName, '\\'));
+            $this->namespace = substr($fullOriginalClassName, 0, $namespaceSeperatorPosition);
             $this->originalClassName = substr($fullOriginalClassName, strlen($this->namespace) + 1);
         }
         $this->fullOriginalClassName = $fullOriginalClassName;
@@ -210,7 +211,7 @@ class ProxyClass
      * Note that the passed trait names must have a leading backslash,
      * for example "\Neos\Flow\ObjectManagement\Proxy\PropertyInjectionTrait".
      *
-     * @param array $traitNames
+     * @param array<int, string> $traitNames
      * @return void
      */
     public function addTraits(array $traitNames): void
@@ -278,7 +279,7 @@ class ProxyClass
     {
         $classReflection = new ClassReflection($this->fullOriginalClassName);
 
-        $classDocumentation = str_replace("*/", "* @codeCoverageIgnore\n */", $classReflection->getDocComment()) . "\n";
+        $classDocumentation = str_replace("*/", "* @codeCoverageIgnore\n */", $classReflection->getDocComment() ?: '/**\n */') . "\n";
         foreach ($classReflection->getAttributes() as $attribute) {
             $classDocumentation .= Compiler::renderAttribute($attribute) . "\n";
         }

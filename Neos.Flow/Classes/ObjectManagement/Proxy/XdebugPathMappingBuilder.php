@@ -29,12 +29,12 @@ class XdebugPathMappingBuilder
     protected $cacheManager;
 
     /**
-     * @var array
+     * @var array<string, mixed>
      */
     protected $settings;
 
     /**
-     * @param array $settings
+     * @param array<string, mixed> $settings
      * @return void
      */
     public function injectSettings(array $settings): void

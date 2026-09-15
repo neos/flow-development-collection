@@ -100,7 +100,10 @@ class RestController extends ActionController
      */
     protected function initializeCreateAction()
     {
-        $propertyMappingConfiguration = $this->arguments[$this->resourceArgumentName]->getPropertyMappingConfiguration();
+        $propertyMappingConfiguration = $this->arguments[$this->resourceArgumentName]?->getPropertyMappingConfiguration();
+        if (!$propertyMappingConfiguration) {
+            throw new \Exception('Missing property mapping configuration for ' . $this->resourceArgumentName, 1744328226);
+        }
         $propertyMappingConfiguration->setTypeConverterOption(PersistentObjectConverter::class, PersistentObjectConverter::CONFIGURATION_CREATION_ALLOWED, true);
         $propertyMappingConfiguration->allowAllProperties();
     }
@@ -112,7 +115,10 @@ class RestController extends ActionController
      */
     protected function initializeUpdateAction()
     {
-        $propertyMappingConfiguration = $this->arguments[$this->resourceArgumentName]->getPropertyMappingConfiguration();
+        $propertyMappingConfiguration = $this->arguments[$this->resourceArgumentName]?->getPropertyMappingConfiguration();
+        if (!$propertyMappingConfiguration) {
+            throw new \Exception('Missing property mapping configuration for ' . $this->resourceArgumentName, 1744328226);
+        }
         $propertyMappingConfiguration->setTypeConverterOption(PersistentObjectConverter::class, PersistentObjectConverter::CONFIGURATION_MODIFICATION_ALLOWED, true);
         $propertyMappingConfiguration->allowAllProperties();
     }

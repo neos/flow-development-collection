@@ -92,13 +92,25 @@ final class AttributeRoutesProvider implements RoutesProviderInterface
             $routes = [...$routes, ...$routesForClass];
         }
 
-        $routes = array_map(static fn (array $routeConfiguration): Route => Route::fromConfiguration($routeConfiguration), $routes);
+        $routes = array_map(
+            static fn (array $routeConfiguration): Route => Route::fromConfiguration($routeConfiguration),
+            $routes
+        );
         return Routes::create(...$routes);
     }
 
     /**
      * @param ObjectManagerInterface $objectManager
-     * @return array<string, array<int, mixed>>
+     * @return array<string,array<int,array{
+     *      name?: string,
+     *      uriPattern: string,
+     *      defaults?: array<mixed>,
+     *      routeParts?: array<mixed>,
+     *      toLowerCase?: bool,
+     *      appendExceedingArguments?: bool,
+     *      cache?: array{lifetime?: int, tags?: array<mixed>},
+     *      httpMethods?: list<string>
+     * }>>
      * @throws InvalidActionNameException
      * @throws InvalidControllerException
      * @throws \Neos\Flow\Utility\Exception
@@ -119,7 +131,10 @@ final class AttributeRoutesProvider implements RoutesProviderInterface
             }
 
             $controllerObjectName = $objectManager->getCaseSensitiveObjectName($className);
-            $controllerPackageKey = $objectManager->getPackageKeyByObjectName($controllerObjectName);
+            $controllerPackageKey = $controllerObjectName ? $objectManager->getPackageKeyByObjectName($controllerObjectName) : null;
+            if (!$controllerPackageKey) {
+                throw new \Exception('Could not resolve package key for class ' . $className);
+            }
             $controllerPackageNamespace = str_replace('.', '\\', $controllerPackageKey);
             if (!str_ends_with($className, 'Controller')) {
                 throw new InvalidControllerException('Only for controller classes');
@@ -144,26 +159,24 @@ final class AttributeRoutesProvider implements RoutesProviderInterface
                 }
                 $annotations = $reflectionService->getMethodAnnotations($className, $methodName, Flow\Route::class);
                 foreach ($annotations as $annotation) {
-                    if ($annotation instanceof Flow\Route) {
-                        $controller = substr($controllerName, 0, -10);
-                        $action = substr($methodName, 0, -6);
-                        $configuration = [
-                            'name' => $controllerPackageKey . ' :: ' . $controller . ' :: ' . ($annotation->name ?: $action),
-                            'uriPattern' => $annotation->uriPattern,
-                            'httpMethods' => $annotation->httpMethods,
-                            'defaults' => Arrays::arrayMergeRecursiveOverrule(
-                                array_filter([
-                                    '@package' => $controllerPackageKey,
-                                    '@subpackage' => $subPackage,
-                                    '@controller' => $controller,
-                                    '@action' => $action,
-                                    '@format' => 'html'
-                                ], fn ($value) => $value !== null),
-                                $annotation->defaults ?? []
-                            )
-                        ];
-                        $routesByClassName[$className][] = $configuration;
-                    }
+                    $controller = substr($controllerName, 0, -10);
+                    $action = substr($methodName, 0, -6);
+                    $configuration = [
+                        'name' => $controllerPackageKey . ' :: ' . $controller . ' :: ' . ($annotation->name ?: $action),
+                        'uriPattern' => $annotation->uriPattern,
+                        'httpMethods' => $annotation->httpMethods,
+                        'defaults' => Arrays::arrayMergeRecursiveOverrule(
+                            array_filter([
+                                '@package' => $controllerPackageKey,
+                                '@subpackage' => $subPackage,
+                                '@controller' => $controller,
+                                '@action' => $action,
+                                '@format' => 'html'
+                            ], fn ($value) => $value !== null),
+                            $annotation->defaults ?? []
+                        )
+                    ];
+                    $routesByClassName[$className][] = $configuration;
                 }
             }
         }

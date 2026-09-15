@@ -33,17 +33,17 @@ use Psr\Log\LoggerInterface;
 abstract class AbstractExceptionHandler implements ExceptionHandlerInterface
 {
     /**
-     * @var LoggerInterface
+     * @var ?LoggerInterface
      */
     protected $logger;
 
     /**
-     * @var ThrowableStorageInterface
+     * @var ?ThrowableStorageInterface
      */
     protected $throwableStorage;
 
     /**
-     * @var array
+     * @var array<mixed>
      */
     protected $options = [];
 
@@ -52,11 +52,11 @@ abstract class AbstractExceptionHandler implements ExceptionHandlerInterface
      *
      * @var array{
      *      viewClassName: string,
-     *      viewOptions: array,
+     *      viewOptions: array<mixed>,
      *      renderTechnicalDetails: bool,
-     *      logException: bool,
+     *      logException?: bool,
      *      renderingGroup?: string,
-     *      variables?: array
+     *      variables?: array<mixed>
      * }
      */
     protected $renderingOptions;
@@ -66,13 +66,14 @@ abstract class AbstractExceptionHandler implements ExceptionHandlerInterface
      * @return void
      * @Flow\Autowiring(enabled=false)
      */
-    public function injectLogger(LoggerInterface $logger)
+    public function injectLogger(LoggerInterface $logger): void
     {
         $this->logger = $logger;
     }
 
     /**
      * @param ThrowableStorageInterface $throwableStorage
+     * @return void
      */
     public function injectThrowableStorage(ThrowableStorageInterface $throwableStorage)
     {
@@ -82,7 +83,7 @@ abstract class AbstractExceptionHandler implements ExceptionHandlerInterface
     /**
      * Sets options of this exception handler.
      *
-     * @param array $options Options for the exception handler
+     * @param array<mixed> $options Options for the exception handler
      * @return void
      */
     public function setOptions(array $options)
@@ -118,7 +119,7 @@ abstract class AbstractExceptionHandler implements ExceptionHandlerInterface
         $exceptionWasLogged = false;
         if ($this->throwableStorage instanceof ThrowableStorageInterface && isset($this->renderingOptions['logException']) && $this->renderingOptions['logException']) {
             $message = $this->throwableStorage->logThrowable($exception);
-            $this->logger->critical($message);
+            $this->logger?->critical($message);
             $exceptionWasLogged = true;
         }
 
@@ -142,7 +143,7 @@ abstract class AbstractExceptionHandler implements ExceptionHandlerInterface
      * Prepares a view for rendering the custom error page.
      *
      * @param \Throwable $exception
-     * @param array $renderingOptions Rendering options as defined in the settings
+     * @param array<string,mixed> $renderingOptions Rendering options as defined in the settings
      * @return ViewInterface
      */
     protected function buildView(\Throwable $exception, array $renderingOptions): ViewInterface
@@ -191,7 +192,14 @@ abstract class AbstractExceptionHandler implements ExceptionHandlerInterface
      * Checks if custom rendering rules apply to the given $exception and returns those.
      *
      * @param \Throwable $exception
-     * @return array the custom rendering options, or the default
+     * @return array{
+     *       viewClassName: string,
+     *       viewOptions: array<mixed>,
+     *       renderTechnicalDetails: bool,
+     *       logException?: bool,
+     *       renderingGroup?: string,
+     *       variables?: array<mixed>
+     *  } the custom rendering options, or the default
      */
     protected function resolveCustomRenderingOptions(\Throwable $exception): array
     {
@@ -310,7 +318,7 @@ abstract class AbstractExceptionHandler implements ExceptionHandlerInterface
             $exceptionMessage .= $this->renderExceptionDetailCli('Code', $exception->getCode());
         }
         $exceptionMessage .= $this->renderExceptionDetailCli('File', str_replace(FLOW_PATH_ROOT, '', $exception->getFile()));
-        $exceptionMessage .= $this->renderExceptionDetailCli('Line', $exception->getLine());
+        $exceptionMessage .= $this->renderExceptionDetailCli('Line', (string)$exception->getLine());
 
         return $exceptionMessage;
     }
@@ -337,7 +345,7 @@ abstract class AbstractExceptionHandler implements ExceptionHandlerInterface
      * - Otherwise the subject is everything until the first line break or end of sentence, the body contains the rest
      *
      * @param string $exceptionMessage
-     * @return array in the format array('subject' => '<subject>', 'body' => '<body>');
+     * @return array{subject: string, body: string}
      */
     protected function splitExceptionMessage(string $exceptionMessage): array
     {

@@ -28,13 +28,13 @@ use Neos\Utility\ObjectAccess;
 class Debugger
 {
     /**
-     * @var ObjectManagerInterface
+     * @var ?ObjectManagerInterface
      */
     protected static $objectManager;
 
     /**
      *
-     * @var array
+     * @var array<mixed>
      */
     protected static $renderedObjects = [];
 
@@ -42,7 +42,7 @@ class Debugger
      * Hardcoded list of Flow class names (regex) which should not be displayed during debugging.
      * This is a fallback in case the classes could not be fetched from the configuration
      *
-     * @var array
+     * @var array<string,true>
      */
     protected static $ignoredClassesFallback = [
         'Neos\\\\Flow\\\\Aop.*' => true,
@@ -139,7 +139,7 @@ class Debugger
                 $dump = sprintf('\'<span class="debug-string">%s</span>\' (%s)', htmlspecialchars($croppedValue), strlen($variable));
             }
         } elseif (is_numeric($variable)) {
-            $dump = sprintf('%s %s', gettype($variable), self::ansiEscapeWrap($variable, '35', $ansiColors));
+            $dump = sprintf('%s %s', gettype($variable), self::ansiEscapeWrap((string)$variable, '35', $ansiColors));
         } elseif (is_iterable($variable)) {
             $dump = self::renderArrayDump($variable, $level + 1, $plaintext, $ansiColors);
         } elseif (is_object($variable)) {
@@ -158,7 +158,7 @@ class Debugger
     /**
      * Renders a dump of the given array
      *
-     * @param iterable $array
+     * @param iterable<mixed> $array
      * @param integer $level
      * @param boolean $plaintext
      * @param boolean $ansiColors
@@ -321,7 +321,7 @@ class Debugger
     /**
      * Renders some backtrace
      *
-     * @param array $trace The trace
+     * @param array<int,array<string,mixed>> $trace The trace
      * @param boolean $includeCode Include code snippet
      * @param boolean $plaintext
      * @return string Backtrace information
@@ -394,7 +394,7 @@ class Debugger
     }
 
     /**
-     * @param array $trace
+     * @param array<int,array<string,mixed>> $trace
      * @param bool $includeCode
      * @return string
      */
@@ -559,7 +559,7 @@ class Debugger
 
     /**
      * @param string $file
-     * @return array
+     * @return array{short: string, proxy: string}
      */
     public static function findProxyAndShortFilePath(string $file): array
     {
@@ -568,7 +568,9 @@ class Debugger
         $proxyClassPathPosition = strpos($file, 'Flow_Object_Classes/');
         if ($proxyClassPathPosition && is_file($file)) {
             $fileContent = @file($file);
-            $originalPath = trim(substr($fileContent[count($fileContent) - 2], 19));
+            if ($fileContent !== false) {
+                $originalPath = trim(substr($fileContent[count($fileContent) - 2], 19));
+            }
         }
 
         $originalPath = str_replace($flowRoot, '', $originalPath);
@@ -615,11 +617,9 @@ class Debugger
 
         if (self::$objectManager instanceof ObjectManagerInterface) {
             $configurationManager = self::$objectManager->get(ConfigurationManager::class);
-            if ($configurationManager instanceof ConfigurationManager) {
-                $ignoredClassesFromSettings = $configurationManager->getConfiguration('Settings', 'Neos.Flow.error.debugger.ignoredClasses');
-                if (is_array($ignoredClassesFromSettings)) {
-                    $ignoredClassesConfiguration = Arrays::arrayMergeRecursiveOverrule($ignoredClassesConfiguration, $ignoredClassesFromSettings);
-                }
+            $ignoredClassesFromSettings = $configurationManager->getConfiguration('Settings', 'Neos.Flow.error.debugger.ignoredClasses');
+            if (is_array($ignoredClassesFromSettings)) {
+                $ignoredClassesConfiguration = Arrays::arrayMergeRecursiveOverrule($ignoredClassesConfiguration, $ignoredClassesFromSettings);
             }
         }
 
@@ -651,11 +651,9 @@ class Debugger
 
         if (self::$objectManager instanceof ObjectManagerInterface) {
             $configurationManager = self::$objectManager->get(ConfigurationManager::class);
-            if ($configurationManager instanceof ConfigurationManager) {
-                $recursionLimitFromSettings = $configurationManager->getConfiguration('Settings', 'Neos.Flow.error.debugger.recursionLimit');
-                if (is_int($recursionLimitFromSettings)) {
-                    self::$recursionLimit = $recursionLimitFromSettings;
-                }
+            $recursionLimitFromSettings = $configurationManager->getConfiguration('Settings', 'Neos.Flow.error.debugger.recursionLimit');
+            if (is_int($recursionLimitFromSettings)) {
+                self::$recursionLimit = $recursionLimitFromSettings;
             }
         }
 
@@ -681,6 +679,7 @@ function var_dump($variable, ?string $title = null, bool $return = false, ?bool 
 {
     if ($plaintext === null) {
         $plaintext = (FLOW_SAPITYPE === 'CLI');
+        /** @phpstan-ignore booleanAnd.leftAlwaysTrue (no, this can be false) */
         $ansiColors = $plaintext && DIRECTORY_SEPARATOR === '/';
     } else {
         $ansiColors = false;

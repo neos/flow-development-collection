@@ -55,7 +55,7 @@ class EntityManagerFactory
     protected $environment;
 
     /**
-     * @var array
+     * @var array<string,mixed>
      */
     protected $settings = [];
 
@@ -63,7 +63,7 @@ class EntityManagerFactory
      * Injects the Flow settings, the persistence part is kept
      * for further use.
      *
-     * @param array $settings
+     * @param array<string,array<string,mixed>> $settings
      * @return void
      * @throws InvalidConfigurationException
      */
@@ -138,7 +138,7 @@ class EntityManagerFactory
      * @param EventManager $eventManager
      * @Flow\Signal
      */
-    public function emitBeforeDoctrineEntityManagerCreation(Connection $connection, Configuration $config, EventManager $eventManager)
+    public function emitBeforeDoctrineEntityManagerCreation(Connection $connection, Configuration $config, EventManager $eventManager): void
     {
     }
 
@@ -147,7 +147,7 @@ class EntityManagerFactory
      * @param EntityManager $entityManager
      * @Flow\Signal
      */
-    public function emitAfterDoctrineEntityManagerCreation(Configuration $config, EntityManager $entityManager)
+    public function emitAfterDoctrineEntityManagerCreation(Configuration $config, EntityManager $entityManager): void
     {
     }
 

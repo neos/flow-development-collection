@@ -40,7 +40,7 @@ class JsonView extends AbstractView
 
     /**
      * Supported options
-     * @var array
+     * @var array<string,array<mixed>>
      */
     protected $supportedOptions = [
         'jsonEncodingOptions' => [0, 'Bitmask of supported Encoding options. See https://php.net/manual/en/json.constants.php', 'integer'],
@@ -66,7 +66,7 @@ class JsonView extends AbstractView
     /**
      * Only variables whose name is contained in this array will be rendered
      *
-     * @var array
+     * @var array<string>
      */
     protected $variablesToRender = ['value'];
 
@@ -166,7 +166,7 @@ class JsonView extends AbstractView
      * {"customer":{"firstName":"John","__class":"Customer"}}
      * This might be of interest to not provide information about the package or domain structure behind.
      *
-     * @var array
+     * @var array<string,mixed>
      */
     protected $configuration = [];
 
@@ -180,7 +180,7 @@ class JsonView extends AbstractView
      * Specifies which variables this JsonView should render
      * By default only the variable 'value' will be rendered
      *
-     * @param array $variablesToRender
+     * @param array<string> $variablesToRender
      * @return void
      * @api
      */
@@ -190,7 +190,7 @@ class JsonView extends AbstractView
     }
 
     /**
-     * @param array $configuration The rendering configuration for this JSON view
+     * @param array<string,mixed> $configuration The rendering configuration for this JSON view
      * @return void
      */
     public function setConfiguration(array $configuration)
@@ -220,7 +220,7 @@ class JsonView extends AbstractView
      * Loads the configuration and transforms the value to a serializable
      * array.
      *
-     * @return array|string|int|float|null An array containing the values, ready to be JSON encoded
+     * @return array<mixed>|string|int|float|null An array containing the values, ready to be JSON encoded
      * @api
      */
     protected function renderArray()
@@ -244,12 +244,12 @@ class JsonView extends AbstractView
      * supplied configuration.
      *
      * @param mixed $value The value to transform
-     * @param array $configuration Configuration for transforming the value
-     * @return array|string|int|float|null The transformed value
+     * @param array<string,mixed> $configuration Configuration for transforming the value
+     * @return array<mixed>|string|int|float|null The transformed value
      */
     protected function transformValue($value, array $configuration)
     {
-        if (is_array($value) || $value instanceof \ArrayAccess) {
+        if (is_iterable($value)) {
             $array = [];
             foreach ($value as $key => $element) {
                 if (isset($configuration['_descendAll']) && is_array($configuration['_descendAll'])) {
@@ -279,8 +279,8 @@ class JsonView extends AbstractView
      * array structure.
      *
      * @param object $object Object to traverse
-     * @param array $configuration Configuration for transforming the given object
-     * @return array|string Object structure as an array
+     * @param array<string,mixed> $configuration Configuration for transforming the given object
+     * @return array<mixed>|string Object structure as an array
      */
     protected function transformObject($object, array $configuration)
     {

@@ -90,6 +90,10 @@ class SecurityCommandController extends CommandController
         $keyData = '';
         // no file_get_contents here because it does not work on php://stdin
         $fp = fopen('php://stdin', 'rb');
+        if ($fp === false) {
+            $this->outputLine('The public key could not be read');
+            $this->quit(1);
+        }
         while (!feof($fp)) {
             $keyData .= fgets($fp, 4096);
         }
@@ -145,6 +149,10 @@ class SecurityCommandController extends CommandController
         $keyData = '';
         // no file_get_contents here because it does not work on php://stdin
         $fp = fopen('php://stdin', 'rb');
+        if ($fp === false) {
+            $this->outputLine('The private key could not be read');
+            $this->quit(1);
+        }
         while (!feof($fp)) {
             $keyData .= fgets($fp, 4096);
         }
@@ -160,6 +168,7 @@ class SecurityCommandController extends CommandController
      *
      * @param string $privilegeType The privilege type ("entity", "method" or the FQN of a class implementing PrivilegeInterface)
      * @param string $roles A comma separated list of role identifiers. Shows policy for an unauthenticated user when left empty.
+     * @return void
      */
     public function showEffectivePolicyCommand(string $privilegeType, string $roles = '')
     {
@@ -326,6 +335,7 @@ class SecurityCommandController extends CommandController
         foreach ($this->reflectionService->getAllClassNames() as $className) {
             try {
                 $reflectionClass = new \ReflectionClass($className);
+                /** @phpstan-ignore catch.neverThrown */
             } catch (\ReflectionException $exception) {
                 continue;
             }

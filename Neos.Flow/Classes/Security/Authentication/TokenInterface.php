@@ -89,7 +89,7 @@ interface TokenInterface
     /**
      * Returns the configured authentication entry point, NULL if none is available
      *
-     * @return EntryPointInterface The configured authentication entry point, NULL if none is available
+     * @return ?EntryPointInterface The configured authentication entry point, NULL if none is available
      */
     public function getAuthenticationEntryPoint();
 

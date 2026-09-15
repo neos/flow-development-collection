@@ -164,6 +164,7 @@ class Bootstrap
      * of this or other request handlers.
      *
      * @param class-string<RequestHandlerInterface> $className
+     * @return void
      */
     public function setPreselectedRequestHandlerClassName(string $className)
     {
@@ -493,9 +494,21 @@ class Bootstrap
                 }
             }
             if ($rootPath !== false) {
-                $rootPath = Files::getUnixStylePath(realpath($rootPath)) . '/';
-                $testPath = Files::getUnixStylePath(realpath(Files::concatenatePaths([$rootPath, 'Packages/Framework/Neos.Flow']))) . '/';
-                $expectedPath = Files::getUnixStylePath(realpath(FLOW_PATH_FLOW)) . '/';
+                $realRootPath = realpath($rootPath);
+                if ($realRootPath === false) {
+                    throw new \RuntimeException('Failed to resolve real root path', 1744459165);
+                }
+                $rootPath = Files::getUnixStylePath($realRootPath) . '/';
+                $realTestPath = realpath(Files::concatenatePaths([$rootPath, 'Packages/Framework/Neos.Flow']));
+                if ($realTestPath === false) {
+                    throw new \RuntimeException('Failed to resolve real test path', 1744459220);
+                }
+                $testPath = Files::getUnixStylePath($realTestPath) . '/';
+                $realExpectedPath = realpath(FLOW_PATH_FLOW);
+                if ($realExpectedPath === false) {
+                    throw new \RuntimeException('Failed to resolve real expected path', 1744459246);
+                }
+                $expectedPath = Files::getUnixStylePath($realExpectedPath) . '/';
                 if ($testPath !== $expectedPath) {
                     echo('Flow: Invalid root path. (Error #1248964375)' . PHP_EOL . '"' . $testPath . '" does not lead to' . PHP_EOL . '"' . $expectedPath . '"' . PHP_EOL);
                     http_response_code(500);
@@ -514,16 +527,28 @@ class Bootstrap
             }
             if (!defined('FLOW_PATH_WEB')) {
                 if (isset($_SERVER['FLOW_WEBPATH']) && is_dir($_SERVER['FLOW_WEBPATH'])) {
-                    define('FLOW_PATH_WEB', Files::getUnixStylePath(realpath($_SERVER['FLOW_WEBPATH'])) . '/');
+                    $webPath = realpath($_SERVER['FLOW_WEBPATH']);
+                    if ($webPath === false) {
+                        throw new \RuntimeException('Failed to resolve web path', 1744459038);
+                    }
+                    define('FLOW_PATH_WEB', Files::getUnixStylePath($webPath) . '/');
                 } else {
                     define('FLOW_PATH_WEB', FLOW_PATH_ROOT . 'Web/');
                 }
             }
         } else {
             if (!defined('FLOW_PATH_ROOT')) {
-                define('FLOW_PATH_ROOT', Files::getUnixStylePath(realpath(dirname($_SERVER['SCRIPT_FILENAME']) . '/../')) . '/');
+                $rootPath = realpath(dirname($_SERVER['SCRIPT_FILENAME']) . '/../');
+                if ($rootPath === false) {
+                    throw new \RuntimeException('Failed to resolve root path', 1744459011);
+                }
+                define('FLOW_PATH_ROOT', Files::getUnixStylePath($rootPath) . '/');
             }
-            define('FLOW_PATH_WEB', Files::getUnixStylePath(realpath(dirname($_SERVER['SCRIPT_FILENAME']))) . '/');
+            $webPath = realpath(dirname($_SERVER['SCRIPT_FILENAME']));
+            if ($webPath === false) {
+                throw new \RuntimeException('Failed to resolve web path', 1744459038);
+            }
+            define('FLOW_PATH_WEB', Files::getUnixStylePath($webPath) . '/');
         }
 
         define('FLOW_PATH_CONFIGURATION', FLOW_PATH_ROOT . 'Configuration/');

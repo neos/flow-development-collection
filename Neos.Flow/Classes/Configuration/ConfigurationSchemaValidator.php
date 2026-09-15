@@ -65,9 +65,9 @@ class ConfigurationSchemaValidator
     /**
      * Validate the given $configurationType and $path
      *
-     * @param string $configurationType (optional) the configuration type to validate. if NULL, validates all configuration.
-     * @param string $path (optional) configuration path to validate
-     * @param array $loadedSchemaFiles (optional). if given, will be filled with a list of loaded schema files
+     * @param ?string $configurationType (optional) the configuration type to validate. if NULL, validates all configuration.
+     * @param ?string $path (optional) configuration path to validate
+     * @param array<int,string> $loadedSchemaFiles (optional). if given, will be filled with a list of loaded schema files
      * @return \Neos\Error\Messages\Result the result of the validation
      * @throws Exception\SchemaValidationException
      */
@@ -92,7 +92,7 @@ class ConfigurationSchemaValidator
      *
      * @param string $configurationType the configuration typr to validate
      * @param string|null $path configuration path to validate, or NULL.
-     * @param array $loadedSchemaFiles will be filled with a list of loaded schema files
+     * @param array<int,string> $loadedSchemaFiles will be filled with a list of loaded schema files
      * @return \Neos\Error\Messages\Result
      * @throws Exception\SchemaValidationException
      */
@@ -122,7 +122,7 @@ class ConfigurationSchemaValidator
                     $schemaType = $schemaNameParts[0];
                     $schemaPath = isset($schemaNameParts[1]) ? $schemaNameParts[1] : null;
 
-                    if ($schemaType === $configurationType && ($path === null || strpos($schemaPath, $path) === 0)) {
+                    if ($schemaType === $configurationType && ($path === null || (is_string($schemaPath) && strpos($schemaPath, $path) === 0))) {
                         $schemaFileInfos[] = [
                             'file' => $schemaFile,
                             'name' => $schemaName,
@@ -139,6 +139,7 @@ class ConfigurationSchemaValidator
         }
 
         $result = new Result();
+        /** @var array<int,array{file: string, name: string, path: ?string, packageKey: string}> $schemaFileInfos */
         foreach ($schemaFileInfos as $schemaFileInfo) {
             $loadedSchemaFiles[] = $schemaFileInfo['file'];
 

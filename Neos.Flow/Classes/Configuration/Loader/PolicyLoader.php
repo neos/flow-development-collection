@@ -17,8 +17,12 @@ namespace Neos\Flow\Configuration\Loader;
 use Neos\Flow\Configuration\ConfigurationManager;
 use Neos\Flow\Configuration\Source\YamlSource;
 use Neos\Flow\Core\ApplicationContext;
+use Neos\Flow\Package\FlowPackageInterface;
 use Neos\Utility\Arrays;
 
+/**
+ * @phpstan-type PolicyDefinition array{roles?: array<string, array{privileges: array<mixed>}>}
+ */
 class PolicyLoader implements LoaderInterface
 {
     /**
@@ -48,6 +52,10 @@ class PolicyLoader implements LoaderInterface
         $this->temporaryDirectoryPath = $temporaryDirectoryPath;
     }
 
+    /**
+     * @param array<FlowPackageInterface> $packages
+     * @return PolicyDefinition
+     */
     public function load(array $packages, ApplicationContext $context): array
     {
         if ($context->isTesting()) {
@@ -78,9 +86,9 @@ class PolicyLoader implements LoaderInterface
     /**
      * Merges two policy configuration arrays.
      *
-     * @param array $firstConfigurationArray
-     * @param array $secondConfigurationArray
-     * @return array
+     * @param PolicyDefinition $firstConfigurationArray
+     * @param PolicyDefinition $secondConfigurationArray
+     * @return PolicyDefinition
      */
     private function mergePolicyConfiguration(array $firstConfigurationArray, array $secondConfigurationArray): array
     {

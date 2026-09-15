@@ -27,6 +27,16 @@ use Neos\Flow\Reflection\ReflectionService;
  * from a pointcut- or advice annotation and returns a pointcut filter composite.
  *
  * @see \Neos\Flow\Aop\Pointcut, PointcutFilterComposite
+ *
+ * @phpstan-type ArgumentConstraints array<string,array{
+ *      operator: array<int,string>,
+ *      value: array<int,mixed>,
+ * }>
+ * @phpstan-type RuntimeEvaluationCondition array{
+ *      operator: string,
+ *      leftValue: string,
+ *      rightValue: mixed,
+ * }
  * @Flow\Scope("singleton")
  * @Flow\Proxy(false)
  */
@@ -124,11 +134,11 @@ class PointcutExpressionParser
     {
         $this->sourceHint = $sourceHint;
 
-        if (!is_string($pointcutExpression) || strlen($pointcutExpression) === 0) {
+        if (strlen($pointcutExpression) === 0) {
             throw new InvalidPointcutExpressionException(sprintf('Pointcut expression must be a valid string, "%s" given, defined in "%s"', gettype($pointcutExpression), $this->sourceHint), 1168874738);
         }
         $pointcutFilterComposite = new PointcutFilterComposite();
-        $pointcutExpressionParts = preg_split(self::PATTERN_SPLITBYOPERATOR, $pointcutExpression, -1, PREG_SPLIT_DELIM_CAPTURE);
+        $pointcutExpressionParts = preg_split(self::PATTERN_SPLITBYOPERATOR, $pointcutExpression, -1, PREG_SPLIT_DELIM_CAPTURE) ?: [];
 
         $count = count($pointcutExpressionParts);
         for ($partIndex = 0; $partIndex < $count; $partIndex += 2) {
@@ -177,7 +187,7 @@ class PointcutExpressionParser
      * filter composite object.
      *
      * @param string $operator The operator
-     * @param string $annotationPattern The pattern expression as configuration for the class annotation filter
+     * @param class-string<object> $annotationPattern The pattern expression as configuration for the class annotation filter
      * @param PointcutFilterComposite $pointcutFilterComposite An instance of the pointcut filter composite. The result (ie. the class annotation filter) will be added to this composite object.
      * @return void
      */
@@ -213,7 +223,7 @@ class PointcutExpressionParser
      * filter composite object.
      *
      * @param string $operator The operator
-     * @param string $annotationPattern The pattern expression as configuration for the method annotation filter
+     * @param class-string $annotationPattern The pattern expression as configuration for the method annotation filter
      * @param PointcutFilterComposite $pointcutFilterComposite An instance of the pointcut filter composite. The result (ie. the method annotation filter) will be added to this composite object.
      * @return void
      */
@@ -233,7 +243,8 @@ class PointcutExpressionParser
      * needed.
      *
      * @param string $annotationPattern
-     * @param array $annotationPropertyConstraints
+     * @param array<mixed> $annotationPropertyConstraints
+     *
      * @return void
      */
     protected function parseAnnotationPattern(string &$annotationPattern, array &$annotationPropertyConstraints): void
@@ -242,8 +253,8 @@ class PointcutExpressionParser
             $matches = [];
             preg_match(self::PATTERN_MATCHMETHODNAMEANDARGUMENTS, $annotationPattern, $matches);
 
-            $annotationPattern = $matches['MethodName'];
-            $annotationPropertiesPattern = $matches['MethodArguments'];
+            $annotationPattern = $matches['MethodName'] ?? '';
+            $annotationPropertiesPattern = $matches['MethodArguments'] ?? '';
             $annotationPropertyConstraints = $this->getArgumentConstraintsFromMethodArgumentsPattern($annotationPropertiesPattern);
         }
     }
@@ -273,8 +284,8 @@ class PointcutExpressionParser
         $matches = [];
         preg_match(self::PATTERN_MATCHMETHODNAMEANDARGUMENTS, $methodPattern, $matches);
 
-        $methodNamePattern = $matches['MethodName'];
-        $methodArgumentPattern = $matches['MethodArguments'];
+        $methodNamePattern = $matches['MethodName'] ?? '';
+        $methodArgumentPattern = $matches['MethodArguments'] ?? '';
         $methodArgumentConstraints = $this->getArgumentConstraintsFromMethodArgumentsPattern($methodArgumentPattern);
 
         $classNameFilter = new PointcutClassNameFilter($classPattern);
@@ -300,8 +311,9 @@ class PointcutExpressionParser
      * Adds a class type filter to the pointcut filter composite
      *
      * @param string $operator
-     * @param string $signaturePattern The pattern expression defining the class type
+     * @param class-string $signaturePattern The pattern expression defining the class type
      * @param PointcutFilterComposite $pointcutFilterComposite An instance of the pointcut filter composite. The result (ie. the class type filter) will be added to this composite object.
+     * @todo this is only ever called from tests, do we even need this?
      * @return void
      */
     protected function parseDesignatorWithin(string $operator, string $signaturePattern, PointcutFilterComposite $pointcutFilterComposite): void
@@ -453,7 +465,7 @@ class PointcutExpressionParser
      * Parses the method arguments pattern and returns the corresponding constraints array
      *
      * @param string $methodArgumentsPattern The arguments pattern defined in the pointcut expression
-     * @return array The corresponding constraints array
+     * @return ArgumentConstraints The corresponding constraints array
      */
     protected function getArgumentConstraintsFromMethodArgumentsPattern(string $methodArgumentsPattern): array
     {
@@ -468,7 +480,7 @@ class PointcutExpressionParser
                 $list = [];
                 $listEntries = [];
 
-                if (preg_match('/^\s*\(.*\)\s*$/', $matches[3][$i], $list) > 0) {
+                if (is_string($matches[3][$i]) && preg_match('/^\s*\(.*\)\s*$/', $matches[3][$i], $list) > 0) {
                     preg_match_all(self::PATTERN_MATCHRUNTIMEEVALUATIONSVALUELIST, $list[0], $listEntries);
                     $matches[3][$i] = $listEntries[1];
                 }
@@ -484,7 +496,7 @@ class PointcutExpressionParser
      * Parses the evaluate string for runtime evaluations and returns the corresponding conditions array
      *
      * @param string $evaluateString The evaluate string defined in the pointcut expression
-     * @return array The corresponding constraints array
+     * @return array<int,RuntimeEvaluationCondition> The corresponding constraints array
      */
     protected function getRuntimeEvaluationConditionsFromEvaluateString(string $evaluateString): array
     {
@@ -499,7 +511,7 @@ class PointcutExpressionParser
                 $list = [];
                 $listEntries = [];
 
-                if (preg_match('/^\s*\(.*\)\s*$/', $matches[3][$i], $list) > 0) {
+                if (is_string($matches[3][$i]) && preg_match('/^\s*\(.*\)\s*$/', $matches[3][$i], $list) > 0) {
                     preg_match_all(self::PATTERN_MATCHRUNTIMEEVALUATIONSVALUELIST, $list[0], $listEntries);
                     $matches[3][$i] = $listEntries[1];
                 }

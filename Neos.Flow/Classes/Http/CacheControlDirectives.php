@@ -20,7 +20,7 @@ namespace Neos\Flow\Http;
 class CacheControlDirectives
 {
     /**
-     * @var array
+     * @var array<string,string>
      */
     protected $cacheDirectives = [
         'visibility' => '',
@@ -171,7 +171,7 @@ class CacheControlDirectives
     }
 
     /**
-     * @return array
+     * @return array<int,string>
      */
     public function getDirectives(): array
     {

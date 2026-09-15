@@ -31,7 +31,7 @@ class RequestMatcher
      * return false. This case is primarily needed
      * if no parentRequest exists.
      *
-     * @var ActionRequest
+     * @var ?ActionRequest
      */
     protected $request;
 
@@ -42,7 +42,7 @@ class RequestMatcher
      * and mainRequest Matchers through the addWeight
      * method
      *
-     * @var RequestMatcher
+     * @var ?RequestMatcher
      */
     protected $parentMatcher;
 
@@ -164,7 +164,7 @@ class RequestMatcher
             return new RequestMatcher();
         }
         $this->addWeight(1000000);
-        return new RequestMatcher($this->request->getParentRequest(), $this);
+        return new RequestMatcher($this->request?->getParentRequest(), $this);
     }
 
     /**
@@ -176,7 +176,7 @@ class RequestMatcher
     public function getMainRequest()
     {
         $this->addWeight(100000);
-        return new RequestMatcher($this->request->getMainRequest(), $this);
+        return new RequestMatcher($this->request?->getMainRequest(), $this);
     }
 
     /**
