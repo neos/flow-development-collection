@@ -337,7 +337,7 @@ class UriBuilder
      */
     protected function addNamespaceToArguments(array $arguments, ActionRequest $currentRequest)
     {
-        while ($currentRequest instanceof ActionRequest && !$currentRequest->isMainRequest()) {
+        while (!$currentRequest->isMainRequest()) {
             $argumentNamespace = $currentRequest->getArgumentNamespace();
             if ($argumentNamespace !== '') {
                 $arguments = [$argumentNamespace => $arguments];
@@ -476,7 +476,7 @@ class UriBuilder
     protected function getRequestNamespacePath(ActionRequest $request): string
     {
         $namespaceParts = [];
-        while ($request !== null && $request->isMainRequest() === false) {
+        while (!$request->isMainRequest()) {
             $namespaceParts[] = $request->getArgumentNamespace();
             $request = $request->getParentRequest();
         }

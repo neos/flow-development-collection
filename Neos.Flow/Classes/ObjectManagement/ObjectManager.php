@@ -128,8 +128,14 @@ class ObjectManager implements ObjectManagerInterface
         }
 
         $this->objects = $objects;
-        $this->objects[ObjectManagerInterface::class][self::KEY_INSTANCE] = $this;
-        $this->objects[get_class($this)][self::KEY_INSTANCE] = $this;
+        $this->objects[ObjectManagerInterface::class] = [
+            self::KEY_INSTANCE => $this,
+            self::KEY_SCOPE => ObjectConfiguration::SCOPE_SINGLETON
+        ];
+        $this->objects[get_class($this)] = [
+            self::KEY_INSTANCE => $this,
+            self::KEY_SCOPE => ObjectConfiguration::SCOPE_SINGLETON
+        ];
     }
 
     /**
@@ -266,8 +272,9 @@ class ObjectManager implements ObjectManagerInterface
      * are built right away.
      *
      * @param string $objectName Name of the object to instantiate
-     * @param class-string $className Name of the class implementing the object
-     * @return object The object, usually a lazy proxy
+     * @param class-string<T> $className Name of the class implementing the object
+     * @return T The object, usually a lazy proxy
+     * @template T of object
      * @throws Exception\CannotBuildObjectException
      * @throws \ReflectionException
      */
@@ -302,9 +309,17 @@ class ObjectManager implements ObjectManagerInterface
         ) {
             return;
         }
-        $this->objects[$className][self::KEY_INSTANCE] = $instance;
-        foreach ($this->objects[$className][self::KEY_OBJECTNAMES_PROVIDED] ?? [] as $providedObjectName) {
-            $this->objects[$providedObjectName][self::KEY_INSTANCE] = $instance;
+        $this->objects[$className] = [
+            self::KEY_INSTANCE => $instance,
+            self::KEY_SCOPE => ObjectConfiguration::SCOPE_SINGLETON
+        ];
+        if (array_key_exists(self::KEY_OBJECTNAMES_PROVIDED, $this->objects[$className])) {
+            foreach ($this->objects[$className][self::KEY_OBJECTNAMES_PROVIDED] as $providedObjectName) {
+                $this->objects[$providedObjectName] = [
+                    self::KEY_INSTANCE => $instance,
+                    self::KEY_SCOPE => ObjectConfiguration::SCOPE_SINGLETON
+                ];
+            }
         }
     }
 
@@ -640,22 +655,24 @@ class ObjectManager implements ObjectManagerInterface
     }
 
     /**
-     * @param class-string $className
-     * @param \Closure(): object $builder Creates the actual instance once the proxy is used for the first time
+     * @param class-string<T> $className
+     * @param \Closure():T $builder Creates the actual instance once the proxy is used for the first time
+     * @return T
+     * @template T of object
      * @throws \ReflectionException
      */
     protected function buildLazyProxy(string $className, \Closure $builder): object
     {
-        /** @phpstan-ignore method.notFound */
         return (new \ReflectionClass($className))->newLazyProxy($builder);
     }
 
     /**
      * Speed optimized alternative to ReflectionClass::newInstanceArgs()
      *
-     * @param string $className Name of the class to instantiate
+     * @param class-string<T> $className Name of the class to instantiate
      * @param array<mixed> $arguments Arguments to pass to the constructor
-     * @return object The object
+     * @return T The object
+     * @template T of object
      * @throws Exception\CannotBuildObjectException
      * @throws \Exception
      */

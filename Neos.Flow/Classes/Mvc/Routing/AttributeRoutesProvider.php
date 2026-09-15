@@ -173,7 +173,7 @@ final class AttributeRoutesProvider implements RoutesProviderInterface
                                 '@action' => $action,
                                 '@format' => 'html'
                             ], fn ($value) => $value !== null),
-                            $annotation->defaults ?? []
+                            $annotation->defaults
                         )
                     ];
                     $routesByClassName[$className][] = $configuration;

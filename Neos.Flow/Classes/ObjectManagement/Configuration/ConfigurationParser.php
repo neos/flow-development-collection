@@ -98,6 +98,7 @@ readonly class ConfigurationParser
             } elseif (array_key_exists('setting', $propertyValue)) {
                 $property = new ConfigurationProperty($propertyName, ['type' => ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'path' => $propertyValue['setting']], ConfigurationProperty::PROPERTY_TYPES_CONFIGURATION);
             } else {
+                /** @phpstan-ignore function.alreadyNarrowedType (Annotations can be wrong) */
                 throw new InvalidObjectConfigurationException('Invalid configuration syntax. Expecting "value", "object" or "setting" as value for property "' . $propertyName . '", instead found "' . (is_array($propertyValue) ? implode(', ', array_keys($propertyValue)) : $propertyValue) . '" (source: ' . $objectConfiguration->getConfigurationSourceHint() . ')', 1230563249);
             }
             $objectConfiguration->setProperty($property);
@@ -127,6 +128,7 @@ readonly class ConfigurationParser
             } elseif (array_key_exists('setting', $argumentValue)) {
                 $argument = new ConfigurationArgument($argumentIndex, $argumentValue['setting'], ConfigurationArgument::ARGUMENT_TYPES_SETTING);
             } else {
+                /** @phpstan-ignore function.alreadyNarrowedType (Annotations can be wrong) */
                 throw new InvalidObjectConfigurationException('Invalid configuration syntax. Expecting "value", "object" or "setting" as value for argument "' . $argumentName . '", instead found "' . (is_array($argumentValue) ? implode(', ', array_keys($argumentValue)) : $argumentValue) . '" (source: ' . $objectConfiguration->getConfigurationSourceHint() . ')', 1230563250);
             }
             if (isset($rawConfigurationOptions['factoryObjectName']) || isset($rawConfigurationOptions['factoryMethodName'])) {
