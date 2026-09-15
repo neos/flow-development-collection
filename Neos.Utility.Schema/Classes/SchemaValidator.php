@@ -531,7 +531,6 @@ class SchemaValidator
             switch ($schema['format']) {
                 case 'date-time':
                     // YYYY-MM-DDThh:mm:ssZ ISO8601
-                    /** @phpstan-ignore staticMethod.resultUnused (we only care about the error) */
                     \DateTime::createFromFormat(\DateTime::ISO8601, $value);
                     $parseErrors = \DateTime::getLastErrors();
                     if ($parseErrors && $parseErrors['error_count'] > 0) {
@@ -540,7 +539,6 @@ class SchemaValidator
                     break;
                 case 'date':
                     // YYYY-MM-DD
-                    /** @phpstan-ignore staticMethod.resultUnused (we only care about the error) */
                     \DateTime::createFromFormat('Y-m-d', $value);
                     $parseErrors = \DateTime::getLastErrors();
                     if ($parseErrors && $parseErrors['error_count'] > 0) {
@@ -549,7 +547,6 @@ class SchemaValidator
                     break;
                 case 'time':
                     // hh:mm:ss
-                    /** @phpstan-ignore staticMethod.resultUnused (we only care about the error) */
                     \DateTime::createFromFormat('H:i:s', $value);
                     $parseErrors = \DateTime::getLastErrors();
                     if ($parseErrors && $parseErrors['error_count'] > 0) {
