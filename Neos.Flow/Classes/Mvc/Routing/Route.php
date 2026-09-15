@@ -188,7 +188,6 @@ class Route
      */
     public static function fromConfiguration(array $configuration): static
     {
-        /** @phpstan-ignore new.static */
         $route = new static();
         if (isset($configuration['name'])) {
             $route->setName($configuration['name']);

@@ -92,7 +92,6 @@ class MvcPropertyMappingConfigurationService
             }
         }
         if ($fieldNamePrefix !== '') {
-            /** @phpstan-ignore nullCoalesce.offset (set by reference) */
             $formFieldArray = $formFieldArray[$fieldNamePrefix] ?? [];
         }
         return $this->serializeAndHashFormFieldArray($formFieldArray);
