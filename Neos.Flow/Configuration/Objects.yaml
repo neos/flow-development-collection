@@ -316,6 +316,8 @@ Neos\Flow\ObjectManagement\Proxy\Compiler:
 
 Doctrine\ORM\EntityManagerInterface:
   scope: singleton
+  # knowing the returned class name allows the object manager to make this lazy
+  className: Doctrine\ORM\EntityManager
   factoryObjectName: Neos\Flow\Persistence\Doctrine\EntityManagerFactory
 
 Doctrine\DBAL\Connection:

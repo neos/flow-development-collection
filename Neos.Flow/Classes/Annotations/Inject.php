@@ -32,6 +32,7 @@ final class Inject
      * proxy should be injected instead
      *
      * @var boolean
+     * @deprecated To be removed with 10.0 - No longer observed, we use PHP 8.4 lazy objects everywhere by default if possible.
      */
     public $lazy = true;
 

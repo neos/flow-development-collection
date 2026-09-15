@@ -16,7 +16,6 @@ use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\Exception\ForwardException;
 use Neos\Flow\Mvc\Exception\InfiniteLoopException;
 use Neos\Flow\Mvc\Exception\StopActionException;
-use Neos\Flow\ObjectManagement\DependencyInjection\DependencyProxy;
 use Neos\FluidAdaptor\Core\Rendering\RenderingContext;
 use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
 use Neos\FluidAdaptor\Core\ViewHelper\Facets\ChildNodeAccessInterface;
@@ -144,13 +143,7 @@ abstract class AbstractWidgetViewHelper extends AbstractViewHelper implements Ch
         $this->widgetContext->setNonAjaxWidgetConfiguration($this->getNonAjaxWidgetConfiguration());
         $this->initializeWidgetIdentifier();
 
-        /** @phpstan-ignore-next-line the mind of the great phpstan can and will not comprehend this */
-        if ($this->controller instanceof \Neos\Flow\ObjectManagement\DependencyInjection\DependencyProxy) {
-            $controllerObjectName = $this->controller->_getClassName();
-        } else {
-            $controllerObjectName = get_class($this->controller);
-        }
-        $this->widgetContext->setControllerObjectName($controllerObjectName);
+        $this->widgetContext->setControllerObjectName(get_class($this->controller));
     }
 
     /**
@@ -217,10 +210,6 @@ abstract class AbstractWidgetViewHelper extends AbstractViewHelper implements Ch
      */
     protected function initiateSubRequest()
     {
-        /** @phpstan-ignore-next-line the mind of the great phpstan can and will not comprehend this */
-        if ($this->controller instanceof DependencyProxy) {
-            $this->controller->_activateDependency();
-        }
         if (!($this->controller instanceof AbstractWidgetController)) {
             throw new Exception\MissingControllerException('initiateSubRequest() can not be called if there is no controller inside $this->controller. Make sure to add the @Neos\Flow\Annotations\Inject annotation in your widget class.', 1284401632);
         }
