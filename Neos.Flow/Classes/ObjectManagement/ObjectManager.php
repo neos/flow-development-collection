@@ -231,6 +231,7 @@ class ObjectManager implements ObjectManagerInterface
             throw new Exception\UnknownObjectException('Object "' . $objectName . '" is not registered.' . $hint, 1264589155);
         }
 
+        /** @var class-string $className */
         // Someone might have requested the implementation class directly, in that case we want to reuse that instance when requesting the object.
         if (
             $objectName !== $className
@@ -278,7 +279,9 @@ class ObjectManager implements ObjectManagerInterface
         if ($this->hasInternalClassInAncestry($className)) {
             return $builder();
         }
-        return $this->buildLazyProxy($className, $builder);
+        $instance = $this->buildLazyProxy($className, $builder);
+        $this->registerInstance($objectName, $className, $instance);
+        return $instance;
     }
 
     /**
