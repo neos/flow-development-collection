@@ -23,7 +23,7 @@ class AdviceChain
 {
     /**
      * An array of Advice objects which form the advice chain
-     * @var array
+     * @var array<AdviceInterface>
      */
     protected $advices;
 
@@ -36,7 +36,7 @@ class AdviceChain
     /**
      * Initializes the advice chain
      *
-     * @param array $advices An array of AdviceInterface compatible objects which form the chain of advices
+     * @param array<AdviceInterface> $advices An array of AdviceInterface compatible objects which form the chain of advices
      */
     public function __construct(array $advices)
     {
@@ -49,7 +49,7 @@ class AdviceChain
      * left in the chain, the proxy classes' method invokeJoinpoint() will finally
      * be called.
      *
-     * @param  JoinPointInterface $joinPoint The current join point (ie. the context)
+     * @param JoinPointInterface $joinPoint The current join point (ie. the context)
      * @return mixed Result of the advice or the original method of the target class
      */
     public function proceed(JoinPointInterface &$joinPoint)

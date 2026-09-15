@@ -38,6 +38,7 @@ use Neos\Flow\Property\TypeConverter\Error\TargetNotFoundError;
 use Neos\Flow\Reflection\ReflectionService;
 use Neos\Utility\TypeHandling;
 use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\StreamInterface;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -111,7 +112,7 @@ class ActionController extends AbstractController
      *
      * array('html' => 'MyCompany\MyApp\MyHtmlView', 'json' => 'MyCompany\...
      *
-     * @var array
+     * @var array<string,array<string>>
      */
     protected $viewFormatToObjectNameMap = [];
 
@@ -146,7 +147,7 @@ class ActionController extends AbstractController
     protected $errorMethodName = 'errorAction';
 
     /**
-     * @var array
+     * @var array<mixed>
      */
     protected $settings;
 
@@ -169,7 +170,7 @@ class ActionController extends AbstractController
     protected $enableDynamicTypeValidation = false;
 
     /**
-     * @param array $settings
+     * @param array<mixed> $settings
      * @return void
      */
     public function injectSettings(array $settings)
@@ -229,8 +230,9 @@ class ActionController extends AbstractController
 
         $this->initializeAction();
         $actionInitializationMethodName = 'initialize' . ucfirst($this->actionMethodName);
-        if (method_exists($this, $actionInitializationMethodName)) {
-            call_user_func([$this, $actionInitializationMethodName]);
+        $userFunc = [$this, $actionInitializationMethodName];
+        if (is_callable($userFunc)) {
+            call_user_func($userFunc);
         }
 
         $this->mvcPropertyMappingConfigurationService->initializePropertyMappingConfigurationFromRequest($request, $this->arguments);
@@ -331,7 +333,7 @@ class ActionController extends AbstractController
      * Returns a map of action method names and their parameters.
      *
      * @param ObjectManagerInterface $objectManager
-     * @return array Array of method parameters by action name
+     * @return array<string,mixed> Array of method parameters by action name
      * @Flow\CompileStatic
      */
     public static function getActionMethodParameters($objectManager)
@@ -346,7 +348,7 @@ class ActionController extends AbstractController
             if (strlen($methodName) > 6 && strpos($methodName, 'Action', strlen($methodName) - 6) !== false) {
                 $result[$methodName] = $reflectionService->getMethodParameters($className, $methodName);
 
-                /* @var $requestBodyAnnotation Flow\MapRequestBody */
+                /** @var Flow\MapRequestBody|null $requestBodyAnnotation */
                 $requestBodyAnnotation = $reflectionService->getMethodAnnotation($className, $methodName, Flow\MapRequestBody::class);
                 if ($requestBodyAnnotation !== null) {
                     $requestBodyArgument = $requestBodyAnnotation->argumentName;
@@ -365,7 +367,7 @@ class ActionController extends AbstractController
      * This is a helper method purely used to make initializeActionMethodValidators()
      * testable without mocking static methods.
      *
-     * @return array
+     * @return array<mixed>
      */
     protected function getInformationNeededForInitializeActionMethodValidators()
     {
@@ -437,7 +439,7 @@ class ActionController extends AbstractController
      * Returns a map of action method names and their validation groups.
      *
      * @param ObjectManagerInterface $objectManager
-     * @return array Array of validation groups by action method name
+     * @return array<string,array<string>> Array of validation groups by action method name
      * @Flow\CompileStatic
      */
     public static function getActionValidationGroups($objectManager)
@@ -450,6 +452,7 @@ class ActionController extends AbstractController
         $methodNames = get_class_methods($className);
         foreach ($methodNames as $methodName) {
             if (strlen($methodName) > 6 && strpos($methodName, 'Action', strlen($methodName) - 6) !== false) {
+                /** @var Flow\ValidationGroups|null $validationGroupsAnnotation */
                 $validationGroupsAnnotation = $reflectionService->getMethodAnnotation($className, $methodName, Flow\ValidationGroups::class);
                 if ($validationGroupsAnnotation !== null) {
                     $result[$methodName] = $validationGroupsAnnotation->validationGroups;
@@ -464,7 +467,7 @@ class ActionController extends AbstractController
      * Returns a map of action method names and their validation parameters.
      *
      * @param ObjectManagerInterface $objectManager
-     * @return array Array of validate annotation parameters by action method name
+     * @return array<string,array<array{type: ?string, options: array<mixed>, argumentName: string}>> Array of validate annotation parameters by action method name
      * @Flow\CompileStatic
      */
     public static function getActionValidateAnnotationData($objectManager)
@@ -572,6 +575,10 @@ class ActionController extends AbstractController
                 return $result;
             }
 
+            if (!$result instanceof StreamInterface) {
+                throw new \Exception('Cannot assign object of type ' . get_class($result) . ' to HTTP response body', 1744326907);
+            }
+
             return $httpResponse->withBody($result);
         }
 
@@ -580,7 +587,7 @@ class ActionController extends AbstractController
 
     /**
      * @param ObjectManagerInterface $objectManager
-     * @return array Array of argument names as key by action method name
+     * @return array<string,array<string,array{evaluate: bool}>> Array of argument names as key by action method name
      * @Flow\CompileStatic
      */
     public static function getActionIgnoredValidationArguments($objectManager)
@@ -611,7 +618,7 @@ class ActionController extends AbstractController
 
     /**
      * @param ObjectManagerInterface $objectManager
-     * @return array Array of all public action method names, indexed by method name
+     * @return array<string,true> Array of all public action method names, indexed by method name
      * @Flow\CompileStatic
      */
     public static function getPublicActionMethods($objectManager)
@@ -677,6 +684,7 @@ class ActionController extends AbstractController
      * before passing it on to further rendering
      *
      * @param ViewInterface $view
+     * @return void
      * @Flow\Signal
      */
     protected function emitViewResolved(ViewInterface $view)
@@ -756,10 +764,11 @@ class ActionController extends AbstractController
      */
     protected function handleTargetNotFoundError()
     {
-        foreach (array_keys($this->request->getArguments()) as $argumentName) {
-            /** @var TargetNotFoundError $targetNotFoundError */
-            $targetNotFoundError = $this->arguments->getValidationResults()->forProperty($argumentName)->getFirstError(TargetNotFoundError::class);
-            if ($targetNotFoundError !== false) {
+        foreach (array_keys($this->request?->getArguments() ?: []) as $argumentName) {
+            $targetNotFoundError = $this->arguments->getValidationResults()
+                ->forProperty($argumentName)
+                ->getFirstError(TargetNotFoundError::class);
+            if ($targetNotFoundError instanceof TargetNotFoundError) {
                 throw new TargetNotFoundException($targetNotFoundError->getMessage(), $targetNotFoundError->getCode());
             }
         }
@@ -789,7 +798,7 @@ class ActionController extends AbstractController
      */
     protected function forwardToReferringRequest()
     {
-        $referringRequest = $this->request->getReferringRequest();
+        $referringRequest = $this->request?->getReferringRequest();
         if ($referringRequest === null) {
             return;
         }
@@ -799,7 +808,7 @@ class ActionController extends AbstractController
             $packageKey .= '\\' . $subpackageKey;
         }
         $argumentsForNextController = $referringRequest->getArguments();
-        $argumentsForNextController['__submittedArguments'] = $this->request->getArguments();
+        $argumentsForNextController['__submittedArguments'] = $this->request?->getArguments() ?: [];
         $argumentsForNextController['__submittedArgumentValidationResults'] = $this->arguments->getValidationResults();
 
         $this->forward($referringRequest->getControllerActionName(), $referringRequest->getControllerName(), $packageKey, $argumentsForNextController);

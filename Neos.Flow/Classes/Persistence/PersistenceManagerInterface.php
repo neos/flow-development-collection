@@ -23,7 +23,7 @@ interface PersistenceManagerInterface
     /**
      * Injects the Flow settings, called by Flow.
      *
-     * @param array $settings
+     * @param array<string,mixed> $settings
      * @return void
      * @api
      */

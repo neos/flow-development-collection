@@ -22,6 +22,9 @@ use Neos\Flow\Package\PackageManager;
 
 abstract class LogEnvironment
 {
+    /**
+     * @var array<string,true>
+     */
     protected static array $packageKeys = [];
 
     protected static bool $initialized = false;
@@ -31,8 +34,7 @@ abstract class LogEnvironment
      * under the key FLOW_LOG_ENVIRONMENT to be set as part of
      * the additional data in an log method call.
      *
-     * @param string $methodName
-     * @return array
+     * @return array<string,array{packageKey: ?string, className: string, methodName: string}>
      */
     public static function fromMethodName(string $methodName): array
     {
@@ -58,6 +60,8 @@ abstract class LogEnvironment
      * Returns an array containing the log environment variables
      * under the key FLOW_LOG_ENVIRONMENT to be set as part of the
      * additional data in an log method call.
+     *
+     * @return array<string,array{packageKey: ?string, className: string, methodName: string}>
      */
     public static function fromClassAndMethodName(string $className, string $methodName): array
     {
@@ -92,6 +96,7 @@ abstract class LogEnvironment
     }
 
     /**
+     * @return array<string,true>
      * @Flow\CompileStatic
      */
     protected static function getPackageKeys(): array

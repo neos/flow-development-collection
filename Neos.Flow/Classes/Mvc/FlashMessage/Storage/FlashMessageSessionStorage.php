@@ -30,7 +30,7 @@ class FlashMessageSessionStorage implements FlashMessageStorageInterface
     protected $session;
 
     /**
-     * @var array
+     * @var array<mixed>
      */
     private $options;
 
@@ -45,7 +45,7 @@ class FlashMessageSessionStorage implements FlashMessageStorageInterface
     private $flashMessageContainer;
 
     /**
-     * @param array $options
+     * @param array<mixed> $options
      */
     public function __construct(array $options = [])
     {

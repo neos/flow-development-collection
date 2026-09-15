@@ -23,7 +23,7 @@ use Neos\Flow\Mvc\Exception\NoSuchArgumentException;
 class Request
 {
     /**
-     * @var string
+     * @var ?class-string<CommandControllerInterface>
      */
     protected $controllerObjectName;
 
@@ -39,12 +39,12 @@ class Request
 
     /**
      * The arguments for this request
-     * @var array
+     * @var array<string,mixed>
      */
     protected $arguments = [];
 
     /**
-     * @var array
+     * @var array<int,mixed>
      */
     protected $exceedingArguments = [];
 
@@ -82,7 +82,7 @@ class Request
     /**
      * Sets the object name of the controller
      *
-     * @param string $controllerObjectName Object name of the controller which processes this request
+     * @param class-string<CommandControllerInterface> $controllerObjectName Object name of the controller which processes this request
      * @return void
      */
     public function setControllerObjectName(string $controllerObjectName)
@@ -94,9 +94,9 @@ class Request
     /**
      * Returns the object name of the controller
      *
-     * @return string The controller's object name
+     * @return ?class-string<CommandControllerInterface> The controller's object name
      */
-    public function getControllerObjectName(): string
+    public function getControllerObjectName(): ?string
     {
         return $this->controllerObjectName;
     }
@@ -133,6 +133,9 @@ class Request
     public function getCommand(): Command
     {
         if ($this->command === null) {
+            if ($this->controllerObjectName === null) {
+                throw new \RuntimeException('missing controller object name', 1744472740);
+            }
             $this->command = new Command($this->controllerObjectName, $this->controllerCommandName);
         }
         return $this->command;
@@ -157,7 +160,7 @@ class Request
     /**
      * Sets the whole arguments array and therefore replaces any arguments which existed before.
      *
-     * @param array $arguments An array of argument names and their values
+     * @param array<string,mixed> $arguments An array of argument names and their values
      * @return void
      */
     public function setArguments(array $arguments)
@@ -194,7 +197,7 @@ class Request
     /**
      * Returns an ArrayObject of arguments and their values
      *
-     * @return array Array of arguments and their values (which may be arguments and values as well)
+     * @return array<string,mixed> Array of arguments and their values (which may be arguments and values as well)
      */
     public function getArguments(): array
     {
@@ -204,7 +207,7 @@ class Request
     /**
      * Sets the exceeding arguments
      *
-     * @param array $exceedingArguments Numeric array of exceeding arguments
+     * @param array<int,mixed> $exceedingArguments Numeric array of exceeding arguments
      * @return void
      */
     public function setExceedingArguments(array $exceedingArguments)
@@ -220,7 +223,7 @@ class Request
      * ./flow acme:foo --argument1 Foo --argument2 Bar baz quux
      * this method would return array(0 => 'baz', 1 => 'quux')
      *
-     * @return array Numeric array of exceeding argument values
+     * @return array<int, mixed> Numeric array of exceeding argument values
      */
     public function getExceedingArguments(): array
     {

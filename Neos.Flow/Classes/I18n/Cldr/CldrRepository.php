@@ -40,6 +40,14 @@ class CldrRepository
     protected $localizationService;
 
     /**
+     * An array of models requested at least once in current request
+     * indexed by filename.
+     *
+     * @var array<string,CldrModel>
+     */
+    protected $modelsByFilename = [];
+
+    /**
      * An array of models requested at least once in current request.
      *
      * This is an associative array with pairs as follow:
@@ -52,9 +60,9 @@ class CldrRepository
      * reside and 'locale' is used to define which files are included in the
      * relation (e.g. for locale 'en_GB' files would be: root + en + en_GB).
      *
-     * @var array<CldrModel>
+     * @var array<string,array<string,CldrModel>>
      */
-    protected $models;
+    protected $models = [];
 
     /**
      * @param I18n\Service $localizationService
@@ -74,21 +82,22 @@ class CldrRepository
      * file.
      *
      * @param string $filename Relative (from CLDR root) path to existing CLDR file
-     * @return CldrModel|false A CldrModel instance or false on failure
+     * @return CldrModel|false An array of CldrModel instances indexed by Locale or false on failure
      */
     public function getModel($filename)
     {
         $filename = Files::concatenatePaths([$this->cldrBasePath, $filename . '.xml']);
 
-        if (isset($this->models[$filename])) {
-            return $this->models[$filename];
+        $cachedModel = $this->modelsByFilename[$filename] ?? null;
+        if ($cachedModel instanceof CldrModel) {
+            return $cachedModel;
         }
 
         if (!is_file($filename)) {
             return false;
         }
 
-        return $this->models[$filename] = new CldrModel([$filename]);
+        return $this->modelsByFilename[$filename] = new CldrModel([$filename]);
     }
 
     /**
@@ -111,8 +120,9 @@ class CldrRepository
     {
         $directoryPath = Files::concatenatePaths([$this->cldrBasePath, $directoryPath]);
 
-        if (isset($this->models[$directoryPath][(string)$locale])) {
-            return $this->models[$directoryPath][(string)$locale];
+        $cachedModel = $this->models[$directoryPath][(string)$locale] ?? null;
+        if ($cachedModel instanceof CldrModel) {
+            return $cachedModel;
         }
 
         if (!is_dir($directoryPath)) {

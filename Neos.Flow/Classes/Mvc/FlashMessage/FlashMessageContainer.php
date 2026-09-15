@@ -23,7 +23,7 @@ use Neos\Flow\Annotations as Flow;
 class FlashMessageContainer
 {
     /**
-     * @var array
+     * @var array<int,Message>
      */
     protected $messages = [];
 

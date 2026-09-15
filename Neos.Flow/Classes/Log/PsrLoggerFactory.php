@@ -24,14 +24,14 @@ class PsrLoggerFactory implements PsrLoggerFactoryInterface
     protected $instances = [];
 
     /**
-     * @var array
+     * @var array<mixed>
      */
     protected $configuration = [];
 
     /**
      * PsrLoggerFactory constructor.
      *
-     * @param array $configuration
+     * @param array<mixed> $configuration
      */
     public function __construct(array $configuration = [])
     {
@@ -70,7 +70,7 @@ class PsrLoggerFactory implements PsrLoggerFactoryInterface
     /**
      * Create a new instance of this PsrLoggerFactory
      *
-     * @param array $configuration
+     * @param array<mixed> $configuration
      * @return PsrLoggerFactory
      * @api
      */
@@ -82,7 +82,7 @@ class PsrLoggerFactory implements PsrLoggerFactoryInterface
     /**
      * Instantiate all configured backends
      *
-     * @param array $configuration
+     * @param array<mixed> $configuration
      * @return BackendInterface[]
      * @throws \Exception
      */
@@ -102,7 +102,7 @@ class PsrLoggerFactory implements PsrLoggerFactoryInterface
      * Instantiate a backend based on configuration.
      *
      * @param string $class
-     * @param array $options
+     * @param array<mixed> $options
      * @return BackendInterface
      * @throws \Exception
      */

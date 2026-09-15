@@ -29,7 +29,7 @@ class DatabaseCommandController extends CommandController
 {
     /**
      * @Flow\InjectConfiguration(path="persistence")
-     * @var array
+     * @var array<string, mixed>
      */
     protected $persistenceSettings = [];
 
@@ -83,6 +83,7 @@ class DatabaseCommandController extends CommandController
      * @param string $collation Collation to use, defaults to utf8mb4_unicode_ci
      * @param string $output A file to write SQL to, instead of executing it
      * @param boolean $verbose If set, the statements will be shown as they are executed
+     * @return void
      * @throws ConnectionException
      * @throws DBALException
      * @throws StopActionException
@@ -116,6 +117,7 @@ class DatabaseCommandController extends CommandController
      * @param string $collation Collation to set, must be compatible with the character set
      * @param string $outputPathAndFilename
      * @param boolean $verbose
+     * @return void
      * @throws ConnectionException
      * @throws DBALException
      */
@@ -125,7 +127,7 @@ class DatabaseCommandController extends CommandController
 
         $statements[] = 'ALTER DATABASE ' . $this->connection->quoteIdentifier($this->persistenceSettings['backendOptions']['dbname']) . ' CHARACTER SET ' . $characterSet . ' COLLATE ' . $collation;
 
-        $tableNames = $this->connection->createSchemaManager()->listTableNames() ?? [];
+        $tableNames = $this->connection->createSchemaManager()->listTableNames();
         foreach ($tableNames as $tableName) {
             $statements[] = 'ALTER TABLE ' . $this->connection->quoteIdentifier($tableName) . ' DEFAULT CHARACTER SET ' . $characterSet . ' COLLATE ' . $collation;
             $statements[] = 'ALTER TABLE ' . $this->connection->quoteIdentifier($tableName) . ' CONVERT TO CHARACTER SET ' . $characterSet . ' COLLATE ' . $collation;

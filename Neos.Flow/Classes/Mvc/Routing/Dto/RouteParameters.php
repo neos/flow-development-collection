@@ -30,12 +30,12 @@ final class RouteParameters implements CacheAwareInterface
     /**
      * The parameters as simple key/value pair in the format ['<parameter1Key>' => <parameter1Value>, ...]
      *
-     * @var array
+     * @var array<string, mixed>
      */
     private $parameters;
 
     /**
-     * @param array $parameters simple key/value pair in the format ['<parameter1Key>' => <parameter1Value>, ...]
+     * @param array<string, mixed> $parameters simple key/value pair in the format ['<parameter1Key>' => <parameter1Value>, ...]
      */
     private function __construct(array $parameters)
     {
@@ -62,7 +62,7 @@ final class RouteParameters implements CacheAwareInterface
     public function withParameter(string $parameterName, $parameterValue): self
     {
         if (!TypeHandling::isLiteral(gettype($parameterValue)) && (!$parameterValue instanceof CacheAwareInterface)) {
-            throw new \InvalidArgumentException(sprintf('Parameter values must be literal types or implement the CacheAwareInterface, given: "%s"', is_object($parameterValue) ? get_class($parameterValue) : gettype($parameterValue)), 1511194273);
+            throw new \InvalidArgumentException(sprintf('Parameter values must be literal types or implement the CacheAwareInterface, given: "%s"', get_debug_type($parameterValue)), 1511194273);
         }
         $newParameters = $this->parameters;
         $newParameters[$parameterName] = $parameterValue;
@@ -100,7 +100,7 @@ final class RouteParameters implements CacheAwareInterface
     }
 
     /**
-     * @return array
+     * @return array<string, mixed>
      */
     public function toArray(): array
     {

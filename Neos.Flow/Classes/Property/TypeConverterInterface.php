@@ -105,7 +105,7 @@ interface TypeConverterInterface
      *
      * @param mixed $source
      * @param string $targetType
-     * @param array $convertedChildProperties
+     * @param array<string,mixed> $convertedChildProperties
      * @param PropertyMappingConfigurationInterface|null $configuration
      * @return mixed|Error the target type, or an error object if a user-error occurred
      * @throws Exception\TypeConverterException thrown in case a developer error occurred

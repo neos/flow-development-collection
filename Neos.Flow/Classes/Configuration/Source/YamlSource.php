@@ -77,7 +77,7 @@ class YamlSource
      *
      * @param string $pathAndFilename Full path and filename of the file to load, excluding the file extension (ie. ".yaml")
      * @param boolean $allowSplitSource If true, the type will be used as a prefix when looking for configuration files
-     * @return array
+     * @return array<mixed>
      * @throws ParseErrorException
      * @throws \Neos\Flow\Configuration\Exception
      */
@@ -86,9 +86,9 @@ class YamlSource
         $this->detectFilesWithWrongExtension($pathAndFilename, $allowSplitSource);
         $pathsAndFileNames = [$pathAndFilename . '.yaml'];
         if ($allowSplitSource === true) {
-            $splitSourcePathsAndFileNames = glob($pathAndFilename . '.*.yaml');
-            $splitSourcePathsAndFileNames = array_merge($splitSourcePathsAndFileNames, glob($pathAndFilename . '.*.yml'));
-            if ($splitSourcePathsAndFileNames !== false) {
+            $splitSourcePathsAndFileNames = glob($pathAndFilename . '.*.yaml') ?: [];
+            $splitSourcePathsAndFileNames = array_merge($splitSourcePathsAndFileNames, glob($pathAndFilename . '.*.yml') ?: []);
+            if ($splitSourcePathsAndFileNames != []) {
                 sort($splitSourcePathsAndFileNames);
                 $pathsAndFileNames = array_merge($pathsAndFileNames, $splitSourcePathsAndFileNames);
             }
@@ -103,6 +103,7 @@ class YamlSource
     /**
      * @param string $pathAndFilename
      * @param bool $allowSplitSource
+     * @return void
      * @throws \Neos\Flow\Configuration\Exception
      */
     protected function detectFilesWithWrongExtension($pathAndFilename, $allowSplitSource = false)
@@ -126,8 +127,8 @@ class YamlSource
      * Loads the file with the given path and merge it's contents into the configuration array.
      *
      * @param string $pathAndFilename
-     * @param array $configuration
-     * @return array
+     * @param array<mixed> $configuration
+     * @return array<mixed>
      * @throws ParseErrorException
      */
     protected function mergeFileContent(string $pathAndFilename, array $configuration): array
@@ -138,6 +139,9 @@ class YamlSource
 
         try {
             $yaml = file_get_contents($pathAndFilename);
+            if ($yaml === false) {
+                throw new ParseErrorException('Failed to load content from file "' . $pathAndFilename . '".', 1744463546);
+            }
             if ($this->usePhpYamlExtension) {
                 $loadedConfiguration = @yaml_parse($yaml);
                 if ($loadedConfiguration === false) {
@@ -166,7 +170,7 @@ class YamlSource
      * Save the specified configuration array to the given file in YAML format.
      *
      * @param string $pathAndFilename Full path and filename of the file to write to, excluding the dot and file extension (i.e. ".yaml")
-     * @param array $configuration The configuration to save
+     * @param array<mixed> $configuration The configuration to save
      * @return void
      */
     public function save(string $pathAndFilename, array $configuration)
@@ -190,14 +194,16 @@ class YamlSource
     {
         $header = '';
         $fileHandle = fopen($pathAndFilename, 'r');
-        while ($line = fgets($fileHandle)) {
-            if (preg_match('/^#/', $line)) {
-                $header .= $line;
-            } else {
-                break;
+        if ($fileHandle !== false) {
+            while ($line = fgets($fileHandle)) {
+                if (preg_match('/^#/', $line)) {
+                    $header .= $line;
+                } else {
+                    break;
+                }
             }
+            fclose($fileHandle);
         }
-        fclose($fileHandle);
         return $header;
     }
 }

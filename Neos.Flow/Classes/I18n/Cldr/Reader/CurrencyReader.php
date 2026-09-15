@@ -38,7 +38,7 @@ class CurrencyReader
     /**
      * An array of fractions data, indexed by currency code.
      *
-     * @var array
+     * @var array<string,array{digits: int, rounding: int}>
      */
     protected $fractions;
 
@@ -82,7 +82,7 @@ class CurrencyReader
      * Returns an array with keys "digits" and "rounding", each an integer.
      *
      * @param string $currencyCode
-     * @return array ['digits' => int, 'rounding => int]
+     * @return array{digits: int, rounding: int}
      */
     public function getFraction(string $currencyCode): array
     {
@@ -103,6 +103,9 @@ class CurrencyReader
     protected function generateFractions(): void
     {
         $model = $this->cldrRepository->getModel('supplemental/supplementalData');
+        if (!$model) {
+            throw new \Exception('Missing model for supplemental/supplementalData', 1744411964);
+        }
         $currencyData = $model->getRawArray('currencyData');
 
         foreach ($currencyData['fractions'] as $fractionString) {

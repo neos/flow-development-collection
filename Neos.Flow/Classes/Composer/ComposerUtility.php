@@ -27,14 +27,14 @@ class ComposerUtility
     /**
      * Runtime cache for composer.json data
      *
-     * @var array
+     * @var array<string,array<string,mixed>>
      */
     protected static $composerManifestCache;
 
     /**
      * Runtime cache for composer.lock data
      *
-     * @var array
+     * @var array<string,mixed>
      */
     protected static $composerLockCache;
 
@@ -42,15 +42,12 @@ class ComposerUtility
      * Returns contents of Composer manifest - or part there of.
      *
      * @param string $manifestPath
-     * @param string $configurationPath Optional. Only return the part of the manifest indexed by configurationPath
-     * @return array|mixed
+     * @param ?string $configurationPath Optional. Only return the part of the manifest indexed by configurationPath
+     * @return mixed
      */
     public static function getComposerManifest(string $manifestPath, ?string $configurationPath = null)
     {
         $composerManifest = static::readComposerManifest($manifestPath);
-        if ($composerManifest === null) {
-            return null;
-        }
 
         if ($configurationPath !== null) {
             return ObjectAccess::getPropertyPath($composerManifest, $configurationPath);
@@ -61,7 +58,7 @@ class ComposerUtility
     /**
      * Read the content of the composer.lock
      *
-     * @return array
+     * @return array<string,mixed>
      */
     public static function readComposerLock(): array
     {
@@ -73,8 +70,8 @@ class ComposerUtility
             return [];
         }
 
-        $json = file_get_contents(FLOW_PATH_ROOT . 'composer.lock');
-        $composerLock = json_decode($json, true);
+        $json = file_get_contents(FLOW_PATH_ROOT . 'composer.lock') ?: '';
+        $composerLock = json_decode($json, true, flags: JSON_THROW_ON_ERROR);
         $composerPackageVersions = isset($composerLock['packages']) ? $composerLock['packages'] : [];
         $composerPackageDevVersions = isset($composerLock['packages-dev']) ? $composerLock['packages-dev'] : [];
         self::$composerLockCache = array_merge($composerPackageVersions, $composerPackageDevVersions);
@@ -86,7 +83,7 @@ class ComposerUtility
      * Read the content of composer.json in the given path
      *
      * @param string $manifestPath
-     * @return array
+     * @return array<string,mixed>
      * @throws Exception\MissingPackageManifestException
      */
     protected static function readComposerManifest(string $manifestPath): array
@@ -99,8 +96,8 @@ class ComposerUtility
         if (!is_file($manifestPathAndFilename)) {
             throw new Exception\MissingPackageManifestException(sprintf('No composer manifest file found at "%s".', $manifestPathAndFilename), 1349868540);
         }
-        $json = file_get_contents($manifestPathAndFilename);
-        $composerManifest = json_decode($json, true);
+        $json = file_get_contents($manifestPathAndFilename) ?: '';
+        $composerManifest = json_decode($json, true, flags: JSON_THROW_ON_ERROR);
 
         if ($composerManifest === null) {
             throw new Exception\InvalidPackageManifestException(sprintf('The composer manifest file found at "%s" could not be parsed. Check for JSON syntax errors!', $manifestPathAndFilename), 1493909988);
@@ -132,8 +129,8 @@ class ComposerUtility
      *
      * @param string $manifestPath
      * @param FlowPackageKey $packageKey
-     * @param array $composerManifestData
-     * @return array the manifest data written
+     * @param array<string,mixed> $composerManifestData
+     * @return array<string,mixed> the manifest data written
      */
     public static function writeComposerManifest(string $manifestPath, FlowPackageKey $packageKey, array $composerManifestData = []): array
     {
@@ -141,9 +138,7 @@ class ComposerUtility
             'description' => ''
         ];
 
-        if ($composerManifestData !== null) {
-            $manifest = array_merge($manifest, $composerManifestData);
-        }
+        $manifest = array_merge($manifest, $composerManifestData);
         if (!isset($manifest['name']) || empty($manifest['name'])) {
             $manifest['name'] = $packageKey->deriveComposerPackageName();
         }

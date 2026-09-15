@@ -99,7 +99,7 @@ class EntityManagerConfiguration
     }
 
     /**
-     * @param array $configuredSubscribers
+     * @param array<class-string> $configuredSubscribers
      * @param EventManager $eventManager
      * @throws IllegalObjectTypeException
      */
@@ -115,7 +115,7 @@ class EntityManagerConfiguration
     }
 
     /**
-     * @param array $configuredListeners
+     * @param array<array{listener: class-string<object>, events: string|array<string>}> $configuredListeners
      * @param EventManager $eventManager
      */
     protected function registerEventListeners(array $configuredListeners, EventManager $eventManager): void
@@ -130,7 +130,7 @@ class EntityManagerConfiguration
      * Apply configured settings regarding DQL to the Doctrine Configuration.
      * At the moment, these are custom DQL functions.
      *
-     * @param array $configuredSettings
+     * @param array<string,mixed> $configuredSettings
      * @param Configuration $doctrineConfiguration
      * @return void
      */
@@ -174,7 +174,7 @@ class EntityManagerConfiguration
     /**
      * Apply configured settings regarding Doctrine's second level cache.
      *
-     * @param array $configuredSettings
+     * @param array<string,mixed> $configuredSettings
      * @param Configuration $doctrineConfiguration
      * @return void
      * @throws NoSuchCacheException

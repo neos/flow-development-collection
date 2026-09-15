@@ -39,7 +39,7 @@ class ObjectPathMappingRepository extends Repository
     protected $entityManager;
 
     /**
-     * @var array
+     * @var array<string,QueryInterface::ORDER_ASCENDING|QueryInterface::ORDER_DESCENDING>
      */
     protected $defaultOrderings = [
         'objectType' => QueryInterface::ORDER_ASCENDING,
@@ -56,7 +56,7 @@ class ObjectPathMappingRepository extends Repository
     public function findOneByObjectTypeUriPatternAndPathSegment($objectType, $uriPattern, $pathSegment, $caseSensitive = false)
     {
         $query = $this->createQuery();
-        return $query->matching(
+        $result = $query->matching(
             $query->logicalAnd(
                 $query->equals('objectType', $objectType),
                 $query->equals('uriPattern', $uriPattern),
@@ -65,6 +65,8 @@ class ObjectPathMappingRepository extends Repository
         )
         ->execute()
         ->getFirst();
+
+        return $result instanceof ObjectPathMapping ? $result : null;
     }
 
     /**
@@ -77,7 +79,7 @@ class ObjectPathMappingRepository extends Repository
     public function findOneByObjectTypeUriPatternAndIdentifier($objectType, $uriPattern, $identifier)
     {
         $query = $this->createQuery();
-        return $query->matching(
+        $result = $query->matching(
             $query->logicalAnd(
                 $query->equals('objectType', $objectType),
                 $query->equals('uriPattern', $uriPattern),
@@ -86,6 +88,8 @@ class ObjectPathMappingRepository extends Repository
         )
         ->execute()
         ->getFirst();
+
+        return $result instanceof ObjectPathMapping ? $result : null;
     }
 
     /**
