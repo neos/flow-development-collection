@@ -222,6 +222,7 @@ class ObjectManager implements ObjectManagerInterface
             throw new Exception\UnknownObjectException('Object "' . $objectName . '" is not registered.' . $hint, 1264589155);
         }
 
+        /** @var class-string $className */
         // Someone might have requested the implementation class directly, in that case we want to reuse that instance when requesting the object.
         if (
             $objectName !== $className
@@ -271,6 +272,7 @@ class ObjectManager implements ObjectManagerInterface
         try {
             $constructorArguments = $this->autowireConstructorArguments($objectName, $className, []);
             if ($classReflection->hasMethod('__construct')) {
+                /** @phpstan-ignore-next-line the constructor is guaranteed to exist by the hasMethod() check above */
                 $instance->__construct(...$constructorArguments);
             }
         } catch (\Throwable $throwable) {
