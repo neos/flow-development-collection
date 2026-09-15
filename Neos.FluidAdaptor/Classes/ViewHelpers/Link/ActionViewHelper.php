@@ -91,6 +91,7 @@ class ActionViewHelper extends AbstractTagBasedViewHelper
                 throw new ViewHelper\Exception('You can\'t use the parent Request, you are already in the MainRequest.', 1360163536);
             }
             $parentRequest = $request->getParentRequest();
+            /** @phpstan-ignore instanceof.alwaysTrue (annotations can be wrong) */
             if (!$parentRequest instanceof ActionRequest) {
                 throw new ViewHelper\Exception('The parent requests was unexpectedly empty, probably the current request is broken.', 1565948237);
             }

@@ -763,7 +763,7 @@ class ReflectionService
      * @template T of object
      * @param class-string $className
      * @param class-string<T> $annotationClassName
-     *
+     * @return T|null
      * @throws \ReflectionException
      */
     public function getMethodAnnotation(string $className, string $methodName, string $annotationClassName): ?object
@@ -1314,6 +1314,7 @@ class ReflectionService
         }
 
         foreach ($this->annotationReader->getPropertyAnnotations($property) as $annotation) {
+            /** @phpstan-ignore offsetAccess.nonOffsetAccessible  (the offset exists) */
             $this->classReflectionData[$className][self::DATA_CLASS_PROPERTIES][$propertyName][self::DATA_PROPERTY_ANNOTATIONS][get_class($annotation)][] = $annotation;
         }
 
@@ -1326,6 +1327,7 @@ class ReflectionService
             } catch (\Error $error) {
                 throw new \RuntimeException(sprintf('Attribute "%s" used in class "%s" was not found.', $attribute->getName(), $className), 1695635128, $error);
             }
+            /** @phpstan-ignore offsetAccess.nonOffsetAccessible  (the offset exists) */
             $this->classReflectionData[$className][self::DATA_CLASS_PROPERTIES][$propertyName][self::DATA_PROPERTY_ANNOTATIONS][$attribute->getName()][] = $attributeInstance;
         }
 
