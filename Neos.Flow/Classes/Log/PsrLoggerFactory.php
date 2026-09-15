@@ -60,9 +60,12 @@ class PsrLoggerFactory implements PsrLoggerFactoryInterface
             throw new \Exception('To use the default logging you have to have the "neos/flow-log" package installed. It seems you miss it, so install it via "composer require neos/flow-log".', 1515437383589);
         }
 
-        $backends = $this->instantiateBackends($this->configuration[$identifier]);
+        /** @phpstan-ignore method.notFound */
+        $logger = (new \ReflectionClass(Logger::class))->newLazyGhost(function ($object) use ($identifier) {
+            $backends = $this->instantiateBackends($this->configuration[$identifier]);
+            $object->__construct($backends);
+        });
 
-        $logger = new Logger($backends);
         $this->instances[$identifier] = $logger;
         return $logger;
     }

@@ -103,7 +103,10 @@ class ValidatorResolver
 
         switch ($this->objectManager->getScope($validatorObjectName)) {
             case Configuration::SCOPE_PROTOTYPE:
-                $validator = (new \ReflectionClass($validatorObjectName)->newLazyGhost(static fn ($object) => $object->__construct($validatorOptions)));
+                /** @phpstan-ignore method.notFound */
+                $validator = (new \ReflectionClass($validatorObjectName))->newLazyGhost(
+                    static fn ($object) => $object->__construct($validatorOptions)
+                );
                 break;
             case Configuration::SCOPE_SINGLETON:
                 if (count($validatorOptions) > 0) {

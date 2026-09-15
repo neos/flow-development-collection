@@ -58,7 +58,7 @@ class CacheFactory implements CacheFactoryInterface
      */
     public function create(string $cacheIdentifier, string $cacheObjectName, string $backendObjectName, array $backendOptions = []): FrontendInterface
     {
-       return (new \ReflectionClass($cacheObjectName))->newLazyProxy(function () use ($cacheIdentifier, $cacheObjectName, $backendObjectName, $backendOptions) {
+        return (new \ReflectionClass($cacheObjectName))->newLazyProxy(function () use ($cacheIdentifier, $cacheObjectName, $backendObjectName, $backendOptions) {
             $this->buildInternal($cacheIdentifier, $cacheObjectName, $backendObjectName, $backendOptions);
         });
     }
