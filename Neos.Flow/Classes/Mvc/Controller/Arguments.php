@@ -103,7 +103,7 @@ class Arguments extends \ArrayObject
      * Returns the value at the specified index
      *
      * @param mixed $offset Offset
-     * @return ?Argument The requested argument object
+     * @return Argument The requested argument object
      * @throws NoSuchArgumentException if the argument does not exist
      * @api
      */
@@ -113,6 +113,7 @@ class Arguments extends \ArrayObject
         if ($translatedOffset === false) {
             throw new \Neos\Flow\Mvc\Exception\NoSuchArgumentException('An argument "' . $offset . '" does not exist.', 1216909923);
         }
+        /** @phpstan-ignore return.type (this is an Argument) */
         return parent::offsetGet($translatedOffset);
     }
 
@@ -160,7 +161,7 @@ class Arguments extends \ArrayObject
      * Returns an argument specified by name
      *
      * @param string $argumentName Name of the argument to retrieve
-     * @return ?Argument
+     * @return Argument
      * @throws NoSuchArgumentException
      * @api
      */
