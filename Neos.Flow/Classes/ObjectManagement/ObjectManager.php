@@ -211,8 +211,9 @@ class ObjectManager implements ObjectManagerInterface
             throw new \InvalidArgumentException('You cannot provide constructor arguments for singleton objects via get(). If you need to pass arguments to the constructor, define them in the Objects.yaml configuration.', 1298049934);
         }
 
-        if (isset($this->objects[$objectName][self::KEY_INSTANCE])) {
-            return $this->objects[$objectName][self::KEY_INSTANCE];
+        $instance = $this->getInstance($objectName);
+        if ($instance !== null) {
+            return $instance;
         }
 
         if (isset($this->objects[$objectName][self::KEY_FACTORY])) {
@@ -235,10 +236,9 @@ class ObjectManager implements ObjectManagerInterface
         // Someone might have requested the implementation class directly, in that case we want to reuse that instance when requesting the object.
         if (
             $objectName !== $className
-            && isset($this->objects[$className])
-            // this condition is important as otherwise you could run into trouble with virtual objects where the class is not declared singleton
-            && $this->objects[$className][self::KEY_SCOPE] === ObjectConfiguration::SCOPE_SINGLETON
             && isset($this->objects[$className][self::KEY_INSTANCE])
+            // this condition is important as otherwise you could run into trouble with interfaces where the class is not declared singleton
+            && $this->objects[$className][self::KEY_SCOPE] === ObjectConfiguration::SCOPE_SINGLETON
         ) {
             $this->objects[$objectName][self::KEY_INSTANCE] = $this->objects[$className][self::KEY_INSTANCE];
             return $this->objects[$objectName][self::KEY_INSTANCE];
@@ -294,7 +294,12 @@ class ObjectManager implements ObjectManagerInterface
     protected function registerInstance(string $objectName, string $className, object $instance): void
     {
         $this->objects[$objectName][self::KEY_INSTANCE] = $instance;
-        if (($this->objects[$className][self::KEY_SCOPE] ?? null) !== ObjectConfiguration::SCOPE_SINGLETON) {
+        if ((
+            $this->objects[$className][self::KEY_SCOPE] ?? null
+        ) !== ObjectConfiguration::SCOPE_SINGLETON
+            // virtual objects should not set/overwrite the class instance
+            || str_contains($objectName, ':')
+        ) {
             return;
         }
         $this->objects[$className][self::KEY_INSTANCE] = $instance;
@@ -453,7 +458,8 @@ class ObjectManager implements ObjectManagerInterface
         if ($this->objects[$objectName][self::KEY_SCOPE] === ObjectConfiguration::SCOPE_PROTOTYPE) {
             throw new Exception\WrongScopeException('Cannot set instance of object "' . $objectName . '" because it is of scope prototype. Only session and singleton instances can be set.', 1265370540);
         }
-        $this->objects[$objectName][self::KEY_INSTANCE] = $instance;
+
+        $this->registerInstance($objectName, get_class($instance), $instance);
     }
 
     /**
