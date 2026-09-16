@@ -764,7 +764,7 @@ class ActionController extends AbstractController
      */
     protected function handleTargetNotFoundError()
     {
-        foreach (array_keys($this->request?->getArguments() ?: []) as $argumentName) {
+        foreach (array_keys($this->request->getArguments() ?: []) as $argumentName) {
             $targetNotFoundError = $this->arguments->getValidationResults()
                 ->forProperty($argumentName)
                 ->getFirstError(TargetNotFoundError::class);
@@ -798,7 +798,7 @@ class ActionController extends AbstractController
      */
     protected function forwardToReferringRequest()
     {
-        $referringRequest = $this->request?->getReferringRequest();
+        $referringRequest = $this->request->getReferringRequest();
         if ($referringRequest === null) {
             return;
         }
@@ -808,7 +808,7 @@ class ActionController extends AbstractController
             $packageKey .= '\\' . $subpackageKey;
         }
         $argumentsForNextController = $referringRequest->getArguments();
-        $argumentsForNextController['__submittedArguments'] = $this->request?->getArguments() ?: [];
+        $argumentsForNextController['__submittedArguments'] = $this->request->getArguments() ?: [];
         $argumentsForNextController['__submittedArgumentValidationResults'] = $this->arguments->getValidationResults();
 
         $this->forward($referringRequest->getControllerActionName(), $referringRequest->getControllerName(), $packageKey, $argumentsForNextController);

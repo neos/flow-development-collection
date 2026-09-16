@@ -37,7 +37,7 @@ class RequestHandler implements HttpRequestHandlerInterface
     protected $middlewaresChain;
 
     /**
-     * @var ?ServerRequestInterface
+     * @var ServerRequestInterface
      */
     protected $httpRequest;
 
@@ -115,7 +115,7 @@ class RequestHandler implements HttpRequestHandlerInterface
     /**
      * Returns the currently handled HTTP request
      *
-     * @return ?ServerRequestInterface
+     * @return ServerRequestInterface
      * @api
      */
     public function getHttpRequest()

@@ -58,7 +58,7 @@ abstract class AbstractController implements ControllerInterface
 
     /**
      * The current action request directed to this controller
-     * @var ?ActionRequest
+     * @var ActionRequest
      * @api
      */
     protected $request;
@@ -215,9 +215,6 @@ abstract class AbstractController implements ControllerInterface
      */
     protected function forward(string $actionName, ?string $controllerName = null, ?string $packageKey = null, array $arguments = []): never
     {
-        if (!$this->request) {
-            throw new \Exception('Cannot resolve request', 1744328653);
-        }
         $nextRequest = clone $this->request;
         $nextRequest->setControllerActionName($actionName);
 
@@ -295,7 +292,7 @@ abstract class AbstractController implements ControllerInterface
         }
         $this->uriBuilder->reset();
         if ($format === null) {
-            $this->uriBuilder->setFormat($this->request?->getFormat());
+            $this->uriBuilder->setFormat($this->request->getFormat());
         } else {
             $this->uriBuilder->setFormat($format);
         }
