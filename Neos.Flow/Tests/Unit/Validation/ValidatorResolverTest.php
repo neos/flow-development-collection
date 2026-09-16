@@ -290,7 +290,7 @@ final class ValidatorResolverTest extends UnitTestCase
     #[Test]
     public function buildMethodArgumentsValidatorConjunctionsReturnsEmptyArrayIfMethodHasNoArguments()
     {
-        $mockController = $this->getAccessibleMock(ActionController::class, ['fooAction'], [], '', false);
+        $mockController = $this->getAccessibleMock(ActionController::class, [], [], '', false);
 
         $mockReflectionService = $this->createMock(ReflectionService::class);
         $mockReflectionService->expects($this->once())->method('getMethodParameters')->with(get_class($mockController), 'fooAction')->willReturn([]);

@@ -540,7 +540,7 @@ final class ContextTest extends UnitTestCase
         $authenticatedUserRole = new Role('Neos.Flow:AuthenticatedUser');
         $testRole = new Role('Acme.Demo:TestRole');
 
-        $mockPolicyService = $this->getAccessibleMock(PolicyService::class, ['getRole', 'initializeRolesFromPolicy']);
+        $mockPolicyService = $this->getAccessibleMock(PolicyService::class, ['getRole']);
         $mockPolicyService->expects($this->atLeastOnce())->method('getRole')->willReturnCallback(function ($roleIdentifier) use ($everybodyRole, $authenticatedUserRole) {
             switch ($roleIdentifier) {
                 case 'Neos.Flow:Everybody':
@@ -809,7 +809,7 @@ final class ContextTest extends UnitTestCase
         $testRole2 = $this->getAccessibleMock(Role::class, [], ['Acme.Demo:TestRole2']);
         $authenticatedUserRole = new Role('Neos.Flow:AuthenticatedUser');
 
-        $mockPolicyService = $this->getAccessibleMock(PolicyService::class, ['getRole', 'initializeRolesFromPolicy']);
+        $mockPolicyService = $this->getAccessibleMock(PolicyService::class, ['getRole']);
         $mockPolicyService->expects($this->atLeastOnce())->method('getRole')->willReturnCallback(function ($roleIdentifier) use ($everybodyRole, $testRole1, $testRole2, $authenticatedUserRole) {
             switch ($roleIdentifier) {
                 case 'Neos.Flow:Everybody':

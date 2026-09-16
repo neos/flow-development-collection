@@ -83,7 +83,8 @@ final class FlowAnnotationDriverTest extends UnitTestCase
     #[Test]
     public function getMaxIdentifierLengthAsksDoctrineForValue(): void
     {
-        $mockDatabasePlatform = $this->getMockForAbstractClass(AbstractPlatform::class, [], '', true, true, true, ['getMaxIdentifierLength']);
+        $mockDatabasePlatform = $this->createPartialMock(AbstractPlatform::class, ['getMaxIdentifierLength', '_getCommonIntegerTypeDeclarationSQL', 'getBooleanTypeDeclarationSQL', 'getIntegerTypeDeclarationSQL', 'getBigIntTypeDeclarationSQL', 'getSmallIntTypeDeclarationSQL', 'initializeDoctrineTypeMappings', 'getClobTypeDeclarationSQL', 'getBlobTypeDeclarationSQL', 'getName', 'getCurrentDatabaseExpression']);
+
         $mockDatabasePlatform->expects(self::atLeastOnce())->method('getMaxIdentifierLength')->willReturn(2048);
         $mockConnection = $this->createMock(Connection::class);
         $mockConnection->expects(self::atLeastOnce())->method('getDatabasePlatform')->willReturn($mockDatabasePlatform);

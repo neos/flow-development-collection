@@ -150,7 +150,7 @@ final class AbstractControllerTest extends UnitTestCase
     public function forwardSetsControllerAndArgumentsAtTheRequestObjectIfTheyAreSpecified(): void
     {
         $routeValuesNormalizer = $this->createMock(RouteValuesNormalizerInterface::class);
-        $routeValuesNormalizer->expects($this->once())->method('normalizeObjects')->will($this->returnArgument(0));
+        $routeValuesNormalizer->expects($this->once())->method('normalizeObjects')->willReturnArgument(0);
 
         $controller = $this->getAccessibleMock(AbstractController::class, ['processRequest']);
         $this->inject($controller, 'routeValuesNormalizer', $routeValuesNormalizer);
@@ -175,7 +175,7 @@ final class AbstractControllerTest extends UnitTestCase
     public function forwardResetsControllerArguments(): void
     {
         $routeValuesNormalizer = $this->createMock(RouteValuesNormalizerInterface::class);
-        $routeValuesNormalizer->expects($this->once())->method('normalizeObjects')->will($this->returnArgument(0));
+        $routeValuesNormalizer->expects($this->once())->method('normalizeObjects')->willReturnArgument(0);
 
         $controller = $this->getAccessibleMock(AbstractController::class, ['processRequest']);
         $this->inject($controller, 'routeValuesNormalizer', $routeValuesNormalizer);
@@ -199,7 +199,7 @@ final class AbstractControllerTest extends UnitTestCase
     public function forwardSetsSubpackageKeyIfNeeded(): void
     {
         $routeValuesNormalizer = $this->createMock(RouteValuesNormalizerInterface::class);
-        $routeValuesNormalizer->expects($this->once())->method('normalizeObjects')->will($this->returnArgument(0));
+        $routeValuesNormalizer->expects($this->once())->method('normalizeObjects')->willReturnArgument(0);
 
         $controller = $this->getAccessibleMock(AbstractController::class, ['processRequest']);
         $this->inject($controller, 'routeValuesNormalizer', $routeValuesNormalizer);
@@ -220,7 +220,7 @@ final class AbstractControllerTest extends UnitTestCase
     public function forwardResetsSubpackageKeyIfNotSetInPackageKey(): void
     {
         $routeValuesNormalizer = $this->createMock(RouteValuesNormalizerInterface::class);
-        $routeValuesNormalizer->expects($this->once())->method('normalizeObjects')->will($this->returnArgument(0));
+        $routeValuesNormalizer->expects($this->once())->method('normalizeObjects')->willReturnArgument(0);
 
         $controller = $this->getAccessibleMock(AbstractController::class, ['processRequest']);
         $this->inject($controller, 'routeValuesNormalizer', $routeValuesNormalizer);

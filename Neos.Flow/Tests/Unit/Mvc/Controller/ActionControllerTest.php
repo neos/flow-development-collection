@@ -227,9 +227,9 @@ final class ActionControllerTest extends UnitTestCase
                 }
                 return $mockView;
             });
-        $this->actionController->expects(self::once())->method('resolveView')->will(self::returnValue($mockView));
+        $this->actionController->expects(self::once())->method('resolveView')->willReturn($mockView);
         $this->actionController->expects(self::once())->method('callActionMethod')->willReturn(new Response());
-        $this->actionController->expects(self::once())->method('resolveActionMethodName')->will(self::returnValue('someAction'));
+        $this->actionController->expects(self::once())->method('resolveActionMethodName')->willReturn('someAction');
 
         $this->actionController->processRequest($this->mockRequest);
     }

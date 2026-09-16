@@ -87,13 +87,13 @@ final class ConfigurationBuilderTest extends UnitTestCase
             ->expects(self::once())
             ->method('getPropertyNamesByAnnotation')
             ->with(__CLASS__, Flow\Inject::class)
-            ->will(self::returnValue(['dummyProperty']));
+            ->willReturn(['dummyProperty']);
 
         $reflectionServiceMock
             ->expects(self::once())
             ->method('isPropertyPrivate')
             ->with(__CLASS__, 'dummyProperty')
-            ->will(self::returnValue(true));
+            ->willReturn(true);
 
         return $reflectionServiceMock;
     }

@@ -432,7 +432,7 @@ final class AbstractFormFieldViewHelperTest extends ViewHelperBaseTestcase
     #[Test]
     public function setErrorClassAttributeDoesNotSetClassAttributeIfNoErrorOccurred(): void
     {
-        $formViewHelper = $this->getAccessibleMock(AbstractFormFieldViewHelper::class, ['hasArgument', 'getErrorsForProperty'], [], '', false);
+        $formViewHelper = $this->getAccessibleMock(AbstractFormFieldViewHelper::class, ['hasArgument'], [], '', false);
         $this->injectDependenciesIntoViewHelper($formViewHelper);
 
         $this->tagBuilder->expects($this->never())->method('addAttribute');
