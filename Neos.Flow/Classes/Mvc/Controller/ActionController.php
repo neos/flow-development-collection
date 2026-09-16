@@ -112,7 +112,7 @@ class ActionController extends AbstractController
      *
      * array('html' => 'MyCompany\MyApp\MyHtmlView', 'json' => 'MyCompany\...
      *
-     * @var array<string,array<string>>
+     * @var array<string, class-string>
      */
     protected $viewFormatToObjectNameMap = [];
 
