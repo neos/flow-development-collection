@@ -18,7 +18,8 @@ use Neos\Flow\Persistence\QueryResultInterface;
 
 /**
  * A lazy result list that is returned by Query::execute()
- *
+ * @template T of object
+ * @implements QueryResultInterface<T>
  * @api
  */
 class QueryResult implements QueryResultInterface
@@ -36,12 +37,12 @@ class QueryResult implements QueryResultInterface
     protected $numberOfRows;
 
     /**
-     * @var Query
+     * @var Query<T>
      */
     protected $query;
 
     /**
-     * @param Query $query
+     * @param Query<T> $query
      */
     public function __construct(Query $query)
     {
@@ -64,7 +65,7 @@ class QueryResult implements QueryResultInterface
     /**
      * Returns a clone of the query object
      *
-     * @return Query
+     * @return Query<T>
      * @api
      */
     public function getQuery(): QueryInterface

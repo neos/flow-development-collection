@@ -18,7 +18,6 @@ use Neos\Utility\TypeHandling;
 
 /**
  * A class schema
- *
  */
 class ClassSchema
 {
@@ -49,7 +48,7 @@ class ClassSchema
     protected $lazyLoadable = false;
 
     /**
-     * @var class-string<RepositoryInterface>|null
+     * @var class-string<RepositoryInterface<object>>|null
      */
     protected $repositoryClassName;
 
@@ -218,7 +217,7 @@ class ClassSchema
     /**
      * Set the class name of the repository managing an entity.
      *
-     * @param ?class-string<RepositoryInterface> $repositoryClassName
+     * @param ?class-string<RepositoryInterface<object>> $repositoryClassName
      * @return void
      * @throws Exception\ClassSchemaConstraintViolationException
      */
@@ -231,7 +230,7 @@ class ClassSchema
     }
 
     /**
-     * @return ?class-string<RepositoryInterface>
+     * @return ?class-string<RepositoryInterface<object>>
      */
     public function getRepositoryClassName()
     {

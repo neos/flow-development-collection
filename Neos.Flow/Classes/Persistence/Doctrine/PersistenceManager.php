@@ -195,9 +195,10 @@ class PersistenceManager extends AbstractPersistenceManager
      * backend. Otherwise NULL is returned.
      *
      * @param mixed $identifier
-     * @param class-string|null $objectType
+     * @param class-string<T>|null $objectType
      * @param boolean $useLazyLoading Set to true if you want to use lazy loading for this object
-     * @return object|null The object for the identifier if it is known, or NULL
+     * @return T|null The object for the identifier if it is known, or NULL
+     * @template T of object
      * @throws \RuntimeException
      * @throws ORMException
      * @api
@@ -208,6 +209,7 @@ class PersistenceManager extends AbstractPersistenceManager
             throw new \RuntimeException('Using only the identifier is not supported by Doctrine 2. Give classname as well or use repository to query identifier.', 1296646103);
         }
         if (isset($this->newObjects[$identifier])) {
+            /** @phpstan-ignore return.type */
             return $this->newObjects[$identifier];
         }
         if ($useLazyLoading === true) {
@@ -220,8 +222,9 @@ class PersistenceManager extends AbstractPersistenceManager
     /**
      * Return a query object for the given type.
      *
-     * @param string $type
-     * @return Query
+     * @param class-string<T> $type
+     * @return QueryInterface<T>
+     * @template T of object
      */
     public function createQueryForType(string $type): QueryInterface
     {

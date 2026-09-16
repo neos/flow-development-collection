@@ -22,7 +22,7 @@ use Neos\Utility\Arrays;
 class PaginateController extends AbstractWidgetController
 {
     /**
-     * @var QueryResultInterface
+     * @var QueryResultInterface<object>
      */
     protected $objects;
 

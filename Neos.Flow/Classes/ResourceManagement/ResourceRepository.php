@@ -27,6 +27,7 @@ use Neos\Flow\Persistence\Repository;
  * provided by ResourceManager instead.
  *
  * @Flow\Scope("singleton")
+ * @extends Repository<PersistentResource>
  * @see ResourceManager
  */
 class ResourceRepository extends Repository
@@ -176,7 +177,7 @@ class ResourceRepository extends Repository
      * Finds other resources which are referring to the same resource data, filename and collection
      *
      * @param PersistentResource $resource The resource used for finding similar resources
-     * @return QueryResultInterface The result, including the given resource
+     * @return QueryResultInterface<PersistentResource> The result, including the given resource
      */
     public function findSimilarResources(PersistentResource $resource)
     {
@@ -201,6 +202,7 @@ class ResourceRepository extends Repository
     {
         $query = $this->createQuery();
         $query->matching($query->equals('sha1', $sha1Hash));
+        /** @var array<PersistentResource> $resources */
         $resources = $query->execute()->toArray();
         foreach ($this->addedResources as $importedResource) {
             if ($importedResource->getSha1() === $sha1Hash) {
@@ -227,6 +229,7 @@ class ResourceRepository extends Repository
                 $query->equals('collectionName', $collectionName)
             )
         );
+        /** @var array<PersistentResource> $resources */
         $resources = $query->execute()->toArray();
         foreach ($this->addedResources as $importedResource) {
             if ($importedResource->getSha1() === $sha1Hash && $importedResource->getCollectionName() === $collectionName) {

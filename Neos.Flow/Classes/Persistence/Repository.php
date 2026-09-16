@@ -17,7 +17,8 @@ use Neos\Flow\Persistence\Exception\IllegalObjectTypeException;
 
 /**
  * The Flow default Repository
- *
+ * @template T of object
+ * @implements RepositoryInterface<T>
  * @api
  */
 abstract class Repository implements RepositoryInterface
@@ -32,7 +33,7 @@ abstract class Repository implements RepositoryInterface
      * Warning: if you think you want to set this,
      * look at RepositoryInterface::ENTITY_CLASSNAME first!
      *
-     * @var class-string
+     * @var class-string<T>
      */
     protected $entityClassName;
 
@@ -51,7 +52,7 @@ abstract class Repository implements RepositoryInterface
         } else {
             $entityClassName = static::ENTITY_CLASSNAME;
         }
-        /** @var class-string $entityClassName */
+        /** @var class-string<T> $entityClassName */
         $this->entityClassName = $entityClassName;
     }
 
@@ -61,7 +62,7 @@ abstract class Repository implements RepositoryInterface
      * Note that anything that is an "instanceof" this class is accepted
      * by the repository.
      *
-     * @return class-string
+     * @return class-string<T>
      * @api
      */
     public function getEntityClassName(): string
@@ -72,7 +73,7 @@ abstract class Repository implements RepositoryInterface
     /**
      * Adds an object to this repository.
      *
-     * @param object $object The object to add
+     * @param T $object The object to add
      * @return void
      * @throws IllegalObjectTypeException
      * @api
@@ -88,7 +89,7 @@ abstract class Repository implements RepositoryInterface
     /**
      * Removes an object from this repository.
      *
-     * @param object $object The object to remove
+     * @param T $object The object to remove
      * @return void
      * @throws IllegalObjectTypeException
      * @api
@@ -104,7 +105,7 @@ abstract class Repository implements RepositoryInterface
     /**
      * Returns all objects of this repository
      *
-     * @return QueryResultInterface The query result
+     * @return QueryResultInterface<T> The query result
      * @api
      * @see QueryInterface::execute()
      */
@@ -117,7 +118,7 @@ abstract class Repository implements RepositoryInterface
      * Finds an object matching the given identifier.
      *
      * @param string $identifier The identifier of the object to find
-     * @return object|null The matching object if found, otherwise NULL
+     * @return T|null The matching object if found, otherwise NULL
      * @api
      */
     public function findByIdentifier($identifier)
@@ -128,7 +129,7 @@ abstract class Repository implements RepositoryInterface
     /**
      * Returns a query for objects of this repository
      *
-     * @return QueryInterface
+     * @return QueryInterface<T>
      * @api
      */
     public function createQuery(): QueryInterface
@@ -185,7 +186,7 @@ abstract class Repository implements RepositoryInterface
     /**
      * Schedules a modified object for persistence.
      *
-     * @param object $object The modified object
+     * @param T $object The modified object
      * @throws IllegalObjectTypeException
      * @api
      */

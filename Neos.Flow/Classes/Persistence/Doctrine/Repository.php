@@ -28,6 +28,8 @@ use Neos\Flow\Persistence\RepositoryInterface;
  * The Flow default Repository, based on Doctrine 2
  *
  * @extends EntityRepository<object>
+ * @implements RepositoryInterface<T>
+ * @template T of object
  * @api
  */
 abstract class Repository extends EntityRepository implements RepositoryInterface
@@ -47,7 +49,7 @@ abstract class Repository extends EntityRepository implements RepositoryInterfac
      * Warning: if you think you want to set this,
      * look at RepositoryInterface::ENTITY_CLASSNAME first!
      *
-     * @var class-string
+     * @var class-string<T>
      */
     protected $objectType;
 
@@ -70,7 +72,7 @@ abstract class Repository extends EntityRepository implements RepositoryInterfac
             } else {
                 $objectType = static::ENTITY_CLASSNAME;
             }
-            /** @var class-string $objectType */
+            /** @var class-string<T> $objectType */
             $this->objectType = $objectType;
             /** @var ?ClassMetadata<object> $classMetadata */
             $classMetadata = $entityManager->getClassMetadata($this->objectType);
@@ -85,7 +87,7 @@ abstract class Repository extends EntityRepository implements RepositoryInterfac
     /**
      * Returns the classname of the entities this repository is managing.
      *
-     * @return string
+     * @return class-string<T>
      * @api
      */
     public function getEntityClassName(): string
@@ -96,7 +98,7 @@ abstract class Repository extends EntityRepository implements RepositoryInterfac
     /**
      * Adds an object to this repository.
      *
-     * @param object $object The object to add
+     * @param T $object The object to add
      * @return void
      * @throws IllegalObjectTypeException
      * @api
@@ -112,7 +114,7 @@ abstract class Repository extends EntityRepository implements RepositoryInterfac
     /**
      * Removes an object from this repository.
      *
-     * @param object $object The object to remove
+     * @param T $object The object to remove
      * @return void
      * @throws IllegalObjectTypeException
      * @api
@@ -128,7 +130,7 @@ abstract class Repository extends EntityRepository implements RepositoryInterfac
     /**
      * Finds all entities in the repository.
      *
-     * @return QueryResultInterface<object> The query result
+     * @return QueryResultInterface<T> The query result
      * @api
      * (don't know how generics work here yet and ignoring method.childReturnType has no effect)
      * @phpstan-ignore-next-line
@@ -141,7 +143,7 @@ abstract class Repository extends EntityRepository implements RepositoryInterfac
     /**
      * Find all objects and return an IterableResult
      *
-     * @return iterable<object>
+     * @return iterable<T>
      */
     public function findAllIterator(): iterable
     {
@@ -157,7 +159,7 @@ abstract class Repository extends EntityRepository implements RepositoryInterfac
      * Finds an object matching the given identifier.
      *
      * @param mixed $identifier The identifier of the object to find
-     * @return object|null The matching object if found, otherwise NULL
+     * @return T|null The matching object if found, otherwise NULL
      * @api
      */
     public function findByIdentifier($identifier)
@@ -168,7 +170,7 @@ abstract class Repository extends EntityRepository implements RepositoryInterfac
     /**
      * Returns a query for objects of this repository
      *
-     * @return Query
+     * @return QueryInterface<T>
      * @api
      */
     public function createQuery(): QueryInterface
@@ -239,7 +241,7 @@ abstract class Repository extends EntityRepository implements RepositoryInterfac
     /**
      * Schedules a modified object for persistence.
      *
-     * @param object $object The modified object
+     * @param T $object The modified object
      * @return void
      * @throws IllegalObjectTypeException
      * @throws UnknownObjectException
