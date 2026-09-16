@@ -14,7 +14,7 @@ namespace Neos\Flow\Persistence;
 
 /**
  * Contract for a repository
- *
+ * @template T of object
  * @api
  */
 interface RepositoryInterface
@@ -22,7 +22,7 @@ interface RepositoryInterface
     /**
      * Returns the object type this repository is managing.
      *
-     * @return string
+     * @return class-string<T>
      * @api
      */
     public function getEntityClassName(): string;
@@ -30,7 +30,7 @@ interface RepositoryInterface
     /**
      * Adds an object to this repository.
      *
-     * @param object $object The object to add
+     * @param T $object The object to add
      * @return void
      * @api
      */
@@ -39,7 +39,7 @@ interface RepositoryInterface
     /**
      * Removes an object from this repository.
      *
-     * @param object $object The object to remove
+     * @param T $object The object to remove
      * @return void
      * @api
      */
@@ -48,7 +48,7 @@ interface RepositoryInterface
     /**
      * Returns all objects of this repository.
      *
-     * @return QueryResultInterface The query result
+     * @return QueryResultInterface<T> The query result
      * @api
      */
     public function findAll(): QueryResultInterface;
@@ -57,7 +57,7 @@ interface RepositoryInterface
      * Finds an object matching the given identifier.
      *
      * @param mixed $identifier The identifier of the object to find
-     * @return object|null The matching object if found, otherwise NULL
+     * @return T|null The matching object if found, otherwise NULL
      * @api
      */
     public function findByIdentifier($identifier);
@@ -65,7 +65,7 @@ interface RepositoryInterface
     /**
      * Returns a query for objects of this repository
      *
-     * @return QueryInterface
+     * @return QueryInterface<T>
      * @api
      */
     public function createQuery(): QueryInterface;
@@ -103,7 +103,7 @@ interface RepositoryInterface
     /**
      * Schedules a modified object for persistence.
      *
-     * @param object $object The modified object
+     * @param T $object The modified object
      * @return void
      * @api
      */

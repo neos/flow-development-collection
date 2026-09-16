@@ -141,7 +141,7 @@ class JsonArrayType extends DoctrineJsonType
 
             if (isset($value['__value_object_value'], $value['__value_object_type'])) {
                 $value = self::deserializeValueObject($value);
-            } elseif (isset($value['__flow_object_type'])) {
+            } elseif (isset($value['__flow_object_type']) && class_exists($value['__flow_object_type'])) {
                 $value = $persistenceManager->getObjectByIdentifier($value['__identifier'], $value['__flow_object_type'], true);
             } else {
                 $this->decodeObjectReferences($value);

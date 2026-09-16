@@ -307,7 +307,7 @@ class PersistentObjectConverter extends ObjectConverter
      * Finds an object from the repository by searching for its identity properties.
      *
      * @param array<string,mixed> $identityProperties Property names and values to search for
-     * @param string $type The object type to look for
+     * @param class-string $type The object type to look for
      * @return object|null Either the object matching the identity or NULL if no object was found
      * @throws DuplicateObjectException if more than one object was found
      */

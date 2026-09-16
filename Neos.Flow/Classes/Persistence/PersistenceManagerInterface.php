@@ -95,9 +95,10 @@ interface PersistenceManagerInterface
      * backend. Otherwise NULL is returned.
      *
      * @param mixed $identifier
-     * @param class-string|null $objectType
+     * @param class-string<T>|null $objectType
      * @param boolean $useLazyLoading Set to true if you want to use lazy loading for this object
-     * @return object|null The object for the identifier if it is known, or NULL
+     * @return T|null The object for the identifier if it is known, or NULL
+     * @template T of object
      * @api
      */
     public function getObjectByIdentifier($identifier, ?string $objectType = null, bool $useLazyLoading = false);
@@ -105,8 +106,9 @@ interface PersistenceManagerInterface
     /**
      * Return a query object for the given type.
      *
-     * @param string $type
-     * @return QueryInterface
+     * @param class-string<T> $type
+     * @return QueryInterface<T>
+     * @template T of object
      * @api
      */
     public function createQueryForType(string $type): QueryInterface;

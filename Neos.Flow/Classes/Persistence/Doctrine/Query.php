@@ -32,13 +32,14 @@ use Psr\Log\LoggerInterface;
 
 /**
  * A Query class for Doctrine 2
- *
+ * @template T of object
+ * @implements QueryInterface<T>
  * @api
  */
 class Query implements QueryInterface
 {
     /**
-     * @var string
+     * @var class-string<T>
      */
     protected $entityClassName;
 
@@ -120,7 +121,7 @@ class Query implements QueryInterface
     protected $cacheResult = false;
 
     /**
-     * @param string $entityClassName
+     * @param class-string<T> $entityClassName
      */
     public function __construct($entityClassName)
     {
@@ -160,7 +161,7 @@ class Query implements QueryInterface
     /**
      * Returns the type this query cares for.
      *
-     * @return string
+     * @return class-string<T>
      * @api
      */
     public function getType(): string
@@ -172,7 +173,7 @@ class Query implements QueryInterface
      * Executes the query and returns the result.
      *
      * @param bool $cacheResult If the Doctrine result cache should be used
-     * @return QueryResultInterface The query result
+     * @return QueryResultInterface<T> The query result
      * @api
      */
     public function execute(bool $cacheResult = false): QueryResultInterface
@@ -285,7 +286,7 @@ class Query implements QueryInterface
      * )
      *
      * @param array<string,QueryInterface::ORDER_ASCENDING|QueryInterface::ORDER_DESCENDING> $orderings The property names to order by
-     * @return QueryInterface
+     * @return QueryInterface<T>
      * @api
      */
     public function setOrderings(array $orderings): QueryInterface
@@ -318,7 +319,7 @@ class Query implements QueryInterface
      * for chaining (fluid interface)
      *
      * @param integer|null $limit
-     * @return QueryInterface
+     * @return QueryInterface<T>
      * @api
      */
     public function setLimit(?int $limit): QueryInterface
@@ -343,7 +344,7 @@ class Query implements QueryInterface
      * Sets the DISTINCT flag for this query.
      *
      * @param boolean $distinct
-     * @return QueryInterface
+     * @return QueryInterface<T>
      * @api
      */
     public function setDistinct(bool $distinct = true): QueryInterface
@@ -369,7 +370,7 @@ class Query implements QueryInterface
      * allow for chaining (fluid interface)
      *
      * @param integer|null $offset
-     * @return QueryInterface
+     * @return QueryInterface<T>
      * @api
      */
     public function setOffset(?int $offset): QueryInterface
@@ -395,7 +396,7 @@ class Query implements QueryInterface
      * for chaining (fluid interface)
      *
      * @param object|string $constraint Some constraint, depending on the backend
-     * @return QueryInterface
+     * @return QueryInterface<T>
      * @api
      */
     public function matching($constraint): QueryInterface

@@ -20,7 +20,7 @@ use Neos\Flow\Security\Context as SecurityContext;
 
 /**
  * The repository for accounts
- *
+ * @extends Repository<Account>
  * @Flow\Scope("singleton")
  */
 class AccountRepository extends Repository

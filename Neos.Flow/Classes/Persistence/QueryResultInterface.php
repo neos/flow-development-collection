@@ -15,8 +15,9 @@ namespace Neos\Flow\Persistence;
 /**
  * A lazy result list that is returned by Query::execute()
  *
- * @extends \Iterator<mixed,object>
- * @extends \ArrayAccess<mixed,object>
+ * @extends \Iterator<mixed,T>
+ * @extends \ArrayAccess<mixed,T>
+ * @template T of object
  * @api
  */
 interface QueryResultInterface extends \Countable, \Iterator, \ArrayAccess
@@ -24,7 +25,7 @@ interface QueryResultInterface extends \Countable, \Iterator, \ArrayAccess
     /**
      * Returns a clone of the query object
      *
-     * @return QueryInterface
+     * @return QueryInterface<T>
      * @api
      */
     public function getQuery(): QueryInterface;
@@ -32,7 +33,7 @@ interface QueryResultInterface extends \Countable, \Iterator, \ArrayAccess
     /**
      * Returns the first object in the result set
      *
-     * @return object|null
+     * @return T|null
      * @api
      */
     public function getFirst();
@@ -40,7 +41,7 @@ interface QueryResultInterface extends \Countable, \Iterator, \ArrayAccess
     /**
      * Returns an array with the objects in the result set
      *
-     * @return array<mixed>
+     * @return array<T>
      * @api
      */
     public function toArray(): array;

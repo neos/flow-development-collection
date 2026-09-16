@@ -441,12 +441,14 @@ class PropertyConditionGenerator implements SqlGeneratorInterface
     }
 
     /**
-     * @param ClassMetadata<object> $targetEntity
+     * @param ClassMetadata<T> $targetEntity
      * @param string $targetEntityPropertyName
-     * @return Query
+     * @return Query<T>
+     * @template T of object
      */
     protected function getSubselectQuery(ClassMetadata $targetEntity, $targetEntityPropertyName)
     {
+        /** @var class-string<T>|null $associationTargetClass */
         $associationTargetClass = $targetEntity->getAssociationTargetClass($targetEntityPropertyName);
         if ($associationTargetClass === null) {
             throw new \InvalidArgumentException("Association name expected, '" . $targetEntityPropertyName . "' is not an association.", 1629871136);
