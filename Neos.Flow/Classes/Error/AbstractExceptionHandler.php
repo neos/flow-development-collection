@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Error;
 
 /*
@@ -12,6 +13,7 @@ namespace Neos\Flow\Error;
  */
 
 use GuzzleHttp\Psr7\ServerRequest;
+use GuzzleHttp\Psr7\Utils;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Cli\Response;
 use Neos\Flow\Exception as FlowException;
@@ -24,6 +26,7 @@ use Neos\Flow\Mvc\Controller\ControllerContext;
 use Neos\Flow\Mvc\Routing\UriBuilder;
 use Neos\Flow\Mvc\View\ViewInterface;
 use Neos\Utility\Arrays;
+use Psr\Http\Message\ResponseInterface;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -182,6 +185,34 @@ abstract class AbstractExceptionHandler implements ExceptionHandlerInterface
         ]);
 
         return $view;
+    }
+
+    /**
+     * Send the rendered view (which can also be a stream) to the client.
+     * Also handles any necessary HTTP headers.
+     *
+     * @param mixed $stream
+     * @return void
+     */
+    protected function sendStream($stream): void
+    {
+        if ($stream instanceof ResponseInterface) {
+            if (!headers_sent()) {
+                foreach ($stream->getHeaders() as $name => $values) {
+                    // Skip setting status code and http header again
+                    if (str_starts_with($name, 'HTTP/')) {
+                        continue;
+                    }
+                    foreach ($values as $value) {
+                        header(sprintf('%s: %s', $name, $value), false);
+                    }
+                }
+            }
+            $stream = $stream->getBody();
+        } else {
+            $stream = Utils::streamFor($stream);
+        }
+        ResponseInformationHelper::sendStream($stream);
     }
 
     /**

@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Neos\Flow\Http\Helper;
@@ -18,6 +19,7 @@ use GuzzleHttp\Psr7\Utils;
 use Neos\Flow\Http\CacheControlDirectives;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\StreamInterface;
 
 /**
  * Helper to extract various information from PSR-7 responses.
@@ -241,5 +243,16 @@ abstract class ResponseInformationHelper
         }
 
         return $response;
+    }
+
+    public static function sendStream(StreamInterface $stream): void
+    {
+        $body = $stream->detach() ?: $stream->getContents();
+        if (is_resource($body)) {
+            fpassthru($body);
+            fclose($body);
+        } else {
+            echo $body;
+        }
     }
 }
