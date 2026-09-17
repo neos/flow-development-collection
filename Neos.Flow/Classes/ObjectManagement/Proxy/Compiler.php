@@ -103,7 +103,7 @@ class Compiler
             return false;
         }
 
-        if (method_exists($classReflection, 'isEnum') && $classReflection->isEnum()) {
+        if ($classReflection->isEnum()) {
             return false;
         }
 
@@ -374,6 +374,7 @@ return ' . var_export($this->storedProxyClasses, true) . ';';
         $values = [];
         foreach ($optionValue as $k => $v) {
             $value = '';
+            /** @phpstan-ignore function.alreadyNarrowedType (annotations can be wrong) */
             if (is_string($k)) {
                 $value .= '"' . $k . '"=';
             }

@@ -302,6 +302,7 @@ class PersistentResource implements ResourceMetaDataInterface, CacheAwareInterfa
     public function setSha1($sha1)
     {
         $this->throwExceptionIfProtected();
+        /** @phpstan-ignore function.alreadyNarrowedType (annotations can be wrong) */
         if (!is_string($sha1) || preg_match('/[A-Fa-f0-9]{40}/', $sha1) !== 1) {
             throw new \InvalidArgumentException('Specified invalid hash to setSha1()', 1362564220);
         }

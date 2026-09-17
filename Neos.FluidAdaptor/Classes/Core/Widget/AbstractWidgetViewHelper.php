@@ -214,6 +214,7 @@ abstract class AbstractWidgetViewHelper extends AbstractViewHelper implements Ch
             throw new Exception\MissingControllerException('initiateSubRequest() can not be called if there is no controller inside $this->controller. Make sure to add the @Neos\Flow\Annotations\Inject annotation in your widget class.', 1284401632);
         }
 
+        /** @phpstan-ignore instanceof.alwaysTrue (annotations can be wrong) */
         $subRequest = $this->controllerContext->getRequest()->createSubRequest();
 
         $this->passArgumentsToSubRequest($subRequest);
