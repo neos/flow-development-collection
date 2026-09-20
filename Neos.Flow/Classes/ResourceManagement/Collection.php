@@ -146,7 +146,10 @@ class Collection implements CollectionInterface
      */
     public function publish()
     {
-        $this->target->publishCollection($this);
+        $publisher = $this->target->publishCollection($this);
+        while ($publisher->valid()) {
+            $publisher->next();
+        }
     }
 
     /**
