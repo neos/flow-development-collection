@@ -12,7 +12,7 @@ namespace Neos\Flow\Aop\Pointcut;
  */
 
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Aop\Builder\ProxyClassBuilder;
+use Neos\Flow\Aop\AspectContainer;
 use Neos\Flow\Aop\Exception as AopException;
 use Neos\Flow\Aop\Exception\InvalidPointcutExpressionException;
 use Neos\Flow\Configuration\ConfigurationManager;
@@ -62,34 +62,13 @@ class PointcutExpressionParser
 																/x';
     const PATTERN_MATCHMETHODNAMEANDARGUMENTS = '/^(?P<MethodName>.*)\((?P<MethodArguments>.*)\)$/';
 
-    /**
-     * @var ProxyClassBuilder
-     */
-    protected $proxyClassBuilder;
-
-    /**
-     * @var ReflectionService
-     */
-    protected $reflectionService;
-
-    /**
-     * @var ObjectManagerInterface
-     */
-    protected $objectManager;
+    protected ReflectionService|null $reflectionService = null;
+    protected ObjectManagerInterface|null $objectManager = null;
 
     /**
      * @var string
      */
-    protected $sourceHint = '';
-
-    /**
-     * @param ProxyClassBuilder $proxyClassBuilder
-     * @return void
-     */
-    public function injectProxyClassBuilder(ProxyClassBuilder $proxyClassBuilder): void
-    {
-        $this->proxyClassBuilder = $proxyClassBuilder;
-    }
+    protected string $sourceHint = '';
 
     /**
      * @param ReflectionService $reflectionService
@@ -104,7 +83,7 @@ class PointcutExpressionParser
      * @param ObjectManagerInterface $objectManager
      * @return void
      */
-    public function injectObjectManager(ObjectManagerInterface $objectManager)
+    public function injectObjectManager(ObjectManagerInterface $objectManager): void
     {
         $this->objectManager = $objectManager;
     }
@@ -119,7 +98,7 @@ class PointcutExpressionParser
      * @throws InvalidPointcutExpressionException
      * @throws AopException
      */
-    public function parse(string $pointcutExpression, string $sourceHint): PointcutFilterComposite
+    public function parse(string $pointcutExpression, string $sourceHint, AspectContainer|null $aspectContainer = null): PointcutFilterComposite
     {
         $this->sourceHint = $sourceHint;
 
@@ -140,7 +119,10 @@ class PointcutExpressionParser
             }
 
             if (strpos($expression, '(') === false) {
-                $this->parseDesignatorPointcut($operator, $expression, $pointcutFilterComposite);
+                if ($aspectContainer === null) {
+                    throw new \RuntimeException('AspectContainer must be provided for designator pointcut', 1762974669);
+                }
+                $this->parseDesignatorPointcut($operator, $expression, $pointcutFilterComposite, $aspectContainer);
             } else {
                 $matches = [];
                 $numberOfMatches = preg_match(self::PATTERN_MATCHPOINTCUTDESIGNATOR, $expression, $matches);
@@ -260,12 +242,12 @@ class PointcutExpressionParser
      */
     protected function parseDesignatorMethod(string $operator, string $signaturePattern, PointcutFilterComposite $pointcutFilterComposite): void
     {
-        if (strpos($signaturePattern, '->') === false) {
+        if (str_contains($signaturePattern, '->') === false) {
             throw new InvalidPointcutExpressionException('Syntax error: "->" expected in "' . $signaturePattern . '", defined in ' . $this->sourceHint, 1169027339);
         }
         $methodVisibility = $this->getVisibilityFromSignaturePattern($signaturePattern);
-        list($classPattern, $methodPattern) = explode('->', $signaturePattern, 2);
-        if (strpos($methodPattern, '(') === false) {
+        [$classPattern, $methodPattern] = explode('->', $signaturePattern, 2);
+        if (str_contains($methodPattern, '(') === false) {
             throw new InvalidPointcutExpressionException('Syntax error: "(" expected in "' . $methodPattern . '", defined in ' . $this->sourceHint, 1169144299);
         }
 
@@ -318,17 +300,17 @@ class PointcutExpressionParser
      * @param string $operator The operator
      * @param string $pointcutExpression The pointcut expression (value of the designator)
      * @param PointcutFilterComposite $pointcutFilterComposite An instance of the pointcut filter composite. The result (ie. the pointcut filter) will be added to this composite object.
+     * @param AspectContainer $aspectContainer
      * @return void
      * @throws InvalidPointcutExpressionException
      */
-    protected function parseDesignatorPointcut(string $operator, string $pointcutExpression, PointcutFilterComposite $pointcutFilterComposite): void
+    protected function parseDesignatorPointcut(string $operator, string $pointcutExpression, PointcutFilterComposite $pointcutFilterComposite, AspectContainer $aspectContainer): void
     {
-        if (strpos($pointcutExpression, '->') === false) {
+        if (str_contains($pointcutExpression, '->') === false) {
             throw new InvalidPointcutExpressionException('Syntax error: "->" expected in "' . $pointcutExpression . '", defined in ' . $this->sourceHint, 1172219205);
         }
-        list($aspectClassName, $pointcutMethodName) = explode('->', $pointcutExpression, 2);
-        $pointcutFilter = new PointcutFilter($aspectClassName, $pointcutMethodName);
-        $pointcutFilter->injectProxyClassBuilder($this->proxyClassBuilder);
+        [$aspectClassName, $pointcutMethodName] = explode('->', $pointcutExpression, 2);
+        $pointcutFilter = new PointcutFilter($aspectClassName, $pointcutMethodName, $aspectContainer);
         $pointcutFilterComposite->addFilter($operator, $pointcutFilter);
     }
 

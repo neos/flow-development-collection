@@ -68,6 +68,7 @@ class Package extends BasePackage
         $bootstrap->registerCompiletimeCommand('neos.flow:core:*');
         $bootstrap->registerCompiletimeCommand('neos.flow:cache:flush');
         $bootstrap->registerCompiletimeCommand('neos.flow:package:rescan');
+        $bootstrap->registerCompiletimeCommand('neos.flow:aop:aspecttargets');
 
         $dispatcher = $bootstrap->getSignalSlotDispatcher();
 
