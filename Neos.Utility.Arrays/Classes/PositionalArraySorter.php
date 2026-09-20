@@ -238,7 +238,11 @@ final class PositionalArraySorter
             if ($value === null && $this->removeNullValues) {
                 continue;
             }
-            $position = ObjectAccess::getPropertyPath($value, $this->positionPropertyPath);
+            if (is_array($value) || is_object($value)) {
+                $position = ObjectAccess::getPropertyPath($value, $this->positionPropertyPath);
+            } else {
+                $position = null;
+            }
             if ($position !== null) {
                 $arrayKeysWithPosition[$key] = $position;
             } elseif (is_numeric($key)) {
