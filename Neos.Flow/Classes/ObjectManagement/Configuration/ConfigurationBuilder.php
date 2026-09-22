@@ -294,7 +294,7 @@ readonly class ConfigurationBuilder
                 }
             }
 
-            /** @var Flow\Autowiring $autowiringAnnotation */
+            /** @var Flow\Autowiring|null $autowiringAnnotation */
             $autowiringAnnotation = $this->reflectionService->getMethodAnnotation($className, '__construct', Flow\Autowiring::class);
             if ($autowiringAnnotation !== null && $autowiringAnnotation->enabled === false) {
                 continue;
@@ -363,22 +363,15 @@ readonly class ConfigurationBuilder
                 continue;
             }
 
-            try {
-                $classMethodNames = get_class_methods($className);
-            } catch (\TypeError $error) {
-                throw new UnknownClassException(sprintf('The class "%s" defined in the object configuration for object "%s", defined in package: %s, does not exist.', $className, $objectConfiguration->getObjectName(), $objectConfiguration->getPackageKey()), 1352371372);
+            if (!class_exists($className)) {
+                throw new UnknownClassException(sprintf('The class "%s" defined in the object configuration for object "%s", defined in package: %s, does not exist.', $className, $objectConfiguration->getObjectName(), $objectConfiguration->getPackageKey()), 1352371371);
             }
-            if (!is_array($classMethodNames)) {
-                if (!class_exists($className)) {
-                    throw new UnknownClassException(sprintf('The class "%s" defined in the object configuration for object "%s", defined in package: %s, does not exist.', $className, $objectConfiguration->getObjectName(), $objectConfiguration->getPackageKey()), 1352371371);
-                }
-                throw new UnknownClassException(sprintf('Could not autowire properties of class "%s" because names of methods contained in that class could not be retrieved using get_class_methods().', $className), 1352386418);
-            }
+            $classMethodNames = get_class_methods($className);
             foreach ($classMethodNames as $methodName) {
                 if (isset($methodName[6]) && str_starts_with($methodName, 'inject') && $methodName[6] === strtoupper($methodName[6])) {
                     $propertyName = lcfirst(substr($methodName, 6));
 
-                    /** @var Flow\Autowiring $autowiringAnnotation */
+                    /** @var Flow\Autowiring|null $autowiringAnnotation */
                     $autowiringAnnotation = $this->reflectionService->getMethodAnnotation($className, $methodName, Flow\Autowiring::class);
                     if ($autowiringAnnotation !== null && $autowiringAnnotation->enabled === false) {
                         continue;

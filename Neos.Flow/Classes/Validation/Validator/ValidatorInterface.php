@@ -24,10 +24,10 @@ interface ValidatorInterface
     /**
      * Constructs the validator and sets validation options
      *
-     * @param array $options The validation options
+     * @param array<mixed> $options The validation options
      * @api
      */
-    // public function __construct(array $options = array());
+    public function __construct(array $options = array());
 
     /**
      * Checks if the given value is valid according to the validator, and returns

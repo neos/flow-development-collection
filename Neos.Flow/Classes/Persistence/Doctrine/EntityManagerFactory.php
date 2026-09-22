@@ -167,6 +167,7 @@ class EntityManagerFactory
         }
 
         $logger = $sqlLoggerInstance->logger;
+        /** @phpstan-ignore instanceof.alwaysTrue (annotations can be wrong) */
         if (!$logger instanceof LoggerInterface) {
             throw new InvalidConfigurationException(sprintf('The SqlLogger needs to get a Psr LoggerInterface injected, got "%s"', get_class($logger)), 1720548075);
         }

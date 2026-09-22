@@ -68,11 +68,11 @@ abstract class ObjectAccess
      */
     public static function getProperty($subject, $propertyName, bool $forceDirectAccess = false)
     {
-        /** @phpstan-ignore booleanAnd.alwaysFalse (annotations may be wrong) */
+        /** @phpstan-ignore function.alreadyNarrowedType,booleanAnd.alwaysFalse (annotations may be wrong) */
         if (!is_object($subject) && !is_array($subject)) {
             throw new \InvalidArgumentException('$subject must be an object or array, ' . gettype($subject) . ' given.', 1237301367);
         }
-        /** @phpstan-ignore booleanAnd.alwaysFalse (annotations may be wrong) */
+        /** @phpstan-ignore function.alreadyNarrowedType,booleanAnd.alwaysFalse (annotations may be wrong) */
         if (!is_string($propertyName) && !is_int($propertyName)) {
             throw new \InvalidArgumentException('Given property name/index is not of type string or integer.', 1231178303);
         }
@@ -248,7 +248,7 @@ abstract class ObjectAccess
      */
     public static function setProperty(&$subject, $propertyName, $propertyValue, bool $forceDirectAccess = false): bool
     {
-        /** @phpstan-ignore booleanAnd.alwaysFalse (annotations may be wrong) */
+        /** @phpstan-ignore function.alreadyNarrowedType,booleanAnd.alwaysFalse (annotations may be wrong) */
         if (!is_string($propertyName) && !is_int($propertyName)) {
             throw new \InvalidArgumentException('Given property name/index is not of type string or integer.', 1231178878);
         }
@@ -258,6 +258,7 @@ abstract class ObjectAccess
             return true;
         }
 
+        /** @phpstan-ignore function.alreadyNarrowedType (annotations may be wrong) */
         if (!is_object($subject)) {
             throw new \InvalidArgumentException('subject must be an object or array, ' . gettype($subject) . ' given.', 1237301368);
         }
@@ -305,6 +306,7 @@ abstract class ObjectAccess
      */
     public static function getGettablePropertyNames($object): array
     {
+        /** @phpstan-ignore function.alreadyNarrowedType (annotations may be wrong) */
         if (!is_object($object)) {
             throw new \InvalidArgumentException('$object must be an object, ' . gettype($object) . ' given.', 1237301369);
         }
@@ -351,6 +353,7 @@ abstract class ObjectAccess
      */
     public static function getSettablePropertyNames($object): array
     {
+        /** @phpstan-ignore function.alreadyNarrowedType (annotations may be wrong) */
         if (!is_object($object)) {
             throw new \InvalidArgumentException('$object must be an object, ' . gettype($object) . ' given.', 1264022994);
         }
@@ -382,6 +385,7 @@ abstract class ObjectAccess
      */
     public static function isPropertySettable($object, string $propertyName): bool
     {
+        /** @phpstan-ignore function.alreadyNarrowedType (annotations may be wrong) */
         if (!is_object($object)) {
             throw new \InvalidArgumentException('$object must be an object, ' . gettype($object) . ' given.', 1259828920);
         }
@@ -404,6 +408,7 @@ abstract class ObjectAccess
      */
     public static function isPropertyGettable($object, string $propertyName): bool
     {
+        /** @phpstan-ignore function.alreadyNarrowedType (annotations may be wrong) */
         if (!is_object($object)) {
             throw new \InvalidArgumentException('$object must be an object, ' . gettype($object) . ' given.', 1259828921);
         }
@@ -429,6 +434,7 @@ abstract class ObjectAccess
      */
     public static function getGettableProperties($object): array
     {
+        /** @phpstan-ignore function.alreadyNarrowedType (annotations may be wrong) */
         if (!is_object($object)) {
             throw new \InvalidArgumentException('$object must be an object, ' . gettype($object) . ' given.', 1237301370);
         }

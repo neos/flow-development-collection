@@ -80,7 +80,6 @@ class XsdGenerator extends AbstractGenerator
         $tagName = $this->getTagNameForClass($className, $viewHelperNamespace);
 
         $xsdElement = $xmlRootNode->addChild('xsd:element');
-        /** @phpstan-ignore argument.type (offsetSet accepts mixed) */
         $xsdElement->offsetSet('name', $tagName);
         $docComment = $reflectionClass->getDocComment();
         if ($docComment !== false) {
@@ -89,13 +88,10 @@ class XsdGenerator extends AbstractGenerator
         $this->addDocumentation($this->docCommentParser->getDescription(), $xsdElement);
 
         $xsdComplexType = $xsdElement->addChild('xsd:complexType');
-        /** @phpstan-ignore argument.type (offsetSet accepts mixed) */
         $xsdComplexType->offsetSet('mixed', 'true');
         $xsdSequence = $xsdComplexType->addChild('xsd:sequence');
         $xsdAny = $xsdSequence->addChild('xsd:any');
-        /** @phpstan-ignore argument.type (offsetSet accepts mixed) */
         $xsdAny->offsetSet('minOccurs', '0');
-        /** @phpstan-ignore argument.type (offsetSet accepts mixed) */
         $xsdAny->offsetSet('maxOccurs', 'unbounded');
 
         $this->addAttributes($className, $xsdComplexType);
@@ -118,13 +114,10 @@ class XsdGenerator extends AbstractGenerator
         foreach ($argumentDefinitions as $argumentDefinition) {
             /** @var \SimpleXMLElement $xsdAttribute */
             $xsdAttribute = $xsdElement->addChild('xsd:attribute');
-            /** @phpstan-ignore argument.type (offsetSet accepts mixed) */
             $xsdAttribute->offsetSet('type', 'xsd:string');
-            /** @phpstan-ignore argument.type (offsetSet accepts mixed) */
             $xsdAttribute->offsetSet('name', $argumentDefinition->getName());
             $this->addDocumentation($argumentDefinition->getDescription(), $xsdAttribute);
             if ($argumentDefinition->isRequired()) {
-                /** @phpstan-ignore argument.type (offsetSet accepts mixed) */
                 $xsdAttribute->offsetSet('use', 'required');
             }
         }
