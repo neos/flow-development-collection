@@ -14,12 +14,15 @@ namespace Neos\Flow\Tests\Unit\ObjectManagement\Configuration;
  * source code.
  */
 use Neos\Flow\Annotations as Flow;
+use Neos\Flow\ObjectManagement\Configuration\ConfigurationArgument;
 use Neos\Flow\ObjectManagement\Configuration\ConfigurationBuilder;
 use Neos\Flow\ObjectManagement\Configuration\ConfigurationParser;
 use Neos\Flow\ObjectManagement\Exception;
 use Neos\Flow\ObjectManagement\Exception\UnknownClassException;
 use Neos\Flow\ObjectManagement\Exception\UnresolvedDependenciesException;
 use Neos\Flow\Reflection\ReflectionService;
+use Neos\Flow\Tests\Unit\ObjectManagement\Fixture\SomeImplementation;
+use Neos\Flow\Tests\Unit\ObjectManagement\Fixture\SomeInterface;
 use Neos\Flow\Tests\UnitTestCase;
 use PHPUnit\Framework\Attributes\Test;
 use Psr\Log\LoggerInterface;
@@ -70,6 +73,33 @@ final class ConfigurationBuilderTest extends UnitTestCase
             self::fail('Factory created objects should not throw UnresolvedDependenciesException by autowiring constructor arguments');
         }
         self::assertEquals($configurationArray['factoryObjectName'], $objectConfigurations[__CLASS__]->getFactoryObjectName());
+    }
+
+    #[Test]
+    public function objectImplementedByConfiguredClassInheritsTheConstructorArgumentsOfThatClass(): void
+    {
+        $reflectionServiceMock = $this->reflectionServiceMock();
+        $reflectionServiceMock->method('getDefaultImplementationClassNameForInterface')->willReturn(false);
+        $reflectionServiceMock->method('hasMethod')->with(SomeImplementation::class, '__construct')->willReturn(true);
+        $reflectionServiceMock->method('getMethodParameters')->with(SomeImplementation::class, '__construct')->willReturn([
+            'name' => ['position' => 0, 'optional' => false, 'type' => 'string', 'class' => null, 'array' => false, 'byReference' => false, 'allowsNull' => false, 'defaultValue' => null, 'scalarDeclaration' => true, 'annotations' => []],
+        ]);
+
+        $rawObjectConfigurations = [
+            SomeInterface::class => ['className' => SomeImplementation::class],
+            SomeImplementation::class => ['scope' => 'singleton', 'arguments' => [1 => ['value' => 'Foo']]],
+        ];
+
+        $configurationBuilder = $this->prepareConfigurationBuilder($reflectionServiceMock);
+        $objectConfigurations = $configurationBuilder->buildObjectConfigurations(
+            ['Neos.Flow.Testing' => [SomeInterface::class, SomeImplementation::class]],
+            ['Neos.Flow.Testing' => $rawObjectConfigurations]
+        );
+
+        $arguments = $objectConfigurations[SomeInterface::class]->getArguments();
+        self::assertArrayHasKey(1, $arguments);
+        self::assertSame('Foo', $arguments[1]->getValue());
+        self::assertSame(ConfigurationArgument::ARGUMENT_TYPES_STRAIGHTVALUE, $arguments[1]->getType());
     }
 
     protected function prepareConfigurationBuilder(ReflectionService $reflectionServiceMock): ConfigurationBuilder

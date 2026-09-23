@@ -13,9 +13,12 @@ namespace Neos\Flow\Tests\Functional\ObjectManagement;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+
+use Neos\Cache\Frontend\VariableFrontend;
 use Neos\Flow\Configuration\ConfigurationManager;
 use Neos\Flow\Core\Bootstrap;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
+use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Flow\SignalSlot\Dispatcher;
 use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\Flow175\OuterPrototype;
 use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\InterfaceA;
@@ -126,5 +129,14 @@ final class ObjectManagerTest extends FunctionalTestCase
 
         self::assertSame('Hello Bastian!', $object1->getInner()->greet('Bastian'));
         self::assertSame('Hello Bastian from a different greeter!', $object2->getInner()->greet('Bastian'));
+    }
+
+    #[Test]
+    public function interfaceObjectUsesClassConfigurationForInjection()
+    {
+        /** @var \Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\ClassImplementingInterfaceToTestConstructorInjection $object1 */
+        $object1 = $this->objectManager->get(\Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\InterfaceToTestConstructorInjection::class);
+        self::assertInstanceOf(PersistenceManagerInterface::class, $object1->persistenceManager);
+        self::assertInstanceOf(VariableFrontend::class, $object1->cache);
     }
 }
