@@ -268,74 +268,114 @@ readonly class ConfigurationBuilder
      */
     protected function autowireArguments(array $objectConfigurations): array
     {
+        $processedObjectNames = [];
         foreach ($objectConfigurations as $objectConfiguration) {
-            $className = $objectConfiguration->getClassName();
-
-            if ($className === '') {
-                continue;
-            }
-
-            if ($objectConfiguration->getAutowiring() === Configuration::AUTOWIRING_MODE_OFF) {
-                continue;
-            }
-
-            if ($objectConfiguration->isCreatedByFactory()) {
-                continue;
-            }
-
-            if (!$this->reflectionService->hasMethod($className, '__construct')) {
-                continue;
-            }
-
-            foreach ($this->excludeClassesFromConstructorAutowiring as $excludeClassNameRegex) {
-                if ((preg_match('/' . $excludeClassNameRegex . '/', $className) === 1) && $objectConfiguration->getScope() === Configuration::SCOPE_PROTOTYPE) {
-                    $objectConfiguration->setAutowiring(Configuration::AUTOWIRING_MODE_OFF);
-                    continue 2;
-                }
-            }
-
-            /** @var Flow\Autowiring $autowiringAnnotation */
-            $autowiringAnnotation = $this->reflectionService->getMethodAnnotation($className, '__construct', Flow\Autowiring::class);
-            if ($autowiringAnnotation !== null && $autowiringAnnotation->enabled === false) {
-                continue;
-            }
-
-            $arguments = $objectConfiguration->getArguments();
-            foreach ($this->reflectionService->getMethodParameters($className, '__construct') as $parameterName => $parameterInformation) {
-                $debuggingHint = '';
-                $index = $parameterInformation['position'] + 1;
-                if (!isset($arguments[$index])) {
-                    $injectConfigurationAnnotation = $parameterInformation['annotations'][InjectConfiguration::class][0] ?? null;
-                    if ($injectConfigurationAnnotation instanceof InjectConfiguration) {
-                        if ($injectConfigurationAnnotation->type !== ConfigurationManager::CONFIGURATION_TYPE_SETTINGS) {
-                            throw new InvalidObjectConfigurationException(sprintf('InjectConfiguration for constructor arguments currently only supports settings. Got type "%s" in constructor argument %s of class %s.', $injectConfigurationAnnotation->type, $index, $className), 1710409120);
-                        }
-                        $arguments[$index] = new ConfigurationArgument(
-                            $index,
-                            $injectConfigurationAnnotation->getFullConfigurationPath($objectConfiguration->getPackageKey()),
-                            ConfigurationArgument::ARGUMENT_TYPES_SETTING
-                        );
-                    } elseif ($parameterInformation['optional'] === true) {
-                        $defaultValue = $parameterInformation['defaultValue'] ?? null;
-                        $arguments[$index] = new ConfigurationArgument($index, $defaultValue, ConfigurationArgument::ARGUMENT_TYPES_STRAIGHTVALUE, Configuration::AUTOWIRING_MODE_OFF);
-                    } elseif ($parameterInformation['class'] !== null && isset($objectConfigurations[$parameterInformation['class']])) {
-                        $arguments[$index] = new ConfigurationArgument($index, $parameterInformation['class'], ConfigurationArgument::ARGUMENT_TYPES_OBJECT);
-                    } elseif ($parameterInformation['allowsNull'] === true) {
-                        $arguments[$index] = new ConfigurationArgument($index, null, ConfigurationArgument::ARGUMENT_TYPES_STRAIGHTVALUE, Configuration::AUTOWIRING_MODE_OFF);
-                    } elseif (is_string($parameterInformation['class']) && interface_exists($parameterInformation['class'])) {
-                        $debuggingHint = sprintf('No default implementation for the required interface %s was configured, therefore no specific class name could be used for this dependency. ', $parameterInformation['class']);
-                    }
-                }
-
-                if (!isset($arguments[$index]) && $objectConfiguration->getScope() === Configuration::SCOPE_SINGLETON) {
-                    throw new UnresolvedDependenciesException(sprintf('Could not autowire required constructor argument $%s for singleton class %s. %sCheck the type hint of that argument and your Objects.yaml configuration.', $parameterName, $className, $debuggingHint), 1298629392);
-                }
-            }
-
-            $objectConfiguration->setArguments($arguments);
+            $processedObjectNames = $this->autowireArgumentsOfObject($objectConfiguration, $objectConfigurations, $processedObjectNames);
         }
 
         return $objectConfigurations;
+    }
+
+    /**
+     * An object which is implemented by a separately configured class, typically an interface pointing at
+     * its implementation, is built the way that class is configured: it inherits the constructor arguments
+     * of the class unless it configures them itself. The class is wired first, so the inherited arguments
+     * are complete.
+     *
+     * @param array<Configuration> $objectConfigurations
+     * @param array<string,true> $processedObjectNames Names of the objects wired so far, also guards against cycles
+     * @return array<string,true>
+     * @throws ClassLoadingForReflectionFailedException
+     * @throws InvalidClassException
+     * @throws InvalidConfigurationException
+     * @throws InvalidObjectConfigurationException
+     * @throws UnresolvedDependenciesException
+     * @throws \ReflectionException
+     */
+    protected function autowireArgumentsOfObject(Configuration $objectConfiguration, array $objectConfigurations, array $processedObjectNames): array
+    {
+        $objectName = $objectConfiguration->getObjectName();
+        if (isset($processedObjectNames[$objectName])) {
+            return $processedObjectNames;
+        }
+        $processedObjectNames[$objectName] = true;
+
+        $className = $objectConfiguration->getClassName();
+
+        if ($className === '') {
+            return $processedObjectNames;
+        }
+
+        if ($objectConfiguration->getAutowiring() === Configuration::AUTOWIRING_MODE_OFF) {
+            return $processedObjectNames;
+        }
+
+        if ($objectConfiguration->isCreatedByFactory()) {
+            return $processedObjectNames;
+        }
+
+        if (!$this->reflectionService->hasMethod($className, '__construct')) {
+            return $processedObjectNames;
+        }
+
+        foreach ($this->excludeClassesFromConstructorAutowiring as $excludeClassNameRegex) {
+            if ((preg_match('/' . $excludeClassNameRegex . '/', $className) === 1) && $objectConfiguration->getScope() === Configuration::SCOPE_PROTOTYPE) {
+                $objectConfiguration->setAutowiring(Configuration::AUTOWIRING_MODE_OFF);
+                return $processedObjectNames;
+            }
+        }
+
+        /** @var Flow\Autowiring $autowiringAnnotation */
+        $autowiringAnnotation = $this->reflectionService->getMethodAnnotation($className, '__construct', Flow\Autowiring::class);
+        if ($autowiringAnnotation !== null && $autowiringAnnotation->enabled === false) {
+            return $processedObjectNames;
+        }
+
+        $arguments = $objectConfiguration->getArguments();
+
+        // transfer object configuration of class to "object" (e.g. interface)
+        if ($objectName !== $className && isset($objectConfigurations[$className])) {
+            $processedObjectNames = $this->autowireArgumentsOfObject($objectConfigurations[$className], $objectConfigurations, $processedObjectNames);
+            foreach ($objectConfigurations[$className]->getArguments() as $index => $argument) {
+                if ($argument !== null && !isset($arguments[$index])) {
+                    $arguments[$index] = $argument;
+                }
+            }
+        }
+
+        foreach ($this->reflectionService->getMethodParameters($className, '__construct') as $parameterName => $parameterInformation) {
+            $debuggingHint = '';
+            $index = $parameterInformation['position'] + 1;
+            if (!isset($arguments[$index])) {
+                $injectConfigurationAnnotation = $parameterInformation['annotations'][InjectConfiguration::class][0] ?? null;
+                if ($injectConfigurationAnnotation instanceof InjectConfiguration) {
+                    if ($injectConfigurationAnnotation->type !== ConfigurationManager::CONFIGURATION_TYPE_SETTINGS) {
+                        throw new InvalidObjectConfigurationException(sprintf('InjectConfiguration for constructor arguments currently only supports settings. Got type "%s" in constructor argument %s of class %s.', $injectConfigurationAnnotation->type, $index, $className), 1710409120);
+                    }
+                    $arguments[$index] = new ConfigurationArgument(
+                        $index,
+                        $injectConfigurationAnnotation->getFullConfigurationPath($objectConfiguration->getPackageKey()),
+                        ConfigurationArgument::ARGUMENT_TYPES_SETTING
+                    );
+                } elseif ($parameterInformation['optional'] === true) {
+                    $defaultValue = $parameterInformation['defaultValue'] ?? null;
+                    $arguments[$index] = new ConfigurationArgument($index, $defaultValue, ConfigurationArgument::ARGUMENT_TYPES_STRAIGHTVALUE, Configuration::AUTOWIRING_MODE_OFF);
+                } elseif ($parameterInformation['class'] !== null && isset($objectConfigurations[$parameterInformation['class']])) {
+                    $arguments[$index] = new ConfigurationArgument($index, $parameterInformation['class'], ConfigurationArgument::ARGUMENT_TYPES_OBJECT);
+                } elseif ($parameterInformation['allowsNull'] === true) {
+                    $arguments[$index] = new ConfigurationArgument($index, null, ConfigurationArgument::ARGUMENT_TYPES_STRAIGHTVALUE, Configuration::AUTOWIRING_MODE_OFF);
+                } elseif (is_string($parameterInformation['class']) && interface_exists($parameterInformation['class'])) {
+                    $debuggingHint = sprintf('No default implementation for the required interface %s was configured, therefore no specific class name could be used for this dependency. ', $parameterInformation['class']);
+                }
+            }
+
+            if (!isset($arguments[$index]) && $objectConfiguration->getScope() === Configuration::SCOPE_SINGLETON) {
+                throw new UnresolvedDependenciesException(sprintf('Could not autowire required constructor argument $%s for singleton class %s. %sCheck the type hint of that argument and your Objects.yaml configuration.', $parameterName, $className, $debuggingHint), 1298629392);
+            }
+        }
+
+        $objectConfiguration->setArguments($arguments);
+        return $processedObjectNames;
     }
 
     /**
