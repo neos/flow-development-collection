@@ -162,14 +162,7 @@ class RequestHandler implements HttpRequestHandlerInterface
     protected function sendResponse(ResponseInterface $response)
     {
         ob_implicit_flush();
-        $headers = ResponseInformationHelper::prepareHeaders($response);
-        $statusLine = array_shift($headers);
-        foreach ($headers as $header) {
-            header($header, false);
-        }
-        // The status line is sent last, since PHP overrides the status for some headers: it turns it into a 401 for a
-        // "WWW-Authenticate" header, and into a 302 for a "Location" header (unless it's a 201 or 3xx)
-        header($statusLine, true, $response->getStatusCode());
+        $this->sendHeaders($response);
         // Flush and stop all output buffers before sending the whole body in one go, as output buffering has no use any more
         // and just makes sending large files impossible without running out of memory
         while (ob_get_level() > 0) {
@@ -183,5 +176,23 @@ class RequestHandler implements HttpRequestHandlerInterface
         } else {
             echo $body;
         }
+    }
+
+    /**
+     * Send the status line and the headers of the HttpResponse
+     *
+     * The status line is sent last, since PHP overrides the status for some headers: it turns it into a 401 for a
+     * "WWW-Authenticate" header, and into a 302 for a "Location" header (unless it's a 201 or 3xx)
+     *
+     * @param ResponseInterface $response
+     */
+    protected function sendHeaders(ResponseInterface $response): void
+    {
+        $headers = ResponseInformationHelper::prepareHeaders($response);
+        $statusLine = array_shift($headers);
+        foreach ($headers as $header) {
+            header($header, false);
+        }
+        header($statusLine, true, $response->getStatusCode());
     }
 }
