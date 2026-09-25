@@ -245,4 +245,24 @@ class ResponseInformationHelperTest extends UnitTestCase
 
         self::assertEquals('must-revalidate', $cacheControlHeaderValue);
     }
+
+    /**
+     * The status line comes last, so that PHP can't change the status when a "WWW-Authenticate" or "Location" header
+     * is sent
+     *
+     * @test
+     */
+    public function prepareHeadersReturnsTheStatusLineAfterAllHeaders()
+    {
+        $headers = ['WWW-Authenticate' => 'Bearer', 'Set-Cookie' => ['a=1', 'b=2'], 'Location' => '/jobs/1'];
+        $response = new Response(403, $headers, null, '1.1', 'Custom Reason');
+
+        self::assertSame([
+            'WWW-Authenticate: Bearer',
+            'Set-Cookie: a=1',
+            'Set-Cookie: b=2',
+            'Location: /jobs/1',
+            'HTTP/1.1 403 Custom Reason',
+        ], ResponseInformationHelper::prepareHeaders($response));
+    }
 }
