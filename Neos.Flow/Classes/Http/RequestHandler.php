@@ -188,11 +188,11 @@ class RequestHandler implements HttpRequestHandlerInterface
      */
     protected function sendHeaders(ResponseInterface $response): void
     {
+        // the first one is the status line
         $headers = ResponseInformationHelper::prepareHeaders($response);
-        $statusLine = array_shift($headers);
-        foreach ($headers as $header) {
+        foreach (array_slice($headers, 1) as $header) {
             header($header, false);
         }
-        header($statusLine, true, $response->getStatusCode());
+        header($headers[0], true, $response->getStatusCode());
     }
 }

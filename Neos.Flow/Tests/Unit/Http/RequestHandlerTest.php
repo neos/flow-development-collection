@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Tests\Unit\Http;
 
 /*
@@ -15,6 +16,7 @@ use GuzzleHttp\Psr7\Response;
 use Neos\Flow\Http\RequestHandler;
 use Neos\Flow\Tests\Unit\Http\Fixtures\HeaderStack;
 use Neos\Flow\Tests\UnitTestCase;
+use Psr\Http\Message\ResponseInterface;
 
 /**
  * Test case for the Http RequestHandler
@@ -45,8 +47,7 @@ class RequestHandlerTest extends UnitTestCase
         $headers = ['WWW-Authenticate' => 'Bearer', 'Set-Cookie' => ['a=1', 'b=2']];
         $response = new Response(403, $headers, null, '1.1', 'Custom Reason');
 
-        $requestHandler = $this->getAccessibleMock(RequestHandler::class, ['dummy'], [], '', false);
-        $requestHandler->_call('sendHeaders', $response);
+        $this->sendHeaders($response);
 
         self::assertSame([
             ['header' => 'WWW-Authenticate: Bearer', 'replace' => false, 'responseCode' => 0],
@@ -65,10 +66,20 @@ class RequestHandlerTest extends UnitTestCase
     {
         $response = new Response(202, ['Location' => '/jobs/1']);
 
-        $requestHandler = $this->getAccessibleMock(RequestHandler::class, ['dummy'], [], '', false);
-        $requestHandler->_call('sendHeaders', $response);
+        $this->sendHeaders($response);
 
         self::assertSame(['Location: /jobs/1', 'HTTP/1.1 202 Accepted'], array_column(HeaderStack::stack(), 'header'));
         self::assertSame(202, HeaderStack::stack()[1]['responseCode']);
+    }
+
+    /**
+     * Calls the protected RequestHandler::sendHeaders()
+     */
+    private function sendHeaders(ResponseInterface $response): void
+    {
+        $requestHandler = (new \ReflectionClass(RequestHandler::class))->newInstanceWithoutConstructor();
+        (function () use ($response) {
+            $this->sendHeaders($response);
+        })->call($requestHandler);
     }
 }
