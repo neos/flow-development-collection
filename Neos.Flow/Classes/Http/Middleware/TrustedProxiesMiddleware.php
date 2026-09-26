@@ -106,7 +106,7 @@ class TrustedProxiesMiddleware implements MiddlewareInterface
 
         $portHeader = $this->getFirstTrustedProxyHeaderValue(self::HEADER_PORT, $trustedRequest);
         if ($portHeader !== null) {
-            $trustedRequest = $trustedRequest->withUri($trustedRequest->getUri()->withPort($portHeader), true);
+            $trustedRequest = $trustedRequest->withUri($trustedRequest->getUri()->withPort((int)$portHeader), true);
         } elseif ($protocolHeader !== null && $portFromHost === null) {
             $trustedRequest = $trustedRequest->withUri($trustedRequest->getUri()->withPort(strtolower($protocolHeader) === 'https' ? 443 : 80), true);
         }

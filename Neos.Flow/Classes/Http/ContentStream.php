@@ -73,7 +73,7 @@ class ContentStream implements StreamInterface
      *
      * @return void
      */
-    public function close()
+    public function close(): void
     {
         if ($this->resource === null) {
             return;
@@ -126,7 +126,7 @@ class ContentStream implements StreamInterface
      *
      * @return int|null Returns the size in bytes if known, or null if unknown.
      */
-    public function getSize()
+    public function getSize(): ?int
     {
         if (!$this->isValidResource($this->resource)) {
             return null;
@@ -144,7 +144,7 @@ class ContentStream implements StreamInterface
      * @return int Position of the file pointer
      * @throws \RuntimeException on error.
      */
-    public function tell()
+    public function tell(): int
     {
         $this->ensureResourceOpen();
 
@@ -161,7 +161,7 @@ class ContentStream implements StreamInterface
      *
      * @return bool
      */
-    public function eof()
+    public function eof(): bool
     {
         if (!$this->isValidResource($this->resource)) {
             return true;
@@ -175,7 +175,7 @@ class ContentStream implements StreamInterface
      *
      * @return bool
      */
-    public function isSeekable()
+    public function isSeekable(): bool
     {
         if (!$this->isValidResource($this->resource)) {
             return false;
@@ -196,10 +196,10 @@ class ContentStream implements StreamInterface
      *     PHP $whence values for `fseek()`.  SEEK_SET: Set position equal to
      *     offset bytes SEEK_CUR: Set position to current location plus offset
      *     SEEK_END: Set position to end-of-stream plus offset.
-     * @return bool
+     * @return void
      * @throws \RuntimeException on failure.
      */
-    public function seek($offset, $whence = SEEK_SET)
+    public function seek($offset, $whence = SEEK_SET): void
     {
         $this->ensureResourceOpen();
 
@@ -212,8 +212,6 @@ class ContentStream implements StreamInterface
         if (0 !== $result) {
             throw new \RuntimeException('Error seeking within stream', 1453892231);
         }
-
-        return true;
     }
 
     /**
@@ -222,14 +220,14 @@ class ContentStream implements StreamInterface
      * If the stream is not seekable, this method will raise an exception;
      * otherwise, it will perform a seek(0).
      *
-     * @return bool
+     * @return void
      * @see seek()
      * @link http://www.php.net/manual/en/function.fseek.php
      * @throws \RuntimeException on failure.
      */
-    public function rewind()
+    public function rewind(): void
     {
-        return $this->seek(0);
+        $this->seek(0);
     }
 
     /**
@@ -238,7 +236,7 @@ class ContentStream implements StreamInterface
      * @return bool
      * @phpstan-assert-if-true resource $this->resource
      */
-    public function isWritable()
+    public function isWritable(): bool
     {
         if (!$this->isValidResource($this->resource)) {
             return false;
@@ -263,7 +261,7 @@ class ContentStream implements StreamInterface
      * @return int Returns the number of bytes written to the stream.
      * @throws \RuntimeException on failure.
      */
-    public function write($string)
+    public function write($string): int
     {
         if (!$this->isWritable()) {
             throw new \RuntimeException('Stream is not writable', 1453892241);
@@ -284,7 +282,7 @@ class ContentStream implements StreamInterface
      * @return bool
      * @phpstan-assert-if-true resource $this->resource
      */
-    public function isReadable()
+    public function isReadable(): bool
     {
         if (!$this->isValidResource($this->resource)) {
             return false;
@@ -306,7 +304,7 @@ class ContentStream implements StreamInterface
      *     if no bytes are available.
      * @throws \RuntimeException if an error occurs.
      */
-    public function read(int $length)
+    public function read($length): string
     {
         $this->ensureResourceReadable();
 
@@ -326,7 +324,7 @@ class ContentStream implements StreamInterface
      * @throws \RuntimeException if unable to read or an error occurs while
      *     reading.
      */
-    public function getContents()
+    public function getContents(): string
     {
         $this->ensureResourceReadable();
 
@@ -415,7 +413,7 @@ class ContentStream implements StreamInterface
      * @see http://php.net/manual/en/language.oop5.magic.php#object.tostring
      * @return string
      */
-    public function __toString()
+    public function __toString(): string
     {
         if (!$this->isReadable()) {
             return '';

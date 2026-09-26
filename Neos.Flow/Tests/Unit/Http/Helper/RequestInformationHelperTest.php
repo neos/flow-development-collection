@@ -25,4 +25,25 @@ final class RequestInformationHelperTest extends UnitTestCase
         self::assertStringNotContainsString('SomePassword', $renderedHeaders);
         self::assertStringNotContainsString('SomeToken', $renderedHeaders);
     }
+
+    #[Test]
+    public function extractHeadersFromServerVariablesCastsScalarValuesToString()
+    {
+        $headers = RequestInformationHelper::extractHeadersFromServerVariables([
+            'HTTP_X_FORWARDED_PORT' => 8080,
+            'CONTENT_LENGTH' => 54,
+            'REDIRECT_REMOTE_AUTHORIZATION' => null,
+        ]);
+
+        self::assertSame(['X-Forwarded-Port' => '8080', 'Content-Length' => '54', 'Authorization' => ''], $headers);
+    }
+
+    #[Test]
+    public function serverRequestCanBeCreatedWithHeadersExtractedFromNonStringServerVariables()
+    {
+        $headers = RequestInformationHelper::extractHeadersFromServerVariables(['HTTP_X_FORWARDED_PORT' => 8080]);
+        $request = new ServerRequest('GET', 'http://localhost', $headers);
+
+        self::assertSame('8080', $request->getHeaderLine('X-Forwarded-Port'));
+    }
 }
