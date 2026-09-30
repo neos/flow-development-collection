@@ -95,6 +95,7 @@ class Dispatcher
         }
 
         $controller = $this->objectManager->get($controllerObjectName);
+        /** @phpstan-ignore instanceof.alwaysTrue (Annotations can be wrong) */
         if (!$controller instanceof CommandControllerInterface) {
             throw new InvalidCommandControllerException('Invalid controller "' . $request->getControllerObjectName() . '". The controller must be a valid request handling controller, ' . get_debug_type($controller) . ' given.', 1565878098);
         }

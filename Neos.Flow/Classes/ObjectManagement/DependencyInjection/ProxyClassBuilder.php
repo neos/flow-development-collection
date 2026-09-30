@@ -184,7 +184,7 @@ class ProxyClassBuilder
         if ($className == '') {
             return '';
         }
-        $forceSerializationCode = $forceSerializationCode === false ? ($this->reflectionService->getClassAnnotation($className, Flow\Proxy::class)?->forceSerializationCode ?? false) : true;
+        $forceSerializationCode = $forceSerializationCode === false ? ($this->reflectionService->getClassAnnotation($className, Flow\Proxy::class)->forceSerializationCode ?? false) : true;
         $scopeAnnotation = $this->reflectionService->getClassAnnotation($className, Flow\Scope::class);
         $transientProperties = $this->reflectionService->getPropertyNamesByAnnotation($className, Flow\Transient::class);
         $injectedProperties = $this->reflectionService->getPropertyNamesByAnnotation($className, Flow\Inject::class);
@@ -236,7 +236,6 @@ class ProxyClassBuilder
         $commands = [];
         $injectedProperties = [];
         foreach ($objectConfiguration->getProperties() as $propertyName => $propertyConfiguration) {
-            assert($propertyConfiguration instanceof ConfigurationProperty);
             if ($propertyConfiguration->getAutowiring() === Configuration::AUTOWIRING_MODE_OFF) {
                 continue;
             }

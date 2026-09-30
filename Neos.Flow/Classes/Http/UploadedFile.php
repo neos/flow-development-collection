@@ -190,6 +190,7 @@ class UploadedFile implements UploadedFileInterface
             throw new InvalidArgumentException('Invalid path provided to move uploaded file to. Must be a non-empty string', 1479747624);
         }
 
+        /** @phpstan-ignore identical.alwaysTrue (FLOW_SAPITYPE can also be "Web", thus this can be false) */
         if ($this->stream !== null || ($this->file !== null && FLOW_SAPITYPE === 'CLI')) {
             $this->moved = $this->writeFile($targetPath);
         }

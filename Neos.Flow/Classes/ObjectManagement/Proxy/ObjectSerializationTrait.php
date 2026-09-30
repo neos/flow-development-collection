@@ -22,6 +22,8 @@ use Neos\Utility\Arrays;
 
 /**
  * Methods used to serialize objects used by proxy classes.
+ *
+ * @phpstan-ignore trait.unused (the trait is used by generated proxy classes)
  */
 trait ObjectSerializationTrait
 {
