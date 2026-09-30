@@ -150,6 +150,7 @@ EOD;
         if (defined('FLOW_PATH_ROOT')) {
             $footer .= '<tr><th>Instance root</th><td class="ExceptionProperty">' . FLOW_PATH_ROOT . '</td></tr>';
         }
+        /** @phpstan-ignore instanceof.alwaysTrue (ObjectManager may not be fully setup yet) */
         if (Bootstrap::$staticObjectManager instanceof ObjectManagerInterface) {
             $bootstrap = Bootstrap::$staticObjectManager->get(Bootstrap::class);
             $footer .= '<tr><th>Application Context</th><td class="ExceptionProperty">' . $bootstrap->getContext() . '</td></tr>';

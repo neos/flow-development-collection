@@ -172,6 +172,7 @@ class DateTimeConverter extends AbstractTypeConverter
         if ($date === false) {
             return new Error('The date "%s" was not recognized (for format "%s").', 1307719788, [$dateAsString, $dateFormat]);
         }
+        /** @phpstan-ignore function.alreadyNarrowedType (annotations can be wrong) */
         if (isset($source['hour'], $source['minute'], $source['second']) && is_array($source)) {
             $date = $this->overrideTime($date, $source);
         }

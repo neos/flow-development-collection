@@ -156,6 +156,7 @@ class CacheManager
     public function setCacheConfigurations(array $cacheConfigurations): void
     {
         foreach ($cacheConfigurations as $identifier => $configuration) {
+            /** @phpstan-ignore function.alreadyNarrowedType (Annotations can be wrong) */
             if (!is_array($configuration)) {
                 throw new \InvalidArgumentException('The cache configuration for cache "' . $identifier . '" was not an array as expected.', 1231259656);
             }

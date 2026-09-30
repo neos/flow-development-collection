@@ -455,8 +455,9 @@ abstract class Files
      */
     public static function bytesToSizeString($bytes, ?int $decimals = null, ?string $decimalSeparator = null, ?string $thousandsSeparator = null): string
     {
-        /** @phpstan-ignore booleanAnd.alwaysFalse (annotations may be wrong) */
+        /** @phpstan-ignore booleanAnd.alwaysFalse,function.alreadyNarrowedType (annotations may be wrong) */
         if (!is_int($bytes) && !is_float($bytes)) {
+            /** @phpstan-ignore function.alreadyNarrowedType (annotations may be wrong) */
             if (is_numeric($bytes)) {
                 $bytes = (float)$bytes;
             } else {
@@ -483,7 +484,7 @@ abstract class Files
         return sprintf(
             '%s %s',
             number_format(round($bytes, 4 * $decimals), $decimals, $decimalSeparator, $thousandsSeparator),
-            self::$sizeUnits[$pow]
+            self::$sizeUnits[(int)$pow]
         );
     }
 
