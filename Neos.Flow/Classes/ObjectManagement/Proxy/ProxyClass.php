@@ -251,7 +251,6 @@ class ProxyClass
         }
 
         foreach ($this->methods as $proxyMethod) {
-            assert($proxyMethod instanceof ProxyMethodGenerator);
             if ($proxyMethod->willBeRendered()) {
                 $methodsCode .= PHP_EOL . $proxyMethod->generate();
             }

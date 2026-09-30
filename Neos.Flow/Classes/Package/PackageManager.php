@@ -212,7 +212,7 @@ class PackageManager
         if (!$this->isPackageAvailable($packageKey)) {
             throw new Exception\UnknownPackageException('Package "' . $packageKey . '" is not available. Please check if the package exists and that the package key is correct (package keys are case sensitive).', 1166546734);
         }
-
+        /** @phpstan-ignore offsetAccess.notFound (previous check works but is not untderstandable for phpstan) */
         return $this->packages[$this->getCaseSensitivePackageKey($packageKey)];
     }
 

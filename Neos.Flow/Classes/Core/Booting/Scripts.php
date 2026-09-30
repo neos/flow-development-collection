@@ -312,6 +312,7 @@ class Scripts
             // to alternative implementations of ThrowableStorageInterface
 
             $output = '';
+            /** @phpstan-ignore instanceof.alwaysTrue (ObjectManager may not be initialized yet) */
             if (!(Bootstrap::$staticObjectManager instanceof ObjectManagerInterface)) {
                 return $output;
             }
@@ -448,6 +449,7 @@ class Scripts
         $proxyClassLoader->initializeAvailableProxyClasses($bootstrap->getContext());
 
         // Check if code was updated, if not something went wrong
+        /** @phpstan-ignore identical.alwaysTrue (may be wrong at compile time) */
         if ($objectConfigurationCache->has('allCompiledCodeUpToDate') === false) {
             if (DIRECTORY_SEPARATOR === '/') {
                 $phpBinaryPathAndFilename = '"' . escapeshellcmd(Files::getUnixStylePath($settings['core']['phpBinaryPathAndFilename'])) . '"';

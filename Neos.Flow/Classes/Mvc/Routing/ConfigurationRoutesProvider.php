@@ -33,7 +33,6 @@ final class ConfigurationRoutesProvider implements RoutesProviderInterface
                     $routes[] = $route;
                 }
             } else {
-                /** @phpstan-ignore method.notFound */
                 $routes[] = (new \ReflectionClass(Route::class))->newLazyProxy(static fn () => Route::fromConfiguration($routeConfiguration));
             }
         }

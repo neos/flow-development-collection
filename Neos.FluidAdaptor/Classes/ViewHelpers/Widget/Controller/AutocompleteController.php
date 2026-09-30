@@ -12,6 +12,7 @@ namespace Neos\FluidAdaptor\ViewHelpers\Widget\Controller;
  * source code.
  */
 
+use Neos\Flow\Persistence\QueryResultInterface;
 use Neos\FluidAdaptor\Core\Widget\AbstractWidgetController;
 use Neos\Utility\Arrays;
 use Neos\Utility\ObjectAccess;
@@ -39,6 +40,9 @@ class AutocompleteController extends AbstractWidgetController
      */
     public function indexAction()
     {
+        if ($this->view === null) {
+            throw new \RuntimeException(self::class . ' requires a view');
+        }
         $this->view->assign('id', $this->widgetConfiguration['for']);
     }
 
@@ -50,6 +54,9 @@ class AutocompleteController extends AbstractWidgetController
     {
         $searchProperty = $this->widgetConfiguration['searchProperty'];
         $queryResult = $this->widgetConfiguration['objects'];
+        if (!$queryResult instanceof QueryResultInterface) {
+            return json_encode([], JSON_THROW_ON_ERROR);
+        }
         $query = clone $queryResult->getQuery();
         $constraint = $query->getConstraint();
 

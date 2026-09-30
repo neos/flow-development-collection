@@ -78,6 +78,7 @@ class HashService
      */
     public function generateHmac($string)
     {
+        /** @phpstan-ignore function.alreadyNarrowedType (annotations can be wrong) */
         if (!is_string($string)) {
             throw new InvalidArgumentForHashGenerationException('A hash can only be generated for a string, but "' . gettype($string) . '" was given.', 1255069587);
         }
@@ -126,6 +127,7 @@ class HashService
      */
     public function validateAndStripHmac($string)
     {
+        /** @phpstan-ignore function.alreadyNarrowedType (annotations can be wrong) */
         if (!is_string($string)) {
             throw new InvalidArgumentForHashGenerationException('A hash can only be validated for a string, but "' . gettype($string) . '" was given.', 1320829762);
         }

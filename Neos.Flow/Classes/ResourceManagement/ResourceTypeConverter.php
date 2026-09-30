@@ -263,7 +263,7 @@ class ResourceTypeConverter extends AbstractTypeConverter
                     $resource->setFilename($filename);
                 }
             }
-            if ($hash !== null && $resource?->getSha1() !== $hash) {
+            if ($hash !== null && $resource->getSha1() !== $hash) {
                 throw new Exception\InvalidResourceDataException('The source SHA1 did not match the SHA1 of the imported resource.', 1482248149);
             }
         }

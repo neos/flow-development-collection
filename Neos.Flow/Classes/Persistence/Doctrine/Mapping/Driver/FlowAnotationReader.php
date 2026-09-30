@@ -82,12 +82,11 @@ class FlowAnotationReader implements Reader
      * @param ReflectionMethod $method The ReflectionMethod to read the annotations from.
      * @param class-string<T> $annotationName The name of the annotation.
      * @return T|null The Annotation or NULL, if the requested annotation does not exist.
-     * @template T
+     * @template T of object
      */
     public function getMethodAnnotation(ReflectionMethod $method, $annotationName)
     {
         $className = $this->getUnproxiedClassName($method->class);
-        /** @var T|null $annotation */
         $annotation = $this->reflectionService->getMethodAnnotation($className, $method->getName(), $annotationName);
         return $annotation;
     }
