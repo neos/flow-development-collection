@@ -219,6 +219,23 @@ class RedisBackendTest extends BaseTestCase
     /**
      * @test
      */
+    public function flushByTagsReturnsTotalOfAllBatches()
+    {
+        $this->backend->setBatchSize(2);
+        $tags = [];
+        for ($i = 0; $i < 5; $i++) {
+            $this->backend->set('entry_' . $i, 'foo', ['tag' . $i]);
+            $tags[] = 'tag' . $i;
+        }
+
+        $count = $this->backend->flushByTags($tags);
+
+        self::assertSame(5, $count, 'flushByTags returns the amount of flushed entries over all batches');
+    }
+
+    /**
+     * @test
+     */
     public function flushByTagRemovesEntries()
     {
         $this->backend->set('some_entry', 'foo', ['tag1', 'tag2']);
