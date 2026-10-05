@@ -321,7 +321,9 @@ class RedisBackend extends IndependentAbstractBackend implements TaggableBackend
 
                 redis.call('UNLINK', ARGV[i]..'tags:'..entryIdentifier)
             end
-            redis.call('UNLINK', KEYS[i])
+            if #entries > 0 then
+                redis.call('UNLINK', KEYS[i])
+            end
             total_entries = total_entries + #entries
         end
         return total_entries

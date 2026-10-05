@@ -219,6 +219,28 @@ class RedisBackendTest extends BaseTestCase
     /**
      * @test
      */
+    public function flushByTagsDoesNotUnlinkTagSetsThatDoNotExist()
+    {
+        $redis = new \Redis();
+        $redis->connect('127.0.0.1');
+        $unlinkCalls = static function () use ($redis): int {
+            // INFO commandstats returns one string per command, e.g. "calls=12,usec=3,..."
+            $stats = $redis->info('commandstats')['cmdstat_unlink'] ?? '';
+            return preg_match('/calls=(\d+)/', (string)$stats, $matches) ? (int)$matches[1] : 0;
+        };
+
+        $this->backend->set('some_entry', 'foo', ['tag1']);
+
+        $before = $unlinkCalls();
+        $count = $this->backend->flushByTags(['unknown1', 'unknown2', 'unknown3']);
+        self::assertSame(0, $count);
+        self::assertSame($before, $unlinkCalls(), 'flushByTags must not issue UNLINK for tag sets that do not exist');
+        self::assertCount(1, $this->backend->findIdentifiersByTag('tag1'));
+    }
+
+    /**
+     * @test
+     */
     public function flushByTagRemovesEntries()
     {
         $this->backend->set('some_entry', 'foo', ['tag1', 'tag2']);
