@@ -104,7 +104,6 @@ class RequestHandler implements HttpRequestHandlerInterface
         $this->middlewaresChain->onStep(function (ServerRequestInterface $request) {
             $this->httpRequest = $request;
         });
-        assert($this->httpRequest instanceof ServerRequestInterface);
         $this->httpResponse = $this->middlewaresChain->handle($this->httpRequest);
 
         $this->sendResponse($this->httpResponse);

@@ -84,10 +84,13 @@ class LazyLoadingAspect
     public function callMethodOnOriginalSessionObject(JoinPointInterface $joinPoint): mixed
     {
         $objectName = $this->objectManager->getObjectNameByClassName(get_class($joinPoint->getProxy()));
+        if ($objectName === false) {
+            throw new \RuntimeException('Could not determine object name for proxy object.', 1789481206);
+        }
         $methodName = $joinPoint->getMethodName();
         $proxy = $joinPoint->getProxy();
 
-        if ($objectName && !isset($this->sessionOriginalInstances[$objectName])) {
+        if (!isset($this->sessionOriginalInstances[$objectName])) {
             $this->sessionOriginalInstances[$objectName] = $this->objectManager->get($objectName);
         }
 

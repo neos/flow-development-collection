@@ -528,14 +528,14 @@ class DatetimeParser
                             $secondPattern = self::PATTERN_MATCH_LENIENT_TIMEZONE_ABBREVIATION;
                         }
 
-                        if (preg_match($firstPattern, $datetimeToParse, $matches) === 0) {
-                            if (preg_match($secondPattern, $datetimeToParse, $matches) === 0) {
-                                throw new Exception\InvalidParseStringException('Expected timezone identifier was not found.', 1280492312);
-                            }
+                        if (preg_match($firstPattern, $datetimeToParse, $matches)) {
+                            $timezone = $matches[0];
+                        } elseif (preg_match($secondPattern, $datetimeToParse, $matches)) {
+                            $timezone = $matches[0];
+                        } else {
+                            throw new Exception\InvalidParseStringException('Expected timezone identifier was not found.', 1280492312);
                         }
 
-                        /** @var string $timezone */
-                        $timezone = $matches[0] ?? null;
                         $numberOfCharactersToRemove = strpos($datetimeToParse, $timezone) + strlen($timezone);
                         $datetimeElements['timezone'] = $timezone;
                         break;

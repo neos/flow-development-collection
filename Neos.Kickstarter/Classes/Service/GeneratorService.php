@@ -52,7 +52,7 @@ class GeneratorService
     protected $reflectionService;
 
     /**
-     * @var array<int,string>
+     * @var list<string>
      */
     protected array $generatedFiles = [];
 

@@ -392,7 +392,7 @@ class RoutingCommandController extends CommandController
      */
     private function outputControllerObjectName(string $package, ?string $subpackage, ?string $controller): void
     {
-        $possibleControllerObjectName = str_replace(['@package', '@subpackage', '@controller', '\\\\'], [str_replace('.', '\\', $package), $subpackage, $controller, '\\'], '@package\@subpackage\Controller\@controllerController');
+        $possibleControllerObjectName = str_replace(['@package', '@subpackage', '@controller', '\\\\'], [str_replace('.', '\\', $package), $subpackage ?? '', $controller ?? '', '\\'], '@package\@subpackage\Controller\@controllerController');
         $controllerObjectName = $this->objectManager->getCaseSensitiveObjectName($possibleControllerObjectName);
         if ($controllerObjectName === null) {
             $this->outputLine('<error>%s</error> (no corresponding class exists)', [$possibleControllerObjectName]);

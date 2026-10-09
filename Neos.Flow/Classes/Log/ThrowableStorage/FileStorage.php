@@ -83,6 +83,7 @@ class FileStorage implements ThrowableStorageInterface
             // exceptions that may occur before Scripts::initializeExceptionStorage() has finished.
 
             $output = '';
+            /** @phpstan-ignore instanceof.alwaysTrue (Bootstrap may not be fully initialized yet) */
             if (!(Bootstrap::$staticObjectManager instanceof ObjectManagerInterface)) {
                 return $output;
             }
