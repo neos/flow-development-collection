@@ -102,6 +102,29 @@ final class ConfigurationBuilderTest extends UnitTestCase
         self::assertSame(ConfigurationArgument::ARGUMENT_TYPES_STRAIGHTVALUE, $arguments[1]->getType());
     }
 
+    #[Test]
+    public function objectNamesInObjectConfigurationWithLeadingBackslashAreNormalized(): void
+    {
+        $reflectionServiceMock = $this->reflectionServiceMock();
+        $reflectionServiceMock->method('getDefaultImplementationClassNameForInterface')->willReturn(false);
+
+        $rawObjectConfigurations = [
+            '\\' . SomeInterface::class => ['className' => '\\' . SomeImplementation::class],
+            '\\' . SomeImplementation::class => ['factoryObjectName' => '\\' . SomeImplementation::class, 'factoryMethodName' => 'create'],
+        ];
+
+        $configurationBuilder = $this->prepareConfigurationBuilder($reflectionServiceMock);
+        $objectConfigurations = $configurationBuilder->buildObjectConfigurations(
+            ['Neos.Flow.Testing' => [SomeInterface::class, SomeImplementation::class]],
+            ['Neos.Flow.Testing' => $rawObjectConfigurations]
+        );
+
+        self::assertArrayNotHasKey('\\' . SomeInterface::class, $objectConfigurations);
+        self::assertSame(SomeInterface::class, $objectConfigurations[SomeInterface::class]->getObjectName());
+        self::assertSame(SomeImplementation::class, $objectConfigurations[SomeInterface::class]->getClassName());
+        self::assertSame(SomeImplementation::class, $objectConfigurations[SomeImplementation::class]->getFactoryObjectName());
+    }
+
     protected function prepareConfigurationBuilder(ReflectionService $reflectionServiceMock): ConfigurationBuilder
     {
         $loggerMock = $this->createMock(LoggerInterface::class);

@@ -95,4 +95,36 @@ final class ObjectManagerTest extends UnitTestCase
         self::assertInstanceOf(BasicClass::class, $instance);
         self::assertSame('Foo', $instance->getSomeProperty());
     }
+
+    #[Test]
+    public function objectNamesWithLeadingBackslashAreNormalized(): void
+    {
+        $objectManager = new ObjectManager($this->createStub(ApplicationContext::class));
+        $objectManager->setObjects([
+            BasicClass::class => [
+                'c' => BasicClass::class,
+                's' => ObjectConfiguration::SCOPE_SINGLETON,
+                'p' => 'Neos.Flow',
+            ]
+        ]);
+        $fullyQualifiedName = '\\' . BasicClass::class;
+
+        self::assertTrue($objectManager->isRegistered($fullyQualifiedName));
+        self::assertTrue($objectManager->has($fullyQualifiedName));
+        self::assertSame(ObjectConfiguration::SCOPE_SINGLETON, $objectManager->getScope($fullyQualifiedName));
+        self::assertSame(BasicClass::class, $objectManager->getObjectNameByClassName($fullyQualifiedName));
+        self::assertSame(BasicClass::class, $objectManager->getClassNameByObjectName($fullyQualifiedName));
+        self::assertSame('Neos.Flow', $objectManager->getPackageKeyByObjectName($fullyQualifiedName));
+
+        $instance = new BasicClass();
+        $objectManager->setInstance($fullyQualifiedName, $instance);
+        self::assertTrue($objectManager->hasInstance(BasicClass::class));
+        self::assertTrue($objectManager->hasInstance($fullyQualifiedName));
+        self::assertSame($instance, $objectManager->getInstance($fullyQualifiedName));
+        self::assertSame($instance, $objectManager->get($fullyQualifiedName));
+        self::assertSame($instance, $objectManager->get(BasicClass::class));
+
+        $objectManager->forgetInstance($fullyQualifiedName);
+        self::assertFalse($objectManager->hasInstance(BasicClass::class));
+    }
 }

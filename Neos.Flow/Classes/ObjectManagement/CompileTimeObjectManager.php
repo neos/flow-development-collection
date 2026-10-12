@@ -207,6 +207,7 @@ class CompileTimeObjectManager extends ObjectManager
      */
     public function setInstance($objectName, $instance): void
     {
+        $objectName = $this->normalizeObjectName($objectName);
         if ($this->registeredClassNames === []) {
             $this->objects[$objectName][self::KEY_INSTANCE] = $instance;
         } else {
@@ -443,6 +444,7 @@ class CompileTimeObjectManager extends ObjectManager
      */
     public function get($objectName, ...$constructorArguments): object
     {
+        $objectName = $this->normalizeObjectName($objectName);
         if (isset($this->objects[$objectName][self::KEY_INSTANCE])) {
             return $this->objects[$objectName][self::KEY_INSTANCE];
         }

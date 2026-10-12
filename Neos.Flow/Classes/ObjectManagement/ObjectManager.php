@@ -147,19 +147,11 @@ class ObjectManager implements ObjectManagerInterface
      *
      * @param  string $objectName Name of the object
      * @return boolean true if the object has been registered, otherwise false
-     * @throws \InvalidArgumentException
      * @api
      */
     public function isRegistered($objectName): bool
     {
-        if (isset($this->objects[$objectName])) {
-            return true;
-        }
-
-        if ($objectName[0] === '\\') {
-            throw new \InvalidArgumentException('Object names must not start with a backslash ("' . $objectName . '")', 1270827335);
-        }
-        return false;
+        return isset($this->objects[$this->normalizeObjectName($objectName)]);
     }
 
     /**
@@ -207,6 +199,7 @@ class ObjectManager implements ObjectManagerInterface
      */
     public function get($objectName, ...$constructorArguments): object
     {
+        $objectName = $this->normalizeObjectName($objectName);
         if (!empty($constructorArguments) && isset($this->objects[$objectName]) && $this->objects[$objectName][self::KEY_SCOPE] !== ObjectConfiguration::SCOPE_PROTOTYPE) {
             throw new \InvalidArgumentException('You cannot provide constructor arguments for singleton objects via get(). If you need to pass arguments to the constructor, define them in the Objects.yaml configuration.', 1298049934);
         }
@@ -228,8 +221,7 @@ class ObjectManager implements ObjectManagerInterface
 
         $className = $this->getClassNameByObjectName($objectName);
         if ($className === false) {
-            $hint = ($objectName[0] === '\\') ? ' Hint: You specified an object name with a leading backslash!' : '';
-            throw new Exception\UnknownObjectException('Object "' . $objectName . '" is not registered.' . $hint, 1264589155);
+            throw new Exception\UnknownObjectException('Object "' . $objectName . '" is not registered.', 1264589155);
         }
 
         /** @var class-string $className */
@@ -342,9 +334,9 @@ class ObjectManager implements ObjectManagerInterface
      */
     public function getScope($objectName): int
     {
+        $objectName = $this->normalizeObjectName($objectName);
         if (!isset($this->objects[$objectName])) {
-            $hint = ($objectName[0] === '\\') ? ' Hint: You specified an object name with a leading backslash!' : '';
-            throw new Exception\UnknownObjectException('Object "' . $objectName . '" is not registered.' . $hint, 1265367590);
+            throw new Exception\UnknownObjectException('Object "' . $objectName . '" is not registered.', 1265367590);
         }
         return $this->objects[$objectName][self::KEY_SCOPE];
     }
@@ -365,7 +357,7 @@ class ObjectManager implements ObjectManagerInterface
      */
     public function getCaseSensitiveObjectName($caseInsensitiveObjectName): ?string
     {
-        $lowerCasedObjectName = strtolower(ltrim($caseInsensitiveObjectName, '\\'));
+        $lowerCasedObjectName = strtolower($this->normalizeObjectName($caseInsensitiveObjectName));
         if (isset($this->cachedLowerCasedObjectNames[$lowerCasedObjectName])) {
             return $this->cachedLowerCasedObjectNames[$lowerCasedObjectName];
         }
@@ -387,12 +379,11 @@ class ObjectManager implements ObjectManagerInterface
      *
      * @return string|false The object name corresponding to the given class name or false if no object is configured to use that class
      *
-     * @throws \InvalidArgumentException
-     *
      * @api
      */
     public function getObjectNameByClassName($className): string|false
     {
+        $className = $this->normalizeObjectName($className);
         if (isset($this->objects[$className]) && (!isset($this->objects[$className][self::KEY_CLASS_NAME]) || $this->objects[$className][self::KEY_CLASS_NAME] === $className)) {
             return $className;
         }
@@ -402,10 +393,6 @@ class ObjectManager implements ObjectManagerInterface
                 return $objectName;
             }
         }
-        if ($className[0] === '\\') {
-            throw new \InvalidArgumentException('Class names must not start with a backslash ("' . $className . '")', 1270826088);
-        }
-
         return false;
     }
 
@@ -418,6 +405,7 @@ class ObjectManager implements ObjectManagerInterface
      */
     public function getClassNameByObjectName($objectName): string|false
     {
+        $objectName = $this->normalizeObjectName($objectName);
         $possibleClassName = $this->objects[$objectName][self::KEY_CLASS_NAME] ?? $objectName;
         return class_exists($possibleClassName) ? $possibleClassName : false;
     }
@@ -431,6 +419,7 @@ class ObjectManager implements ObjectManagerInterface
      */
     public function getPackageKeyByObjectName($objectName): string|false
     {
+        $objectName = $this->normalizeObjectName($objectName);
         return (isset($this->objects[$objectName]) ? ($this->objects[$objectName][self::KEY_PACKAGE] ?? false) : false);
     }
 
@@ -448,6 +437,7 @@ class ObjectManager implements ObjectManagerInterface
      */
     public function setInstance($objectName, $instance): void
     {
+        $objectName = $this->normalizeObjectName($objectName);
         if (!isset($this->objects[$objectName])) {
             if (!class_exists($objectName, false)) {
                 throw new Exception\UnknownObjectException('Cannot set instance of object "' . $objectName . '" because the object or class name is unknown to the Object Manager.', 1265370539);
@@ -471,7 +461,7 @@ class ObjectManager implements ObjectManagerInterface
      */
     public function hasInstance(string $objectName): bool
     {
-        return isset($this->objects[$objectName][self::KEY_INSTANCE]);
+        return isset($this->objects[$this->normalizeObjectName($objectName)][self::KEY_INSTANCE]);
     }
 
     /**
@@ -485,7 +475,7 @@ class ObjectManager implements ObjectManagerInterface
      */
     public function getInstance(string $objectName): ?object
     {
-        return $this->objects[$objectName][self::KEY_INSTANCE] ?? null;
+        return $this->objects[$this->normalizeObjectName($objectName)][self::KEY_INSTANCE] ?? null;
     }
 
     /**
@@ -500,6 +490,7 @@ class ObjectManager implements ObjectManagerInterface
      */
     public function forgetInstance($objectName): void
     {
+        $objectName = $this->normalizeObjectName($objectName);
         unset($this->objects[$objectName][self::KEY_INSTANCE]);
         $className = $this->objects[$objectName][self::KEY_CLASS_NAME] ?? null;
         if ($className !== null && $className !== $objectName) {
@@ -557,6 +548,15 @@ class ObjectManager implements ObjectManagerInterface
     public function getAllObjectConfigurations(): array
     {
         return $this->objects;
+    }
+
+    /**
+     * Object and class names are registered without a leading backslash, but may be passed
+     * as fully qualified for example from Configuration.
+     */
+    protected function normalizeObjectName(string $objectName): string
+    {
+        return ltrim($objectName, '\\');
     }
 
     /**
