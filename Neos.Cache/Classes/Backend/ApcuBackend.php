@@ -133,8 +133,6 @@ class ApcuBackend extends IndependentAbstractBackend implements TaggableBackendI
         } else {
             throw new Exception('Could not set value.', 1232986877);
         }
-
-        $this->cacheEntriesIterator = null;
     }
 
     /**
@@ -177,7 +175,6 @@ class ApcuBackend extends IndependentAbstractBackend implements TaggableBackendI
     public function remove(string $entryIdentifier): bool
     {
         $this->removeIdentifierFromAllTags($entryIdentifier);
-        $this->cacheEntriesIterator = null;
         return apcu_delete($this->getPrefixedIdentifier($entryIdentifier));
     }
 
@@ -241,7 +238,6 @@ class ApcuBackend extends IndependentAbstractBackend implements TaggableBackendI
         foreach ($identifiers as $identifier) {
             $this->remove($identifier);
         }
-        $this->cacheEntriesIterator = null;
         return count($identifiers);
     }
 
@@ -389,16 +385,16 @@ class ApcuBackend extends IndependentAbstractBackend implements TaggableBackendI
     /**
      * Rewinds the cache entry iterator to the first element
      *
+     * APCu is searched anew on every rewind, so this always yields an up-to-date view. That is why writing methods
+     * like set() and remove() must not reset the iterator: doing so would make a running iteration start over from
+     * the first entry whenever an entry is changed.
+     *
      * @return void
      * @api
      */
     #[\ReturnTypeWillChange]
     public function rewind()
     {
-        if ($this->cacheEntriesIterator === null) {
-            $this->cacheEntriesIterator = new \APCUIterator('/^' . $this->identifierPrefix . 'entry_.*/');
-        } else {
-            $this->cacheEntriesIterator->rewind();
-        }
+        $this->cacheEntriesIterator = new \APCUIterator('/^' . $this->identifierPrefix . 'entry_.*/');
     }
 }

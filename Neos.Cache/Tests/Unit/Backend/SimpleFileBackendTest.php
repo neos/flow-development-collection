@@ -590,6 +590,54 @@ class SimpleFileBackendTest extends BaseTestCase
     /**
      * @test
      */
+    public function iterationIsNotRestartedWhenAnEntryIsUpdatedWhileIterating(): void
+    {
+        $backend = $this->getSimpleFileBackend();
+
+        foreach (['first', 'second', 'third', 'fourth'] as $entryIdentifier) {
+            $backend->set($entryIdentifier, $entryIdentifier . 'Data');
+        }
+
+        $visitedEntryIdentifiers = [];
+        foreach ($backend as $entryIdentifier => $data) {
+            // update while in the middle of the iteration – a restart would visit earlier entries again
+            if (count($visitedEntryIdentifiers) === 2) {
+                $backend->set($entryIdentifier, 'updatedData');
+            }
+            $visitedEntryIdentifiers[] = $entryIdentifier;
+        }
+
+        sort($visitedEntryIdentifiers);
+        self::assertSame(['first', 'fourth', 'second', 'third'], $visitedEntryIdentifiers);
+    }
+
+    /**
+     * @test
+     */
+    public function iterationIsNotRestartedWhenAnEntryIsRemovedWhileIterating(): void
+    {
+        $backend = $this->getSimpleFileBackend();
+
+        foreach (['first', 'second', 'third', 'fourth'] as $entryIdentifier) {
+            $backend->set($entryIdentifier, $entryIdentifier . 'Data');
+        }
+
+        $visitedEntryIdentifiers = [];
+        foreach ($backend as $entryIdentifier => $data) {
+            // remove an entry that has been visited already, like SessionManager::collectGarbage() does
+            if (count($visitedEntryIdentifiers) === 2) {
+                $backend->remove($visitedEntryIdentifiers[0]);
+            }
+            $visitedEntryIdentifiers[] = $entryIdentifier;
+        }
+
+        sort($visitedEntryIdentifiers);
+        self::assertSame(['first', 'fourth', 'second', 'third'], $visitedEntryIdentifiers);
+    }
+
+    /**
+     * @test
+     */
     public function iterationResetsWhenDataFlushed()
     {
         $backend = $this->getSimpleFileBackend();
