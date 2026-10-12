@@ -494,7 +494,7 @@ class ConfigurationManager
     }
 
     /**
-     * Replaces variables (in the format %CONSTANT% or %env:ENVIRONMENT_VARIABLE%)
+     * Replaces variables (in the format %CONSTANT%, %env:ENVIRONMENT_VARIABLE% or %file:/path/to/file%)
      * in the given php exported configuration string.
      *
      * This is applied before caching to allow runtime evaluation of constants and environment variables.
@@ -510,13 +510,17 @@ class ConfigurationManager
             (?P<expression>
             (?:(?:\\\?[\d\w_\\\]+\:\:)             # either a class name followed by ::
             |                                      # or
-            (?:(?P<prefix>[a-z]+)                  # a prefix (like "env")
+            (?:(?P<prefix>[a-z]+)                  # a prefix (like "env" or "file")
             (\((?P<type>int|bool|float|string)\))? # optional type (like "(int)")
             \:))?                                  # followed by ":"
-            (?P<name>[A-Z_0-9]+))                  # the actual variable name in all upper
+            (?P<name>[A-Za-z_0-9\/]+))             # the actual variable name in all upper or path to a file
             %)                                     # concluded by %
             (?<endString>[^%]*?(?:\',\n)?)?        # optionally concluding a string
         /mx', static function ($matchGroup) {
+            if ($matchGroup['prefix'] === 'env' && strtoupper($matchGroup['name']) !== $matchGroup['name']) {
+                return $matchGroup[0];
+            }
+
             $replacement = "";
             $constantDoesNotStartAsBeginning = false;
             if ($matchGroup['startString'] !== "=> '") {
@@ -532,6 +536,8 @@ class ConfigurationManager
                 } else {
                     $replacement .= "getenv('" . $matchGroup['name'] . "')";
                 }
+            } elseif (isset($matchGroup['prefix']) && $matchGroup['prefix'] === 'file') {
+                $replacement .= "trim(file_get_contents('" . $matchGroup['name'] . "'))";
             } elseif (isset($matchGroup['expression'])) {
                 $replacement .= "(defined('" . $matchGroup['expression'] . "') ? constant('" . $matchGroup['expression'] . "') : null)";
             }
