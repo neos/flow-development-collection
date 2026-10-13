@@ -51,6 +51,9 @@ class RequestBodyParsingMiddleware implements MiddlewareInterface
     protected function parseRequestBody(ServerRequestInterface $httpRequest)
     {
         $requestBody = $httpRequest->getBody()->getContents();
+        if ($httpRequest->getBody()->isSeekable()) {
+            $httpRequest->getBody()->rewind();
+        }
         if ($requestBody === null || $requestBody === '') {
             return $requestBody;
         }
