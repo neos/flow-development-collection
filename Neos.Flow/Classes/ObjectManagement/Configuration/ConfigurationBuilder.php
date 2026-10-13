@@ -23,6 +23,7 @@ use Neos\Flow\ObjectManagement\Exception\InvalidObjectConfigurationException;
 use Neos\Flow\ObjectManagement\Exception\UnknownClassException;
 use Neos\Flow\ObjectManagement\Exception\UnresolvedDependenciesException;
 use Neos\Flow\ObjectManagement\ObjectManager;
+use Neos\Flow\ObjectManagement\ObjectNameNormalization;
 use Neos\Flow\Reflection\Exception\ClassLoadingForReflectionFailedException;
 use Neos\Flow\Reflection\Exception\InvalidClassException;
 use Neos\Flow\Reflection\ReflectionService;
@@ -38,8 +39,11 @@ use Psr\Log\LoggerInterface;
  */
 readonly class ConfigurationBuilder
 {
+    use ObjectNameNormalization;
+
     /**
      * @param ReflectionService $reflectionService
+     * @param ConfigurationParser $configurationParser
      * @param LoggerInterface $logger
      * @param array<string> $excludeClassesFromConstructorAutowiring An array of object names for which constructor injection autowiring should be disabled
      * Note that the object names are regular expressions.
@@ -515,14 +519,5 @@ readonly class ConfigurationBuilder
         }
 
         return $objectConfigurations;
-    }
-
-    /**
-     * Object and class names should only register without leading backslash, but
-     * configuration could contain fully qualified forms.
-     */
-    protected function normalizeObjectName(string $objectName): string
-    {
-        return ltrim($objectName, '\\');
     }
 }

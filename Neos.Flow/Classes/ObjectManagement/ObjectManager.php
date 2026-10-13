@@ -22,6 +22,7 @@ use Neos\Flow\ObjectManagement\Configuration\Configuration as ObjectConfiguratio
 use Neos\Flow\ObjectManagement\Configuration\ConfigurationArgument;
 use Neos\Flow\ObjectManagement\Configuration\ConfigurationArgument as ObjectConfigurationArgument;
 use Neos\Flow\Security\Context;
+use Psr\Log\LoggerInterface;
 
 /**
  * Object Manager
@@ -44,25 +45,20 @@ use Neos\Flow\Security\Context;
  */
 class ObjectManager implements ObjectManagerInterface
 {
-    protected const KEY_INSTANCE = 'i';
-    protected const KEY_SCOPE = 's';
-    protected const KEY_FACTORY = 'f';
-    protected const KEY_FACTORY_ARGUMENTS = 'fa';
-    protected const KEY_CONSTRUCTOR_ARGUMENTS = 'ca';
-    protected const KEY_AUTOWIRING_MODE = 'wm';
-    protected const KEY_ARGUMENT_TYPE = 't';
-    protected const KEY_ARGUMENT_VALUE = 'v';
-    protected const KEY_CLASS_NAME = 'c';
-    protected const KEY_PACKAGE = 'p';
-    protected const KEY_LOWERCASE_NAME = 'l';
-    protected const KEY_OBJECTNAMES_PROVIDED = 'o';
+    use ObjectNameNormalization;
 
-    /**
-     * The configuration context for this Flow run
-     *
-     * @var ApplicationContext
-     */
-    protected ApplicationContext $context;
+    protected const string KEY_INSTANCE = 'i';
+    protected const string KEY_SCOPE = 's';
+    protected const string KEY_FACTORY = 'f';
+    protected const string KEY_FACTORY_ARGUMENTS = 'fa';
+    protected const string KEY_CONSTRUCTOR_ARGUMENTS = 'ca';
+    protected const string KEY_AUTOWIRING_MODE = 'wm';
+    protected const string KEY_ARGUMENT_TYPE = 't';
+    protected const string KEY_ARGUMENT_VALUE = 'v';
+    protected const string KEY_CLASS_NAME = 'c';
+    protected const string KEY_PACKAGE = 'p';
+    protected const string KEY_LOWERCASE_NAME = 'l';
+    protected const string KEY_OBJECTNAMES_PROVIDED = 'o';
 
     /**
      * @var array<class-string|string, ObjectRecordShape>
@@ -100,9 +96,8 @@ class ObjectManager implements ObjectManagerInterface
      *
      * @param ApplicationContext $context The configuration context for this Flow run
      */
-    public function __construct(ApplicationContext $context)
+    public function __construct(protected readonly ApplicationContext $context, protected readonly LoggerInterface $logger)
     {
-        $this->context = $context;
         $this->shutdownObjects = new \SplObjectStorage();
         $this->internalShutdownObjects = new \SplObjectStorage();
     }
@@ -548,15 +543,6 @@ class ObjectManager implements ObjectManagerInterface
     public function getAllObjectConfigurations(): array
     {
         return $this->objects;
-    }
-
-    /**
-     * Object and class names are registered without a leading backslash, but may be passed
-     * as fully qualified for example from Configuration.
-     */
-    protected function normalizeObjectName(string $objectName): string
-    {
-        return ltrim($objectName, '\\');
     }
 
     /**

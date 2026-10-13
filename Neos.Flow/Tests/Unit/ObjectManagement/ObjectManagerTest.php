@@ -12,6 +12,7 @@ use Neos\Flow\Tests\Unit\ObjectManagement\Fixture\BasicClass;
 use Neos\Flow\Tests\UnitTestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
+use Psr\Log\LoggerInterface;
 
 /*
  * This file is part of the Neos.Flow package.
@@ -88,7 +89,8 @@ final class ObjectManagerTest extends UnitTestCase
         ];
 
         $context = $this->createStub(ApplicationContext::class);
-        $objectManager = new ObjectManager($context);
+        $logger = $this->createStub(LoggerInterface::class);
+        $objectManager = new ObjectManager($context, $logger);
         $objectManager->setObjects($objects);
 
         $instance = $objectManager->get(BasicClass::class);
@@ -99,7 +101,8 @@ final class ObjectManagerTest extends UnitTestCase
     #[Test]
     public function objectNamesWithLeadingBackslashAreNormalized(): void
     {
-        $objectManager = new ObjectManager($this->createStub(ApplicationContext::class));
+        $logger = $this->createStub(LoggerInterface::class);
+        $objectManager = new ObjectManager($this->createStub(ApplicationContext::class), $logger);
         $objectManager->setObjects([
             BasicClass::class => [
                 'c' => BasicClass::class,

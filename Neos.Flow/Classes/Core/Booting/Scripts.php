@@ -492,7 +492,8 @@ class Scripts
      */
     public static function initializeObjectManagerCompileTimeCreate(Bootstrap $bootstrap)
     {
-        $objectManager = new CompileTimeObjectManager($bootstrap->getContext());
+        $logger = $bootstrap->getEarlyInstance(PsrLoggerFactoryInterface::class)->get('systemLogger');
+        $objectManager = new CompileTimeObjectManager($bootstrap->getContext(), $logger);
         $bootstrap->setEarlyInstance(ObjectManagerInterface::class, $objectManager);
 
         $signalSlotDispatcher = $bootstrap->getEarlyInstance(Dispatcher::class);
@@ -518,7 +519,6 @@ class Scripts
         $configurationManager = $bootstrap->getEarlyInstance(ConfigurationManager::class);
         $reflectionService = $objectManager->get(ReflectionService::class);
         $cacheManager = $bootstrap->getEarlyInstance(CacheManager::class);
-        $logger = $bootstrap->getEarlyInstance(PsrLoggerFactoryInterface::class)->get('systemLogger');
         $packageManager = $bootstrap->getEarlyInstance(PackageManager::class);
 
         $objectManager->injectReflectionService($reflectionService);
@@ -528,7 +528,6 @@ class Scripts
             throw new \Exception('Configuration cache must be of type VariableFrontend', 1744459785);
         }
         $objectManager->injectConfigurationCache($configurationCache);
-        $objectManager->injectLogger($logger);
         $objectManager->initialize($packageManager->getAvailablePackages());
 
         foreach ($bootstrap->getEarlyInstances() as $objectName => $instance) {
@@ -549,7 +548,8 @@ class Scripts
         $configurationManager = $bootstrap->getEarlyInstance(ConfigurationManager::class);
         $objectConfigurationCache = $bootstrap->getEarlyInstance(CacheManager::class)->getCache('Flow_Object_Configuration');
 
-        $objectManager = new ObjectManager($bootstrap->getContext());
+        $logger = $bootstrap->getEarlyInstance(PsrLoggerFactoryInterface::class)->get('systemLogger');
+        $objectManager = new ObjectManager($bootstrap->getContext(), $logger);
 
         $objectManager->setObjects($objectConfigurationCache->get('objects'));
 
