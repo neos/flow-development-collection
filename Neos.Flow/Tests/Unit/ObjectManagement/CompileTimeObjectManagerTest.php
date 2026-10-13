@@ -13,6 +13,7 @@ namespace Neos\Flow\Tests\Unit\ObjectManagement;
  */
 
 use Neos\Flow\Configuration\ConfigurationManager;
+use Neos\Flow\Core\ApplicationContext;
 use Neos\Flow\ObjectManagement\CompileTimeObjectManager;
 use Neos\Flow\Package\Package;
 use Neos\Flow\Package\PackageManager;
@@ -54,8 +55,9 @@ class CompileTimeObjectManagerTest extends UnitTestCase
                 ]
             ]
         ]);
-        $this->compileTimeObjectManager = $this->getAccessibleMock(CompileTimeObjectManager::class, [], [], '', false);
-        $this->compileTimeObjectManager->injectLogger($this->createMock(LoggerInterface::class));
+        $context = $this->createMock(ApplicationContext::class);
+        $logger = $this->createMock(LoggerInterface::class);
+        $this->compileTimeObjectManager = $this->getAccessibleMock(CompileTimeObjectManager::class, [], [$context, $logger], '', true);
         $this->compileTimeObjectManager->injectConfigurationManager($mockConfigurationManager);
     }
 

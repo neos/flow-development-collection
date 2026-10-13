@@ -23,6 +23,7 @@ use Neos\Flow\ObjectManagement\Exception\InvalidObjectConfigurationException;
 use Neos\Flow\ObjectManagement\Exception\UnknownClassException;
 use Neos\Flow\ObjectManagement\Exception\UnresolvedDependenciesException;
 use Neos\Flow\ObjectManagement\ObjectManager;
+use Neos\Flow\ObjectManagement\ObjectNameNormalization;
 use Neos\Flow\Reflection\Exception\ClassLoadingForReflectionFailedException;
 use Neos\Flow\Reflection\Exception\InvalidClassException;
 use Neos\Flow\Reflection\ReflectionService;
@@ -38,8 +39,11 @@ use Psr\Log\LoggerInterface;
  */
 readonly class ConfigurationBuilder
 {
+    use ObjectNameNormalization;
+
     /**
      * @param ReflectionService $reflectionService
+     * @param ConfigurationParser $configurationParser
      * @param LoggerInterface $logger
      * @param array<string> $excludeClassesFromConstructorAutowiring An array of object names for which constructor injection autowiring should be disabled
      * Note that the object names are regular expressions.
@@ -118,9 +122,15 @@ readonly class ConfigurationBuilder
         foreach ($rawObjectConfigurationsByPackages as $packageKey => $rawObjectConfigurations) {
             foreach ($rawObjectConfigurations as $objectName => $rawObjectConfiguration) {
                 /** @var class-string $objectName */
-                $objectName = str_replace('_', '\\', $objectName);
+                $objectName = $this->normalizeObjectName(str_replace('_', '\\', $objectName));
                 if (!is_array($rawObjectConfiguration)) {
                     throw new InvalidObjectConfigurationException('Configuration of object "' . $objectName . '" in package "' . $packageKey . '" is not an array, please check your Objects.yaml for syntax errors.', 1295954338);
+                }
+                if (isset($rawObjectConfiguration['className']) && is_string($rawObjectConfiguration['className'])) {
+                    $rawObjectConfiguration['className'] = $this->normalizeObjectName($rawObjectConfiguration['className']);
+                }
+                if (isset($rawObjectConfiguration['factoryObjectName']) && is_string($rawObjectConfiguration['factoryObjectName'])) {
+                    $rawObjectConfiguration['factoryObjectName'] = $this->normalizeObjectName($rawObjectConfiguration['factoryObjectName']);
                 }
 
                 $existingObjectConfiguration = $objectConfigurations[$objectName] ?? null;
@@ -443,7 +453,7 @@ readonly class ConfigurationBuilder
                             $this->logger->debug(sprintf('Could not autowire property %s because the method parameter in %s() contained no class type hint.', $className . '::' . $propertyName, $methodName));
                             continue;
                         }
-                        $properties[$propertyName] = new ConfigurationProperty($propertyName, $methodParameter['class'], ConfigurationProperty::PROPERTY_TYPES_OBJECT);
+                        $properties[$propertyName] = new ConfigurationProperty($propertyName, $this->normalizeObjectName($methodParameter['class']), ConfigurationProperty::PROPERTY_TYPES_OBJECT);
                     }
                 }
             }
@@ -466,7 +476,7 @@ readonly class ConfigurationBuilder
                     if ($objectName === null) {
                         $objectName = trim(implode('', $this->reflectionService->getPropertyTagValues($className, $propertyName, 'var')), ' \\');
                     }
-                    $configurationProperty = new ConfigurationProperty($propertyName, $objectName, ConfigurationProperty::PROPERTY_TYPES_OBJECT, null, $enableLazyInjection);
+                    $configurationProperty = new ConfigurationProperty($propertyName, $this->normalizeObjectName($objectName), ConfigurationProperty::PROPERTY_TYPES_OBJECT, null, $enableLazyInjection);
                     $properties[$propertyName] = $configurationProperty;
                 }
             }

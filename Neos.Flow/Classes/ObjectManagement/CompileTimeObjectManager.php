@@ -25,12 +25,10 @@ use Neos\Flow\ObjectManagement\Configuration\ConfigurationProperty as Property;
 use Neos\Flow\ObjectManagement\Exception\InvalidObjectConfigurationException;
 use Neos\Flow\ObjectManagement\Exception\UnknownObjectException;
 use Neos\Flow\ObjectManagement\Exception\WrongScopeException;
-use Neos\Flow\Package;
 use Neos\Flow\Package\FlowPackageInterface;
 use Neos\Flow\Package\PackageInterface;
 use Neos\Flow\Package\PackageKeyAwareInterface;
 use Neos\Flow\Reflection\ReflectionService;
-use Psr\Log\LoggerInterface;
 
 /**
  * A specialized Object Manager which is able to do some basic dependency injection for
@@ -67,11 +65,6 @@ class CompileTimeObjectManager extends ObjectManager
      * @var ConfigurationManager|null
      */
     protected ?ConfigurationManager $configurationManager;
-
-    /**
-     * @var LoggerInterface|null
-     */
-    protected ?LoggerInterface $logger;
 
     /**
      * @var array<class-string,Configuration>
@@ -125,17 +118,6 @@ class CompileTimeObjectManager extends ObjectManager
     }
 
     /**
-     * Injects the (system) logger based on PSR-3.
-     *
-     * @param LoggerInterface $logger
-     * @return void
-     */
-    public function injectLogger(LoggerInterface $logger): void
-    {
-        $this->logger = $logger;
-    }
-
-    /**
      * Initializes the object configurations and some other parts of this Object Manager.
      *
      * @param array<string, PackageInterface&PackageKeyAwareInterface> $packages An array of active packages to consider
@@ -146,16 +128,13 @@ class CompileTimeObjectManager extends ObjectManager
      */
     public function initialize(array $packages): void
     {
-        if ($this->reflectionService === null || $this->configurationManager === null || $this->logger === null) {
+        if ($this->reflectionService === null || $this->configurationManager === null) {
             $missingDependencies = [];
             if ($this->reflectionService === null) {
                 $missingDependencies[] = 'reflectionService';
             }
             if ($this->configurationManager === null) {
                 $missingDependencies[] = 'configurationManager';
-            }
-            if ($this->logger === null) {
-                $missingDependencies[] = 'logger';
             }
             throw new \Exception(sprintf('%s is missing dependencies: %s', self::class, implode(', ', $missingDependencies)), 1784221618);
         }
@@ -207,6 +186,7 @@ class CompileTimeObjectManager extends ObjectManager
      */
     public function setInstance($objectName, $instance): void
     {
+        $objectName = $this->normalizeObjectName($objectName);
         if ($this->registeredClassNames === []) {
             $this->objects[$objectName][self::KEY_INSTANCE] = $instance;
         } else {
@@ -323,7 +303,7 @@ class CompileTimeObjectManager extends ObjectManager
     {
         foreach ($filterConfiguration as $packageKey => $filterExpressions) {
             if (!array_key_exists($packageKey, $classNames)) {
-                $this->logger?->debug('The package "' . $packageKey . '" specified in the setting "Neos.Flow.object.includeClasses" was either excluded or is not loaded.');
+                $this->logger->debug('The package "' . $packageKey . '" specified in the setting "Neos.Flow.object.includeClasses" was either excluded or is not loaded.');
                 continue;
             }
             if (!is_array($filterExpressions)) {
@@ -443,6 +423,7 @@ class CompileTimeObjectManager extends ObjectManager
      */
     public function get($objectName, ...$constructorArguments): object
     {
+        $objectName = $this->normalizeObjectName($objectName);
         if (isset($this->objects[$objectName][self::KEY_INSTANCE])) {
             return $this->objects[$objectName][self::KEY_INSTANCE];
         }
