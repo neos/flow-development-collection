@@ -185,7 +185,9 @@ abstract class ObjectAccess
         if ($subject instanceof \ArrayAccess) {
             return;
         }
-        if (array_key_exists($propertyName, get_object_vars($subject))) {
+        $properties = array_map(fn(\ReflectionProperty $property) => $property->getName(), (new \ReflectionClass($subject))->getProperties(\ReflectionProperty::IS_PUBLIC));
+
+        if (in_array($propertyName, $properties)) {
             self::$propertyGetterCache[$cacheIdentifier]['publicProperty'] = $propertyName;
         }
     }
