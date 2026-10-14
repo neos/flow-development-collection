@@ -57,6 +57,12 @@ class RedisBackend extends IndependentAbstractBackend implements TaggableBackend
     public const MIN_REDIS_VERSION = '6.0.0';
 
     /**
+     * Added to the tags set of every entry, so that an evicted tags set is detectable for untagged entries, too.
+     * Cache tags cannot contain a null byte, so this marker never collides with a real tag.
+     */
+    private const ENTRY_TAGS_MARKER = "\0entry\0";
+
+    /**
      * @var \Redis
      */
     protected $redis;
@@ -132,6 +138,8 @@ class RedisBackend extends IndependentAbstractBackend implements TaggableBackend
             $redisTags[] = ['key' => $this->getPrefixedIdentifier('tags:' . $entryIdentifier), 'value' => $tag, 'expire' => $expire];
             return $redisTags;
         }, []);
+        $entryTagsKey = $this->getPrefixedIdentifier('tags:' . $entryIdentifier);
+        $redisTags[] = ['key' => $entryTagsKey, 'value' => self::ENTRY_TAGS_MARKER, 'expire' => $this->calculateExpires($entryTagsKey, $lifetime)];
 
         $this->redis->multi();
         $result = $this->redis->set($this->getPrefixedIdentifier('entry:' . $entryIdentifier), $this->compress($data), $setOptions);
@@ -170,7 +178,12 @@ class RedisBackend extends IndependentAbstractBackend implements TaggableBackend
      */
     public function get(string $entryIdentifier): string|bool
     {
-        return $this->uncompress($this->redis->get($this->getPrefixedIdentifier('entry:' . $entryIdentifier)));
+        // The data is not returned by the script, because copying it through Lua is expensive for large entries
+        $this->redis->pipeline();
+        $this->hasCompleteTagIndex($entryIdentifier);
+        $this->redis->get($this->getPrefixedIdentifier('entry:' . $entryIdentifier));
+        [$hasCompleteTagIndex, $data] = $this->redis->exec();
+        return $hasCompleteTagIndex === 1 ? $this->uncompress($data) : false;
     }
 
     /**
@@ -182,8 +195,49 @@ class RedisBackend extends IndependentAbstractBackend implements TaggableBackend
      */
     public function has(string $entryIdentifier): bool
     {
-        // exists returned true or false in phpredis versions < 4.0.0, now it returns the number of keys
-        return (bool)$this->redis->exists($this->getPrefixedIdentifier('entry:' . $entryIdentifier));
+        return $this->hasCompleteTagIndex($entryIdentifier) === 1;
+    }
+
+    /**
+     * Redis evicts keys independently of each other, e.g. with the "allkeys-lru" policy. If a tag set or the tags
+     * set of an entry is evicted, the entry can no longer be flushed by tag and would be served forever. Such an
+     * entry is removed and reported as missing, so that it gets rebuilt with a complete tag index.
+     *
+     * @return mixed 1 if the entry exists and has a complete tag index, otherwise 0
+     */
+    private function hasCompleteTagIndex(string $entryIdentifier): mixed
+    {
+        // language=lua
+        $script = "
+        if redis.call('EXISTS', KEYS[1]) == 0 then
+            return 0
+        end
+
+        local tags = redis.call('SMEMBERS', KEYS[2])
+        local complete = #tags > 0
+        for _, tagName in ipairs(tags) do
+            if tagName ~= ARGV[3] and redis.call('SISMEMBER', ARGV[1]..'tag:'..tagName, ARGV[2]) == 0 then
+                complete = false
+                break
+            end
+        end
+        if complete then
+            return 1
+        end
+
+        for _, tagName in ipairs(tags) do
+            redis.call('SREM', ARGV[1]..'tag:'..tagName, ARGV[2])
+        end
+        redis.call('UNLINK', KEYS[1], KEYS[2])
+        return 0
+        ";
+        return $this->redis->eval($script, [
+            $this->getPrefixedIdentifier('entry:' . $entryIdentifier),
+            $this->getPrefixedIdentifier('tags:' . $entryIdentifier),
+            $this->getPrefixedIdentifier(''),
+            $entryIdentifier,
+            self::ENTRY_TAGS_MARKER
+        ], 2);
     }
 
     /**
