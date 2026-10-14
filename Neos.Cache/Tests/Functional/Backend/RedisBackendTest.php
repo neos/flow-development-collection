@@ -293,6 +293,40 @@ class RedisBackendTest extends BaseTestCase
     /**
      * @test
      */
+    public function entriesWithAnEvictedTagIndexAreRemoved()
+    {
+        $this->backend->set('tagged_entry', 'foo', ['tag1', 'tag2']);
+        $this->backend->set('untagged_entry', 'bar');
+        $redis = $this->connectToRedis();
+
+        $redis->del($this->backend->getPrefixedIdentifier('tag:tag1'));
+        $redis->del($this->backend->getPrefixedIdentifier('tags:untagged_entry'));
+
+        self::assertFalse($this->backend->get('tagged_entry'));
+        self::assertFalse($this->backend->has('tagged_entry'));
+        self::assertEquals([], $this->backend->findIdentifiersByTag('tag2'));
+        self::assertFalse($this->backend->has('untagged_entry'));
+        self::assertFalse($this->backend->get('untagged_entry'));
+    }
+
+    /**
+     * @test
+     */
+    public function taggedEntriesWrittenWithoutTagsMarkerAreStillReturned()
+    {
+        $redis = $this->connectToRedis();
+        $redis->set($this->backend->getPrefixedIdentifier('entry:some_entry'), 'foo');
+        $redis->sAdd($this->backend->getPrefixedIdentifier('tags:some_entry'), 'tag1');
+        $redis->sAdd($this->backend->getPrefixedIdentifier('tag:tag1'), 'some_entry');
+
+        $data = $this->backend->get('some_entry');
+
+        self::assertEquals('foo', $data);
+    }
+
+    /**
+     * @test
+     */
     public function expiredEntriesAreSkippedWhenIterating()
     {
         $this->backend->set('entry1', 'foo', [], 1);
@@ -304,5 +338,13 @@ class RedisBackendTest extends BaseTestCase
             $actualEntries[] = $key;
         }
         self::assertEmpty($actualEntries, 'Entries should be empty');
+    }
+
+    private function connectToRedis(): \Redis
+    {
+        $redis = new \Redis();
+        $redis->connect('127.0.0.1', 6379);
+        $redis->select(0);
+        return $redis;
     }
 }

@@ -170,9 +170,13 @@ class RedisBackendTest extends BaseTestCase
     public function getInvokesRedis(): void
     {
         $this->redis->expects(self::once())
+            ->method('eval')
+            ->with($this->anything(), $this->containsIdentical('d41d8cd98f00b204e9800998ecf8427e:Foo_Cache:entry:foo'), 2);
+        $this->redis->expects(self::once())
             ->method('get')
-            ->with('d41d8cd98f00b204e9800998ecf8427e:Foo_Cache:entry:foo')
-            ->willReturn('bar');
+            ->with('d41d8cd98f00b204e9800998ecf8427e:Foo_Cache:entry:foo');
+        $this->redis->method('exec')
+            ->willReturn([1, 'bar']);
 
         self::assertEquals('bar', $this->backend->get('foo'));
     }
@@ -183,9 +187,9 @@ class RedisBackendTest extends BaseTestCase
     public function hasInvokesRedis(): void
     {
         $this->redis->expects(self::once())
-            ->method('exists')
-            ->with('d41d8cd98f00b204e9800998ecf8427e:Foo_Cache:entry:foo')
-            ->willReturn(true);
+            ->method('eval')
+            ->with($this->anything(), $this->containsIdentical('d41d8cd98f00b204e9800998ecf8427e:Foo_Cache:entry:foo'), 2)
+            ->willReturn(1);
 
         self::assertEquals(true, $this->backend->has('foo'));
     }
