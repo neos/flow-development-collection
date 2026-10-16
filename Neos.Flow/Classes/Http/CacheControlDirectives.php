@@ -162,7 +162,7 @@ class CacheControlDirectives
                 if (!isset($matches[1])) {
                     $value = null;
                 } else {
-                    $value = (isset($matches[2]) ? (int)$matches[2] : true);
+                    $value = (int)$matches[2];
                 }
                 break;
         }

@@ -237,7 +237,7 @@ class CompileTimeObjectManager extends ObjectManager
                 if ($information[self::KEY_SCOPE] === $scope) {
                     if (isset($information[self::KEY_CLASS_NAME]) && $information[self::KEY_CLASS_NAME] !== '') {
                         $this->cachedClassNamesByScope[$scope][] = $information[self::KEY_CLASS_NAME];
-                    } elseif (is_string($objectName) && class_exists($objectName)) {
+                    } elseif (class_exists($objectName)) {
                         $this->cachedClassNamesByScope[$scope][] = $objectName;
                     }
                 }
@@ -326,6 +326,7 @@ class CompileTimeObjectManager extends ObjectManager
                 $this->logger?->debug('The package "' . $packageKey . '" specified in the setting "Neos.Flow.object.includeClasses" was either excluded or is not loaded.');
                 continue;
             }
+            /** @phpstan-ignore function.alreadyNarrowedType (Annotations can be wrong) */
             if (!is_array($filterExpressions)) {
                 throw new InvalidConfigurationTypeException('The value given for setting "Neos.Flow.object.includeClasses.\'' . $packageKey . '\'" is  invalid. It should be an array of expressions. Check the syntax in the YAML file.', 1422357272);
             }

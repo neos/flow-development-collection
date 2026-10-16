@@ -678,6 +678,7 @@ use Neos\Flow\Error\Debugger;
 function var_dump($variable, ?string $title = null, bool $return = false, ?bool $plaintext = null)
 {
     if ($plaintext === null) {
+        /** @phpstan-ignore identical.alwaysTrue (FLOW_SAPITYPE can also be "Web") */
         $plaintext = (FLOW_SAPITYPE === 'CLI');
         /** @phpstan-ignore booleanAnd.leftAlwaysTrue (no, this can be false) */
         $ansiColors = $plaintext && DIRECTORY_SEPARATOR === '/';

@@ -325,7 +325,7 @@ readonly class ConfigurationBuilder
             }
         }
 
-        /** @var Flow\Autowiring $autowiringAnnotation */
+        /** @var Flow\Autowiring|null $autowiringAnnotation */
         $autowiringAnnotation = $this->reflectionService->getMethodAnnotation($className, '__construct', Flow\Autowiring::class);
         if ($autowiringAnnotation !== null && $autowiringAnnotation->enabled === false) {
             return $processedObjectNames;
@@ -404,6 +404,8 @@ readonly class ConfigurationBuilder
             }
 
             try {
+                /** @var list<non-falsy-string>|null $classMethodNames */
+                /** @phpstan-ignore varTag.nativeType (this can actually be null) */
                 $classMethodNames = get_class_methods($className);
             } catch (\TypeError $error) {
                 throw new UnknownClassException(sprintf('The class "%s" defined in the object configuration for object "%s", defined in package: %s, does not exist.', $className, $objectConfiguration->getObjectName(), $objectConfiguration->getPackageKey()), 1352371372);
@@ -418,7 +420,7 @@ readonly class ConfigurationBuilder
                 if (isset($methodName[6]) && str_starts_with($methodName, 'inject') && $methodName[6] === strtoupper($methodName[6])) {
                     $propertyName = lcfirst(substr($methodName, 6));
 
-                    /** @var Flow\Autowiring $autowiringAnnotation */
+                    /** @var Flow\Autowiring|null $autowiringAnnotation */
                     $autowiringAnnotation = $this->reflectionService->getMethodAnnotation($className, $methodName, Flow\Autowiring::class);
                     if ($autowiringAnnotation !== null && $autowiringAnnotation->enabled === false) {
                         continue;

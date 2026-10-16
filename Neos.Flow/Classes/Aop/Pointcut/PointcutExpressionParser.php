@@ -187,7 +187,7 @@ class PointcutExpressionParser
      * filter composite object.
      *
      * @param string $operator The operator
-     * @param class-string<object> $annotationPattern The pattern expression as configuration for the class annotation filter
+     * @param string $annotationPattern The pattern expression as configuration for the class annotation filter
      * @param PointcutFilterComposite $pointcutFilterComposite An instance of the pointcut filter composite. The result (ie. the class annotation filter) will be added to this composite object.
      * @return void
      */
@@ -196,6 +196,7 @@ class PointcutExpressionParser
         $annotationPropertyConstraints = [];
         $this->parseAnnotationPattern($annotationPattern, $annotationPropertyConstraints);
 
+        /** @var class-string $annotationPattern */
         $filter = new PointcutClassAnnotatedWithFilter($annotationPattern, $annotationPropertyConstraints);
         $filter->injectReflectionService($this->reflectionService);
         $filter->injectLogger($this->objectManager->get(PsrLoggerFactoryInterface::class)->get('systemLogger'));
@@ -223,7 +224,7 @@ class PointcutExpressionParser
      * filter composite object.
      *
      * @param string $operator The operator
-     * @param class-string $annotationPattern The pattern expression as configuration for the method annotation filter
+     * @param string $annotationPattern The pattern expression as configuration for the method annotation filter
      * @param PointcutFilterComposite $pointcutFilterComposite An instance of the pointcut filter composite. The result (ie. the method annotation filter) will be added to this composite object.
      * @return void
      */
@@ -232,6 +233,7 @@ class PointcutExpressionParser
         $annotationPropertyConstraints = [];
         $this->parseAnnotationPattern($annotationPattern, $annotationPropertyConstraints);
 
+        /** @var class-string $annotationPattern */
         $filter = new PointcutMethodAnnotatedWithFilter($annotationPattern, $annotationPropertyConstraints);
         $filter->injectReflectionService($this->reflectionService);
         $filter->injectLogger($this->objectManager->get(PsrLoggerFactoryInterface::class)->get('systemLogger'));
@@ -311,7 +313,7 @@ class PointcutExpressionParser
      * Adds a class type filter to the pointcut filter composite
      *
      * @param string $operator
-     * @param class-string $signaturePattern The pattern expression defining the class type
+     * @param string $signaturePattern The pattern expression defining the class type
      * @param PointcutFilterComposite $pointcutFilterComposite An instance of the pointcut filter composite. The result (ie. the class type filter) will be added to this composite object.
      * @todo this is only ever called from tests, do we even need this?
      * @return void

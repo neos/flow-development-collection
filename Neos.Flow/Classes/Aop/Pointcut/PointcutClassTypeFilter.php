@@ -44,17 +44,19 @@ class PointcutClassTypeFilter implements PointcutFilterInterface
     /**
      * The constructor - initializes the class type filter with the class or interface name
      *
-     * @param class-string $interfaceOrClassName Interface or a class name to match against
+     * @param string $interfaceOrClassName Interface or a class name to match against
      * @throws Exception
      */
     public function __construct(string $interfaceOrClassName)
     {
-        $this->interfaceOrClassName = $interfaceOrClassName;
-        if (!interface_exists($this->interfaceOrClassName)) {
-            if (!class_exists($this->interfaceOrClassName)) {
-                throw new Exception('The specified interface / class "' . $this->interfaceOrClassName . '" for the pointcut class type filter does not exist.', 1172483343);
-            }
+        if (interface_exists($interfaceOrClassName)) {
+            $this->interfaceOrClassName = $interfaceOrClassName;
+            $this->isInterface = true;
+        } elseif (class_exists($interfaceOrClassName)) {
+            $this->interfaceOrClassName = $interfaceOrClassName;
             $this->isInterface = false;
+        } else {
+            throw new Exception('The specified interface / class "' . $interfaceOrClassName . '" for the pointcut class type filter does not exist.', 1172483343);
         }
     }
 

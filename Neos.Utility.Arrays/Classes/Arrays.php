@@ -244,12 +244,13 @@ abstract class Arrays
      */
     public static function setValueByPath($subject, $path, $value)
     {
-        /** @phpstan-ignore booleanAnd.alwaysFalse (annotations may be wrong) */
+        /** @phpstan-ignore booleanAnd.alwaysFalse,instanceof.alwaysTrue (annotations may be wrong) */
         if (!is_array($subject) && !($subject instanceof \ArrayAccess)) {
             throw new \InvalidArgumentException('setValueByPath() expects $subject to be array or an object implementing \ArrayAccess, "' . get_debug_type($subject) . '" given.', 1306424308);
         }
         if (is_string($path)) {
             $path = explode('.', $path);
+            /** @phpstan-ignore function.alreadyNarrowedType (annotations may be wrong) */
         } elseif (!is_array($path)) {
             throw new \InvalidArgumentException('setValueByPath() expects $path to be string or array, "' . gettype($path) . '" given.', 1305111499);
         }
@@ -277,6 +278,7 @@ abstract class Arrays
     {
         if (is_string($path)) {
             $path = explode('.', $path);
+            /** @phpstan-ignore function.alreadyNarrowedType (annotations may be wrong) */
         } elseif (!is_array($path)) {
             throw new \InvalidArgumentException('unsetValueByPath() expects $path to be string or array, "' . gettype($path) . '" given.', 1305111513);
         }

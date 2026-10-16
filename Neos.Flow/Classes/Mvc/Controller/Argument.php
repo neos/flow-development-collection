@@ -183,7 +183,7 @@ class Argument
     {
         $this->validator = $validator;
         // the validation should not be called on null values - for the cases where the value is required, the error will be thrown in Controller::mapRequestArgumentsToControllerArguments()
-        if ($validator !== null && $this->value !== null) {
+        if ($this->value !== null) {
             $this->validationResults = $this->propertyMapper->getMessages();
             $validationMessages = $validator->validate($this->value);
             $this->validationResults->merge($validationMessages);

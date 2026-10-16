@@ -107,7 +107,6 @@ class PropertyMapper
      * @return mixed an instance of $targetType
      * @throws Exception
      * @throws SecurityException
-     * @phpstan-assert Result $this->getMessages()
      * @api
      */
     public function convert($source, string $targetType, ?PropertyMappingConfigurationInterface $configuration = null)
@@ -128,7 +127,6 @@ class PropertyMapper
         } catch (SecurityException $exception) { /** @phpstan-ignore catch.neverThrown (AOP I guess) */
             throw $exception;
         } catch (\Exception $exception) {
-            /** @phpstan-ignore greater.alwaysFalse (Not sure about this tbh) */
             throw new PropertyException('Could not convert target type "' . $targetType . '"' . (count($currentPropertyPath) > 0 ? ', at property path "' . implode('.', $currentPropertyPath) . '"' : '') . ': ' . $exception->getMessage(), 1297759968, $exception);
         }
     }
@@ -230,7 +228,7 @@ class PropertyMapper
         if ($configuration->getTypeConverter() !== null) {
             return $configuration->getTypeConverter();
         }
-
+        /** @phpstan-ignore function.alreadyNarrowedType (annotations can be wrong) */
         if (!is_string($targetType)) {
             throw new Exception\InvalidTargetException('The target type was no string, but of type "' . gettype($targetType) . '"', 1297941727);
         }

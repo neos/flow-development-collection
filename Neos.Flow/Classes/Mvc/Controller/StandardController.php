@@ -43,6 +43,7 @@ class StandardController extends ActionController
      */
     public function indexAction()
     {
+        /** @phpstan-ignore instanceof.alwaysTrue (Annotations can be wrong)  */
         if (!$this->request instanceof ActionRequest) {
             return
                 "\nWelcome to Flow!\n\n" .

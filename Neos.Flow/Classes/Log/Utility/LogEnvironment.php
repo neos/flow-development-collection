@@ -17,7 +17,6 @@ namespace Neos\Flow\Log\Utility;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Core\Bootstrap;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
-use Neos\Flow\Package\PackageKeyAwareInterface;
 use Neos\Flow\Package\PackageManager;
 
 abstract class LogEnvironment
@@ -102,6 +101,7 @@ abstract class LogEnvironment
     protected static function getPackageKeys(): array
     {
         if (self::$initialized === false) {
+            /** @phpstan-ignore instanceof.alwaysTrue (Bootstrap may not be fully initialized yet) */
             if (!Bootstrap::$staticObjectManager instanceof ObjectManagerInterface) {
                 return [];
             }
@@ -110,9 +110,7 @@ abstract class LogEnvironment
             $packageManager = Bootstrap::$staticObjectManager->get(PackageManager::class);
 
             foreach ($packageManager->getAvailablePackages() as $package) {
-                if ($package instanceof PackageKeyAwareInterface) {
-                    self::$packageKeys[$package->getPackageKey()] = true;
-                }
+                self::$packageKeys[$package->getPackageKey()] = true;
             }
             self::$initialized = true;
         }

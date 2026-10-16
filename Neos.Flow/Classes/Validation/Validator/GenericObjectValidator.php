@@ -186,6 +186,7 @@ class GenericObjectValidator extends AbstractValidator implements ObjectValidato
         if ($propertyName === null) {
             return $this->propertyValidators;
         }
+        /** @phpstan-ignore function.alreadyNarrowedType (annotations can be wrong) */
         if (is_string($propertyName)) {
             $propertyValidators = $this->propertyValidators[$propertyName] ?? null;
             if ($propertyValidators instanceof \SplObjectStorage) {

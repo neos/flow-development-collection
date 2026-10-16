@@ -68,8 +68,8 @@ class FileSystemSymlinkTarget extends FileSystemTarget
 
         $streamMetaData = stream_get_meta_data($sourceStream);
 
-        if ($streamMetaData['wrapper_type'] !== 'plainfile' || $streamMetaData['stream_type'] !== 'STDIO') {
-            throw new TargetException(sprintf('Could not publish stream "%s" into resource publishing target "%s" because the source is not a local file.', $streamMetaData['uri'], $this->name), 1416242392);
+        if ($streamMetaData['wrapper_type'] !== 'plainfile' || $streamMetaData['stream_type'] !== 'STDIO' || !array_key_exists('uri', $streamMetaData)) {
+            throw new TargetException(sprintf('Could not publish stream "%s" into resource publishing target "%s" because the source is not a local file.', $streamMetaData['uri'] ?? '--uri-key-missing--', $this->name), 1416242392);
         }
 
         $sourcePathAndFilename = $streamMetaData['uri'];
