@@ -226,8 +226,8 @@ class Argument
         } elseif (is_array($rawValue) && isset($rawValue['__type']) && $configuration->getConfigurationValue(ObjectConverter::class, ObjectConverter::CONFIGURATION_OVERRIDE_TARGET_TYPE_ALLOWED) === true) {
             $this->dataType = $rawValue['__type'];
         }
-        $this->value = $this->propertyMapper->convert($rawValue, $this->dataType, $this->getPropertyMappingConfiguration());
-        $this->validationResults = $this->propertyMapper->getMessages() ?? new Result();
+        $this->value = $this->propertyMapper?->convert($rawValue, $this->dataType, $this->getPropertyMappingConfiguration()) ?? $rawValue;
+        $this->validationResults = $this->propertyMapper?->getMessages() ?? new Result();
         if ($this->validator !== null) {
             $validationMessages = $this->validator->validate($this->value);
             $this->validationResults->merge($validationMessages);

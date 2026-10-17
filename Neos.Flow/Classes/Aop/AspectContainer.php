@@ -100,7 +100,7 @@ class AspectContainer
     /**
      * Returns the advisors which were defined in the aspect
      *
-     * @return array Array of \Neos\Flow\Aop\Advisor objects
+     * @return Advisor[] Array of \Neos\Flow\Aop\Advisor objects
      */
     public function getAdvisors(): array
     {
@@ -110,7 +110,7 @@ class AspectContainer
     /**
      * Returns the interface introductions which were defined in the aspect
      *
-     * @return array Array of \Neos\Flow\Aop\InterfaceIntroduction objects
+     * @return InterfaceIntroduction[] Array of \Neos\Flow\Aop\InterfaceIntroduction objects
      */
     public function getInterfaceIntroductions(): array
     {
@@ -120,7 +120,7 @@ class AspectContainer
     /**
      * Returns the property introductions which were defined in the aspect
      *
-     * @return array Array of \Neos\Flow\Aop\PropertyIntroduction objects
+     * @return PropertyIntroduction[] Array of \Neos\Flow\Aop\PropertyIntroduction objects
      */
     public function getPropertyIntroductions(): array
     {
@@ -130,7 +130,7 @@ class AspectContainer
     /**
      * Returns the trait introductions which were defined in the aspect
      *
-     * @return array Array of \Neos\Flow\Aop\TraitIntroduction objects
+     * @return TraitIntroduction[] Array of \Neos\Flow\Aop\TraitIntroduction objects
      */
     public function getTraitIntroductions(): array
     {

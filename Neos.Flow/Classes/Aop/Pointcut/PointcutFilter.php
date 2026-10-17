@@ -12,8 +12,8 @@ namespace Neos\Flow\Aop\Pointcut;
  */
 
 use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Aop\AspectContainer;
 use Neos\Flow\Aop\Builder\ClassNameIndex;
-use Neos\Flow\Aop\Builder\ProxyClassBuilder;
 use Neos\Flow\Aop\Exception\UnknownPointcutException;
 
 /**
@@ -41,11 +41,7 @@ class PointcutFilter implements PointcutFilterInterface
      */
     protected $pointcut;
 
-    /**
-     * A reference to the AOP Proxy ClassBuilder
-     * @var ProxyClassBuilder
-     */
-    protected $proxyClassBuilder;
+    protected AspectContainer $aspectContainer;
 
     /**
      * The constructor - initializes the pointcut filter with the name of the pointcut we're referring to
@@ -53,21 +49,11 @@ class PointcutFilter implements PointcutFilterInterface
      * @param string $aspectClassName Name of the aspect class containing the pointcut
      * @param string $pointcutMethodName Name of the method which acts as an anchor for the pointcut name and expression
      */
-    public function __construct(string $aspectClassName, string $pointcutMethodName)
+    public function __construct(string $aspectClassName, string $pointcutMethodName, AspectContainer $aspectContainer)
     {
         $this->aspectClassName = $aspectClassName;
         $this->pointcutMethodName = $pointcutMethodName;
-    }
-
-    /**
-     * Injects the AOP Proxy Class Builder
-     *
-     * @param ProxyClassBuilder $proxyClassBuilder
-     * @return void
-     */
-    public function injectProxyClassBuilder(ProxyClassBuilder $proxyClassBuilder): void
-    {
-        $this->proxyClassBuilder = $proxyClassBuilder;
+        $this->aspectContainer = $aspectContainer;
     }
 
     /**
@@ -83,7 +69,7 @@ class PointcutFilter implements PointcutFilterInterface
     public function matches($className, $methodName, $methodDeclaringClassName, $pointcutQueryIdentifier): bool
     {
         if ($this->pointcut === null) {
-            $this->pointcut = $this->proxyClassBuilder->findPointcut($this->aspectClassName, $this->pointcutMethodName) ?: null;
+            $this->pointcut = $this->findPointcut($this->pointcutMethodName) ?: null;
         }
         if ($this->pointcut === null) {
             throw new UnknownPointcutException('No pointcut "' . $this->pointcutMethodName . '" found in aspect class "' . $this->aspectClassName . '" .', 1172223694);
@@ -109,7 +95,7 @@ class PointcutFilter implements PointcutFilterInterface
     public function getRuntimeEvaluationsDefinition(): array
     {
         if ($this->pointcut === null) {
-            $this->pointcut = $this->proxyClassBuilder->findPointcut($this->aspectClassName, $this->pointcutMethodName) ?: null;
+            $this->pointcut = $this->findPointcut($this->pointcutMethodName) ?: null;
         }
         if ($this->pointcut === null) {
             return [];
@@ -127,11 +113,22 @@ class PointcutFilter implements PointcutFilterInterface
     public function reduceTargetClassNames(ClassNameIndex $classNameIndex): ClassNameIndex
     {
         if ($this->pointcut === null) {
-            $this->pointcut = $this->proxyClassBuilder->findPointcut($this->aspectClassName, $this->pointcutMethodName) ?: null;
+            $this->pointcut = $this->findPointcut($this->pointcutMethodName);
         }
         if ($this->pointcut === null) {
             return $classNameIndex;
         }
         return $this->pointcut->reduceTargetClassNames($classNameIndex);
+    }
+
+    protected function findPointcut(string $methodName): ?Pointcut
+    {
+        foreach ($this->aspectContainer->getPointcuts() as $pointcut) {
+            if ($pointcut->getPointcutMethodName() === $methodName) {
+                return $pointcut;
+            }
+        }
+
+        return null;
     }
 }

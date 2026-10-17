@@ -27,9 +27,9 @@ use Neos\Flow\Aop\Builder\ClassNameIndex;
 class PointcutFilterComposite implements PointcutFilterInterface
 {
     /**
-     * @var array An array of \Neos\Flow\Aop\Pointcut\Pointcut*Filter objects
+     * @var array<array{0: string, 1: PointcutFilterInterface}> An array of \Neos\Flow\Aop\Pointcut\Pointcut*Filter objects
      */
-    protected $filters = [];
+    protected array $filters = [];
 
     /**
      * @var boolean
