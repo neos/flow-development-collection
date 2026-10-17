@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\ResourceManagement\Target;
 
 /*
@@ -11,12 +12,12 @@ namespace Neos\Flow\ResourceManagement\Target;
  * source code.
  */
 
-/**
- * Interface for a resource publishing target
- */
 use Neos\Flow\ResourceManagement\CollectionInterface;
 use Neos\Flow\ResourceManagement\PersistentResource;
 
+/**
+ * Interface for a resource publishing target
+ */
 interface TargetInterface
 {
     /**
