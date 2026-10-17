@@ -12,6 +12,7 @@ namespace Neos\Eel;
  */
 
 use Neos\Flow\Annotations as Flow;
+use Neos\Utility\Arrays;
 use Neos\Utility\Exception\PropertyNotAccessibleException;
 use Neos\Utility\ObjectAccess;
 
@@ -23,6 +24,7 @@ use Neos\Utility\ObjectAccess;
  *
  * @phpstan-consistent-constructor
  * @Flow\Proxy(false)
+ * @psalm-consistent-constructor
  */
 class Context
 {
@@ -37,6 +39,22 @@ class Context
     public function __construct($value = null)
     {
         $this->value = $value;
+    }
+
+    /**
+     * Union recursive with another context
+     * Only available, if both context hold arrays and not other primitives/objects
+     *
+     * @throws \DomainException only arrays can be united
+     */
+    public function union(Context $other): static
+    {
+        if (!is_array($this->value) || !is_array($other->value)) {
+            throw new \DomainException("Can only union context with arrays.", 1678295473807);
+        }
+        return new static(
+            Arrays::arrayMergeRecursiveOverrule($this->unwrap(), $other->unwrap())
+        );
     }
 
     /**
