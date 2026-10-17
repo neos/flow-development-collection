@@ -33,6 +33,7 @@ use Neos\FluidAdaptor\Core\ViewHelper\AbstractTagBasedViewHelper;
  * <a href="mailto:foo@bar.tld">some custom content</a>
  * </output>
  *
+ * you may optionally add a subject and a body to the VH
  * @api
  */
 class EmailViewHelper extends AbstractTagBasedViewHelper
@@ -55,6 +56,8 @@ class EmailViewHelper extends AbstractTagBasedViewHelper
         $this->registerTagAttribute('rev', 'string', 'Specifies the relationship between the linked document and the current document');
         $this->registerTagAttribute('target', 'string', 'Specifies where to open the linked document');
         $this->registerArgument('email', 'string', 'The email address to be turned into a link.', true);
+        $this->registerArgument('subject', 'string', 'The subject of the email link.');
+        $this->registerArgument('body', 'string', 'The body of the email link.');
     }
 
     /**
@@ -65,7 +68,12 @@ class EmailViewHelper extends AbstractTagBasedViewHelper
     {
         $email = $this->arguments['email'];
 
-        $linkHref = 'mailto:' . $email;
+        $linkHref = $this->getMailtoLink(
+            [$email],
+            $this->arguments['subject'] ?? '',
+            $this->arguments['body'] ?? ''
+        );
+
         $linkText = $email;
         $tagContent = $this->renderChildren();
         if ($tagContent !== null) {
@@ -76,5 +84,18 @@ class EmailViewHelper extends AbstractTagBasedViewHelper
         $this->tag->forceClosingTag(true);
 
         return $this->tag->render();
+    }
+
+    protected function getMailtoLink(array $recipients, string $subject, string $body)
+    {
+        $recipientsString = implode( ',', $recipients);
+        $link = 'mailto:' . rawurldecode($recipientsString) . '?';
+        if ($subject !== '') {
+            $link .= 'subject=' . rawurlencode($subject);
+        }
+        if ($body !== '') {
+            $link .= '&body=' . rawurlencode($body);
+        }
+        return $link;
     }
 }
