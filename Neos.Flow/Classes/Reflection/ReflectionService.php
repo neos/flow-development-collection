@@ -258,8 +258,9 @@ class ReflectionService
         if (!$this->initialized) {
             $this->initialize();
         }
-
-        return array_keys($this->classReflectionData);
+        $classNames = array_keys($this->classReflectionData);
+        sort($classNames);
+        return $classNames;
     }
 
     /**
@@ -1068,8 +1069,6 @@ class ReflectionService
         // flatten nested array structure to a list of classes
         $classNamesToReflect = array_merge(...array_values($this->availableClassNames));
         $reflectedClassNames = array_keys($this->classReflectionData);
-        sort($classNamesToReflect);
-        sort($reflectedClassNames);
         $newClassNames = array_diff($classNamesToReflect, $reflectedClassNames);
         if ($newClassNames === []) {
             return;
@@ -1186,10 +1185,6 @@ class ReflectionService
         foreach ($class->getMethods() as $method) {
             $this->reflectClassMethod($className, $method);
         }
-        // Sort reflection data so that the cache data is deterministic. This is
-        // important for comparisons when checking if classes have changed in a
-        // Development context.
-        ksort($this->classReflectionData);
         $this->updatedReflectionData[$className] = true;
     }
 
