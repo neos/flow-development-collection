@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Error;
 
 /*
@@ -39,7 +40,8 @@ class ProductionExceptionHandler extends AbstractExceptionHandler
         try {
             if ($this->useCustomErrorView()) {
                 try {
-                    echo $this->buildView($exception, $this->renderingOptions)->render();
+                    $stream = $this->buildView($exception, $this->renderingOptions)->render();
+                    $this->sendStream($stream);
                 } catch (\Throwable $throwable) {
                     $this->renderStatically($statusCode, $throwable);
                 }

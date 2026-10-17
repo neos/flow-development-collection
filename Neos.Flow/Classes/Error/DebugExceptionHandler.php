@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Error;
 
 /*
@@ -76,7 +77,8 @@ EOD;
         }
 
         try {
-            echo $this->buildView($exception, $this->renderingOptions)->render();
+            $stream = $this->buildView($exception, $this->renderingOptions)->render();
+            $this->sendStream($stream);
         } catch (\Throwable $throwable) {
             $this->renderStatically($statusCode, $throwable);
         }
