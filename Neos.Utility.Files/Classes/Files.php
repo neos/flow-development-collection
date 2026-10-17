@@ -159,18 +159,26 @@ abstract class Files
                 throw new FilesException('Could not unlink symbolic link "' . $path . '".', 1323697654);
             }
         } else {
+            $files = [];
+            $directories = [];
             $directoryIterator = new \RecursiveDirectoryIterator($path);
             foreach ($directoryIterator as $fileInfo) {
                 if (is_string($fileInfo)) {
                     continue;
                 }
                 if (!$fileInfo->isDir()) {
-                    if (self::unlink($fileInfo->getPathname()) !== true) {
-                        throw new FilesException('Could not unlink file "' . $fileInfo->getPathname() . '".', 1169047619);
-                    }
+                    $files[] = $fileInfo->getPathname();
                 } elseif (!$directoryIterator->isDot()) {
-                    self::removeDirectoryRecursively($fileInfo->getPathname());
+                    $directories[] = $fileInfo->getPathname();
                 }
+            }
+            foreach ($files as $pathAndFilename) {
+                if (self::unlink($pathAndFilename) !== true) {
+                    throw new FilesException('Could not unlink file "' . $pathAndFilename . '".', 1169047619);
+                }
+            }
+            foreach ($directories as $directoryPathname) {
+                self::removeDirectoryRecursively($directoryPathname);
             }
         }
     }
