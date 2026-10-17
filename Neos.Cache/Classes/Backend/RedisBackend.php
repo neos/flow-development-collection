@@ -170,7 +170,18 @@ class RedisBackend extends IndependentAbstractBackend implements TaggableBackend
      */
     public function get(string $entryIdentifier): string|bool
     {
-        return $this->uncompress($this->redis->get($this->getPrefixedIdentifier('entry:' . $entryIdentifier)));
+        $tries = 1;
+        do {
+            try {
+                return $this->uncompress($this->redis->get($this->getPrefixedIdentifier('entry:' . $entryIdentifier)));
+            } catch (\RedisException  $exception) {
+                if ($tries > 8) {
+                    throw $exception;
+                }
+                usleep($tries**2 * 100000);
+                $tries++;
+            }
+        } while (true);
     }
 
     /**
