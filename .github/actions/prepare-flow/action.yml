@@ -58,6 +58,7 @@ runs:
         git -C ../${{ inputs.collection-path }} checkout -b build
         composer config repositories.flow '{ "type": "path", "url": "../${{ inputs.collection-path }}", "options": { "symlink": false } }'
         composer require --no-update neos/flow-development-collection:"dev-build as ${{ steps.flow.outputs.branch-alias }}"
+        composer require --no-update phpstan/phpstan:"~2.2"
 
     - name: Cache Composer packages
       uses: actions/cache@v5

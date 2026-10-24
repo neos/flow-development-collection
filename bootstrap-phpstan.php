@@ -15,7 +15,7 @@ namespace {
 namespace Neos\Media\Domain\Repository {
     if (!class_exists(AssetRepository::class)) {
         /**
-         * @method iterable<int, \Neos\Media\Domain\Model\AssetInterface> findByResource(\Neos\Flow\ResourceManagement\PersistentResource $resource)
+         * @method \Neos\Flow\Persistence\QueryResultInterface<\Neos\Media\Domain\Model\AssetInterface> findByResource(\Neos\Flow\ResourceManagement\PersistentResource $resource)
          * @method void removeWithoutUsageChecks(\Neos\Media\Domain\Model\AssetInterface $object)
          */
         class AssetRepository extends \Neos\Flow\Persistence\Repository
@@ -27,7 +27,7 @@ namespace Neos\Media\Domain\Repository {
 namespace Neos\Media\Domain\Repository {
     if (!class_exists(ThumbnailRepository::class)) {
         /**
-         * @method iterable<int,\Neos\Media\Domain\Model\Thumbnail> findByResource(\Neos\Flow\ResourceManagement\PersistentResource $resource)
+         * @method \Neos\Flow\Persistence\QueryResultInterface<\Neos\Media\Domain\Model\Thumbnail> findByResource(\Neos\Flow\ResourceManagement\PersistentResource $resource)
          * @method void remove(\Neos\Media\Domain\Model\Thumbnail $object)
          */
         class ThumbnailRepository extends \Neos\Flow\Persistence\Repository

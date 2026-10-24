@@ -79,6 +79,7 @@ class StandaloneView extends AbstractTemplateView
      * @param ?ActionRequest $request The current action request. If none is specified it will be created from the environment.
      * @param array<string,mixed> $options
      * @throws \Neos\FluidAdaptor\Exception
+     * @phpstan-ignore method.childParameterType (signature deviates from parent)
      */
     public function __construct(?ActionRequest $request = null, array $options = [])
     {

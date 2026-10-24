@@ -250,11 +250,11 @@ class ResourceCommandController extends CommandController
             foreach ($brokenResources as $resource) {
                 if ($mediaPackagePresent) {
                     $assets = $assetRepository->findByResource($resource);
-                    if ($assets !== null) {
+                    if ($assets->count() !== 0) {
                         $relatedAssets[$resource] = $assets;
                     }
                     $thumbnails = $thumbnailRepository->findByResource($resource);
-                    if ($assets !== null) {
+                    if ($thumbnails->count() !== 0) {
                         $relatedThumbnails[$resource] = $thumbnails;
                     }
                 }

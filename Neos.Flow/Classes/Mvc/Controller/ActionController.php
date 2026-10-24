@@ -91,7 +91,7 @@ class ActionController extends AbstractController
     /**
      * The current view, as resolved by resolveView()
      *
-     * @var ViewInterface
+     * @var ViewInterface|null
      * @api
      */
     protected $view = null;

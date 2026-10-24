@@ -78,7 +78,7 @@ class Cookie
     protected $domain;
 
     /**
-     * @var string
+     * @var ?string
      */
     protected $path;
 
@@ -117,7 +117,7 @@ class Cookie
      * @param int|\DateTimeInterface $expires Date and time after which this cookie expires.
      * @param ?int $maximumAge Number of seconds until the cookie expires.
      * @param ?string $domain The host to which the user agent will send this cookie
-     * @param string $path The path describing the scope of this cookie
+     * @param ?string $path The path describing the scope of this cookie
      * @param boolean $secure If this cookie should only be sent through a "secure" channel by the user agent
      * @param boolean $httpOnly If this cookie should only be used through the HTTP protocol
      * @param string $sameSite If this cookie should restricted to a first-party or top-level navigation or third-party context
@@ -132,10 +132,11 @@ class Cookie
         if ($expires instanceof \DateTimeInterface) {
             $expires = $expires->getTimestamp();
         }
+        /** @phpstan-ignore function.alreadyNarrowedType (Annotations can be wrong) */
         if (!is_int($expires)) {
             throw new \InvalidArgumentException('The parameter "expires" passed to the Cookie constructor must be a unix timestamp or a DateTimeInterface object.', 1345108785);
         }
-        /** @phpstan-ignore booleanAnd.alwaysFalse (until $maximumAge is typed ?int in php) */
+        /** @phpstan-ignore booleanAnd.alwaysFalse,function.alreadyNarrowedType (until $maximumAge is typed ?int in php) */
         if ($maximumAge !== null && !is_int($maximumAge)) {
             throw new \InvalidArgumentException('The parameter "maximumAge" passed to the Cookie constructor must be an integer value.', 1345108786);
         }
@@ -342,7 +343,7 @@ class Cookie
     /**
      * Returns the path this cookie is valid for.
      *
-     * @return string The path
+     * @return ?string The path
      * @api
      */
     public function getPath()

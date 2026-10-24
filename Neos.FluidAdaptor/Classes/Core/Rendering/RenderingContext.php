@@ -123,6 +123,7 @@ class RenderingContext extends FluidRenderingContext implements FlowAwareRenderi
     {
         $this->controllerContext = $controllerContext;
         $request = $controllerContext->getRequest();
+        /** @phpstan-ignore instanceof.alwaysTrue (annotations can be wrong) */
         if (!$this->templatePaths instanceof TemplatePaths || !$request instanceof ActionRequest) {
             return;
         }

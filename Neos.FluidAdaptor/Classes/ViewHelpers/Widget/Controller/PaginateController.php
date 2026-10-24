@@ -98,6 +98,9 @@ class PaginateController extends AbstractWidgetController
         }
         $modifiedObjects = $query->execute();
 
+        if ($this->view === null) {
+            throw new \RuntimeException(self::class . ' requires a view');
+        }
         $this->view->assign('contentArguments', [
             $this->widgetConfiguration['as'] => $modifiedObjects
         ]);
