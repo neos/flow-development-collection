@@ -1,0 +1,81 @@
+`8.4.5 (2026-10-05) <https://github.com/neos/flow-development-collection/releases/tag/8.4.5>`_
+==============================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`BUGFIX: Drop `setlocale()` calls from `Functions::pathinfo()` <https://github.com/neos/flow-development-collection/pull/3607>`_
+--------------------------------------------------------------------------------------------------------------------------------
+
+This avoids a (PHP) bug where following regex calls can change their behaviour.
+
+See `#3606 <https://github.com/neos/flow-development-collection/issues/3606>`_
+
+
+* Packages: ``Flow`` ``Utility.Unicode``
+
+`BUGFIX: Handle false model and pluralRulesSet in generateRulesets <https://github.com/neos/flow-development-collection/pull/3608>`_
+------------------------------------------------------------------------------------------------------------------------------------
+
+This avoids ``Call to a member function getRawArray() on false``.
+
+
+* Packages: ``Flow``
+
+`TASK: Use `Test` attribute in kickstarter test template <https://github.com/neos/flow-development-collection/pull/3605>`_
+--------------------------------------------------------------------------------------------------------------------------
+
+Replaces the ``@test`` annotation with the PHPUnit ``#[Test]`` attribute in the generated entity test case, matching the style used since PHPUnit 11.
+
+
+* Packages: ``Flow`` ``Kickstarter``
+
+`TASK: Drop support for legacy code caches <https://github.com/neos/flow-development-collection/pull/3603>`_
+------------------------------------------------------------------------------------------------------------
+
+Drop support for xcache and wincache from our ``OpcodeCacheHelper``.
+
+
+* Packages: ``Utility.OpcodeCache``
+
+`TASK: Update to PHPUnit 11 <https://github.com/neos/flow-development-collection/pull/3563>`_
+---------------------------------------------------------------------------------------------
+
+**Upgrade instructions**
+
+The only thing you might need to adjust (besides catering to all the changes in PhpUnit 11), is the signature of ``getAccessibleMock()`` in our base testcase class. The arguments
+
+- ``$callAutoload``
+- ``$callOriginalMethods``
+- ``$proxyTarget``
+
+have been removed, as the underlying PHPUnit methods are deprecated.
+
+**Review instructions**
+
+All tests should still pass – have fun verifying they still do test the correct stuff.
+
+
+* Packages: ``Flow`` ``Cache``
+
+`TASK: Fix typos in documentation and some strings <https://github.com/neos/flow-development-collection/pull/3577>`_
+--------------------------------------------------------------------------------------------------------------------
+
+Hello!
+
+First of all, thank you for your work!
+Just like in https://github.com/neos/neos-development-collection/pull/5846 I fixed typos in this repository too.
+
+**Upgrade instructions**
+
+n/a
+
+**Review instructions**
+
+I split my fixes into separate commits so changes in code (comments) and documentation are easily discernible. Note that c6d0157 changes actual strings in the code.
+
+
+* Packages: ``Flow`` ``FluidAdaptor``
+
+`Detailed log <https://github.com/neos/flow-development-collection/compare/8.4.4...8.4.5>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
