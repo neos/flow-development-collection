@@ -42,12 +42,7 @@ class ParserTestWrapper {
 
 class ParserTestBase extends \PHPUnit\Framework\TestCase {
 
-	public function __construct()
-    {
-        parent::__construct(static::class);
-    }
-
-    function buildParser($parser) {
+	function buildParser($parser) {
 		$class = 'Parser' . sha1($parser);
 
 		echo ParserCompiler::compile("class $class extends \PhpPeg\Parser {\n $parser\n}") . "\n\n\n";
