@@ -1,0 +1,59 @@
+`9.2.2 (2026-10-24) <https://github.com/neos/flow-development-collection/releases/tag/9.2.2>`_
+==============================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`BUGFIX: Make Neos.Cache's CacheFactory work standlone <https://github.com/neos/flow-development-collection/pull/3641>`_
+------------------------------------------------------------------------------------------------------------------------
+
+Up to now, calling ``Neos\\Cache\\CacheFactory::create()`` will return an empty, unresolvable proxy, which $somehow still works in Flow (or Flow doesn't use it at all and prefers its own ``Neos\\Flow\\Cache\\CacheFactory``). This breaks standalone usage.
+
+This bugfix adds the missing return statement.
+
+**Upgrade instructions**
+
+none
+
+**Review instructions**
+
+see the new test
+
+* Packages: ``Flow`` ``Cache``
+
+`TASK: Adjust `FLOW_VERSION_BRANCH` to 9.1 to be correct (and deprecate it) <https://github.com/neos/flow-development-collection/pull/3635>`_
+---------------------------------------------------------------------------------------------------------------------------------------------
+
+i forgot that at the time of the release
+
+**Upgrade instructions**
+
+* Packages: ``Flow``
+
+`TASK: Point contributing guide at Weblate instead of Crowdin <https://github.com/neos/flow-development-collection/pull/3630>`_
+-------------------------------------------------------------------------------------------------------------------------------
+
+Hi! The contributing guide still points at Crowdin which has been replaced by Weblate.
+
+**Upgrade instructions**
+
+-
+
+**Review instructions**
+
+-
+
+
+* Packages: ``Flow`` ``.github``
+
+`TASK: Drop overridden constructors for `TestCase` again <https://github.com/neos/flow-development-collection/pull/3638>`_
+--------------------------------------------------------------------------------------------------------------------------
+
+They were removed in 26b8b110a, but a later Rector run re-added them (``ParentTestClassConstructorRector`` from ``PHPUnitSetList::PHPUNIT_100`` targets ``TestCase`` subclasses without a ``Test`` suffix).
+
+``TestCase::__construct()`` is final since PHPUnit 12.1, so loading ``PersistenceTestPHP8`` breaks the functional test bootstrap with "Cannot override final method". The override also replaced the test method name with the class name.
+
+* Packages: ``Flow`` ``Eel``
+
+`Detailed log <https://github.com/neos/flow-development-collection/compare/9.2.1...9.2.2>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
