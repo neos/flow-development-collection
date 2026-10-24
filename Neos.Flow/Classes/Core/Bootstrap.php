@@ -561,7 +561,8 @@ class Bootstrap
             define('FLOW_PATH_TEMPORARY', $temporaryDirectoryPath);
         }
 
-        define('FLOW_VERSION_BRANCH', '9.2');
+        /** @deprecated can be removed with Flow 10 */
+        define('FLOW_VERSION_BRANCH', '9.3');
         define('FLOW_APPLICATION_CONTEXT', (string)$this->context);
     }
 
