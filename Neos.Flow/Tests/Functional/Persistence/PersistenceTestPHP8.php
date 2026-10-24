@@ -63,11 +63,6 @@ final class PersistenceTestPHP8 extends FunctionalTestCase
      */
     protected $earlyEntityManager;
 
-    public function __construct()
-    {
-        parent::__construct(static::class);
-    }
-
     /**
      * @return void
      */

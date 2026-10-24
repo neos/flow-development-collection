@@ -1,0 +1,116 @@
+`9.0.8 (2026-10-05) <https://github.com/neos/flow-development-collection/releases/tag/9.0.8>`_
+==============================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`BUGFIX: Unpack variadic parameters in proxies <https://github.com/neos/flow-development-collection/pull/3600>`_
+----------------------------------------------------------------------------------------------------------------
+
+A generated proxy method passes the parameters of the original method on to the parent method one by one. For a variadic parameter this means that the collected arguments are handed over as a single array, which results in a TypeError as soon as a proxied or advised method declares a variadic parameter.
+
+The generated parent call now unpacks variadic parameters again. The same applies to the invocation of a join point at the end of an advice chain: a join point stores the arguments of a variadic parameter as one array, mapped to the name of that parameter, so that array needs to be unpacked before the method is called with the arguments taken from the join point.
+
+* Fixes: `#3589 <https://github.com/neos/flow-development-collection/issues/3589>`_
+
+* Packages: ``Flow``
+
+`BUGFIX: Comment out final keyword of static methods <https://github.com/neos/flow-development-collection/pull/3599>`_
+----------------------------------------------------------------------------------------------------------------------
+
+The regular expression which comments out the final keyword of methods that are overridden in a proxy class did not match methods declared as ``final public static function`` or similar combinations including the static keyword. As a consequence, a final static method annotated with ``Flow\\CompileStatic`` resulted in a "Cannot override final method" fatal error – but only in Production context, where CompileStatic methods are compiled into the proxy class.
+
+The new expression covers all combinations of public, protected, static and final, methods returning by reference and method names consisting of a single character.
+
+* Fixes: `#3592 <https://github.com/neos/flow-development-collection/issues/3592>`_
+
+* Packages: ``Flow``
+
+`BUGFIX: Drop `setlocale()` calls from `Functions::pathinfo()` <https://github.com/neos/flow-development-collection/pull/3607>`_
+--------------------------------------------------------------------------------------------------------------------------------
+
+This avoids a (PHP) bug where following regex calls can change their behaviour.
+
+See `#3606 <https://github.com/neos/flow-development-collection/issues/3606>`_
+
+
+* Packages: ``Flow`` ``Utility.Unicode``
+
+`BUGFIX: Handle false model and pluralRulesSet in generateRulesets <https://github.com/neos/flow-development-collection/pull/3608>`_
+------------------------------------------------------------------------------------------------------------------------------------
+
+This avoids ``Call to a member function getRawArray() on false``.
+
+
+* Packages: ``Flow``
+
+`BUGFIX: Call original method in void proxy methods <https://github.com/neos/flow-development-collection/pull/3598>`_
+---------------------------------------------------------------------------------------------------------------------
+
+When proxy building adds only pre parent call code to a method – without any post code – and the method declares a ``void`` or ``never`` return type, the generated proxy method contains the pre code but no call to the original method: the original implementation is silently skipped.
+
+This change renders the parent call (without a return statement, which is not allowed for these return types) like the branch for pre and post parent call code already does.
+
+Note for the upmerge to 9.2: the unit test ``noParentCallIsRenderedForVoidAndNeverReturnTypesIfOnlyPreParentCallCodeExists`` introduced with `#3596 <https://github.com/neos/flow-development-collection/issues/3596>``_documents the old behavior and needs to be inverted – the ``ProxyMethodGeneratorTest` introduced with this change covers the corrected behavior and will conflict with the file of the same name from #3596.
+
+* Fixes: `#3597 <https://github.com/neos/flow-development-collection/issues/3597>`_
+
+* Packages: ``Flow``
+
+`TASK: Use `Test` attribute in kickstarter test template <https://github.com/neos/flow-development-collection/pull/3605>`_
+--------------------------------------------------------------------------------------------------------------------------
+
+Replaces the ``@test`` annotation with the PHPUnit ``#[Test]`` attribute in the generated entity test case, matching the style used since PHPUnit 11.
+
+
+* Packages: ``Flow`` ``Kickstarter``
+
+`TASK: Drop support for legacy code caches <https://github.com/neos/flow-development-collection/pull/3603>`_
+------------------------------------------------------------------------------------------------------------
+
+Drop support for xcache and wincache from our ``OpcodeCacheHelper``.
+
+
+* Packages: ``Utility.OpcodeCache``
+
+`TASK: Update to PHPUnit 11 <https://github.com/neos/flow-development-collection/pull/3563>`_
+---------------------------------------------------------------------------------------------
+
+**Upgrade instructions**
+
+The only thing you might need to adjust (besides catering to all the changes in PhpUnit 11), is the signature of ``getAccessibleMock()`` in our base testcase class. The arguments
+
+- ``$callAutoload``
+- ``$callOriginalMethods``
+- ``$proxyTarget``
+
+have been removed, as the underlying PHPUnit methods are deprecated.
+
+**Review instructions**
+
+All tests should still pass – have fun verifying they still do test the correct stuff.
+
+
+* Packages: ``Flow`` ``Cache``
+
+`TASK: Fix typos in documentation and some strings <https://github.com/neos/flow-development-collection/pull/3577>`_
+--------------------------------------------------------------------------------------------------------------------
+
+Hello!
+
+First of all, thank you for your work!
+Just like in https://github.com/neos/neos-development-collection/pull/5846 I fixed typos in this repository too.
+
+**Upgrade instructions**
+
+n/a
+
+**Review instructions**
+
+I split my fixes into separate commits so changes in code (comments) and documentation are easily discernible. Note that c6d0157 changes actual strings in the code.
+
+
+* Packages: ``Flow`` ``FluidAdaptor``
+
+`Detailed log <https://github.com/neos/flow-development-collection/compare/9.0.7...9.0.8>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

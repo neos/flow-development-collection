@@ -561,7 +561,7 @@ class Bootstrap
             define('FLOW_PATH_TEMPORARY', $temporaryDirectoryPath);
         }
 
-        define('FLOW_VERSION_BRANCH', '9.0');
+        define('FLOW_VERSION_BRANCH', '9.1');
         define('FLOW_APPLICATION_CONTEXT', (string)$this->context);
     }
 
