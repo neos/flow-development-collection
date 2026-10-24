@@ -1,0 +1,33 @@
+`8.4.6 (2026-10-24) <https://github.com/neos/flow-development-collection/releases/tag/8.4.6>`_
+==============================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`TASK: Point contributing guide at Weblate instead of Crowdin <https://github.com/neos/flow-development-collection/pull/3630>`_
+-------------------------------------------------------------------------------------------------------------------------------
+
+Hi! The contributing guide still points at Crowdin which has been replaced by Weblate.
+
+**Upgrade instructions**
+
+-
+
+**Review instructions**
+
+-
+
+
+* Packages: ``Flow`` ``.github``
+
+`TASK: Drop overridden constructors for `TestCase` again <https://github.com/neos/flow-development-collection/pull/3638>`_
+--------------------------------------------------------------------------------------------------------------------------
+
+They were removed in 26b8b110a, but a later Rector run re-added them (``ParentTestClassConstructorRector`` from ``PHPUnitSetList::PHPUNIT_100`` targets ``TestCase`` subclasses without a ``Test`` suffix).
+
+``TestCase::__construct()`` is final since PHPUnit 12.1, so loading ``PersistenceTestPHP8`` breaks the functional test bootstrap with "Cannot override final method". The override also replaced the test method name with the class name.
+
+* Packages: ``Flow`` ``Eel``
+
+`Detailed log <https://github.com/neos/flow-development-collection/compare/8.4.5...8.4.6>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
