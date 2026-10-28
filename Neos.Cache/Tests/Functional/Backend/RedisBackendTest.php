@@ -310,6 +310,22 @@ class RedisBackendTest extends BaseTestCase
     /**
      * @test
      */
+    public function tagSetsNeverExpire()
+    {
+        $redis = new \Redis();
+        $redis->connect('127.0.0.1', 6379);
+        $redis->sAdd($this->backend->getPrefixedIdentifier('tag:tag1'), 'other_entry');
+        $redis->expire($this->backend->getPrefixedIdentifier('tag:tag1'), 100);
+
+        $this->backend->set('some_entry', 'foo', ['tag1'], 100);
+
+        self::assertSame(-1, $redis->ttl($this->backend->getPrefixedIdentifier('tag:tag1')));
+        self::assertSame(-1, $redis->ttl($this->backend->getPrefixedIdentifier('tags:some_entry')));
+    }
+
+    /**
+     * @test
+     */
     public function expiredEntriesAreSkippedWhenIterating()
     {
         $this->backend->set('entry1', 'foo', [], 1);

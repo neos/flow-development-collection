@@ -225,6 +225,30 @@ class RedisBackendTest extends BaseTestCase
     }
 
     /**
+     * @test
+     * @dataProvider evictionPolicyProvider
+     */
+    public function getStatusWarnsAboutEvictionPoliciesThatCanEvictTagSets(string $evictionPolicy, bool $expectWarning): void
+    {
+        $this->redis->method('info')->willReturnMap([
+            ['SERVER', ['redis_version' => '7.2.0']],
+            ['MEMORY', ['maxmemory_policy' => $evictionPolicy]],
+        ]);
+
+        $status = $this->backend->getStatus();
+
+        self::assertSame($expectWarning, $status->hasWarnings());
+    }
+
+    public static function evictionPolicyProvider(): array
+    {
+        return [
+            ['allkeys-lru', true],
+            ['volatile-lru', false],
+        ];
+    }
+
+    /**
      * @return array
      */
     public static function writingOperationsProvider(): array
