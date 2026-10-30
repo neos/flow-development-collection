@@ -554,7 +554,7 @@ class SimpleFileBackendTest extends BaseTestCase
     /**
      * @test
      */
-    public function iterationResetsWhenDataIsSet()
+    public function newIterationIncludesEntriesSetAfterPreviousIteration()
     {
         $backend = $this->getSimpleFileBackend();
 
@@ -574,7 +574,7 @@ class SimpleFileBackendTest extends BaseTestCase
     /**
      * @test
      */
-    public function iterationResetsWhenDataGetsRemoved()
+    public function newIterationExcludesEntriesRemovedAfterPreviousIteration()
     {
         $backend = $this->getSimpleFileBackend();
 
@@ -638,7 +638,7 @@ class SimpleFileBackendTest extends BaseTestCase
     /**
      * @test
      */
-    public function iterationResetsWhenDataFlushed()
+    public function newIterationIsEmptyAfterFlush()
     {
         $backend = $this->getSimpleFileBackend();
 
