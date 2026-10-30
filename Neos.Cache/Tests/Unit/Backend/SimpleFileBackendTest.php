@@ -554,6 +554,21 @@ class SimpleFileBackendTest extends BaseTestCase
     /**
      * @test
      */
+    public function iteratingOverTheBackendYieldsTheDataOfTheEntries(): void
+    {
+        $backend = $this->getSimpleFileBackend();
+
+        $backend->set('first', 'firstData');
+        $backend->set('second', 'secondData');
+
+        $data = \iterator_to_array($backend);
+        ksort($data);
+        self::assertSame(['first' => 'firstData', 'second' => 'secondData'], $data);
+    }
+
+    /**
+     * @test
+     */
     public function newIterationIncludesEntriesSetAfterPreviousIteration()
     {
         $backend = $this->getSimpleFileBackend();
