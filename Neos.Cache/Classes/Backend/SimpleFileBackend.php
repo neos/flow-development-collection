@@ -349,9 +349,7 @@ class SimpleFileBackend extends IndependentAbstractBackend implements PhpCapable
         if ($this->cacheFilesIterator === null) {
             $this->rewind();
         }
-
-        $pathAndFilename = $this->cacheFilesIterator->getPathname();
-        return $this->readCacheFile($pathAndFilename);
+        return $this->get($this->key());
     }
 
     /**

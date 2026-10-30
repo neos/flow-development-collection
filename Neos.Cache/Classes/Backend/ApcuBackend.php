@@ -335,7 +335,7 @@ class ApcuBackend extends IndependentAbstractBackend implements TaggableBackendI
         if ($this->cacheEntriesIterator === null) {
             $this->rewind();
         }
-        return $this->cacheEntriesIterator->current();
+        return $this->get($this->key());
     }
 
     /**
