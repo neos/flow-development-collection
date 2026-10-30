@@ -364,9 +364,7 @@ class SimpleFileBackend extends IndependentAbstractBackend implements PhpCapable
             $this->rewind();
         }
         $this->cacheFilesIterator->next();
-        while ($this->cacheFilesIterator->isDot() && $this->cacheFilesIterator->valid()) {
-            $this->cacheFilesIterator->next();
-        }
+        $this->skipNonEntries();
     }
 
     /**
@@ -412,7 +410,20 @@ class SimpleFileBackend extends IndependentAbstractBackend implements PhpCapable
     {
         $this->cacheFilesIterator = new \DirectoryIterator($this->cacheDirectory);
         $this->cacheFilesIterator->rewind();
-        while (substr($this->cacheFilesIterator->getFilename(), 0, 1) === '.' && $this->cacheFilesIterator->valid()) {
+        $this->skipNonEntries();
+    }
+
+    /**
+     * Advances the cache files iterator past hidden files and entries that no longer exist
+     *
+     * Entries may vanish while iterating, because they were removed (by this or another process) or expired. They
+     * are skipped, so they do not show up with empty data.
+     */
+    private function skipNonEntries(): void
+    {
+        while ($this->cacheFilesIterator->valid()
+            && (substr($this->cacheFilesIterator->getFilename(), 0, 1) === '.' || !$this->has($this->key()))
+        ) {
             $this->cacheFilesIterator->next();
         }
     }

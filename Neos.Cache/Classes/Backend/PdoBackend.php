@@ -88,6 +88,11 @@ class PdoBackend extends IndependentAbstractBackend implements TaggableBackendIn
     protected $cacheEntriesIterator;
 
     /**
+     * Content of the entry the iterator currently points to, false if there is none
+     */
+    private string|false $currentEntryContent = false;
+
+    /**
      * Sets the DSN to use
      *
      * @param string $DSN The DSN to use for connecting to the DB
@@ -556,7 +561,7 @@ class PdoBackend extends IndependentAbstractBackend implements TaggableBackendIn
         if ($this->cacheEntriesIterator === null) {
             $this->rewind();
         }
-        return $this->cacheEntriesIterator->current();
+        return $this->currentEntryContent;
     }
 
     /**
@@ -571,6 +576,7 @@ class PdoBackend extends IndependentAbstractBackend implements TaggableBackendIn
             $this->rewind();
         }
         $this->cacheEntriesIterator->next();
+        $this->fetchCurrentEntry();
     }
 
     /**
@@ -585,7 +591,7 @@ class PdoBackend extends IndependentAbstractBackend implements TaggableBackendIn
         if ($this->cacheEntriesIterator === null) {
             $this->rewind();
         }
-        return $this->cacheEntriesIterator->key();
+        return (string)$this->cacheEntriesIterator->current();
     }
 
     /**
@@ -604,35 +610,49 @@ class PdoBackend extends IndependentAbstractBackend implements TaggableBackendIn
 
     /**
      * Rewinds the cache entry iterator to the first element
-     * and fetches cacheEntries.
      *
-     * The entries are fetched anew on every rewind, so this always yields an up-to-date view. That is why writing
-     * methods like set() and remove() must not reset the iterator: doing so would make a running iteration start
-     * over from the first entry whenever an entry is changed.
+     * The entry identifiers are fetched anew on every rewind, so this always yields an up-to-date view. That is why
+     * writing methods like set() and remove() must not reset the iterator: doing so would make a running iteration
+     * start over from the first entry whenever an entry is changed.
      *
      * @return void
      * @api
      */
     public function rewind(): void
     {
+        $this->cacheEntriesIterator = new \ArrayIterator([]);
+        $this->currentEntryContent = false;
+
         try {
             $this->connect();
         } catch (Exception $e) {
             return;
         }
 
-        $cacheEntries = [];
-
-        $statementHandle = $this->databaseHandle->prepare('SELECT "identifier", "content" FROM "' . $this->cacheTableName . '" WHERE "context"=? AND "cache"=?' . $this->getNotExpiredStatement());
+        $statementHandle = $this->databaseHandle->prepare('SELECT "identifier" FROM "' . $this->cacheTableName . '" WHERE "context"=? AND "cache"=?' . $this->getNotExpiredStatement());
         $statementHandle->execute([$this->context(), $this->cacheIdentifier]);
-        $statementHandle->bindColumn(1, $identifier);
-        $statementHandle->bindColumn(2, $content, \PDO::PARAM_LOB);
 
-        while ($statementHandle->fetch(\PDO::FETCH_BOUND)) {
-            $cacheEntries[$identifier] = is_resource($content) ? stream_get_contents($content) : $content;
+        $this->cacheEntriesIterator = new \ArrayIterator($statementHandle->fetchAll(\PDO::FETCH_COLUMN));
+        $this->fetchCurrentEntry();
+    }
+
+    /**
+     * Fetches the content of the current entry, skipping entries that no longer exist
+     *
+     * Entries may vanish while iterating, because they were removed (by this or another process) or expired. They
+     * are skipped, so they do not show up with outdated or empty data.
+     */
+    private function fetchCurrentEntry(): void
+    {
+        $this->currentEntryContent = false;
+        while ($this->cacheEntriesIterator->valid()) {
+            $content = $this->get((string)$this->cacheEntriesIterator->current());
+            if ($content !== false) {
+                $this->currentEntryContent = $content;
+                return;
+            }
+            $this->cacheEntriesIterator->next();
         }
-
-        $this->cacheEntriesIterator = new \ArrayIterator($cacheEntries);
     }
 
     /**

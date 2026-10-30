@@ -351,6 +351,7 @@ class ApcuBackend extends IndependentAbstractBackend implements TaggableBackendI
             $this->rewind();
         }
         $this->cacheEntriesIterator->next();
+        $this->skipVanishedEntries();
     }
 
     /**
@@ -395,6 +396,20 @@ class ApcuBackend extends IndependentAbstractBackend implements TaggableBackendI
     #[\ReturnTypeWillChange]
     public function rewind()
     {
-        $this->cacheEntriesIterator = new \APCUIterator('/^' . $this->identifierPrefix . 'entry_.*/');
+        $this->cacheEntriesIterator = new \APCUIterator('/^' . $this->identifierPrefix . 'entry_.*/', APC_ITER_KEY);
+        $this->skipVanishedEntries();
+    }
+
+    /**
+     * Advances the entry iterator past entries that no longer exist
+     *
+     * The iterator reads entries in chunks, so it may still know entries that have been removed (by this or
+     * another process) or have expired. They are skipped, so they do not show up with empty data.
+     */
+    private function skipVanishedEntries(): void
+    {
+        while ($this->cacheEntriesIterator->valid() && !$this->has($this->key())) {
+            $this->cacheEntriesIterator->next();
+        }
     }
 }
