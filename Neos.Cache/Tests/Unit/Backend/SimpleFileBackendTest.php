@@ -534,7 +534,7 @@ final class SimpleFileBackendTest extends BaseTestCase
     }
 
     #[Test]
-    public function iterationResetsWhenDataIsSet(): void
+    public function newIterationIncludesEntriesSetAfterPreviousIteration()
     {
         $backend = $this->getSimpleFileBackend();
 
@@ -554,7 +554,7 @@ final class SimpleFileBackendTest extends BaseTestCase
     }
 
     #[Test]
-    public function iterationResetsWhenDataGetsRemoved(): void
+    public function newIterationExcludesEntriesRemovedAfterPreviousIteration()
     {
         $backend = $this->getSimpleFileBackend();
 
@@ -612,7 +612,7 @@ final class SimpleFileBackendTest extends BaseTestCase
     }
 
     #[Test]
-    public function iterationResetsWhenDataFlushed()
+    public function newIterationIsEmptyAfterFlush()
     {
         $backend = $this->getSimpleFileBackend();
 

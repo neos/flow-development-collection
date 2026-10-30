@@ -239,7 +239,7 @@ final class PdoBackendTest extends BaseTestCase
     }
 
     #[Test]
-    public function iterationResetsWhenDataIsSet()
+    public function newIterationIncludesEntriesSetAfterPreviousIteration()
     {
         $backend = $this->setUpBackend();
 
@@ -257,7 +257,7 @@ final class PdoBackendTest extends BaseTestCase
     }
 
     #[Test]
-    public function iterationResetsWhenDataFlushed()
+    public function newIterationIsEmptyAfterFlush()
     {
         $backend = $this->setUpBackend();
 
@@ -271,7 +271,7 @@ final class PdoBackendTest extends BaseTestCase
     }
 
     #[Test]
-    public function iterationResetsWhenDataFlushedByTag()
+    public function newIterationExcludesEntriesFlushedByTag()
     {
         $backend = $this->setUpBackend();
 
@@ -285,7 +285,7 @@ final class PdoBackendTest extends BaseTestCase
     }
 
     #[Test]
-    public function iterationResetsWhenDataGetsRemoved()
+    public function newIterationExcludesEntriesRemovedAfterPreviousIteration()
     {
         $backend = $this->setUpBackend();
 

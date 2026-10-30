@@ -303,7 +303,7 @@ final class ApcuBackendTest extends BaseTestCase
     }
 
     #[Test]
-    public function iterationResetsWhenDataIsSet()
+    public function newIterationIncludesEntriesSetAfterPreviousIteration()
     {
         $backend = $this->setUpBackend();
         $cache = new VariableFrontend('UnitTestCache', $backend);
@@ -375,7 +375,7 @@ final class ApcuBackendTest extends BaseTestCase
     }
 
     #[Test]
-    public function iterationResetsWhenDataFlushed()
+    public function newIterationIsEmptyAfterFlush()
     {
         $backend = $this->setUpBackend();
         $cache = new VariableFrontend('UnitTestCache', $backend);
@@ -394,7 +394,7 @@ final class ApcuBackendTest extends BaseTestCase
     }
 
     #[Test]
-    public function iterationResetsWhenDataFlushedByTag()
+    public function newIterationExcludesEntriesFlushedByTag()
     {
         $backend = $this->setUpBackend();
         $cache = new VariableFrontend('UnitTestCache', $backend);
@@ -413,7 +413,7 @@ final class ApcuBackendTest extends BaseTestCase
     }
 
     #[Test]
-    public function iterationResetsWhenDataGetsRemoved()
+    public function newIterationExcludesEntriesRemovedAfterPreviousIteration()
     {
         $backend = $this->setUpBackend();
         $cache = new VariableFrontend('UnitTestCache', $backend);
