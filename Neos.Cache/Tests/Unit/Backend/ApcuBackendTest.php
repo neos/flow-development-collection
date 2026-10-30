@@ -343,6 +343,38 @@ class ApcuBackendTest extends BaseTestCase
     /**
      * @test
      */
+    public function iterationSkipsEntriesRemovedBeforeTheyAreVisited(): void
+    {
+        $backend = $this->setUpBackend();
+
+        $entryIdentifiers = ['first', 'second', 'third', 'fourth'];
+        foreach ($entryIdentifiers as $entryIdentifier) {
+            $backend->set($entryIdentifier, $entryIdentifier . 'Data');
+        }
+
+        $visitedEntries = [];
+        $removedEntryIdentifier = null;
+        foreach ($backend as $entryIdentifier => $data) {
+            // remove an entry that has not been visited yet – it must neither end the iteration nor be yielded
+            if ($removedEntryIdentifier === null) {
+                $removedEntryIdentifier = current(array_diff($entryIdentifiers, [$entryIdentifier]));
+                $backend->remove($removedEntryIdentifier);
+            }
+            $visitedEntries[$entryIdentifier] = $data;
+        }
+
+        $expectedEntries = [];
+        foreach (array_diff($entryIdentifiers, [$removedEntryIdentifier]) as $entryIdentifier) {
+            $expectedEntries[$entryIdentifier] = $entryIdentifier . 'Data';
+        }
+        ksort($expectedEntries);
+        ksort($visitedEntries);
+        self::assertSame($expectedEntries, $visitedEntries);
+    }
+
+    /**
+     * @test
+     */
     public function newIterationIncludesEntriesSetAfterPreviousIteration()
     {
         $backend = $this->setUpBackend();
