@@ -133,7 +133,10 @@ class ProxyClassBuilder
                 );
             }
 
-            $couldHaveEntityRelations = $this->couldHaveEntityRelations($objectConfiguration);
+            // Forced serialization code also covers entities the type based detection cannot see,
+            // e.g. inside an untyped array, so those classes need the related entities container, too.
+            $couldHaveEntityRelations = $this->couldHaveEntityRelations($objectConfiguration)
+                || ($this->reflectionService->getClassAnnotation($className, Flow\Proxy::class)?->forceSerializationCode ?? false);
             $isProxyWithAop = in_array('\\' . AopProxyInterface::class, $proxyClass->getInterfaces());
             $serializeRelatedEntitiesCode = $this->buildSerializeRelatedEntitiesCode($objectConfiguration, $isProxyWithAop || $injectionCodeWasIntroduced);
             if ($serializeRelatedEntitiesCode !== '') {
