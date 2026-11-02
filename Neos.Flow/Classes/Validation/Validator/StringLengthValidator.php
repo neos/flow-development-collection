@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Validation\Validator;
 
 /*
@@ -22,7 +23,7 @@ use Neos\Utility\Unicode;
 class StringLengthValidator extends AbstractValidator
 {
     /**
-     * @var array
+     * @var array<string,mixed>
      */
     protected $supportedOptions = [
         'minimum' => [0, 'Minimum length for a valid string', 'integer'],

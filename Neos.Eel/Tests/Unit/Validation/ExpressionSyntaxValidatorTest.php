@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Neos\Eel\Tests\Unit\Validation;
 
-use PHPUnit\Framework\Attributes\Test;
 use Neos\Eel\Validation\ExpressionSyntaxValidator;
 use Neos\Flow\Tests\Unit\Validation\Validator\AbstractValidatorTestcase;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Tests for the ExpressionSyntaxValidator

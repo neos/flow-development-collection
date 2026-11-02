@@ -4,10 +4,6 @@ declare(strict_types=1);
 
 namespace Neos\FluidAdaptor\Tests\Unit\ViewHelpers\Format;
 
-use Neos\FluidAdaptor\ViewHelpers\Format\BytesViewHelper;
-use PHPUnit\Framework\Attributes\DataProvider;
-use PHPUnit\Framework\Attributes\Test;
-
 /*
  * This file is part of the Neos.FluidAdaptor package.
  *
@@ -26,6 +22,9 @@ use Neos\Flow\I18n\Formatter\NumberFormatter;
 use Neos\Flow\I18n\Service;
 use Neos\FluidAdaptor\Core\ViewHelper\Exception as ViewHelperException;
 use Neos\FluidAdaptor\Tests\Unit\ViewHelpers\ViewHelperBaseTestcase;
+use Neos\FluidAdaptor\ViewHelpers\Format\BytesViewHelper;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Test for \Neos\FluidAdaptor\ViewHelpers\Format\BytesViewHelper

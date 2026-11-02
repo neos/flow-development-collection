@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Neos\Flow\Tests\Unit\SignalSlot;
@@ -12,12 +13,12 @@ namespace Neos\Flow\Tests\Unit\SignalSlot;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use PHPUnit\Framework\Attributes\Test;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\SignalSlot\Dispatcher;
 use Neos\Flow\SignalSlot\Exception\InvalidSlotException;
 use Neos\Flow\SignalSlot\SignalInformation;
 use Neos\Flow\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Testcase for the Signal Dispatcher Class
@@ -28,8 +29,8 @@ final class DispatcherTest extends UnitTestCase
     public function connectAllowsForConnectingASlotWithASignal(): void
     {
 
-        $mockSignal = $this->getMockBuilder('stdClass')->addMethods(['emitSomeSignal'])->getMock();
-        $mockSlot = $this->getMockBuilder('stdClass')->addMethods(['someSlotMethod'])->getMock();
+        $mockSignal = $this->createMock(SignalFixture::class);
+        $mockSlot = $this->createMock(SlotFixture::class);
 
         $dispatcher = new Dispatcher();
         $dispatcher->connect(get_class($mockSignal), 'someSignal', get_class($mockSlot), 'someSlotMethod', false);
@@ -43,8 +44,8 @@ final class DispatcherTest extends UnitTestCase
     #[Test]
     public function connectAlsoAcceptsObjectsInPlaceOfTheClassName(): void
     {
-        $mockSignal = $this->getMockBuilder('stdClass')->addMethods(['emitSomeSignal'])->getMock();
-        $mockSlot = $this->getMockBuilder('stdClass')->addMethods(['someSlotMethod'])->getMock();
+        $mockSignal = $this->createMock(SignalFixture::class);
+        $mockSlot = $this->createMock(SlotFixture::class);
 
         $dispatcher = new Dispatcher();
         $dispatcher->connect(get_class($mockSignal), 'someSignal', $mockSlot, 'someSlotMethod', false);
@@ -58,7 +59,7 @@ final class DispatcherTest extends UnitTestCase
     #[Test]
     public function connectAlsoAcceptsClosuresActingAsASlot(): void
     {
-        $mockSignal = $this->getMockBuilder('stdClass')->addMethods(['emitSomeSignal'])->getMock();
+        $mockSignal = $this->createMock(SignalFixture::class);
         $mockSlot = function () {
         };
 
@@ -74,8 +75,8 @@ final class DispatcherTest extends UnitTestCase
     #[Test]
     public function wireAllowsForConnectingASlotWithASignal(): void
     {
-        $mockSignal = $this->getMockBuilder('stdClass')->addMethods(['emitSomeSignal'])->getMock();
-        $mockSlot = $this->getMockBuilder('stdClass')->addMethods(['someSlotMethod'])->getMock();
+        $mockSignal = $this->createMock(SignalFixture::class);
+        $mockSlot = $this->createMock(SlotFixture::class);
 
         $dispatcher = new Dispatcher();
         $dispatcher->wire(get_class($mockSignal), 'someSignal', get_class($mockSlot), 'someSlotMethod', false);
@@ -89,8 +90,8 @@ final class DispatcherTest extends UnitTestCase
     #[Test]
     public function wireAlsoAcceptsObjectsInPlaceOfTheClassName(): void
     {
-        $mockSignal = $this->getMockBuilder('stdClass')->addMethods(['emitSomeSignal'])->getMock();
-        $mockSlot = $this->getMockBuilder('stdClass')->addMethods(['someSlotMethod'])->getMock();
+        $mockSignal = $this->createMock(SignalFixture::class);
+        $mockSlot = $this->createMock(SlotFixture::class);
 
         $dispatcher = new Dispatcher();
         $dispatcher->wire(get_class($mockSignal), 'someSignal', $mockSlot, 'someSlotMethod', false);
@@ -104,7 +105,7 @@ final class DispatcherTest extends UnitTestCase
     #[Test]
     public function wireAlsoAcceptsClosuresActingAsASlot(): void
     {
-        $mockSignal = $this->getMockBuilder('stdClass')->addMethods(['emitSomeSignal'])->getMock();
+        $mockSignal = $this->createMock(SignalFixture::class);
         $mockSlot = function () {
         };
 
@@ -267,8 +268,8 @@ final class DispatcherTest extends UnitTestCase
     public function connectWithSignalNameStartingWithEmitShouldNotBeAllowed(): void
     {
         $this->expectException(\InvalidArgumentException::class);
-        $mockSignal = $this->getMockBuilder('stdClass')->addMethods(['emitSomeSignal'])->getMock();
-        $mockSlot = $this->getMockBuilder('stdClass')->addMethods(['someSlotMethod'])->getMock();
+        $mockSignal = $this->createMock(SignalFixture::class);
+        $mockSlot = $this->createMock(SlotFixture::class);
 
         $dispatcher = new Dispatcher();
         $dispatcher->connect(get_class($mockSignal), 'emitSomeSignal', get_class($mockSlot), 'someSlotMethod', false);
@@ -329,5 +330,23 @@ final class DispatcherTest extends UnitTestCase
         $passedArguments = ['bar', 'quux'];
         $dispatcher->dispatch('SignalClassName', 'methodName', $passedArguments);
         self::assertEquals([new SignalInformation('SignalClassName', 'methodName', $passedArguments)], $receivedArguments);
+    }
+}
+
+/**
+ * Fixtures providing a signal emitter and a slot method. The dispatcher only ever needs the
+ * class name of a signal, and a slot has to be an existing method – hence these stand-ins.
+ */
+class SignalFixture
+{
+    public function emitSomeSignal(): void
+    {
+    }
+}
+
+class SlotFixture
+{
+    public function someSlotMethod(): void
+    {
     }
 }

@@ -13,15 +13,15 @@ namespace Neos\Flow\Tests\Unit\Package;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use PHPUnit\Framework\Attributes\Test;
+use Neos\Flow\Composer\ComposerUtility;
 use Neos\Flow\Package\Exception\CorruptPackageException;
 use Neos\Flow\Package\Exception\InvalidPackagePathException;
 use Neos\Flow\Package\FlowPackageKey;
-use org\bovigo\vfs\vfsStream;
-use Neos\Flow\Composer\ComposerUtility;
 use Neos\Flow\Package\Package;
 use Neos\Flow\Package\PackageFactory;
 use Neos\Flow\Tests\UnitTestCase;
+use org\bovigo\vfs\vfsStream;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Testcase for the package factory

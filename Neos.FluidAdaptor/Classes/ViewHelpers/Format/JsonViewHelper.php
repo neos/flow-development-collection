@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\FluidAdaptor\ViewHelpers\Format;
 
 /*
@@ -86,7 +87,7 @@ class JsonViewHelper extends AbstractViewHelper
             $options = $options | JSON_FORCE_OBJECT;
         }
 
-        return json_encode($value, $options);
+        return json_encode($value, $options | JSON_THROW_ON_ERROR);
     }
 
     /**

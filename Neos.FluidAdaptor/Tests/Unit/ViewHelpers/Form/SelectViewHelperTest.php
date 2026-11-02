@@ -13,17 +13,17 @@ namespace Neos\FluidAdaptor\Tests\Unit\ViewHelpers\Form;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use Neos\FluidAdaptor\ViewHelpers\Form\SelectViewHelper;
-use PHPUnit\Framework\Attributes\Test;
-use Neos\FluidAdaptor\ViewHelpers\Fixtures\UserDomainClass;
-use Neos\FluidAdaptor\ViewHelpers\FormViewHelper;
-use Neos\Flow\I18n\Translator;
 use Neos\Flow\I18n\Locale;
-use PHPUnit\Framework\Attributes\DataProvider;
-use PHPUnit\Framework\MockObject\MockObject;
+use Neos\Flow\I18n\Translator;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\FluidAdaptor\Core\ViewHelper\Exception;
 use Neos\FluidAdaptor\Tests\Unit\ViewHelpers\ViewHelperBaseTestcase;
+use Neos\FluidAdaptor\ViewHelpers\Fixtures\UserDomainClass;
+use Neos\FluidAdaptor\ViewHelpers\Form\SelectViewHelper;
+use Neos\FluidAdaptor\ViewHelpers\FormViewHelper;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\MockObject\MockObject;
 use TYPO3Fluid\Fluid\Core\ViewHelper\TagBuilder;
 
 require_once(__DIR__ . '/Fixtures/EmptySyntaxTreeNode.php');
@@ -447,7 +447,7 @@ final class SelectViewHelperTest extends ViewHelperBaseTestcase
         $this->tagBuilder->expects($this->once())->method('render');
 
         // Plain domain object without __toString — the view helper should fall back to the UUID.
-        $user = new class {
+        $user = new class () {
             public int $id = 1;
             public string $firstName = 'Ingmar';
             public string $lastName = 'Schlecht';
@@ -498,7 +498,7 @@ final class SelectViewHelperTest extends ViewHelperBaseTestcase
 
         // Object lacking __toString — combined with the null persistence identifier,
         // the view helper has no way to derive a value and must raise the exception.
-        $user = new class {
+        $user = new class () {
             public string $firstName = 'Ingmar';
             public string $lastName = 'Schlecht';
         };

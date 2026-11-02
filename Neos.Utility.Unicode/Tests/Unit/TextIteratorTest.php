@@ -13,11 +13,12 @@ namespace Neos\Utility\Unicode\Tests\Unit;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use PHPUnit\Framework\TestCase;
-use PHPUnit\Framework\Attributes\Test;
+
+use Neos\Utility\Unicode;
 use Neos\Utility\Unicode\Exception;
 use Neos\Utility\Unicode\TextIterator;
-use Neos\Utility\Unicode;
+use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Testcase for the TextIterator port
@@ -54,7 +55,6 @@ final class TextIteratorTest extends TestCase
         self::assertInstanceOf(TextIterator::class, $wordIterator);
     }
 
-
     /**
      * Checks if a new instance iterating over sentences can be created
      */
@@ -74,7 +74,6 @@ final class TextIteratorTest extends TestCase
         $lineIterator = new TextIterator('Some string', TextIterator::LINE);
         self::assertInstanceOf(TextIterator::class, $lineIterator);
     }
-
 
     /**
      * Checks if the constructor rejects an invalid iterator type

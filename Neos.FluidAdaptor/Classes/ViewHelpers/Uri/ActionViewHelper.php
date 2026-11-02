@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\FluidAdaptor\ViewHelpers\Uri;
 
 /*
@@ -12,8 +13,8 @@ namespace Neos\FluidAdaptor\ViewHelpers\Uri;
  */
 
 use Neos\Flow\Mvc\ActionRequest;
-use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
 use Neos\FluidAdaptor\Core\ViewHelper;
+use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
 
 /**
  * A view helper for creating URIs to actions.

@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Mvc\Controller\Exception;
 
 /*

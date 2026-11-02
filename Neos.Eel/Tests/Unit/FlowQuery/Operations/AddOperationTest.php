@@ -14,10 +14,10 @@ namespace Neos\Eel\Tests\Unit\FlowQuery\Operations;
  * source code.
  */
 
-use Neos\Flow\Tests\UnitTestCase;
-use PHPUnit\Framework\Attributes\Test;
 use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Eel\FlowQuery\Operations\AddOperation;
+use Neos\Flow\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * AddOperation test

@@ -4,9 +4,6 @@ declare(strict_types=1);
 
 namespace Neos\Cache\Tests\Functional\Backend;
 
-use PHPUnit\Framework\Attributes\RequiresPhpExtension;
-use PHPUnit\Framework\Attributes\Test;
-
 include_once(__DIR__ . '/../../BaseTestCase.php');
 
 /*
@@ -23,8 +20,10 @@ use Exception;
 use Neos\Cache\Backend\RedisBackend;
 use Neos\Cache\EnvironmentConfiguration;
 use Neos\Cache\Tests\BaseTestCase;
-use RedisException;
+use PHPUnit\Framework\Attributes\RequiresPhpExtension;
+use PHPUnit\Framework\Attributes\Test;
 use Redis;
+use RedisException;
 
 /**
  * Testcase for the redis cache backend

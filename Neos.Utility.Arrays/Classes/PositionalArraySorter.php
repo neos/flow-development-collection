@@ -44,18 +44,33 @@ namespace Neos\Utility;
  */
 final class PositionalArraySorter
 {
+    /**
+     * @var array<mixed>
+     */
     private array $startKeys;
 
+    /**
+     * @var array<mixed>
+     */
     private array $middleKeys;
 
+    /**
+     * @var array<mixed>
+     */
     private array $endKeys;
 
+    /**
+     * @var array<mixed>
+     */
     private array $beforeKeys;
 
+    /**
+     * @var array<mixed>
+     */
     private array $afterKeys;
 
     /**
-     * @param array $subject The source array to sort
+     * @param array<mixed> $subject The source array to sort
      * @param string $positionPropertyPath optional property path to the string that contains the position
      * @param bool $removeNullValues if set to TRUE (default), null-values of the subject are removed
      */
@@ -69,7 +84,7 @@ final class PositionalArraySorter
     /**
      * Returns a sorted copy of the subject array
      *
-     * @return array
+     * @return array<mixed>
      * @throws Exception\InvalidPositionException
      */
     public function toArray(): array
@@ -87,7 +102,7 @@ final class PositionalArraySorter
      *
      * TODO Detect circles in after / before dependencies (#52185)
      *
-     * @return array an ordered list of keys
+     * @return array<mixed> an ordered list of keys
      * @throws Exception\InvalidPositionException if the positional string has an unsupported format
      */
     public function getSortedKeys(): array
@@ -112,6 +127,8 @@ final class PositionalArraySorter
      * Extracts all "middle" keys from $arrayKeysWithPosition. Those are all keys with a numeric position.
      * The result is a multidimensional arrays where the KEY of each array is a PRIORITY and the VALUE is an array of matching KEYS
      * This also removes matching keys from the given $arrayKeysWithPosition
+     *
+     * @param array<mixed> $arrayKeysWithPosition
      */
     private function extractMiddleKeys(array &$arrayKeysWithPosition): void
     {
@@ -130,6 +147,8 @@ final class PositionalArraySorter
      * Extracts all "start" keys from $arrayKeysWithPosition. Those are all keys with a position starting with "start"
      * The result is a multidimensional arrays where the KEY of each array is a PRIORITY and the VALUE is an array of matching KEYS
      * This also removes matching keys from the given $arrayKeysWithPosition
+     *
+     * @param array<mixed> $arrayKeysWithPosition
      */
     private function extractStartKeys(array &$arrayKeysWithPosition): void
     {
@@ -152,6 +171,8 @@ final class PositionalArraySorter
      * Extracts all "end" keys from $arrayKeysWithPosition. Those are all keys with a position starting with "end"
      * The result is a multidimensional arrays where the KEY of each array is a PRIORITY and the VALUE is an array of matching KEYS
      * This also removes matching keys from the given $arrayKeysWithPosition
+     *
+     * @param array<mixed> $arrayKeysWithPosition
      */
     private function extractEndKeys(array &$arrayKeysWithPosition): void
     {
@@ -174,6 +195,9 @@ final class PositionalArraySorter
      * Extracts all "before" keys from $arrayKeysWithPosition. Those are all keys with a position starting with "before"
      * The result is a multidimensional arrays where the KEY of each array is a PRIORITY and the VALUE is an array of matching KEYS
      * This also removes matching keys from the given $arrayKeysWithPosition
+     *
+     * @param array<mixed> $arrayKeysWithPosition
+     * @param array<mixed> $existingKeys
      */
     private function extractBeforeKeys(array &$arrayKeysWithPosition, array $existingKeys): void
     {
@@ -201,6 +225,9 @@ final class PositionalArraySorter
      * Extracts all "after" keys from $arrayKeysWithPosition. Those are all keys with a position starting with "after"
      * The result is a multidimensional arrays where the KEY of each array is a PRIORITY and the VALUE is an array of matching KEYS
      * This also removes matching keys from the given $arrayKeysWithPosition
+     *
+     * @param array<mixed> $arrayKeysWithPosition
+     * @param array<mixed> $existingKeys
      */
     private function extractAfterKeys(array &$arrayKeysWithPosition, array $existingKeys): void
     {
@@ -228,7 +255,7 @@ final class PositionalArraySorter
      * Collect the array keys inside $this->subject with each position meta-argument.
      * If there is no position but the array is numerically ordered, we use the array index as position.
      *
-     * @return array an associative array where each key of $subject has a position string assigned
+     * @return array<mixed> an associative array where each key of $subject has a position string assigned
      */
     private function collectArrayKeysAndPositions(): array
     {
@@ -253,6 +280,8 @@ final class PositionalArraySorter
 
     /**
      * Flattens start-, middle-, end-, before- and afterKeys to a single dimension and merges them together to a single array
+     *
+     * @return array<mixed>
      */
     private function generateSortedKeysMap(): array
     {

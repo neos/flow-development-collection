@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Neos\Flow\Tests\Functional\I18n\Cldr\Reader;
@@ -12,12 +13,11 @@ namespace Neos\Flow\Tests\Functional\I18n\Cldr\Reader;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+use Neos\Flow\I18n\Cldr\Reader\NumbersReader;
+use Neos\Flow\I18n\Locale;
+use Neos\Flow\Tests\FunctionalTestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
-use Neos\Flow\I18n\Locale;
-use Neos\Flow\I18n\Cldr\Reader\NumbersReader;
-use Neos\Flow\Tests\FunctionalTestCase;
-use Neos\Flow\I18n;
 
 final class NumbersReaderTest extends FunctionalTestCase
 {

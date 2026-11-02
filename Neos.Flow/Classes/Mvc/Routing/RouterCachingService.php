@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Mvc\Routing;
 
 /*
@@ -11,9 +12,9 @@ namespace Neos\Flow\Mvc\Routing;
  * source code.
  */
 
-use Neos\Flow\Annotations as Flow;
 use Neos\Cache\CacheAwareInterface;
 use Neos\Cache\Frontend\VariableFrontend;
+use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Http\Helper\RequestInformationHelper;
 use Neos\Flow\Mvc\Routing\Dto\ResolveContext;
 use Neos\Flow\Mvc\Routing\Dto\RouteContext;
@@ -22,8 +23,8 @@ use Neos\Flow\Mvc\Routing\Dto\RouteTags;
 use Neos\Flow\Mvc\Routing\Dto\UriConstraints;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
-use Neos\Utility\Arrays;
 use Neos\Flow\Validation\Validator\UuidValidator;
+use Neos\Utility\Arrays;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -65,6 +66,12 @@ class RouterCachingService
 
     /**
      * @Flow\InjectConfiguration("mvc.routes")
+     * @phpstan-var array<string,bool|array{
+     *     position?: string,
+     *     variables?: array<string,mixed>,
+     *     providerFactory?: class-string<RoutesProviderFactoryInterface>,
+     *     providerOptions?: array<string,mixed>,
+     * }> indexed by package key
      * @var array
      */
     protected $routingSettings;
@@ -72,7 +79,7 @@ class RouterCachingService
     /**
      * @param LoggerInterface $logger
      */
-    public function injectLogger(LoggerInterface $logger)
+    public function injectLogger(LoggerInterface $logger): void
     {
         $this->logger = $logger;
     }
@@ -93,7 +100,7 @@ class RouterCachingService
      * Checks the cache for the given RouteContext and returns the result or false if no matching ache entry was found
      *
      * @param RouteContext $routeContext
-     * @return array|false the cached route values or false if no cache entry was found
+     * @return array<mixed>|false the cached route values or false if no cache entry was found
      */
     public function getCachedMatchResults(RouteContext $routeContext)
     {
@@ -109,7 +116,7 @@ class RouterCachingService
      * Stores the $matchResults in the cache
      *
      * @param RouteContext $routeContext
-     * @param array $matchResults
+     * @param array<mixed> $matchResults
      * @param RouteTags|null $matchedTags
      * @param RouteLifetime|null $matchedLifetime
      * @return void
@@ -170,8 +177,8 @@ class RouterCachingService
 
     /**
      * @param string $uriPath
-     * @param array $routeValues
-     * @return array
+     * @param array<mixed> $routeValues
+     * @return array<int,string>
      */
     protected function generateRouteTags($uriPath, $routeValues)
     {
@@ -259,8 +266,8 @@ class RouterCachingService
     /**
      * Recursively converts objects in an array to their identifiers
      *
-     * @param array $routeValues the array to be processed
-     * @return array|null the modified array or NULL if $routeValues contain an object and its identifier could not be determined
+     * @param array<mixed> $routeValues the array to be processed
+     * @return array<mixed>|null the modified array or NULL if $routeValues contain an object and its identifier could not be determined
      */
     protected function convertObjectsToHashes(array $routeValues)
     {
@@ -289,7 +296,7 @@ class RouterCachingService
      * Generates the Resolve cache identifier for the given Request
      *
      * @param ResolveContext $resolveContext
-     * @param array $routeValues
+     * @param array<mixed> $routeValues
      * @return string
      */
     protected function buildResolveCacheIdentifier(ResolveContext $resolveContext, array $routeValues)
@@ -303,8 +310,8 @@ class RouterCachingService
      * Helper method to generate tags by taking all UUIDs contained
      * in the given $routeValues or $matchResults
      *
-     * @param array $values
-     * @return array
+     * @param array<mixed> $values
+     * @return array<int,string>
      */
     protected function extractUuids(array $values)
     {

@@ -13,12 +13,12 @@ namespace Neos\Eel\Tests\Unit;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+use Neos\Cache\Frontend\StringFrontend;
+use Neos\Eel\CompilingEvaluator;
+use Neos\Eel\Context;
+use Neos\Eel\Package;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
-use Neos\Eel\Package;
-use Neos\Cache\Frontend\StringFrontend;
-use Neos\Eel\Context;
-use Neos\Eel\CompilingEvaluator;
 use PHPUnit\Framework\MockObject\MockObject;
 
 /**

@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Neos\Flow\Log\Backend;
@@ -13,7 +14,6 @@ namespace Neos\Flow\Log\Backend;
  * source code.
  */
 
-use Neos\Flow\Log\PlainTextFormatter;
 
 /**
  * An abstract Log backend
@@ -42,7 +42,7 @@ abstract class AbstractBackend implements BackendInterface
      */
     public function __construct($options = [])
     {
-        if (is_array($options) || $options instanceof \ArrayAccess) {
+        if (is_iterable($options)) {
             foreach ($options as $optionKey => $optionValue) {
                 $methodName = 'set' . ucfirst($optionKey);
                 if (method_exists($this, $methodName)) {

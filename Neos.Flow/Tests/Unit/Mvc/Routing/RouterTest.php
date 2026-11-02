@@ -13,25 +13,21 @@ namespace Neos\Flow\Tests\Unit\Mvc\Routing;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use PHPUnit\Framework\Attributes\Test;
-use PHPUnit\Framework\MockObject\MockObject;
-use GuzzleHttp\Psr7\Uri;
-use Neos\Flow\Configuration\ConfigurationManager;
-use Neos\Flow\Mvc\Exception\InvalidRouteSetupException;
 use Neos\Flow\Mvc\Exception\NoMatchingRouteException;
-use Neos\Flow\Mvc\Routing\Dto\RouteLifetime;
-use Neos\Flow\Mvc\Routing\Dto\RouteParameters;
 use Neos\Flow\Mvc\Routing\Dto\ResolveContext;
 use Neos\Flow\Mvc\Routing\Dto\RouteContext;
+use Neos\Flow\Mvc\Routing\Dto\RouteLifetime;
+use Neos\Flow\Mvc\Routing\Dto\RouteParameters;
 use Neos\Flow\Mvc\Routing\Dto\RouteTags;
 use Neos\Flow\Mvc\Routing\Dto\UriConstraints;
 use Neos\Flow\Mvc\Routing\Route;
 use Neos\Flow\Mvc\Routing\Router;
 use Neos\Flow\Mvc\Routing\RouterCachingService;
-use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\Routing\Routes;
 use Neos\Flow\Mvc\Routing\RoutesProviderInterface;
 use Neos\Flow\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\MockObject\MockObject;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\UriInterface;
 use Psr\Log\LoggerInterface;
@@ -73,8 +69,8 @@ final class RouterTest extends UnitTestCase
         $mockRoutesProvider->method('getRoutes')->willReturn(Routes::empty());
         $this->inject($this->router, 'routesProvider', $mockRoutesProvider);
 
-        $this->mockSystemLogger = $this->createMock(LoggerInterface::class);
-        $this->inject($this->router, 'logger', $this->mockSystemLogger);
+        $mockSystemLogger = $this->createMock(LoggerInterface::class);
+        $this->inject($this->router, 'logger', $mockSystemLogger);
 
         $this->mockRouterCachingService = $this->createMock(RouterCachingService::class);
         $this->mockRouterCachingService->method('getCachedResolvedUriConstraints')->willReturn(false);
@@ -95,8 +91,6 @@ final class RouterTest extends UnitTestCase
         $mockUri->method('withFragment')->willReturn($mockUri);
         $mockUri->method('withPath')->willReturn($mockUri);
         $this->mockHttpRequest->method('getUri')->willReturn($mockUri);
-
-        $this->mockActionRequest = $this->getMockBuilder(ActionRequest::class)->disableOriginalConstructor()->getMock();
     }
 
     #[Test]

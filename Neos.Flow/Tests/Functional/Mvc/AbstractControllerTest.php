@@ -13,8 +13,8 @@ namespace Neos\Flow\Tests\Functional\Mvc;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use PHPUnit\Framework\Attributes\Test;
 use Neos\Flow\Tests\FunctionalTestCase;
+use PHPUnit\Framework\Attributes\Test;
 
 final class AbstractControllerTest extends FunctionalTestCase
 {
@@ -36,7 +36,7 @@ final class AbstractControllerTest extends FunctionalTestCase
                 '@package' => 'Neos.Flow',
                 '@subpackage' => 'Tests\Functional\Mvc\Fixtures',
                 '@controller' => 'AbstractControllerTestA',
-                '@format' =>'html'
+                '@format' => 'html'
             ],
             true
         );

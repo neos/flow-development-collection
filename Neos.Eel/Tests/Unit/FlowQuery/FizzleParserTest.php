@@ -13,10 +13,10 @@ namespace Neos\Eel\Tests\Unit\FlowQuery;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use Neos\Flow\Tests\UnitTestCase;
-use PHPUnit\Framework\Attributes\Test;
-use PhpPeg\ParserTestWrapper;
 use Neos\Eel\FlowQuery\FizzleParser;
+use Neos\Flow\Tests\UnitTestCase;
+use PhpPeg\ParserTestWrapper;
+use PHPUnit\Framework\Attributes\Test;
 
 require_once(__DIR__ . '/../../../Resources/Private/PHP/php-peg/tests/ParserTestBase.php');
 

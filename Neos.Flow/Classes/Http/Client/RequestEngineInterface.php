@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Http\Client;
 
 /*
@@ -12,8 +13,8 @@ namespace Neos\Flow\Http\Client;
  */
 
 use Neos\Flow\Http;
-use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\RequestInterface;
+use Psr\Http\Message\ResponseInterface;
 
 /**
  * Interface for a Request Engine which can be used by a HTTP Client implementation

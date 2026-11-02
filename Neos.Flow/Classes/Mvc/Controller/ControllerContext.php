@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Mvc\Controller;
 
 /*
@@ -12,10 +13,10 @@ namespace Neos\Flow\Mvc\Controller;
  */
 
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Mvc\FlashMessage\FlashMessageContainer;
-use Neos\Flow\Mvc\FlashMessage\FlashMessageService;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\ActionResponse;
+use Neos\Flow\Mvc\FlashMessage\FlashMessageContainer;
+use Neos\Flow\Mvc\FlashMessage\FlashMessageService;
 use Neos\Flow\Mvc\Routing\UriBuilder;
 
 /**

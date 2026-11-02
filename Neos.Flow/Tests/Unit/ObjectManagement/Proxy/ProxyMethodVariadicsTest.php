@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Tests\Unit\ObjectManagement\Proxy;
 
 /*
@@ -15,8 +16,8 @@ use Laminas\Code\Reflection\MethodReflection;
 use Neos\Flow\ObjectManagement\Proxy\ProxyMethodGenerator;
 use Neos\Flow\Tests\Unit\ObjectManagement\Fixture\ClassWithVariadicMethods;
 use Neos\Flow\Tests\UnitTestCase;
-use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Tests for the handling of variadic parameters in generated proxy methods

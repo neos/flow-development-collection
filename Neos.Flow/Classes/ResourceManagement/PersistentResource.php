@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\ResourceManagement;
 
 /*
@@ -12,13 +13,13 @@ namespace Neos\Flow\ResourceManagement;
  */
 
 use Doctrine\ORM\Mapping as ORM;
-use Neos\Flow\Annotations as Flow;
 use Neos\Cache\CacheAwareInterface;
+use Neos\Flow\Annotations as Flow;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
+use Neos\Flow\ResourceManagement\Exception as ResourceException;
 use Neos\Flow\Utility\Environment;
 use Neos\Utility;
 use Neos\Utility\Unicode\Functions as UnicodeFunctions;
-use Neos\Flow\ResourceManagement\Exception as ResourceException;
 
 /**
  * Model representing a persistable resource
@@ -330,9 +331,9 @@ class PersistentResource implements ResourceMetaDataInterface, CacheAwareInterfa
             $temporaryPathAndFilename .= '-' . microtime(true);
 
             if (function_exists('posix_getpid')) {
-                $temporaryPathAndFilename .= '-' . str_pad(posix_getpid(), 10);
+                $temporaryPathAndFilename .= '-' . str_pad((string)posix_getpid(), 10);
             } else {
-                $temporaryPathAndFilename .= '-' . (string) getmypid();
+                $temporaryPathAndFilename .= '-' . getmypid();
             }
 
             $temporaryPathAndFilename = trim($temporaryPathAndFilename);
@@ -364,7 +365,9 @@ class PersistentResource implements ResourceMetaDataInterface, CacheAwareInterfa
     {
         if ($this->lifecycleEventsActive) {
             $collection = $this->resourceManager->getCollection($this->collectionName);
-            $collection->getTarget()->publishResource($this, $collection);
+            if ($collection) {
+                $collection->getTarget()->publishResource($this, $collection);
+            }
         }
     }
 

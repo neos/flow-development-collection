@@ -13,15 +13,14 @@ namespace Neos\Flow\Tests\Unit\Reflection;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use PHPUnit\Framework\Attributes\Test;
-use Neos\Flow\Tests\Unit\Reflection\Fixture\FileWithNoClass;
-use Neos\Flow\Tests\Unit\Reflection\Fixture\ClassWithDifferentNameDifferent;
-use Neos\Flow\Tests\Unit\Reflection\Fixture\ClassWithAliasDependency;
-use Neos\Flow\Tests\Unit\Reflection\Fixture\AliasedClass;
-use Doctrine\Common\Annotations\Reader;
 use Neos\Flow\Reflection\Exception\ClassLoadingForReflectionFailedException;
 use Neos\Flow\Reflection\ReflectionService;
+use Neos\Flow\Tests\Unit\Reflection\Fixture\AliasedClass;
+use Neos\Flow\Tests\Unit\Reflection\Fixture\ClassWithAliasDependency;
+use Neos\Flow\Tests\Unit\Reflection\Fixture\ClassWithDifferentNameDifferent;
+use Neos\Flow\Tests\Unit\Reflection\Fixture\FileWithNoClass;
 use Neos\Flow\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Testcase for the ReflectionService

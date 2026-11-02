@@ -13,18 +13,6 @@ namespace Neos\Flow\Tests\Functional\Persistence;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use Neos\Flow\Tests\Functional\Persistence\FixturesPHP8\TestEntityRepository;
-use Neos\Flow\Tests\Functional\Persistence\FixturesPHP8\ExtendedTypesEntityRepository;
-use PHPUnit\Framework\Attributes\Test;
-use Neos\Flow\Tests\Functional\Persistence\FixturesPHP8\ObjectHoldingAnEntity;
-use Neos\Flow\Tests\Functional\Persistence\FixturesPHP8\TestValueObject;
-use Neos\Flow\Tests\Functional\Persistence\FixturesPHP8\TestEmbeddedValueObject;
-use PHPUnit\Framework\Attributes\DoesNotPerformAssertions;
-use Neos\Flow\Tests\Functional\Persistence\FixturesPHP8\EventSubscriber;
-use Neos\Flow\Tests\Functional\Persistence\FixturesPHP8\EventListener;
-use Neos\Flow\Tests\Functional\Persistence\FixturesPHP8\ExtendedTypesEntity;
-use Neos\Flow\Tests\Functional\Persistence\FixturesPHP8\CommonObject;
-use Neos\Flow\Tests\Functional\Persistence\FixturesPHP8\TestEmbeddable;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Tools\SchemaTool;
 use Neos\Flow\Configuration\ConfigurationManager;
@@ -32,10 +20,22 @@ use Neos\Flow\Persistence\Doctrine\PersistenceManager;
 use Neos\Flow\Persistence\Doctrine\QueryResult;
 use Neos\Flow\Persistence\Exception;
 use Neos\Flow\Persistence\Exception\ObjectValidationFailedException;
+use Neos\Flow\Tests\Functional\Persistence\FixturesPHP8\CommonObject;
 use Neos\Flow\Tests\Functional\Persistence\FixturesPHP8\EnumForAProperty;
+use Neos\Flow\Tests\Functional\Persistence\FixturesPHP8\EventListener;
+use Neos\Flow\Tests\Functional\Persistence\FixturesPHP8\EventSubscriber;
+use Neos\Flow\Tests\Functional\Persistence\FixturesPHP8\ExtendedTypesEntity;
+use Neos\Flow\Tests\Functional\Persistence\FixturesPHP8\ExtendedTypesEntityRepository;
+use Neos\Flow\Tests\Functional\Persistence\FixturesPHP8\ObjectHoldingAnEntity;
+use Neos\Flow\Tests\Functional\Persistence\FixturesPHP8\TestEmbeddable;
+use Neos\Flow\Tests\Functional\Persistence\FixturesPHP8\TestEmbeddedValueObject;
 use Neos\Flow\Tests\Functional\Persistence\FixturesPHP8\TestEntity;
+use Neos\Flow\Tests\Functional\Persistence\FixturesPHP8\TestEntityRepository;
+use Neos\Flow\Tests\Functional\Persistence\FixturesPHP8\TestValueObject;
 use Neos\Flow\Tests\FunctionalTestCase;
 use Neos\Utility\ObjectAccess;
+use PHPUnit\Framework\Attributes\DoesNotPerformAssertions;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Testcase for persistence

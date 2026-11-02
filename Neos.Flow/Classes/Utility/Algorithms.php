@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Neos\Flow\Utility;
@@ -13,9 +14,9 @@ namespace Neos\Flow\Utility;
  * source code.
  */
 
+use Neos\Flow\Annotations as Flow;
 use Neos\Utility\Unicode\Functions;
 use Ramsey\Uuid\Uuid;
-use Neos\Flow\Annotations as Flow;
 
 /**
  * A utility class for various algorithms.
@@ -36,7 +37,7 @@ class Algorithms
      */
     public static function generateUUID(): string
     {
-        if (is_callable('uuid_create')) {
+        if (function_exists('uuid_create')) {
             return strtolower(uuid_create(UUID_TYPE_RANDOM));
         }
 

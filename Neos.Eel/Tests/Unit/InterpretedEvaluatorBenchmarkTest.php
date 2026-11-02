@@ -13,11 +13,11 @@ namespace Neos\Eel\Tests\Unit;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use PHPUnit\Framework\Attributes\Group;
-use Neos\Flow\Tests\UnitTestCase;
-use PHPUnit\Framework\Attributes\Test;
 use Neos\Eel\Context;
 use Neos\Eel\InterpretedEvaluator;
+use Neos\Flow\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * A benchmark to test the interpreting evaluator

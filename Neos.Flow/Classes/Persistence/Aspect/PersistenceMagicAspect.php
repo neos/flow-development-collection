@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Persistence\Aspect;
 
 /*
@@ -14,9 +15,9 @@ namespace Neos\Flow\Persistence\Aspect;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Aop\JoinPointInterface;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
-use Neos\Utility\ObjectAccess;
 use Neos\Flow\Reflection\ReflectionService;
 use Neos\Flow\Utility\Algorithms;
+use Neos\Utility\ObjectAccess;
 
 /**
  * Adds the aspect of persistence magic to relevant objects
@@ -49,21 +50,21 @@ class PersistenceMagicAspect
     /**
      * @Flow\Pointcut("classAnnotatedWith(Neos\Flow\Annotations\Entity) || classAnnotatedWith(Doctrine\ORM\Mapping\Entity)")
      */
-    public function isEntity()
+    public function isEntity(): void
     {
     }
 
     /**
      * @Flow\Pointcut("classAnnotatedWith(Neos\Flow\Annotations\ValueObject) && !filter(Neos\Flow\Persistence\Aspect\EmbeddedValueObjectPointcutFilter)")
      */
-    public function isNonEmbeddedValueObject()
+    public function isNonEmbeddedValueObject(): void
     {
     }
 
     /**
      * @Flow\Pointcut("Neos\Flow\Persistence\Aspect\PersistenceMagicAspect->isEntity || Neos\Flow\Persistence\Aspect\PersistenceMagicAspect->isNonEmbeddedValueObject")
      */
-    public function isEntityOrValueObject()
+    public function isEntityOrValueObject(): void
     {
     }
 
@@ -114,6 +115,9 @@ class PersistenceMagicAspect
         $hashSourceParts = [];
 
         $classSchema = $this->reflectionService->getClassSchema($proxyClassName);
+        if (!$classSchema) {
+            throw new \Exception('Missing class schema for proxy class ' . $proxyClassName);
+        }
         foreach ($classSchema->getProperties() as $property => $propertySchema) {
             // Currently, private properties are transient. Should this behaviour change, they need to be included
             // in the value hash generation
@@ -138,6 +142,6 @@ class PersistenceMagicAspect
         $serializedSource = ($this->useIgBinary === true) ? igbinary_serialize($hashSourceParts) : serialize($hashSourceParts);
 
         $proxy = $joinPoint->getProxy();
-        ObjectAccess::setProperty($proxy, 'Persistence_Object_Identifier', sha1($serializedSource), true);
+        ObjectAccess::setProperty($proxy, 'Persistence_Object_Identifier', sha1($serializedSource ?: ''), true);
     }
 }

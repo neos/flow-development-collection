@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Persistence;
 
 /*
@@ -13,20 +14,21 @@ namespace Neos\Flow\Persistence;
 
 /**
  * An empty result list
- *
+ * @template T of object
+ * @implements QueryResultInterface<T>
  * @api
  */
 class EmptyQueryResult implements QueryResultInterface
 {
     /**
-     * @var QueryInterface
+     * @var QueryInterface<T>
      */
     protected $query;
 
     /**
      * Constructor
      *
-     * @param QueryInterface $query
+     * @param QueryInterface<T> $query
      */
     public function __construct(QueryInterface $query)
     {
@@ -36,7 +38,7 @@ class EmptyQueryResult implements QueryResultInterface
     /**
      * Returns a clone of the query object
      *
-     * @return QueryInterface
+     * @return QueryInterface<T>
      * @api
      */
     public function getQuery(): QueryInterface
@@ -47,7 +49,7 @@ class EmptyQueryResult implements QueryResultInterface
     /**
      * Returns NULL
      *
-     * @return object|null
+     * @return T|null
      * @api
      */
     public function getFirst()
@@ -58,7 +60,7 @@ class EmptyQueryResult implements QueryResultInterface
     /**
      * Returns an empty array
      *
-     * @return array
+     * @return array<T>
      * @api
      */
     public function toArray(): array
@@ -68,6 +70,7 @@ class EmptyQueryResult implements QueryResultInterface
 
     public function current(): mixed
     {
+        /** @phpstan-ignore return.type (I don't see any "object" requirement here) */
         return null;
     }
 

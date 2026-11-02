@@ -13,11 +13,13 @@ namespace Neos\Flow\Tests\Functional\ObjectManagement;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use PHPUnit\Framework\Attributes\Test;
+
+use Neos\Flow\ObjectManagement\Proxy\ProxyInterface;
 use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\ClassToBeSerialized;
 use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\PrototypeClassA;
 use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\SingletonClassC;
 use Neos\Flow\Tests\FunctionalTestCase;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Functional tests for Object serialization.
@@ -59,5 +61,31 @@ final class ObjectSerializationTest extends FunctionalTestCase
         self::assertContains('Persistence_Object_Identifier', $propertiesToBeSerialized); # Introduced due to "Entity" annotation
         self::assertContains('someProperty', $propertiesToBeSerialized);
         self::assertContains('protectedProperty', $propertiesToBeSerialized);
+    }
+
+    #[Test]
+    public function readonlyClassesSurviveASerializationRoundtrip()
+    {
+        $object = new Fixtures\ReadonlyClassWithSerializedState('a name', ['first tag', 'second tag'], 'a temporary value');
+        self::assertInstanceOf(ProxyInterface::class, $object);
+
+        $unserializedObject = unserialize(serialize($object));
+
+        self::assertInstanceOf(Fixtures\ReadonlyClassWithSerializedState::class, $unserializedObject);
+        self::assertSame('a name', $unserializedObject->name);
+        self::assertSame(['first tag', 'second tag'], $unserializedObject->tags);
+    }
+
+    #[Test]
+    public function transientPropertiesOfReadonlyClassesAreNotSerialized()
+    {
+        $object = new Fixtures\ReadonlyClassWithSerializedState('a name', ['first tag'], 'a temporary value');
+
+        $propertiesToBeSerialized = $object->__sleep();
+
+        self::assertSame(['name', 'tags'], $propertiesToBeSerialized);
+
+        $unserializedObject = unserialize(serialize($object));
+        self::assertFalse(isset($unserializedObject->temporaryValue));
     }
 }

@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Package;
 
 /*
@@ -19,13 +20,13 @@ namespace Neos\Flow\Package;
 interface PackageInterface
 {
     /** @deprecated with Flow 9, please use {@see PackageManager::isPackageKeyValid()} instead. */
-    const PATTERN_MATCH_PACKAGEKEY = FlowPackageKey::PATTERN;
-    const DEFAULT_COMPOSER_TYPE = 'neos-package';
+    public const PATTERN_MATCH_PACKAGEKEY = FlowPackageKey::PATTERN;
+    public const DEFAULT_COMPOSER_TYPE = 'neos-package';
 
     /**
      * Returns the array of filenames of the class files
      *
-     * @return iterable An array or yields the class names (key) and their filename, including the relative path to the package's directory
+     * @return iterable<class-string,string> An array or yields the class names (key) and their filename, including the relative path to the package's directory
      * @api
      */
     public function getClassFiles();
@@ -41,7 +42,7 @@ interface PackageInterface
     /**
      * Returns an array of all namespaces declared for this package.
      *
-     * @return array
+     * @return array<string>
      * @api
      */
     public function getNamespaces();

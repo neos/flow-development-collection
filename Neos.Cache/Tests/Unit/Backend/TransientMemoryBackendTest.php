@@ -4,9 +4,6 @@ declare(strict_types=1);
 
 namespace Neos\Cache\Tests\Unit\Backend;
 
-use PHPUnit\Framework\Attributes\Test;
-use PHPUnit\Framework\MockObject\MockObject;
-
 include_once(__DIR__ . '/../../BaseTestCase.php');
 
 /*
@@ -22,9 +19,11 @@ include_once(__DIR__ . '/../../BaseTestCase.php');
 use Neos\Cache\Backend\TransientMemoryBackend;
 use Neos\Cache\EnvironmentConfiguration;
 use Neos\Cache\Exception;
+use Neos\Cache\Frontend\FrontendInterface;
 use Neos\Cache\Frontend\StringFrontend;
 use Neos\Cache\Tests\BaseTestCase;
-use Neos\Cache\Frontend\FrontendInterface;
+use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\MockObject\MockObject;
 
 /**
  * Testcase for the Transient Memory Backend

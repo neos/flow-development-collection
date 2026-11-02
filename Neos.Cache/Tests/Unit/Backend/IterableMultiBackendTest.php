@@ -1,8 +1,8 @@
 <?php
-declare(strict_types=1);
-namespace Neos\Cache\Tests\Unit\Backend;
 
-use PHPUnit\Framework\Attributes\Test;
+declare(strict_types=1);
+
+namespace Neos\Cache\Tests\Unit\Backend;
 
 include_once(__DIR__ . '/../../BaseTestCase.php');
 
@@ -11,6 +11,7 @@ use Neos\Cache\Backend\IterableMultiBackend;
 use Neos\Cache\EnvironmentConfiguration;
 use Neos\Cache\Frontend\VariableFrontend;
 use Neos\Cache\Tests\BaseTestCase;
+use PHPUnit\Framework\Attributes\Test;
 
 final class IterableMultiBackendTest extends BaseTestCase
 {
@@ -38,7 +39,6 @@ final class IterableMultiBackendTest extends BaseTestCase
 
         $cache->set('foo1', 'bar1');
         $cache->set('foo2', 'bar2');
-
 
         $iterator = $cache->getIterator();
         $iterator->rewind();

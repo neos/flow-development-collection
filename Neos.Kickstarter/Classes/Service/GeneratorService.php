@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Kickstarter\Service;
 
 /*
@@ -12,12 +13,12 @@ namespace Neos\Kickstarter\Service;
  */
 
 use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Core\ClassLoader;
 use Neos\Flow\I18n\Xliff\V12\XliffParser;
+use Neos\Flow\Package\FlowPackageInterface;
+use Neos\Flow\Package\PackageInterface;
 use Neos\Flow\Package\PackageManager;
 use Neos\FluidAdaptor\View\StandaloneView;
-use Neos\Flow\Core\ClassLoader;
-use Neos\Flow\Package\PackageInterface;
-use Neos\Flow\Package\FlowPackageInterface;
 use Neos\Utility\Files;
 
 /**
@@ -51,9 +52,9 @@ class GeneratorService
     protected $reflectionService;
 
     /**
-     * @var array
+     * @var array<int,string>
      */
-    protected $generatedFiles = [];
+    protected array $generatedFiles = [];
 
     /**
      * Generate a controller with the given name for the given package
@@ -63,7 +64,7 @@ class GeneratorService
      * @param string $controllerName The name of the new controller
      * @param boolean $fusionView If the controller should default to a FusionView
      * @param boolean $overwrite Overwrite any existing files?
-     * @return array An array of generated filenames
+     * @return array<int,string> An array of generated filenames
      */
     public function generateActionController($packageKey, $subpackage, $controllerName, $fusionView = false, $overwrite = false)
     {
@@ -102,7 +103,7 @@ class GeneratorService
      * @param string $controllerName The name of the new controller
      * @param boolean $fusionView If the controller should default to a FusionView
      * @param boolean $overwrite Overwrite any existing files?
-     * @return array An array of generated filenames
+     * @return array<int,string> An array of generated filenames
      */
     public function generateCrudController($packageKey, $subpackage, $controllerName, $fusionView = false, $overwrite = false)
     {
@@ -143,7 +144,7 @@ class GeneratorService
      * @param string $packageKey The package key of the controller's package
      * @param string $controllerName The name of the new controller
      * @param boolean $overwrite Overwrite any existing files?
-     * @return array An array of generated filenames
+     * @return array<int,string> An array of generated filenames
      */
     public function generateCommandController($packageKey, $controllerName, $overwrite = false)
     {
@@ -179,7 +180,7 @@ class GeneratorService
      * @param string $viewName The name of the view
      * @param string $templateName The name of the view
      * @param boolean $overwrite Overwrite any existing files?
-     * @return array An array of generated filenames
+     * @return array<int,string> An array of generated filenames
      */
     public function generateView($packageKey, $subpackage, $controllerName, $viewName, $templateName, $overwrite = false)
     {
@@ -199,7 +200,9 @@ class GeneratorService
         $contextVariables['modelFullClassName'] = '\\' . trim($baseNamespace, '\\') . ($subpackage != '' ? '\\' . $subpackage : '') . '\Domain\Model\\' . $controllerName;
         $contextVariables['modelClassName'] = ucfirst($contextVariables['modelName']);
 
-        $modelClassSchema = $this->reflectionService->getClassSchema($contextVariables['modelFullClassName']);
+        $modelClassSchema = class_exists($contextVariables['modelFullClassName'])
+            ? $this->reflectionService->getClassSchema($contextVariables['modelFullClassName'])
+            : null;
         if ($modelClassSchema !== null) {
             $contextVariables['properties'] = $modelClassSchema->getProperties();
             if (isset($contextVariables['properties']['Persistence_Object_Identifier'])) {
@@ -229,7 +232,7 @@ class GeneratorService
      * @param string $packageKey The package key of the controller's package
      * @param string $layoutName The name of the layout
      * @param boolean $overwrite Overwrite any existing files?
-     * @return array An array of generated filenames
+     * @return array<int,string> An array of generated filenames
      */
     public function generateLayout($packageKey, $layoutName, $overwrite = false)
     {
@@ -261,7 +264,7 @@ class GeneratorService
      * @param string $viewName The name of the view
      * @param string $templateName The name of the view
      * @param boolean $overwrite Overwrite any existing files?
-     * @return array An array of generated filenames
+     * @return array<int,string> An array of generated filenames
      */
     public function generateFusion(string $packageKey, string $subpackage, string $controllerName, string $viewName, string $templateName, bool $overwrite = false): array
     {
@@ -281,7 +284,9 @@ class GeneratorService
         $contextVariables['modelFullClassName'] = '\\' . trim($baseNamespace, '\\') . ($subpackage != '' ? '\\' . $subpackage : '') . '\Domain\Model\\' . $controllerName;
         $contextVariables['modelClassName'] = ucfirst($contextVariables['modelName']);
 
-        $modelClassSchema = $this->reflectionService->getClassSchema($contextVariables['modelFullClassName']);
+        $modelClassSchema = class_exists($contextVariables['modelFullClassName'])
+            ? $this->reflectionService->getClassSchema($contextVariables['modelFullClassName'])
+            : null;
         if ($modelClassSchema !== null) {
             $contextVariables['properties'] = $modelClassSchema->getProperties();
             if (isset($contextVariables['properties']['Persistence_Object_Identifier'])) {
@@ -311,7 +316,7 @@ class GeneratorService
      * @param string $packageKey The package key of the controller's package
      * @param string $layoutName The name of the layout
      * @param boolean $overwrite Overwrite any existing files?
-     * @return array An array of generated filenames
+     * @return array<int,string> An array of generated filenames
      */
     public function generatePrototype(string $packageKey, string $layoutName, bool $overwrite = false): array
     {
@@ -340,9 +345,9 @@ class GeneratorService
      *
      * @param string $packageKey The package key of the controller's package
      * @param string $modelName The name of the new model
-     * @param array $fieldDefinitions The field definitions
+     * @param array<mixed> $fieldDefinitions The field definitions
      * @param boolean $overwrite Overwrite any existing files?
-     * @return array An array of generated filenames
+     * @return array<int,string> An array of generated filenames
      */
     public function generateModel($packageKey, $modelName, array $fieldDefinitions, $overwrite = false)
     {
@@ -378,7 +383,7 @@ class GeneratorService
      * @param string $packageKey The package key of the controller's package
      * @param string $modelName The name of the new model fpr which to generate the test
      * @param boolean $overwrite Overwrite any existing files?
-     * @return array An array of generated filenames
+     * @return array<int,string> An array of generated filenames
      */
     public function generateTestsForModel($packageKey, $modelName, $overwrite = false)
     {
@@ -411,7 +416,7 @@ class GeneratorService
      * @param string $packageKey The package key
      * @param string $modelName The name of the model
      * @param boolean $overwrite Overwrite any existing files?
-     * @return array An array of generated filenames
+     * @return array<int,string> An array of generated filenames
      */
     public function generateRepository($packageKey, $modelName, $overwrite = false)
     {
@@ -443,7 +448,7 @@ class GeneratorService
      * Generate a documentation skeleton for the package key
      *
      * @param string $packageKey The package key
-     * @return array An array of generated filenames
+     * @return array<int,string> An array of generated filenames
      */
     public function generateDocumentation($packageKey)
     {
@@ -459,7 +464,7 @@ class GeneratorService
         $templatePathAndFilename = 'resource://Neos.Kickstarter/Private/Generator/Documentation/Makefile';
         $fileContent = file_get_contents($templatePathAndFilename);
         $targetPathAndFilename = $documentationPath . '/Makefile';
-        $this->generateFile($targetPathAndFilename, $fileContent);
+        $this->generateFile($targetPathAndFilename, $fileContent ?: '');
 
         $templatePathAndFilename = 'resource://Neos.Kickstarter/Private/Generator/Documentation/index.rst';
         $fileContent = $this->renderTemplate($templatePathAndFilename, $contextVariables);
@@ -481,8 +486,8 @@ class GeneratorService
      *
      * @param string $packageKey
      * @param string $sourceLanguageKey
-     * @param array $targetLanguageKeys
-     * @return array An array of generated filenames
+     * @param array<string> $targetLanguageKeys
+     * @return array<int,string> An array of generated filenames
      */
     public function generateTranslation($packageKey, $sourceLanguageKey, array $targetLanguageKeys = [])
     {
@@ -516,9 +521,9 @@ class GeneratorService
     /**
      * Normalize types and prefix types with namespaces
      *
-     * @param array $fieldDefinitions The field definitions
+     * @param array<mixed> $fieldDefinitions The field definitions
      * @param string $namespace The namespace
-     * @return array The normalized and type converted field definitions
+     * @return array<mixed> The normalized and type converted field definitions
      */
     protected function normalizeFieldDefinitions(array $fieldDefinitions, $namespace = '')
     {
@@ -574,7 +579,7 @@ class GeneratorService
      * Render the given template file with the given variables
      *
      * @param string $templatePathAndFilename
-     * @param array $contextVariables
+     * @param array<mixed> $contextVariables
      * @return string
      * @throws \Neos\FluidAdaptor\Core\Exception
      */
@@ -588,7 +593,7 @@ class GeneratorService
 
     /**
      * @param PackageInterface $package
-     * @return array
+     * @return array<mixed>
      */
     protected function getPrimaryNamespaceAndEntryPath(PackageInterface $package)
     {

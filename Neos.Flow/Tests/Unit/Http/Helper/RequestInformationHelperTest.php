@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Neos\Flow\Tests\Unit\Http\Helper;
 
-use PHPUnit\Framework\Attributes\Test;
 use GuzzleHttp\Psr7\ServerRequest;
 use Neos\Flow\Http\Helper\RequestInformationHelper;
 use Neos\Flow\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Tests for the RequestInformationHelper

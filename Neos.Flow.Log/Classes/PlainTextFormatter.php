@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Log;
 
 /**
@@ -22,8 +23,8 @@ class PlainTextFormatter
     }
 
     /**
-     * @param $spaces
-     * @return string
+     * @param int $spaces
+     * @return ?string
      */
     public function format($spaces = 4)
     {

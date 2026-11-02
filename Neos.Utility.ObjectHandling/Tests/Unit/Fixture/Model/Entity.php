@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Utility\ObjectHandling\Tests\Unit\Fixture\Model;
 
 /*

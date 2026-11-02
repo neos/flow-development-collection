@@ -13,14 +13,14 @@ namespace Neos\Flow\Tests\Unit\Security\Authentication\Token;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use PHPUnit\Framework\Attributes\Test;
-use PHPUnit\Framework\Attributes\DataProvider;
 use Neos\Flow\Security\Authentication\EntryPoint\WebRedirect;
 use Neos\Flow\Security\Authentication\Token\AbstractToken;
 use Neos\Flow\Security\Authentication\TokenInterface;
 use Neos\Flow\Security\Exception\InvalidAuthenticationStatusException;
 use Neos\Flow\Security\RequestPattern\Uri as UriRequestPattern;
 use Neos\Flow\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Testcase for abstract authentication token
@@ -35,7 +35,7 @@ final class AbstractTokenTest extends UnitTestCase
 
     protected function setUp(): void
     {
-        $this->token = $this->getMockForAbstractClass(AbstractToken::class);
+        $this->token = $this->createPartialMock(AbstractToken::class, ['updateCredentials']);
     }
 
     #[Test]

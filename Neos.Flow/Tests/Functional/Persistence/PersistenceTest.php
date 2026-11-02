@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Neos\Flow\Tests\Functional\Persistence;
@@ -12,18 +13,6 @@ namespace Neos\Flow\Tests\Functional\Persistence;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use Neos\Flow\Tests\Functional\Persistence\Fixtures\TestEntityRepository;
-use Neos\Flow\Tests\Functional\Persistence\Fixtures\ExtendedTypesEntityRepository;
-use PHPUnit\Framework\Attributes\Test;
-use Neos\Flow\Tests\Functional\Persistence\Fixtures\TestEntity;
-use Neos\Flow\Tests\Functional\Persistence\Fixtures\ObjectHoldingAnEntity;
-use Neos\Flow\Tests\Functional\Persistence\Fixtures\TestValueObject;
-use Neos\Flow\Tests\Functional\Persistence\Fixtures\TestEmbeddedValueObject;
-use PHPUnit\Framework\Attributes\DoesNotPerformAssertions;
-use Neos\Flow\Tests\Functional\Persistence\Fixtures\EventSubscriber;
-use Neos\Flow\Tests\Functional\Persistence\Fixtures\EventListener;
-use Neos\Flow\Tests\Functional\Persistence\Fixtures\ExtendedTypesEntity;
-use Neos\Flow\Tests\Functional\Persistence\Fixtures\TestEmbeddable;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Tools\SchemaTool;
 use Neos\Flow\Persistence\Doctrine\PersistenceManager;
@@ -31,8 +20,20 @@ use Neos\Flow\Persistence\Doctrine\QueryResult;
 use Neos\Flow\Persistence\Exception;
 use Neos\Flow\Persistence\Exception\IllegalObjectTypeException;
 use Neos\Flow\Persistence\Exception\ObjectValidationFailedException;
+use Neos\Flow\Tests\Functional\Persistence\Fixtures\EventListener;
+use Neos\Flow\Tests\Functional\Persistence\Fixtures\EventSubscriber;
+use Neos\Flow\Tests\Functional\Persistence\Fixtures\ExtendedTypesEntity;
+use Neos\Flow\Tests\Functional\Persistence\Fixtures\ExtendedTypesEntityRepository;
+use Neos\Flow\Tests\Functional\Persistence\Fixtures\ObjectHoldingAnEntity;
+use Neos\Flow\Tests\Functional\Persistence\Fixtures\TestEmbeddable;
+use Neos\Flow\Tests\Functional\Persistence\Fixtures\TestEmbeddedValueObject;
+use Neos\Flow\Tests\Functional\Persistence\Fixtures\TestEntity;
+use Neos\Flow\Tests\Functional\Persistence\Fixtures\TestEntityRepository;
+use Neos\Flow\Tests\Functional\Persistence\Fixtures\TestValueObject;
 use Neos\Flow\Tests\FunctionalTestCase;
 use Neos\Utility\ObjectAccess;
+use PHPUnit\Framework\Attributes\DoesNotPerformAssertions;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Testcase for persistence

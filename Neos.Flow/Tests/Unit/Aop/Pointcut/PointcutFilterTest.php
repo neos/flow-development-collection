@@ -13,14 +13,13 @@ namespace Neos\Flow\Tests\Unit\Aop\Pointcut;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use PHPUnit\Framework\Attributes\Test;
-use Neos\Flow\Aop\Exception\UnknownPointcutException;
-use Neos\Flow\Aop\Builder\ProxyClassBuilder;
-use Neos\Flow\Aop\Pointcut\PointcutFilter;
-use Neos\Flow\Aop\Pointcut\Pointcut;
 use Neos\Flow\Aop\Builder\ClassNameIndex;
+use Neos\Flow\Aop\Builder\ProxyClassBuilder;
+use Neos\Flow\Aop\Exception\UnknownPointcutException;
+use Neos\Flow\Aop\Pointcut\Pointcut;
+use Neos\Flow\Aop\Pointcut\PointcutFilter;
 use Neos\Flow\Tests\UnitTestCase;
-use Neos\Flow\Aop;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Testcase for the Pointcut Filter

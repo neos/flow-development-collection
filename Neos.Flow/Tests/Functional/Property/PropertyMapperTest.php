@@ -13,15 +13,6 @@ namespace Neos\Flow\Tests\Functional\Property;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use PHPUnit\Framework\Attributes\Test;
-use Neos\Flow\Tests\Functional\Property\Fixtures\TestEntity;
-use Neos\Flow\Tests\Functional\Property\Fixtures\TestClass;
-use Neos\Flow\Tests\Functional\Property\Fixtures\TestValueobject;
-use Neos\Flow\Tests\Functional\Property\Fixtures\TestEmbeddedValueobject;
-use Neos\Flow\Tests\Functional\Property\Fixtures\TestEntitySubclass;
-use Neos\Flow\Tests\Functional\Property\Fixtures\TestSubclass;
-use Neos\Flow\Tests\Functional\Property\Fixtures\TestEntitySubclassWithNewField;
-use PHPUnit\Framework\Attributes\DataProvider;
 use Neos\Flow\Property\Exception;
 use Neos\Flow\Property\PropertyMapper;
 use Neos\Flow\Property\PropertyMappingConfiguration;
@@ -29,8 +20,17 @@ use Neos\Flow\Property\PropertyMappingConfigurationInterface;
 use Neos\Flow\Property\TypeConverter\ObjectConverter;
 use Neos\Flow\Property\TypeConverter\PersistentObjectConverter;
 use Neos\Flow\Security\Account;
+use Neos\Flow\Tests\Functional\Property\Fixtures\TestClass;
 use Neos\Flow\Tests\Functional\Property\Fixtures\TestClassWithMissingCollectionElementType;
+use Neos\Flow\Tests\Functional\Property\Fixtures\TestEmbeddedValueobject;
+use Neos\Flow\Tests\Functional\Property\Fixtures\TestEntity;
+use Neos\Flow\Tests\Functional\Property\Fixtures\TestEntitySubclass;
+use Neos\Flow\Tests\Functional\Property\Fixtures\TestEntitySubclassWithNewField;
+use Neos\Flow\Tests\Functional\Property\Fixtures\TestSubclass;
+use Neos\Flow\Tests\Functional\Property\Fixtures\TestValueobject;
 use Neos\Flow\Tests\FunctionalTestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Test case for Property Mapper

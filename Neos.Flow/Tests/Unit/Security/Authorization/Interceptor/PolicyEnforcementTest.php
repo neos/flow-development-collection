@@ -13,15 +13,14 @@ namespace Neos\Flow\Tests\Unit\Security\Authorization\Interceptor;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use PHPUnit\Framework\Attributes\Test;
-use Neos\Flow\Security\Context;
+use Neos\Flow\Aop\JoinPointInterface;
 use Neos\Flow\Security\Authentication\AuthenticationManagerInterface;
-use Neos\Flow\Security\Authorization\PrivilegeManagerInterface;
 use Neos\Flow\Security\Authorization\Interceptor\PolicyEnforcement;
 use Neos\Flow\Security\Authorization\Privilege\Method\MethodPrivilegeInterface;
-use Neos\Flow\Aop\JoinPointInterface;
+use Neos\Flow\Security\Authorization\PrivilegeManagerInterface;
+use Neos\Flow\Security\Context;
 use Neos\Flow\Tests\UnitTestCase;
-use Neos\Flow\Security;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Testcase for the policy enforcement interceptor
@@ -42,7 +41,6 @@ final class PolicyEnforcementTest extends UnitTestCase
         $interceptor->setJoinPoint($joinPoint);
         $interceptor->invoke();
     }
-
 
     #[Test]
     public function invokeCallsThePrivilegeManagerToDecideOnTheCurrentJoinPoint()

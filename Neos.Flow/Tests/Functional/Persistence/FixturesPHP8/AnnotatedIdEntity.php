@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Tests\Functional\Persistence\FixturesPHP8;
 
 /*
@@ -11,8 +12,8 @@ namespace Neos\Flow\Tests\Functional\Persistence\FixturesPHP8;
  * source code.
  */
 
-use Neos\Flow\Annotations as Flow;
 use Doctrine\ORM\Mapping as ORM;
+use Neos\Flow\Annotations as Flow;
 
 /**
  * A sample entity that has a property with a Id annotation

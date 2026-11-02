@@ -1,9 +1,11 @@
 <?php
+
 namespace Neos\Flow\Security;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Security\Authentication\Token\SessionlessTokenInterface;
+use Neos\Flow\Security\Authentication\TokenInterface;
 
 /**
  * @Flow\Scope("session")
@@ -14,14 +16,14 @@ class SessionDataContainer
     /**
      * The current list of security tokens.
      *
-     * @var array
+     * @var array<TokenInterface>
      */
     protected $securityTokens = [];
 
     /**
      * The current list of CSRF tokens
      *
-     * @var array
+     * @var array<string,string|bool>
      */
     protected $csrfProtectionTokens = [];
 
@@ -35,7 +37,7 @@ class SessionDataContainer
     /**
      * Get the current list of security tokens.
      *
-     * @return array
+     * @return array<TokenInterface>
      */
     public function getSecurityTokens(): array
     {
@@ -45,7 +47,8 @@ class SessionDataContainer
     /**
      * Set the current list of security tokens with their data.
      *
-     * @param array $securityTokens
+     * @param array<TokenInterface> $securityTokens
+     * @return void
      */
     public function setSecurityTokens(array $securityTokens)
     {
@@ -60,7 +63,7 @@ class SessionDataContainer
     /**
      * Get the current list of active CSRF tokens.
      *
-     * @return array
+     * @return array<string,string|bool>
      */
     public function getCsrfProtectionTokens(): array
     {
@@ -70,7 +73,8 @@ class SessionDataContainer
     /**
      * set the list of currently active CSRF tokens.
      *
-     * @param array $csrfProtectionTokens
+     * @param array<string,string|bool> $csrfProtectionTokens
+     * @return void
      */
     public function setCsrfProtectionTokens(array $csrfProtectionTokens)
     {

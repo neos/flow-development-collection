@@ -13,15 +13,15 @@ namespace Neos\Flow\Tests\Unit\Mvc\Controller;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+use Neos\Error\Messages as FlowError;
+use Neos\Flow\Mvc;
 use Neos\Flow\Mvc\Controller\Argument;
 use Neos\Flow\Mvc\Controller\MvcPropertyMappingConfiguration;
-use PHPUnit\Framework\Attributes\Test;
 use Neos\Flow\Property\PropertyMapper;
 use Neos\Flow\Property\TypeConverter\PersistentObjectConverter;
 use Neos\Flow\Tests\UnitTestCase;
-use Neos\Flow\Mvc;
 use Neos\Flow\Validation\Validator\ValidatorInterface;
-use Neos\Error\Messages as FlowError;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Testcase for the MVC Controller Argument
@@ -112,7 +112,6 @@ final class ArgumentTest extends UnitTestCase
         $returnedArgument = $this->simpleValueArgument->setValue(null);
         self::assertSame($this->simpleValueArgument, $returnedArgument, 'The returned argument is not the original argument.');
     }
-
 
     #[Test]
     public function setValueUsesNullAsIs()

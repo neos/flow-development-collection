@@ -13,10 +13,10 @@ namespace Neos\Flow\Tests\Unit\Validation\Validator;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use PHPUnit\Framework\Attributes\DataProvider;
-use PHPUnit\Framework\Attributes\Test;
 use Neos\Flow\ResourceManagement\ResourceMetaDataInterface;
 use Neos\Flow\Validation\Validator\MediaTypeValidator;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use Psr\Http\Message\UploadedFileInterface;
 
 /**
@@ -61,7 +61,6 @@ final class MediaTypeValidatorTest extends AbstractValidatorTestcase
     {
         self::assertFalse($this->validator->validate($item)->hasErrors());
     }
-
 
     public static function itemsWithAllowedMediaType(): \Iterator
     {

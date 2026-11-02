@@ -57,3 +57,6 @@ Neos:
               options:
                 logFileURL: '%FLOW_PATH_DATA%Logs/I18n_Development.log'
                 severityThreshold: '%LOG_DEBUG%'
+    object:
+      proxy:
+        enableXdebugPathMapping: true

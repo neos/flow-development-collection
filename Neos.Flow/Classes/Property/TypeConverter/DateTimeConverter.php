@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Property\TypeConverter;
 
 /*
@@ -64,7 +65,7 @@ class DateTimeConverter extends AbstractTypeConverter
     /**
      * @var string
      */
-    const CONFIGURATION_DATE_FORMAT = 'dateFormat';
+    public const CONFIGURATION_DATE_FORMAT = 'dateFormat';
 
     /**
      * The default date format is "YYYY-MM-DDT##:##:##+##:##", for example "2005-08-15T15:52:01+00:00"
@@ -72,7 +73,7 @@ class DateTimeConverter extends AbstractTypeConverter
      *
      * @var string
      */
-    const DEFAULT_DATE_FORMAT = \DateTime::W3C;
+    public const DEFAULT_DATE_FORMAT = \DateTime::W3C;
 
     /**
      * @var array<string>
@@ -92,7 +93,7 @@ class DateTimeConverter extends AbstractTypeConverter
     /**
      * If conversion is possible.
      *
-     * @param string|int|array $source
+     * @param mixed|array<mixed> $source
      * @param string $targetType
      * @return boolean
      */
@@ -113,9 +114,9 @@ class DateTimeConverter extends AbstractTypeConverter
     /**
      * Converts $source to a \DateTime using the configured dateFormat
      *
-     * @param string|integer|array $source the string to be converted to a \DateTime object
+     * @param string|integer|array<string,mixed> $source the string to be converted to a \DateTime object
      * @param string $targetType must be "DateTime"
-     * @param array $convertedChildProperties not used currently
+     * @param array<string,mixed> $convertedChildProperties not used currently
      * @param PropertyMappingConfigurationInterface|null $configuration
      * @return \DateTimeInterface|null|Error
      * @throws InvalidPropertyMappingConfigurationException
@@ -179,7 +180,7 @@ class DateTimeConverter extends AbstractTypeConverter
 
     /**
      * Returns whether date information (day, month, year) are present as keys in $source.
-     * @param array $source
+     * @param array<string,mixed> $source
      * @return bool
      */
     protected function isDatePartKeysProvided(array $source)
@@ -215,15 +216,17 @@ class DateTimeConverter extends AbstractTypeConverter
      * Overrides hour, minute & second of the given date with the values in the $source array
      *
      * @param \DateTimeInterface $date
-     * @param array $source
+     * @param array<string,mixed> $source
      * @return \DateTimeInterface
      */
     protected function overrideTime(\DateTimeInterface $date, array $source)
     {
-        $hour = isset($source['hour']) ? (integer)$source['hour'] : 0;
-        $minute = isset($source['minute']) ? (integer)$source['minute'] : 0;
-        $second = isset($source['second']) ? (integer)$source['second'] : 0;
-        if ($date instanceof \DateTime || $date instanceof \DateTimeImmutable) {
+        $hour = isset($source['hour']) ? (int)$source['hour'] : 0;
+        $minute = isset($source['minute']) ? (int)$source['minute'] : 0;
+        $second = isset($source['second']) ? (int)$source['second'] : 0;
+        if ($date instanceof \DateTime) {
+            $date = $date->setTime($hour, $minute, $second);
+        } elseif ($date instanceof \DateTimeImmutable) {
             $date = $date->setTime($hour, $minute, $second);
         }
         return $date;

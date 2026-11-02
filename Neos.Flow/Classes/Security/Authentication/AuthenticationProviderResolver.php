@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Security\Authentication;
 
 /*
@@ -47,12 +48,12 @@ class AuthenticationProviderResolver
     public function resolveProviderClass($providerName)
     {
         $className = $this->objectManager->getClassNameByObjectName($providerName);
-        if ($className !== false) {
+        if (is_string($className) && is_subclass_of($className, AuthenticationProviderInterface::class)) {
             return $className;
         }
 
         $className = $this->objectManager->getClassNameByObjectName('Neos\Flow\Security\Authentication\Provider\\' . $providerName);
-        if ($className !== false) {
+        if (is_string($className) &&  is_subclass_of($className, AuthenticationProviderInterface::class)) {
             return $className;
         }
 

@@ -4,10 +4,6 @@ declare(strict_types=1);
 
 namespace Neos\Flow\Tests\Unit\Aop\Pointcut;
 
-use PHPUnit\Framework\Attributes\Test;
-use Neos\Flow\Aop\Pointcut\PointcutClassNameFilter;
-use Neos\Flow\Aop\Builder\ClassNameIndex;
-
 /*
  * This file is part of the Neos.Flow package.
  *
@@ -21,9 +17,11 @@ use Neos\Flow\Aop\Builder\ClassNameIndex;
 require_once(FLOW_PATH_FLOW . 'Tests/Unit/Fixtures/DummyClass.php');
 require_once(FLOW_PATH_FLOW . 'Tests/Unit/Fixtures/SecondDummyClass.php');
 
+use Neos\Flow\Aop\Builder\ClassNameIndex;
+use Neos\Flow\Aop\Pointcut\PointcutClassNameFilter;
 use Neos\Flow\Reflection\ReflectionService;
 use Neos\Flow\Tests\UnitTestCase;
-use Neos\Flow\Aop;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Testcase for the Pointcut Class Filter

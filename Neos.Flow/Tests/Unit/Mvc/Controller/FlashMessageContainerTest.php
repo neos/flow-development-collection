@@ -13,10 +13,10 @@ namespace Neos\Flow\Tests\Unit\Mvc\Controller;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use PHPUnit\Framework\Attributes\Test;
 use Neos\Error\Messages as FlowError;
-use Neos\Flow\Tests\UnitTestCase;
 use Neos\Flow\Mvc\FlashMessage\FlashMessageContainer;
+use Neos\Flow\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Testcase for the Flash Messages Container

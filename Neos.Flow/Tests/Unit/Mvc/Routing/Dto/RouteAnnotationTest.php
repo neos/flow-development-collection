@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Neos\Flow\Tests\Unit\Mvc\Routing\Dto;
 
 use Neos\Flow\Annotations as Flow;
-use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Tests for #[Flow\Route]

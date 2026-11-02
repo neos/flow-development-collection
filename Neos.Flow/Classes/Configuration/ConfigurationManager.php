@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Neos\Flow\Configuration;
@@ -14,6 +15,8 @@ namespace Neos\Flow\Configuration;
  */
 
 use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Configuration\Exception\InvalidConfigurationException;
+use Neos\Flow\Configuration\Exception\InvalidConfigurationTypeException;
 use Neos\Flow\Configuration\Loader\AppendLoader;
 use Neos\Flow\Configuration\Loader\LoaderInterface;
 use Neos\Flow\Configuration\Loader\MergeLoader;
@@ -21,8 +24,6 @@ use Neos\Flow\Configuration\Loader\ObjectsLoader;
 use Neos\Flow\Configuration\Loader\PolicyLoader;
 use Neos\Flow\Configuration\Loader\RoutesLoader;
 use Neos\Flow\Configuration\Loader\SettingsLoader;
-use Neos\Flow\Configuration\Exception\InvalidConfigurationException;
-use Neos\Flow\Configuration\Exception\InvalidConfigurationTypeException;
 use Neos\Flow\Configuration\Source\YamlSource;
 use Neos\Flow\Core\ApplicationContext;
 use Neos\Flow\Package\FlowPackageInterface;
@@ -135,7 +136,7 @@ class ConfigurationManager
     /**
      * Storage of the raw special configurations
      *
-     * @var array
+     * @var array<string,mixed>
      */
     protected $configurations = [];
 
@@ -159,7 +160,7 @@ class ConfigurationManager
     protected $temporaryDirectoryPath = null;
 
     /**
-     * @var array
+     * @var array<string,mixed>
      */
     protected $unprocessedConfiguration = [];
 
@@ -234,9 +235,6 @@ class ConfigurationManager
             // B/C layer
         } elseif (is_string($configurationLoader)) {
             $configurationLoader = $this->convertLegacyProcessingType($configurationType, $configurationLoader);
-        }
-        if (!$configurationLoader instanceof LoaderInterface) {
-            throw new \InvalidArgumentException(sprintf('Specified invalid configuration loader of type "%s" while registering custom configuration type "%s". This should be an instance of %s', is_object($configurationLoader) ? get_class($configurationLoader) : gettype($configurationLoader), $configurationType, LoaderInterface::class), 1617895964);
         }
 
         // if the configuration was already registered and the there is an unprocessed loaded configuration, the configuration needs to be loaded again
@@ -424,6 +422,7 @@ class ConfigurationManager
      * Generate configuration with environment variables replaced without modifying or loading the cache
      *
      * @param string $configurationType The kind of configuration to fetch
+     * @return void
      */
     protected function processConfigurationType(string $configurationType)
     {
@@ -530,7 +529,7 @@ class ConfigurationManager
             }
             $replacement .= ($constantDoesNotStartAsBeginning ? $matchGroup['startString'] . "' . " : '=> ');
 
-            if (isset($matchGroup['prefix']) && $matchGroup['prefix'] === 'env') {
+            if ($matchGroup['prefix'] === 'env') {
                 if ($matchGroup['type'] === 'bool') {
                     $replacement .= "!in_array(strtolower(getenv('" . $matchGroup['name'] . "')), ['', '0', 'false'], true)";
                 } elseif ($matchGroup['type'] !== '') {
@@ -538,7 +537,7 @@ class ConfigurationManager
                 } else {
                     $replacement .= "getenv('" . $matchGroup['name'] . "')";
                 }
-            } elseif (isset($matchGroup['expression'])) {
+            } else {
                 $replacement .= "(defined('" . $matchGroup['expression'] . "') ? constant('" . $matchGroup['expression'] . "') : null)";
             }
 
@@ -549,12 +548,16 @@ class ConfigurationManager
             if ($matchGroup['endString'] === "',\n") {
                 $constantUntilEndOfLine = true;
             }
-            $replacement .= ($constantUntilEndOfLine ? ",\n" :  " . '" . $matchGroup['endString']);
+            $replacement .= ($constantUntilEndOfLine ? ",\n" : " . '" . $matchGroup['endString']);
 
             return $replacement;
         }, $phpString);
 
-        return $phpString;
+        if (is_string($phpString)) {
+            return $phpString;
+        }
+
+        throw new \RuntimeException('Failed to render PHP string', 1744468312);
     }
 
     /**

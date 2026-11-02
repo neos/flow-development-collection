@@ -13,14 +13,14 @@ namespace Neos\Flow\Tests\Unit\I18n\Formatter;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use Neos\Flow\I18n\Locale;
-use PHPUnit\Framework\Attributes\Test;
-use Neos\Flow\I18n\Formatter\NumberFormatter;
-use PHPUnit\Framework\Attributes\DataProvider;
+use Neos\Flow\I18n;
 use Neos\Flow\I18n\Cldr\Reader\CurrencyReader;
 use Neos\Flow\I18n\Cldr\Reader\NumbersReader;
+use Neos\Flow\I18n\Formatter\NumberFormatter;
+use Neos\Flow\I18n\Locale;
 use Neos\Flow\Tests\UnitTestCase;
-use Neos\Flow\I18n;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Testcase for the NumberFormatter

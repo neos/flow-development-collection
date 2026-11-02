@@ -4,9 +4,6 @@ declare(strict_types=1);
 
 namespace Neos\FluidAdaptor\Tests\Unit\ViewHelpers\Format;
 
-use PHPUnit\Framework\Attributes\Test;
-use PHPUnit\Framework\Attributes\DataProvider;
-
 /*
  * This file is part of the Neos.FluidAdaptor package.
  *
@@ -21,8 +18,10 @@ require_once(__DIR__ . '/../ViewHelperBaseTestcase.php');
 
 use Neos\FluidAdaptor\Core\Rendering\RenderingContext;
 use Neos\FluidAdaptor\Core\ViewHelper\Exception\InvalidVariableException;
-use Neos\FluidAdaptor\ViewHelpers\Format\CaseViewHelper;
 use Neos\FluidAdaptor\Tests\Unit\ViewHelpers\ViewHelperBaseTestcase;
+use Neos\FluidAdaptor\ViewHelpers\Format\CaseViewHelper;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Test for \Neos\FluidAdaptor\ViewHelpers\Format\CaseViewHelper

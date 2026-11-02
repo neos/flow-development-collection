@@ -13,11 +13,11 @@ namespace Neos\Flow\Tests\Unit\Security\Policy;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+use Neos\Flow\Security\Policy\Role;
+use Neos\Flow\Tests\UnitTestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
-use Neos\Flow\Security\Policy\Role;
-use Neos\Flow\Tests\UnitTestCase;
 
 /**
  * Testcase for Neos\Flow\Security\Policy\Role

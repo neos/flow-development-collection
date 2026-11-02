@@ -13,14 +13,6 @@ namespace Neos\Flow\Tests\Unit\Mvc\Routing;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use Neos\Flow\Mvc\Routing\Route;
-use Neos\Flow\Mvc\Routing\Dto\ResolveContext;
-use PHPUnit\Framework\Attributes\Test;
-use Neos\Flow\Mvc\Routing\DynamicRoutePartInterface;
-use Neos\Flow\Mvc\Routing\StaticRoutePart;
-use Neos\Flow\Mvc\Routing\IdentityRoutePart;
-use PHPUnit\Framework\Attributes\DataProvider;
-use Neos\Flow\Mvc\Routing\RoutePartInterface;
 use GuzzleHttp\Psr7\Uri;
 use Neos\Flow\Mvc\Exception\InvalidRoutePartHandlerException;
 use Neos\Flow\Mvc\Exception\InvalidRoutePartValueException;
@@ -28,13 +20,21 @@ use Neos\Flow\Mvc\Exception\InvalidRouteSetupException;
 use Neos\Flow\Mvc\Exception\InvalidUriPatternException;
 use Neos\Flow\Mvc\Routing;
 use Neos\Flow\Mvc\Routing\Dto\MatchResult;
+use Neos\Flow\Mvc\Routing\Dto\ResolveContext;
 use Neos\Flow\Mvc\Routing\Dto\ResolveResult;
 use Neos\Flow\Mvc\Routing\Dto\RouteContext;
 use Neos\Flow\Mvc\Routing\Dto\RouteParameters;
 use Neos\Flow\Mvc\Routing\Dto\UriConstraints;
+use Neos\Flow\Mvc\Routing\DynamicRoutePartInterface;
 use Neos\Flow\Mvc\Routing\Fixtures\MockRoutePartHandler;
+use Neos\Flow\Mvc\Routing\IdentityRoutePart;
+use Neos\Flow\Mvc\Routing\Route;
+use Neos\Flow\Mvc\Routing\RoutePartInterface;
+use Neos\Flow\Mvc\Routing\StaticRoutePart;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\UriInterface;
@@ -1015,7 +1015,6 @@ final class RouteTest extends UnitTestCase
         $originalArray = ['foo' => 'bar', 'someObject' => $object1, 'baz' => ['someOtherObject' => $object2]];
 
         $convertedArray = ['foo' => 'bar', 'someObject' => ['__identity' => 'x'], 'baz' => ['someOtherObject' => ['__identity' => 'y']]];
-
 
         $routeValuesNormalizer = $this->createMock(Routing\RouteValuesNormalizerInterface::class);
         $routeValuesNormalizer->expects($this->once())->method('normalizeObjects')->with($originalArray)->willReturn($convertedArray);

@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Validation\Validator;
 
 /*
@@ -11,9 +12,9 @@ namespace Neos\Flow\Validation\Validator;
  * source code.
  */
 
-use Neos\Flow\Validation\Exception\InvalidValidationOptionsException;
 use Neos\Error\Messages\Result as ErrorResult;
 use Neos\Flow\Validation\Error as ValidationError;
+use Neos\Flow\Validation\Exception\InvalidValidationOptionsException;
 
 /**
  * Abstract validator
@@ -41,17 +42,17 @@ abstract class AbstractValidator implements ValidatorInterface
      * 2 => type
      * 3 => required (boolean, optional)
      *
-     * @var array
+     * @var array<mixed>
      */
     protected $supportedOptions = [];
 
     /**
-     * @var array
+     * @var array<mixed>
      */
     protected $options = [];
 
     /**
-     * @var ErrorResult
+     * @var ErrorResult|null
      */
     private $result;
 
@@ -63,7 +64,7 @@ abstract class AbstractValidator implements ValidatorInterface
     /**
      * Constructs the validator and sets validation options
      *
-     * @param array $options Options for the validator
+     * @param array<mixed> $options Options for the validator
      * @throws InvalidValidationOptionsException if unsupported options are found
      * @api
      */
@@ -117,7 +118,7 @@ abstract class AbstractValidator implements ValidatorInterface
     /**
      * Pop and return the current Result from the stack and make $this->result point to the last Result again.
      * @since Flow 4.3
-     * @return ErrorResult
+     * @return ErrorResult|null
      */
     protected function popResult()
     {
@@ -143,7 +144,7 @@ abstract class AbstractValidator implements ValidatorInterface
      * the Error Messages object which occurred.
      *
      * @param mixed $value The value that should be validated
-     * @return ErrorResult
+     * @return ErrorResult|null
      * @throws InvalidValidationOptionsException
      * @api
      */
@@ -171,19 +172,22 @@ abstract class AbstractValidator implements ValidatorInterface
      *
      * @param string $message The error message
      * @param integer $code The error code (a unix timestamp)
-     * @param array $arguments Arguments to be replaced in message
+     * @param array<mixed> $arguments Arguments to be replaced in message
      * @return void
      * @api
      */
     protected function addError($message, $code, array $arguments = [])
     {
+        if ($this->result === null) {
+            $this->result = new ErrorResult();
+        }
         $this->result->addError(new ValidationError($message, $code, $arguments));
     }
 
     /**
      * Returns the options of this validator
      *
-     * @return array
+     * @return array<mixed>
      */
     public function getOptions()
     {

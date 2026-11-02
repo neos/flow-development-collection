@@ -13,17 +13,20 @@ namespace Neos\Flow\Tests\Functional\ObjectManagement;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use PHPUnit\Framework\Attributes\Test;
+
+use Neos\Cache\Frontend\VariableFrontend;
+use Neos\Flow\Configuration\ConfigurationManager;
+use Neos\Flow\Core\Bootstrap;
+use Neos\Flow\ObjectManagement\ObjectManagerInterface;
+use Neos\Flow\Persistence\PersistenceManagerInterface;
+use Neos\Flow\SignalSlot\Dispatcher;
+use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\Flow175\OuterPrototype;
 use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\InterfaceA;
 use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\InterfaceAImplementation;
 use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\PrototypeClassB;
 use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\PrototypeClassG;
-use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\Flow175\OuterPrototype;
-use Neos\Flow\Configuration\ConfigurationManager;
-use Neos\Flow\Core\Bootstrap;
-use Neos\Flow\ObjectManagement\ObjectManagerInterface;
-use Neos\Flow\SignalSlot\Dispatcher;
 use Neos\Flow\Tests\FunctionalTestCase;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Functional tests for the Object Manager features
@@ -38,6 +41,20 @@ final class ObjectManagerTest extends FunctionalTestCase
 
         self::assertInstanceOf(InterfaceAImplementation::class, $objectByInterface);
         self::assertInstanceOf(InterfaceAImplementation::class, $objectByClassName);
+        self::assertSame($objectByClassName, $objectByInterface, sprintf('Instance %d does not equal %d', spl_object_id($objectByClassName), spl_object_id($objectByInterface)));
+    }
+
+    #[Test]
+    public function requestingTheImplementationAndThenTheInterfaceWorks()
+    {
+        $this->objectManager->forgetInstance(Fixtures\InterfaceAImplementation::class);
+        $this->objectManager->forgetInstance(Fixtures\InterfaceA::class);
+        $objectByClassName = $this->objectManager->get(Fixtures\InterfaceAImplementation::class);
+        $objectByInterface = $this->objectManager->get(Fixtures\InterfaceA::class);
+
+        self::assertInstanceOf(Fixtures\InterfaceA::class, $objectByInterface);
+        self::assertInstanceOf(Fixtures\InterfaceA::class, $objectByClassName);
+        self::assertSame($objectByClassName, $objectByInterface, sprintf('Instance %d does not equal %d', spl_object_id($objectByClassName), spl_object_id($objectByInterface)));
     }
 
     #[Test]
@@ -101,7 +118,7 @@ final class ObjectManagerTest extends FunctionalTestCase
         self::assertSame(ObjectManagerInterface::class, $first);
         self::assertSame(ConfigurationManager::class, $last);
     }
-    
+
     #[Test]
     public function virtualObjectsCanBeInstantiated()
     {
@@ -112,5 +129,14 @@ final class ObjectManagerTest extends FunctionalTestCase
 
         self::assertSame('Hello Bastian!', $object1->getInner()->greet('Bastian'));
         self::assertSame('Hello Bastian from a different greeter!', $object2->getInner()->greet('Bastian'));
+    }
+
+    #[Test]
+    public function interfaceObjectUsesClassConfigurationForInjection()
+    {
+        /** @var \Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\ClassImplementingInterfaceToTestConstructorInjection $object1 */
+        $object1 = $this->objectManager->get(\Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\InterfaceToTestConstructorInjection::class);
+        self::assertInstanceOf(PersistenceManagerInterface::class, $object1->persistenceManager);
+        self::assertInstanceOf(VariableFrontend::class, $object1->cache);
     }
 }

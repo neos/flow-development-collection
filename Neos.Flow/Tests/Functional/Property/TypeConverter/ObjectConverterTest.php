@@ -13,17 +13,16 @@ namespace Neos\Flow\Tests\Functional\Property\TypeConverter;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use PHPUnit\Framework\Attributes\Test;
-use Neos\Flow\Tests\Functional\Property\Fixtures\TestClass;
-use Neos\Flow\Tests\Functional\Property\Fixtures\TestClassWithSingletonConstructorInjection;
-use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\InterfaceAImplementation;
-use Neos\Flow\Tests\Functional\Property\Fixtures\TestClassWithThirdPartyClassConstructorInjection;
 use Neos\Flow\Property\Exception\InvalidTargetException;
 use Neos\Flow\Property\PropertyMappingConfiguration;
 use Neos\Flow\Property\TypeConverter\ObjectConverter;
-use Neos\Utility\ObjectAccess;
+use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\InterfaceAImplementation;
+use Neos\Flow\Tests\Functional\Property\Fixtures\TestClass;
+use Neos\Flow\Tests\Functional\Property\Fixtures\TestClassWithSingletonConstructorInjection;
+use Neos\Flow\Tests\Functional\Property\Fixtures\TestClassWithThirdPartyClassConstructorInjection;
 use Neos\Flow\Tests\FunctionalTestCase;
-use Neos\Flow\Tests\Functional\Property\Fixtures;
+use Neos\Utility\ObjectAccess;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  */

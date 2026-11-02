@@ -4,9 +4,6 @@ declare(strict_types=1);
 
 namespace Neos\Flow\Tests\Unit\ObjectManagement\Proxy;
 
-use PHPUnit\Framework\Attributes\DataProvider;
-use PHPUnit\Framework\Attributes\Test;
-
 /*
  * This file is part of the Neos.Flow package.
  *
@@ -29,6 +26,8 @@ use Neos\Flow\ObjectManagement\Proxy\Compiler;
 use Neos\Flow\Tests\Unit\ObjectManagement\Fixture\ExampleEnum;
 use Neos\Flow\Tests\Unit\ObjectManagement\Fixture\FooBarAnnotation;
 use Neos\Flow\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 
 /**
@@ -43,7 +42,7 @@ final class CompilerTest extends UnitTestCase
 
     protected function setUp(): void
     {
-        $this->compiler = $this->getAccessibleMock(Compiler::class);
+        $this->compiler = $this->getAccessibleMock(Compiler::class, [], [], '', false);
     }
 
     public static function annotationsAndStrings(): \Iterator

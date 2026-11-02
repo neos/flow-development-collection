@@ -13,10 +13,8 @@ namespace Neos\Flow\Tests\Unit\Validation;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use PHPUnit\Framework\Attributes\Test;
-use Neos\Flow\Annotations\Validate;
 use Neos\Flow\Annotations\IgnoreValidation;
-use Neos\Flow\Annotations;
+use Neos\Flow\Annotations\Validate;
 use Neos\Flow\Mvc\Controller\ActionController;
 use Neos\Flow\ObjectManagement\Configuration\Configuration;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
@@ -31,6 +29,7 @@ use Neos\Flow\Validation\Validator\IntegerValidator;
 use Neos\Flow\Validation\Validator\PolyTypeObjectValidatorInterface;
 use Neos\Flow\Validation\Validator\ValidatorInterface;
 use Neos\Flow\Validation\ValidatorResolver;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Testcase for the validator resolver
@@ -291,7 +290,7 @@ final class ValidatorResolverTest extends UnitTestCase
     #[Test]
     public function buildMethodArgumentsValidatorConjunctionsReturnsEmptyArrayIfMethodHasNoArguments()
     {
-        $mockController = $this->getAccessibleMock(ActionController::class, ['fooAction'], [], '', false);
+        $mockController = $this->getAccessibleMock(ActionController::class, [], [], '', false);
 
         $mockReflectionService = $this->createMock(ReflectionService::class);
         $mockReflectionService->expects($this->once())->method('getMethodParameters')->with(get_class($mockController), 'fooAction')->willReturn([]);

@@ -13,11 +13,10 @@ namespace Neos\Flow\Tests\Unit\Reflection;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use PHPUnit\Framework\Attributes\Test;
 use Neos\Flow\Reflection\Exception;
 use Neos\Flow\Reflection\PropertyReflection;
 use Neos\Flow\Tests\UnitTestCase;
-use Neos\Flow\Reflection;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Testcase for PropertyReflection

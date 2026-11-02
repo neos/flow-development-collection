@@ -13,13 +13,13 @@ namespace Neos\FluidAdaptor\Tests\Unit\ViewHelpers\Format;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use Neos\FluidAdaptor\ViewHelpers\Format\NumberViewHelper;
-use PHPUnit\Framework\Attributes\Test;
-use Neos\Flow\I18n\Formatter\NumberFormatter;
 use Neos\Flow\I18n\Configuration;
+use Neos\Flow\I18n\Formatter\NumberFormatter;
 use Neos\Flow\I18n\Service;
 use Neos\FluidAdaptor\Core\ViewHelper\Exception;
 use Neos\FluidAdaptor\Tests\Unit\ViewHelpers\ViewHelperBaseTestcase;
+use Neos\FluidAdaptor\ViewHelpers\Format\NumberViewHelper;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Test for \Neos\FluidAdaptor\ViewHelpers\Format\NumberViewHelper

@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Property;
 
 /*
@@ -70,7 +71,7 @@ interface PropertyMappingConfigurationInterface
 
     /**
      * @param string $typeConverterClassName
-     * @param string $key
+     * @param string|int $key
      * @return mixed configuration value for the specific $typeConverterClassName. Can be used by Type Converters to fetch converter-specific configuration
      * @api
      */

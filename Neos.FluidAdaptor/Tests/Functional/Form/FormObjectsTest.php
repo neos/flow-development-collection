@@ -14,13 +14,13 @@ namespace Neos\FluidAdaptor\Tests\Functional\Form;
  * source code.
  */
 
-use PHPUnit\Framework\Attributes\Large;
 use Neos\Flow\Tests\FunctionalTestCase;
+use Neos\FluidAdaptor\Tests\Functional\Form\Fixtures\Domain\Model\Post;
+use Neos\FluidAdaptor\Tests\Functional\Form\Fixtures\Domain\Model\Tag;
+use Neos\FluidAdaptor\Tests\Functional\Form\Fixtures\Domain\Model\User;
+use PHPUnit\Framework\Attributes\Large;
 use PHPUnit\Framework\Attributes\Test;
 use Symfony\Component\DomCrawler\Field\InputFormField;
-use Neos\FluidAdaptor\Tests\Functional\Form\Fixtures\Domain\Model\Post;
-use Neos\FluidAdaptor\Tests\Functional\Form\Fixtures\Domain\Model\User;
-use Neos\FluidAdaptor\Tests\Functional\Form\Fixtures\Domain\Model\Tag;
 
 /**
  * Testcase for Standalone View

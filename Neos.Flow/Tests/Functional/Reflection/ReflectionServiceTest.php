@@ -13,29 +13,29 @@ namespace Neos\Flow\Tests\Functional\Reflection;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use PHPUnit\Framework\Attributes\Test;
-use Neos\Flow\Tests\Functional\Reflection\Fixtures\ClassSchemaFixture;
 use Neos\Flow\Reflection\ClassSchema;
-use PHPUnit\Framework\Attributes\DoesNotPerformAssertions;
-use Neos\Flow\Tests\Functional\Reflection\Fixtures\Model\EntityExtendingPlainObject;
-use Neos\Flow\Tests\Functional\Reflection\Fixtures\Repository\SuperEntityRepository;
-use Neos\Flow\Tests\Functional\Reflection\Fixtures\Model\SuperEntity;
-use Neos\Flow\Tests\Functional\Reflection\Fixtures\Repository\SubSubEntityRepository;
-use Neos\Flow\Tests\Functional\Reflection\Fixtures\AnnotatedClassWithUseStatements;
+use Neos\Flow\Reflection\ReflectionService;
+use Neos\Flow\Tests\Functional\Persistence;
+use Neos\Flow\Tests\Functional\Reflection;
 use Neos\Flow\Tests\Functional\Reflection\Fixtures\AnnotatedClass;
-use Neos\Flow\Tests\Functional\Reflection\Fixtures\Model\EntityWithUseStatements;
+use Neos\Flow\Tests\Functional\Reflection\Fixtures\AnnotatedClassWithUseStatements;
+use Neos\Flow\Tests\Functional\Reflection\Fixtures\ClassSchemaFixture;
 use Neos\Flow\Tests\Functional\Reflection\Fixtures\DummyClassWithProperties;
 use Neos\Flow\Tests\Functional\Reflection\Fixtures\DummyClassWithTypeHints;
-use Neos\Flow\Tests\Functional\Reflection\Fixtures\PHP8\DummyClassWithUnionTypeHints;
-use Neos\Flow\Tests\Functional\Reflection\Fixtures\PHP8\DummyClassWithDisjunctiveNormalFormTypes;
 use Neos\Flow\Tests\Functional\Reflection\Fixtures\DummyReadonlyClass;
-use Neos\Flow\Reflection\ReflectionService;
+use Neos\Flow\Tests\Functional\Reflection\Fixtures\Model\EntityExtendingPlainObject;
+use Neos\Flow\Tests\Functional\Reflection\Fixtures\Model\EntityWithUseStatements;
 use Neos\Flow\Tests\Functional\Reflection\Fixtures\Model\SubEntity;
 use Neos\Flow\Tests\Functional\Reflection\Fixtures\Model\SubSubEntity;
 use Neos\Flow\Tests\Functional\Reflection\Fixtures\Model\SubSubSubEntity;
-use Neos\Flow\Tests\Functional\Persistence;
-use Neos\Flow\Tests\Functional\Reflection;
+use Neos\Flow\Tests\Functional\Reflection\Fixtures\Model\SuperEntity;
+use Neos\Flow\Tests\Functional\Reflection\Fixtures\PHP8\DummyClassWithDisjunctiveNormalFormTypes;
+use Neos\Flow\Tests\Functional\Reflection\Fixtures\PHP8\DummyClassWithUnionTypeHints;
+use Neos\Flow\Tests\Functional\Reflection\Fixtures\Repository\SubSubEntityRepository;
+use Neos\Flow\Tests\Functional\Reflection\Fixtures\Repository\SuperEntityRepository;
 use Neos\Flow\Tests\FunctionalTestCase;
+use PHPUnit\Framework\Attributes\DoesNotPerformAssertions;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Functional tests for the Reflection Service features

@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Neos\Kickstarter\Tests\Unit\Utility;
 
 use Neos\Flow\Tests\UnitTestCase;
-use PHPUnit\Framework\Attributes\Test;
 use Neos\Kickstarter\Utility\Inflector;
+use PHPUnit\Framework\Attributes\Test;
 
 /*
  * This file is part of the Neos.Kickstarter package.

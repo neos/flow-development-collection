@@ -13,19 +13,19 @@ namespace Neos\Flow\Tests\Unit\Security\Authentication\Provider;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use Neos\Flow\Security\Cryptography\HashService;
-use Neos\Flow\Security\Account;
-use Neos\Flow\Security\AccountRepository;
-use Neos\Flow\Security\Authentication\Token\UsernamePassword;
-use Neos\Flow\Security\Cryptography\PrecomposedHashProvider;
-use Neos\Flow\Security\Context;
-use PHPUnit\Framework\Attributes\Test;
-use Neos\Flow\Security\Authentication\TokenInterface;
-use Neos\Flow\Security\Exception\UnsupportedAuthenticationTokenException;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Flow\Security;
+use Neos\Flow\Security\Account;
+use Neos\Flow\Security\AccountRepository;
 use Neos\Flow\Security\Authentication\Provider\PersistedUsernamePasswordProvider;
+use Neos\Flow\Security\Authentication\Token\UsernamePassword;
+use Neos\Flow\Security\Authentication\TokenInterface;
+use Neos\Flow\Security\Context;
+use Neos\Flow\Security\Cryptography\HashService;
+use Neos\Flow\Security\Cryptography\PrecomposedHashProvider;
+use Neos\Flow\Security\Exception\UnsupportedAuthenticationTokenException;
 use Neos\Flow\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Testcase for username/password authentication provider. The account are stored in the CR.

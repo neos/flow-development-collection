@@ -13,15 +13,15 @@ namespace Neos\Flow\Tests\Unit\Mvc\View;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use Neos\Flow\Mvc\View\JsonView;
-use Neos\Flow\Mvc\Controller\ControllerContext;
+use Neos\Flow\Mvc;
 use Neos\Flow\Mvc\ActionResponse;
+use Neos\Flow\Mvc\Controller\ControllerContext;
+use Neos\Flow\Mvc\View\JsonView;
+use Neos\Flow\Persistence\Doctrine\PersistenceManager;
 use Neos\Flow\Tests\Unit\Mvc\View\Fixtures\NestedTestObject;
+use Neos\Flow\Tests\UnitTestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
-use Neos\Flow\Mvc;
-use Neos\Flow\Persistence\Doctrine\PersistenceManager;
-use Neos\Flow\Tests\UnitTestCase;
 
 /**
  * Testcase for the JSON view

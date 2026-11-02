@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Security\Authentication;
 
 /*
@@ -14,9 +15,9 @@ namespace Neos\Flow\Security\Authentication;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Security\Authentication\Token\SessionlessTokenInterface;
 use Neos\Flow\Security\Context;
-use Neos\Flow\Security\Exception\NoTokensAuthenticatedException;
-use Neos\Flow\Security\Exception\AuthenticationRequiredException;
 use Neos\Flow\Security\Exception;
+use Neos\Flow\Security\Exception\AuthenticationRequiredException;
+use Neos\Flow\Security\Exception\NoTokensAuthenticatedException;
 use Neos\Flow\Session\Exception\SessionNotStartedException;
 use Neos\Flow\Session\SessionManagerInterface;
 
@@ -51,7 +52,7 @@ class AuthenticationProviderManager implements AuthenticationManagerInterface
      * Injected configuration for providers.
      * Will be null'd again after building the object instances.
      *
-     * @var array|null
+     * @var array<mixed>|null
      */
     protected $providerConfigurations;
 
@@ -81,7 +82,7 @@ class AuthenticationProviderManager implements AuthenticationManagerInterface
     /**
      * Inject the settings and does a fresh build of tokens based on the injected settings
      *
-     * @param array $settings The settings
+     * @param array<string,mixed> $settings The settings
      * @return void
      * @throws Exception
      */
@@ -206,7 +207,10 @@ class AuthenticationProviderManager implements AuthenticationManagerInterface
             } catch (AuthenticationRequiredException $exception) {
             }
         }
-        return $this->isAuthenticated;
+
+        return $this->isAuthenticated !== null
+            ? $this->isAuthenticated
+            : false;
     }
 
     /**

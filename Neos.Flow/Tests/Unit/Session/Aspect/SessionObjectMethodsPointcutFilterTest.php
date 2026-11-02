@@ -13,12 +13,12 @@ namespace Neos\Flow\Tests\Unit\Session\Aspect;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use PHPUnit\Framework\Attributes\Test;
 use Neos\Flow\Aop\Builder\ClassNameIndex;
 use Neos\Flow\ObjectManagement\CompileTimeObjectManager;
 use Neos\Flow\ObjectManagement\Configuration\Configuration;
 use Neos\Flow\Session\Aspect\SessionObjectMethodsPointcutFilter;
 use Neos\Flow\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Testcase for the SessionObjectMethodsPointcutFilter

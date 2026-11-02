@@ -13,29 +13,29 @@ namespace Neos\Flow\Tests\Unit\Mvc\Controller;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use Neos\Flow\Mvc\ActionRequest;
-use Neos\Flow\Mvc\Controller\ControllerContext;
-use Neos\Flow\Mvc\ViewConfigurationManager;
-use PHPUnit\Framework\Attributes\Test;
-use Neos\Flow\Mvc\Exception\NoSuchActionException;
-use Neos\Flow\Mvc\ActionResponse;
-use Neos\Flow\Mvc\Exception\InvalidActionVisibilityException;
-use Neos\Flow\Mvc\Controller\MvcPropertyMappingConfigurationService;
-use Neos\Flow\Mvc\View\ViewInterface;
-use PHPUnit\Framework\Attributes\DataProvider;
-use Neos\Flow\Mvc\Exception\ViewNotFoundException;
-use Neos\Flow\Mvc\Controller\Argument;
 use GuzzleHttp\Psr7\Response;
-use Neos\Flow\Mvc\Controller\ActionController;
-use Neos\Flow\Mvc\Controller\Arguments;
-use Neos\Flow\Mvc\View\SimpleTemplateView;
 use Neos\Flow\Mvc;
+use Neos\Flow\Mvc\ActionRequest;
+use Neos\Flow\Mvc\ActionResponse;
+use Neos\Flow\Mvc\Controller\ActionController;
+use Neos\Flow\Mvc\Controller\Argument;
+use Neos\Flow\Mvc\Controller\Arguments;
+use Neos\Flow\Mvc\Controller\ControllerContext;
+use Neos\Flow\Mvc\Controller\MvcPropertyMappingConfigurationService;
+use Neos\Flow\Mvc\Exception\InvalidActionVisibilityException;
+use Neos\Flow\Mvc\Exception\NoSuchActionException;
+use Neos\Flow\Mvc\Exception\ViewNotFoundException;
+use Neos\Flow\Mvc\View\SimpleTemplateView;
+use Neos\Flow\Mvc\View\ViewInterface;
+use Neos\Flow\Mvc\ViewConfigurationManager;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Reflection\ReflectionService;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Flow\Validation\Validator\ConjunctionValidator;
 use Neos\Flow\Validation\Validator\ValidatorInterface;
 use Neos\Flow\Validation\ValidatorResolver;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use Psr\Http\Message\ServerRequestInterface;
 
 /**
@@ -152,7 +152,7 @@ final class ActionControllerTest extends UnitTestCase
         $mockHttpRequest = $this->createStub(ServerRequestInterface::class);
         $mockRequest->method('getHttpRequest')->willReturn(($mockHttpRequest));
 
-        $mockResponse = new ActionResponse;
+        $mockResponse = new ActionResponse();
 
         $this->actionController->processRequest($mockRequest, $mockResponse);
     }
@@ -190,7 +190,7 @@ final class ActionControllerTest extends UnitTestCase
         $mockHttpRequest = $this->createStub(ServerRequestInterface::class);
         $mockRequest->method('getHttpRequest')->willReturn(($mockHttpRequest));
 
-        $mockResponse = new ActionResponse;
+        $mockResponse = new ActionResponse();
 
         $this->actionController->processRequest($mockRequest, $mockResponse);
     }
@@ -227,9 +227,9 @@ final class ActionControllerTest extends UnitTestCase
                 }
                 return $mockView;
             });
-        $this->actionController->expects(self::once())->method('resolveView')->will(self::returnValue($mockView));
+        $this->actionController->expects(self::once())->method('resolveView')->willReturn($mockView);
         $this->actionController->expects(self::once())->method('callActionMethod')->willReturn(new Response());
-        $this->actionController->expects(self::once())->method('resolveActionMethodName')->will(self::returnValue('someAction'));
+        $this->actionController->expects(self::once())->method('resolveActionMethodName')->willReturn('someAction');
 
         $this->actionController->processRequest($this->mockRequest);
     }
@@ -279,7 +279,6 @@ final class ActionControllerTest extends UnitTestCase
         $this->inject($this->actionController, 'supportedMediaTypes', ['application/xml']);
 
         $this->actionController->expects(self::once())->method('callActionMethod')->willReturn($mockResponse);
-
 
         $mockMvcPropertyMappingConfigurationService = $this->createStub(MvcPropertyMappingConfigurationService::class);
         $this->inject($this->actionController, 'mvcPropertyMappingConfigurationService', $mockMvcPropertyMappingConfigurationService);

@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Tests\Functional\Persistence\FixturesPHP8;
 
 /*
@@ -14,8 +15,8 @@ namespace Neos\Flow\Tests\Functional\Persistence\FixturesPHP8;
 use Doctrine\ORM\Event\OnFlushEventArgs;
 use Doctrine\ORM\Event\PostFlushEventArgs;
 use Doctrine\ORM\Event\PreFlushEventArgs;
-use Neos\Flow\Annotations as Flow;
 use Doctrine\ORM\Events;
+use Neos\Flow\Annotations as Flow;
 
 /**
  * A sample event subscriber

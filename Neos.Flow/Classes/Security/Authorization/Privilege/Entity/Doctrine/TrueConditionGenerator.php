@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Security\Authorization\Privilege\Entity\Doctrine;
 
 /*
@@ -11,8 +12,8 @@ namespace Neos\Flow\Security\Authorization\Privilege\Entity\Doctrine;
  * source code.
  */
 
-use Doctrine\Persistence\Mapping\ClassMetadata;
 use Doctrine\ORM\Query\Filter\SQLFilter as DoctrineSqlFilter;
+use Doctrine\Persistence\Mapping\ClassMetadata;
 use Neos\Flow\Annotations as Flow;
 
 /**
@@ -24,7 +25,7 @@ class TrueConditionGenerator implements SqlGeneratorInterface
      * Returns an SQL query part that is basically a no-op in order to match any entity
      *
      * @param DoctrineSqlFilter $sqlFilter
-     * @param ClassMetadata $targetEntity
+     * @param ClassMetadata<object> $targetEntity
      * @param string $targetTableAlias
      * @return string
      */

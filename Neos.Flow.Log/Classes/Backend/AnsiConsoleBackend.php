@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Neos\Flow\Log\Backend;
@@ -22,25 +23,25 @@ use Neos\Flow\Log\Exception\CouldNotOpenResourceException;
  */
 class AnsiConsoleBackend extends ConsoleBackend
 {
-    const FG_BLACK = "\033[0;30m";
-    const FG_WHITE = "\033[1;37m";
-    const FG_GRAY = "\033[0;37m";
-    const FG_BLUE = "\033[0;34m";
-    const FG_CYAN = "\033[0;36m";
-    const FG_YELLOW = "\033[1;33m";
-    const FG_RED = "\033[0;31m";
-    const FG_GREEN = "\033[0;32m";
+    public const FG_BLACK = "\033[0;30m";
+    public const FG_WHITE = "\033[1;37m";
+    public const FG_GRAY = "\033[0;37m";
+    public const FG_BLUE = "\033[0;34m";
+    public const FG_CYAN = "\033[0;36m";
+    public const FG_YELLOW = "\033[1;33m";
+    public const FG_RED = "\033[0;31m";
+    public const FG_GREEN = "\033[0;32m";
 
-    const BG_CYAN = "\033[46m";
-    const BG_GREEN = "\033[42m";
-    const BG_RED = "\033[41m";
-    const BG_YELLOW = "\033[43m";
-    const BG_WHITE = "\033[47m";
+    public const BG_CYAN = "\033[46m";
+    public const BG_GREEN = "\033[42m";
+    public const BG_RED = "\033[41m";
+    public const BG_YELLOW = "\033[43m";
+    public const BG_WHITE = "\033[47m";
 
-    const END = "\033[0m";
+    public const END = "\033[0m";
 
     /**
-     * @var array
+     * @var array<string,string>
      */
     protected $tagFormats = [];
 
@@ -75,12 +76,7 @@ class AnsiConsoleBackend extends ConsoleBackend
     /**
      * Appends the given message along with the additional information into the log.
      *
-     * @param string $message
-     * @param int $severity
-     * @param array $additionalData
-     * @param string $packageKey
-     * @param string $className
-     * @param string $methodName
+     * @param array<mixed>|null $additionalData
      * @return void
      */
     public function append(string $message, int $severity = LOG_INFO, $additionalData = null, ?string $packageKey = null, ?string $className = null, ?string $methodName = null): void
@@ -118,7 +114,7 @@ class AnsiConsoleBackend extends ConsoleBackend
                 } else {
                     return str_replace('|', $matches[3], $format);
                 }
-            }, $output);
+            }, $output) ?: '';
         } while ($lastOutput !== $output);
         return $output;
     }
@@ -126,7 +122,7 @@ class AnsiConsoleBackend extends ConsoleBackend
     /**
      * @param boolean $disableAnsi
      */
-    public function setDisableAnsi($disableAnsi)
+    public function setDisableAnsi($disableAnsi): void
     {
         $this->disableAnsi = $disableAnsi;
     }

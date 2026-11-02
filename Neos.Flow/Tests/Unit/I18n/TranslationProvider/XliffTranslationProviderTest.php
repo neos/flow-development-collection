@@ -13,16 +13,16 @@ namespace Neos\Flow\Tests\Unit\I18n\TranslationProvider;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use Neos\Flow\I18n\Locale;
-use Neos\Flow\I18n\Cldr\Reader\PluralsReader;
-use Neos\Flow\I18n\Xliff\Service\XliffFileProvider;
-use PHPUnit\Framework\Attributes\Test;
-use Neos\Flow\I18n\Xliff\Model\FileAdapter;
-use Neos\Flow\I18n\TranslationProvider\XliffTranslationProvider;
-use Neos\Flow\I18n\TranslationProvider\Exception\InvalidPluralFormException;
-use PHPUnit\Framework\MockObject\MockObject;
 use Neos\Flow\I18n;
+use Neos\Flow\I18n\Cldr\Reader\PluralsReader;
+use Neos\Flow\I18n\Locale;
+use Neos\Flow\I18n\TranslationProvider\Exception\InvalidPluralFormException;
+use Neos\Flow\I18n\TranslationProvider\XliffTranslationProvider;
+use Neos\Flow\I18n\Xliff\Model\FileAdapter;
+use Neos\Flow\I18n\Xliff\Service\XliffFileProvider;
 use Neos\Flow\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\MockObject\MockObject;
 
 /**
  * Testcase for the XliffTranslationProvider

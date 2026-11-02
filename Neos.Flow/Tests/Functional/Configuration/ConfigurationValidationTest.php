@@ -13,8 +13,6 @@ namespace Neos\Flow\Tests\Functional\Configuration;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use PHPUnit\Framework\Attributes\DataProvider;
-use PHPUnit\Framework\Attributes\Test;
 use Neos\Error\Messages\Error;
 use Neos\Error\Messages\Result;
 use Neos\Flow\Configuration\ConfigurationManager;
@@ -26,6 +24,8 @@ use Neos\Flow\Package\PackageManager;
 use Neos\Flow\Tests\Functional\Configuration\Fixtures\RootDirectoryIgnoringYamlSource;
 use Neos\Flow\Tests\FunctionalTestCase;
 use Neos\Utility\ObjectAccess;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 
 /**

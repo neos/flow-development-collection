@@ -4,9 +4,6 @@ declare(strict_types=1);
 
 namespace Neos\FluidAdaptor\Tests\Unit\View;
 
-use Neos\Flow\Mvc\ActionRequest;
-use PHPUnit\Framework\Attributes\Test;
-
 /*
  * This file is part of the Neos.FluidAdaptor package.
  *
@@ -21,9 +18,11 @@ include_once(__DIR__ . '/Fixtures/TemplateViewFixture.php');
 
 use GuzzleHttp\Psr7\ServerRequest;
 use GuzzleHttp\Psr7\Uri;
+use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\Controller\ControllerContext;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\FluidAdaptor\View\TemplateView;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Testcase for the TemplateView
@@ -41,7 +40,7 @@ final class TemplateViewTest extends UnitTestCase
      */
     protected function setupMockControllerContextForPathResolving($packageKey, $subPackageKey, $controllerName, $format)
     {
-        $controllerObjectName = 'Neos\\' . $packageKey . '\\' . ($subPackageKey != $subPackageKey . '\\' ? : '') . 'Controller\\' . $controllerName . 'Controller';
+        $controllerObjectName = 'Neos\\' . $packageKey . '\\' . ($subPackageKey != $subPackageKey . '\\' ?: '') . 'Controller\\' . $controllerName . 'Controller';
 
         $httpRequest = new ServerRequest('GET', new Uri('http://robertlemke.com/blog'));
         $mockRequest = $this->createMock(ActionRequest::class, [], [$httpRequest]);

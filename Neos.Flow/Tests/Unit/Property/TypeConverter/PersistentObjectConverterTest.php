@@ -15,17 +15,14 @@ namespace Neos\Flow\Tests\Unit\Property\TypeConverter;
  */
 
 use Doctrine\ORM\Query\Expr\Comparison;
-use Neos\Flow\Persistence\PersistenceManagerInterface;
-use PHPUnit\Framework\Attributes\Test;
-use PHPUnit\Framework\Attributes\DataProvider;
-use Neos\Flow\Persistence\QueryInterface;
-use Neos\Flow\Persistence\QueryResultInterface;
-use PHPUnit\Framework\MockObject\MockObject;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Fixtures\ClassWithSetters;
 use Neos\Flow\Fixtures\ClassWithSettersAndConstructor;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Persistence;
+use Neos\Flow\Persistence\PersistenceManagerInterface;
+use Neos\Flow\Persistence\QueryInterface;
+use Neos\Flow\Persistence\QueryResultInterface;
 use Neos\Flow\Property\Exception\DuplicateObjectException;
 use Neos\Flow\Property\Exception\InvalidPropertyMappingConfigurationException;
 use Neos\Flow\Property\Exception\InvalidSourceException;
@@ -37,6 +34,9 @@ use Neos\Flow\Property\TypeConverterInterface;
 use Neos\Flow\Reflection\ClassSchema;
 use Neos\Flow\Reflection\ReflectionService;
 use Neos\Flow\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\MockObject\Rule\InvocationOrder;
 
 require_once(__DIR__ . '/../../Fixtures/ClassWithSetters.php');
@@ -178,18 +178,18 @@ final class PersistentObjectConverterTest extends UnitTestCase
         $this->mockReflectionService
             ->expects($matcher)
             ->method('getMethodParameters')->willReturnCallback(function (...$parameters) use ($matcher) {
-            if ($matcher->numberOfInvocations() === 1) {
-                $this->assertSame('TheTargetType', $parameters[0]);
-                $this->assertSame('__construct', $parameters[1]);
-            }
-            if ($matcher->numberOfInvocations() === 2) {
-                $this->assertSame('TheTargetType', $parameters[0]);
-                $this->assertSame('setVirtualPropertyName', $parameters[1]);
-            }
-            return [
-                ['type' => 'TheTypeOfSubObject']
-            ];
-        });
+                if ($matcher->numberOfInvocations() === 1) {
+                    $this->assertSame('TheTargetType', $parameters[0]);
+                    $this->assertSame('__construct', $parameters[1]);
+                }
+                if ($matcher->numberOfInvocations() === 2) {
+                    $this->assertSame('TheTargetType', $parameters[0]);
+                    $this->assertSame('setVirtualPropertyName', $parameters[1]);
+                }
+                return [
+                    ['type' => 'TheTypeOfSubObject']
+                ];
+            });
         $configuration = $this->buildConfiguration([]);
         self::assertEquals('TheTypeOfSubObject', $this->converter->getTypeOfChildProperty('TheTargetType', 'virtualPropertyName', $configuration));
     }
@@ -210,7 +210,6 @@ final class PersistentObjectConverterTest extends UnitTestCase
         $configuration = $this->buildConfiguration([]);
         self::assertEquals('string', $this->converter->getTypeOfChildProperty('TheTargetType', 'anotherProperty', $configuration));
     }
-
 
     #[Test]
     public function convertFromShouldFetchObjectFromPersistenceIfUuidStringIsGiven()

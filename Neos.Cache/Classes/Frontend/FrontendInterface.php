@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Neos\Cache\Frontend;
@@ -23,12 +24,12 @@ interface FrontendInterface
     /**
      * Pattern an entry identifier must match.
      */
-    const PATTERN_ENTRYIDENTIFIER = '/^[a-zA-Z0-9_%\-&]{1,250}$/';
+    public const PATTERN_ENTRYIDENTIFIER = '/^[a-zA-Z0-9_%\-&]{1,250}$/';
 
     /**
      * Pattern a tag must match.
      */
-    const PATTERN_TAG = '/^[a-zA-Z0-9_%\-&]{1,250}$/';
+    public const PATTERN_TAG = '/^[a-zA-Z0-9_%\-&]{1,250}$/';
 
     /**
      * Returns this cache's identifier

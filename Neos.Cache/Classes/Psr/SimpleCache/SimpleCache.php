@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Neos\Cache\Psr\SimpleCache;
@@ -27,7 +28,7 @@ class SimpleCache implements CacheInterface
     /**
      * Pattern an entry identifier must match.
      */
-    const PATTERN_ENTRYIDENTIFIER = '/^[a-zA-Z0-9_\.]{1,64}$/';
+    public const PATTERN_ENTRYIDENTIFIER = '/^[a-zA-Z0-9_\.]{1,64}$/';
 
     /**
      * @var string

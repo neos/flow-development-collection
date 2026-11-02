@@ -13,11 +13,10 @@ namespace Neos\Flow\Log\Tests\Unit\Backend;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use PHPUnit\Framework\Attributes\Test;
 use Neos\Flow\Log\Backend\JsonFileBackend;
-use org\bovigo\vfs\vfsStream;
-use org\bovigo\vfs\vfsStreamWrapper;
 use Neos\Flow\Tests\UnitTestCase;
+use org\bovigo\vfs\vfsStream;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Test case for the Json File Backend

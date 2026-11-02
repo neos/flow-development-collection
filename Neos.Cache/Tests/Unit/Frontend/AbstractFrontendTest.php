@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Neos\Cache\Tests\Unit\Frontend;
 
-use PHPUnit\Framework\Attributes\Test;
-
 include_once(__DIR__ . '/../../BaseTestCase.php');
 
 /*
@@ -18,9 +16,10 @@ include_once(__DIR__ . '/../../BaseTestCase.php');
  * source code.
  */
 use Neos\Cache\Backend\AbstractBackend;
-use Neos\Cache\Tests\BaseTestCase;
 use Neos\Cache\Backend\TaggableBackendInterface;
 use Neos\Cache\Frontend\StringFrontend;
+use Neos\Cache\Tests\BaseTestCase;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Testcase for the abstract cache frontend

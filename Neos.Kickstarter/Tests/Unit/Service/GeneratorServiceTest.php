@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Neos\Kickstarter\Tests\Unit\Service;
 
 use Neos\Flow\Tests\UnitTestCase;
-use PHPUnit\Framework\Attributes\Test;
 use Neos\Kickstarter\Service\GeneratorService;
+use PHPUnit\Framework\Attributes\Test;
 
 /*
  * This file is part of the Neos.Kickstarter package.

@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Neos\Flow\Security\Aspect;
@@ -50,6 +51,7 @@ class LoggingAspect
     public function logManagerAuthenticate(JoinPointInterface $joinPoint)
     {
         if ($joinPoint->hasException()) {
+            /** @var \Exception $exception */
             $exception = $joinPoint->getException();
             if (!$exception instanceof NoTokensAuthenticatedException) {
                 $this->securityLogger->notice(sprintf('Authentication failed: "%s" #%d', $exception->getMessage(), $exception->getCode()), $this->getLogEnvironmentFromJoinPoint($joinPoint));
@@ -100,9 +102,9 @@ class LoggingAspect
     }
 
     /**
-     * @param array $collectedIdentifiers
+     * @param array<string> $collectedIdentifiers
      * @param TokenInterface $token
-     * @return array
+     * @return array<string>
      */
     protected function reduceTokenToAccountIdentifier(array $collectedIdentifiers, TokenInterface $token): array
     {
@@ -170,7 +172,7 @@ class LoggingAspect
 
     /**
      * @param JoinPointInterface $joinPoint
-     * @return array
+     * @return array<string,array{packageKey: string, className: string, methodName: string}>
      */
     protected function getLogEnvironmentFromJoinPoint(JoinPointInterface $joinPoint): array
     {

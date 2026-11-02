@@ -1,5 +1,7 @@
 <?php
+
 declare(strict_types=1);
+
 namespace Neos\Flow\Session\Aspect;
 
 /*
@@ -29,11 +31,14 @@ class LazyLoadingAspect
     #[Flow\Inject]
     protected ?LoggerInterface $logger = null;
 
+    /**
+     * @var array<string,object>
+     */
     protected array $sessionOriginalInstances = [];
 
     public function __construct(
-        readonly protected ObjectManagerInterface $objectManager,
-        readonly protected SessionManagerInterface $sessionManager,
+        protected readonly ObjectManagerInterface $objectManager,
+        protected readonly SessionManagerInterface $sessionManager,
     ) {
     }
 

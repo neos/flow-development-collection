@@ -4,8 +4,12 @@ declare(strict_types=1);
 
 namespace Neos\Flow\Tests\Unit\Reflection;
 
+use Neos\Flow\Reflection\ClassReflection;
+use Neos\Flow\Reflection\MethodReflection;
+use Neos\Flow\Reflection\PropertyReflection;
 use Neos\Flow\Tests\Reflection\Fixture\DummyInterface1;
 use Neos\Flow\Tests\Reflection\Fixture\DummyInterface2;
+use Neos\Flow\Tests\UnitTestCase;
 use PHPUnit\Framework\Attributes\Test;
 
 /*
@@ -20,12 +24,6 @@ use PHPUnit\Framework\Attributes\Test;
 
 require_once('Fixture/DummyInterface1.php');
 require_once('Fixture/DummyInterface2.php');
-
-use Neos\Flow\Reflection\ClassReflection;
-use Neos\Flow\Reflection\MethodReflection;
-use Neos\Flow\Reflection\PropertyReflection;
-use Neos\Flow\Tests\UnitTestCase;
-use Neos\Flow\Tests\Reflection\Fixture;
 
 /**
  * Testcase for ClassReflection

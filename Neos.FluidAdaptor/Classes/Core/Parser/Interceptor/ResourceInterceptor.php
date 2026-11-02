@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\FluidAdaptor\Core\Parser\Interceptor;
 
 /*
@@ -40,7 +41,7 @@ class ResourceInterceptor implements InterceptorInterface
      *
      * @var string
      */
-    const PATTERN_SPLIT_AT_RESOURCE_URIS = '!
+    public const PATTERN_SPLIT_AT_RESOURCE_URIS = '!
 		(
 			(?:[^"\'(\s]+/      # URL part: A string with no quotes, no opening parentheses and no whitespace
 			)*                  # a URL consists of multiple URL parts
@@ -55,7 +56,7 @@ class ResourceInterceptor implements InterceptorInterface
      * @var string
      * @see \Neos\Flow\Package\FlowPackageKey::PATTERN
      */
-    const PATTERN_MATCH_RESOURCE_URI = '!(?:../)*(?:(?P<Package>[A-Za-z0-9]+\.(?:[A-Za-z0-9][\.a-z0-9]*)+)/Resources/)?Public/(?P<Path>[^"]+)!';
+    public const PATTERN_MATCH_RESOURCE_URI = '!(?:../)*(?:(?P<Package>[A-Za-z0-9]+\.(?:[A-Za-z0-9][\.a-z0-9]*)+)/Resources/)?Public/(?P<Path>[^"]+)!';
 
     /**
      * The default package key to use when rendering resource links without a
@@ -97,7 +98,7 @@ class ResourceInterceptor implements InterceptorInterface
         if (strpos($node->getText(), 'Public/') === false) {
             return $node;
         }
-        $textParts = preg_split(self::PATTERN_SPLIT_AT_RESOURCE_URIS, $node->getText(), -1, PREG_SPLIT_NO_EMPTY | PREG_SPLIT_DELIM_CAPTURE);
+        $textParts = preg_split(self::PATTERN_SPLIT_AT_RESOURCE_URIS, $node->getText(), -1, PREG_SPLIT_NO_EMPTY | PREG_SPLIT_DELIM_CAPTURE) ?: [];
         $node = new RootNode();
         foreach ($textParts as $part) {
             $matches = [];
@@ -109,7 +110,7 @@ class ResourceInterceptor implements InterceptorInterface
                 if ($this->defaultPackageKey !== null) {
                     $arguments['package'] = new TextNode($this->defaultPackageKey);
                 }
-                if (isset($matches['Package']) && FlowPackageKey::isPackageKeyValid($matches['Package'])) {
+                if (FlowPackageKey::isPackageKeyValid($matches['Package'])) {
                     $arguments['package'] = new TextNode($matches['Package']);
                 }
 
@@ -127,7 +128,7 @@ class ResourceInterceptor implements InterceptorInterface
     /**
      * This interceptor wants to hook into text nodes.
      *
-     * @return array Array of INTERCEPT_* constants
+     * @return array<int,int> Array of INTERCEPT_* constants
      */
     public function getInterceptionPoints()
     {

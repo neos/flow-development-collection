@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Neos\Flow\Command;
@@ -299,7 +300,7 @@ class RoutingCommandController extends CommandController
 
         $this->outputLine();
         $this->outputLine('<b>Results:</b>');
-        $matchResults = $matchedRoute->getMatchResults();
+        $matchResults = $matchedRoute->getMatchResults() ?? [];
         $this->outputArray($matchResults, 2);
 
         $this->outputLine();
@@ -338,7 +339,7 @@ class RoutingCommandController extends CommandController
      * Parses the given JSON string as array
      *
      * @param string|null $json
-     * @return array
+     * @return array<string, mixed>
      * @throws StopCommandException
      */
     private function parseJsonToArray(?string $json): array
@@ -361,7 +362,7 @@ class RoutingCommandController extends CommandController
     /**
      * Outputs a (potentially multi-dimensional) array to the console
      *
-     * @param array $array
+     * @param array<string|int, mixed> $array
      * @param int $indention
      */
     private function outputArray(array $array, int $indention): void

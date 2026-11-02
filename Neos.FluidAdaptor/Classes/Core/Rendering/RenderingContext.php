@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\FluidAdaptor\Core\Rendering;
 
 /*
@@ -11,20 +12,21 @@ namespace Neos\FluidAdaptor\Core\Rendering;
  * source code.
  */
 
-use Neos\FluidAdaptor\Core\Cache\CacheAdaptor;
-use Neos\FluidAdaptor\Core\Parser\TemplateParser;
-use Neos\FluidAdaptor\Core\Parser\TemplateProcessor\EscapingFlagProcessor;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\Controller\ControllerContext;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
+use Neos\FluidAdaptor\Core\Cache\CacheAdaptor;
 use Neos\FluidAdaptor\Core\Parser\Interceptor\ResourceInterceptor;
 use Neos\FluidAdaptor\Core\Parser\SyntaxTree\Expression\LegacyNamespaceExpressionNode;
+use Neos\FluidAdaptor\Core\Parser\TemplateParser;
+use Neos\FluidAdaptor\Core\Parser\TemplateProcessor\EscapingFlagProcessor;
 use Neos\FluidAdaptor\Core\Parser\TemplateProcessor\NamespaceDetectionTemplateProcessor;
 use Neos\FluidAdaptor\Core\ViewHelper\TemplateVariableContainer;
 use Neos\FluidAdaptor\Core\ViewHelper\ViewHelperResolver;
 use Neos\FluidAdaptor\View\TemplatePaths;
 use TYPO3Fluid\Fluid\Core\Parser\Configuration;
+use TYPO3Fluid\Fluid\Core\Parser\SyntaxTree\Expression\AbstractExpressionNode;
 use TYPO3Fluid\Fluid\Core\Parser\SyntaxTree\Expression\CastingExpressionNode;
 use TYPO3Fluid\Fluid\Core\Parser\SyntaxTree\Expression\MathExpressionNode;
 use TYPO3Fluid\Fluid\Core\Parser\SyntaxTree\Expression\TernaryExpressionNode;
@@ -42,7 +44,7 @@ class RenderingContext extends FluidRenderingContext implements FlowAwareRenderi
      * which will be consulted when an expression does not match
      * any built-in parser expression types.
      *
-     * @var array
+     * @var array<class-string<AbstractExpressionNode>>
      */
     protected $expressionNodeTypes = [
         LegacyNamespaceExpressionNode::class,
@@ -81,7 +83,7 @@ class RenderingContext extends FluidRenderingContext implements FlowAwareRenderi
     /**
      * RenderingContext constructor.
      *
-     * @param array $options
+     * @param array<string,mixed> $options
      */
     public function __construct(array $options = [])
     {
@@ -99,6 +101,7 @@ class RenderingContext extends FluidRenderingContext implements FlowAwareRenderi
 
     /**
      * @param ObjectManagerInterface $objectManager
+     * @return void
      */
     public function injectObjectManager(ObjectManagerInterface $objectManager)
     {
@@ -116,7 +119,7 @@ class RenderingContext extends FluidRenderingContext implements FlowAwareRenderi
     /**
      * @param ControllerContext $controllerContext
      */
-    public function setControllerContext($controllerContext)
+    public function setControllerContext($controllerContext): void
     {
         $this->controllerContext = $controllerContext;
         $request = $controllerContext->getRequest();

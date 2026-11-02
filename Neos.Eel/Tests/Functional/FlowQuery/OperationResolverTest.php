@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Neos\Eel\Tests\Functional\FlowQuery;
 
-use PHPUnit\Framework\Attributes\Test;
-use Neos\Eel\Tests\Functional\FlowQuery\Fixtures\ExampleFinalOperationWithHigherPriority;
 use Neos\Eel\FlowQuery\OperationResolver;
 use Neos\Eel\FlowQuery\OperationResolverInterface;
+use Neos\Eel\Tests\Functional\FlowQuery\Fixtures\ExampleFinalOperationWithHigherPriority;
 use Neos\Flow\Tests\FunctionalTestCase;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Test cases for operation resolver

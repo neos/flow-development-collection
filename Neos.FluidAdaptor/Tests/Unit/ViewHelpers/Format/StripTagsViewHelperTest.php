@@ -4,11 +4,6 @@ declare(strict_types=1);
 
 namespace Neos\FluidAdaptor\Tests\Unit\ViewHelpers\Format;
 
-use Neos\FluidAdaptor\ViewHelpers\Format\StripTagsViewHelper;
-use PHPUnit\Framework\Attributes\Test;
-use PHPUnit\Framework\Attributes\DataProvider;
-use PHPUnit\Framework\MockObject\MockObject;
-
 /*
  * This file is part of the Neos.FluidAdaptor package.
  *
@@ -26,6 +21,10 @@ require_once(__DIR__ . '/../Fixtures/UserWithToString.php');
 use Neos\FluidAdaptor\Tests\Unit\ViewHelpers\ViewHelperBaseTestcase;
 use Neos\FluidAdaptor\ViewHelpers\Fixtures\UserWithoutToString;
 use Neos\FluidAdaptor\ViewHelpers\Fixtures\UserWithToString;
+use Neos\FluidAdaptor\ViewHelpers\Format\StripTagsViewHelper;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\MockObject\MockObject;
 
 /**
  * Test for \Neos\FluidAdaptor\ViewHelpers\Format\StripTagsViewHelper

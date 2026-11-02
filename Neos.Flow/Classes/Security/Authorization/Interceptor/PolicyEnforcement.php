@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Security\Authorization\Interceptor;
 
 /*
@@ -15,10 +16,10 @@ use Doctrine\ORM\EntityNotFoundException;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Aop\JoinPointInterface;
 use Neos\Flow\Security\Authentication\AuthenticationManagerInterface;
+use Neos\Flow\Security\Authorization\InterceptorInterface;
 use Neos\Flow\Security\Authorization\Privilege\Method\MethodPrivilegeInterface;
 use Neos\Flow\Security\Authorization\Privilege\Method\MethodPrivilegeSubject;
 use Neos\Flow\Security\Authorization\PrivilegeManagerInterface;
-use Neos\Flow\Security\Authorization\InterceptorInterface;
 use Neos\Flow\Security\Context;
 use Neos\Flow\Security\Exception\AccessDeniedException;
 use Neos\Flow\Security\Exception\AuthenticationRequiredException;
@@ -96,6 +97,7 @@ class PolicyEnforcement implements InterceptorInterface
 
         try {
             $this->authenticationManager->authenticate();
+            /** @phpstan-ignore catch.neverThrown */
         } catch (EntityNotFoundException $exception) {
             throw new AuthenticationRequiredException('Could not authenticate. Looks like a broken session.', 1358971444, $exception);
         } catch (NoTokensAuthenticatedException $noTokensAuthenticatedException) {

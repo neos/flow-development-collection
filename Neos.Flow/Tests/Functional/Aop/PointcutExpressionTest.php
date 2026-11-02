@@ -13,9 +13,9 @@ namespace Neos\Flow\Tests\Functional\Aop;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use PHPUnit\Framework\Attributes\Test;
 use Neos\Flow\Tests\Functional\Aop\Fixtures\PointcutExpressionTestingTarget;
 use Neos\Flow\Tests\FunctionalTestCase;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Test suite for pointcut expression related features

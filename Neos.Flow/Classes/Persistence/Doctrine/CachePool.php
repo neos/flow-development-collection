@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Persistence\Doctrine;
 
 use Neos\Cache\Psr\Cache\CacheItem;

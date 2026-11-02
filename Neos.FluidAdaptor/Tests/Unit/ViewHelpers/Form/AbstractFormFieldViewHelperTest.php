@@ -13,14 +13,14 @@ namespace Neos\FluidAdaptor\Tests\Unit\ViewHelpers\Form;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use PHPUnit\Framework\Attributes\Test;
-use PHPUnit\Framework\Attributes\DataProvider;
-use PHPUnit\Framework\Attributes\DoesNotPerformAssertions;
 use Neos\Error\Messages\Result;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\FluidAdaptor\Tests\Unit\ViewHelpers\ViewHelperBaseTestcase;
 use Neos\FluidAdaptor\ViewHelpers\Form\AbstractFormFieldViewHelper;
 use Neos\FluidAdaptor\ViewHelpers\FormViewHelper;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\DoesNotPerformAssertions;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 
 require_once(__DIR__ . '/../ViewHelperBaseTestcase.php');
@@ -432,7 +432,7 @@ final class AbstractFormFieldViewHelperTest extends ViewHelperBaseTestcase
     #[Test]
     public function setErrorClassAttributeDoesNotSetClassAttributeIfNoErrorOccurred(): void
     {
-        $formViewHelper = $this->getAccessibleMock(AbstractFormFieldViewHelper::class, ['hasArgument', 'getErrorsForProperty'], [], '', false);
+        $formViewHelper = $this->getAccessibleMock(AbstractFormFieldViewHelper::class, ['hasArgument'], [], '', false);
         $this->injectDependenciesIntoViewHelper($formViewHelper);
 
         $this->tagBuilder->expects($this->never())->method('addAttribute');

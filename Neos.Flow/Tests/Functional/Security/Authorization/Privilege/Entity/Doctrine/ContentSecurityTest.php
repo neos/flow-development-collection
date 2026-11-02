@@ -13,25 +13,24 @@ namespace Neos\Flow\Tests\Functional\Security\Authorization\Privilege\Entity\Doc
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use Neos\Flow\Tests\Functional\Security\Fixtures\RestrictableEntityDoctrineRepository;
-use Neos\Flow\Tests\Functional\Security\Fixtures\TestEntityADoctrineRepository;
-use Neos\Flow\Tests\Functional\Security\Fixtures\TestEntityCDoctrineRepository;
-use Neos\Flow\Tests\Functional\Security\Fixtures\TestEntityDDoctrineRepository;
-use Neos\Flow\Tests\Functional\Aop\Fixtures\TestContext;
-use PHPUnit\Framework\Attributes\Test;
-use Neos\Flow\Tests\Functional\Security\Fixtures\RestrictableEntity;
-use Neos\Flow\Security\Account;
-use Neos\Flow\Tests\Functional\Security\Fixtures\TestEntityB;
-use Neos\Flow\Tests\Functional\Security\Fixtures\TestEntityA;
-use Neos\Flow\Tests\Functional\Security\Fixtures\TestEntityD;
-use Neos\Flow\Tests\Functional\Security\Fixtures\TestEntityC;
 use Doctrine\Common\Collections\ArrayCollection;
 use Neos\Flow\Cache\CacheManager;
 use Neos\Flow\Persistence\Doctrine\PersistenceManager;
-use Neos\Flow\Tests\Functional\Security\Fixtures;
-use Neos\Flow\Tests\FunctionalTestCase;
-use Neos\Flow\Tests\Functional\Aop;
 use Neos\Flow\Security;
+use Neos\Flow\Security\Account;
+use Neos\Flow\Tests\Functional\Aop\Fixtures\TestContext;
+use Neos\Flow\Tests\Functional\Security\Fixtures;
+use Neos\Flow\Tests\Functional\Security\Fixtures\RestrictableEntity;
+use Neos\Flow\Tests\Functional\Security\Fixtures\RestrictableEntityDoctrineRepository;
+use Neos\Flow\Tests\Functional\Security\Fixtures\TestEntityA;
+use Neos\Flow\Tests\Functional\Security\Fixtures\TestEntityADoctrineRepository;
+use Neos\Flow\Tests\Functional\Security\Fixtures\TestEntityB;
+use Neos\Flow\Tests\Functional\Security\Fixtures\TestEntityC;
+use Neos\Flow\Tests\Functional\Security\Fixtures\TestEntityCDoctrineRepository;
+use Neos\Flow\Tests\Functional\Security\Fixtures\TestEntityD;
+use Neos\Flow\Tests\Functional\Security\Fixtures\TestEntityDDoctrineRepository;
+use Neos\Flow\Tests\FunctionalTestCase;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Testcase for content security using doctrine persistence
@@ -83,10 +82,10 @@ final class ContentSecurityTest extends FunctionalTestCase
         if (!$this->persistenceManager instanceof PersistenceManager) {
             $this->markTestSkipped('Doctrine persistence is not enabled');
         }
-        $this->restrictableEntityDoctrineRepository = new RestrictableEntityDoctrineRepository();
-        $this->testEntityADoctrineRepository = new TestEntityADoctrineRepository();
-        $this->testEntityCDoctrineRepository = new TestEntityCDoctrineRepository();
-        $this->testEntityDDoctrineRepository = new TestEntityDDoctrineRepository();
+        $this->restrictableEntityDoctrineRepository = $this->objectManager->get(RestrictableEntityDoctrineRepository::class);
+        $this->testEntityADoctrineRepository = $this->objectManager->get(TestEntityADoctrineRepository::class);
+        $this->testEntityCDoctrineRepository = $this->objectManager->get(TestEntityCDoctrineRepository::class);
+        $this->testEntityDDoctrineRepository = $this->objectManager->get(TestEntityDDoctrineRepository::class);
         $this->globalObjectTestContext = $this->objectManager->get(TestContext::class);
     }
 

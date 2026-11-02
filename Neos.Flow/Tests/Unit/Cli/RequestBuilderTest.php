@@ -13,18 +13,18 @@ namespace Neos\Flow\Tests\Unit\Cli;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+use Neos\Flow\Cli;
 use Neos\Flow\Cli\Command;
 use Neos\Flow\Cli\CommandManager;
-use Neos\Flow\Cli\RequestBuilder;
-use PHPUnit\Framework\Attributes\Test;
-use PHPUnit\Framework\Attributes\DataProvider;
 use Neos\Flow\Command\HelpCommandController;
 use Neos\Flow\Mvc\Exception\InvalidArgumentMixingException;
 use Neos\Flow\Mvc\Exception\NoSuchCommandException;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
-use Neos\Flow\Reflection\ReflectionService;
+use Neos\Flow\Package\PackageManager;
 use Neos\Flow\Tests\UnitTestCase;
-use Neos\Flow\Cli;
+use Neos\Flow\Utility\Environment;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Testcase for the MVC CLI Request Builder
@@ -62,9 +62,10 @@ final class RequestBuilderTest extends UnitTestCase
         $this->mockCommandManager = $this->createMock(CommandManager::class);
         $this->mockCommandManager->method('getCommandByIdentifier')->with('acme.test:default:list')->willReturn(($mockCommand));
 
-        $this->requestBuilder = new RequestBuilder();
-        $this->requestBuilder->injectObjectManager($this->mockObjectManager);
-        $this->requestBuilder->injectCommandManager($this->mockCommandManager);
+        $mockEnvironment = $this->createMock(Environment::class);
+        $mockPackageManager = $this->createMock(PackageManager::class);
+
+        $this->requestBuilder = new Cli\RequestBuilder($mockEnvironment, $this->mockObjectManager, $mockPackageManager, $this->mockCommandManager);
     }
 
     /**
@@ -83,14 +84,7 @@ final class RequestBuilderTest extends UnitTestCase
     #[Test]
     public function ifCommandCantBeResolvedTheHelpScreenIsShown(): void
     {
-        // The following call is only made to satisfy PHPUnit. For some weird reason PHPUnit complains that the
-        // mocked method ("getObjectNameByClassName") does not exist _if the mock object is not used_.
-        $this->mockObjectManager->getObjectNameByClassName('Acme\Test\Command\DefaultCommandController');
-        $this->mockCommandManager->getCommandByIdentifier('acme.test:default:list');
-
-        $mockCommandManager = $this->createMock(CommandManager::class);
-        $mockCommandManager->method('getCommandByIdentifier')->with('test:default:list')->willThrowException(new NoSuchCommandException());
-        $this->requestBuilder->injectCommandManager($mockCommandManager);
+        $this->mockCommandManager->method('getCommandByIdentifier')->with('test:default:list')->willThrowException(new NoSuchCommandException());
 
         $request = $this->requestBuilder->build('test:default:list');
         self::assertSame(HelpCommandController::class, $request->getControllerObjectName());

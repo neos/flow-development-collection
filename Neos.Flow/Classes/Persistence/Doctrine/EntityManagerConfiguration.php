@@ -22,12 +22,12 @@ use Doctrine\ORM\Cache\RegionsConfiguration;
 use Doctrine\ORM\Configuration;
 use Doctrine\ORM\EntityManager;
 use Neos\Cache\Exception\NoSuchCacheException;
+use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Cache\CacheManager;
 use Neos\Flow\Configuration\Exception\InvalidConfigurationException;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Package;
 use Neos\Flow\Persistence\Exception\IllegalObjectTypeException;
-use Neos\Flow\Annotations as Flow;
 use Psr\Cache\CacheItemPoolInterface;
 
 /**
@@ -99,7 +99,7 @@ class EntityManagerConfiguration
     }
 
     /**
-     * @param array $configuredSubscribers
+     * @param array<class-string> $configuredSubscribers
      * @param EventManager $eventManager
      * @throws IllegalObjectTypeException
      */
@@ -115,7 +115,7 @@ class EntityManagerConfiguration
     }
 
     /**
-     * @param array $configuredListeners
+     * @param array<array{listener: class-string<object>, events: string|array<string>}> $configuredListeners
      * @param EventManager $eventManager
      */
     protected function registerEventListeners(array $configuredListeners, EventManager $eventManager): void
@@ -130,7 +130,7 @@ class EntityManagerConfiguration
      * Apply configured settings regarding DQL to the Doctrine Configuration.
      * At the moment, these are custom DQL functions.
      *
-     * @param array $configuredSettings
+     * @param array<string,mixed> $configuredSettings
      * @param Configuration $doctrineConfiguration
      * @return void
      */
@@ -174,7 +174,7 @@ class EntityManagerConfiguration
     /**
      * Apply configured settings regarding Doctrine's second level cache.
      *
-     * @param array $configuredSettings
+     * @param array<string,mixed> $configuredSettings
      * @param Configuration $doctrineConfiguration
      * @return void
      * @throws NoSuchCacheException

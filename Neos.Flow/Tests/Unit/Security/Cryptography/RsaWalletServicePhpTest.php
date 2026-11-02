@@ -13,12 +13,12 @@ namespace Neos\Flow\Tests\Unit\Security\Cryptography;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+use Neos\Flow\Security\Cryptography\RsaWalletServicePhp;
+use Neos\Flow\Security\Exception\DecryptionNotAllowedException;
+use Neos\Flow\Tests\UnitTestCase;
+use org\bovigo\vfs\vfsStream;
 use PHPUnit\Framework\Attributes\RequiresFunction;
 use PHPUnit\Framework\Attributes\Test;
-use Neos\Flow\Security\Exception\DecryptionNotAllowedException;
-use org\bovigo\vfs\vfsStream;
-use Neos\Flow\Security\Cryptography\RsaWalletServicePhp;
-use Neos\Flow\Tests\UnitTestCase;
 
 /**
  * Testcase for the PHP (OpenSSL) based RSAWalletService

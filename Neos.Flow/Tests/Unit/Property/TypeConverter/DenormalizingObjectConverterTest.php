@@ -13,7 +13,6 @@ namespace Neos\Flow\Tests\Unit\Property\TypeConverter;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use PHPUnit\Framework\Attributes\Test;
 use Neos\Flow\Property\TypeConverter\DenormalizingObjectConverter;
 use Neos\Flow\Tests\Unit\Property\TypeConverter\Fixture\ArrayBasedValueObject;
 use Neos\Flow\Tests\Unit\Property\TypeConverter\Fixture\BooleanBasedValueObject;
@@ -23,6 +22,7 @@ use Neos\Flow\Tests\Unit\Property\TypeConverter\Fixture\IntegerBasedValueObject;
 use Neos\Flow\Tests\Unit\Property\TypeConverter\Fixture\IntegerBasedValueObjectWithLongName;
 use Neos\Flow\Tests\Unit\Property\TypeConverter\Fixture\StringBasedValueObject;
 use Neos\Flow\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\Test;
 
 final class DenormalizingObjectConverterTest extends UnitTestCase
 {
@@ -147,7 +147,6 @@ final class DenormalizingObjectConverterTest extends UnitTestCase
         $this->assertInstanceOf(BooleanBasedValueObjectWithLongName::class, $resultTrue);
         $this->assertEquals(true, $resultTrue->getValue());
     }
-
 
     /**
      * @return void

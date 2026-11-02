@@ -13,15 +13,13 @@ namespace Neos\Flow\Tests\Unit\Aop\Advice;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use PHPUnit\Framework\Attributes\Test;
-use Neos\Flow\Aop\JoinPointInterface;
-use Neos\Flow\Tests\Unit\Aop\Advice\Fixtures\SomeClass;
-use Neos\Flow\SignalSlot\Dispatcher;
 use Neos\Flow\Aop\Advice\AbstractAdvice;
+use Neos\Flow\Aop\JoinPointInterface;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
+use Neos\Flow\SignalSlot\Dispatcher;
+use Neos\Flow\Tests\Unit\Aop\Advice\Fixtures\SomeClass;
 use Neos\Flow\Tests\UnitTestCase;
-use Neos\Flow\SignalSlot;
-use Neos\Flow\Aop;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Testcase for the Abstract Method Interceptor Builder

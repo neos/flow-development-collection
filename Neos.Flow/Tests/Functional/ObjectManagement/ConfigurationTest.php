@@ -13,10 +13,11 @@ namespace Neos\Flow\Tests\Functional\ObjectManagement;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use PHPUnit\Framework\Attributes\Test;
+
 use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\PrototypeClassD;
-use Neos\Utility\ObjectAccess;
 use Neos\Flow\Tests\FunctionalTestCase;
+use Neos\Utility\ObjectAccess;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Functional tests for the Object configuration via Objects.yaml

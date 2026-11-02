@@ -13,35 +13,35 @@ namespace Neos\Flow\Tests;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use Neos\Flow\ResourceManagement\ResourceManager;
-use Neos\Flow\Session\SessionInterface;
-use Neos\Flow\Security\Authorization\TestingPrivilegeManager;
-use Neos\Flow\Persistence\PersistenceManagerInterface;
-use Neos\Flow\Security\Context;
-use Neos\Flow\Security\Policy\PolicyService;
-use Neos\Flow\Security\Authentication\AuthenticationProviderManager;
-use Neos\Utility\ObjectAccess;
+use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Configuration\ConfigurationManager;
+use Neos\Flow\Core\Bootstrap;
+use Neos\Flow\Http\Client\Browser;
 use Neos\Flow\Http\Client\InternalRequestEngine;
+use Neos\Flow\Mvc\ActionRequest;
+use Neos\Flow\Mvc\Routing\Dto\RouteContext;
+use Neos\Flow\Mvc\Routing\Dto\RouteParameters;
+use Neos\Flow\Mvc\Routing\Route;
+use Neos\Flow\Mvc\Routing\TestingRoutesProvider;
 use Neos\Flow\Persistence\Aspect\PersistenceMagicAspect;
+use Neos\Flow\Persistence\PersistenceManagerInterface;
+use Neos\Flow\ResourceManagement\ResourceManager;
 use Neos\Flow\ResourceManagement\ResourceRepository;
 use Neos\Flow\ResourceManagement\ResourceTypeConverter;
 use Neos\Flow\Security\Account;
-use Neos\Flow\Security\Authentication\TokenInterface;
-use Neos\Flow\Http\Client\Browser;
-use Neos\Flow\Configuration\ConfigurationManager;
-use Neos\Flow\Core\Bootstrap;
-use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Mvc\Routing\TestingRoutesProvider;
+use Neos\Flow\Security\Authentication\AuthenticationProviderManager;
 use Neos\Flow\Security\Authentication\TokenAndProviderFactory;
+use Neos\Flow\Security\Authentication\TokenInterface;
+use Neos\Flow\Security\Authorization\TestingPrivilegeManager;
+use Neos\Flow\Security\Context;
+use Neos\Flow\Security\Policy\PolicyService;
+use Neos\Flow\Session\SessionInterface;
 use Neos\Http\Factories\ServerRequestFactory;
 use Neos\Http\Factories\UriFactory;
-use Psr\Http\Message\ServerRequestInterface as HttpRequest;
-use Neos\Flow\Mvc\ActionRequest;
-use Neos\Flow\Mvc\Routing\Dto\RouteParameters;
-use Neos\Flow\Mvc\Routing\Dto\RouteContext;
-use Neos\Flow\Mvc\Routing\Route;
 use Neos\Utility\Arrays;
 use Neos\Utility\Files;
+use Neos\Utility\ObjectAccess;
+use Psr\Http\Message\ServerRequestInterface as HttpRequest;
 
 /**
  * A base test case for functional tests

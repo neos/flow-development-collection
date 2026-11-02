@@ -13,35 +13,43 @@ namespace Neos\Flow\Tests\Functional\ObjectManagement;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use PHPUnit\Framework\Attributes\Test;
-use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\ClassWithDocComments;
-use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\ClassWithPhpAttributes;
-use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\SingletonClassB;
-use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\SingletonClassE;
-use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\SingletonClassEsub;
-use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\PrototypeClassF;
-use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\FinalClassWithDependencies;
-use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\ReadonlyClassWithDependencies;
-use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\ClassWithKeywordsInClassBody;
-use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\SampleAttribute;
-use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\PHP8\ClassWithConstructorProperties;
+
 use Neos\Flow\Annotations\Around;
 use Neos\Flow\Annotations\Session;
-use Neos\Flow\ObjectManagement\Exception\CannotBuildObjectException;
-use Neos\Flow\ObjectManagement\Proxy\ProxyClass;
 use Neos\Flow\ObjectManagement\Proxy\ProxyInterface;
 use Neos\Flow\Reflection\ClassReflection;
 use Neos\Flow\Reflection\PropertyReflection;
-use Neos\Flow\Reflection\ReflectionService;
 use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\ClassExtendingClassWithPrivateConstructor;
-use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\ClassImplementingInterfaceWithConstructor;
+use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\ClassWithDocComments;
+use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\ClassWithGeneratorMethods;
+use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\ClassWithKeywordsInClassBody;
+use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\ClassWithPhpAttributes;
 use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\ClassWithPrivateConstructor;
+use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\FinalClassWithDependencies;
+use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\PHP8\ClassWithConstructorProperties;
 use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\PHP8\ClassWithUnionTypes;
 use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\PHP81\BackedEnumWithMethod;
+use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\PHP81\ClassWithFirstClassCallables;
+use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\PHP81\ClassWithIntersectionTypes;
+use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\PHP81\IdentifiableAndNameable;
+use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\PHP82\ClassUsingTraitWithConstants;
+use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\PHP83\ClassWithDynamicConstantFetch;
+use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\PHP83\ClassWithOverrideAttribute;
+use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\PHP83\ClassWithTypedConstants;
+use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\PHP83\GreetingProviderInterface;
+use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\PHP84\ClassWithNewWithoutParentheses;
 use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\PrototypeClassA;
+use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\PrototypeClassF;
 use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\PrototypeClassK;
+use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\ReadonlyClassWithDependencies;
+use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\SampleAttribute;
 use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\SampleMethodAttribute;
+use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\SingletonClassA;
+use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\SingletonClassB;
+use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\SingletonClassE;
+use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\SingletonClassEsub;
 use Neos\Flow\Tests\FunctionalTestCase;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Functional tests for the Proxy Compiler and related features
@@ -221,21 +229,6 @@ final class ProxyCompilerTest extends FunctionalTestCase
         self::assertEquals(ClassWithPhpAttributes::class, $attributes[0]->getArguments()[0]);
     }
 
-    /**
-     * @see https://github.com/neos/flow-development-collection/issues/2554
-     * @throws
-     */
-    #[Test]
-    public function proxyingClassImplementingInterfacesWithParametrizedConstructorsLeadsToException(): void
-    {
-        $this->expectException(CannotBuildObjectException::class);
-        $proxyClass = new ProxyClass(ClassImplementingInterfaceWithConstructor::class);
-        $proxyClass->injectReflectionService($this->objectManager->get(ReflectionService::class));
-        $proxyClass->getConstructor()->addPreParentCallCode('// some code');
-        $proxyClass->render();
-    }
-
-    #[Test]
     public function complexPropertyTypesArePreserved(): void
     {
         $reflectionClass = new ClassReflection(ClassWithUnionTypes::class);
@@ -385,5 +378,196 @@ final class ProxyCompilerTest extends FunctionalTestCase
     {
         $object = new PrototypeClassK();
         self::assertSame($object->getToken(), $object->getToken());
+    }
+
+    #[Test]
+    public function generatorMethodsOfProxiedClassesCanBeIterated(): void
+    {
+        $object = $this->objectManager->get(ClassWithGeneratorMethods::class);
+        self::assertInstanceOf(ProxyInterface::class, $object);
+        self::assertInstanceOf(SingletonClassA::class, $object->getSingletonA());
+
+        self::assertSame(['item-one', 'item-two'], iterator_to_array($object->generateItems()));
+        self::assertSame(['a' => 1, 'b' => 2], iterator_to_array($object->generateKeyedValues()));
+    }
+
+    #[Test]
+    public function generatorMethodsOfProxiedClassesCanDelegateWithYieldFrom(): void
+    {
+        $object = $this->objectManager->get(ClassWithGeneratorMethods::class);
+
+        // The keys of the delegated generator start at 0 again, therefore they must not be preserved here
+        $actualItems = iterator_to_array($object->generateItemsWithDelegation(), false);
+        self::assertSame(['item-zero', 'item-one', 'item-two', 'item-three'], $actualItems);
+    }
+
+    #[Test]
+    public function generatorsOfProxiedClassesCanReceiveValuesAndReturnAResult(): void
+    {
+        $object = $this->objectManager->get(ClassWithGeneratorMethods::class);
+
+        $generator = $object->generateSums();
+        self::assertSame(0, $generator->current());
+
+        $generator->send(5);
+        self::assertSame(5, $generator->current());
+
+        $generator->send(7);
+        self::assertSame(12, $generator->current());
+
+        $generator->send(null);
+        self::assertFalse($generator->valid());
+        self::assertSame(12, $generator->getReturn());
+    }
+
+    #[Test]
+    public function firstClassCallablesCanBeCreatedFromMethodsOfProxiedInstances(): void
+    {
+        $object = $this->objectManager->get(ClassWithFirstClassCallables::class);
+        self::assertInstanceOf(ProxyInterface::class, $object);
+
+        $greeter = $object->greet(...);
+        self::assertSame('Hello World', $greeter('World'));
+        self::assertSame($object, (new \ReflectionFunction($greeter))->getClosureThis());
+
+        $shouter = ClassWithFirstClassCallables::shout(...);
+        self::assertSame('HELLO!', $shouter('hello'));
+    }
+
+    #[Test]
+    public function firstClassCallablesCreatedInsideProxiedClassesCanBeCalled(): void
+    {
+        $object = $this->objectManager->get(ClassWithFirstClassCallables::class);
+
+        self::assertSame('Hello World', ($object->getGreeterCallable())('World'));
+        self::assertSame('psst…', ($object->getWhispererCallable())('PSST'));
+        self::assertSame('HELLO!', ($object->getShouterCallable())('hello'));
+        self::assertSame(['Hello Alice', 'Hello Bob'], $object->greetAll(['Alice', 'Bob']));
+    }
+
+    #[Test]
+    public function pureIntersectionTypesWorkInProxiedClasses(): void
+    {
+        $object = $this->objectManager->get(ClassWithIntersectionTypes::class);
+        self::assertInstanceOf(ProxyInterface::class, $object);
+        self::assertInstanceOf(SingletonClassA::class, $object->getSingletonA());
+
+        $subject = new IdentifiableAndNameable('abc-123', 'Zaphod');
+        $object->setSubject($subject);
+
+        self::assertSame($subject, $object->getSubject());
+        self::assertSame('abc-123: Zaphod', $object->describe($subject));
+    }
+
+    #[Test]
+    public function pureIntersectionTypesArePreservedInProxiedClasses(): void
+    {
+        $reflectionClass = new ClassReflection(ClassWithIntersectionTypes::class);
+
+        self::assertInstanceOf(\ReflectionIntersectionType::class, $reflectionClass->getProperty('subject')->getType());
+        self::assertInstanceOf(\ReflectionIntersectionType::class, $reflectionClass->getMethod('getSubject')->getReturnType());
+        self::assertInstanceOf(\ReflectionIntersectionType::class, $reflectionClass->getMethod('setSubject')->getParameters()[0]->getType());
+    }
+
+    #[Test]
+    public function pureIntersectionTypesAreStillEnforcedInProxiedClasses(): void
+    {
+        $object = $this->objectManager->get(ClassWithIntersectionTypes::class);
+
+        $this->expectException(\TypeError::class);
+        /** @noinspection PhpParamsInspection */
+        $object->describe(new PrototypeClassA());
+    }
+
+    #[Test]
+    public function typedClassConstantsWorkInProxiedClasses(): void
+    {
+        $object = $this->objectManager->get(ClassWithTypedConstants::class);
+        self::assertInstanceOf(ProxyInterface::class, $object);
+
+        self::assertSame(42, ClassWithTypedConstants::ANSWER);
+        self::assertSame('Hello', ClassWithTypedConstants::GREETING);
+
+        self::assertSame(42, $object->getAnswer());
+        self::assertSame('Hello', $object->getGreeting());
+        self::assertSame([1, 2, 3], $object->getNumbers());
+    }
+
+    #[Test]
+    public function typesOfClassConstantsAreVisibleThroughReflectionOnTheProxiedClass(): void
+    {
+        self::assertSame('int', (string)(new \ReflectionClassConstant(ClassWithTypedConstants::class, 'ANSWER'))->getType());
+        self::assertSame('string', (string)(new \ReflectionClassConstant(ClassWithTypedConstants::class, 'GREETING'))->getType());
+        self::assertSame('array', (string)(new \ReflectionClassConstant(ClassWithTypedConstants::class, 'NUMBERS'))->getType());
+    }
+
+    #[Test]
+    public function constantsDeclaredInTraitsWorkInProxiedClasses(): void
+    {
+        $object = $this->objectManager->get(ClassUsingTraitWithConstants::class);
+        self::assertInstanceOf(ProxyInterface::class, $object);
+        self::assertInstanceOf(SingletonClassA::class, $object->getSingletonA());
+
+        self::assertSame('Hello from the trait', ClassUsingTraitWithConstants::GREETING);
+        self::assertSame('Hello from the trait', $object->getGreetingFromTrait());
+        self::assertSame(42, $object->getAnswerFromTrait());
+    }
+
+    #[Test]
+    public function methodsAnnotatedWithOverrideAttributeWorkInProxiedClasses(): void
+    {
+        $object = $this->objectManager->get(ClassWithOverrideAttribute::class);
+        self::assertInstanceOf(ProxyInterface::class, $object);
+        self::assertInstanceOf(GreetingProviderInterface::class, $object);
+
+        self::assertSame('Greetings!', $object->greet());
+        self::assertSame('a very polite greeting provider', $object->describe());
+    }
+
+    #[Test]
+    public function overrideAttributeIsStillVisibleThroughReflectionOnTheProxiedClass(): void
+    {
+        $reflectionClass = new ClassReflection(ClassWithOverrideAttribute::class);
+
+        self::assertCount(1, $reflectionClass->getMethod('greet')->getAttributes(\Override::class));
+        self::assertCount(1, $reflectionClass->getMethod('describe')->getAttributes(\Override::class));
+    }
+
+    #[Test]
+    public function newWithoutParenthesesWorksInProxiedClasses(): void
+    {
+        $object = $this->objectManager->get(ClassWithNewWithoutParentheses::class);
+        self::assertInstanceOf(ProxyInterface::class, $object);
+        $object->setValue('a changed value');
+
+        self::assertSame('described: the initial value', $object->describeNewSelf());
+        self::assertSame('described: the initial value', $object->describeNewStatic());
+        self::assertSame('described: the initial value', $object->describeNewClassName());
+        self::assertSame('the initial value', $object->readValueOfNewSelf());
+
+        self::assertSame('described: a changed value', $object->describe(), 'The original instance must not be affected');
+    }
+
+    #[Test]
+    public function newSelfInsideProxiedClassesCreatesFullyInitializedProxyInstances(): void
+    {
+        $object = $this->objectManager->get(ClassWithNewWithoutParentheses::class);
+        $newInstance = $object->createNewSelf();
+
+        self::assertInstanceOf(ClassWithNewWithoutParentheses::class, $newInstance);
+        self::assertInstanceOf(ProxyInterface::class, $newInstance);
+        self::assertInstanceOf(SingletonClassA::class, $newInstance->getSingletonA());
+    }
+
+    #[Test]
+    public function dynamicClassConstantFetchWorksInProxiedClasses(): void
+    {
+        $object = $this->objectManager->get(ClassWithDynamicConstantFetch::class);
+        self::assertInstanceOf(ProxyInterface::class, $object);
+
+        self::assertSame('the first value', $object->fetchViaSelf('FIRST'));
+        self::assertSame('the second value', $object->fetchViaSelf('SECOND'));
+        self::assertSame('the first value', $object->fetchViaStatic('FIRST'));
+        self::assertSame('the second value', $object->fetchViaClassName('SECOND'));
     }
 }

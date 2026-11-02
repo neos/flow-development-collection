@@ -13,10 +13,9 @@ namespace Neos\Flow\Tests\Functional\Utility;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use PHPUnit\Framework\Attributes\Test;
-use Neos\Flow\Utility\Now;
 use Neos\Flow\Tests\FunctionalTestCase;
-use Neos\Flow\Utility;
+use Neos\Flow\Utility\Now;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Functional test for the Now class

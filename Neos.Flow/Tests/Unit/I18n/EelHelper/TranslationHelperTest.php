@@ -13,10 +13,10 @@ namespace Neos\Flow\Tests\Unit\I18n\EelHelper;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use PHPUnit\Framework\Attributes\Test;
 use Neos\Flow\I18n\EelHelper\TranslationHelper;
 use Neos\Flow\I18n\EelHelper\TranslationParameterToken;
 use Neos\Flow\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Tests for TranslateHelper

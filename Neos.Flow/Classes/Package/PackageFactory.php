@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Package;
 
 /*
@@ -12,8 +13,8 @@ namespace Neos\Flow\Package;
  */
 
 use Neos\Flow\Composer\ComposerUtility;
-use Neos\Utility\Files;
 use Neos\Flow\Utility\PhpAnalyzer;
+use Neos\Utility\Files;
 
 /**
  * Class for building Packages
@@ -27,7 +28,7 @@ class PackageFactory
      * @param string $packagePath path to package, relative to base path
      * @param FlowPackageKey $packageKey key / name of the package
      * @param string $composerName
-     * @param array $autoloadConfiguration Autoload configuration as defined in composer.json
+     * @param array<mixed> $autoloadConfiguration Autoload configuration as defined in composer.json
      * @param array{className: class-string<PackageInterface>, pathAndFilename: string}|null $packageClassInformation
      * @return PackageInterface&PackageKeyAwareInterface
      * @throws Exception\CorruptPackageException
@@ -100,8 +101,11 @@ class PackageFactory
         $absolutePackageClassPath = Files::concatenatePaths([$absolutePackagePath, $packageClassPathAndFilename]);
 
         $packageClassContents = file_get_contents($absolutePackageClassPath);
+        if (!$packageClassContents) {
+            throw new Exception\CorruptPackageException(sprintf('Could not read package class file of package "%s"', $packageKey->value), 1744142431);
+        }
         $packageClassName = (new PhpAnalyzer($packageClassContents))->extractFullyQualifiedClassName();
-        if ($packageClassName === null) {
+        if ($packageClassName === null || !is_subclass_of($packageClassName, PackageInterface::class)) {
             throw new Exception\CorruptPackageException(sprintf('The package "%s" does not contain a valid package class. Check if the file "%s" really contains a class.', $packageKey->value, $packageClassPathAndFilename), 1327587091);
         }
 

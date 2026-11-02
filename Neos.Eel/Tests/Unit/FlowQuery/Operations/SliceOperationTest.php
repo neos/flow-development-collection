@@ -13,11 +13,11 @@ namespace Neos\Eel\Tests\Unit\FlowQuery\Operations;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+use Neos\Eel\FlowQuery\FlowQuery;
+use Neos\Eel\FlowQuery\Operations\SliceOperation;
 use Neos\Flow\Tests\UnitTestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
-use Neos\Eel\FlowQuery\FlowQuery;
-use Neos\Eel\FlowQuery\Operations\SliceOperation;
 
 /**
  * SliceOperation test

@@ -1,7 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
 namespace Neos\Flow\Tests\Unit\Security\Authentication;
 
 /*
@@ -13,23 +11,25 @@ namespace Neos\Flow\Tests\Unit\Security\Authentication;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use PHPUnit\Framework\Attributes\Test;
+
 use Neos\Flow\ObjectManagement\ObjectManager;
 use Neos\Flow\Security\Authentication\AuthenticationProviderResolver;
+use Neos\Flow\Security\Authentication\Provider\TestingProvider;
 use Neos\Flow\Security\Exception\NoAuthenticationProviderFoundException;
 use Neos\Flow\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Testcase for the security interceptor resolver
  */
-final class AuthenticationProviderResolverTest extends UnitTestCase
+class AuthenticationProviderResolverTest extends UnitTestCase
 {
     #[Test]
     public function resolveProviderObjectNameThrowsAnExceptionIfNoProviderIsAvailable()
     {
         $this->expectException(NoAuthenticationProviderFoundException::class);
-        $mockObjectManager = $this->createMock(ObjectManager::class);
-        $mockObjectManager->method('getClassNameByObjectName')->willReturn((false));
+        $mockObjectManager = $this->getMockBuilder(ObjectManager::class)->disableOriginalConstructor()->getMock();
+        $mockObjectManager->expects(self::any())->method('getClassNameByObjectName')->willReturn(false);
 
         $providerResolver = new AuthenticationProviderResolver($mockObjectManager);
 
@@ -39,7 +39,7 @@ final class AuthenticationProviderResolverTest extends UnitTestCase
     #[Test]
     public function resolveProviderReturnsTheCorrectProviderForAShortName()
     {
-        $longClassNameForTest = 'Neos\Flow\Security\Authentication\Provider\ValidShortName';
+        $longClassNameForTest = TestingProvider::class;
 
         $getCaseSensitiveObjectNameCallback = function () use ($longClassNameForTest) {
             $args = func_get_args();
@@ -51,11 +51,11 @@ final class AuthenticationProviderResolverTest extends UnitTestCase
             return false;
         };
 
-        $mockObjectManager = $this->createMock(ObjectManager::class);
-        $mockObjectManager->method('getClassNameByObjectName')->willReturnCallback($getCaseSensitiveObjectNameCallback);
+        $mockObjectManager = $this->getMockBuilder(ObjectManager::class)->disableOriginalConstructor()->getMock();
+        $mockObjectManager->expects(self::any())->method('getClassNameByObjectName')->willReturnCallback($getCaseSensitiveObjectNameCallback);
 
         $providerResolver = new AuthenticationProviderResolver($mockObjectManager);
-        $providerClass = $providerResolver->resolveProviderClass('ValidShortName');
+        $providerClass = $providerResolver->resolveProviderClass('TestingProvider');
 
         self::assertEquals($longClassNameForTest, $providerClass, 'The wrong classname has been resolved');
     }
@@ -63,12 +63,12 @@ final class AuthenticationProviderResolverTest extends UnitTestCase
     #[Test]
     public function resolveProviderReturnsTheCorrectProviderForACompleteClassName()
     {
-        $mockObjectManager = $this->createMock(ObjectManager::class);
-        $mockObjectManager->method('getClassNameByObjectName')->with('existingProviderClass')->willReturn(('existingProviderClass'));
+        $mockObjectManager = $this->getMockBuilder(ObjectManager::class)->disableOriginalConstructor()->getMock();
+        $mockObjectManager->expects(self::any())->method('getClassNameByObjectName')->with(TestingProvider::class)->willReturn(TestingProvider::class);
 
         $providerResolver = new AuthenticationProviderResolver($mockObjectManager);
-        $providerClass = $providerResolver->resolveProviderClass('existingProviderClass');
+        $providerClass = $providerResolver->resolveProviderClass(TestingProvider::class);
 
-        self::assertEquals('existingProviderClass', $providerClass, 'The wrong classname has been resolved');
+        self::assertEquals(TestingProvider::class, $providerClass, 'The wrong classname has been resolved');
     }
 }

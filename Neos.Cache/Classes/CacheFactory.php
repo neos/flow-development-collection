@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Cache;
 
 /*
@@ -47,8 +48,8 @@ class CacheFactory implements CacheFactoryInterface
      * After creating the cache, it will be registered at the cache manager.
      *
      * @param string $cacheIdentifier The name / identifier of the cache to create
-     * @param string $cacheObjectName Object name of the cache frontend
-     * @param string $backendObjectName Object name of the cache backend
+     * @param class-string $cacheObjectName Object name of the cache frontend
+     * @param class-string $backendObjectName Object name of the cache backend
      * @param array $backendOptions (optional) Array of backend options
      * @return FrontendInterface The created cache frontend
      * @throws InvalidBackendException
@@ -56,6 +57,13 @@ class CacheFactory implements CacheFactoryInterface
      * @api
      */
     public function create(string $cacheIdentifier, string $cacheObjectName, string $backendObjectName, array $backendOptions = []): FrontendInterface
+    {
+        return (new \ReflectionClass($cacheObjectName))->newLazyProxy(function () use ($cacheIdentifier, $cacheObjectName, $backendObjectName, $backendOptions) {
+            return $this->buildInternal($cacheIdentifier, $cacheObjectName, $backendObjectName, $backendOptions);
+        });
+    }
+
+    protected function buildInternal(string $cacheIdentifier, string $cacheObjectName, string $backendObjectName, array $backendOptions = []): FrontendInterface
     {
         try {
             $backend = $this->instantiateBackend($backendObjectName, $backendOptions, $this->environmentConfiguration);

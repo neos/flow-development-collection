@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\FluidAdaptor\ViewHelpers\Link;
 
 /*
@@ -12,8 +13,8 @@ namespace Neos\FluidAdaptor\ViewHelpers\Link;
  */
 
 use Neos\Flow\Mvc\ActionRequest;
-use Neos\FluidAdaptor\Core\ViewHelper\AbstractTagBasedViewHelper;
 use Neos\FluidAdaptor\Core\ViewHelper;
+use Neos\FluidAdaptor\Core\ViewHelper\AbstractTagBasedViewHelper;
 
 /**
  * A view helper for creating links to actions.

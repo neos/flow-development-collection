@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\FluidAdaptor\ViewHelpers\Widget\Controller;
 
 /*
@@ -11,9 +12,9 @@ namespace Neos\FluidAdaptor\ViewHelpers\Widget\Controller;
  * source code.
  */
 
-use Neos\Utility\ObjectAccess;
-use Neos\Utility\Arrays;
 use Neos\FluidAdaptor\Core\Widget\AbstractWidgetController;
+use Neos\Utility\Arrays;
+use Neos\Utility\ObjectAccess;
 
 /**
  * Controller for the auto-complete widget
@@ -21,7 +22,7 @@ use Neos\FluidAdaptor\Core\Widget\AbstractWidgetController;
 class AutocompleteController extends AbstractWidgetController
 {
     /**
-     * @var array
+     * @var array<string,mixed>
      */
     protected $configuration = ['limit' => 10];
 
@@ -63,7 +64,7 @@ class AutocompleteController extends AbstractWidgetController
             );
         }
         if (isset($this->configuration['limit'])) {
-            $query->setLimit((integer)$this->configuration['limit']);
+            $query->setLimit((int)$this->configuration['limit']);
         }
 
         $results = $query->execute();
@@ -82,6 +83,6 @@ class AutocompleteController extends AbstractWidgetController
                 'value' => $val
             ];
         }
-        return json_encode($output);
+        return json_encode($output, JSON_THROW_ON_ERROR);
     }
 }

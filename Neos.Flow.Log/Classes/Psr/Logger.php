@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Log\Psr;
 
 /*
@@ -26,7 +27,7 @@ class Logger implements LoggerInterface
 {
     use LoggerTrait;
 
-    const LOGLEVEL_MAPPING = [
+    public const LOGLEVEL_MAPPING = [
         LogLevel::EMERGENCY => LOG_EMERG,
         LogLevel::DEBUG => LOG_DEBUG,
         LogLevel::INFO => LOG_INFO,
@@ -45,7 +46,7 @@ class Logger implements LoggerInterface
     /**
      * Constructs the PSR-3 Logger.
      *
-     * @param iterable $backends
+     * @param iterable<mixed> $backends
      */
     public function __construct(iterable $backends)
     {
@@ -61,7 +62,7 @@ class Logger implements LoggerInterface
     /**
      * @param mixed $level
      * @param string|\Stringable $message
-     * @param array $context
+     * @param array<string,mixed> $context
      * @api
      */
     public function log($level, string|\Stringable $message, array $context = []): void
@@ -80,8 +81,8 @@ class Logger implements LoggerInterface
     }
 
     /**
-     * @param array $context
-     * @return array list of packageKey, className and methodName either string or null
+     * @param array<string,mixed> $context
+     * @return array<int,string|null> list of packageKey, className and methodName either string or null
      */
     protected function extractLegacyDataFromContext(array $context): array
     {
@@ -93,8 +94,8 @@ class Logger implements LoggerInterface
     }
 
     /**
-     * @param array $context
-     * @return array
+     * @param array<string,mixed> $context
+     * @return array<string,mixed>
      */
     protected function removeLegacyDataFromContext(array $context): array
     {

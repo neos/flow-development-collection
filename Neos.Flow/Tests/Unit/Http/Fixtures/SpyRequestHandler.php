@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Tests\Unit\Http\Fixtures;
 
 use GuzzleHttp\Psr7\Response;

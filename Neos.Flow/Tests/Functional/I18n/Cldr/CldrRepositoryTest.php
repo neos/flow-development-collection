@@ -13,13 +13,13 @@ namespace Neos\Flow\Tests\Functional\I18n\Cldr;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use PHPUnit\Framework\Attributes\Test;
-use Neos\Flow\I18n\Locale;
 use Neos\Flow\I18n;
 use Neos\Flow\I18n\Cldr\CldrRepository;
+use Neos\Flow\I18n\Locale;
 use Neos\Flow\Tests\FunctionalTestCase;
 use Neos\Utility\Files;
 use Neos\Utility\ObjectAccess;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Testcase for the I18N CLDR Repository

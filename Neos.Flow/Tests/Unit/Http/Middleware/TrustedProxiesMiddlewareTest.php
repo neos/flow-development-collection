@@ -13,20 +13,21 @@ namespace Neos\Flow\Tests\Unit\Http\Middleware;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use PHPUnit\Framework\Attributes\BackupGlobals;
-use PHPUnit\Framework\Attributes\Test;
-use PHPUnit\Framework\Attributes\DataProvider;
-use Neos\Flow\Tests\Unit\Http\Fixtures\SpyRequestHandler;
-use Psr\Http\Server\RequestHandlerInterface;
+use GuzzleHttp\Psr7\Uri;
 use Neos\Flow\Http\Middleware\TrustedProxiesMiddleware;
 use Neos\Flow\Http\ServerRequestAttributes;
-use GuzzleHttp\Psr7\Uri;
+use Neos\Flow\Tests\Unit\Http\Fixtures\SpyRequestHandler;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Http\Factories\ServerRequestFactory;
 use Neos\Http\Factories\UriFactory;
+use PHPUnit\Framework\Attributes\BackupGlobals;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\MockObject\MockObject;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestFactoryInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\RequestHandlerInterface;
 
 /**
  * Test case for the TrustedProxiesMiddleware
@@ -44,15 +45,30 @@ final class TrustedProxiesMiddlewareTest extends UnitTestCase
     protected $trustedProxiesSettings;
 
     /**
+     * @var ServerRequestInterface|MockObject
+     */
+    protected $mockHttpRequest;
+
+    /**
+     * @var ResponseInterface|MockObject
+     */
+    protected $mockHttpResponse;
+
+    /**
+     * @var RequestHandlerInterface|MockObject
+     */
+    protected $mockHttpRequestHandler;
+
+    /**
      * @var ServerRequestFactoryInterface
      */
     protected $serverRequestFactory;
 
     protected function setUp(): void
     {
-        $mockHttpRequest = $this->createMock(ServerRequestInterface::class);
-        $mockHttpResponse = $this->createMock(ResponseInterface::class);
-        $mockHttpRequestHandler = $this->createMock(RequestHandlerInterface::class);
+        $this->mockHttpRequest = $this->createMock(ServerRequestInterface::class);
+        $this->mockHttpResponse = $this->createMock(ResponseInterface::class);
+        $this->mockHttpRequestHandler = $this->createMock(RequestHandlerInterface::class);
 
         $this->serverRequestFactory = new ServerRequestFactory(new UriFactory());
         $this->trustedProxiesMiddleware = new TrustedProxiesMiddleware();

@@ -1,0 +1,267 @@
+`9.2.0-beta3 (2026-08-31) <https://github.com/neos/flow-development-collection/releases/tag/9.2.0-beta3>`_
+==========================================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`FEATURE: Runtime Constructor Injection <https://github.com/neos/flow-development-collection/pull/3510>`_
+---------------------------------------------------------------------------------------------------------
+
+This changes constructor injection to happen at runtime by the ObjectManager. That means the constructor no longer needs to be proxied and loose it's signature (Any other proxying happening, eg. AOP or other injection types will retain the signature now). It therefore also reduces the  amount of proxies necessary in a project.  
+Additionally to proof how this works some of the core classes now use exclusively constructor injection.
+The change also includes refactorings for type safety around the object configuration and proxy building.
+
+*NOTE*
+This obviously breaks instantiating classes with constructor injection via ``new MyClass()`` omitting any arguments. IMHO that is very bad practice anyhow. As can be seen in this change (and I didn't see anything in Neos either), it was only used in tests as of now. I think therefore we can relatively safely change this in a minor release? 
+
+* Packages: ``.github`` ``Flow``
+
+`FEATURE: Enable Xdebug Path Mapping in Development context per default <https://github.com/neos/flow-development-collection/pull/3547>`_
+-----------------------------------------------------------------------------------------------------------------------------------------
+
+Enables the Xdebug Path Mapping per default in Development context.
+
+See: https://github.com/neos/flow-development-collection/pull/3535
+
+* Packages: ``Flow``
+
+`BUGFIX: Preserve by-reference returns in proxies <https://github.com/neos/flow-development-collection/pull/3611>`_
+-------------------------------------------------------------------------------------------------------------------
+
+Methods which are declared to return by reference (``function &foo()``) lost their reference semantics when the generated proxy method contained code before and after the parent call: the parent call was assigned to a local variable by value, therefore "return $result" returned a copy.
+
+The proxy method generator now assigns the parent call by reference if the method itself returns by reference.
+
+For advised methods this cannot be repaired: the return value passes through the join point and the advice chain by value, so the reference is lost by design. Instead of silently changing the semantics of such a method, the AdvisedMethodInterceptorBuilder now refuses to build the interceptor code and throws an exception while the proxy classes are compiled. The exception names the affected class and method and explains the possible ways out. Methods returning by reference which are introduced by an interface are covered as well.
+
+Note that this is a change in behavior which should be mentioned in the release notes: a project with a pointcut which happens to match a method returning by reference will not compile anymore until the pointcut is adjusted. None of the Flow and Neos packages declare such methods.
+
+* Fixes: `#3590 <https://github.com/neos/flow-development-collection/issues/3590>`_
+
+* Packages: ``Flow``
+
+`BUGFIX: Handle false model and pluralRulesSet in generateRulesets <https://github.com/neos/flow-development-collection/pull/3608>`_
+------------------------------------------------------------------------------------------------------------------------------------
+
+This avoids ``Call to a member function getRawArray() on false``.
+
+
+* Packages: ``Flow``
+
+`BUGFIX: Call original method in void proxy methods <https://github.com/neos/flow-development-collection/pull/3598>`_
+---------------------------------------------------------------------------------------------------------------------
+
+When proxy building adds only pre parent call code to a method – without any post code – and the method declares a ``void`` or ``never`` return type, the generated proxy method contains the pre code but no call to the original method: the original implementation is silently skipped.
+
+This change renders the parent call (without a return statement, which is not allowed for these return types) like the branch for pre and post parent call code already does.
+
+Note for the upmerge to 9.2: the unit test ``noParentCallIsRenderedForVoidAndNeverReturnTypesIfOnlyPreParentCallCodeExists`` introduced with `#3596 <https://github.com/neos/flow-development-collection/issues/3596>``_documents the old behavior and needs to be inverted – the ``ProxyMethodGeneratorTest` introduced with this change covers the corrected behavior and will conflict with the file of the same name from #3596.
+
+* Fixes: `#3597 <https://github.com/neos/flow-development-collection/issues/3597>`_
+
+* Packages: ``Flow``
+
+`BUGFIX: Prevent reflecting non Flow classes in `couldHaveEntityRelations()` <https://github.com/neos/flow-development-collection/pull/3587>`_
+----------------------------------------------------------------------------------------------------------------------------------------------
+
+We should check if classes in properties of
+proxied classes are reflected, otherwise they
+might be non Flow classes or otherwise excluded.
+In either case making them definitely not (Flow)
+controlled entities.
+
+* Fixes: `#3585 <https://github.com/neos/flow-development-collection/issues/3585>`_
+
+**Upgrade instructions**
+
+
+* Packages: ``Flow``
+
+`BUGFIX: Handle objects without name in argument configuration parsing <https://github.com/neos/flow-development-collection/pull/3576>`_
+----------------------------------------------------------------------------------------------------------------------------------------
+
+Instead of throwing an exception when an argument configuration contains no name, create a synthetic virtual object name derived from a configuration hash. This handles edge cases encountered with global Objects.yaml configurations.
+
+* Packages: ``Flow``
+
+`BUGFIX: Reuse singleton instance when requested by interface <https://github.com/neos/flow-development-collection/pull/3575>`_
+-------------------------------------------------------------------------------------------------------------------------------
+
+Regression from `#3510 <https://github.com/neos/flow-development-collection/issues/3510>`_
+
+When a singleton was first requested by its implementation class name, subsequent requests by its interface name would create a new instance instead of reusing the existing one.
+
+The ObjectManager now detects this case and returns the already-existing instance, preserving singleton semantics for both class name and interface name lookups.
+
+Also removes the restriction that prevented building proxy classes for classes implementing interfaces with a constructor declaration, and guards ProxyClassBuilder's parent-advice lookup against base classes without a parent.
+
+* Packages: ``Flow``
+
+`BUGFIX: Always serialize the RelatedEntitesContainer in proxies <https://github.com/neos/flow-development-collection/pull/3573>`_
+----------------------------------------------------------------------------------------------------------------------------------
+
+fixes regression from `#3510 <https://github.com/neos/flow-development-collection/issues/3510>`_
+
+* Packages: ``Flow``
+
+`BUGFIX: fix exception message in ObjectSerializationTrait <https://github.com/neos/flow-development-collection/pull/3572>`_
+----------------------------------------------------------------------------------------------------------------------------
+
+- follow up to https://github.com/neos/flow-development-collection/pull/3510
+- adjust exception message to show with class caused the error
+
+
+
+* Packages: ``Flow``
+
+`TASK: Use `Test` attribute in kickstarter test template <https://github.com/neos/flow-development-collection/pull/3605>`_
+--------------------------------------------------------------------------------------------------------------------------
+
+Replaces the ``@test`` annotation with the PHPUnit ``#[Test]`` attribute in the generated entity test case, matching the style used since PHPUnit 11.
+
+
+* Packages: ``Flow`` ``Kickstarter``
+
+`TASK: Fix tests after upmerge and PHPUnit migration <https://github.com/neos/flow-development-collection/pull/3610>`_
+----------------------------------------------------------------------------------------------------------------------
+
+This fixes the two unit test failures which currently break the test run on the 9.2 branch:
+
+The test ``noParentCallIsRenderedForVoidAndNeverReturnTypesIfOnlyPreParentCallCodeExists`` documented the behavior which was fixed with #3598: for void and never methods which only received pre parent call code, the call to the original method was skipped. After the upmerge of that fix into 9.2, the test failed. Since the merge already brought the corrected test coverage from `#3598 <https://github.com/neos/flow-development-collection/issues/3598>`_into the same test class, the outdated test can simply be removed.
+
+Additionally, the code style clean-up in 2feb05da8 removed the import of ``ActionResponse`` from ``AbstractWidgetControllerTest`` although the class is used in one of the tests, which made that test fail with a class not found error. The import is restored.
+
+* Related to: `#3597 <https://github.com/neos/flow-development-collection/issues/3597>`_
+
+* Packages: ``.github`` ``FluidAdaptor``
+
+`TASK: Extend test coverage for proxy class building <https://github.com/neos/flow-development-collection/pull/3596>`_
+----------------------------------------------------------------------------------------------------------------------
+
+This adds functional and unit tests which verify that PHP language constructs work as expected in proxied classes: generator methods, first-class callable syntax, pure intersection and DNF types, typed class constants, constants declared in traits, the Override attribute, readonly properties and classes, new without parentheses and dynamic class constant fetch — covering both dependency injection and AOP advices.
+
+It also adds unit tests for ProxyMethodGenerator, ProxyConstructorGenerator, RelatedEntitiesContainer and ObjectSerializationTrait, which previously had no test coverage at all. The unit tests document the current behavior of the code generators, including a few oddities which should be addressed separately.
+
+* Related to: `#3589 <https://github.com/neos/flow-development-collection/issues/3589>``_, #3590, #3591, #3592, #3593, ``#3594 <https://github.com/neos/flow-development-collection/issues/3594>`_
+
+* Packages: ``Flow``
+
+`TASK: Drop support for legacy code caches <https://github.com/neos/flow-development-collection/pull/3603>`_
+------------------------------------------------------------------------------------------------------------
+
+Drop support for xcache and wincache from our ``OpcodeCacheHelper``.
+
+
+* Packages: ``Utility.OpcodeCache``
+
+`TASK: Update to PHPUnit 11 <https://github.com/neos/flow-development-collection/pull/3563>`_
+---------------------------------------------------------------------------------------------
+
+**Upgrade instructions**
+
+The only thing you might need to adjust (besides catering to all the changes in PhpUnit 11), is the signature of ``getAccessibleMock()`` in our base testcase class. The arguments
+
+- ``$callAutoload``
+- ``$callOriginalMethods``
+- ``$proxyTarget``
+
+have been removed, as the underlying PHPUnit methods are deprecated.
+
+**Review instructions**
+
+All tests should still pass – have fun verifying they still do test the correct stuff.
+
+
+* Packages: ``Flow`` ``Cache``
+
+`TASK: Add PHP language feature reference <https://github.com/neos/flow-development-collection/pull/3595>`_
+-----------------------------------------------------------------------------------------------------------
+
+This adds a new reference to the appendix of the Definitive Guide which documents the support status of PHP language constructs in proxied classes, separated by subsystem (Dependency Injection, AOP and object serialization) and including the Flow version which introduced support.
+
+The reference also documents known limitations with links to the corresponding issues, so that users can look up whether a specific language feature can be used in classes managed by the object framework.
+
+* Packages: ``Flow``
+
+`TASK: Fix typos in documentation and some strings <https://github.com/neos/flow-development-collection/pull/3577>`_
+--------------------------------------------------------------------------------------------------------------------
+
+Hello!
+
+First of all, thank you for your work!
+Just like in https://github.com/neos/neos-development-collection/pull/5846 I fixed typos in this repository too.
+
+**Upgrade instructions**
+
+n/a
+
+**Review instructions**
+
+I split my fixes into separate commits so changes in code (comments) and documentation are easily discernible. Note that c6d0157 changes actual strings in the code.
+
+
+* Packages: ``Flow`` ``FluidAdaptor``
+
+`TASK: PSR12 & PHP-CS-Fixer <https://github.com/neos/flow-development-collection/pull/3588>`_
+---------------------------------------------------------------------------------------------
+
+The codestyle is adjusted from psr2 to psr12 and the linters are adjusted accordingly.
+
+PHP-CS-Fixer shall replace the StyleCi that caused lots of unexpected test failures. The fixer is included in the ``composer lint`` command and thus can be executed locally before pushing. The ``composer fix`` command allows to adjust the coding style to the requirements quickly.
+ 
+also:
+- changes the codestyle from psr2 to psr12 
+- cs fixer in check mode to the ``composer lint`` command
+- a general ``composer fix`` command is added that for now only runs the cs fixed
+- style ci configuration is removed
+
+**Upgrade instructions**
+
+**Review instructions**
+
+!!! Style CI will fail as we remove the configuration and change the settings. This is intended and will be fixed by removeing style ci after the merge !!!
+
+
+`TASK: Sort out use of cleanClassName vs cleanTypeName <https://github.com/neos/flow-development-collection/pull/3579>`_
+------------------------------------------------------------------------------------------------------------------------
+
+
+
+* Packages: ``Flow``
+
+`TASK: Raise PhpStan to level 8 - Part 2 <https://github.com/neos/flow-development-collection/pull/3518>`_
+----------------------------------------------------------------------------------------------------------
+
+Raise PhpStan to level 8 for:
+- Neos.Flow/Classes/Reflection
+- Neos.Flow/Classes/ResourceManagement
+- Neos.Flow/Classes/Security
+- Neos.Flow/Classes/Session
+- Neos.Flow/Classes/SignalSlot
+- Neos.Flow/Classes/Utility
+- Neos.Flow/Validation
+
+This is a follow up for: `#3515 <https://github.com/neos/flow-development-collection/issues/3515>`_
+
+**Upgrade instructions**
+
+**Review instructions**
+
+Follow ups will adjust the other Flow Subcontexts. This is limited to be in a manageble size.
+Also the target branch should offcourse be adjusted to 9.2 once that exists.
+
+
+* Packages: ``Flow``
+
+`TASK: Update PHP version requirement to 8.4 <https://github.com/neos/flow-development-collection/pull/3564>`_
+--------------------------------------------------------------------------------------------------------------
+
+As discussed here https://neos-project.slack.com/archives/C050KKBEB/p1780140193359499
+
+**Upgrade instructions**
+
+
+* Packages: ``Flow`` ``.github`` ``Cache`` ``Eel`` ``Error.Messages`` ``Flow.Log`` ``FluidAdaptor`` ``Http.Factories`` ``Kickstarter`` ``Utility.Arrays`` ``Utility.Files`` ``Utility.MediaTypes`` ``Utility.ObjectHandling`` ``Utility.OpcodeCache`` ``Utility.Pdo`` ``Utility.Schema`` ``Utility.Unicode``
+
+`Detailed log <https://github.com/neos/flow-development-collection/compare/9.1.2...9.2.0-beta3>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

@@ -13,11 +13,11 @@ namespace Neos\Flow\Tests\Unit\Utility;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use PHPUnit\Framework\TestCase;
+use Neos\Error\Messages as Error;
+use Neos\Utility\SchemaValidator;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
-use Neos\Utility\SchemaValidator;
-use Neos\Error\Messages as Error;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Testcase for the configuration validator
@@ -674,7 +674,6 @@ final class SchemaValidatorTest extends TestCase
         $this->assertSuccess($this->configurationValidator->validate($value, $schema), $expectSuccess);
     }
 
-
     /// BOOLEAN ///
     /**
      * @return \Iterator<(int | string), mixed>
@@ -1003,7 +1002,6 @@ final class SchemaValidatorTest extends TestCase
         ];
         $this->assertSuccess($this->configurationValidator->validate($value, $schema), $expectSuccess);
     }
-
 
     /// ANY ///
     /**

@@ -13,19 +13,17 @@ namespace Neos\Flow\Tests\Functional\Security\Authorization\Privilege\Entity\Doc
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use PHPUnit\Framework\Attributes\DataProvider;
-use PHPUnit\Framework\Attributes\Test;
-use Neos\Eel\Context;
-use Neos\Flow\Tests\Functional\Security\Fixtures\RestrictableEntity;
 use Doctrine\ORM\EntityManagerInterface;
+use Neos\Eel\Context;
 use Neos\Flow\Persistence\Doctrine\PersistenceManager;
 use Neos\Flow\Security\Authorization\Privilege\Entity\Doctrine\ConditionGenerator;
 use Neos\Flow\Security\Authorization\Privilege\Entity\Doctrine\EntityPrivilegeExpressionEvaluator;
 use Neos\Flow\Security\Authorization\Privilege\Entity\Doctrine\SqlFilter;
+use Neos\Flow\Tests\Functional\Security\Fixtures\RestrictableEntity;
 use Neos\Flow\Tests\Functional\Security\Fixtures\TestEntityC;
 use Neos\Flow\Tests\FunctionalTestCase;
-use Neos\Eel;
-use Neos\Flow\Tests\Functional\Security\Fixtures;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 
 final class EntityPrivilegeExpressionEvaluatorTest extends FunctionalTestCase
 {

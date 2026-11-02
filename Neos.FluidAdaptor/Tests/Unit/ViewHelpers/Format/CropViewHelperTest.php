@@ -4,10 +4,6 @@ declare(strict_types=1);
 
 namespace Neos\FluidAdaptor\Tests\Unit\ViewHelpers\Format;
 
-use Neos\FluidAdaptor\ViewHelpers\Format\CropViewHelper;
-use PHPUnit\Framework\Attributes\Test;
-use PHPUnit\Framework\MockObject\MockObject;
-
 /*
  * This file is part of the Neos.FluidAdaptor package.
  *
@@ -21,6 +17,9 @@ use PHPUnit\Framework\MockObject\MockObject;
 require_once(__DIR__ . '/../ViewHelperBaseTestcase.php');
 
 use Neos\FluidAdaptor\Tests\Unit\ViewHelpers\ViewHelperBaseTestcase;
+use Neos\FluidAdaptor\ViewHelpers\Format\CropViewHelper;
+use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\MockObject\MockObject;
 
 /**
  * Test for \Neos\FluidAdaptor\ViewHelpers\Format\CropViewHelper

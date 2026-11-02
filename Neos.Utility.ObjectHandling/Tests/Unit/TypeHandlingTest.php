@@ -13,11 +13,11 @@ namespace Neos\Utility\ObjectHandling\Tests\Unit;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use PHPUnit\Framework\TestCase;
-use PHPUnit\Framework\Attributes\Test;
-use PHPUnit\Framework\Attributes\DataProvider;
 use Neos\Utility\Exception\InvalidTypeException;
 use Neos\Utility\TypeHandling;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Testcase for the Utility\TypeHandling class

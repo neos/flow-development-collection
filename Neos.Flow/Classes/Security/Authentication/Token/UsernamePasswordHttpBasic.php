@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Security\Authentication\Token;
 
 /*
@@ -28,7 +29,7 @@ class UsernamePasswordHttpBasic extends UsernamePassword implements SessionlessT
      */
     public function updateCredentials(ActionRequest $actionRequest)
     {
-        $this->credentials = ['username' => null, 'password' => null];
+        $this->credentials = ['username' => '', 'password' => ''];
         $this->authenticationStatus = self::NO_CREDENTIALS_GIVEN;
 
         $authorizationHeader = $actionRequest->getHttpRequest()->getHeaderLine('Authorization');

@@ -13,19 +13,18 @@ namespace Neos\FluidAdaptor\Tests\Unit\Core\Widget;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use PHPUnit\Framework\Attributes\Test;
-use PHPUnit\Framework\MockObject\MockObject;
 use GuzzleHttp\Psr7\Response;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\ActionRequestFactory;
 use Neos\Flow\Mvc\Dispatcher;
-use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Security\Context;
 use Neos\Flow\Security\Cryptography\HashService;
 use Neos\Flow\Tests\UnitTestCase;
-use Neos\FluidAdaptor\Core\Widget\AjaxWidgetMiddleware;
 use Neos\FluidAdaptor\Core\Widget\AjaxWidgetContextHolder;
+use Neos\FluidAdaptor\Core\Widget\AjaxWidgetMiddleware;
 use Neos\FluidAdaptor\Core\Widget\WidgetContext;
+use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\MockObject\MockObject;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;

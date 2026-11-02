@@ -13,12 +13,12 @@ namespace Neos\Flow\Tests\Unit\Session;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use PHPUnit\Framework\Attributes\Test;
-use Neos\Flow\Session\TransientSession;
-use Neos\Flow\Session\SessionInterface;
-use Neos\Flow\Session\Exception\SessionNotStartedException;
-use Neos\Flow\Tests\UnitTestCase;
 use Neos\Flow\Session;
+use Neos\Flow\Session\Exception\SessionNotStartedException;
+use Neos\Flow\Session\SessionInterface;
+use Neos\Flow\Session\TransientSession;
+use Neos\Flow\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Testcase for the Transient Session implementation

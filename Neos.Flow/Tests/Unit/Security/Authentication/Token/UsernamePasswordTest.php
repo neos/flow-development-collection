@@ -13,12 +13,12 @@ namespace Neos\Flow\Tests\Unit\Security\Authentication\Token;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+use Neos\Flow\Mvc\ActionRequest;
+use Neos\Flow\Security\Authentication\Token\UsernamePassword;
+use Neos\Flow\Security\Authentication\TokenInterface;
+use Neos\Flow\Tests\UnitTestCase;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
-use Neos\Flow\Mvc\ActionRequest;
-use Neos\Flow\Security\Authentication\TokenInterface;
-use Neos\Flow\Security\Authentication\Token\UsernamePassword;
-use Neos\Flow\Tests\UnitTestCase;
 use Psr\Http\Message\ServerRequestInterface;
 
 /**

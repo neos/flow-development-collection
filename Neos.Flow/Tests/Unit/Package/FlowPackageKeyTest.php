@@ -6,9 +6,9 @@ namespace Neos\Flow\Tests\Unit\Package;
 
 use Neos\Flow\Package\Exception\InvalidPackageKeyException;
 use Neos\Flow\Package\FlowPackageKey;
-use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\TestCase;
 
 class FlowPackageKeyTest extends TestCase
 {

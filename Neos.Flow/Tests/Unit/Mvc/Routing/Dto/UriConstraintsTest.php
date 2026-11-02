@@ -13,12 +13,12 @@ namespace Neos\Flow\Tests\Unit\Mvc\Routing\Dto;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use PHPUnit\Framework\Attributes\Test;
-use PHPUnit\Framework\Attributes\DataProvider;
 use GuzzleHttp\Psr7\Uri;
 use Neos\Flow\Mvc\Routing\Dto\UriConstraints;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Utility\ObjectAccess;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Testcase for the UriConstraintsTest DTO
@@ -156,7 +156,6 @@ final class UriConstraintsTest extends UnitTestCase
         ];
         self::assertSame($expectedResult, ObjectAccess::getProperty($uriConstraints, 'constraints', true));
     }
-
 
     #[Test]
     public function withPortReturnsANewInstanceWithPortConstraintSet()

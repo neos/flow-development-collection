@@ -21,7 +21,7 @@ final class Routes implements \IteratorAggregate
     private function __construct(
         Route ...$routes
     ) {
-        $this->routes = $routes;
+        $this->routes = array_values($routes);
 
         // validate that each route is unique
         $routesWithHttpMethodConstraints = [];
@@ -46,6 +46,18 @@ final class Routes implements \IteratorAggregate
         return new self(...$routes);
     }
 
+    /**
+     * @param array<array{
+     *      name?: string,
+     *      uriPattern: string,
+     *      defaults?: array<mixed>,
+     *      routeParts?: array<mixed>,
+     *      toLowerCase?: bool,
+     *      appendExceedingArguments?: bool,
+     *      cache?: array{lifetime?: int, tags?: array<mixed>},
+     *      httpMethods?: list<string>
+     *  }> $configuration
+     */
     public static function fromConfiguration(array $configuration): self
     {
         $routes = [];

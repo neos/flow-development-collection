@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\FluidAdaptor\Core\Parser\Fixtures;
 
 use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;

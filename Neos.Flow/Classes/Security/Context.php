@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Security;
 
 /*
@@ -11,16 +12,16 @@ namespace Neos\Flow\Security;
  * source code.
  */
 
-use Neos\Flow\Annotations as Flow;
 use Neos\Cache\CacheAwareInterface;
+use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Configuration\Exception\InvalidConfigurationTypeException;
 use Neos\Flow\Log\Utility\LogEnvironment;
+use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Security\Authentication\Token\SessionlessTokenInterface;
 use Neos\Flow\Security\Authentication\TokenAndProviderFactoryInterface;
 use Neos\Flow\Security\Authentication\TokenInterface;
-use Neos\Flow\Configuration\Exception\InvalidConfigurationTypeException;
 use Neos\Flow\Security\Policy\Role;
-use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Session\SessionManagerInterface;
 use Neos\Flow\Utility\Algorithms;
 use Neos\Utility\TypeHandling;
@@ -38,47 +39,47 @@ class Context
      * Authenticate as many tokens as possible but do not require
      * an authenticated token (e.g. for guest users with role Neos.Flow:Everybody).
      */
-    const AUTHENTICATE_ANY_TOKEN = 1;
+    public const AUTHENTICATE_ANY_TOKEN = 1;
 
     /**
      * Stop authentication of tokens after first successful
      * authentication of a token.
      */
-    const AUTHENTICATE_ONE_TOKEN = 2;
+    public const AUTHENTICATE_ONE_TOKEN = 2;
 
     /**
      * Authenticate all active tokens and throw an exception if
      * an active token could not be authenticated.
      */
-    const AUTHENTICATE_ALL_TOKENS = 3;
+    public const AUTHENTICATE_ALL_TOKENS = 3;
 
     /**
      * Authenticate as many tokens as possible but do not fail if
      * a token could not be authenticated and at least one token
      * could be authenticated.
      */
-    const AUTHENTICATE_AT_LEAST_ONE_TOKEN = 4;
+    public const AUTHENTICATE_AT_LEAST_ONE_TOKEN = 4;
 
     /**
      * Creates one csrf token per session
      */
-    const CSRF_ONE_PER_SESSION = 1;
+    public const CSRF_ONE_PER_SESSION = 1;
 
     /**
      * Creates one csrf token per uri
      */
-    const CSRF_ONE_PER_URI = 2;
+    public const CSRF_ONE_PER_URI = 2;
 
     /**
      * Creates one csrf token per request
      */
-    const CSRF_ONE_PER_REQUEST = 3;
+    public const CSRF_ONE_PER_REQUEST = 3;
 
     /**
      * If the security context isn't initialized (or authorization checks are disabled)
      * this constant will be returned by getContextHash()
      */
-    const CONTEXT_HASH_UNINITIALIZED = '__uninitialized__';
+    public const CONTEXT_HASH_UNINITIALIZED = '__uninitialized__';
 
     /**
      * One of the AUTHENTICATE_* constants to set the authentication strategy.
@@ -95,7 +96,7 @@ class Context
     protected $csrfProtectionStrategy = self::CSRF_ONE_PER_SESSION;
 
     /**
-     * @var array
+     * @var array<int,string>
      */
     protected $tokenStatusLabels = [
         1 => 'no credentials given',
@@ -149,7 +150,7 @@ class Context
 
     /**
      * CSRF tokens that are valid during this request but will be gone after.
-     * @var array
+     * @var array<string,bool>
      */
     protected $csrfTokensRemovedAfterCurrentRequest = [];
 
@@ -193,7 +194,7 @@ class Context
      * Array of registered global objects that can be accessed as operands
      *
      * @Flow\InjectConfiguration("aop.globalObjects")
-     * @var array
+     * @var array<string,string>
      */
     protected $globalObjects = [];
 
@@ -253,7 +254,7 @@ class Context
     /**
      * Injects the configuration settings
      *
-     * @param array $settings
+     * @param array<string,mixed> $settings
      * @return void
      * @throws Exception
      */
@@ -624,7 +625,7 @@ class Context
 
     /**
      * @param Account $account
-     * @return array
+     * @return array<string,Role>
      */
     protected function collectRolesAndParentRolesFromAccount(Account $account): array
     {
@@ -640,7 +641,7 @@ class Context
 
     /**
      * @param Role $role
-     * @return array
+     * @return array<string,Role>
      */
     protected function collectParentRoles(Role $role): array
     {
@@ -692,6 +693,9 @@ class Context
             if (isset($requestPatternsByType[$patternType]) && $requestPatternsByType[$patternType] === true) {
                 continue;
             }
+            if (!$this->request) {
+                throw new \Exception('Cannot evaluate request pattern without a request', 1743927165);
+            }
             $requestPatternsByType[$patternType] = $requestPattern->matchRequest($this->request);
         }
         return !in_array(false, $requestPatternsByType, true);
@@ -704,7 +708,7 @@ class Context
      *
      * @param array<TokenInterface> $managerTokens Array of tokens provided by the authentication manager
      * @param array<TokenInterface> $sessionTokens Array of tokens restored from the session
-     * @return array Array of Authentication\TokenInterface objects
+     * @return array<string,TokenInterface> Array of Authentication\TokenInterface objects
      */
     protected function mergeTokens(array $managerTokens, array $sessionTokens)
     {
@@ -848,6 +852,7 @@ class Context
         $this->withoutAuthorizationChecks(function () use (&$contextHashSoFar) {
             foreach ($this->globalObjects as $globalObjectsRegisteredClassName) {
                 if (is_subclass_of($globalObjectsRegisteredClassName, CacheAwareInterface::class)) {
+                    /** @var class-string<CacheAwareInterface> $globalObjectsRegisteredClassName */
                     $globalObject = $this->objectManager->get($globalObjectsRegisteredClassName);
                     $contextHashSoFar .= '<' . $globalObject->getCacheEntryIdentifier();
                 }

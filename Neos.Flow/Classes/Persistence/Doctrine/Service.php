@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Neos\Flow\Persistence\Doctrine;
@@ -34,7 +35,6 @@ use Doctrine\Migrations\Metadata\AvailableMigrationsList;
 use Doctrine\Migrations\Metadata\ExecutedMigration;
 use Doctrine\Migrations\Metadata\ExecutedMigrationsList;
 use Doctrine\Migrations\MigratorConfiguration;
-use Doctrine\Migrations\Tools\Console\Exception\InvalidOptionUsage;
 use Doctrine\Migrations\Tools\Console\Exception\VersionAlreadyExists;
 use Doctrine\Migrations\Tools\Console\Exception\VersionDoesNotExist;
 use Doctrine\Migrations\Version\Comparator;
@@ -42,6 +42,7 @@ use Doctrine\Migrations\Version\Direction;
 use Doctrine\Migrations\Version\ExecutionResult;
 use Doctrine\Migrations\Version\Version;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\Mapping\ClassMetadata;
 use Doctrine\ORM\Mapping\MappingException;
 use Doctrine\ORM\Tools\SchemaTool;
 use Doctrine\ORM\Tools\SchemaValidator;
@@ -97,7 +98,7 @@ class Service
      * Validates the metadata mapping for Doctrine, using the SchemaValidator
      * of Doctrine.
      *
-     * @return array
+     * @return array<int|string,array<string>>
      */
     public function validateMapping(): array
     {
@@ -158,7 +159,9 @@ class Service
      */
     public function compileProxies(): void
     {
-        Files::emptyDirectoryRecursively(Files::concatenatePaths([$this->environment->getPathToTemporaryDirectory(), 'Doctrine/Proxies']));
+        $proxyDirectory = Files::concatenatePaths([$this->environment->getPathToTemporaryDirectory(), 'Doctrine/Proxies']);
+        Files::createDirectoryRecursively($proxyDirectory);
+        Files::emptyDirectoryRecursively($proxyDirectory);
         $proxyFactory = $this->entityManager->getProxyFactory();
         $proxyFactory->generateProxyClasses($this->entityManager->getMetadataFactory()->getAllMetadata());
     }
@@ -167,7 +170,7 @@ class Service
      * Returns information about which entities exist and possibly if their
      * mapping information contains errors or not.
      *
-     * @return array
+     * @return array<class-string,string|ClassMetadata<object>>
      */
     public function getEntityStatus(): array
     {
@@ -192,12 +195,12 @@ class Service
      * Run DQL and return the result as-is.
      *
      * @param string $dql
-     * @param integer $hydrationMode
+     * @param 1|2|3|4|5|6|string|null $hydrationMode
      * @param int|null $firstResult
      * @param int|null $maxResult
      * @return mixed
      */
-    public function runDql(string $dql, int $hydrationMode = \Doctrine\ORM\Query::HYDRATE_OBJECT, ?int $firstResult = null, ?int $maxResult = null)
+    public function runDql(string $dql, int|string|null $hydrationMode = \Doctrine\ORM\Query::HYDRATE_OBJECT, ?int $firstResult = null, ?int $maxResult = null)
     {
         $query = $this->entityManager->createQuery($dql);
         if ($firstResult !== null) {
@@ -489,17 +492,15 @@ class Service
         if ($version === 'all') {
             if ($markAsMigrated === false) {
                 foreach ($executedMigrations->getItems() as $availableMigration) {
-                    $this->mark($output, $availableMigration->getVersion(), false, $executedMigrations, !$markAsMigrated, $overrideMigrationFolderName);
+                    $this->mark($output, $availableMigration->getVersion(), false, $executedMigrations, true, $overrideMigrationFolderName);
                 }
             }
 
             foreach ($availableVersions->getItems() as $availableMigration) {
                 $this->mark($output, $availableMigration->getVersion(), true, $executedMigrations, !$markAsMigrated, $overrideMigrationFolderName);
             }
-        } elseif ($version !== null) {
-            $this->mark($output, new Version($version), false, $executedMigrations, !$markAsMigrated, $overrideMigrationFolderName);
         } else {
-            throw InvalidOptionUsage::new('You must specify the version or use the --all argument.');
+            $this->mark($output, new Version($version), false, $executedMigrations, !$markAsMigrated, $overrideMigrationFolderName);
         }
     }
 
@@ -619,7 +620,7 @@ class Service
      * @param boolean $diffAgainstCurrent
      * @param string|null $filterExpression
      * @param string|null $overrideMigrationFolderName
-     * @return array Path to the new file
+     * @return array<int,mixed> Path to the new file
      * @throws DBALException
      * @throws FilesException
      */
@@ -694,10 +695,10 @@ class Service
      *
      * @param Schema $schema
      * @param AbstractPlatform $platform
-     * @param array $tableNames
+     * @param array<string> $tableNames
      * @param string $search
      * @param string $replace
-     * @return array
+     * @return array{drop: array<int,string>, add: array<int,string>}
      */
     public static function getForeignKeyHandlingSql(Schema $schema, AbstractPlatform $platform, array $tableNames, string $search, string $replace): array
     {

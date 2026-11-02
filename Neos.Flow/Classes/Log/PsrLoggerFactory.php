@@ -1,10 +1,11 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Neos\Flow\Log;
 
-use Neos\Flow\Log\Backend\BackendInterface;
 use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Log\Backend\BackendInterface;
 use Neos\Flow\Log\Psr\Logger;
 
 /**
@@ -23,14 +24,14 @@ class PsrLoggerFactory implements PsrLoggerFactoryInterface
     protected $instances = [];
 
     /**
-     * @var array
+     * @var array<mixed>
      */
     protected $configuration = [];
 
     /**
      * PsrLoggerFactory constructor.
      *
-     * @param array $configuration
+     * @param array<mixed> $configuration
      */
     public function __construct(array $configuration = [])
     {
@@ -59,9 +60,12 @@ class PsrLoggerFactory implements PsrLoggerFactoryInterface
             throw new \Exception('To use the default logging you have to have the "neos/flow-log" package installed. It seems you miss it, so install it via "composer require neos/flow-log".', 1515437383589);
         }
 
-        $backends = $this->instantiateBackends($this->configuration[$identifier]);
+        /** @phpstan-ignore method.notFound */
+        $logger = (new \ReflectionClass(Logger::class))->newLazyGhost(function ($object) use ($identifier) {
+            $backends = $this->instantiateBackends($this->configuration[$identifier]);
+            $object->__construct($backends);
+        });
 
-        $logger = new Logger($backends);
         $this->instances[$identifier] = $logger;
         return $logger;
     }
@@ -69,7 +73,7 @@ class PsrLoggerFactory implements PsrLoggerFactoryInterface
     /**
      * Create a new instance of this PsrLoggerFactory
      *
-     * @param array $configuration
+     * @param array<mixed> $configuration
      * @return PsrLoggerFactory
      * @api
      */
@@ -81,7 +85,7 @@ class PsrLoggerFactory implements PsrLoggerFactoryInterface
     /**
      * Instantiate all configured backends
      *
-     * @param array $configuration
+     * @param array<mixed> $configuration
      * @return BackendInterface[]
      * @throws \Exception
      */
@@ -101,7 +105,7 @@ class PsrLoggerFactory implements PsrLoggerFactoryInterface
      * Instantiate a backend based on configuration.
      *
      * @param string $class
-     * @param array $options
+     * @param array<mixed> $options
      * @return BackendInterface
      * @throws \Exception
      */

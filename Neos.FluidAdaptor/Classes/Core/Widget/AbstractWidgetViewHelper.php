@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\FluidAdaptor\Core\Widget;
 
 /*
@@ -15,11 +16,11 @@ use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\Exception\ForwardException;
 use Neos\Flow\Mvc\Exception\InfiniteLoopException;
 use Neos\Flow\Mvc\Exception\StopActionException;
-use Neos\Flow\ObjectManagement\DependencyInjection\DependencyProxy;
 use Neos\FluidAdaptor\Core\Rendering\RenderingContext;
 use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
 use Neos\FluidAdaptor\Core\ViewHelper\Facets\ChildNodeAccessInterface;
 use TYPO3Fluid\Fluid\Core\Compiler\TemplateCompiler;
+use TYPO3Fluid\Fluid\Core\Parser\SyntaxTree\NodeInterface;
 use TYPO3Fluid\Fluid\Core\Parser\SyntaxTree\RootNode;
 use TYPO3Fluid\Fluid\Core\Parser\SyntaxTree\ViewHelperNode;
 
@@ -142,15 +143,14 @@ abstract class AbstractWidgetViewHelper extends AbstractViewHelper implements Ch
         $this->widgetContext->setNonAjaxWidgetConfiguration($this->getNonAjaxWidgetConfiguration());
         $this->initializeWidgetIdentifier();
 
-        $controllerObjectName = ($this->controller instanceof DependencyProxy) ? $this->controller->_getClassName() : get_class($this->controller);
-        $this->widgetContext->setControllerObjectName($controllerObjectName);
+        $this->widgetContext->setControllerObjectName(get_class($this->controller));
     }
 
     /**
      * Stores the syntax tree child nodes in the Widget Context, so they can be
      * rendered with <f:widget.renderChildren> lateron.
      *
-     * @param array $childNodes The SyntaxTree Child nodes of this ViewHelper.
+     * @param array<NodeInterface> $childNodes The SyntaxTree Child nodes of this ViewHelper.
      * @return void
      */
     public function setChildNodes(array $childNodes)
@@ -166,7 +166,7 @@ abstract class AbstractWidgetViewHelper extends AbstractViewHelper implements Ch
     /**
      * Generate the configuration for this widget. Override to adjust.
      *
-     * @return array
+     * @return array<mixed>
      * @api
      */
     protected function getWidgetConfiguration()
@@ -179,7 +179,7 @@ abstract class AbstractWidgetViewHelper extends AbstractViewHelper implements Ch
      *
      * By default, returns getWidgetConfiguration(). Should become API later.
      *
-     * @return array
+     * @return array<mixed>
      */
     protected function getAjaxWidgetConfiguration()
     {
@@ -191,7 +191,7 @@ abstract class AbstractWidgetViewHelper extends AbstractViewHelper implements Ch
      *
      * By default, returns getWidgetConfiguration(). Should become API later.
      *
-     * @return array
+     * @return array<mixed>
      */
     protected function getNonAjaxWidgetConfiguration()
     {
@@ -210,9 +210,6 @@ abstract class AbstractWidgetViewHelper extends AbstractViewHelper implements Ch
      */
     protected function initiateSubRequest()
     {
-        if ($this->controller instanceof DependencyProxy) {
-            $this->controller->_activateDependency();
-        }
         if (!($this->controller instanceof AbstractWidgetController)) {
             throw new Exception\MissingControllerException('initiateSubRequest() can not be called if there is no controller inside $this->controller. Make sure to add the @Neos\Flow\Annotations\Inject annotation in your widget class.', 1284401632);
         }

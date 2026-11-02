@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\FluidAdaptor\ViewHelpers\Form;
 
 /*
@@ -98,7 +99,8 @@ class CheckboxViewHelper extends AbstractFormFieldViewHelper
             if ($checked === null) {
                 $checked = false;
                 foreach ($propertyValue as $value) {
-                    if (TypeHandling::isSimpleType(TypeHandling::getTypeForValue($value))) {
+                    $typeForValue = TypeHandling::getTypeForValue($value);
+                    if (TypeHandling::isSimpleType($typeForValue)) {
                         $checked = $valueAttribute === $value;
                     } else {
                         // assume an entity
@@ -111,7 +113,7 @@ class CheckboxViewHelper extends AbstractFormFieldViewHelper
             }
             $this->arguments['multiple'] = true;
         } elseif (!$multiple && $propertyValue !== null) {
-            $checked = (boolean)$propertyValue === (boolean)$valueAttribute;
+            $checked = (bool)$propertyValue === (bool)$valueAttribute;
         }
 
         $nameAttribute = $this->getName();

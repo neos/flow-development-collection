@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Aop;
 
 /*
@@ -14,6 +15,7 @@ namespace Neos\Flow\Aop;
 /**
  * Contains boilerplate code for AOP execution and is added to AOP proxy classes.
  *
+ * @phpstan-ignore trait.unused (probably API)
  */
 trait AdvicesTrait
 {

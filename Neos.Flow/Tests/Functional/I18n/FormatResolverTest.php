@@ -13,13 +13,12 @@ namespace Neos\Flow\Tests\Functional\I18n;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+use Neos\Flow\I18n\FormatResolver;
 use Neos\Flow\I18n\Locale;
+use Neos\Flow\Tests\Functional\I18n\Fixtures\SampleFormatter;
+use Neos\Flow\Tests\FunctionalTestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
-use Neos\Flow\Tests\Functional\I18n\Fixtures\SampleFormatter;
-use Neos\Flow\I18n\FormatResolver;
-use Neos\Flow\Tests\FunctionalTestCase;
-use Neos\Flow\I18n;
 
 /**
  * Testcase for the I18N placeholder replacing
@@ -58,7 +57,7 @@ final class FormatResolverTest extends FunctionalTestCase
     #[Test]
     public function formatResolverWorksCorrectlyForFullyQualifiedFormatterClassNames(): void
     {
-        $actualFormatter = new SampleFormatter;
+        $actualFormatter = new SampleFormatter();
         $locale = new Locale('de');
         $testResult = $this->formatResolver->resolvePlaceholders(sprintf('{0,%s}', SampleFormatter::class), ['foo'], $locale);
         self::assertEquals($actualFormatter->format('foo', $locale), $testResult);

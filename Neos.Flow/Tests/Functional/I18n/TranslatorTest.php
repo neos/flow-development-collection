@@ -13,12 +13,12 @@ namespace Neos\Flow\Tests\Functional\I18n;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use Neos\Flow\I18n\Translator;
+use Neos\Flow\I18n;
 use Neos\Flow\I18n\Locale;
+use Neos\Flow\I18n\Translator;
+use Neos\Flow\Tests\FunctionalTestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
-use Neos\Flow\I18n;
-use Neos\Flow\Tests\FunctionalTestCase;
 
 /**
  * Testcase for the I18N translations

@@ -57,3 +57,13 @@ Neos:
         # of the Flow root. This file can be used to map proxy classes to their original
         # source files for debugging. Should only be enabled in development environments.
         enableXdebugPathMapping: false
+
+        # This is a forward compatibility setting, preventing constructor arguments to be autowired
+        # if they are not declared singleton or session when this setting is false.
+        #
+        # BEWARE of dragons, Flow code should be fine, but Neos might still contain such constructs.
+        # Manual full cache flush is necessary after changing this setting.
+        #
+        # In the future autowiring of prototypes should no longer be an option as it makes no sense.
+        # Use a factory class if you need this otherwise.
+        prototypeAutowiring: true

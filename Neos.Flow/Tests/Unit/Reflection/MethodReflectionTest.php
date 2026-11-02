@@ -13,12 +13,11 @@ namespace Neos\Flow\Tests\Unit\Reflection;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use PHPUnit\Framework\Attributes\Test;
-use Neos\Flow\Reflection\MethodReflection;
 use Neos\Flow\Reflection\ClassReflection;
+use Neos\Flow\Reflection\MethodReflection;
 use Neos\Flow\Reflection\ParameterReflection;
-use Neos\Flow\Reflection;
 use Neos\Flow\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Testcase for MethodReflection

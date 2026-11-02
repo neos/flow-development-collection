@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Error;
 
 /*
@@ -27,7 +28,7 @@ interface ExceptionHandlerInterface
     /**
      * Sets options of this exception handler
      *
-     * @param array $options
+     * @param array<string,mixed> $options
      * @return void
      */
     public function setOptions(array $options);

@@ -1,5 +1,7 @@
 <?php
+
 declare(strict_types=1);
+
 namespace Neos\Flow\Session;
 
 /*
@@ -107,7 +109,7 @@ interface SessionInterface
     /**
      * Returns the tags this session has been tagged with.
      *
-     * @return array The tags or an empty array if there aren't any
+     * @return array<string> The tags or an empty array if there aren't any
      * @throws Exception\SessionNotStartedException
      * @api
      */

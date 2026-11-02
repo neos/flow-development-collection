@@ -1,5 +1,7 @@
 <?php
+
 declare(strict_types=1);
+
 namespace Neos\Flow\Session;
 
 /*
@@ -26,8 +28,14 @@ class TransientSession implements SessionInterface
 {
     protected string $sessionId;
     protected bool $started = false;
+    /**
+     * @var array<string,mixed>
+     */
     protected array $data = [];
     protected ?int $lastActivityTimestamp = null;
+    /**
+     * @var array<string,bool>
+     */
     protected array $tags;
 
     public function isStarted(): bool
@@ -165,6 +173,7 @@ class TransientSession implements SessionInterface
         if ($this->lastActivityTimestamp === null) {
             $this->touch();
         }
+        /** @phpstan-ignore return.type (touch() initializes the timestamp) */
         return $this->lastActivityTimestamp;
     }
 
@@ -217,7 +226,7 @@ class TransientSession implements SessionInterface
     /**
      * Returns the tags this session has been tagged with.
      *
-     * @return array The tags or an empty array if there aren't any
+     * @return array<int,string> The tags or an empty array if there aren't any
      * @throws Exception\SessionNotStartedException
      * @api
      */

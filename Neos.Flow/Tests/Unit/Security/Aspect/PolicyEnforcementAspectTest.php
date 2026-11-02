@@ -13,14 +13,14 @@ namespace Neos\Flow\Tests\Unit\Security\Aspect;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use Neos\Flow\Security\Authorization\Interceptor\PolicyEnforcement;
-use Neos\Flow\Security\Context;
-use PHPUnit\Framework\Attributes\Test;
 use Neos\Flow\Aop\Advice\AdviceChain;
 use Neos\Flow\Aop\JoinPointInterface;
 use Neos\Flow\Security;
 use Neos\Flow\Security\Aspect\PolicyEnforcementAspect;
+use Neos\Flow\Security\Authorization\Interceptor\PolicyEnforcement;
+use Neos\Flow\Security\Context;
 use Neos\Flow\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Testcase for the security policy enforcement aspect

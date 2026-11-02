@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Http;
 
 /*
@@ -89,6 +90,7 @@ class RequestHandler implements HttpRequestHandlerInterface
     /**
      * Handles a HTTP request
      *
+     * @phpstan-assert ServerRequest $this->httpRequest
      * @return void
      */
     public function handleRequest()
@@ -102,6 +104,7 @@ class RequestHandler implements HttpRequestHandlerInterface
         $this->middlewaresChain->onStep(function (ServerRequestInterface $request) {
             $this->httpRequest = $request;
         });
+        assert($this->httpRequest instanceof ServerRequestInterface);
         $this->httpResponse = $this->middlewaresChain->handle($this->httpRequest);
 
         $this->sendResponse($this->httpResponse);
@@ -147,6 +150,7 @@ class RequestHandler implements HttpRequestHandlerInterface
     /**
      * Send the HttpResponse of the component context to the browser and flush all output buffers.
      * @param ResponseInterface $response
+     * @return void
      */
     protected function sendResponse(ResponseInterface $response)
     {

@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Neos\Flow\Tests\Functional\Persistence\Doctrine;
@@ -12,20 +13,20 @@ namespace Neos\Flow\Tests\Functional\Persistence\Doctrine;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use PHPUnit\Framework\Attributes\Test;
-use Neos\Flow\Tests\Functional\Persistence\Fixtures\PostRepository;
-use Neos\Flow\Tests\Functional\Persistence\Fixtures\Post;
-use Neos\Flow\Tests\Functional\Persistence\Fixtures\SuperEntityRepository;
-use Neos\Flow\Tests\Functional\Persistence\Fixtures\SuperEntity;
-use Neos\Flow\Tests\Functional\Persistence\Fixtures\SubEntity;
-use Neos\Flow\Tests\Functional\Persistence\Fixtures\SubSubEntityRepository;
-use Neos\Flow\Tests\Functional\Persistence\Fixtures\SubSubEntity;
 use Neos\Flow\Persistence\Doctrine\PersistenceManager;
 use Neos\Flow\Persistence\Doctrine\Repository;
 use Neos\Flow\Persistence\Exception\IllegalObjectTypeException;
 use Neos\Flow\Persistence\QueryResultInterface;
 use Neos\Flow\Tests\Functional\Persistence\Fixtures;
+use Neos\Flow\Tests\Functional\Persistence\Fixtures\Post;
+use Neos\Flow\Tests\Functional\Persistence\Fixtures\PostRepository;
+use Neos\Flow\Tests\Functional\Persistence\Fixtures\SubEntity;
+use Neos\Flow\Tests\Functional\Persistence\Fixtures\SubSubEntity;
+use Neos\Flow\Tests\Functional\Persistence\Fixtures\SubSubEntityRepository;
+use Neos\Flow\Tests\Functional\Persistence\Fixtures\SuperEntity;
+use Neos\Flow\Tests\Functional\Persistence\Fixtures\SuperEntityRepository;
 use Neos\Flow\Tests\FunctionalTestCase;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Testcase for basic repository operations

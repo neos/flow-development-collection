@@ -14,10 +14,10 @@ namespace Neos\Flow\Tests\Functional\Http;
  * source code.
  */
 
-use PHPUnit\Framework\Attributes\Test;
 use Neos\Flow\Configuration\ConfigurationManager;
 use Neos\Flow\Http\RequestHandler;
 use Neos\Flow\Tests\FunctionalTestCase;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use Psr\Http\Message\ResponseInterface;
 

@@ -13,7 +13,6 @@ namespace Neos\Flow\Tests\Unit\Security\Authorization;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use PHPUnit\Framework\Attributes\Test;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Security\Authorization\FilterFirewall;
@@ -25,6 +24,7 @@ use Neos\Flow\Security\Exception\AccessDeniedException;
 use Neos\Flow\Security\RequestPattern\Uri;
 use Neos\Flow\Security\RequestPatternResolver;
 use Neos\Flow\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Testcase for the filter firewall
@@ -124,7 +124,6 @@ final class FilterFirewallTest extends UnitTestCase
         self::assertEquals($mockRequestPattern2, $result[1]->getRequestPattern());
         self::assertEquals($testInterceptor, $result[1]->getSecurityInterceptor());
     }
-
 
     #[Test]
     public function allConfiguredFiltersAreCalled()

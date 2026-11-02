@@ -13,11 +13,11 @@ namespace Neos\Flow\Tests\Unit\Persistence\Aspect;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use PHPUnit\Framework\Attributes\Test;
 use Neos\Flow\Aop\JoinPointInterface;
 use Neos\Flow\Persistence\Aspect\PersistenceMagicAspect;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Flow\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Testcase for the PersistenceMagicAspect

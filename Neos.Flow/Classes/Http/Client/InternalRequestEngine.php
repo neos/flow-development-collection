@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Http\Client;
 
 /*
@@ -26,9 +27,9 @@ use Neos\Flow\Security\Context;
 use Neos\Flow\Session\SessionInterface;
 use Neos\Flow\Session\SessionManager;
 use Neos\Flow\Validation\ValidatorResolver;
+use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ServerRequestFactoryInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\StreamFactoryInterface;
@@ -174,7 +175,7 @@ class InternalRequestEngine implements RequestEngineInterface
     /**
      * Prepare a response in case an error occurred.
      *
-     * @param object $exception \Exception or \Throwable
+     * @param \Throwable $exception
      * @param ResponseInterface $response
      * @return ResponseInterface
      */
@@ -197,7 +198,7 @@ class InternalRequestEngine implements RequestEngineInterface
         return $response
             ->withStatus($statusCode)
             ->withBody($this->contentFactory->createStream($content))
-            ->withHeader('X-Flow-ExceptionCode', $exception->getCode())
+            ->withHeader('X-Flow-ExceptionCode', (string)$exception->getCode())
             ->withHeader('X-Flow-ExceptionMessage', base64_encode($exception->getMessage()));
     }
 }

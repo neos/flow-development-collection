@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Tests\Functional\Security\Fixtures;
 
 /*
@@ -23,5 +24,5 @@ class RestrictableEntityRepository extends Repository
     /**
      * @var string
      */
-    const ENTITY_CLASSNAME = RestrictableEntity::class;
+    public const ENTITY_CLASSNAME = RestrictableEntity::class;
 }

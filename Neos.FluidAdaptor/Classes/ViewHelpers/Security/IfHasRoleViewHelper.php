@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\FluidAdaptor\ViewHelpers\Security;
 
 /*
@@ -78,6 +79,7 @@ class IfHasRoleViewHelper extends AbstractConditionViewHelper
 {
     /**
      * Initializes the "then" and "else" arguments
+     * @return void
      */
     public function initializeArguments()
     {
@@ -104,7 +106,7 @@ class IfHasRoleViewHelper extends AbstractConditionViewHelper
     }
 
     /**
-     * @param array|null $arguments
+     * @param array<string,mixed>|null $arguments
      * @param FlowAwareRenderingContextInterface&RenderingContextInterface $renderingContext
      * @return boolean
      */
@@ -120,8 +122,8 @@ class IfHasRoleViewHelper extends AbstractConditionViewHelper
             return false;
         }
 
-        $role = $arguments['role'];
-        $account = $arguments['account'];
+        $role = $arguments['role'] ?? null;
+        $account = $arguments['account'] ?? null;
         $packageKey = isset($arguments['packageKey']) ? $arguments['packageKey'] : $renderingContext->getControllerContext()->getRequest()->getControllerPackageKey();
 
         if (is_string($role)) {

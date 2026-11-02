@@ -13,11 +13,11 @@ namespace Neos\Flow\Tests\Unit\Configuration\Source;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use PHPUnit\Framework\Attributes\Test;
 use Neos\Flow\Configuration\Exception;
-use org\bovigo\vfs\vfsStream;
 use Neos\Flow\Configuration\Source\YamlSource;
 use Neos\Flow\Tests\UnitTestCase;
+use org\bovigo\vfs\vfsStream;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Testcase for the YAML configuration source

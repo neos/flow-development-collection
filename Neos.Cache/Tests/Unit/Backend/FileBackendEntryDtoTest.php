@@ -4,13 +4,12 @@ declare(strict_types=1);
 
 namespace Neos\Cache\Tests\Unit\Backend;
 
-use PHPUnit\Framework\Attributes\DataProvider;
-use PHPUnit\Framework\Attributes\Test;
-
 include_once(__DIR__ . '/../../BaseTestCase.php');
 
 use Neos\Cache\Backend\FileBackendEntryDto;
 use Neos\Cache\Tests\BaseTestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Test case for the FileBackendEntryDto

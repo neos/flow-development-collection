@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Security\Authorization\Privilege\Method;
 
 /*
@@ -30,7 +31,7 @@ class MethodTargetExpressionParser extends PointcutExpressionParser
      * @param string $operator The operator
      * @param string $pointcutExpression The pointcut expression (value of the designator)
      * @param PointcutFilterComposite $pointcutFilterComposite An instance of the pointcut filter composite. The result (ie. the pointcut filter) will be added to this composite object.
-     * @param array &$trace
+     * @param array<mixed> &$trace
      * @return void
      * @throws InvalidPointcutExpressionException
      */

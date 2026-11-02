@@ -1,7 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
 namespace Neos\Flow\Tests\Unit\Validation\Validator;
 
 /*
@@ -13,9 +11,10 @@ namespace Neos\Flow\Tests\Unit\Validation\Validator;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use PHPUnit\Framework\Attributes\Test;
-use PHPUnit\Framework\Attributes\DataProvider;
+
 use Neos\Flow\Validation\Validator\CountValidator;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 
 require_once('AbstractValidatorTestcase.php');
 
@@ -23,7 +22,7 @@ require_once('AbstractValidatorTestcase.php');
  * Testcase for the count validator
  *
  */
-final class CountValidatorTest extends AbstractValidatorTestcase
+class CountValidatorTest extends AbstractValidatorTestcase
 {
     protected $validatorClassName = CountValidator::class;
 
@@ -47,7 +46,7 @@ final class CountValidatorTest extends AbstractValidatorTestcase
     public static function countables()
     {
         $splObjectStorage = new \SplObjectStorage();
-        $splObjectStorage->attach(new \stdClass);
+        $splObjectStorage->attach(new \stdClass());
         return [
             [['Foo', 'Bar']],
             [new \ArrayObject(['Baz', 'Quux'])],
@@ -76,11 +75,11 @@ final class CountValidatorTest extends AbstractValidatorTestcase
     public static function nonCountables()
     {
         $splObjectStorage = new \SplObjectStorage();
-        $splObjectStorage->attach(new \stdClass);
+        $splObjectStorage->attach(new \stdClass());
         return [
             ['Bar'],
             [1],
-            [new \stdClass]
+            [new \stdClass()]
         ];
     }
 

@@ -13,22 +13,22 @@ namespace Neos\Flow\Tests\Unit\Cache;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use Neos\Cache\Frontend\FrontendInterface;
-use PHPUnit\Framework\Attributes\Test;
-use Neos\Cache\Exception\DuplicateIdentifierException;
-use Neos\Cache\Frontend\AbstractFrontend;
-use Neos\Cache\Exception\NoSuchCacheException;
-use PHPUnit\Framework\Attributes\DataProvider;
-use org\bovigo\vfs\vfsStream;
 use Neos\Cache;
+use Neos\Cache\Exception\DuplicateIdentifierException;
+use Neos\Cache\Exception\NoSuchCacheException;
+use Neos\Cache\Frontend\AbstractFrontend;
+use Neos\Cache\Frontend\FrontendInterface;
 use Neos\Flow\Cache\CacheManager;
 use Neos\Flow\Configuration\ConfigurationManager;
 use Neos\Flow\Monitor\ChangeDetectionStrategy\ChangeDetectionStrategyInterface;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Flow\Utility\Environment;
+use org\bovigo\vfs\vfsStream;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
-use Psr\Log\LoggerInterface;
 use Psr\Cache\CacheItemPoolInterface;
+use Psr\Log\LoggerInterface;
 use Psr\SimpleCache\CacheInterface;
 
 /**

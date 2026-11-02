@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Mvc\Routing\Dto;
 
 /*
@@ -11,8 +12,8 @@ namespace Neos\Flow\Mvc\Routing\Dto;
  * source code.
  */
 
-use Neos\Flow\Annotations as Flow;
 use GuzzleHttp\Psr7\Uri;
+use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Http\Helper\UriHelper;
 use Psr\Http\Message\UriInterface;
 
@@ -34,26 +35,26 @@ use Psr\Http\Message\UriInterface;
  */
 final class UriConstraints
 {
-    const CONSTRAINT_SCHEME = 'scheme';
-    const CONSTRAINT_HOST = 'host';
-    const CONSTRAINT_HOST_PREFIX = 'hostPrefix';
-    const CONSTRAINT_HOST_SUFFIX = 'hostSuffix';
-    const CONSTRAINT_PORT = 'port';
-    const CONSTRAINT_PATH = 'path';
-    const CONSTRAINT_PATH_PREFIX = 'pathPrefix';
-    const CONSTRAINT_PATH_SUFFIX = 'pathSuffix';
-    const CONSTRAINT_QUERY_STRING = 'queryString';
-    const CONSTRAINT_FRAGMENT = 'fragment';
+    public const CONSTRAINT_SCHEME = 'scheme';
+    public const CONSTRAINT_HOST = 'host';
+    public const CONSTRAINT_HOST_PREFIX = 'hostPrefix';
+    public const CONSTRAINT_HOST_SUFFIX = 'hostSuffix';
+    public const CONSTRAINT_PORT = 'port';
+    public const CONSTRAINT_PATH = 'path';
+    public const CONSTRAINT_PATH_PREFIX = 'pathPrefix';
+    public const CONSTRAINT_PATH_SUFFIX = 'pathSuffix';
+    public const CONSTRAINT_QUERY_STRING = 'queryString';
+    public const CONSTRAINT_FRAGMENT = 'fragment';
 
-    const HTTP_DEFAULT_HOST = 'localhost';
+    public const HTTP_DEFAULT_HOST = 'localhost';
 
     /**
-     * @var array
+     * @var array<mixed>
      */
     private $constraints;
 
     /**
-     * @param array $constraints array of constraints with one of the CONSTRAINT_* constants as keys and corresponding values
+     * @param array<mixed> $constraints array of constraints with one of the CONSTRAINT_* constants as keys and corresponding values
      */
     private function __construct(array $constraints)
     {
@@ -212,7 +213,7 @@ final class UriConstraints
     /**
      * Create a new instance with a query string corresponding to the given $values merged with any existing query string constraint
      *
-     * @param array $values
+     * @param array<mixed> $values
      * @return UriConstraints
      */
     public function withAddedQueryValues(array $values): self

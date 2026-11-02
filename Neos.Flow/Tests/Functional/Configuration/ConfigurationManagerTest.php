@@ -13,13 +13,13 @@ namespace Neos\Flow\Tests\Functional\Configuration;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use PHPUnit\Framework\Attributes\Test;
 use Neos\Flow\Configuration\ConfigurationManager;
 use Neos\Flow\Configuration\Loader\SettingsLoader;
 use Neos\Flow\Configuration\Source\YamlSource;
 use Neos\Flow\Core\ApplicationContext;
 use Neos\Flow\Tests\FunctionalTestCase;
 use Neos\Flow\Utility\Environment;
+use PHPUnit\Framework\Attributes\Test;
 
 final class ConfigurationManagerTest extends FunctionalTestCase
 {

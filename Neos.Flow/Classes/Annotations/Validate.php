@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Annotations;
 
 /*
@@ -20,7 +21,7 @@ use Doctrine\Common\Annotations\Annotation\NamedArgumentConstructor;
  * @NamedArgumentConstructor
  * @Target({"METHOD", "PROPERTY"})
  */
-#[\Attribute(\Attribute::TARGET_METHOD|\Attribute::TARGET_PROPERTY|\Attribute::IS_REPEATABLE)]
+#[\Attribute(\Attribute::TARGET_METHOD | \Attribute::TARGET_PROPERTY | \Attribute::IS_REPEATABLE)]
 final class Validate
 {
     /**
@@ -31,7 +32,7 @@ final class Validate
 
     /**
      * Options for the validator, validator-specific.
-     * @var array
+     * @var array<mixed>
      */
     public $options = [];
 
@@ -43,10 +44,14 @@ final class Validate
 
     /**
      * The validation groups for which this validator should be executed.
-     * @var array
+     * @var array<int,string>
      */
     public $validationGroups = ['Default'];
 
+    /**
+     * @param array<mixed> $options
+     * @param array<int,string>|null $validationGroups
+     */
     public function __construct(?string $argumentName = null, ?string $type = null, array $options = [], ?array $validationGroups = null)
     {
         $this->type = $type;

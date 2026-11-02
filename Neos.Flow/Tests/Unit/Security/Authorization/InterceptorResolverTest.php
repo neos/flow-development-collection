@@ -13,12 +13,12 @@ namespace Neos\Flow\Tests\Unit\Security\Authorization;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use PHPUnit\Framework\Attributes\Test;
-use Neos\Flow\Security\Exception\NoInterceptorFoundException;
-use Neos\Flow\Security\Authorization\InterceptorResolver;
 use Neos\Flow\ObjectManagement\ObjectManager;
-use Neos\Flow\Tests\UnitTestCase;
 use Neos\Flow\Security;
+use Neos\Flow\Security\Authorization\InterceptorResolver;
+use Neos\Flow\Security\Exception\NoInterceptorFoundException;
+use Neos\Flow\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Testcase for the security interceptor resolver
@@ -54,7 +54,6 @@ final class InterceptorResolverTest extends UnitTestCase
 
         $mockObjectManager = $this->createMock(ObjectManager::class);
         $mockObjectManager->method('getClassNameByObjectName')->willReturnCallback($getCaseSensitiveObjectNameCallback);
-
 
         $interceptorResolver = new InterceptorResolver($mockObjectManager);
         $interceptorClass = $interceptorResolver->resolveInterceptorClass('ValidShortName');

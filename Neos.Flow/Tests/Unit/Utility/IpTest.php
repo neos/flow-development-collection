@@ -14,9 +14,9 @@ namespace Neos\Flow\Tests\Unit\Utility;
  * source code.
  */
 use Neos\Flow\Tests\UnitTestCase;
+use Neos\Flow\Utility\Ip;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
-use Neos\Flow\Utility\Ip;
 
 /**
  * Testcase for the Utility Ip class

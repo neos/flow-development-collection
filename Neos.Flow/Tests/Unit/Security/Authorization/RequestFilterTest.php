@@ -13,13 +13,12 @@ namespace Neos\Flow\Tests\Unit\Security\Authorization;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use PHPUnit\Framework\Attributes\Test;
-use Neos\Flow\Security\RequestPatternInterface;
+use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Security\Authorization\InterceptorInterface;
 use Neos\Flow\Security\Authorization\RequestFilter;
-use Neos\Flow\Mvc\ActionRequest;
+use Neos\Flow\Security\RequestPatternInterface;
 use Neos\Flow\Tests\UnitTestCase;
-use Neos\Flow\Security;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Testcase for request filters

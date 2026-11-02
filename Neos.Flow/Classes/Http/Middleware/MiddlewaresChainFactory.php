@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Neos\Flow\Http\Middleware;
@@ -32,7 +33,7 @@ class MiddlewaresChainFactory
     protected $objectManager;
 
     /**
-     * @param array $chainConfiguration
+     * @param array<mixed> $chainConfiguration
      * @return MiddlewaresChain
      * @throws Exception
      */

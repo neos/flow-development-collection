@@ -13,11 +13,11 @@ namespace Neos\Flow\Tests\Unit\Aop\Builder;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use PHPUnit\Framework\Attributes\Test;
 use Neos\Flow\Aop\Builder\AbstractMethodInterceptorBuilder;
 use Neos\Flow\Aop\Builder\AdvisedConstructorInterceptorBuilder;
 use Neos\Flow\Reflection\ReflectionService;
 use Neos\Flow\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Testcase for the Abstract Method Interceptor Builder

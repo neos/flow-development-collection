@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Annotations;
 
 /*
@@ -21,7 +22,7 @@ use Doctrine\Common\Annotations\Annotation\NamedArgumentConstructor;
  * @NamedArgumentConstructor
  * @Target({"METHOD", "CLASS"})
  */
-#[\Attribute(\Attribute::TARGET_METHOD|\Attribute::TARGET_CLASS)]
+#[\Attribute(\Attribute::TARGET_METHOD | \Attribute::TARGET_CLASS)]
 final class Autowiring
 {
     /**

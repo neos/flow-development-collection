@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\FluidAdaptor\Tests\Functional\Form\Fixtures\Controller;
 
 /*
@@ -10,9 +11,9 @@ namespace Neos\FluidAdaptor\Tests\Functional\Form\Fixtures\Controller;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\Controller\ActionController;
 use Neos\FluidAdaptor\Tests\Functional\Form\Fixtures\Domain\Model\Post;
-use Neos\Flow\Annotations as Flow;
 
 /**
  * Controller for simple CRUD actions, to test Fluid forms in

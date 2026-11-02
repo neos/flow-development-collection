@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Neos\Cache\Psr\Cache;
@@ -27,7 +28,7 @@ class CachePool implements CacheItemPoolInterface
     /**
      * Pattern an entry identifier must match.
      */
-    const PATTERN_ENTRYIDENTIFIER = '/^[a-zA-Z0-9_%\-&\.]{1,250}$/';
+    public const PATTERN_ENTRYIDENTIFIER = '/^[a-zA-Z0-9_%\-&\.]{1,250}$/';
 
     /**
      * @var BackendInterface

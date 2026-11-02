@@ -13,18 +13,18 @@ namespace Neos\Flow\Tests\Unit\Cache;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use Neos\Flow\Utility\Environment;
-use PHPUnit\Framework\Attributes\Test;
-use Neos\Cache\EnvironmentConfiguration;
-use org\bovigo\vfs\vfsStream;
 use Neos\Cache\Backend\FileBackend;
 use Neos\Cache\Backend\NullBackend;
+use Neos\Cache\EnvironmentConfiguration;
+use Neos\Cache\Frontend\VariableFrontend;
 use Neos\Flow\Cache\CacheFactory;
 use Neos\Flow\Cache\CacheManager;
-use Neos\Cache\Frontend\VariableFrontend;
 use Neos\Flow\Core\ApplicationContext;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Flow\Utility;
+use Neos\Flow\Utility\Environment;
+use org\bovigo\vfs\vfsStream;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Test case for the Cache Factory

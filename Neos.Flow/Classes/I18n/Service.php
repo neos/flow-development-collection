@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\I18n;
 
 /*
@@ -11,8 +12,8 @@ namespace Neos\Flow\I18n;
  * source code.
  */
 
-use Neos\Flow\Annotations as Flow;
 use Neos\Cache\Frontend\VariableFrontend;
+use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Package\FlowPackageInterface;
 use Neos\Flow\Package\PackageManager;
 use Neos\Utility\Files;
@@ -27,7 +28,7 @@ use Neos\Utility\Files;
 class Service
 {
     /**
-     * @var array
+     * @var array<mixed>
      */
     protected $settings;
 
@@ -65,7 +66,7 @@ class Service
     protected $localeBasePath = 'resource://';
 
     /**
-     * @param array $settings
+     * @param array<string,mixed> $settings
      * @return void
      */
     public function injectSettings(array $settings)
@@ -120,9 +121,9 @@ class Service
      * any change.
      *
      * @param string $pathAndFilename Path to the file
-     * @param Locale $locale Desired locale of localized file
+     * @param ?Locale $locale Desired locale of localized file
      * @param boolean $strict Whether to match only provided locale (true) or search for best-matching locale (false)
-     * @return array Path to the localized file (or $filename when no localized file was found) and the matched locale
+     * @return array{0: string, 1: Locale} Path to the localized file (or $filename when no localized file was found) and the matched locale
      * @see Configuration::setFallbackRule()
      * @api
      */
@@ -134,7 +135,7 @@ class Service
 
         $filename = basename($pathAndFilename);
         if ((strpos($filename, '.')) !== false) {
-            $dotPosition = strrpos($pathAndFilename, '.');
+            $dotPosition = strrpos($pathAndFilename, '.') ?: 0;
             $pathAndFilenameWithoutExtension = substr($pathAndFilename, 0, $dotPosition);
             $extension = substr($pathAndFilename, $dotPosition);
         } else {
@@ -175,7 +176,7 @@ class Service
      * @param string $path Base directory to the translation files
      * @param string $sourceName name of the translation source
      * @param Locale $locale Desired locale of XLIFF file
-     * @return array Path to the localized file (or $filename when no localized file was found) and the matched locale
+     * @return array{0: string|false, 1: Locale} Path to the localized file (or $filename when no localized file was found) and the matched locale
      * @see Configuration::setFallbackRule()
      * @api
      */
@@ -198,7 +199,7 @@ class Service
      * Build a chain of locale objects according to the fallback rule and
      * the available locales.
      * @param Locale $locale
-     * @return array
+     * @return array<string,Locale>
      */
     public function getLocaleChain(Locale $locale)
     {

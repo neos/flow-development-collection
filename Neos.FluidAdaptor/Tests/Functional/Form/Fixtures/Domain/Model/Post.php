@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\FluidAdaptor\Tests\Functional\Form\Fixtures\Domain\Model;
 
 /*
@@ -13,8 +14,8 @@ namespace Neos\FluidAdaptor\Tests\Functional\Form\Fixtures\Domain\Model;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-use Neos\Flow\Annotations as Flow;
 use Doctrine\ORM\Mapping as ORM;
+use Neos\Flow\Annotations as Flow;
 
 /**
  * A test entity which is used to test Fluid forms in combination with

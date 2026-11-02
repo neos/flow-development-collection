@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Cache;
 
 use Psr\Cache\CacheException as Psr6CacheException;

@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Neos\Cache\Backend;
@@ -53,7 +54,7 @@ class MemcachedBackend extends IndependentAbstractBackend implements TaggableBac
      * Max bucket size, (1024*1024)-42 bytes
      * @var int
      */
-    const MAX_BUCKET_SIZE = 1048534;
+    public const MAX_BUCKET_SIZE = 1048534;
 
     /**
      * Instance of the PHP Memcache/Memcached class

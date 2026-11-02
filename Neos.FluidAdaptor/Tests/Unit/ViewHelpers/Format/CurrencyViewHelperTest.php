@@ -4,12 +4,6 @@ declare(strict_types=1);
 
 namespace Neos\FluidAdaptor\Tests\Unit\ViewHelpers\Format;
 
-use Neos\FluidAdaptor\ViewHelpers\Format\CurrencyViewHelper;
-use PHPUnit\Framework\Attributes\Test;
-use Neos\Flow\I18n\Formatter\NumberFormatter;
-use Neos\Flow\I18n\Configuration;
-use Neos\Flow\I18n\Service;
-
 /*
  * This file is part of the Neos.FluidAdaptor package.
  *
@@ -23,9 +17,14 @@ use Neos\Flow\I18n\Service;
 
 require_once(__DIR__ . '/../ViewHelperBaseTestcase.php');
 
+use Neos\Flow\I18n\Configuration;
+use Neos\Flow\I18n\Formatter\NumberFormatter;
+use Neos\Flow\I18n\Service;
 use Neos\FluidAdaptor\Core\ViewHelper\Exception;
 use Neos\FluidAdaptor\Core\ViewHelper\Exception\InvalidVariableException;
 use Neos\FluidAdaptor\Tests\Unit\ViewHelpers\ViewHelperBaseTestcase;
+use Neos\FluidAdaptor\ViewHelpers\Format\CurrencyViewHelper;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Test for \Neos\FluidAdaptor\ViewHelpers\Format\CurrencyViewHelper

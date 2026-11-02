@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Mvc\Controller;
 
 /*
@@ -11,12 +12,12 @@ namespace Neos\Flow\Mvc\Controller;
  * source code.
  */
 
-use Neos\Flow\Annotations as Flow;
 use Neos\Error\Messages\Result;
+use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Property\PropertyMapper;
 use Neos\Flow\Property\TypeConverter\ObjectConverter;
-use Neos\Utility\TypeHandling;
 use Neos\Flow\Validation\Validator\ValidatorInterface;
+use Neos\Utility\TypeHandling;
 
 /**
  * A controller argument
@@ -183,7 +184,7 @@ class Argument
         $this->validator = $validator;
         // the validation should not be called on null values - for the cases where the value is required, the error will be thrown in Controller::mapRequestArgumentsToControllerArguments()
         if ($validator !== null && $this->value !== null) {
-            $this->validationResults = $this->propertyMapper->getMessages() ?? new Result();
+            $this->validationResults = $this->propertyMapper->getMessages();
             $validationMessages = $validator->validate($this->value);
             $this->validationResults->merge($validationMessages);
         }
@@ -227,7 +228,7 @@ class Argument
             $this->dataType = $rawValue['__type'];
         }
         $this->value = $this->propertyMapper->convert($rawValue, $this->dataType, $this->getPropertyMappingConfiguration());
-        $this->validationResults = $this->propertyMapper->getMessages() ?? new Result();
+        $this->validationResults = $this->propertyMapper->getMessages();
         if ($this->validator !== null) {
             $validationMessages = $this->validator->validate($this->value);
             $this->validationResults->merge($validationMessages);

@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace Neos\Cache\Tests\Unit\Psr\SimpleCache;
 
-use PHPUnit\Framework\Attributes\Test;
-use Neos\Cache\Exception\InvalidDataException;
-use PHPUnit\Framework\MockObject\MockObject;
 use Neos\Cache\Backend\BackendInterface;
 use Neos\Cache\Exception;
+use Neos\Cache\Exception\InvalidDataException;
 use Neos\Cache\Psr\InvalidArgumentException;
 use Neos\Cache\Psr\SimpleCache\SimpleCache;
 use Neos\Cache\Tests\BaseTestCase;
+use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\MockObject\MockObject;
 
 /**
  * Tests the PSR-16 simple cache (frontend)

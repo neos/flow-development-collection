@@ -13,15 +13,15 @@ namespace Neos\FluidAdaptor\Tests\Unit\Core\Widget;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+use Neos\Flow\Mvc\Controller\ControllerContext;
+use Neos\Flow\Mvc\Controller\ControllerInterface;
+use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\FluidAdaptor\Core\Widget\AbstractWidgetViewHelper;
 use Neos\FluidAdaptor\Core\Widget\AjaxWidgetContextHolder;
-use Neos\FluidAdaptor\Core\Widget\WidgetContext;
-use Neos\Flow\ObjectManagement\ObjectManagerInterface;
-use Neos\Flow\Mvc\Controller\ControllerContext;
-use PHPUnit\Framework\Attributes\Test;
-use Neos\Flow\Mvc\Controller\ControllerInterface;
 use Neos\FluidAdaptor\Core\Widget\Exception\MissingControllerException;
+use Neos\FluidAdaptor\Core\Widget\WidgetContext;
+use PHPUnit\Framework\Attributes\Test;
 use TYPO3Fluid\Fluid\Core\Parser\SyntaxTree\AbstractNode;
 use TYPO3Fluid\Fluid\Core\Parser\SyntaxTree\RootNode;
 use TYPO3Fluid\Fluid\Core\Parser\SyntaxTree\TextNode;

@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Tests\Functional\I18n\Fixtures;
 
 /*
@@ -10,10 +11,10 @@ namespace Neos\Flow\Tests\Functional\I18n\Fixtures;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use Neos\Flow\I18n\Locale;
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\I18n\Formatter\FormatterInterface;
 use Neos\Flow\I18n;
+use Neos\Flow\I18n\Formatter\FormatterInterface;
+use Neos\Flow\I18n\Locale;
 
 /**
  * A dummy I18n formatter class

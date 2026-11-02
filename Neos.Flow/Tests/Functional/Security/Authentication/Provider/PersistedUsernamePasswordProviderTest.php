@@ -13,14 +13,14 @@ namespace Neos\Flow\Tests\Functional\Security\Authentication\Provider;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+use Neos\Flow\Security;
+use Neos\Flow\Security\Account;
 use Neos\Flow\Security\AccountFactory;
 use Neos\Flow\Security\AccountRepository;
-use Neos\Flow\Security\Authentication\Token\UsernamePassword;
-use PHPUnit\Framework\Attributes\Test;
-use Neos\Flow\Security\Account;
 use Neos\Flow\Security\Authentication\Provider\PersistedUsernamePasswordProvider;
+use Neos\Flow\Security\Authentication\Token\UsernamePassword;
 use Neos\Flow\Tests\FunctionalTestCase;
-use Neos\Flow\Security;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Testcase for the persisted username and password provider
@@ -52,7 +52,7 @@ final class PersistedUsernamePasswordProviderTest extends FunctionalTestCase
         $accountFactory = new AccountFactory();
         $this->accountRepository = new AccountRepository();
 
-        $this->authenticationToken = new class extends UsernamePassword {
+        $this->authenticationToken = new class () extends UsernamePassword {
             public function _setCredentials(array $credentials): void
             {
                 $this->credentials = $credentials;

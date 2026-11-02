@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\FluidAdaptor\ViewHelpers\Widget\Controller;
 
 /*
@@ -12,8 +13,8 @@ namespace Neos\FluidAdaptor\ViewHelpers\Widget\Controller;
  */
 
 use Neos\Flow\Persistence\QueryResultInterface;
-use Neos\Utility\Arrays;
 use Neos\FluidAdaptor\Core\Widget\AbstractWidgetController;
+use Neos\Utility\Arrays;
 
 /**
  * Controller for the paginate widget
@@ -21,12 +22,12 @@ use Neos\FluidAdaptor\Core\Widget\AbstractWidgetController;
 class PaginateController extends AbstractWidgetController
 {
     /**
-     * @var QueryResultInterface
+     * @var QueryResultInterface<object>
      */
     protected $objects;
 
     /**
-     * @var array
+     * @var array<string,mixed>
      */
     protected $configuration = ['itemsPerPage' => 10, 'insertAbove' => false, 'insertBelow' => true, 'maximumNumberOfLinks' => 99];
 
@@ -56,12 +57,12 @@ class PaginateController extends AbstractWidgetController
     protected $numberOfPages = 1;
 
     /**
-     * @var float
+     * @var integer
      */
     protected $displayRangeStart;
 
     /**
-     * @var float
+     * @var integer
      */
     protected $displayRangeEnd;
 
@@ -72,8 +73,8 @@ class PaginateController extends AbstractWidgetController
     {
         $this->objects = $this->widgetConfiguration['objects'];
         $this->configuration = Arrays::arrayMergeRecursiveOverrule($this->configuration, $this->widgetConfiguration['configuration'], true);
-        $this->numberOfPages = (integer)ceil(count($this->objects) / (integer)$this->configuration['itemsPerPage']);
-        $this->maximumNumberOfLinks = (integer)$this->configuration['maximumNumberOfLinks'];
+        $this->numberOfPages = (int)ceil(count($this->objects) / (int)$this->configuration['itemsPerPage']);
+        $this->maximumNumberOfLinks = (int)$this->configuration['maximumNumberOfLinks'];
     }
 
     /**
@@ -82,18 +83,18 @@ class PaginateController extends AbstractWidgetController
      */
     public function indexAction($currentPage = 1)
     {
-        $this->currentPage = (integer)$currentPage;
+        $this->currentPage = (int)$currentPage;
         if ($this->currentPage < 1) {
             $this->currentPage = 1;
         } elseif ($this->currentPage > $this->numberOfPages) {
             $this->currentPage = $this->numberOfPages;
         }
 
-        $itemsPerPage = (integer)$this->configuration['itemsPerPage'];
+        $itemsPerPage = (int)$this->configuration['itemsPerPage'];
         $query = $this->objects->getQuery();
         $query->setLimit($itemsPerPage);
         if ($this->currentPage > 1) {
-            $query->setOffset((integer)($itemsPerPage * ($this->currentPage - 1)));
+            $query->setOffset((int)($itemsPerPage * ($this->currentPage - 1)));
         }
         $modifiedObjects = $query->execute();
 
@@ -117,22 +118,30 @@ class PaginateController extends AbstractWidgetController
             $maximumNumberOfLinks = $this->numberOfPages;
         }
         $delta = floor($maximumNumberOfLinks / 2);
-        $this->displayRangeStart = $this->currentPage - $delta;
-        $this->displayRangeEnd = $this->currentPage + $delta + ($maximumNumberOfLinks % 2 === 0 ? 1 : 0);
-        if ($this->displayRangeStart < 1) {
-            $this->displayRangeEnd -= $this->displayRangeStart - 1;
+        $displayRangeStart = $this->currentPage - $delta;
+        $displayRangeEnd = $this->currentPage + $delta + ($maximumNumberOfLinks % 2 === 0 ? 1 : 0);
+        if ($displayRangeStart < 1) {
+            $displayRangeEnd -= $displayRangeStart - 1;
         }
-        if ($this->displayRangeEnd > $this->numberOfPages) {
-            $this->displayRangeStart -= ($this->displayRangeEnd - $this->numberOfPages);
+        if ($displayRangeEnd > $this->numberOfPages) {
+            $displayRangeStart -= ($displayRangeEnd - $this->numberOfPages);
         }
-        $this->displayRangeStart = (integer)max($this->displayRangeStart, 1);
-        $this->displayRangeEnd = (integer)min($this->displayRangeEnd, $this->numberOfPages);
+        $this->displayRangeStart = (int)max($displayRangeStart, 1);
+        $this->displayRangeEnd = (int)min($displayRangeEnd, $this->numberOfPages);
     }
 
     /**
-     * Returns an array with the keys "pages", "current", "numberOfPages", "nextPage" & "previousPage"
-     *
-     * @return array
+     * @return array{
+     *     pages: list<array{number: int, isCurrent: bool}>,
+     *     current: int,
+     *     numberOfPages: int,
+     *     displayRangeStart: float,
+     *     displayRangeEnd: float,
+     *     hasLessPages: bool,
+     *     hasMorePages: bool,
+     *     nextPage?: int,
+     *     previousPage?: int,
+     * }
      */
     protected function buildPagination()
     {

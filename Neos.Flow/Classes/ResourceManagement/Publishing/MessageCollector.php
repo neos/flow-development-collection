@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\ResourceManagement\Publishing;
 
 /*
@@ -11,11 +12,11 @@ namespace Neos\Flow\ResourceManagement\Publishing;
  * source code.
  */
 
-use Neos\Flow\Annotations as Flow;
 use Neos\Error\Messages\Error;
 use Neos\Error\Messages\Message;
 use Neos\Error\Messages\Notice;
 use Neos\Error\Messages\Warning;
+use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Exception;
 use Psr\Log\LoggerInterface;
 use Psr\Log\LogLevel;
@@ -27,7 +28,7 @@ use Psr\Log\LogLevel;
  */
 class MessageCollector
 {
-    const LOGLEVEL_MAPPING = [
+    public const LOGLEVEL_MAPPING = [
         Error::SEVERITY_ERROR => LogLevel::ERROR,
         Error::SEVERITY_NOTICE => LogLevel::NOTICE,
         Error::SEVERITY_OK => LogLevel::INFO,
@@ -35,7 +36,7 @@ class MessageCollector
     ];
 
     /**
-     * @var \SplObjectStorage
+     * @var \SplObjectStorage<Message,mixed>
      */
     protected $messages;
 

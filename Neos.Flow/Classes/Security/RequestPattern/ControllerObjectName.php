@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Security\RequestPattern;
 
 /*
@@ -21,14 +22,14 @@ use Neos\Flow\Security\RequestPatternInterface;
 class ControllerObjectName implements RequestPatternInterface
 {
     /**
-     * @var array
+     * @var array<string,string>
      */
     protected $options;
 
     /**
      * Expects options in the form array('controllerObjectNamePattern' => '<regularExpression>')
      *
-     * @param array $options
+     * @param array<string,string> $options
      */
     public function __construct(array $options)
     {
@@ -47,6 +48,6 @@ class ControllerObjectName implements RequestPatternInterface
         if (!isset($this->options['controllerObjectNamePattern'])) {
             throw new InvalidRequestPatternException('Missing option "controllerObjectNamePattern" in the ControllerObjectName request pattern configuration', 1446224501);
         }
-        return (boolean)preg_match('/^' . str_replace('\\', '\\\\', $this->options['controllerObjectNamePattern']) . '$/', $request->getControllerObjectName());
+        return (bool)preg_match('/^' . str_replace('\\', '\\\\', $this->options['controllerObjectNamePattern']) . '$/', $request->getControllerObjectName());
     }
 }

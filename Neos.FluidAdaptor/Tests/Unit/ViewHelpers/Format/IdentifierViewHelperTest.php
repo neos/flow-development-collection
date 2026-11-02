@@ -4,10 +4,6 @@ declare(strict_types=1);
 
 namespace Neos\FluidAdaptor\Tests\Unit\ViewHelpers\Format;
 
-use Neos\FluidAdaptor\ViewHelpers\Format\IdentifierViewHelper;
-use Neos\Flow\Persistence\PersistenceManagerInterface;
-use PHPUnit\Framework\Attributes\Test;
-
 /*
  * This file is part of the Neos.FluidAdaptor package.
  *
@@ -20,7 +16,10 @@ use PHPUnit\Framework\Attributes\Test;
 
 require_once(__DIR__ . '/../ViewHelperBaseTestcase.php');
 
+use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\FluidAdaptor\Tests\Unit\ViewHelpers\ViewHelperBaseTestcase;
+use Neos\FluidAdaptor\ViewHelpers\Format\IdentifierViewHelper;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Test for \Neos\FluidAdaptor\ViewHelpers\Format\IdentifierViewHelper

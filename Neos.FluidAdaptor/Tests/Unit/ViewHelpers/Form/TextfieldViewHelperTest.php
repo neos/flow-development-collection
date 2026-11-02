@@ -13,10 +13,10 @@ namespace Neos\FluidAdaptor\Tests\Unit\ViewHelpers\Form;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+use Neos\FluidAdaptor\Tests\Unit\ViewHelpers\ViewHelperBaseTestcase;
+use Neos\FluidAdaptor\ViewHelpers\Fixtures\EmptySyntaxTreeNode;
 use Neos\FluidAdaptor\ViewHelpers\Form\TextfieldViewHelper;
 use PHPUnit\Framework\Attributes\Test;
-use Neos\FluidAdaptor\ViewHelpers\Fixtures\EmptySyntaxTreeNode;
-use Neos\FluidAdaptor\Tests\Unit\ViewHelpers\ViewHelperBaseTestcase;
 use TYPO3Fluid\Fluid\Core\ViewHelper\TagBuilder;
 
 require_once(__DIR__ . '/Fixtures/EmptySyntaxTreeNode.php');

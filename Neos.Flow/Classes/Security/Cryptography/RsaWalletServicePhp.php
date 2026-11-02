@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Security\Cryptography;
 
 /*
@@ -31,13 +32,13 @@ class RsaWalletServicePhp implements RsaWalletServiceInterface
     protected $keystorePathAndFilename;
 
     /**
-     * @var array
+     * @var array<string,mixed>
      */
     protected $keys = [];
 
     /**
      * The openSSL configuration
-     * @var array
+     * @var array<mixed>
      */
     protected $openSSLConfiguration = [];
 
@@ -55,7 +56,7 @@ class RsaWalletServicePhp implements RsaWalletServiceInterface
     /**
      * Injects the OpenSSL configuration to be used
      *
-     * @param array $settings
+     * @param array<string,mixed> $settings
      * @return void
      * @throws MissingConfigurationException
      * @throws SecurityException
@@ -88,7 +89,7 @@ class RsaWalletServicePhp implements RsaWalletServiceInterface
     public function initializeObject()
     {
         if (file_exists($this->keystorePathAndFilename)) {
-            $this->keys = unserialize(file_get_contents($this->keystorePathAndFilename), ['allowed_classes' => [OpenSslRsaKey::class]]);
+            $this->keys = unserialize(file_get_contents($this->keystorePathAndFilename) ?: '', ['allowed_classes' => [OpenSslRsaKey::class]]);
         }
         $this->saveKeysOnShutdown = false;
     }
@@ -128,6 +129,9 @@ class RsaWalletServicePhp implements RsaWalletServiceInterface
     public function registerKeyPairFromPrivateKeyString($privateKeyString, $usedForPasswords = false)
     {
         $keyResource = openssl_pkey_get_private($privateKeyString);
+        if ($keyResource === false) {
+            throw new \Exception('Failed to load private key', 1743877014);
+        }
 
         $modulus = $this->getModulus($keyResource);
         $publicKeyString = $this->getPublicKeyString($keyResource);
@@ -149,6 +153,9 @@ class RsaWalletServicePhp implements RsaWalletServiceInterface
     public function registerPublicKeyFromString($publicKeyString)
     {
         $keyResource = openssl_pkey_get_public($publicKeyString);
+        if ($keyResource === false) {
+            throw new \Exception('Failed to load public key', 1743876948);
+        }
 
         $modulus = $this->getModulus($keyResource);
         $publicKey = new OpenSslRsaKey($modulus, $publicKeyString);
@@ -165,7 +172,7 @@ class RsaWalletServicePhp implements RsaWalletServiceInterface
      */
     public function getPublicKey($fingerprint)
     {
-        if ($fingerprint === null || !isset($this->keys[$fingerprint])) {
+        if (!isset($this->keys[$fingerprint])) {
             throw new InvalidKeyPairIdException('Invalid keypair fingerprint given', 1231438860);
         }
 
@@ -199,16 +206,16 @@ class RsaWalletServicePhp implements RsaWalletServiceInterface
      * Note: You should never decrypt a password with this function. Use checkRSAEncryptedPassword()
      * to check passwords!
      *
-     * @param string $cipher cipher text to decrypt
+     * @param string $cypher cypher text to decrypt
      * @param string $fingerprint The fingerprint to identify the private key (RSA public key fingerprint)
      * @return string The decrypted text
      * @throws InvalidKeyPairIdException If the given fingerprint identifies no valid keypair
      * @throws DecryptionNotAllowedException If the given fingerprint identifies a keypair for encrypted passwords
      * @throws SecurityException If decryption failed for some other reason
      */
-    public function decrypt($cipher, $fingerprint)
+    public function decrypt($cypher, $fingerprint)
     {
-        if ($fingerprint === null || !isset($this->keys[$fingerprint])) {
+        if (!isset($this->keys[$fingerprint])) {
             throw new InvalidKeyPairIdException('Invalid keypair fingerprint given', 1231438861);
         }
 
@@ -218,7 +225,7 @@ class RsaWalletServicePhp implements RsaWalletServiceInterface
             throw new DecryptionNotAllowedException('You are not allowed to decrypt passwords!', 1233655350);
         }
 
-        return $this->decryptWithPrivateKey($cipher, $keyPair['privateKey']);
+        return $this->decryptWithPrivateKey($cypher, $keyPair['privateKey']);
     }
 
     /**
@@ -231,7 +238,7 @@ class RsaWalletServicePhp implements RsaWalletServiceInterface
      */
     public function sign($plaintext, $fingerprint)
     {
-        if ($fingerprint === null || !isset($this->keys[$fingerprint])) {
+        if (!isset($this->keys[$fingerprint])) {
             throw new InvalidKeyPairIdException('Invalid keypair fingerprint given', 1299095799);
         }
 
@@ -253,7 +260,7 @@ class RsaWalletServicePhp implements RsaWalletServiceInterface
      */
     public function verifySignature($plaintext, $signature, $fingerprint)
     {
-        if ($fingerprint === null || !isset($this->keys[$fingerprint])) {
+        if (!isset($this->keys[$fingerprint])) {
             throw new InvalidKeyPairIdException('Invalid keypair fingerprint given', 1304959763);
         }
 
@@ -275,7 +282,7 @@ class RsaWalletServicePhp implements RsaWalletServiceInterface
      */
     public function checkRSAEncryptedPassword($encryptedPassword, $passwordHash, $salt, $fingerprint)
     {
-        if ($fingerprint === null || !isset($this->keys[$fingerprint])) {
+        if (!isset($this->keys[$fingerprint])) {
             throw new InvalidKeyPairIdException('Invalid keypair fingerprint given', 1233655216);
         }
 
@@ -293,7 +300,7 @@ class RsaWalletServicePhp implements RsaWalletServiceInterface
      */
     public function destroyKeypair($fingerprint)
     {
-        if ($fingerprint === null || !isset($this->keys[$fingerprint])) {
+        if (!isset($this->keys[$fingerprint])) {
             throw new InvalidKeyPairIdException('Invalid keypair fingerprint given', 1231438863);
         }
 
@@ -322,6 +329,9 @@ class RsaWalletServicePhp implements RsaWalletServiceInterface
     private function getPublicKeyString(\OpenSSLAsymmetricKey $keyResource)
     {
         $keyDetails = openssl_pkey_get_details($keyResource);
+        if ($keyDetails === false) {
+            throw new \Exception('Failed to get public key details', 1743876036);
+        }
 
         return $keyDetails['key'];
     }
@@ -335,6 +345,9 @@ class RsaWalletServicePhp implements RsaWalletServiceInterface
     private function getModulus(\OpenSSLAsymmetricKey $keyResource)
     {
         $keyDetails = openssl_pkey_get_details($keyResource);
+        if ($keyDetails === false) {
+            throw new \Exception('Failed to load public key details', 1743875916);
+        }
         return strtoupper(bin2hex($keyDetails['rsa']['n']));
     }
 
@@ -350,6 +363,9 @@ class RsaWalletServicePhp implements RsaWalletServiceInterface
     {
         $decrypted = '';
         $key = openssl_pkey_get_private($privateKey->getKeyString());
+        if ($key === false) {
+            throw new \Exception('Failed to load private key', 1743875855);
+        }
         if (openssl_private_decrypt($cipher, $decrypted, $key, $this->paddingAlgorithm) === false) {
             // Fallback for data that was encrypted with old default OPENSSL_PKCS1_PADDING
             if ($this->paddingAlgorithm !== OPENSSL_PKCS1_PADDING) {
@@ -374,7 +390,7 @@ class RsaWalletServicePhp implements RsaWalletServiceInterface
      * consistent key access.
      *
      * @param OpenSslRsaKey $publicKey The public key
-     * @param OpenSslRsaKey $privateKey The private key
+     * @param OpenSslRsaKey|null $privateKey The private key
      * @param boolean $usedForPasswords true if this keypair should be used to encrypt passwords (then decryption won't be allowed!).
      * @return string The fingerprint which is used as an identifier for storing the key pair
      */
@@ -439,7 +455,13 @@ class RsaWalletServicePhp implements RsaWalletServiceInterface
     public function getFingerprintByPublicKey($publicKeyString)
     {
         $keyResource = openssl_pkey_get_public($publicKeyString);
+        if ($keyResource === false) {
+            throw new \Exception('Could not extract public key', 1743875618);
+        }
         $keyDetails = openssl_pkey_get_details($keyResource);
+        if ($keyDetails === false) {
+            throw new \Exception('Could not extract public key details', 1743875650);
+        }
         $modulus = $this->sshConvertMpint($keyDetails['rsa']['n']);
         $publicExponent = $this->sshConvertMpint($keyDetails['rsa']['e']);
 

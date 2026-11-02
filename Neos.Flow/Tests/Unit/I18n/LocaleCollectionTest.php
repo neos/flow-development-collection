@@ -13,11 +13,11 @@ namespace Neos\Flow\Tests\Unit\I18n;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+use Neos\Flow\I18n;
 use Neos\Flow\I18n\Locale;
 use Neos\Flow\I18n\LocaleCollection;
-use PHPUnit\Framework\Attributes\Test;
-use Neos\Flow\I18n;
 use Neos\Flow\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Testcase for the LocaleCollection class

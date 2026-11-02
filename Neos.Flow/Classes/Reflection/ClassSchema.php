@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Reflection;
 
 /*
@@ -11,20 +12,20 @@ namespace Neos\Flow\Reflection;
  * source code.
  */
 
+use Neos\Flow\Persistence\RepositoryInterface;
 use Neos\Utility\Exception\InvalidTypeException;
 use Neos\Utility\TypeHandling;
 
 /**
  * A class schema
- *
  */
 class ClassSchema
 {
     /**
      * Available model types
      */
-    const MODELTYPE_ENTITY = 1;
-    const MODELTYPE_VALUEOBJECT = 2;
+    public const MODELTYPE_ENTITY = 1;
+    public const MODELTYPE_VALUEOBJECT = 2;
 
     /**
      * Name of the class this schema is referring to
@@ -47,21 +48,27 @@ class ClassSchema
     protected $lazyLoadable = false;
 
     /**
-     * @var string|null
+     * @var class-string<RepositoryInterface<object>>|null
      */
     protected $repositoryClassName;
 
     /**
      * Properties of the class which need to be persisted
      *
-     * @var array
+     * @var array<string,array{
+     *     type: string,
+     *     elementType: ?string,
+     *     nullable: bool,
+     *     lazy: bool,
+     *     transient: bool,
+     * }>
      */
     protected $properties = [];
 
     /**
      * The properties forming the identity of an object
      *
-     * @var array
+     * @var array<string,string>
      */
     protected $identityProperties = [];
 
@@ -137,7 +144,13 @@ class ClassSchema
      * hasProperty($propertyName) before!
      *
      * @param string $propertyName
-     * @return array
+     * @return array{
+     *       type: string,
+     *       elementType: ?string,
+     *       nullable: bool,
+     *       lazy: bool,
+     *       transient: bool,
+     * }
      */
     public function getProperty($propertyName)
     {
@@ -147,7 +160,13 @@ class ClassSchema
     /**
      * Returns all properties defined in this schema
      *
-     * @return array
+     * @return array<string,array{
+     *      type: string,
+     *      elementType: ?string,
+     *      nullable: bool,
+     *      lazy: bool,
+     *      transient: bool,
+     * }>
      */
     public function getProperties()
     {
@@ -198,7 +217,7 @@ class ClassSchema
     /**
      * Set the class name of the repository managing an entity.
      *
-     * @param string $repositoryClassName
+     * @param ?class-string<RepositoryInterface<object>> $repositoryClassName
      * @return void
      * @throws Exception\ClassSchemaConstraintViolationException
      */
@@ -211,7 +230,7 @@ class ClassSchema
     }
 
     /**
-     * @return string
+     * @return ?class-string<RepositoryInterface<object>>
      */
     public function getRepositoryClassName()
     {
@@ -300,7 +319,7 @@ class ClassSchema
     /**
      * Gets the properties (names and types) forming the identity of an object.
      *
-     * @return array
+     * @return array<string,string>
      * @see markAsIdentityProperty()
      */
     public function getIdentityProperties()

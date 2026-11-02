@@ -13,19 +13,19 @@ namespace Neos\Flow\Tests\Unit\Security\Authentication;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use PHPUnit\Framework\Attributes\Test;
-use PHPUnit\Framework\Assert;
-use PHPUnit\Framework\MockObject\MockObject;
-use Neos\Flow\Security\Authentication\AuthenticationProviderInterface;
-use Neos\Flow\Security\Authentication\TokenAndProviderFactoryInterface;
-use Neos\Flow\Security\Exception\AuthenticationRequiredException;
-use Neos\Flow\Session\SessionManager;
-use Neos\Flow\Tests\UnitTestCase;
 use Neos\Flow\Security\Account;
+use Neos\Flow\Security\Authentication\AuthenticationProviderInterface;
 use Neos\Flow\Security\Authentication\AuthenticationProviderManager;
+use Neos\Flow\Security\Authentication\TokenAndProviderFactoryInterface;
 use Neos\Flow\Security\Authentication\TokenInterface;
 use Neos\Flow\Security\Context;
+use Neos\Flow\Security\Exception\AuthenticationRequiredException;
 use Neos\Flow\Session\SessionInterface;
+use Neos\Flow\Session\SessionManager;
+use Neos\Flow\Tests\UnitTestCase;
+use PHPUnit\Framework\Assert;
+use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\MockObject\MockObject;
 
 /**
  * Test case for authentication provider manager

@@ -13,12 +13,9 @@ namespace Neos\Flow\Tests\Unit\ResourceManagement\Streams;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use PHPUnit\Framework\Attributes\Test;
-use PHPUnit\Framework\Attributes\DataProvider;
-use Neos\Flow\Http\Exception;
-use PHPUnit\Framework\MockObject\MockObject;
-use Neos\Flow\Http\BaseUriProvider;
 use GuzzleHttp\Psr7\Uri;
+use Neos\Flow\Http\BaseUriProvider;
+use Neos\Flow\Http\Exception;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Package\PackageManager;
 use Neos\Flow\ResourceManagement\Collection;
@@ -27,6 +24,9 @@ use Neos\Flow\ResourceManagement\Storage\PackageStorage;
 use Neos\Flow\ResourceManagement\Target\FileSystemTarget;
 use Neos\Flow\Tests\UnitTestCase;
 use org\bovigo\vfs\vfsStream;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\MockObject\MockObject;
 use Psr\Http\Message\UriInterface;
 use Psr\Log\LoggerInterface;
 

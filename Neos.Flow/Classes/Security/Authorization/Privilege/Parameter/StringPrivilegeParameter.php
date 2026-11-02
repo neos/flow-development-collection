@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Security\Authorization\Privilege\Parameter;
 
 /*
@@ -19,7 +20,7 @@ use Neos\Flow\Annotations as Flow;
 class StringPrivilegeParameter extends AbstractPrivilegeParameter
 {
     /**
-     * @return array|null
+     * @return array<mixed>|null
      */
     public function getPossibleValues()
     {

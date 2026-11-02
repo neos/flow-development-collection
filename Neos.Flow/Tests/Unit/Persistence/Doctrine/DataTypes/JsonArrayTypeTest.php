@@ -13,9 +13,7 @@ namespace Neos\Flow\Tests\Unit\Persistence\Doctrine\DataTypes;
 * information, please view the LICENSE file which was distributed with this
 * source code.
 */
-use PHPUnit\Framework\Attributes\Test;
 use Doctrine\DBAL\Platforms\AbstractPlatform;
-use PHPUnit\Framework\MockObject\MockObject;
 use Neos\Flow\Persistence\Doctrine\DataTypes\JsonArrayType;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Flow\Tests\Unit\Property\TypeConverter\Fixture\ArrayBasedValueObject;
@@ -24,6 +22,8 @@ use Neos\Flow\Tests\Unit\Property\TypeConverter\Fixture\FloatBasedValueObject;
 use Neos\Flow\Tests\Unit\Property\TypeConverter\Fixture\IntegerBasedValueObject;
 use Neos\Flow\Tests\Unit\Property\TypeConverter\Fixture\StringBasedValueObject;
 use Neos\Flow\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\MockObject\MockObject;
 
 final class JsonArrayTypeTest extends UnitTestCase
 {

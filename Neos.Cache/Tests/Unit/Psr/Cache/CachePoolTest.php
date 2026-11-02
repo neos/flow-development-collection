@@ -13,14 +13,14 @@ namespace Neos\Cache\Tests\Unit\Psr\Cache;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use PHPUnit\Framework\Attributes\DataProvider;
-use PHPUnit\Framework\Attributes\Test;
 use Neos\Cache\Backend\AbstractBackend;
 use Neos\Cache\Backend\BackendInterface;
-use Neos\Cache\Psr\Cache\CachePool;
 use Neos\Cache\Psr\Cache\CacheItem;
+use Neos\Cache\Psr\Cache\CachePool;
 use Neos\Cache\Psr\InvalidArgumentException;
 use Neos\Cache\Tests\BaseTestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 
 /**
@@ -68,6 +68,8 @@ final class CachePoolTest extends BaseTestCase
         $this->expectException(\InvalidArgumentException::class);
         new CachePool($identifier, $mockBackend);
     }
+
+
 
     #[Test]
     public function getItemChecksIfTheIdentifierIsValid(): void

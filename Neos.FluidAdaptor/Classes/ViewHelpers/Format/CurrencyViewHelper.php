@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\FluidAdaptor\ViewHelpers\Format;
 
 /*
@@ -16,8 +17,8 @@ use Neos\Flow\I18n\Cldr\Reader\NumbersReader;
 use Neos\Flow\I18n\Exception as I18nException;
 use Neos\Flow\I18n\Formatter\NumberFormatter;
 use Neos\FluidAdaptor\Core\ViewHelper\AbstractLocaleAwareViewHelper;
-use Neos\FluidAdaptor\Core\ViewHelper\Exception\InvalidVariableException;
 use Neos\FluidAdaptor\Core\ViewHelper\Exception as ViewHelperException;
+use Neos\FluidAdaptor\Core\ViewHelper\Exception\InvalidVariableException;
 
 /**
  * Formats a given float to a currency representation.

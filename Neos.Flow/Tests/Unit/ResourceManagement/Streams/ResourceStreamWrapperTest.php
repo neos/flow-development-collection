@@ -13,18 +13,18 @@ namespace Neos\Flow\Tests\Unit\ResourceManagement\Streams;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use PHPUnit\Framework\Attributes\Test;
 use Neos\Flow\Package\Exception\UnknownPackageException;
-use PHPUnit\Framework\MockObject\MockObject;
 use Neos\Flow\Package\FlowPackageInterface;
-use Neos\Flow\ResourceManagement\Exception;
-use Neos\Utility\ObjectAccess;
-use org\bovigo\vfs\vfsStream;
 use Neos\Flow\Package\PackageManager;
+use Neos\Flow\ResourceManagement\Exception;
 use Neos\Flow\ResourceManagement\PersistentResource;
 use Neos\Flow\ResourceManagement\ResourceManager;
 use Neos\Flow\ResourceManagement\Streams\ResourceStreamWrapper;
 use Neos\Flow\Tests\UnitTestCase;
+use Neos\Utility\ObjectAccess;
+use org\bovigo\vfs\vfsStream;
+use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\MockObject\MockObject;
 
 /**
  * Tests for the ResourceStreamWrapper class

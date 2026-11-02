@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Utility;
 
 /*
@@ -31,19 +32,19 @@ abstract class ObjectAccess
 {
     /**
      * Internal RuntimeCache for getGettablePropertyNames()
-     * @var array
+     * @var array<string<object>,array<int,string>>
      */
-    protected static $gettablePropertyNamesCache = [];
+    protected static array $gettablePropertyNamesCache = [];
 
     /**
      * Internal RuntimeCache for getPropertyInternal()
-     * @var array
+     * @var array<string,array{accessorMethod?: string, publicProperty?: string}>
      */
-    protected static $propertyGetterCache = [];
+    protected static array $propertyGetterCache = [];
 
-    const ACCESS_GET = 0;
-    const ACCESS_SET = 1;
-    const ACCESS_PUBLIC = 2;
+    public const ACCESS_GET = 0;
+    public const ACCESS_SET = 1;
+    public const ACCESS_PUBLIC = 2;
 
     /**
      * Get a property of a given object or array.
@@ -58,8 +59,8 @@ abstract class ObjectAccess
      * - if public property exists, return the value of it.
      * - else, throw exception
      *
-     * @param mixed $subject Object or array to get the property from
-     * @param string|integer $propertyName Name or index of the property to retrieve
+     * @param object|array<mixed> $subject Object or array to get the property from
+     * @param string|int $propertyName Name or index of the property to retrieve
      * @param boolean $forceDirectAccess Directly access property using reflection(!)
      * @return mixed Value of the property
      * @throws \InvalidArgumentException in case $subject was not an object or $propertyName was not a string
@@ -67,9 +68,11 @@ abstract class ObjectAccess
      */
     public static function getProperty($subject, $propertyName, bool $forceDirectAccess = false)
     {
+        /** @phpstan-ignore booleanAnd.alwaysFalse (annotations may be wrong) */
         if (!is_object($subject) && !is_array($subject)) {
             throw new \InvalidArgumentException('$subject must be an object or array, ' . gettype($subject) . ' given.', 1237301367);
         }
+        /** @phpstan-ignore booleanAnd.alwaysFalse (annotations may be wrong) */
         if (!is_string($propertyName) && !is_int($propertyName)) {
             throw new \InvalidArgumentException('Given property name/index is not of type string or integer.', 1231178303);
         }
@@ -91,14 +94,14 @@ abstract class ObjectAccess
      * of type string you should use getProperty() instead.
      *
      * @param mixed $subject Object or array to get the property from
-     * @param string $propertyName name of the property to retrieve
+     * @param string|int $propertyName name of the property to retrieve
      * @param boolean $forceDirectAccess directly access property using reflection(!)
      * @param boolean $propertyExists (by reference) will be set to true if the specified property exists and is gettable
      * @return mixed Value of the property
      * @throws PropertyNotAccessibleException
      * @see getProperty()
      */
-    protected static function getPropertyInternal($subject, string $propertyName, bool $forceDirectAccess, bool &$propertyExists)
+    protected static function getPropertyInternal($subject, string|int $propertyName, bool $forceDirectAccess, bool &$propertyExists)
     {
         if ($subject === null) {
             return null;
@@ -109,6 +112,10 @@ abstract class ObjectAccess
         }
         if (!is_object($subject)) {
             return null;
+        }
+
+        if (is_int($propertyName)) {
+            throw new \InvalidArgumentException('Cannot use integer property names for objects', 1743799241);
         }
 
         $propertyExists = true;
@@ -230,15 +237,18 @@ abstract class ObjectAccess
      *   on it without checking if it existed.
      * - else, return false
      *
-     * @param mixed $subject The target object or array
+     * @template T of object
+     * @param array<mixed>|T &$subject The target object or array
      * @param string|integer $propertyName Name or index of the property to set
      * @param mixed $propertyValue Value of the property
      * @param boolean $forceDirectAccess directly access property using reflection(!)
+     * @param-out ($subject is array ? array<mixed> : T) $subject
      * @return boolean true if the property could be set, false otherwise
      * @throws \InvalidArgumentException in case $object was not an object or $propertyName was not a string
      */
     public static function setProperty(&$subject, $propertyName, $propertyValue, bool $forceDirectAccess = false): bool
     {
+        /** @phpstan-ignore booleanAnd.alwaysFalse (annotations may be wrong) */
         if (!is_string($propertyName) && !is_int($propertyName)) {
             throw new \InvalidArgumentException('Given property name/index is not of type string or integer.', 1231178878);
         }
@@ -261,8 +271,8 @@ abstract class ObjectAccess
                 $propertyReflection = new \ReflectionProperty($className, $propertyName);
                 $propertyReflection->setAccessible(true);
                 $propertyReflection->setValue($subject, $propertyValue);
-            } elseif ($subject instanceof ProxyInterface && property_exists(get_parent_class($className), $propertyName)) {
-                $propertyReflection = new \ReflectionProperty(get_parent_class($className), $propertyName);
+            } elseif ($subject instanceof ProxyInterface && property_exists(get_parent_class($className) ?: $className, $propertyName)) {
+                $propertyReflection = new \ReflectionProperty(get_parent_class($className) ?: $className, $propertyName);
                 $propertyReflection->setAccessible(true);
                 $propertyReflection->setValue($subject, $propertyValue);
             } else {
@@ -290,7 +300,7 @@ abstract class ObjectAccess
      * - public properties which can be directly get.
      *
      * @param object $object Object to receive property names for
-     * @return array Array of all gettable property names
+     * @return array<int,string> Array of all gettable property names
      * @throws \InvalidArgumentException
      */
     public static function getGettablePropertyNames($object): array
@@ -336,7 +346,7 @@ abstract class ObjectAccess
      * - public properties which can be directly set.
      *
      * @param object $object Object to receive property names for
-     * @return array Array of all settable property names
+     * @return array<int,string> Array of all settable property names
      * @throws \InvalidArgumentException
      */
     public static function getSettablePropertyNames($object): array
@@ -376,6 +386,7 @@ abstract class ObjectAccess
             throw new \InvalidArgumentException('$object must be an object, ' . gettype($object) . ' given.', 1259828920);
         }
 
+        /** @var string $className safe for objects */
         $className = TypeHandling::getTypeForValue($object);
         if (($object instanceof \stdClass && array_key_exists($propertyName, get_object_vars($object))) || array_key_exists($propertyName, get_class_vars($className))) {
             return true;
@@ -412,7 +423,7 @@ abstract class ObjectAccess
      * $object that are accessible through this class.
      *
      * @param object $object Object to get all properties from.
-     * @return array Associative array of all properties.
+     * @return array<string,mixed> Associative array of all properties.
      * @throws \InvalidArgumentException
      * @todo What to do with ArrayAccess
      */

@@ -13,10 +13,10 @@ namespace Neos\Flow\Tests\Unit\Mvc\Routing;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use PHPUnit\Framework\Attributes\Test;
+use Neos\Flow\Mvc;
 use Neos\Flow\Mvc\Routing\StaticRoutePart;
 use Neos\Flow\Tests\UnitTestCase;
-use Neos\Flow\Mvc;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Testcase for the MVC Web Routing StaticRoutePart Class

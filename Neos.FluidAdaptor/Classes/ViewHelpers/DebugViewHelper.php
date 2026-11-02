@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\FluidAdaptor\ViewHelpers;
 
 /*
@@ -78,6 +79,6 @@ class DebugViewHelper extends AbstractViewHelper
             $expressionToExamine = (is_object($expressionToExamine) ? get_class($expressionToExamine) : gettype($expressionToExamine));
         }
 
-        return \Neos\Flow\var_dump($expressionToExamine, $this->arguments['title'], true);
+        return \Neos\Flow\var_dump($expressionToExamine, $this->arguments['title'], true) ?: '';
     }
 }

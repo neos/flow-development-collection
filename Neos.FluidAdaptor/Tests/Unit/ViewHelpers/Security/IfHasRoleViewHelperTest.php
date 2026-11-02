@@ -13,20 +13,20 @@ namespace Neos\FluidAdaptor\Tests\Unit\ViewHelpers\Security;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+use GuzzleHttp\Psr7\ServerRequest;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\Controller\ControllerContext;
-use PHPUnit\Framework\Attributes\Test;
-use Neos\Flow\Security\Account;
-use PHPUnit\Framework\MockObject\MockObject;
-use GuzzleHttp\Psr7\ServerRequest;
-use Neos\Flow\Reflection\ReflectionService;
-use Neos\FluidAdaptor\Core\Rendering\RenderingContext;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
+use Neos\Flow\Reflection\ReflectionService;
+use Neos\Flow\Security\Account;
 use Neos\Flow\Security\Context;
 use Neos\Flow\Security\Policy\PolicyService;
 use Neos\Flow\Security\Policy\Role;
-use Neos\FluidAdaptor\ViewHelpers\Security\IfHasRoleViewHelper;
+use Neos\FluidAdaptor\Core\Rendering\RenderingContext;
 use Neos\FluidAdaptor\Tests\Unit\ViewHelpers\ViewHelperBaseTestcase;
+use Neos\FluidAdaptor\ViewHelpers\Security\IfHasRoleViewHelper;
+use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\MockObject\MockObject;
 
 /**
  * Test case for IfHasRoleViewHelper

@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Utility\Unicode;
 
 /*
@@ -31,7 +32,7 @@ abstract class Functions
     {
         $result = '';
         $splitIntoLowerCaseWords = preg_split("/([\n\r\t ])/", self::strtolower($string), -1, PREG_SPLIT_DELIM_CAPTURE);
-        foreach ($splitIntoLowerCaseWords as $delimiterOrValue) {
+        foreach ($splitIntoLowerCaseWords ?: [] as $delimiterOrValue) {
             $result .= self::strtoupper(self::substr($delimiterOrValue, 0, 1)) . self::substr($delimiterOrValue, 1);
         }
         return $result;
@@ -133,7 +134,7 @@ abstract class Functions
      * @param string $haystack UTF-8 string to search in
      * @param string $needle UTF-8 string to search for
      * @param integer $offset Positition to start the search
-     * @return integer The character position
+     * @return integer|false The character position
      * @api
      */
     public static function strpos(string $haystack, string $needle, int $offset = 0)
@@ -158,11 +159,11 @@ abstract class Functions
      * @see https://www.php.net/manual/en/function.pathinfo.php
      *
      * @param string $path
-     * @param integer $options Optional, one of PATHINFO_DIRNAME, PATHINFO_BASENAME, PATHINFO_EXTENSION or PATHINFO_FILENAME.
-     * @return string|array
+     * @param integer|null $options Optional, one of PATHINFO_DIRNAME, PATHINFO_BASENAME, PATHINFO_EXTENSION or PATHINFO_FILENAME.
+     * @return ($options is null ? array{dirname?: string, basename: string, extension?: string, filename: string} : string)
      * @api
      */
-    public static function pathinfo(string $path, ?int $options = null)
+    public static function pathinfo(string $path, ?int $options = null): string|array
     {
         return $options == null ? pathinfo($path) : pathinfo($path, $options);
     }
@@ -186,8 +187,11 @@ abstract class Functions
         $encodedUrl = preg_replace_callback('%[^:@/?#&=\.]+%usD', function ($matches) {
             return urlencode($matches[0]);
         }, $url);
-        $components = parse_url($encodedUrl);
+        if ($encodedUrl === null) {
+            return false;
+        }
 
+        $components = parse_url($encodedUrl);
         if ($components === false) {
             return false;
         }
@@ -201,7 +205,7 @@ abstract class Functions
             $components['host'] = $componentsFromUrl['host'];
         }
         if (array_key_exists('port', $componentsFromUrl)) {
-            $components['port'] = (integer)$componentsFromUrl['port'];
+            $components['port'] = (int)$componentsFromUrl['port'];
         } else {
             unset($components['port']);
         }

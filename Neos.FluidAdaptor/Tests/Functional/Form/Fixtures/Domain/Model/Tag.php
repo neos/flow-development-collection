@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\FluidAdaptor\Tests\Functional\Form\Fixtures\Domain\Model;
 
 /*

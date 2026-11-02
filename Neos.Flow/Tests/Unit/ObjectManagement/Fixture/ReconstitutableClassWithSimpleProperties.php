@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Tests\Unit\ObjectManagement\Fixture;
 
 use Neos\Flow\Aop\JoinPointInterface;

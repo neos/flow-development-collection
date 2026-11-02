@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\FluidAdaptor\ViewHelpers\Widget;
 
 /*
@@ -10,8 +11,8 @@ namespace Neos\FluidAdaptor\ViewHelpers\Widget;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Security\Cryptography\HashService;
-use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
 use Neos\FluidAdaptor\Core\ViewHelper;
+use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
 use Neos\FluidAdaptor\Core\Widget\Exception\WidgetContextNotFoundException;
 use Neos\FluidAdaptor\Core\Widget\WidgetContext;
 
@@ -104,7 +105,7 @@ class UriViewHelper extends AbstractViewHelper
         } else {
             $arguments['__widgetId'] = $widgetContext->getAjaxWidgetIdentifier();
         }
-        return '?' . http_build_query($arguments, null, '&');
+        return '?' . http_build_query(data: $arguments, arg_separator: '&');
     }
 
     /**

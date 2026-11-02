@@ -13,20 +13,18 @@ namespace Neos\Flow\Tests\Unit\Mvc\Routing;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use PHPUnit\Framework\MockObject\Stub;
 use Neos\Flow\Http\BaseUriProvider;
-use Neos\Flow\Mvc\Routing\RouterInterface;
-use Neos\Flow\Utility\Environment;
-use Neos\Flow\Mvc\Routing\UriBuilder;
-use PHPUnit\Framework\Attributes\Test;
-use Neos\Flow\Mvc\Routing\Exception\MissingActionNameException;
-use PHPUnit\Framework\MockObject\MockObject;
-use Neos\Flow\Http;
+use Neos\Flow\Mvc;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\Routing\Dto\ResolveContext;
+use Neos\Flow\Mvc\Routing\Exception\MissingActionNameException;
+use Neos\Flow\Mvc\Routing\RouterInterface;
+use Neos\Flow\Mvc\Routing\UriBuilder;
 use Neos\Flow\Tests\UnitTestCase;
-use Neos\Flow\Mvc;
-use Neos\Flow\Utility;
+use Neos\Flow\Utility\Environment;
+use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\Stub;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\UriInterface;
 
@@ -613,7 +611,6 @@ final class UriBuilderTest extends UnitTestCase
 
         self::assertEquals($expectedArguments, $this->uriBuilder->getLastArguments());
     }
-
 
     #[Test]
     public function buildAddsPackageKeyFromRootRequestIfRequestIsOfTypeSubRequest()

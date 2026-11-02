@@ -13,10 +13,6 @@ namespace Neos\Flow\Tests\Unit\Security;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use PHPUnit\Framework\Attributes\Test;
-use PHPUnit\Framework\Attributes\DataProvider;
-use Neos\Flow\Security\Policy\PolicyService;
-use PHPUnit\Framework\MockObject\MockObject;
 use Neos\Flow\Exception;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
@@ -26,13 +22,16 @@ use Neos\Flow\Security\Authentication\TokenAndProviderFactory;
 use Neos\Flow\Security\Authentication\TokenAndProviderFactoryInterface;
 use Neos\Flow\Security\Authentication\TokenInterface;
 use Neos\Flow\Security\Context;
-use Neos\Flow\Security\Policy;
+use Neos\Flow\Security\Policy\PolicyService;
+use Neos\Flow\Security\Policy\Role;
 use Neos\Flow\Security\RequestPatternInterface;
 use Neos\Flow\Security\SessionDataContainer;
 use Neos\Flow\Session\SessionInterface;
 use Neos\Flow\Session\SessionManagerInterface;
 use Neos\Flow\Tests\UnitTestCase;
-use Neos\Flow\Security\Policy\Role;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\MockObject\MockObject;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -176,8 +175,8 @@ final class ContextTest extends UnitTestCase
             $token4,
             $token5
         ]));
-//        $mockAuthenticationManager = $this->createMock(AuthenticationManagerInterface::class);
-//        $mockAuthenticationManager->expects($this->once())->method('getTokens')->willReturn(([$token1, $token2, $token3, $token4, $token5]));
+        //        $mockAuthenticationManager = $this->createMock(AuthenticationManagerInterface::class);
+        //        $mockAuthenticationManager->expects($this->once())->method('getTokens')->willReturn(([$token1, $token2, $token3, $token4, $token5]));
 
         $mockSession = $this->createStub(SessionInterface::class);
         $mockSessionManager = $this->createMock(SessionManagerInterface::class);
@@ -413,7 +412,7 @@ final class ContextTest extends UnitTestCase
         $securityContext->_set('securityLogger', $mockSecurityLogger);
 
         $result = $securityContext->initialize();
-//        $securityContext->_call('initialize');
+        //        $securityContext->_call('initialize');
 
         $expectedMergedTokens = [$token1Clone, $token2Clone, $token3];
         self::assertEquals($expectedMergedTokens, array_values($securityContext->_get('activeTokens')));
@@ -541,7 +540,7 @@ final class ContextTest extends UnitTestCase
         $authenticatedUserRole = new Role('Neos.Flow:AuthenticatedUser');
         $testRole = new Role('Acme.Demo:TestRole');
 
-        $mockPolicyService = $this->getAccessibleMock(PolicyService::class, ['getRole', 'initializeRolesFromPolicy']);
+        $mockPolicyService = $this->getAccessibleMock(PolicyService::class, ['getRole']);
         $mockPolicyService->expects($this->atLeastOnce())->method('getRole')->willReturnCallback(function ($roleIdentifier) use ($everybodyRole, $authenticatedUserRole) {
             switch ($roleIdentifier) {
                 case 'Neos.Flow:Everybody':
@@ -810,7 +809,7 @@ final class ContextTest extends UnitTestCase
         $testRole2 = $this->getAccessibleMock(Role::class, [], ['Acme.Demo:TestRole2']);
         $authenticatedUserRole = new Role('Neos.Flow:AuthenticatedUser');
 
-        $mockPolicyService = $this->getAccessibleMock(PolicyService::class, ['getRole', 'initializeRolesFromPolicy']);
+        $mockPolicyService = $this->getAccessibleMock(PolicyService::class, ['getRole']);
         $mockPolicyService->expects($this->atLeastOnce())->method('getRole')->willReturnCallback(function ($roleIdentifier) use ($everybodyRole, $testRole1, $testRole2, $authenticatedUserRole) {
             switch ($roleIdentifier) {
                 case 'Neos.Flow:Everybody':

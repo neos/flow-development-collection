@@ -4,10 +4,6 @@ declare(strict_types=1);
 
 namespace Neos\Flow\Cache\Tests\Unit\Backend;
 
-use PHPUnit\Framework\Attributes\RequiresPhpExtension;
-use PHPUnit\Framework\Attributes\Test;
-use PHPUnit\Framework\MockObject\MockObject;
-
 include_once(__DIR__ . '/../../BaseTestCase.php');
 
 /*
@@ -23,9 +19,12 @@ include_once(__DIR__ . '/../../BaseTestCase.php');
 use Neos\Cache\Backend\ApcuBackend;
 use Neos\Cache\EnvironmentConfiguration;
 use Neos\Cache\Exception;
-use Neos\Cache\Tests\BaseTestCase;
 use Neos\Cache\Frontend\FrontendInterface;
 use Neos\Cache\Frontend\VariableFrontend;
+use Neos\Cache\Tests\BaseTestCase;
+use PHPUnit\Framework\Attributes\RequiresPhpExtension;
+use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\MockObject\MockObject;
 
 /**
  * Testcase for the APCu cache backend

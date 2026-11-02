@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Security\Authentication\Controller;
 
 /*
@@ -11,8 +12,8 @@ namespace Neos\Flow\Security\Authentication\Controller;
  * source code.
  */
 
-use Neos\Flow\Annotations as Flow;
 use Neos\Error\Messages\Error;
+use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\Controller\ActionController;
 use Neos\Flow\Security\Authentication\AuthenticationManagerInterface;
@@ -85,7 +86,11 @@ abstract class AbstractAuthenticationController extends ActionController
 
         if (!$this->authenticationManager->isAuthenticated()) {
             $this->onAuthenticationFailure($authenticationException);
-            return call_user_func([$this, $this->errorMethodName]);
+            $callable = [$this, $this->errorMethodName];
+            if (!is_callable($callable)) {
+                throw new \Exception('Invalid error method ' . $this->errorMethodName, 1743955562);
+            }
+            return call_user_func($callable);
         }
 
         $storedRequest = $this->securityContext->getInterceptedRequest();

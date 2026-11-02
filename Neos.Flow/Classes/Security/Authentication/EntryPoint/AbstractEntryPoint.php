@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Security\Authentication\EntryPoint;
 
 /*
@@ -21,14 +22,14 @@ abstract class AbstractEntryPoint implements EntryPointInterface
     /**
      * The configurations options
      *
-     * @var array
+     * @var array<mixed>
      */
     protected $options = [];
 
     /**
      * Sets the options array
      *
-     * @param array $options An array of configuration options
+     * @param array<mixed> $options An array of configuration options
      * @return void
      */
     public function setOptions(array $options)
@@ -39,7 +40,7 @@ abstract class AbstractEntryPoint implements EntryPointInterface
     /**
      * Returns the options array
      *
-     * @return array The configuration options of this entry point
+     * @return array<mixed> The configuration options of this entry point
      */
     public function getOptions()
     {

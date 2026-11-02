@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\FluidAdaptor\Tests\Functional\Core\Fixtures\ViewHelpers;
 
 /*
@@ -10,9 +11,9 @@ namespace Neos\FluidAdaptor\Tests\Functional\Core\Fixtures\ViewHelpers;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use Neos\FluidAdaptor\Tests\Functional\Core\Fixtures\ViewHelpers\Controller\SomeAjaxController;
 use Neos\Flow\Annotations as Flow;
 use Neos\FluidAdaptor\Core\Widget\AbstractWidgetViewHelper;
+use Neos\FluidAdaptor\Tests\Functional\Core\Fixtures\ViewHelpers\Controller\SomeAjaxController;
 
 /**
  * A view helper for the test AJAX widget

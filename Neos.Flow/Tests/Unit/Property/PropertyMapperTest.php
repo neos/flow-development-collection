@@ -13,10 +13,6 @@ namespace Neos\Flow\Tests\Unit\Property;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use PHPUnit\Framework\Attributes\DataProvider;
-use PHPUnit\Framework\Attributes\Test;
-use PHPUnit\Framework\Attributes\DoesNotPerformAssertions;
-use PHPUnit\Framework\MockObject\MockObject;
 use Neos\Flow\Core\Bootstrap;
 use Neos\Flow\Property\Exception\DuplicateTypeConverterException;
 use Neos\Flow\Property\Exception\InvalidSourceException;
@@ -29,6 +25,10 @@ use Neos\Flow\Property\TypeConverterInterface;
 use Neos\Flow\Security\Exception;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Utility\TypeHandling;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\DoesNotPerformAssertions;
+use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\MockObject\MockObject;
 
 require_once(__DIR__ . '/../Fixtures/ClassWithSetters.php');
 
@@ -226,7 +226,6 @@ final class PropertyMapperTest extends UnitTestCase
     {
         $data = [];
 
-
         $className1 = uniqid('Neos_Flow_Testclass1_', false);
         $className2 = uniqid('Neos_Flow_Testclass2_', false);
         $className3 = uniqid('Neos_Flow_Testclass3_', false);
@@ -343,7 +342,7 @@ final class PropertyMapperTest extends UnitTestCase
 
         // If The target type is no string, we expect an exception.
         $data[] = [
-            'target' => new \stdClass,
+            'target' => new \stdClass(),
             'expectedConverter' => '',
             'typeConverters' => [],
             'shouldFailWithException' => InvalidTargetException::class

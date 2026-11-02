@@ -13,10 +13,10 @@ namespace Neos\Flow\Tests\Unit\Security\Authentication\EntryPoint;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use PHPUnit\Framework\Attributes\Test;
 use GuzzleHttp\Psr7\Response;
 use Neos\Flow\Security\Authentication\EntryPoint\HttpBasic;
 use Neos\Flow\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\Test;
 use Psr\Http\Message\ServerRequestInterface;
 
 /**

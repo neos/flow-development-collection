@@ -19,38 +19,39 @@ use Neos\Utility\Unicode;
 /**
  * A UTF8-aware TextIterator
  *
+ * @implements \Iterator<int,string>
  */
 class TextIterator implements \Iterator
 {
-    const CODE_POINT = 1;
-    const COMB_SEQUENCE = 2;
-    const CHARACTER = 3;
-    const WORD = 4;
-    const LINE = 5;
-    const SENTENCE = 6;
+    public const CODE_POINT = 1;
+    public const COMB_SEQUENCE = 2;
+    public const CHARACTER = 3;
+    public const WORD = 4;
+    public const LINE = 5;
+    public const SENTENCE = 6;
 
-    const DONE = 'DONE';
+    public const DONE = 'DONE';
 
-    const WORD_NONE = 'WORD_NONE';
-    const WORD_NONE_LIMIT = 'WORD_NONE_LIMIT';
-    const WORD_NUMBER = 'WORD_NUMBER';
-    const WORD_NUMBER_LIMIT = 'WORD_NUMBER_LIMIT';
-    const WORD_LETTER = 'WORD_LETTER';
-    const WORD_LETTER_LIMIT = 'WORD_LETTER_LIMIT';
-    const WORD_KANA = 'WORD_KANA';
-    const WORD_KANA_LIMIT = 'WORD_KANA_LIMIT';
+    public const WORD_NONE = 'WORD_NONE';
+    public const WORD_NONE_LIMIT = 'WORD_NONE_LIMIT';
+    public const WORD_NUMBER = 'WORD_NUMBER';
+    public const WORD_NUMBER_LIMIT = 'WORD_NUMBER_LIMIT';
+    public const WORD_LETTER = 'WORD_LETTER';
+    public const WORD_LETTER_LIMIT = 'WORD_LETTER_LIMIT';
+    public const WORD_KANA = 'WORD_KANA';
+    public const WORD_KANA_LIMIT = 'WORD_KANA_LIMIT';
 
-    const LINE_SOFT = 'LINE_SOFT';
-    const LINE_SOFT_LIMIT = 'LINE_SOFT_LIMIT';
-    const LINE_HARD = 'LINE_HARD';
-    const LINE_HARD_LIMIT = 'LINE_HARD_LIMIT';
+    public const LINE_SOFT = 'LINE_SOFT';
+    public const LINE_SOFT_LIMIT = 'LINE_SOFT_LIMIT';
+    public const LINE_HARD = 'LINE_HARD';
+    public const LINE_HARD_LIMIT = 'LINE_HARD_LIMIT';
 
-    const SENTENCE_TERM = 'SENTENCE_TERM';
-    const SENTENCE_TERM_LIMIT = 'SENTENCE_TERM_LIMIT';
-    const SENTENCE_SEP = 'SENTENCE_SEP';
-    const SENTENCE_SEP_LIMIT = 'SENTENCE_SEP_LIMIT';
+    public const SENTENCE_TERM = 'SENTENCE_TERM';
+    public const SENTENCE_TERM_LIMIT = 'SENTENCE_TERM_LIMIT';
+    public const SENTENCE_SEP = 'SENTENCE_SEP';
+    public const SENTENCE_SEP_LIMIT = 'SENTENCE_SEP_LIMIT';
 
-    const REGEXP_SENTENCE_DELIMITERS = '[\.|,|!|\?|;]';
+    public const REGEXP_SENTENCE_DELIMITERS = '[\.|,|!|\?|;]';
 
     /**
      * @var integer
@@ -68,12 +69,12 @@ class TextIterator implements \Iterator
     protected $currentPosition;
 
     /**
-     * @var \ArrayObject
+     * @var \ArrayObject<int,TextIteratorElement>
      */
     protected $iteratorCache;
 
     /**
-     * @var \ArrayIterator
+     * @var \ArrayIterator<int,TextIteratorElement>
      */
     protected $iteratorCacheIterator;
 
@@ -109,11 +110,11 @@ class TextIterator implements \Iterator
     /**
      * Returns the current element
      *
-     * @return string The value of the current element
+     * @return string|null The value of the current element
      */
-    public function current(): string
+    public function current(): ?string
     {
-        return $this->getCurrentElement()->getValue();
+        return $this->getCurrentElement()?->getValue();
     }
 
     /**
@@ -123,7 +124,7 @@ class TextIterator implements \Iterator
      */
     public function next(): void
     {
-        $this->previousElement = $this->getCurrentElement();
+        $this->previousElement = $this->getCurrentElement() ?: $this->previousElement;
         $this->iteratorCacheIterator->next();
     }
 
@@ -164,11 +165,11 @@ class TextIterator implements \Iterator
     /**
      * Returns the offset in the original given string of the current element
      *
-     * @return integer The offset of the current element
+     * @return int|null The offset of the current element, if any
      */
-    public function offset(): int
+    public function offset(): ?int
     {
-        return $this->getCurrentElement()->getOffset();
+        return $this->getCurrentElement()?->getOffset();
     }
 
     /**
@@ -194,7 +195,8 @@ class TextIterator implements \Iterator
             $previousElement = $this->getCurrentElement();
             $this->next();
         }
-        return $previousElement->getValue();
+        // can never be null because the iterator cannot be empty
+        return $previousElement?->getValue() ?: '';
     }
 
     /**
@@ -202,15 +204,15 @@ class TextIterator implements \Iterator
      * given by its offset
      *
      * @param integer $offset The offset of the character
-     * @return int The offset of the element following this character
+     * @return int|null The offset of the element following this character or null if the offset is out of bounds
      */
-    public function following(int $offset): int
+    public function following(int $offset): ?int
     {
         $this->rewind();
         while ($this->valid()) {
             $this->next();
             $nextElement = $this->getCurrentElement();
-            if ($nextElement->getOffset() >= $offset) {
+            if ($nextElement && $nextElement->getOffset() >= $offset) {
                 return $nextElement->getOffset();
             }
         }
@@ -231,7 +233,7 @@ class TextIterator implements \Iterator
             $previousElement = $this->getCurrentElement();
             $this->next();
             $currentElement = $this->getCurrentElement();
-            if (($currentElement->getOffset() + $currentElement->getLength()) >= $offset) {
+            if ($previousElement && $currentElement && ($currentElement->getOffset() + $currentElement->getLength()) >= $offset) {
                 return $previousElement->getOffset() + $previousElement->getLength();
             }
         }
@@ -254,20 +256,21 @@ class TextIterator implements \Iterator
      */
     public function isBoundary(): bool
     {
-        return $this->getCurrentElement()->isBoundary();
+        return $this->getCurrentElement()?->isBoundary() ?: false;
     }
 
     /**
      * Returns all elements of the iterator in an array
      *
-     * @return array All elements of the iterator
+     * @return array<int,string> All elements of the iterator
      */
     public function getAll(): array
     {
         $this->rewind();
         $allValues = [];
         while ($this->valid()) {
-            $allValues[] = $this->getCurrentElement()->getValue();
+            // will never be null while valid
+            $allValues[] = $this->getCurrentElement()?->getValue() ?: '';
             $this->next();
         }
         return $allValues;
@@ -276,7 +279,7 @@ class TextIterator implements \Iterator
     /**
      * @throws UnsupportedFeatureException
      */
-    public function getRuleStatus()
+    public function getRuleStatus(): never
     {
         throw new UnsupportedFeatureException('getRuleStatus() is not supported.', 1210849057);
     }
@@ -284,7 +287,7 @@ class TextIterator implements \Iterator
     /**
      * @throws UnsupportedFeatureException
      */
-    public function getRuleStatusArray()
+    public function getRuleStatusArray(): never
     {
         throw new UnsupportedFeatureException('getRuleStatusArray() is not supported.', 1210849076);
     }
@@ -292,7 +295,7 @@ class TextIterator implements \Iterator
     /**
      * @throws UnsupportedFeatureException
      */
-    public function getAvailableLocales()
+    public function getAvailableLocales(): never
     {
         throw new UnsupportedFeatureException('getAvailableLocales() is not supported.', 1210849105);
     }
@@ -305,7 +308,8 @@ class TextIterator implements \Iterator
     public function first(): string
     {
         $this->rewind();
-        return $this->getCurrentElement()->getValue();
+        // can never be empty, will at least contain empty string
+        return $this->getCurrentElement()?->getValue() ?: '';
     }
 
     /**
@@ -346,7 +350,7 @@ class TextIterator implements \Iterator
     private function parseSubjectByCharacter(): void
     {
         $i = 0;
-        foreach (preg_split('//u', $this->subject) as $currentCharacter) {
+        foreach (preg_split('//u', $this->subject) ?: [] as $currentCharacter) {
             if ($currentCharacter === '') {
                 continue;
             }
@@ -373,7 +377,7 @@ class TextIterator implements \Iterator
                 $this->iteratorCache->append(new TextIteratorElement(' ', $i, 1, true));
 
                 $j = 0;
-                $splittedWord = preg_split('/' . self::REGEXP_SENTENCE_DELIMITERS . '/', $currentWord);
+                $splittedWord = preg_split('/' . self::REGEXP_SENTENCE_DELIMITERS . '/', $currentWord) ?: [];
                 foreach ($splittedWord as $currentPart) {
                     if ($currentPart !== '') {
                         $this->iteratorCache->append(new TextIteratorElement($currentPart, $i, Unicode\Functions::strlen($currentPart), false));
@@ -442,7 +446,7 @@ class TextIterator implements \Iterator
         $count = 0;
         $delimitersMatches = [];
         preg_match_all('/' . self::REGEXP_SENTENCE_DELIMITERS . '/', $this->subject, $delimitersMatches);
-        $splittedSentence = preg_split('/' . self::REGEXP_SENTENCE_DELIMITERS . '/', $this->subject);
+        $splittedSentence = preg_split('/' . self::REGEXP_SENTENCE_DELIMITERS . '/', $this->subject) ?: [];
 
         if (count($splittedSentence) == 1) {
             $this->iteratorCache->append(new TextIteratorElement($splittedSentence[0], 0, Unicode\Functions::strlen($splittedSentence[0]), false));
@@ -480,6 +484,7 @@ class TextIterator implements \Iterator
      * Helper function to get the current element from the cache.
      *
      * @return TextIteratorElement|null The current element of the cache
+     * @phpstan-ignore return.unusedType (can be null if next() leaves the valid range of the iterator)
      */
     private function getCurrentElement()
     {

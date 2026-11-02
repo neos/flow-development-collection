@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\FluidAdaptor\Core\Parser\TemplateProcessor;
 
 /*
@@ -11,9 +12,9 @@ namespace Neos\FluidAdaptor\Core\Parser\TemplateProcessor;
  * source code.
  */
 
+use Neos\FluidAdaptor\Core\Exception;
 use TYPO3Fluid\Fluid\Core\Parser\TemplateProcessorInterface;
 use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
-use Neos\FluidAdaptor\Core\Exception;
 
 /**
  * Preprocessor to detect the "escapingEnabled" inline flag in a template.
@@ -25,10 +26,11 @@ class EscapingFlagProcessor implements TemplateProcessorInterface
      */
     protected $renderingContext;
 
-    public static $SCAN_PATTERN_ESCAPINGMODIFIER = '/{escapingEnabled\s*=\s*(?P<enabled>true|false)\s*}/i';
+    public static string $SCAN_PATTERN_ESCAPINGMODIFIER = '/{escapingEnabled\s*=\s*(?P<enabled>true|false)\s*}/i';
 
     /**
      * @param RenderingContextInterface $renderingContext
+     * @return void
      */
     public function setRenderingContext(RenderingContextInterface $renderingContext)
     {
@@ -56,7 +58,7 @@ class EscapingFlagProcessor implements TemplateProcessorInterface
         if (strtolower($matches[0]['enabled']) === 'false') {
             $this->renderingContext->getTemplateParser()->setEscapingEnabled(false);
         }
-        $templateSource = preg_replace(self::$SCAN_PATTERN_ESCAPINGMODIFIER, '', $templateSource);
+        $templateSource = preg_replace(self::$SCAN_PATTERN_ESCAPINGMODIFIER, '', $templateSource) ?: '';
 
         return $templateSource;
     }

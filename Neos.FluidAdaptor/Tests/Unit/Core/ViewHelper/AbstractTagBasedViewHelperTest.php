@@ -14,9 +14,9 @@ namespace Neos\FluidAdaptor\Tests\Unit\Core\ViewHelper;
  * source code.
  */
 use Neos\Flow\Tests\UnitTestCase;
+use Neos\FluidAdaptor\Core\ViewHelper\AbstractTagBasedViewHelper;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
-use Neos\FluidAdaptor\Core\ViewHelper\AbstractTagBasedViewHelper;
 use TYPO3Fluid\Fluid\Core\ViewHelper\TagBuilder;
 
 /**

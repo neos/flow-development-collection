@@ -13,14 +13,13 @@ namespace Neos\Flow\Tests\Unit\Monitor;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use PHPUnit\Framework\Attributes\Test;
 use Neos\Cache\Frontend\StringFrontend;
 use Neos\Flow\Monitor\ChangeDetectionStrategy\ChangeDetectionStrategyInterface;
-use org\bovigo\vfs\vfsStream;
 use Neos\Flow\Monitor\FileMonitor;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Utility\Files;
-use Neos\Cache;
+use org\bovigo\vfs\vfsStream;
+use PHPUnit\Framework\Attributes\Test;
 use Psr\Log\LoggerInterface;
 
 /**

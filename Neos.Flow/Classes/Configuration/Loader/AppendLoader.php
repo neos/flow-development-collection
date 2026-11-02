@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Neos\Flow\Configuration\Loader;
@@ -15,6 +16,7 @@ namespace Neos\Flow\Configuration\Loader;
 
 use Neos\Flow\Configuration\Source\YamlSource;
 use Neos\Flow\Core\ApplicationContext;
+use Neos\Flow\Package\FlowPackageInterface;
 
 class AppendLoader implements LoaderInterface
 {
@@ -34,6 +36,10 @@ class AppendLoader implements LoaderInterface
         $this->filePrefix = $filePrefix;
     }
 
+    /**
+     * @param array<FlowPackageInterface> $packages
+     * @return array<int,array<mixed>>
+     */
     public function load(array $packages, ApplicationContext $context): array
     {
         $configuration = [];

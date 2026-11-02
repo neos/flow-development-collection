@@ -13,14 +13,13 @@ namespace Neos\Flow\Tests\Unit\I18n\Cldr\Reader;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+use Neos\Cache\Frontend\VariableFrontend;
 use Neos\Flow\I18n\Cldr\CldrModel;
 use Neos\Flow\I18n\Cldr\CldrRepository;
-use PHPUnit\Framework\Attributes\DataProvider;
-use PHPUnit\Framework\Attributes\Test;
-use Neos\Cache\Frontend\VariableFrontend;
 use Neos\Flow\I18n\Cldr\Reader\CurrencyReader;
 use Neos\Flow\Tests\UnitTestCase;
-use Neos\Flow\I18n;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Testcase for the CurrencyReader

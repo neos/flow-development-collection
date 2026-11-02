@@ -14,10 +14,10 @@ namespace Neos\FluidAdaptor\Tests\Unit\Core\Widget;
  * source code.
  */
 use Neos\Flow\Tests\UnitTestCase;
-use PHPUnit\Framework\Attributes\Test;
 use Neos\FluidAdaptor\Core\Widget\AjaxWidgetContextHolder;
-use Neos\FluidAdaptor\Core\Widget\WidgetContext;
 use Neos\FluidAdaptor\Core\Widget\Exception\WidgetContextNotFoundException;
+use Neos\FluidAdaptor\Core\Widget\WidgetContext;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Testcase for AjaxWidgetContextHolder

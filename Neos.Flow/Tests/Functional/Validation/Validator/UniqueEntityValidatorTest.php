@@ -13,13 +13,13 @@ namespace Neos\Flow\Tests\Functional\Validation\Validator;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use Neos\Flow\Tests\FunctionalTestCase;
 use Neos\Flow\Persistence\Doctrine\PersistenceManager;
-use Neos\Flow\Tests\Functional\Persistence\Fixtures\PostRepository;
-use PHPUnit\Framework\Attributes\Test;
-use Neos\Flow\Validation\Validator\UniqueEntityValidator;
-use Neos\Flow\Tests\Functional\Persistence\Fixtures\Post;
 use Neos\Flow\Tests\Functional\Persistence\Fixtures\AnnotatedIdentitiesEntity;
+use Neos\Flow\Tests\Functional\Persistence\Fixtures\Post;
+use Neos\Flow\Tests\Functional\Persistence\Fixtures\PostRepository;
+use Neos\Flow\Tests\FunctionalTestCase;
+use Neos\Flow\Validation\Validator\UniqueEntityValidator;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Testcase for the UniqueEntity Validator

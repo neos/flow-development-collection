@@ -13,12 +13,12 @@ namespace Neos\FluidAdaptor\Tests\Unit\ViewHelpers\Uri;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use Neos\FluidAdaptor\Tests\Unit\ViewHelpers\ViewHelperBaseTestcase;
-use Neos\FluidAdaptor\ViewHelpers\Uri\ActionViewHelper;
-use PHPUnit\Framework\Attributes\Test;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\Controller\ControllerContext;
 use Neos\FluidAdaptor\Core\ViewHelper\Exception;
+use Neos\FluidAdaptor\Tests\Unit\ViewHelpers\ViewHelperBaseTestcase;
+use Neos\FluidAdaptor\ViewHelpers\Uri\ActionViewHelper;
+use PHPUnit\Framework\Attributes\Test;
 
 require_once(__DIR__ . '/../ViewHelperBaseTestcase.php');
 

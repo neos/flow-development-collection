@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Annotations;
 
 /*
@@ -21,7 +22,7 @@ use Doctrine\Common\Annotations\Annotation\NamedArgumentConstructor;
  * @NamedArgumentConstructor
  * @Target({"CLASS", "PROPERTY"})
  */
-#[\Attribute(\Attribute::TARGET_CLASS|\Attribute::TARGET_PROPERTY|\Attribute::IS_REPEATABLE)]
+#[\Attribute(\Attribute::TARGET_CLASS | \Attribute::TARGET_PROPERTY | \Attribute::IS_REPEATABLE)]
 final class Introduce
 {
     /**
@@ -33,17 +34,21 @@ final class Introduce
 
     /**
      * The interface name to introduce.
-     * @var string|null
+     * @var interface-string|null
      */
     public $interfaceName;
 
     /**
      * The trait name to introduce
      *
-     * @var string|null
+     * @var trait-string|null
      */
     public $traitName;
 
+    /**
+     * @param interface-string|null $interfaceName
+     * @param trait-string|null $traitName
+     */
     public function __construct(string $pointcutExpression, ?string $interfaceName = null, ?string $traitName = null)
     {
         $this->pointcutExpression = $pointcutExpression;

@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Neos\Flow\Tests\Unit\Persistence\Doctrine\Mapping\Driver;
@@ -12,17 +13,16 @@ namespace Neos\Flow\Tests\Unit\Persistence\Doctrine\Mapping\Driver;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use Neos\Flow\Security\Policy\Role;
-use Neos\Flow\Security\Account;
-use PHPUnit\Framework\Attributes\DataProvider;
-use PHPUnit\Framework\Attributes\Test;
-use Neos\Flow\Persistence\Doctrine\Mapping\Driver\FlowAnnotationDriver;
-use Neos\Flow\Tests\UnitTestCase;
-use Neos\Flow\Security;
-use PHPUnit\Framework\MockObject\MockObject;
-use Doctrine\ORM\EntityManager;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Platforms\AbstractPlatform;
+use Doctrine\ORM\EntityManager;
+use Neos\Flow\Persistence\Doctrine\Mapping\Driver\FlowAnnotationDriver;
+use Neos\Flow\Security\Account;
+use Neos\Flow\Security\Policy\Role;
+use Neos\Flow\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\MockObject\MockObject;
 
 /**
  * Testcase for the Flow annotation driver
@@ -83,7 +83,8 @@ final class FlowAnnotationDriverTest extends UnitTestCase
     #[Test]
     public function getMaxIdentifierLengthAsksDoctrineForValue(): void
     {
-        $mockDatabasePlatform = $this->getMockForAbstractClass(AbstractPlatform::class, [], '', true, true, true, ['getMaxIdentifierLength']);
+        $mockDatabasePlatform = $this->createPartialMock(AbstractPlatform::class, ['getMaxIdentifierLength', '_getCommonIntegerTypeDeclarationSQL', 'getBooleanTypeDeclarationSQL', 'getIntegerTypeDeclarationSQL', 'getBigIntTypeDeclarationSQL', 'getSmallIntTypeDeclarationSQL', 'initializeDoctrineTypeMappings', 'getClobTypeDeclarationSQL', 'getBlobTypeDeclarationSQL', 'getName', 'getCurrentDatabaseExpression']);
+
         $mockDatabasePlatform->expects(self::atLeastOnce())->method('getMaxIdentifierLength')->willReturn(2048);
         $mockConnection = $this->createMock(Connection::class);
         $mockConnection->expects(self::atLeastOnce())->method('getDatabasePlatform')->willReturn($mockDatabasePlatform);

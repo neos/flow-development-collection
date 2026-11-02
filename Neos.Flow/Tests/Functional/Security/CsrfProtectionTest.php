@@ -13,12 +13,13 @@ namespace Neos\Flow\Tests\Functional\Security;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use PHPUnit\Framework\Attributes\Test;
-use Neos\Flow\Http\Cookie;
+
 use GuzzleHttp\Psr7\Uri;
+use Neos\Flow\Http\Cookie;
 use Neos\Flow\Security\AccountFactory;
 use Neos\Flow\Security\AccountRepository;
 use Neos\Flow\Tests\FunctionalTestCase;
+use PHPUnit\Framework\Attributes\Test;
 use Psr\Http\Message\ServerRequestFactoryInterface;
 
 /**
@@ -63,7 +64,7 @@ final class CsrfProtectionTest extends FunctionalTestCase
             '@subpackage' => 'Tests\Functional\Security\Fixtures',
             '@controller' => 'Restricted',
             '@action' => 'public',
-            '@format' =>'html'
+            '@format' => 'html'
             ],
             true
         );

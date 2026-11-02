@@ -13,16 +13,15 @@ namespace Neos\Flow\Tests\Unit\I18n;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use PHPUnit\Framework\Attributes\Test;
+use Neos\Cache\Frontend\VariableFrontend;
 use Neos\Flow\I18n\Locale;
-use Neos\Flow\I18n\Service;
 use Neos\Flow\I18n\LocaleCollection;
+use Neos\Flow\I18n\Service;
 use Neos\Flow\Package\FlowPackageInterface;
 use Neos\Flow\Package\PackageManager;
-use org\bovigo\vfs\vfsStream;
-use Neos\Cache\Frontend\VariableFrontend;
 use Neos\Flow\Tests\UnitTestCase;
-use Neos\Flow\I18n;
+use org\bovigo\vfs\vfsStream;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Testcase for the Locale Service class.

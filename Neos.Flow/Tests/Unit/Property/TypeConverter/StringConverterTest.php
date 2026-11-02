@@ -13,12 +13,12 @@ namespace Neos\Flow\Tests\Unit\Property\TypeConverter;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use PHPUnit\Framework\Attributes\CoversClass;
-use PHPUnit\Framework\Attributes\Test;
-use PHPUnit\Framework\Attributes\DataProvider;
 use Neos\Flow\Property\PropertyMappingConfiguration;
 use Neos\Flow\Property\TypeConverter\StringConverter;
 use Neos\Flow\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Testcase for the String converter
@@ -68,7 +68,6 @@ final class StringConverterTest extends UnitTestCase
         self::assertEquals('13.12.1980', $this->converter->convertFrom($date, 'string', [], $propertyMappingConfiguration));
     }
 
-
     #[Test]
     public function canConvertFromShouldReturnTrue()
     {
@@ -80,7 +79,6 @@ final class StringConverterTest extends UnitTestCase
     {
         self::assertEquals([], $this->converter->getSourceChildPropertiesToBeConverted('myString'));
     }
-
 
     public static function arrayToStringDataProvider(): \Iterator
     {

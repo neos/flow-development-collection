@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Neos\Flow\Tests\Functional\Persistence\Doctrine;
@@ -12,17 +13,17 @@ namespace Neos\Flow\Tests\Functional\Persistence\Doctrine;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use Neos\Flow\Tests\Functional\Persistence\Fixtures\PostRepository;
-use Neos\Flow\Tests\Functional\Persistence\Fixtures\CommentRepository;
-use PHPUnit\Framework\Attributes\Test;
-use Neos\Flow\Tests\Functional\Persistence\Fixtures\Image;
-use Neos\Flow\Tests\Functional\Persistence\Fixtures\Post;
-use Neos\Flow\Tests\Functional\Persistence\Fixtures\Comment;
-use Neos\Flow\Tests\Functional\Persistence\Fixtures\TestValueObject;
-use Neos\Flow\Tests\Functional\Persistence\Fixtures\Tag;
 use Neos\Flow\Persistence\Doctrine\PersistenceManager;
 use Neos\Flow\Tests\Functional\Persistence\Fixtures;
+use Neos\Flow\Tests\Functional\Persistence\Fixtures\Comment;
+use Neos\Flow\Tests\Functional\Persistence\Fixtures\CommentRepository;
+use Neos\Flow\Tests\Functional\Persistence\Fixtures\Image;
+use Neos\Flow\Tests\Functional\Persistence\Fixtures\Post;
+use Neos\Flow\Tests\Functional\Persistence\Fixtures\PostRepository;
+use Neos\Flow\Tests\Functional\Persistence\Fixtures\Tag;
+use Neos\Flow\Tests\Functional\Persistence\Fixtures\TestValueObject;
 use Neos\Flow\Tests\FunctionalTestCase;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Testcase for aggregate-related behavior

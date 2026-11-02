@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Cli;
 
 use Neos\Flow\Annotations as Flow;
@@ -14,30 +15,10 @@ use Neos\Flow\ObjectManagement\ObjectManagerInterface;
  */
 class Dispatcher
 {
-    /**
-     * @var \Neos\Flow\SignalSlot\Dispatcher
-     */
-    protected $signalDispatcher;
-
-    /**
-     * @var ObjectManagerInterface
-     */
-    protected $objectManager;
-
-    /**
-     * @param \Neos\Flow\SignalSlot\Dispatcher $signalDispatcher
-     */
-    public function injectSignalDispatcher(\Neos\Flow\SignalSlot\Dispatcher $signalDispatcher)
-    {
-        $this->signalDispatcher = $signalDispatcher;
-    }
-
-    /**
-     * @param ObjectManagerInterface $objectManager
-     */
-    public function injectObjectManager(ObjectManagerInterface $objectManager)
-    {
-        $this->objectManager = $objectManager;
+    public function __construct(
+        protected \Neos\Flow\SignalSlot\Dispatcher $signalDispatcher,
+        protected ObjectManagerInterface $objectManager
+    ) {
     }
 
     /**
@@ -108,14 +89,14 @@ class Dispatcher
     protected function resolveController(Request $request): CommandControllerInterface
     {
         $controllerObjectName = $request->getControllerObjectName();
-        if ($controllerObjectName === '') {
+        if (empty($controllerObjectName)) {
             $exceptionMessage = 'No controller could be resolved which would match your request';
             throw new InvalidCommandControllerException($exceptionMessage, 1565878092);
         }
 
         $controller = $this->objectManager->get($controllerObjectName);
         if (!$controller instanceof CommandControllerInterface) {
-            throw new InvalidCommandControllerException('Invalid controller "' . $request->getControllerObjectName() . '". The controller must be a valid request handling controller, ' . (is_object($controller) ? get_class($controller) : gettype($controller)) . ' given.', 1565878098);
+            throw new InvalidCommandControllerException('Invalid controller "' . $request->getControllerObjectName() . '". The controller must be a valid request handling controller, ' . get_debug_type($controller) . ' given.', 1565878098);
         }
 
         return $controller;

@@ -13,11 +13,10 @@ namespace Neos\Flow\Tests\Functional\Mvc;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use PHPUnit\Framework\Attributes\Test;
 use Neos\Flow\Tests\Functional\Mvc\Fixtures\RoutePartHandler\UriBuilderSetDomainAndPathPrefixRoutePartHandler;
 use Neos\Flow\Tests\Functional\Mvc\Fixtures\RoutePartHandler\UriBuilderSetDomainRoutePartHandler;
 use Neos\Flow\Tests\FunctionalTestCase;
-use Psr\Http\Message\ServerRequestFactoryInterface;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Functional tests for the Router
@@ -27,16 +26,6 @@ use Psr\Http\Message\ServerRequestFactoryInterface;
  */
 final class UriBuilderTest extends FunctionalTestCase
 {
-    /**
-     * Additional setup: Routes
-     */
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        $serverRequestFactory = $this->objectManager->get(ServerRequestFactoryInterface::class);
-    }
-
     private function registerSingleRoute($routePartHandler): void
     {
         $route = $this->registerRoute('testa', 'test/mvc/uribuilder/{@action}/{someRoutePart}', [

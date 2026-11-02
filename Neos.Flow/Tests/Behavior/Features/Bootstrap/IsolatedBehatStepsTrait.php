@@ -1,12 +1,13 @@
 <?php
+
 namespace Neos\Flow\Tests\Behavior\Features\Bootstrap;
 
 require_once(__DIR__ . '/SubProcess/SubProcess.php');
 
+use Neos\Flow\Cache\CacheManager;
 use Neos\Flow\Configuration\ConfigurationManager;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Tests\Features\Bootstrap\SubProcess\SubProcess;
-use Neos\Flow\Cache\CacheManager;
 use PHPUnit\Framework\Assert;
 
 /**

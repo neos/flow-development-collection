@@ -13,17 +13,17 @@ namespace Neos\Flow\Tests\Unit\Cli;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use Neos\Flow\Cli\Command;
-use PHPUnit\Framework\Attributes\DataProvider;
-use PHPUnit\Framework\Attributes\Test;
-use Neos\Flow\Cli\CommandArgumentDefinition;
 use Neos\Flow\Cli;
+use Neos\Flow\Cli\Command;
+use Neos\Flow\Cli\CommandArgumentDefinition;
 use Neos\Flow\Command\CacheCommandController;
 use Neos\Flow\Reflection\MethodReflection;
 use Neos\Flow\Reflection\ParameterReflection;
 use Neos\Flow\Reflection\ReflectionService;
 use Neos\Flow\Tests\Unit\Cli\Fixtures\Command\MockACommandController;
 use Neos\Flow\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Testcase for the CLI Command class

@@ -4,10 +4,6 @@ declare(strict_types=1);
 
 namespace Neos\Cache\Tests\Unit\Frontend;
 
-use PHPUnit\Framework\Attributes\Test;
-use PHPUnit\Framework\Attributes\RequiresPhpExtension;
-use PHPUnit\Framework\MockObject\MockObject;
-
 include_once(__DIR__ . '/../../BaseTestCase.php');
 
 /*
@@ -21,11 +17,14 @@ include_once(__DIR__ . '/../../BaseTestCase.php');
  */
 use Neos\Cache\Backend\AbstractBackend;
 use Neos\Cache\Backend\NullBackend;
-use Neos\Cache\Exception\NotSupportedByBackendException;
-use Neos\Cache\Tests\BaseTestCase;
 use Neos\Cache\Backend\TaggableBackendInterface;
+use Neos\Cache\Exception\NotSupportedByBackendException;
 use Neos\Cache\Frontend\StringFrontend;
 use Neos\Cache\Frontend\VariableFrontend;
+use Neos\Cache\Tests\BaseTestCase;
+use PHPUnit\Framework\Attributes\RequiresPhpExtension;
+use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\MockObject\MockObject;
 
 /**
  * Testcase for the variable cache frontend

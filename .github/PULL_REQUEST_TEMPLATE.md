@@ -28,7 +28,7 @@
 
 **Checklist**
 
-- [ ] Code follows the PSR-2 coding style
+- [ ] Code follows the PSR-12 coding style
 - [ ] Tests have been created, run and adjusted as needed
 - [ ] The PR is created against the [lowest maintained branch](https://www.neos.io/features/release-roadmap.html)
 - [ ] Reviewer - PR Title is brief but complete and starts with `FEATURE|TASK|BUGFIX`

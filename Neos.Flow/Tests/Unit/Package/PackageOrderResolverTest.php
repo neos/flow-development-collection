@@ -13,10 +13,10 @@ namespace Neos\Flow\Tests\Unit\Package;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+use Neos\Flow\Package\PackageOrderResolver;
 use Neos\Flow\Tests\UnitTestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
-use Neos\Flow\Package\PackageOrderResolver;
 
 /**
  * Test the PackageOrderResolver

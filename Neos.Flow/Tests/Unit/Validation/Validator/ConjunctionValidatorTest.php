@@ -13,12 +13,12 @@ namespace Neos\Flow\Tests\Unit\Validation\Validator;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use PHPUnit\Framework\Attributes\Test;
+use Neos\Error\Messages as Error;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Flow\Validation\Exception\NoSuchValidatorException;
 use Neos\Flow\Validation\Validator\ConjunctionValidator;
 use Neos\Flow\Validation\Validator\ValidatorInterface;
-use Neos\Error\Messages as Error;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Testcase for the Conjunction Validator

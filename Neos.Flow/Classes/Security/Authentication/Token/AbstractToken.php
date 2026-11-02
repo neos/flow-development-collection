@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Security\Authentication\Token;
 
 /*
@@ -36,18 +37,18 @@ abstract class AbstractToken implements TokenInterface
 
     /**
      * The credentials submitted by the client
-     * @var array
+     * @var array<mixed>
      * @Flow\Transient
      */
     protected $credentials = [];
 
     /**
-     * @var Account
+     * @var ?Account
      */
     protected $account;
 
     /**
-     * @var array
+     * @var array<RequestPatternInterface>
      */
     protected $requestPatterns = [];
 
@@ -59,14 +60,14 @@ abstract class AbstractToken implements TokenInterface
 
     /**
      * Token options
-     * @var array
+     * @var array<mixed>
      */
     protected $options;
 
     /**
      * Build an instance of this token, potentially passing it options that can be configured via `tokenOptions`
      *
-     * @param array|null $options
+     * @param array<mixed>|null $options
      */
     public function __construct(?array $options = null)
     {
@@ -118,7 +119,7 @@ abstract class AbstractToken implements TokenInterface
     /**
      * Returns the configured authentication entry point, NULL if none is available
      *
-     * @return EntryPointInterface The configured authentication entry point, NULL if none is available
+     * @return ?EntryPointInterface The configured authentication entry point, NULL if none is available
      */
     public function getAuthenticationEntryPoint()
     {
@@ -138,7 +139,7 @@ abstract class AbstractToken implements TokenInterface
     /**
      * Sets request patterns
      *
-     * @param array $requestPatterns Array of RequestPatternInterface to be set
+     * @param array<mixed> $requestPatterns Array of RequestPatternInterface to be set
      * @return void
      * @throws \InvalidArgumentException
      */
@@ -166,7 +167,7 @@ abstract class AbstractToken implements TokenInterface
     /**
      * Returns the credentials (username and password) of this token.
      *
-     * @return array $credentials The needed credentials to authenticate this token
+     * @return array<mixed> $credentials The needed credentials to authenticate this token
      */
     public function getCredentials()
     {
@@ -176,17 +177,17 @@ abstract class AbstractToken implements TokenInterface
     /**
      * Returns the account if one is authenticated, NULL otherwise.
      *
-     * @return Account An account object
+     * @return ?Account An account object
      */
     public function getAccount()
     {
-        return $this->isAuthenticated() ? $this->account: null;
+        return $this->isAuthenticated() ? $this->account : null;
     }
 
     /**
      * Set the (authenticated) account
      *
-     * @param Account $account An account object
+     * @param ?Account $account An account object
      * @return void
      */
     public function setAccount(?Account $account = null)

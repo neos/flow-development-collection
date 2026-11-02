@@ -1,7 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
 namespace Neos\Flow\Tests\Unit\ObjectManagement;
 
 /*
@@ -13,16 +11,24 @@ namespace Neos\Flow\Tests\Unit\ObjectManagement;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use PHPUnit\Framework\Attributes\Test;
-use org\bovigo\vfs\vfsStream;
+
+use Neos\Flow\Configuration\ConfigurationManager;
+use Neos\Flow\Core\ApplicationContext;
 use Neos\Flow\ObjectManagement\CompileTimeObjectManager;
 use Neos\Flow\Package\Package;
 use Neos\Flow\Package\PackageManager;
 use Neos\Flow\Tests\UnitTestCase;
+use org\bovigo\vfs\vfsStream;
+use PHPUnit\Framework\Attributes\Test;
 use Psr\Log\LoggerInterface;
 
-final class CompileTimeObjectManagerTest extends UnitTestCase
+class CompileTimeObjectManagerTest extends UnitTestCase
 {
+    /**
+     * @var PackageManager
+     */
+    protected $mockPackageManager;
+
     /**
      * @var CompileTimeObjectManager
      */
@@ -31,9 +37,9 @@ final class CompileTimeObjectManagerTest extends UnitTestCase
     protected function setUp(): void
     {
         vfsStream::setup('Packages');
-        $this->compileTimeObjectManager = $this->getAccessibleMock(CompileTimeObjectManager::class, [], [], '', false);
-        $this->compileTimeObjectManager->injectLogger($this->createMock(LoggerInterface::class));
-        $configurations = [
+        $this->mockPackageManager = $this->getMockBuilder(PackageManager::class)->disableOriginalConstructor()->getMock();
+        $mockConfigurationManager = $this->getMockBuilder(ConfigurationManager::class)->disableOriginalConstructor()->getMock();
+        $mockConfigurationManager->method('getConfiguration')->willReturn([
             'Neos' => [
                 'Flow' => [
                     'object' => [
@@ -48,8 +54,11 @@ final class CompileTimeObjectManagerTest extends UnitTestCase
                     ]
                 ]
             ]
-        ];
-        $this->compileTimeObjectManager->injectAllSettings($configurations);
+        ]);
+        $context = $this->createMock(ApplicationContext::class);
+        $logger = $this->createMock(LoggerInterface::class);
+        $this->compileTimeObjectManager = $this->getAccessibleMock(CompileTimeObjectManager::class, [], [$context, $logger], '', true);
+        $this->compileTimeObjectManager->injectConfigurationManager($mockConfigurationManager);
     }
 
     #[Test]

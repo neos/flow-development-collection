@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Validation;
 
 /*
@@ -16,13 +17,13 @@ use Neos\Flow\ObjectManagement\Configuration\Configuration;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Reflection\PropertyReflection;
 use Neos\Flow\Reflection\ReflectionService;
+use Neos\Flow\Validation\Validator\AggregateBoundaryValidator;
+use Neos\Flow\Validation\Validator\ConjunctionValidator;
+use Neos\Flow\Validation\Validator\GenericObjectValidator;
 use Neos\Flow\Validation\Validator\PolyTypeObjectValidatorInterface;
+use Neos\Flow\Validation\Validator\ValidatorInterface;
 use Neos\Utility\Exception\InvalidTypeException;
 use Neos\Utility\TypeHandling;
-use Neos\Flow\Validation\Validator\AggregateBoundaryValidator;
-use Neos\Flow\Validation\Validator\ValidatorInterface;
-use Neos\Flow\Validation\Validator\GenericObjectValidator;
-use Neos\Flow\Validation\Validator\ConjunctionValidator;
 
 /**
  * Validator resolver to automatically find a appropriate validator for a given subject
@@ -36,7 +37,7 @@ class ValidatorResolver
      * Match validator names and options
      * @var string
      */
-    const PATTERN_MATCH_VALIDATORS = '/
+    public const PATTERN_MATCH_VALIDATORS = '/
 			(?:^|,\s*)
 			(?P<validatorName>[a-z0-9\\\\]+)
 			\s*
@@ -53,7 +54,7 @@ class ValidatorResolver
      * Match validator options (to parse actual options)
      * @var string
      */
-    const PATTERN_MATCH_VALIDATOROPTIONS = '/
+    public const PATTERN_MATCH_VALIDATOROPTIONS = '/
 			\s*
 			(?P<optionName>[a-z0-9]+)
 			\s*=\s*
@@ -77,7 +78,7 @@ class ValidatorResolver
     protected $reflectionService;
 
     /**
-     * @var array
+     * @var array<string,ConjunctionValidator>
      */
     protected $baseValidatorConjunctions = [];
 
@@ -87,7 +88,7 @@ class ValidatorResolver
      * could be resolved.
      *
      * @param string $validatorType Either one of the built-in data types or fully qualified validator class name
-     * @param array $validatorOptions Options to be passed to the validator
+     * @param array<mixed> $validatorOptions Options to be passed to the validator
      * @return ValidatorInterface|null
      * @throws Exception\NoSuchValidatorException
      * @throws Exception\InvalidValidationConfigurationException
@@ -102,7 +103,10 @@ class ValidatorResolver
 
         switch ($this->objectManager->getScope($validatorObjectName)) {
             case Configuration::SCOPE_PROTOTYPE:
-                $validator = new $validatorObjectName($validatorOptions);
+                /** @phpstan-ignore method.notFound */
+                $validator = (new \ReflectionClass($validatorObjectName))->newLazyGhost(
+                    static fn ($object) => $object->__construct($validatorOptions)
+                );
                 break;
             case Configuration::SCOPE_SINGLETON:
                 if (count($validatorOptions) > 0) {
@@ -114,10 +118,6 @@ class ValidatorResolver
                 throw new Exception\NoSuchValidatorException('The validator "' . $validatorObjectName . '" is not of scope singleton or prototype!', 1300694835);
         }
 
-        if (!($validator instanceof ValidatorInterface)) {
-            throw new Exception\NoSuchValidatorException(sprintf('The validator "%s" does not implement %s!', $validatorObjectName, ValidatorInterface::class), 1300694875);
-        }
-
         return $validator;
     }
 
@@ -127,7 +127,7 @@ class ValidatorResolver
      * If no validation is necessary, the returned validator is empty.
      *
      * @param string $targetClassName Fully qualified class name of the target class, ie. the class which should be validated
-     * @param array $validationGroups The validation groups to build the validator for
+     * @param array<int,string> $validationGroups The validation groups to build the validator for
      * @return ConjunctionValidator The validator conjunction
      * @throws Exception\InvalidValidationConfigurationException
      * @throws Exception\InvalidValidationOptionsException
@@ -150,10 +150,10 @@ class ValidatorResolver
      * - by the data type specified in the param annotations
      * - additional validators specified in the validate annotations of a method
      *
-     * @param string $className
+     * @param class-string $className
      * @param string $methodName
-     * @param array $methodParameters Optional pre-compiled array of method parameters
-     * @param array $methodValidateAnnotations Optional pre-compiled array of validate annotations (as array)
+     * @param array<string,mixed>|null $methodParameters Optional pre-compiled array of method parameters
+     * @param array<array{type: ?string, options: array<mixed>, argumentName: string}>|null $methodValidateAnnotations Optional pre-compiled array of validate annotations (as array)
      * @return array<ConjunctionValidator> An Array of ValidatorConjunctions for each method parameters.
      * @throws Exception\InvalidValidationConfigurationException
      * @throws Exception\NoSuchValidatorException
@@ -191,6 +191,7 @@ class ValidatorResolver
         }
 
         if ($methodValidateAnnotations === null) {
+            /** @var Flow\Validate[] $validateAnnotations */
             $validateAnnotations = $this->reflectionService->getMethodAnnotations($className, $methodName, Flow\Validate::class);
             $methodValidateAnnotations = array_map(function ($validateAnnotation) {
                 return [
@@ -202,7 +203,11 @@ class ValidatorResolver
         }
 
         foreach ($methodValidateAnnotations as $annotationParameters) {
-            $newValidator = $this->createValidator($annotationParameters['type'], $annotationParameters['options']);
+            $validatorType = $annotationParameters['type'] ?? null;
+            if ($validatorType === null) {
+                throw new \Exception('Missing validator type', 1743872674);
+            }
+            $newValidator = $this->createValidator($validatorType, $annotationParameters['options']);
             if ($newValidator === null) {
                 throw new Exception\NoSuchValidatorException('Invalid validate annotation in ' . $className . '->' . $methodName . '(): Could not resolve class name for  validator "' . $annotationParameters['type'] . '".', 1239853109);
             }
@@ -235,7 +240,7 @@ class ValidatorResolver
      * Builds a chain of nested object validators by specification of the given
      * object path.
      *
-     * @param array $objectPath The object path
+     * @param array<string> $objectPath The object path
      * @param ValidatorInterface $propertyValidator The validator which should be added to the property specified by objectPath
      * @return GenericObjectValidator
      * @throws Exception\InvalidValidationOptionsException
@@ -252,7 +257,12 @@ class ValidatorResolver
             $parentObjectValidator = $subObjectValidator;
         }
 
-        $parentObjectValidator->addPropertyValidator(array_shift($objectPath), $propertyValidator);
+        $propertyName = array_shift($objectPath);
+        if (!is_string($propertyName)) {
+            throw new \Exception('Missing propertyName', 1743872593);
+        }
+
+        $parentObjectValidator->addPropertyValidator($propertyName, $propertyValidator);
 
         return $rootObjectValidator;
     }
@@ -275,7 +285,7 @@ class ValidatorResolver
      *
      * @param string $indexKey The key to use as index in $this->baseValidatorConjunctions; calculated from target class name and validation groups
      * @param string $targetClassName The data type to build the validation conjunction for. Needs to be the fully qualified class name.
-     * @param array $validationGroups The validation groups to build the validator for
+     * @param array<int,string> $validationGroups The validation groups to build the validator for
      * @return void
      * @throws Exception\NoSuchValidatorException
      * @throws \InvalidArgumentException
@@ -331,8 +341,12 @@ class ValidatorResolver
                 $needsCollectionValidator = TypeHandling::isCollectionType($propertyTargetClassName);
                 $needsObjectValidator = (!TypeHandling::isSimpleType($propertyTargetClassName) && $this->objectManager->isRegistered($propertyTargetClassName) && $this->objectManager->getScope($propertyTargetClassName) === Configuration::SCOPE_PROTOTYPE);
 
+                /** @var Flow\Validate[] $validateAnnotations */
                 $validateAnnotations = $this->reflectionService->getPropertyAnnotations($targetClassName, $classPropertyName, Flow\Validate::class);
                 foreach ($validateAnnotations as $validateAnnotation) {
+                    if ($validateAnnotation->type === null) {
+                        continue;
+                    }
                     if ($validateAnnotation->type === 'Collection') {
                         $needsCollectionValidator = false;
                         $validateAnnotation->options = array_merge(['elementType' => $parsedType['elementType'], 'validationGroups' => $validationGroups], $validateAnnotation->options);
@@ -356,7 +370,9 @@ class ValidatorResolver
 
                 if ($needsCollectionValidator) {
                     $collectionValidator = $this->createValidator(Validator\CollectionValidator::class, ['elementType' => $parsedType['elementType'], 'validationGroups' => $validationGroups]);
-                    $objectValidator->addPropertyValidator($classPropertyName, $collectionValidator);
+                    if ($collectionValidator instanceof ValidatorInterface) {
+                        $objectValidator->addPropertyValidator($classPropertyName, $collectionValidator);
+                    }
                 }
                 if ($needsObjectValidator) {
                     $validatorForProperty = $this->getBaseValidatorConjunction($propertyTargetClassName, $validationGroups);
@@ -424,7 +440,7 @@ class ValidatorResolver
      * Returns a map of object validator class names.
      *
      * @param ObjectManagerInterface $objectManager
-     * @return array Array of object validator class names
+     * @return list<class-string<PolyTypeObjectValidatorInterface>> Array of object validator class names
      * @Flow\CompileStatic
      */
     public static function getPolyTypeObjectValidatorImplementationClassNames($objectManager)
@@ -439,7 +455,7 @@ class ValidatorResolver
      * validator is available false is returned
      *
      * @param string $validatorType Either the fully qualified class name of the validator or the short name of a built-in validator
-     * @return string|false Class name of the validator or false if not available
+     * @return class-string<ValidatorInterface>|false Class name of the validator or false if not available
      */
     protected function resolveValidatorObjectName($validatorType)
     {
@@ -448,6 +464,7 @@ class ValidatorResolver
         $validatorClassNames = static::getValidatorImplementationClassNames($this->objectManager);
 
         if ($this->objectManager->isRegistered($validatorType) && isset($validatorClassNames[$validatorType])) {
+            /** @var class-string<ValidatorInterface> $validatorType */
             return $validatorType;
         }
 
@@ -458,6 +475,7 @@ class ValidatorResolver
             $possibleClassName = sprintf('Neos\Flow\Validation\Validator\%sValidator', $this->getValidatorType($validatorType));
         }
         if ($this->objectManager->isRegistered($possibleClassName) && isset($validatorClassNames[$possibleClassName])) {
+            /** @var class-string<ValidatorInterface> $possibleClassName */
             return $possibleClassName;
         }
 
@@ -468,7 +486,7 @@ class ValidatorResolver
      * Returns all class names implementing the ValidatorInterface.
      *
      * @param ObjectManagerInterface $objectManager
-     * @return array Array of class names implementing ValidatorInterface indexed by class name
+     * @return array<class-string<ValidatorInterface>,int> Array of class names implementing ValidatorInterface indexed by class name
      * @Flow\CompileStatic
      */
     public static function getValidatorImplementationClassNames($objectManager)

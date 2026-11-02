@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Configuration;
 
 /*
@@ -11,13 +12,13 @@ namespace Neos\Flow\Configuration;
  * source code.
  */
 
-use Neos\Flow\I18n\Translator;
-use Symfony\Component\Yaml\Yaml;
-use Neos\Flow\Annotations as Flow;
 use Neos\Error\Messages\Notice;
 use Neos\Error\Messages\Result;
+use Neos\Flow\Annotations as Flow;
+use Neos\Flow\I18n\Translator;
 use Neos\Utility\Arrays;
 use Neos\Utility\Files;
+use Symfony\Component\Yaml\Yaml;
 
 /**
  * A validator for all configuration entries using Schema
@@ -64,9 +65,9 @@ class ConfigurationSchemaValidator
     /**
      * Validate the given $configurationType and $path
      *
-     * @param string $configurationType (optional) the configuration type to validate. if NULL, validates all configuration.
-     * @param string $path (optional) configuration path to validate
-     * @param array $loadedSchemaFiles (optional). if given, will be filled with a list of loaded schema files
+     * @param ?string $configurationType (optional) the configuration type to validate. if NULL, validates all configuration.
+     * @param ?string $path (optional) configuration path to validate
+     * @param array<int,string> $loadedSchemaFiles (optional). if given, will be filled with a list of loaded schema files
      * @return \Neos\Error\Messages\Result the result of the validation
      * @throws Exception\SchemaValidationException
      */
@@ -91,7 +92,7 @@ class ConfigurationSchemaValidator
      *
      * @param string $configurationType the configuration typr to validate
      * @param string|null $path configuration path to validate, or NULL.
-     * @param array $loadedSchemaFiles will be filled with a list of loaded schema files
+     * @param array<int,string> $loadedSchemaFiles will be filled with a list of loaded schema files
      * @return \Neos\Error\Messages\Result
      * @throws Exception\SchemaValidationException
      */
@@ -121,7 +122,7 @@ class ConfigurationSchemaValidator
                     $schemaType = $schemaNameParts[0];
                     $schemaPath = isset($schemaNameParts[1]) ? $schemaNameParts[1] : null;
 
-                    if ($schemaType === $configurationType && ($path === null || strpos($schemaPath, $path) === 0)) {
+                    if ($schemaType === $configurationType && ($path === null || (is_string($schemaPath) && strpos($schemaPath, $path) === 0))) {
                         $schemaFileInfos[] = [
                             'file' => $schemaFile,
                             'name' => $schemaName,
@@ -134,10 +135,11 @@ class ConfigurationSchemaValidator
         }
 
         if (count($schemaFileInfos) === 0) {
-            throw new Exception\SchemaValidationException('No schema files found for configuration type "' . $configurationType . '"' . ($path !== null ? ' and path "' . $path . '".': '.'), 1364985056);
+            throw new Exception\SchemaValidationException('No schema files found for configuration type "' . $configurationType . '"' . ($path !== null ? ' and path "' . $path . '".' : '.'), 1364985056);
         }
 
         $result = new Result();
+        /** @var array<int,array{file: string, name: string, path: ?string, packageKey: string}> $schemaFileInfos */
         foreach ($schemaFileInfos as $schemaFileInfo) {
             $loadedSchemaFiles[] = $schemaFileInfo['file'];
 

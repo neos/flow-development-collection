@@ -13,11 +13,11 @@ namespace Neos\Eel\Tests\Unit;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+use Neos\Eel\Context;
+use Neos\Eel\Tests\Unit\Fixtures\TestObject;
 use Neos\Flow\Tests\UnitTestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
-use Neos\Eel\Tests\Unit\Fixtures\TestObject;
-use Neos\Eel\Context;
 
 /**
  * Eel context test

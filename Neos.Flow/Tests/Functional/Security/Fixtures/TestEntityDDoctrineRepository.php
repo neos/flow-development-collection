@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Tests\Functional\Security\Fixtures;
 
 /*
@@ -22,5 +23,5 @@ class TestEntityDDoctrineRepository extends Repository
     /**
      * @var string
      */
-    const ENTITY_CLASSNAME = TestEntityD::class;
+    public const ENTITY_CLASSNAME = TestEntityD::class;
 }

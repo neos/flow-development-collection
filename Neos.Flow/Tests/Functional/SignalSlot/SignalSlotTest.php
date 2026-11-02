@@ -13,10 +13,10 @@ namespace Neos\Flow\Tests\Functional\SignalSlot;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use PHPUnit\Framework\Attributes\Test;
-use Neos\Flow\Tests\Functional\SignalSlot\Fixtures\SubClass;
 use Neos\Flow\SignalSlot\Dispatcher;
+use Neos\Flow\Tests\Functional\SignalSlot\Fixtures\SubClass;
 use Neos\Flow\Tests\FunctionalTestCase;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Test suite for Signal Slot

@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Tests\Functional\Configuration\Fixtures;
 
 /*
@@ -10,8 +11,8 @@ namespace Neos\Flow\Tests\Functional\Configuration\Fixtures;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use Neos\Flow\Configuration\Source\YamlSource;
 use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Configuration\Source\YamlSource;
 
 class RootDirectoryIgnoringYamlSource extends YamlSource
 {

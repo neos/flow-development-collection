@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Neos\Cache\Tests\Unit\Backend;
 
-use PHPUnit\Framework\Attributes\Test;
-
 include_once(__DIR__ . '/../../BaseTestCase.php');
 
 /*
@@ -21,6 +19,7 @@ include_once(__DIR__ . '/../../BaseTestCase.php');
 use Neos\Cache\Backend\AbstractBackend;
 use Neos\Cache\EnvironmentConfiguration;
 use Neos\Cache\Tests\BaseTestCase;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Testcase for the abstract cache backend
@@ -40,19 +39,39 @@ final class AbstractBackendTest extends BaseTestCase
     {
         $this->backend = new class (new EnvironmentConfiguration('Ultraman Neos Testing', '/some/path', PHP_MAXPATHLEN)) extends AbstractBackend {
             protected $someOption;
-            public function set(string $entryIdentifier, string $data, array $tags = [], ?int $lifetime = NULL): void {}
-            public function get(string $entryIdentifier): string {}
-            public function has(string $entryIdentifier): bool {}
-            public function remove(string $entryIdentifier): bool {}
-            public function flush(): void {}
-            public function flushByTag(string $tag): int {}
-            public function flushByTags(array $tags): int {}
-            public function findIdentifiersByTag(string $tag): array {}
-            public function collectGarbage(): void {}
-            public function setSomeOption($value) {
+            public function set(string $entryIdentifier, string $data, array $tags = [], ?int $lifetime = null): void
+            {
+            }
+            public function get(string $entryIdentifier): string
+            {
+            }
+            public function has(string $entryIdentifier): bool
+            {
+            }
+            public function remove(string $entryIdentifier): bool
+            {
+            }
+            public function flush(): void
+            {
+            }
+            public function flushByTag(string $tag): int
+            {
+            }
+            public function flushByTags(array $tags): int
+            {
+            }
+            public function findIdentifiersByTag(string $tag): array
+            {
+            }
+            public function collectGarbage(): void
+            {
+            }
+            public function setSomeOption($value)
+            {
                 $this->someOption = $value;
             }
-            public function getSomeOption() {
+            public function getSomeOption()
+            {
                 return $this->someOption;
             }
         };

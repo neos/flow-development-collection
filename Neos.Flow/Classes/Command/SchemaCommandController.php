@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Command;
 
 /*
@@ -13,11 +14,11 @@ namespace Neos\Flow\Command;
 
 use Neos\Error\Messages\Result;
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Package\PackageManager;
 use Neos\Flow\Cli\CommandController;
+use Neos\Flow\Package\PackageManager;
+use Neos\Utility\Files;
 use Neos\Utility\SchemaValidator;
 use Symfony\Component\Yaml\Yaml;
-use Neos\Utility\Files;
 
 /**
  * Configuration command controller for the Neos.Flow package
@@ -75,7 +76,7 @@ class SchemaCommandController extends CommandController
 
         if ($verbose) {
             $this->outputLine();
-            if ($result->hasNotices()) {
+            if ($result->hasNotices() === true) {
                 $notices = $result->getFlattenedNotices();
                 $this->outputLine('<b>%d notices:</b>', [count($notices)]);
                 foreach ($notices as $path => $pathNotices) {

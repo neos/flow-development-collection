@@ -13,17 +13,16 @@ namespace Neos\Flow\Tests\Unit\Persistence;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use PHPUnit\Framework\Attributes\Test;
-use Neos\Flow\Persistence\Repository;
-use Neos\Flow\Persistence\RepositoryInterface;
-use PHPUnit\Framework\Attributes\DataProvider;
 use Neos\Flow\Persistence\Doctrine\PersistenceManager;
+use Neos\Flow\Persistence\Exception\IllegalObjectTypeException;
+use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Flow\Persistence\QueryInterface;
 use Neos\Flow\Persistence\QueryResultInterface;
-use Neos\Flow\Persistence\PersistenceManagerInterface;
-use Neos\Flow\Persistence\Exception\IllegalObjectTypeException;
+use Neos\Flow\Persistence\Repository;
+use Neos\Flow\Persistence\RepositoryInterface;
 use Neos\Flow\Tests\UnitTestCase;
-use Neos\Flow\Persistence;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 
 require_once('Fixture/Repository/NonstandardEntityRepository.php');
 

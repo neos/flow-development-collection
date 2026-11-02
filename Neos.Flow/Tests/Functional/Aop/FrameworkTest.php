@@ -14,19 +14,19 @@ namespace Neos\Flow\Tests\Functional\Aop;
  * source code.
  */
 
-use PHPUnit\Framework\Attributes\Test;
-use Neos\Flow\Tests\Functional\Aop\Fixtures\TargetClass01;
-use Neos\Flow\Tests\Functional\Aop\Fixtures\TargetClassWithNeverReturnType;
-use Neos\Flow\Tests\Functional\Aop\Fixtures\Name;
 use Neos\Flow\Tests\Functional\Aop\Fixtures\ChildClassOfTargetClass01;
+use Neos\Flow\Tests\Functional\Aop\Fixtures\Introduced01Interface;
+use Neos\Flow\Tests\Functional\Aop\Fixtures\Name;
+use Neos\Flow\Tests\Functional\Aop\Fixtures\TargetClass01;
 use Neos\Flow\Tests\Functional\Aop\Fixtures\TargetClass02;
 use Neos\Flow\Tests\Functional\Aop\Fixtures\TargetClass03;
-use Neos\Flow\Tests\Functional\Aop\Fixtures\Introduced01Interface;
 use Neos\Flow\Tests\Functional\Aop\Fixtures\TargetClass04;
 use Neos\Flow\Tests\Functional\Aop\Fixtures\TargetClassWithFinalModifier;
+use Neos\Flow\Tests\Functional\Aop\Fixtures\TargetClassWithNeverReturnType;
 use Neos\Flow\Tests\Functional\Aop\Fixtures\TargetClassWithPhp7Features;
 use Neos\Flow\Tests\Functional\Aop\Fixtures\TargetClassWithPhp8Features;
 use Neos\Flow\Tests\FunctionalTestCase;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Testcase for the AOP Framework class

@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Cli;
 
 /*
@@ -29,39 +30,17 @@ class CommandManager
     /**
      * @var array<Command>
      */
-    protected $availableCommands = null;
+    protected array $availableCommands = [];
 
     /**
-     * @var array
+     * @var array<string, string>
      */
-    protected $shortCommandIdentifiers = null;
+    protected array $shortCommandIdentifiers = [];
 
-    /**
-     * @var Bootstrap
-     */
-    protected $bootstrap;
-
-    /**
-     * @var ObjectManagerInterface
-     */
-    protected $objectManager;
-
-    /**
-     * @param ObjectManagerInterface $objectManager
-     * @return void
-     */
-    public function injectObjectManager(ObjectManagerInterface $objectManager)
-    {
-        $this->objectManager = $objectManager;
-    }
-
-    /**
-     * @param Bootstrap $bootstrap
-     * @return void
-     */
-    public function injectBootstrap(Bootstrap $bootstrap)
-    {
-        $this->bootstrap = $bootstrap;
+    public function __construct(
+        private readonly Bootstrap $bootstrap,
+        private readonly ObjectManagerInterface $objectManager
+    ) {
     }
 
     /**
@@ -72,9 +51,7 @@ class CommandManager
      */
     public function getAvailableCommands(): array
     {
-        if ($this->availableCommands === null) {
-            $this->availableCommands = [];
-
+        if ($this->availableCommands === []) {
             foreach (static::getCommandControllerMethodArguments($this->objectManager) as $className => $methods) {
                 foreach (array_keys($methods) as $methodName) {
                     $this->availableCommands[] = new Command($className, substr($methodName, 0, -7));
@@ -161,14 +138,12 @@ class CommandManager
     /**
      * Returns an array that contains all available command identifiers and their shortest non-ambiguous alias
      *
-     * @return array in the format array('full.command:identifier1' => 'alias1', 'full.command:identifier2' => 'alias2')
+     * @return array<string,string> in the format array('full.command:identifier1' => 'alias1', 'full.command:identifier2' => 'alias2')
      */
     protected function getShortCommandIdentifiers(): array
     {
-        if ($this->shortCommandIdentifiers === null) {
-            $this->shortCommandIdentifiers = [];
+        if ($this->shortCommandIdentifiers === []) {
             $commandsByCommandName = [];
-            /** @var Command $availableCommand */
             foreach ($this->getAvailableCommands() as $availableCommand) {
                 list($packageKey, $controllerName, $commandName) = explode(':', $availableCommand->getCommandIdentifier());
                 if (!isset($commandsByCommandName[$commandName])) {
@@ -245,7 +220,7 @@ class CommandManager
      *
      * @param string $controllerObjectName
      * @param string $commandMethodName
-     * @return array
+     * @return array<string,mixed>
      */
     public function getCommandMethodParameters(string $controllerObjectName, string $commandMethodName): array
     {
@@ -256,7 +231,7 @@ class CommandManager
 
     /**
      * @param ObjectManagerInterface $objectManager
-     * @return array Array of method arguments per controller and method.
+     * @return array<class-string<CommandController>, array<string, array<string,mixed>>> of method arguments per controller and method.
      * @Flow\CompileStatic
      */
     public static function getCommandControllerMethodArguments(ObjectManagerInterface $objectManager): array
@@ -265,11 +240,14 @@ class CommandManager
         $reflectionService = $objectManager->get(ReflectionService::class);
 
         $commandControllerMethodArgumentMap = [];
-        foreach ($reflectionService->getAllSubClassNamesForClass(CommandController::class) as $className) {
+
+        /** @var class-string<CommandController>[] $commandControllerSubClasses */
+        $commandControllerSubClasses = $reflectionService->getAllSubClassNamesForClass(CommandController::class);
+        foreach ($commandControllerSubClasses as $className) {
             if (!class_exists($className) || $reflectionService->isClassAbstract($className)) {
                 continue;
             }
-            /** @var string $controllerObjectName */
+            /** @var class-string<CommandController> $controllerObjectName */
             $controllerObjectName = $objectManager->getObjectNameByClassName($className);
             $commandControllerMethodArgumentMap[$controllerObjectName] = [];
             foreach (get_class_methods($className) as $methodName) {

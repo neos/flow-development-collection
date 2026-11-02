@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Command;
 
 /*
@@ -11,12 +12,12 @@ namespace Neos\Flow\Command;
  * source code.
  */
 
-use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Aop\Builder\ProxyClassBuilder as AopProxyClassBuilder;
 use Neos\Cache\Backend\FreezableBackendInterface;
-use Neos\Flow\Cache\CacheManager;
 use Neos\Cache\Frontend\PhpFrontend;
 use Neos\Cache\Frontend\VariableFrontend;
+use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Aop\Builder\ProxyClassBuilder as AopProxyClassBuilder;
+use Neos\Flow\Cache\CacheManager;
 use Neos\Flow\Cli\CommandController;
 use Neos\Flow\Cli\Dispatcher;
 use Neos\Flow\Cli\RequestBuilder;
@@ -189,11 +190,8 @@ class CoreCommandController extends CommandController
         $classesCache = $this->cacheManager->getCache('Flow_Object_Classes');
         $logger = $this->objectManager->get(PsrLoggerFactoryInterface::class)->get('systemLogger');
 
-        $this->proxyClassCompiler->injectClassesCache($classesCache);
-
         $this->aopProxyClassBuilder->injectObjectConfigurationCache($objectConfigurationCache);
         $this->aopProxyClassBuilder->injectLogger($logger);
-        $this->dependencyInjectionProxyClassBuilder->injectLogger($logger);
         $this->aopProxyClassBuilder->build();
         $this->dependencyInjectionProxyClassBuilder->build();
 

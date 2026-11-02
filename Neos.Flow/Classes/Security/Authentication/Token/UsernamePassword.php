@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Security\Authentication\Token;
 
 /*
@@ -26,7 +27,7 @@ class UsernamePassword extends AbstractToken implements UsernamePasswordTokenInt
 
     /**
      * The username/password credentials
-     * @var array
+     * @var array{username: string, password: string,}
      * @Flow\Transient
      */
     protected $credentials = ['username' => '', 'password' => ''];
@@ -78,7 +79,7 @@ class UsernamePassword extends AbstractToken implements UsernamePasswordTokenInt
      */
     public function getUsername(): string
     {
-        return $this->credentials['username'] ?? '';
+        return $this->credentials['username'];
     }
 
     /**
@@ -86,7 +87,7 @@ class UsernamePassword extends AbstractToken implements UsernamePasswordTokenInt
      */
     public function getPassword(): string
     {
-        return $this->credentials['password'] ?? '';
+        return $this->credentials['password'];
     }
 
     /**

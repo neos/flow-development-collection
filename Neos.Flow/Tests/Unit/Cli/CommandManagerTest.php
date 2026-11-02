@@ -13,19 +13,19 @@ namespace Neos\Flow\Tests\Unit\Cli;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use PHPUnit\Framework\Attributes\Test;
-use Neos\Flow\Tests\Unit\Cli\Fixtures\Command\MockACommandController;
-use Neos\Flow\Tests\Unit\Cli\Fixtures\Command\MockBCommandController;
-use Neos\Flow\Cli\CommandController;
-use Neos\Flow\Cli\Command;
 use Neos\Flow\Cli;
+use Neos\Flow\Cli\Command;
+use Neos\Flow\Cli\CommandController;
 use Neos\Flow\Cli\CommandManager;
 use Neos\Flow\Core\Bootstrap;
 use Neos\Flow\Mvc\Exception\AmbiguousCommandIdentifierException;
 use Neos\Flow\Mvc\Exception\NoSuchCommandException;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Reflection\ReflectionService;
+use Neos\Flow\Tests\Unit\Cli\Fixtures\Command\MockACommandController;
+use Neos\Flow\Tests\Unit\Cli\Fixtures\Command\MockBCommandController;
 use Neos\Flow\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\Test;
 
 require_once('Fixtures/Command/MockCommandController.php');
 
@@ -47,20 +47,24 @@ final class CommandManagerTest extends UnitTestCase
     protected function setUp(): void
     {
         $this->mockReflectionService = $this->createMock(ReflectionService::class);
-        $this->commandManager = $this->getMockBuilder(CommandManager::class)->onlyMethods(['getAvailableCommands'])->getMock();
-        $this->commandManager->injectBootstrap($this->createMock(Bootstrap::class));
+        $mockBootstrap = $this->getMockBuilder(Bootstrap::class)->disableOriginalConstructor()->getMock();
+        $mockObjectManager = $this->createMock(ObjectManagerInterface::class);
+        $mockObjectManager->method('get')->with([ReflectionService::class])->willReturn($this->mockReflectionService);
+        $this->commandManager = $this->getMockBuilder(Cli\CommandManager::class)->onlyMethods(['getAvailableCommands'])
+            ->setConstructorArgs([$mockBootstrap, $mockObjectManager])
+            ->getMock();
     }
 
     #[Test]
     public function getAvailableCommandsReturnsAllAvailableCommands(): void
     {
-        $commandManager = new CommandManager();
         $mockCommandControllerClassNames = [MockACommandController::class, MockBCommandController::class];
         $this->mockReflectionService->expects(self::once())->method('getAllSubClassNamesForClass')->with(CommandController::class)->willReturn($mockCommandControllerClassNames);
         $mockObjectManager = $this->createMock(ObjectManagerInterface::class);
         $mockObjectManager->method('get')->with(ReflectionService::class)->willReturn($this->mockReflectionService);
         $mockObjectManager->method('getObjectNameByClassName')->willReturnArgument(0);
-        $commandManager->injectObjectManager($mockObjectManager);
+        $mockBootstrap = $this->getMockBuilder(Bootstrap::class)->disableOriginalConstructor()->getMock();
+        $commandManager = new CommandManager($mockBootstrap, $mockObjectManager);
 
         $commands = $commandManager->getAvailableCommands();
         self::assertCount(3, $commands);

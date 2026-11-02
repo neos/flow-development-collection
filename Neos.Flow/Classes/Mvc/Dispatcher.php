@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Mvc;
 
 /*
@@ -17,9 +18,9 @@ use Neos\Flow\Log\PsrLoggerFactoryInterface;
 use Neos\Flow\Log\Utility\LogEnvironment;
 use Neos\Flow\Mvc\Controller\ControllerInterface;
 use Neos\Flow\Mvc\Controller\Exception\InvalidControllerException;
+use Neos\Flow\Mvc\Exception\ForwardException;
 use Neos\Flow\Mvc\Exception\InfiniteLoopException;
 use Neos\Flow\Mvc\Exception\StopActionException;
-use Neos\Flow\Mvc\Exception\ForwardException;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Security\Authorization\FirewallInterface;
 use Neos\Flow\Security\Context;
@@ -68,7 +69,7 @@ class Dispatcher
     /**
      * @param Context $context
      */
-    public function injectSecurityContext(Context $context)
+    public function injectSecurityContext(Context $context): void
     {
         $this->securityContext = $context;
     }
@@ -76,7 +77,7 @@ class Dispatcher
     /**
      * @param FirewallInterface $firewall
      */
-    public function injectFirewall(FirewallInterface $firewall)
+    public function injectFirewall(FirewallInterface $firewall): void
     {
         $this->firewall = $firewall;
     }
@@ -193,7 +194,7 @@ class Dispatcher
 
         $controller = $this->objectManager->get($controllerObjectName);
         if (!$controller instanceof ControllerInterface) {
-            throw new Controller\Exception\InvalidControllerException('Invalid controller "' . $request->getControllerObjectName() . '". The controller must be a valid request handling controller, ' . (is_object($controller) ? get_class($controller) : gettype($controller)) . ' given.', 1202921619, null, $request);
+            throw new Controller\Exception\InvalidControllerException('Invalid controller "' . $request->getControllerObjectName() . '". The controller must be a valid request handling controller, ' . get_debug_type($controller) . ' given.', 1202921619, null, $request);
         }
         return $controller;
     }

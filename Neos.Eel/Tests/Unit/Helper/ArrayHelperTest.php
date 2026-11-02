@@ -13,11 +13,11 @@ namespace Neos\Eel\Tests\Unit;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+use Neos\Eel\Helper\ArrayHelper;
+use Neos\Eel\Tests\Unit\Fixtures\TestArrayIterator;
 use Neos\Flow\Tests\UnitTestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
-use Neos\Eel\Helper\ArrayHelper;
-use Neos\Eel\Tests\Unit\Fixtures\TestArrayIterator;
 
 /**
  * Tests for ArrayHelper

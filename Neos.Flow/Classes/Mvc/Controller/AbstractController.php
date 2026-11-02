@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Mvc\Controller;
 
 /*
@@ -12,30 +13,30 @@ namespace Neos\Flow\Mvc\Controller;
  */
 
 use GuzzleHttp\Psr7\Response;
+use GuzzleHttp\Psr7\Uri;
 use GuzzleHttp\Psr7\Utils;
 use Neos\Error\Messages as Error;
 use Neos\Flow\Annotations as Flow;
-use GuzzleHttp\Psr7\Uri;
-use Neos\Flow\Mvc\Exception\InvalidActionNameException;
-use Neos\Flow\Mvc\Exception\InvalidArgumentNameException;
-use Neos\Flow\Mvc\Exception\InvalidArgumentTypeException;
-use Neos\Flow\Mvc\Exception\InvalidControllerNameException;
-use Neos\Flow\Mvc\Exception\NoSuchArgumentException;
-use Neos\Flow\Mvc\Routing\Exception\MissingActionNameException;
-use Neos\Flow\Mvc\Routing\RouteValuesNormalizerInterface;
-use Neos\Flow\Persistence\Exception\UnknownObjectException;
-use Neos\Flow\Property\Exception;
-use Psr\Http\Message\UriInterface;
 use Neos\Flow\Http\Helper\MediaTypeHelper;
 use Neos\Flow\Http\Helper\ResponseInformationHelper;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\ActionResponse;
 use Neos\Flow\Mvc\Exception\ForwardException;
+use Neos\Flow\Mvc\Exception\InvalidActionNameException;
+use Neos\Flow\Mvc\Exception\InvalidArgumentNameException;
+use Neos\Flow\Mvc\Exception\InvalidArgumentTypeException;
+use Neos\Flow\Mvc\Exception\InvalidControllerNameException;
+use Neos\Flow\Mvc\Exception\NoSuchArgumentException;
 use Neos\Flow\Mvc\Exception\RequiredArgumentMissingException;
 use Neos\Flow\Mvc\Exception\StopActionException;
+use Neos\Flow\Mvc\Routing\Exception\MissingActionNameException;
+use Neos\Flow\Mvc\Routing\RouteValuesNormalizerInterface;
 use Neos\Flow\Mvc\Routing\UriBuilder;
+use Neos\Flow\Persistence\Exception\UnknownObjectException;
+use Neos\Flow\Property\Exception;
 use Neos\Flow\Validation\ValidatorResolver;
 use Neos\Utility\MediaTypes;
+use Psr\Http\Message\UriInterface;
 
 /**
  * An abstract base class for HTTP based controllers
@@ -101,7 +102,7 @@ abstract class AbstractController implements ControllerInterface
     /**
      * A list of IANA media types which are supported by this controller
      *
-     * @var array
+     * @var array<int,string>
      * @see http://www.iana.org/assignments/media-types/index.html
      */
     protected $supportedMediaTypes = ['text/html'];
@@ -120,6 +121,7 @@ abstract class AbstractController implements ControllerInterface
      *
      * @param ActionRequest $request
      * @param ActionResponse $response
+     * @return void
      */
     protected function initializeController(ActionRequest $request, ActionResponse $response)
     {
@@ -163,7 +165,7 @@ abstract class AbstractController implements ControllerInterface
      * @param string $messageBody text of the FlashMessage
      * @param string $messageTitle optional header of the FlashMessage
      * @param string $severity severity of the FlashMessage (one of the Message::SEVERITY_* constants)
-     * @param array $messageArguments arguments to be passed to the FlashMessage
+     * @param array<mixed> $messageArguments arguments to be passed to the FlashMessage
      * @param integer $messageCode
      * @return void
      * @throws \InvalidArgumentException if the message body is no string

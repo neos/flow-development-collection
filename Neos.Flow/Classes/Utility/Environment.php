@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Neos\Flow\Utility;
@@ -16,9 +17,8 @@ namespace Neos\Flow\Utility;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Core\ApplicationContext;
 use Neos\Flow\Core\Bootstrap;
-use Neos\Flow\Error\Exception as ErrorException;
-use Neos\Flow\Utility\Exception as UtilityException;
 use Neos\Flow\Mvc\ActionRequest;
+use Neos\Flow\Utility\Exception as UtilityException;
 use Neos\Utility\Exception\FilesException;
 use Neos\Utility\Files;
 
@@ -140,18 +140,15 @@ class Environment
      *
      * @param string $temporaryDirectoryBase Full path to the base for the temporary directory
      * @return string The full path to the temporary directory
-     * @throws UtilityException if the temporary directory could not be created or is not writable
+     * @throws FilesException if the temporary directory could not be created
+     * @throws UtilityException if the temporary directory is not writable
      */
     protected function createTemporaryDirectory(string $temporaryDirectoryBase): string
     {
         $temporaryDirectory = self::composeTemporaryDirectoryName($temporaryDirectoryBase, $this->context);
 
         if (!is_dir($temporaryDirectory) && !is_link($temporaryDirectory)) {
-            try {
-                Files::createDirectoryRecursively($temporaryDirectory);
-            } catch (ErrorException $exception) {
-                throw new UtilityException('The temporary directory "' . $temporaryDirectory . '" could not be created. Please make sure permissions are correct for this path or define another temporary directory in your Settings.yaml with the path "Neos.Flow.utility.environment.temporaryDirectoryBase".', 1335382361);
-            }
+            Files::createDirectoryRecursively($temporaryDirectory);
         }
 
         if (!is_writable($temporaryDirectory)) {

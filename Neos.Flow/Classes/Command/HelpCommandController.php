@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Command;
 
 /*
@@ -18,8 +19,8 @@ use Neos\Flow\Cli\CommandController;
 use Neos\Flow\Core\Bootstrap;
 use Neos\Flow\Mvc\Exception\AmbiguousCommandIdentifierException;
 use Neos\Flow\Mvc\Exception\CommandException;
-use Neos\Flow\Package\PackageManager;
 use Neos\Flow\Mvc\Exception\StopActionException;
+use Neos\Flow\Package\PackageManager;
 
 /**
  * A Command Controller which provides help for available commands
@@ -176,7 +177,7 @@ class HelpCommandController extends CommandController
             if (!$commandArgumentDefinition->isRequired()) {
                 $hasOptions = true;
             } else {
-                $usage .= sprintf(' <%s>', strtolower(preg_replace('/([A-Z])/', ' $1', $commandArgumentDefinition->getName())));
+                $usage .= sprintf(' <%s>', strtolower(preg_replace('/([A-Z])/', ' $1', $commandArgumentDefinition->getName()) ?? ''));
             }
         }
 
@@ -270,7 +271,7 @@ class HelpCommandController extends CommandController
      * added to the commands array of this class.
      *
      * @param array<Command> $commands
-     * @return array in the format array('<packageKey>' => array('<CommandControllerClassName>', array('<command1>' => $command1, '<command2>' => $command2)))
+     * @return Command[][][] in the format array('<packageKey>' => array('<CommandControllerClassName>', array('<command1>' => $command1, '<command2>' => $command2)))
      */
     protected function buildCommandsIndex(array $commands)
     {

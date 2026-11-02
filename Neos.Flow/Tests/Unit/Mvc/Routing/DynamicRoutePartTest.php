@@ -13,12 +13,12 @@ namespace Neos\Flow\Tests\Unit\Mvc\Routing;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use PHPUnit\Framework\Attributes\Test;
 use Neos\Flow\Mvc\Routing\Dto\ResolveResult;
 use Neos\Flow\Mvc\Routing\DynamicRoutePart;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Flow\Tests\Unit\Mvc\Routing\Fixtures\UriArgumentObjectWithToString;
 use Neos\Flow\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Testcase for the MVC Web Routing DynamicRoutePart Class
@@ -75,7 +75,6 @@ final class DynamicRoutePartTest extends UnitTestCase
 
         self::assertFalse($this->dynamicRoutPart->match($routePath), 'Dynamic Route Part should not match if name is not set.');
     }
-
 
     #[Test]
     public function valueMatchesFirstRequestPathSegmentAfterSuccessfulMatch()

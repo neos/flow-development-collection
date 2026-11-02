@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Tests\Functional\Persistence\FixturesPHP8;
 
 /*
@@ -11,8 +12,8 @@ namespace Neos\Flow\Tests\Functional\Persistence\FixturesPHP8;
  * source code.
  */
 
-use Neos\Flow\Persistence\Doctrine\Repository;
 use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Persistence\Doctrine\Repository;
 use Neos\Flow\Persistence\QueryResultInterface;
 
 /**
@@ -24,7 +25,7 @@ class SubSubEntityRepository extends Repository
     /**
      * @var string
      */
-    const ENTITY_CLASSNAME = SubSubEntity::class;
+    public const ENTITY_CLASSNAME = SubSubEntity::class;
 
     public function findAll(): QueryResultInterface
     {

@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\FluidAdaptor\ViewHelpers\Security;
 
 /*
@@ -66,7 +67,7 @@ class IfAuthenticatedViewHelper extends AbstractConditionViewHelper
     }
 
     /**
-     * @param null $arguments
+     * @param array<string,mixed>|null $arguments
      * @param FlowAwareRenderingContextInterface&RenderingContextInterface $renderingContext
      * @return bool
      */

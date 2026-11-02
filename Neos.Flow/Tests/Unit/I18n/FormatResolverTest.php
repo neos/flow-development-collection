@@ -13,19 +13,19 @@ namespace Neos\Flow\Tests\Unit\I18n;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use Neos\Flow\I18n\Locale;
-use PHPUnit\Framework\Attributes\Test;
-use Neos\Flow\I18n\Formatter\NumberFormatter;
-use Neos\Flow\I18n\FormatResolver;
-use Neos\Flow\I18n\Exception\InvalidFormatPlaceholderException;
+use Neos\Flow\I18n;
 use Neos\Flow\I18n\Exception\IndexOutOfBoundsException;
-use Neos\Flow\I18n\Exception\UnknownFormatterException;
+use Neos\Flow\I18n\Exception\InvalidFormatPlaceholderException;
 use Neos\Flow\I18n\Exception\InvalidFormatterException;
+use Neos\Flow\I18n\Exception\UnknownFormatterException;
+use Neos\Flow\I18n\FormatResolver;
 use Neos\Flow\I18n\Formatter\FormatterInterface;
+use Neos\Flow\I18n\Formatter\NumberFormatter;
+use Neos\Flow\I18n\Locale;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Reflection\ReflectionService;
 use Neos\Flow\Tests\UnitTestCase;
-use Neos\Flow\I18n;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 
 /**
@@ -108,14 +108,14 @@ final class FormatResolverTest extends UnitTestCase
         $matcher = $this->exactly(2);
         $mockObjectManager->expects($matcher)
             ->method('isRegistered')->willReturnCallback(function (...$parameters) use ($matcher) {
-            if ($matcher->numberOfInvocations() === 1) {
-                $this->assertSame('foo', $parameters[0]);
-            }
-            if ($matcher->numberOfInvocations() === 2) {
-                $this->assertSame('Neos\Flow\I18n\Formatter\FooFormatter', $parameters[0]);
-            }
-            return false;
-        });
+                if ($matcher->numberOfInvocations() === 1) {
+                    $this->assertSame('foo', $parameters[0]);
+                }
+                if ($matcher->numberOfInvocations() === 2) {
+                    $this->assertSame('Neos\Flow\I18n\Formatter\FooFormatter', $parameters[0]);
+                }
+                return false;
+            });
 
         $formatResolver = new FormatResolver();
         $formatResolver->injectObjectManager($mockObjectManager);

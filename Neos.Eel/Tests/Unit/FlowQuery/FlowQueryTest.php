@@ -13,25 +13,24 @@ namespace Neos\Eel\Tests\Unit\FlowQuery;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use PHPUnit\Framework\Attributes\Test;
-use PHPUnit\Framework\Attributes\DataProvider;
-use Neos\Eel\FlowQuery\Operations\Object\FilterOperation;
-use Neos\Eel\FlowQuery\Operations\CountOperation;
-use Neos\Eel\FlowQuery\Operations\FirstOperation;
-use Neos\Eel\FlowQuery\Operations\LastOperation;
-use Neos\Eel\FlowQuery\Operations\SliceOperation;
-use Neos\Eel\FlowQuery\Operations\GetOperation;
-use Neos\Eel\FlowQuery\Operations\IsOperation;
-use Neos\Eel\FlowQuery\Operations\Object\ChildrenOperation;
-use Neos\Eel\FlowQuery\Operations\Object\PropertyOperation;
 use Neos\Eel\FlowQuery\FizzleException;
 use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Eel\FlowQuery\OperationResolver;
+use Neos\Eel\FlowQuery\Operations\CountOperation;
+use Neos\Eel\FlowQuery\Operations\FirstOperation;
+use Neos\Eel\FlowQuery\Operations\GetOperation;
+use Neos\Eel\FlowQuery\Operations\IsOperation;
+use Neos\Eel\FlowQuery\Operations\LastOperation;
+use Neos\Eel\FlowQuery\Operations\Object\ChildrenOperation;
+use Neos\Eel\FlowQuery\Operations\Object\FilterOperation;
+use Neos\Eel\FlowQuery\Operations\Object\PropertyOperation;
+use Neos\Eel\FlowQuery\Operations\SliceOperation;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
-use Neos\Utility\ObjectAccess;
 use Neos\Flow\Tests\UnitTestCase;
-use Neos\Eel\FlowQuery\Operations;
+use Neos\Utility\ObjectAccess;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * FlowQuery test
@@ -615,7 +614,7 @@ final class FlowQueryTest extends UnitTestCase
         $mockPersistenceManager = $this->mockPersistenceManager;
         $objectManager = $this->createMock(ObjectManagerInterface::class);
         $objectManager->method('get')->willReturnCallBack(function ($className) use ($mockPersistenceManager) {
-            $instance = new $className;
+            $instance = new $className();
             // Special case to inject the mock persistence manager into the filter operation
             if ($className === FilterOperation::class) {
                 ObjectAccess::setProperty($instance, 'persistenceManager', $mockPersistenceManager, true);

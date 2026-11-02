@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Package;
 
 /*
@@ -11,21 +12,28 @@ namespace Neos\Flow\Package;
  * source code.
  */
 
+use Composer\Console\Application as ComposerApplication;
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Composer\Exception\InvalidConfigurationException;
 use Neos\Flow\Composer\ComposerUtility;
+use Neos\Flow\Composer\Exception\InvalidConfigurationException;
 use Neos\Flow\Core\Bootstrap;
+use Neos\Flow\Package\Exception as PackageException;
 use Neos\Flow\SignalSlot\Dispatcher;
 use Neos\Flow\SignalSlot\Exception\InvalidSlotException;
 use Neos\Utility\Exception\FilesException;
 use Neos\Utility\Files;
 use Neos\Utility\OpcodeCacheHelper;
-use Neos\Flow\Package\Exception as PackageException;
-use Composer\Console\Application as ComposerApplication;
 use Symfony\Component\Console\Input\ArrayInput;
 
 /**
  * The default Flow Package Manager
+ *
+ * @phpstan-type ComposerManifest array{
+ *     require?: array<string>,
+ *     extra?: array{neos?: array{loading-order?: array{after?: mixed}}},
+ *     autoload?: array<string,array<string,string>>,
+ *     name: string,
+ * }
  *
  * @api
  * @Flow\Scope("singleton")
@@ -60,7 +68,7 @@ class PackageManager
     /**
      * Array of available packages, indexed by package key (case sensitive)
      *
-     * @var array
+     * @var array<string,PackageInterface&PackageKeyAwareInterface>
      */
     protected $packages = [];
 
@@ -74,7 +82,7 @@ class PackageManager
     /**
      * A map between ComposerName and PackageKey, only available when scanAvailablePackages is run
      *
-     * @var array
+     * @var array<string,string>
      */
     protected $composerNameToPackageKeyMap = [];
 
@@ -93,12 +101,12 @@ class PackageManager
     /**
      * Package states configuration as stored in the PackageStates.php file
      *
-     * @var array
+     * @var array<mixed>
      */
     protected $packageStatesConfiguration = [];
 
     /**
-     * @var array
+     * @var array<mixed>
      */
     protected $settings;
 
@@ -111,7 +119,7 @@ class PackageManager
      * Inject settings into the package manager. Has to be called explicitly on object initialization as
      * the package manager subpackage is excluded from proxy class building.
      *
-     * @param array $settings
+     * @param array<string,mixed> $settings
      * @return void
      */
     public function injectSettings(array $settings): void
@@ -145,8 +153,6 @@ class PackageManager
         $this->bootstrap = $bootstrap;
         $this->packageStatesConfiguration = $this->getCurrentPackageStates();
         $this->registerPackagesFromConfiguration($this->packageStatesConfiguration);
-        /** @var PackageInterface $package */
-
         foreach ($this->packages as $package) {
             if ($package instanceof FlowPackageInterface) {
                 $this->flowPackages[$package->getPackageKey()] = $package;
@@ -197,11 +203,11 @@ class PackageManager
      * Returns a PackageInterface object for the specified package.
      *
      * @param string $packageKey
-     * @return PackageInterface The requested package object
+     * @return PackageInterface&PackageKeyAwareInterface The requested package object
      * @throws Exception\UnknownPackageException if the specified package is not known
      * @api
      */
-    public function getPackage($packageKey): PackageInterface
+    public function getPackage($packageKey): PackageInterface&PackageKeyAwareInterface
     {
         if (!$this->isPackageAvailable($packageKey)) {
             throw new Exception\UnknownPackageException('Package "' . $packageKey . '" is not available. Please check if the package exists and that the package key is correct (package keys are case sensitive).', 1166546734);
@@ -214,7 +220,7 @@ class PackageManager
      * Returns an array of PackageInterface objects of all available packages.
      * A package is available, if the package directory contains valid meta information.
      *
-     * @return array<PackageInterface>
+     * @return array<PackageInterface&PackageKeyAwareInterface>
      * @api
      */
     public function getAvailablePackages(): array
@@ -229,7 +235,7 @@ class PackageManager
      * @param string $packageState defaults to available
      * @param string $packageType
      *
-     * @return array<PackageInterface>
+     * @return array<PackageInterface&PackageKeyAwareInterface>
      * @throws Exception\InvalidPackageStateException
      * @api
      */
@@ -256,9 +262,9 @@ class PackageManager
      * Returns an array of PackageInterface objects in the given array of packages
      * that are of the specified package type.
      *
-     * @param array $packages Array of PackageInterface objects to be filtered
+     * @param array<PackageInterface&PackageKeyAwareInterface> $packages Array of PackageInterface objects to be filtered
      * @param string $packageType Filter out anything that's not of this packageType
-     * @return array<PackageInterface>
+     * @return array<PackageInterface&PackageKeyAwareInterface>
      */
     protected function filterPackagesByType($packages, $packageType): array
     {
@@ -276,7 +282,7 @@ class PackageManager
      * Create a package, given the package key
      *
      * @param string $packageKey The package key of the new package
-     * @param array $manifest A composer manifest as associative array.
+     * @param array<string,mixed> $manifest A composer manifest as associative array.
      * @param string $packagesPath If specified, the package will be created in this path, otherwise the default "Application" directory is used
      * @return PackageInterface The newly created package
      *
@@ -371,7 +377,7 @@ class PackageManager
     /**
      * Rescans available packages, order and write a new PackageStates file.
      *
-     * @return array The found and sorted package states.
+     * @return array<mixed> The found and sorted package states.
      * @throws Exception
      * @throws InvalidConfigurationException
      * @throws FilesException
@@ -389,7 +395,7 @@ class PackageManager
      * initialises a package scan if the file was not found or the configuration format
      * was not current.
      *
-     * @return array
+     * @return array<mixed>
      * @throws Exception
      * @throws InvalidConfigurationException
      * @throws FilesException
@@ -417,18 +423,18 @@ class PackageManager
     /**
      * Load the current package states
      *
-     * @return array
+     * @return array<mixed>
      */
     protected function loadPackageStates(): array
     {
-        return (is_file($this->packageInformationCacheFilePath) ? include $this->packageInformationCacheFilePath  : []);
+        return (is_file($this->packageInformationCacheFilePath) ? include $this->packageInformationCacheFilePath : []);
     }
 
     /**
      * Scans all directories in the packages directories for available packages.
      * For each package a Package object is created and stored in $this->packages.
      *
-     * @return array
+     * @return array<string,mixed>
      * @throws Exception
      * @throws InvalidConfigurationException
      */
@@ -483,6 +489,8 @@ class PackageManager
     /**
      * Traverses directories recursively from the given starting point and yields folder paths, who contain a composer.json.
      * When a composer.json was found, traversing into lower directories is stopped.
+     *
+     * @implements \Generator<string>
      */
     protected function findComposerPackagesInPath(string $startingDirectory): \Generator
     {
@@ -508,6 +516,14 @@ class PackageManager
     /**
      * @throws Exception\CorruptPackageException
      * @throws Exception\InvalidPackagePathException
+     * @param ComposerManifest $composerManifest
+     * @return array{
+     *     packageKey: string,
+     *     packagePath: string,
+     *     composerName: string,
+     *     autoloadConfiguration: array<mixed>,
+     *     packageClassInformation: array<string>,
+     * }
      */
     protected function preparePackageStateConfiguration(FlowPackageKey $packageKey, string $packagePath, array $composerManifest): array
     {
@@ -525,7 +541,7 @@ class PackageManager
     /**
      * Requires and registers all packages which were defined in packageStatesConfiguration
      *
-     * @param array $packageStatesConfiguration
+     * @param array<string,mixed> $packageStatesConfiguration
      * @throws Exception\CorruptPackageException
      */
     protected function registerPackagesFromConfiguration($packageStatesConfiguration): void
@@ -541,7 +557,7 @@ class PackageManager
      * to all relevant data arrays.
      *
      * @param string $composerName
-     * @param array $packageStateConfiguration
+     * @param array<string,mixed> $packageStateConfiguration
      * @return void
      * @throws Exception\CorruptPackageException
      */
@@ -558,8 +574,8 @@ class PackageManager
      * Takes the given packageStatesConfiguration, sorts it by dependencies, saves it and returns
      * the ordered list
      *
-     * @param array $packageStates
-     * @return array
+     * @param array<string,mixed> $packageStates
+     * @return array<string,mixed>
      * @throws Exception\PackageStatesFileNotWritableException
      * @throws FilesException
      */
@@ -574,7 +590,7 @@ class PackageManager
     /**
      * Save the given (ordered) array of package states data
      *
-     * @param array $orderedPackageStates
+     * @param array<string,mixed> $orderedPackageStates
      * @throws Exception\PackageStatesFileNotWritableException
      * @throws FilesException
      */
@@ -620,12 +636,15 @@ class PackageManager
      * and package configurations arrays holds all packages in the correct
      * initialization order.
      *
-     * @param array $packageStates The unordered package states
-     * @return array ordered package states.
+     * @param array<string,mixed> $packageStates The unordered package states
+     * @return array<string,mixed> ordered package states.
      */
     protected function sortAvailablePackagesByDependencies(array $packageStates): array
     {
-        $packageOrderResolver = new PackageOrderResolver($packageStates['packages'], $this->collectPackageManifestData($packageStates));
+        $packageOrderResolver = new PackageOrderResolver(
+            $packageStates['packages'],
+            $this->collectPackageManifestData($packageStates)
+        );
         $packageStates['packages'] = $packageOrderResolver->sort();
 
         return $packageStates;
@@ -634,8 +653,8 @@ class PackageManager
     /**
      * Collects the manifest data for all packages in the given package states array
      *
-     * @param array $packageStates
-     * @return array
+     * @param array<string,mixed> $packageStates
+     * @return array<string,ComposerManifest>
      */
     protected function collectPackageManifestData(array $packageStates): array
     {

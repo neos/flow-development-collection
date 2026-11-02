@@ -13,19 +13,17 @@ namespace Neos\Flow\Tests\Unit\Mvc\Controller;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use PHPUnit\Framework\Attributes\Test;
-use Neos\Flow\Mvc\ActionRequest;
-use Neos\Flow\Mvc\ActionResponse;
-use PHPUnit\Framework\MockObject\MockObject;
 use Neos\Flow\Cli\CommandController;
 use Neos\Flow\Cli\CommandManager;
 use Neos\Flow\Cli\ConsoleOutput;
 use Neos\Flow\Cli\Request;
 use Neos\Flow\Cli\Response;
+use Neos\Flow\Mvc\ActionRequest;
+use Neos\Flow\Mvc\ActionResponse;
 use Neos\Flow\Mvc\Controller\Arguments;
-use Neos\Flow\Reflection\ReflectionService;
 use Neos\Flow\Tests\UnitTestCase;
-use Neos\Flow\Mvc;
+use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\MockObject\MockObject;
 
 /**
  * Testcase for the Command Controller
@@ -53,7 +51,6 @@ final class CommandControllerTest extends UnitTestCase
         $this->mockConsoleOutput = $this->createMock(ConsoleOutput::class);
         $this->inject($this->commandController, 'output', $this->mockConsoleOutput);
     }
-
 
     #[Test]
     public function processRequestThrowsExceptionIfGivenRequestIsNoCliRequest()

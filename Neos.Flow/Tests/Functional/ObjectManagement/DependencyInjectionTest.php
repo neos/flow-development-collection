@@ -13,31 +13,32 @@ namespace Neos\Flow\Tests\Functional\ObjectManagement;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use PHPUnit\Framework\Attributes\Test;
-use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\SingletonClassB;
-use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\SingletonClassC;
-use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\PrototypeClassAishInterface;
-use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\SingletonClassD;
-use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\SingletonClassG;
-use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\PrototypeClassDsub;
-use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\SingletonClassF;
-use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\PrototypeClassE;
-use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\ClassWithNonNamespacedDependencies;
-use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\SubNamespace\AnotherClass;
-use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\ClassWithInjectedConfiguration;
-use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\ClassWithInjectedCache;
 use Neos\Flow\Cache\CacheManager;
 use Neos\Flow\Configuration\ConfigurationManager;
 use Neos\Flow\ObjectManagement\Proxy\ProxyInterface;
+use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\ClassWithInjectedCache;
+use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\ClassWithInjectedConfiguration;
+use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\ClassWithNonNamespacedDependencies;
 use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\FinalClassWithDependencies;
 use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\Flow175\ClassWithTransitivePrototypeDependency;
+use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\PHP81\ClassWithNonPromotedReadonlyProperties;
 use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\PrototypeClassA;
+use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\PrototypeClassAishInterface;
+use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\PrototypeClassDsub;
+use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\PrototypeClassE;
 use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\PrototypeClassH;
 use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\PrototypeClassL;
 use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\SingletonClassA;
+use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\SingletonClassB;
+use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\SingletonClassC;
+use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\SingletonClassD;
+use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\SingletonClassF;
+use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\SingletonClassG;
+use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\SubNamespace\AnotherClass;
 use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\ValueObjectClassA;
 use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\ValueObjectClassB;
 use Neos\Flow\Tests\FunctionalTestCase;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Functional tests for the Dependency Injection features
@@ -214,7 +215,6 @@ final class DependencyInjectionTest extends FunctionalTestCase
         self::assertSame($actualSettings, $classWithInjectedConfiguration->getSettings());
     }
 
-
     #[Test]
     public function injectionOfSpecifiedPackageSettings(): void
     {
@@ -317,10 +317,97 @@ final class DependencyInjectionTest extends FunctionalTestCase
     public function constructorSettingsInjectionViaInjectAnnotation(): void
     {
         $object = $this->objectManager->get(PrototypeClassL::class);
-        self::assertInstanceOf(ProxyInterface::class, $object);
+        self::assertInstanceOf(PrototypeClassL::class, $object);
         self::assertSame('injected setting', $object->value);
 
         $object = new PrototypeClassL('override');
         self::assertSame('override', $object->value);
+    }
+
+    /**
+     * Test that proxy constructors support PHP 8+ named arguments (issue #3076)
+     */
+    #[Test]
+    public function prototypeObjectsCanBeInstantiatedWithNamedArguments(): void
+    {
+        $valueObject = new Fixtures\ValueObjectClassA('test-value');
+        $object = new Fixtures\ClassWithNamedConstructorArguments(
+            valueObject: $valueObject,
+            stringValue: 'named-value'
+        );
+
+        self::assertSame($valueObject, $object->getValueObject());
+        self::assertSame('named-value', $object->getStringValue());
+    }
+
+    /**
+     * Test that named arguments work with positional arguments
+     */
+    #[Test]
+    public function prototypeObjectsCanBeInstantiatedWithPositionalArguments(): void
+    {
+        $valueObject = new Fixtures\ValueObjectClassA('test-value');
+        $object = new Fixtures\ClassWithNamedConstructorArguments($valueObject, 'positional-value');
+
+        self::assertSame($valueObject, $object->getValueObject());
+        self::assertSame('positional-value', $object->getStringValue());
+    }
+
+    /**
+     * Test that named arguments work with default values
+     */
+    #[Test]
+    public function prototypeObjectsCanBeInstantiatedWithNamedArgumentsAndDefaults(): void
+    {
+        $valueObject = new Fixtures\ValueObjectClassA('test-value');
+        $object = new Fixtures\ClassWithNamedConstructorArguments(valueObject: $valueObject);
+
+        self::assertSame($valueObject, $object->getValueObject());
+        self::assertSame('default', $object->getStringValue());
+    }
+
+    /**
+     * Test that constructor injection still works with named argument support
+     */
+    #[Test]
+    public function singletonObjectsWithConstructorInjectionStillWorkWithNamedArgumentSupport(): void
+    {
+        $singleton = $this->objectManager->get(Fixtures\SingletonWithConstructorInjection::class);
+
+        self::assertInstanceOf(Fixtures\SingletonClassA::class, $singleton->getSingletonA());
+        self::assertNull($singleton->getOptionalValue());
+    }
+
+    /**
+     * Readonly properties which are not promoted constructor properties are assigned in the
+     * constructor body of the original class – the proxy constructor must not interfere with that.
+     */
+    #[Test]
+    public function nonPromotedReadonlyPropertiesAreSetWhenAProxiedObjectIsCreated(): void
+    {
+        $object = $this->objectManager->get(ClassWithNonPromotedReadonlyProperties::class);
+
+        self::assertInstanceOf(ProxyInterface::class, $object);
+        self::assertSame('the default label', $object->label);
+        self::assertSame(84, $object->getNumber());
+        self::assertInstanceOf(SingletonClassA::class, $object->getSingletonA());
+    }
+
+    #[Test]
+    public function nonPromotedReadonlyPropertiesRespectConstructorArguments(): void
+    {
+        $object = $this->objectManager->get(ClassWithNonPromotedReadonlyProperties::class, 'a custom label', 21);
+
+        self::assertSame('a custom label', $object->label);
+        self::assertSame(42, $object->getNumber());
+    }
+
+    #[Test]
+    public function nonPromotedReadonlyPropertiesOfProxiedObjectsCannotBeModified(): void
+    {
+        $object = $this->objectManager->get(ClassWithNonPromotedReadonlyProperties::class);
+
+        $this->expectException(\Error::class);
+        $object->label = 'a new label';
     }
 }

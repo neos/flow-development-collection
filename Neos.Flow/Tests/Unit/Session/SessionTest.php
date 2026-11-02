@@ -13,8 +13,6 @@ namespace Neos\Flow\Tests\Unit\Session;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use PHPUnit\Framework\Attributes\Test;
-use PHPUnit\Framework\MockObject\MockObject;
 use GuzzleHttp\Psr7\Uri;
 use Neos\Cache\Backend\FileBackend;
 use Neos\Cache\EnvironmentConfiguration;
@@ -39,6 +37,8 @@ use Neos\Flow\Tests\UnitTestCase;
 use Neos\Http\Factories\ServerRequestFactory;
 use Neos\Http\Factories\UriFactory;
 use org\bovigo\vfs\vfsStream;
+use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\MockObject\MockObject;
 use Psr\Http\Message\ServerRequestInterface;
 
 /**
@@ -104,7 +104,7 @@ final class SessionTest extends UnitTestCase
         $mockRequestHandler->method('getHttpRequest')->willReturn($this->httpRequest);
 
         $this->mockBootstrap = $this->createMock(Bootstrap::class);
-        $this->mockBootstrap->expects(self::any())->method('getActiveRequestHandler')->will(self::returnValue($mockRequestHandler));
+        $this->mockBootstrap->expects(self::any())->method('getActiveRequestHandler')->willReturn($mockRequestHandler);
 
         $this->mockSecurityContext = $this->createMock(Context::class);
 
@@ -607,7 +607,6 @@ final class SessionTest extends UnitTestCase
         $sessionCookie = $session->getSessionCookie();
 
         $session->close();
-
 
         $session = Session::createFromCookieAndSessionInformation($sessionCookie, '12345', time());
         $this->inject($session, 'objectManager', $this->mockObjectManager);

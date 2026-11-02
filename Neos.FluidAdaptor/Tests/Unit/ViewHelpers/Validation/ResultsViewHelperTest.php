@@ -13,10 +13,10 @@ namespace Neos\FluidAdaptor\Tests\Unit\ViewHelpers\Validation;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use PHPUnit\Framework\Attributes\Test;
 use Neos\Error\Messages\Result;
 use Neos\FluidAdaptor\Tests\Unit\ViewHelpers\ViewHelperBaseTestcase;
 use Neos\FluidAdaptor\ViewHelpers\Validation\ResultsViewHelper;
+use PHPUnit\Framework\Attributes\Test;
 
 require_once(__DIR__ . '/../ViewHelperBaseTestcase.php');
 

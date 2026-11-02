@@ -13,8 +13,6 @@ namespace Neos\Flow\Tests\Unit\Security\Cryptography;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use PHPUnit\Framework\Attributes\Test;
-use PHPUnit\Framework\MockObject\MockObject;
 use Neos\Cache\Backend\TransientMemoryBackend;
 use Neos\Cache\EnvironmentConfiguration;
 use Neos\Cache\Frontend\StringFrontend;
@@ -26,6 +24,8 @@ use Neos\Flow\Security\Exception\InvalidHashException;
 use Neos\Flow\Security\Exception\MissingConfigurationException;
 use Neos\Flow\Tests\Unit\Cryptography\Fixture\TestHashingStrategy;
 use Neos\Flow\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\MockObject\MockObject;
 
 /**
  * Test case for the Hash Service
@@ -160,7 +160,6 @@ final class HashServiceTest extends UnitTestCase
         $this->expectException(MissingConfigurationException::class);
         $this->hashService->hashPassword('myTestPassword', 'nonExistingHashingStrategy');
     }
-
 
     #[Test]
     public function hashPasswordThrowsExceptionIfNoDefaultHashingStrategyIsConfigured()

@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Persistence\Doctrine;
 
 /*
@@ -11,8 +12,8 @@ namespace Neos\Flow\Persistence\Doctrine;
  * source code.
  */
 
-use Neos\Flow\Annotations as Flow;
 use Neos\Error\Messages\Error;
+use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Property\Exception\TypeConverterException;
 use Neos\Flow\Property\PropertyMapper;
 use Neos\Flow\Property\PropertyMappingConfigurationInterface;
@@ -27,7 +28,7 @@ class ArrayTypeConverter extends AbstractTypeConverter
     /**
      * @var string
      */
-    const CONFIGURATION_CONVERT_ELEMENTS = 'convertElements';
+    public const CONFIGURATION_CONVERT_ELEMENTS = 'convertElements';
 
     /**
      * @var array<string>
@@ -63,16 +64,15 @@ class ArrayTypeConverter extends AbstractTypeConverter
      *
      * @param mixed $source
      * @param string $targetType
-     * @param array $convertedChildProperties
-     * @param PropertyMappingConfigurationInterface $configuration
-     * @return mixed|Error the target type, or an error object if a user-error occurred
+     * @param array<string,mixed> $convertedChildProperties
+     * @return array<mixed> the target type, or an error object if a user-error occurred
      * @throws TypeConverterException thrown in case a developer error occurred
      * @api
      */
     public function convertFrom($source, $targetType, array $convertedChildProperties = [], ?PropertyMappingConfigurationInterface $configuration = null)
     {
         $result = [];
-        $convertElements = $configuration->getConfigurationValue(ArrayTypeConverter::class, self::CONFIGURATION_CONVERT_ELEMENTS);
+        $convertElements = $configuration?->getConfigurationValue(ArrayTypeConverter::class, self::CONFIGURATION_CONVERT_ELEMENTS) ?: true;
         foreach ($source as $element) {
             if ($convertElements === true) {
                 $element = $this->propertyMapper->convert($element, 'array', $configuration);

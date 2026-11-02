@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Kickstarter\Command;
 
 /*
@@ -11,13 +12,13 @@ namespace Neos\Kickstarter\Command;
  * source code.
  */
 
+use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Cli\CommandController;
 use Neos\Flow\Composer\ComposerUtility;
 use Neos\Flow\Package\PackageInterface;
 use Neos\Flow\Package\PackageManager;
-use Neos\Utility\Arrays;
-use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Cli\CommandController;
 use Neos\Kickstarter\Utility\Validation;
+use Neos\Utility\Arrays;
 
 /**
  * Command controller for the Kickstart generator
@@ -47,6 +48,7 @@ class KickstartCommandController extends CommandController
      *
      * @param string $packageKey The package key, for example "MyCompany.MyPackageName"
      * @param string $packageType Optional package type, e.g. "neos-plugin"
+     * @return void
      * @see neos.flow:package:create
      */
     public function packageCommand($packageKey, $packageType = PackageInterface::DEFAULT_COMPOSER_TYPE)
@@ -99,6 +101,7 @@ class KickstartCommandController extends CommandController
      * @param boolean $generateFusion If Fusion templates should be generated instead of Fluid.
      * @param boolean $generateRelated Also create the mentioned package, related model and repository if necessary.
      * @param boolean $force Overwrite any existing controller or template code. Regardless of this flag, the package, model and repository will never be overwritten.
+     * @return void
      * @see neos.kickstarter:kickstart:commandcontroller
      */
     public function actionControllerCommand($packageKey, $controllerName, $generateActions = false, $generateTemplates = true, $generateFusion = false, $generateRelated = false, $force = false)
@@ -193,6 +196,7 @@ class KickstartCommandController extends CommandController
      * @param string $packageKey The package key of the package for the new controller
      * @param string $controllerName The name for the new controller. This may also be a comma separated list of controller names.
      * @param boolean $force Overwrite any existing controller.
+     * @return void
      * @see neos.kickstarter:kickstart:actioncontroller
      */
     public function commandControllerCommand($packageKey, $controllerName, $force = false)
@@ -220,6 +224,7 @@ class KickstartCommandController extends CommandController
      * @param string $packageKey The package key of the package for the domain model
      * @param string $modelName The name of the new domain model class
      * @param boolean $force Overwrite any existing model.
+     * @return void
      * @see neos.kickstarter:kickstart:repository
      */
     public function modelCommand($packageKey, $modelName, $force = false)
@@ -262,6 +267,7 @@ class KickstartCommandController extends CommandController
      * @param string $packageKey The package key
      * @param string $modelName The name of the domain model class
      * @param boolean $force Overwrite any existing repository.
+     * @return void
      * @see neos.kickstarter:kickstart:model
      */
     public function repositoryCommand($packageKey, $modelName, $force = false)
@@ -282,6 +288,7 @@ class KickstartCommandController extends CommandController
      * Generates a documentation skeleton for the given package.
      *
      * @param string $packageKey The package key of the package for the documentation
+     * @return void
      */
     public function documentationCommand($packageKey)
     {
@@ -303,7 +310,7 @@ class KickstartCommandController extends CommandController
      *
      * @param string $packageKey The package key of the package for the translation
      * @param string $sourceLanguageKey The language key of the default language
-     * @param array $targetLanguageKeys Comma separated language keys for the target translations
+     * @param array<string> $targetLanguageKeys Comma separated language keys for the target translations
      * @return void
      */
     public function translationCommand($packageKey, $sourceLanguageKey, array $targetLanguageKeys = [])
@@ -337,6 +344,7 @@ class KickstartCommandController extends CommandController
      * Check the given model name to be not one of the reserved words of PHP.
      *
      * @param string $modelName
+     * @return void
      * @see http://www.php.net/manual/en/reserved.keywords.php
      */
     protected function validateModelName($modelName)

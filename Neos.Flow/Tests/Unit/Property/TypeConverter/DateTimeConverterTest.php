@@ -13,15 +13,15 @@ namespace Neos\Flow\Tests\Unit\Property\TypeConverter;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use PHPUnit\Framework\Attributes\CoversClass;
-use PHPUnit\Framework\Attributes\Test;
-use PHPUnit\Framework\Attributes\DataProvider;
+use Neos\Error\Messages\Error as FlowError;
 use Neos\Flow\Property\Exception\TypeConverterException;
-use Neos\Flow\Property\TypeConverter\DateTimeConverter;
-use Neos\Flow\Tests\UnitTestCase;
 use Neos\Flow\Property\PropertyMappingConfiguration;
 use Neos\Flow\Property\PropertyMappingConfigurationInterface;
-use Neos\Error\Messages\Error as FlowError;
+use Neos\Flow\Property\TypeConverter\DateTimeConverter;
+use Neos\Flow\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Testcase for the DateTime converter
@@ -46,7 +46,6 @@ final class DateTimeConverterTest extends UnitTestCase
         self::assertEquals(\DateTimeInterface::class, $this->converter->getSupportedTargetType(), 'Target type does not match');
         self::assertEquals(1, $this->converter->getPriority(), 'Priority does not match');
     }
-
 
     /** String to DateTime testcases  **/
     #[Test]

@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Security\Authorization\Privilege\Method;
 
 /*
@@ -27,7 +28,7 @@ use Neos\Flow\Security\Exception\InvalidPrivilegeTypeException;
 class MethodPrivilege extends AbstractPrivilege implements MethodPrivilegeInterface
 {
     /**
-     * @var array
+     * @var array<string,array<string,array<string,mixed>>>
      */
     protected static $methodPermissions;
 

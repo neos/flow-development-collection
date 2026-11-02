@@ -13,10 +13,10 @@ namespace Neos\Utility\MediaTypes\Tests\Unit;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use PHPUnit\Framework\TestCase;
+use Neos\Utility\MediaTypes;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
-use Neos\Utility\MediaTypes;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Testcase for the Utility Media Types class

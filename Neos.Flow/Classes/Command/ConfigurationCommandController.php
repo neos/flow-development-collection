@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Command;
 
 /*
@@ -11,7 +12,6 @@ namespace Neos\Flow\Command;
  * source code.
  */
 
-use Symfony\Component\Yaml\Yaml;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Cli\CommandController;
 use Neos\Flow\Configuration\ConfigurationManager;
@@ -19,6 +19,7 @@ use Neos\Flow\Configuration\ConfigurationSchemaValidator;
 use Neos\Flow\Configuration\Exception\SchemaValidationException;
 use Neos\Utility\Arrays;
 use Neos\Utility\SchemaGenerator;
+use Symfony\Component\Yaml\Yaml;
 
 /**
  * Configuration command controller for the Neos.Flow package
@@ -96,8 +97,10 @@ class ConfigurationCommandController extends CommandController
     }
 
     /**
+     * @param array<mixed> $array a deeply nested array
      * @param int $maximumDepth 0 for no truncation and 1 to only show the first keys of the array
      * @param int $currentLevel 1 for the start and will be incremented recursively
+     * @return array<mixed>
      */
     private static function truncateArrayAtDepth(array $array, int $maximumDepth, int $currentLevel = 1): array
     {
@@ -167,7 +170,6 @@ class ConfigurationCommandController extends CommandController
             $this->outputLine('<b>Exception:</b>');
             $this->outputFormatted($exception->getMessage(), [], 4);
             $this->quit(2);
-            return;
         }
 
         if ($verbose) {

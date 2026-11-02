@@ -13,13 +13,13 @@ namespace Neos\Flow\Tests\Unit\Monitor\ChangeDetectionStrategy;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use Neos\Flow\Tests\UnitTestCase;
-use Neos\Flow\Monitor\ChangeDetectionStrategy\ModificationTimeStrategy;
 use Neos\Cache\Frontend\StringFrontend;
-use PHPUnit\Framework\Attributes\Test;
 use Neos\Flow\Monitor\ChangeDetectionStrategy\ChangeDetectionStrategyInterface;
+use Neos\Flow\Monitor\ChangeDetectionStrategy\ModificationTimeStrategy;
+use Neos\Flow\Tests\UnitTestCase;
 use org\bovigo\vfs\vfsStream;
 use org\bovigo\vfs\vfsStreamWrapper;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Testcase for the Modification Time Change Detection Strategy

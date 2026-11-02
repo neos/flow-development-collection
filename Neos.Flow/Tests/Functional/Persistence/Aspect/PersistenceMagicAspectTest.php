@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Neos\Flow\Tests\Functional\Persistence\Aspect;
@@ -12,19 +13,18 @@ namespace Neos\Flow\Tests\Functional\Persistence\Aspect;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use PHPUnit\Framework\Attributes\Test;
+use Neos\Flow\Persistence\Doctrine\PersistenceManager;
 use Neos\Flow\Tests\Functional\Persistence\Fixtures\AnnotatedIdentitiesEntity;
 use Neos\Flow\Tests\Functional\Persistence\Fixtures\AnnotatedIdEntity;
 use Neos\Flow\Tests\Functional\Persistence\Fixtures\TestValueObject;
-use PHPUnit\Framework\Attributes\DataProvider;
 use Neos\Flow\Tests\Functional\Persistence\Fixtures\TestValueObjectWithConstructorLogic;
 use Neos\Flow\Tests\Functional\Persistence\Fixtures\TestValueObjectWithConstructorLogicAndInversedPropertyOrder;
-use Neos\Flow\Tests\Functional\Persistence\Fixtures\TestValueObjectWithTransientProperties;
 use Neos\Flow\Tests\Functional\Persistence\Fixtures\TestValueObjectWithDateTimeProperty;
 use Neos\Flow\Tests\Functional\Persistence\Fixtures\TestValueObjectWithSubValueObjectProperties;
-use Neos\Flow\Persistence\Doctrine\PersistenceManager;
-use Neos\Flow\Tests\Functional\Persistence\Fixtures;
+use Neos\Flow\Tests\Functional\Persistence\Fixtures\TestValueObjectWithTransientProperties;
 use Neos\Flow\Tests\FunctionalTestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Testcase for PersistenceMagicAspect

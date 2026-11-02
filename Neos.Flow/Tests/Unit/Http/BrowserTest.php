@@ -13,17 +13,17 @@ namespace Neos\Flow\Tests\Unit\Http;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use Neos\Flow\Http\Client\Browser;
-use PHPUnit\Framework\Attributes\Test;
-use Neos\Flow\Http\Client\RequestEngineInterface;
-use PHPUnit\Framework\Attributes\Depends;
-use Neos\Flow\Http\Client\InfiniteRedirectionException;
 use GuzzleHttp\Psr7\Response;
 use GuzzleHttp\Psr7\Uri;
 use Neos\Flow\Http\Client;
+use Neos\Flow\Http\Client\Browser;
+use Neos\Flow\Http\Client\InfiniteRedirectionException;
+use Neos\Flow\Http\Client\RequestEngineInterface;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Http\Factories\ServerRequestFactory;
 use Neos\Http\Factories\UriFactory;
+use PHPUnit\Framework\Attributes\Depends;
+use PHPUnit\Framework\Attributes\Test;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
@@ -108,17 +108,17 @@ final class BrowserTest extends UnitTestCase
         $matcher = $this->exactly(2);
         $requestEngine->expects($matcher)
             ->method('sendRequest')->willReturnCallback(function (...$parameters) use ($matcher, $initialUri, $redirectUri, $firstResponse, $secondResponse) {
-            if ($matcher->numberOfInvocations() === 1) {
-                self::assertInstanceOf(ServerRequestInterface::class, $parameters[0]);
-                self::assertSame((string)$initialUri, (string)$parameters[0]->getUri());
-                return $firstResponse;
-            }
-            if ($matcher->numberOfInvocations() === 2) {
-                self::assertInstanceOf(ServerRequestInterface::class, $parameters[0]);
-                self::assertSame((string)$redirectUri, (string)$parameters[0]->getUri());
-                return $secondResponse;
-            }
-        });
+                if ($matcher->numberOfInvocations() === 1) {
+                    self::assertInstanceOf(ServerRequestInterface::class, $parameters[0]);
+                    self::assertSame((string)$initialUri, (string)$parameters[0]->getUri());
+                    return $firstResponse;
+                }
+                if ($matcher->numberOfInvocations() === 2) {
+                    self::assertInstanceOf(ServerRequestInterface::class, $parameters[0]);
+                    self::assertSame((string)$redirectUri, (string)$parameters[0]->getUri());
+                    return $secondResponse;
+                }
+            });
 
         $this->browser->setRequestEngine($requestEngine);
         $actual = $this->browser->request($initialUri);
@@ -152,7 +152,7 @@ final class BrowserTest extends UnitTestCase
         $wildResponses[3] = new Response(301, ['Location' => 'http://localhost/ahNoPleaseRatherGoThere']);
 
         $requestEngine = $this->createMock(RequestEngineInterface::class);
-        for ($i=0; $i<=3; $i++) {
+        for ($i = 0; $i <= 3; $i++) {
             $requestEngine
                 ->expects($this->exactly(count($wildResponses)))
                 ->method('sendRequest')
@@ -169,7 +169,7 @@ final class BrowserTest extends UnitTestCase
         $this->expectException(InfiniteRedirectionException::class);
         $requestEngine = $this->createMock(RequestEngineInterface::class);
         $responses = [];
-        for ($i=0; $i<=10; $i++) {
+        for ($i = 0; $i <= 10; $i++) {
             $responses[] = new Response(301, ['Location' => 'http://localhost/this/willLead/you/knowhere/' . $i]);
         }
         $requestEngine

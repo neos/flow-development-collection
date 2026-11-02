@@ -13,12 +13,11 @@ namespace Neos\Flow\Tests\Functional\Property\TypeConverter;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use PHPUnit\Framework\Attributes\Test;
-use Neos\Flow\Tests\Functional\Property\Fixtures\TestEntityWithImmutableProperty;
 use Neos\Flow\Property\Exception;
 use Neos\Flow\Property\PropertyMapper;
+use Neos\Flow\Tests\Functional\Property\Fixtures\TestEntityWithImmutableProperty;
 use Neos\Flow\Tests\FunctionalTestCase;
-use Neos\Flow\Tests\Functional\Property\Fixtures;
+use PHPUnit\Framework\Attributes\Test;
 
 final class PersistentObjectConverterTest extends FunctionalTestCase
 {

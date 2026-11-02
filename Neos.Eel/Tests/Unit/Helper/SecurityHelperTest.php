@@ -7,12 +7,12 @@ namespace Neos\Eel\Tests\Unit;
 /*                                                                        *
  * This script belongs to the Flow package "Neos.Eel".                   *
  *                                                                        */
-use Neos\Flow\Tests\UnitTestCase;
-use PHPUnit\Framework\Attributes\Test;
-use Neos\Flow\Security\Context;
+use Neos\Eel\Helper\SecurityHelper;
 use Neos\Flow\Security\Authentication\TokenInterface;
 use Neos\Flow\Security\Authorization\PrivilegeManagerInterface;
-use Neos\Eel\Helper\SecurityHelper;
+use Neos\Flow\Security\Context;
+use Neos\Flow\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Eel SecurityHelper test

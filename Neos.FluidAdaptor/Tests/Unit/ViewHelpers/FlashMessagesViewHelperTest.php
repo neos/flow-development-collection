@@ -13,15 +13,15 @@ namespace Neos\FluidAdaptor\Tests\Unit\ViewHelpers;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use Neos\Flow\Mvc\FlashMessage\FlashMessageContainer;
-use Neos\Flow\Mvc\Controller\ControllerContext;
-use Neos\FluidAdaptor\ViewHelpers\FlashMessagesViewHelper;
-use PHPUnit\Framework\Attributes\Test;
-use Neos\Error\Messages\Message;
 use Neos\Error\Messages\Error;
+use Neos\Error\Messages\Message;
 use Neos\Error\Messages\Notice;
 use Neos\Error\Messages\Warning;
+use Neos\Flow\Mvc\Controller\ControllerContext;
+use Neos\Flow\Mvc\FlashMessage\FlashMessageContainer;
+use Neos\FluidAdaptor\ViewHelpers\FlashMessagesViewHelper;
 use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use TYPO3Fluid\Fluid\Core\ViewHelper\TagBuilder;
 
 require_once(__DIR__ . '/ViewHelperBaseTestcase.php');

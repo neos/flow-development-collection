@@ -4,8 +4,15 @@ declare(strict_types=1);
 
 namespace Neos\Flow\Tests\Unit\ObjectManagement;
 
+use Neos\Flow\Core\ApplicationContext;
+use Neos\Flow\ObjectManagement\Configuration\Configuration as ObjectConfiguration;
+use Neos\Flow\ObjectManagement\Configuration\ConfigurationArgument;
+use Neos\Flow\ObjectManagement\ObjectManager;
+use Neos\Flow\Tests\Unit\ObjectManagement\Fixture\BasicClass;
+use Neos\Flow\Tests\UnitTestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
+use Psr\Log\LoggerInterface;
 
 /*
  * This file is part of the Neos.Flow package.
@@ -18,13 +25,6 @@ use PHPUnit\Framework\Attributes\Test;
  */
 
 require_once(__DIR__ . '/Fixture/BasicClass.php');
-
-use Neos\Flow\Core\ApplicationContext;
-use Neos\Flow\ObjectManagement\Configuration\ConfigurationArgument;
-use Neos\Flow\ObjectManagement\ObjectManager;
-use Neos\Flow\Tests\Unit\ObjectManagement\Fixture\BasicClass;
-use Neos\Flow\Tests\UnitTestCase;
-use Neos\Flow\ObjectManagement\Configuration\Configuration as ObjectConfiguration;
 
 final class ObjectManagerTest extends UnitTestCase
 {
@@ -89,11 +89,45 @@ final class ObjectManagerTest extends UnitTestCase
         ];
 
         $context = $this->createStub(ApplicationContext::class);
-        $objectManager = new ObjectManager($context);
+        $logger = $this->createStub(LoggerInterface::class);
+        $objectManager = new ObjectManager($context, $logger);
         $objectManager->setObjects($objects);
 
         $instance = $objectManager->get(BasicClass::class);
         self::assertInstanceOf(BasicClass::class, $instance);
         self::assertSame('Foo', $instance->getSomeProperty());
+    }
+
+    #[Test]
+    public function objectNamesWithLeadingBackslashAreNormalized(): void
+    {
+        $logger = $this->createStub(LoggerInterface::class);
+        $objectManager = new ObjectManager($this->createStub(ApplicationContext::class), $logger);
+        $objectManager->setObjects([
+            BasicClass::class => [
+                'c' => BasicClass::class,
+                's' => ObjectConfiguration::SCOPE_SINGLETON,
+                'p' => 'Neos.Flow',
+            ]
+        ]);
+        $fullyQualifiedName = '\\' . BasicClass::class;
+
+        self::assertTrue($objectManager->isRegistered($fullyQualifiedName));
+        self::assertTrue($objectManager->has($fullyQualifiedName));
+        self::assertSame(ObjectConfiguration::SCOPE_SINGLETON, $objectManager->getScope($fullyQualifiedName));
+        self::assertSame(BasicClass::class, $objectManager->getObjectNameByClassName($fullyQualifiedName));
+        self::assertSame(BasicClass::class, $objectManager->getClassNameByObjectName($fullyQualifiedName));
+        self::assertSame('Neos.Flow', $objectManager->getPackageKeyByObjectName($fullyQualifiedName));
+
+        $instance = new BasicClass();
+        $objectManager->setInstance($fullyQualifiedName, $instance);
+        self::assertTrue($objectManager->hasInstance(BasicClass::class));
+        self::assertTrue($objectManager->hasInstance($fullyQualifiedName));
+        self::assertSame($instance, $objectManager->getInstance($fullyQualifiedName));
+        self::assertSame($instance, $objectManager->get($fullyQualifiedName));
+        self::assertSame($instance, $objectManager->get(BasicClass::class));
+
+        $objectManager->forgetInstance($fullyQualifiedName);
+        self::assertFalse($objectManager->hasInstance(BasicClass::class));
     }
 }

@@ -13,11 +13,11 @@ namespace Neos\Flow\Tests\Unit\Property\TypeConverter;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use PHPUnit\Framework\Attributes\Test;
 use GuzzleHttp\Psr7\Uri;
+use Neos\Error\Messages as FlowError;
 use Neos\Flow\Property\TypeConverter\UriTypeConverter;
 use Neos\Flow\Tests\UnitTestCase;
-use Neos\Error\Messages as FlowError;
+use PHPUnit\Framework\Attributes\Test;
 use Psr\Http\Message\UriInterface;
 
 /**

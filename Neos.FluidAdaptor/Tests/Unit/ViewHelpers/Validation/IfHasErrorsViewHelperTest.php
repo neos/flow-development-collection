@@ -13,12 +13,12 @@ namespace Neos\FluidAdaptor\Tests\Unit\ViewHelpers\Security;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use PHPUnit\Framework\Attributes\Test;
-use PHPUnit\Framework\MockObject\MockObject;
 use Neos\Error\Messages\Error;
 use Neos\Error\Messages\Result;
-use Neos\FluidAdaptor\ViewHelpers\Validation\IfHasErrorsViewHelper;
 use Neos\FluidAdaptor\Tests\Unit\ViewHelpers\ViewHelperBaseTestcase;
+use Neos\FluidAdaptor\ViewHelpers\Validation\IfHasErrorsViewHelper;
+use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\MockObject\MockObject;
 
 require_once(__DIR__ . '/../ViewHelperBaseTestcase.php');
 
@@ -43,7 +43,7 @@ final class IfHasErrorsViewHelperTest extends ViewHelperBaseTestcase
     #[Test]
     public function returnsAndRendersThenChildIfResultsHaveErrors()
     {
-        $result = new Result;
+        $result = new Result();
         $result->addError(new Error('I am an error', 1386163707));
 
         $this->request->expects($this->once())->method('getInternalArgument')->with('__submittedArgumentValidationResults')->willReturn(($result));

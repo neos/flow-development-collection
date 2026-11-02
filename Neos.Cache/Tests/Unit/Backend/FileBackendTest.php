@@ -4,9 +4,6 @@ declare(strict_types=1);
 
 namespace Neos\Cache\Tests\Unit\Backend;
 
-use PHPUnit\Framework\Attributes\Test;
-use PHPUnit\Framework\Attributes\DataProvider;
-
 include_once(__DIR__ . '/../../BaseTestCase.php');
 
 /*
@@ -23,11 +20,13 @@ use Neos\Cache\Backend\FileBackend;
 use Neos\Cache\Backend\FileBackendEntryDto;
 use Neos\Cache\EnvironmentConfiguration;
 use Neos\Cache\Exception;
-use Neos\Cache\Tests\BaseTestCase;
-use org\bovigo\vfs\vfsStream;
 use Neos\Cache\Frontend\AbstractFrontend;
 use Neos\Cache\Frontend\PhpFrontend;
 use Neos\Cache\Frontend\VariableFrontend;
+use Neos\Cache\Tests\BaseTestCase;
+use org\bovigo\vfs\vfsStream;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 
 /**

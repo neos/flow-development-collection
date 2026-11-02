@@ -13,9 +13,9 @@ namespace Neos\Utility\Arrays\Tests\Unit;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use PHPUnit\Framework\TestCase;
-use PHPUnit\Framework\Attributes\Test;
 use Neos\Utility\ValueAccessor;
+use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Testcase for the Utility Array class
@@ -65,7 +65,7 @@ final class ValueAccessorTest extends TestCase
     #[Test]
     public function arrayAccessorWorks()
     {
-        $acceptableValues = [[], [1,2,3], ['foo'=>'bar']];
+        $acceptableValues = [[], [1,2,3], ['foo' => 'bar']];
         $inacceptableValues = [0, 1, 99999, -1, -99999, true, false, 'string', new \DateTimeImmutable()];
 
         $this->testAccessor($acceptableValues, [...$inacceptableValues, null], 'array');

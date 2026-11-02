@@ -13,16 +13,16 @@ namespace Neos\Eel\Tests\Unit;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use Neos\Eel\ProtectedContext;
-use PHPUnit\Framework\Attributes\DataProvider;
-use PHPUnit\Framework\Attributes\Test;
-use Neos\Eel\Package;
 use Neos\Eel\Context;
 use Neos\Eel\EelEvaluatorInterface;
 use Neos\Eel\EvaluationException;
+use Neos\Eel\Package;
 use Neos\Eel\ParserException;
+use Neos\Eel\ProtectedContext;
 use Neos\Eel\Tests\Unit\Fixtures\TestObject;
 use Neos\Flow\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Abstract evaluator test

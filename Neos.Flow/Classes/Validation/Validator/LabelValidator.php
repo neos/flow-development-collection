@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Validation\Validator;
 
 /*
@@ -24,7 +25,7 @@ use Neos\Flow\Annotations as Flow;
  */
 class LabelValidator extends AbstractValidator
 {
-    const PATTERN_VALIDCHARACTERS = '/^[\p{L}\p{Sc} ,.:;?!%§&"\'\/+\-_=\(\)#0-9]*$/u';
+    public const PATTERN_VALIDCHARACTERS = '/^[\p{L}\p{Sc} ,.:;?!%§&"\'\/+\-_=\(\)#0-9]*$/u';
 
     /**
      * The given value is valid if it matches the regular expression specified in PATTERN_VALIDCHARACTERS.

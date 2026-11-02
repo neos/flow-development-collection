@@ -1,7 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
 namespace Neos\Flow\Tests\Unit\Persistence\Doctrine;
 
 /*
@@ -13,14 +11,14 @@ namespace Neos\Flow\Tests\Unit\Persistence\Doctrine;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use PHPUnit\Framework\Attributes\Test;
-use Doctrine\ORM\Configuration;
+
 use Doctrine\Common\EventManager;
 use Doctrine\DBAL\Connection;
 use Neos\Flow\Persistence\Doctrine\EntityManagerConfiguration;
 use Neos\Flow\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\Test;
 
-final class EntityManagerConfigurationTest extends UnitTestCase
+class EntityManagerConfigurationTest extends UnitTestCase
 {
     #[Test]
     public function dqlCustomStringFunctionCanCorrectlyBeAppliedToConfiguration()
@@ -57,10 +55,10 @@ final class EntityManagerConfigurationTest extends UnitTestCase
         /** @var EntityManagerConfiguration $entityManagerConfiguration */
         $entityManagerConfiguration = $this->getAccessibleMock(EntityManagerConfiguration::class, ['applyCacheConfiguration']);
         /** @var Connection $connection */
-        $connection = $this->createMock(Connection::class);
+        $connection = $this->getMockBuilder(Connection::class)->disableOriginalConstructor()->getMock();
         /** @var EventManager $eventManager */
-        $eventManager = $this->createMock(EventManager::class);
-        $configuration = new Configuration;
+        $eventManager = $this->getMockBuilder(EventManager::class)->disableOriginalConstructor()->getMock();
+        $configuration = new \Doctrine\ORM\Configuration();
 
         $settingsArray = [
             'persistence' => [

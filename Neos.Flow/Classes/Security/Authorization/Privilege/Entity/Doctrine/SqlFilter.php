@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Security\Authorization\Privilege\Entity\Doctrine;
 
 /*
@@ -16,9 +17,9 @@ use Doctrine\ORM\Query\Filter\SQLFilter as DoctrineSqlFilter;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Core\Bootstrap;
 use Neos\Flow\Security\Account;
+use Neos\Flow\Security\Authorization\Privilege\Entity\EntityPrivilegeInterface;
 use Neos\Flow\Security\Context;
 use Neos\Flow\Security\Policy\PolicyService;
-use Neos\Flow\Security\Authorization\Privilege\Entity\EntityPrivilegeInterface;
 
 /**
  * A filter to rewrite doctrine queries according to the security policy.
@@ -40,7 +41,7 @@ class SqlFilter extends DoctrineSqlFilter
     /**
      * Gets the SQL query part to add to a query.
      *
-     * @param ClassMetadata $targetEntity Metadata object for the target entity to be filtered
+     * @param ClassMetadata<object> $targetEntity Metadata object for the target entity to be filtered
      * @param string $targetTableAlias The target table alias used in the current query
      * @return string The constraint SQL if there is available, empty string otherwise
      */

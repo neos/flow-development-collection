@@ -13,10 +13,10 @@ namespace Neos\Flow\Tests\Unit\Utility;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use PHPUnit\Framework\TestCase;
+use Neos\Utility\SchemaGenerator;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
-use Neos\Utility\SchemaGenerator;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Testcase for the Schema Generator

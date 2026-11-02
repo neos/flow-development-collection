@@ -13,10 +13,10 @@ namespace Neos\Flow\Tests\Unit\ResourceManagement\Streams;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use PHPUnit\Framework\Attributes\Test;
 use Neos\Flow\ResourceManagement\Streams\StreamWrapperAdapter;
 use Neos\Flow\ResourceManagement\Streams\StreamWrapperInterface;
 use Neos\Flow\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Testcase for the StreamWrapperAdapter class
@@ -32,7 +32,6 @@ final class StreamWrapperAdapterTest extends UnitTestCase
      * @var StreamWrapperInterface
      */
     protected $mockStreamWrapper;
-
 
     protected function setUp(): void
     {

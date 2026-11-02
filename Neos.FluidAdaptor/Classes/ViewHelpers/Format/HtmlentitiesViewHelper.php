@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\FluidAdaptor\ViewHelpers\Format;
 
 /*
@@ -79,7 +80,7 @@ class HtmlentitiesViewHelper extends AbstractViewHelper
     /**
      * Applies htmlentities() on the specified value.
      *
-     * @param array $arguments
+     * @param array<string,mixed> $arguments
      * @param \Closure $renderChildrenClosure
      * @param RenderingContextInterface $renderingContext
      * @return string|mixed

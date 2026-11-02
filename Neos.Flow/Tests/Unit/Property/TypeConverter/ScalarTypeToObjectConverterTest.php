@@ -4,6 +4,14 @@ declare(strict_types=1);
 
 namespace Neos\Flow\Tests\Unit\Property\TypeConverter;
 
+use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Fixtures\ClassWithBoolConstructor;
+use Neos\Flow\Fixtures\ClassWithFloatConstructor;
+use Neos\Flow\Fixtures\ClassWithIntegerConstructor;
+use Neos\Flow\Fixtures\ClassWithStringConstructor;
+use Neos\Flow\Property\TypeConverter\ScalarTypeToObjectConverter;
+use Neos\Flow\Reflection\ReflectionService;
+use Neos\Flow\Tests\UnitTestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 
@@ -20,15 +28,7 @@ use PHPUnit\Framework\Attributes\Test;
 require_once(__DIR__ . '/../../Fixtures/ClassWithStringConstructor.php');
 require_once(__DIR__ . '/../../Fixtures/ClassWithIntegerConstructor.php');
 require_once(__DIR__ . '/../../Fixtures/ClassWithBoolConstructor.php');
-
-use Neos\Flow\Fixtures\ClassWithBoolConstructor;
-use Neos\Flow\Fixtures\ClassWithFloatConstructor;
-use Neos\Flow\Fixtures\ClassWithIntegerConstructor;
-use Neos\Flow\Fixtures\ClassWithStringConstructor;
-use Neos\Flow\Property\TypeConverter\ScalarTypeToObjectConverter;
-use Neos\Flow\Reflection\ReflectionService;
-use Neos\Flow\Tests\UnitTestCase;
-use Neos\Flow\Annotations as Flow;
+require_once(__DIR__ . '/../../Fixtures/ClassWithFloatConstructor.php');
 
 /**
  * Test case for the ScalarTypeToObjectConverter
