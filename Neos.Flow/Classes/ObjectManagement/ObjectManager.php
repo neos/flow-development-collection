@@ -662,6 +662,10 @@ class ObjectManager implements ObjectManagerInterface
     }
 
     /**
+     * Fills in configured arguments which were not passed explicitly.
+     *
+     * An argument passed explicitly as null is kept, it is not autowired.
+     *
      * @param array<int|string,mixed> $configuration
      * @param array<int|string,mixed> $existingArguments
      * @return array<int|string,mixed>
@@ -670,12 +674,12 @@ class ObjectManager implements ObjectManagerInterface
     {
         foreach ($configuration as $index => $argument) {
             if (is_int($index)) {
-                if (isset($existingArguments[$index - 1])) {
+                if (array_key_exists($index - 1, $existingArguments)) {
                     continue;
                 }
                 $existingArguments[$index - 1] = $this->getConfiguredArgument($argument[self::KEY_ARGUMENT_TYPE], $argument[self::KEY_ARGUMENT_VALUE]);
             } elseif (is_string($index)) {
-                if (isset($existingArguments[$index])) {
+                if (array_key_exists($index, $existingArguments)) {
                     continue;
                 }
                 $existingArguments[$index] = $this->getConfiguredArgument($argument[self::KEY_ARGUMENT_TYPE], $argument[self::KEY_ARGUMENT_VALUE]);
