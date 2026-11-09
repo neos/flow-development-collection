@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Persistence\Doctrine;
 
 /*
@@ -13,8 +14,8 @@ namespace Neos\Flow\Persistence\Doctrine;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\Mapping\ClassMetadata;
 use Doctrine\ORM\QueryBuilder;
-use Doctrine\Persistence\Mapping\ClassMetadata;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Persistence\Exception\IllegalObjectTypeException;
 use Neos\Flow\Persistence\Exception\UnknownObjectException;
@@ -26,6 +27,9 @@ use Neos\Flow\Persistence\RepositoryInterface;
 /**
  * The Flow default Repository, based on Doctrine 2
  *
+ * @extends EntityRepository<object>
+ * @implements RepositoryInterface<T>
+ * @template T of object
  * @api
  */
 abstract class Repository extends EntityRepository implements RepositoryInterface
@@ -45,12 +49,12 @@ abstract class Repository extends EntityRepository implements RepositoryInterfac
      * Warning: if you think you want to set this,
      * look at RepositoryInterface::ENTITY_CLASSNAME first!
      *
-     * @var class-string
+     * @var class-string<T>
      */
     protected $objectType;
 
     /**
-     * @var array
+     * @var array<string,QueryInterface::ORDER_ASCENDING|QueryInterface::ORDER_DESCENDING>
      */
     protected $defaultOrderings = [];
 
@@ -58,7 +62,7 @@ abstract class Repository extends EntityRepository implements RepositoryInterfac
      * Initializes a new Repository.
      *
      * @param EntityManagerInterface $entityManager The EntityManager to use.
-     * @param ClassMetadata|null $classMetadata The class descriptor.
+     * @param ClassMetadata<object>|null $classMetadata The class descriptor.
      */
     public function __construct(EntityManagerInterface $entityManager, ?ClassMetadata $classMetadata = null)
     {
@@ -68,9 +72,13 @@ abstract class Repository extends EntityRepository implements RepositoryInterfac
             } else {
                 $objectType = static::ENTITY_CLASSNAME;
             }
-            /** @var class-string $objectType */
+            /** @var class-string<T> $objectType */
             $this->objectType = $objectType;
+            /** @var ?ClassMetadata<object> $classMetadata */
             $classMetadata = $entityManager->getClassMetadata($this->objectType);
+        }
+        if (!$classMetadata) {
+            throw new \Exception('Unable to resolve class metadata for ' . $this->objectType);
         }
         parent::__construct($entityManager, $classMetadata);
         $this->entityManager = $this->_em;
@@ -79,7 +87,7 @@ abstract class Repository extends EntityRepository implements RepositoryInterfac
     /**
      * Returns the classname of the entities this repository is managing.
      *
-     * @return string
+     * @return class-string<T>
      * @api
      */
     public function getEntityClassName(): string
@@ -90,16 +98,15 @@ abstract class Repository extends EntityRepository implements RepositoryInterfac
     /**
      * Adds an object to this repository.
      *
-     * @param object $object The object to add
+     * @param T $object The object to add
      * @return void
      * @throws IllegalObjectTypeException
      * @api
      */
     public function add($object): void
     {
-        if (!is_object($object) || !($object instanceof $this->objectType)) {
-            $type = (is_object($object) ? get_class($object) : gettype($object));
-            throw new IllegalObjectTypeException('The value given to add() was ' . $type . ' , however the ' . get_class($this) . ' can only store ' . $this->objectType . ' instances.', 1517408062);
+        if (!($object instanceof $this->objectType)) {
+            throw new IllegalObjectTypeException('The value given to add() was ' . get_debug_type($object) . ' , however the ' . get_class($this) . ' can only store ' . $this->objectType . ' instances.', 1517408062);
         }
         $this->entityManager->persist($object);
     }
@@ -107,16 +114,15 @@ abstract class Repository extends EntityRepository implements RepositoryInterfac
     /**
      * Removes an object from this repository.
      *
-     * @param object $object The object to remove
+     * @param T $object The object to remove
      * @return void
      * @throws IllegalObjectTypeException
      * @api
      */
     public function remove($object): void
     {
-        if (!is_object($object) || !($object instanceof $this->objectType)) {
-            $type = (is_object($object) ? get_class($object) : gettype($object));
-            throw new IllegalObjectTypeException('The value given to remove() was ' . $type . ' , however the ' . get_class($this) . ' can only handle ' . $this->objectType . ' instances.', 1517408067);
+        if (!($object instanceof $this->objectType)) {
+            throw new IllegalObjectTypeException('The value given to remove() was ' . get_debug_type($object) . ' , however the ' . get_class($this) . ' can only handle ' . $this->objectType . ' instances.', 1517408067);
         }
         $this->entityManager->remove($object);
     }
@@ -124,9 +130,10 @@ abstract class Repository extends EntityRepository implements RepositoryInterfac
     /**
      * Finds all entities in the repository.
      *
-     * @phpstan-ignore-next-line we don't satisfy the contract of doctrines repository as we don't return a simple array.
-     * @return QueryResultInterface The query result
+     * @return QueryResultInterface<T> The query result
      * @api
+     * (don't know how generics work here yet and ignoring method.childReturnType has no effect)
+     * @phpstan-ignore-next-line
      */
     public function findAll(): QueryResultInterface
     {
@@ -136,7 +143,7 @@ abstract class Repository extends EntityRepository implements RepositoryInterfac
     /**
      * Find all objects and return an IterableResult
      *
-     * @return iterable
+     * @return iterable<T>
      */
     public function findAllIterator(): iterable
     {
@@ -152,7 +159,7 @@ abstract class Repository extends EntityRepository implements RepositoryInterfac
      * Finds an object matching the given identifier.
      *
      * @param mixed $identifier The identifier of the object to find
-     * @return object|null The matching object if found, otherwise NULL
+     * @return T|null The matching object if found, otherwise NULL
      * @api
      */
     public function findByIdentifier($identifier)
@@ -163,7 +170,7 @@ abstract class Repository extends EntityRepository implements RepositoryInterfac
     /**
      * Returns a query for objects of this repository
      *
-     * @return Query
+     * @return QueryInterface<T>
      * @api
      */
     public function createQuery(): QueryInterface
@@ -222,7 +229,7 @@ abstract class Repository extends EntityRepository implements RepositoryInterfac
      *  'bar' => \Neos\Flow\Persistence\QueryInterface::ORDER_DESCENDING
      * )
      *
-     * @param array $defaultOrderings The property names to order by by default
+     * @param array<string,QueryInterface::ORDER_ASCENDING|QueryInterface::ORDER_DESCENDING> $defaultOrderings The property names to "order by" by default
      * @return void
      * @api
      */
@@ -234,7 +241,7 @@ abstract class Repository extends EntityRepository implements RepositoryInterfac
     /**
      * Schedules a modified object for persistence.
      *
-     * @param object $object The modified object
+     * @param T $object The modified object
      * @return void
      * @throws IllegalObjectTypeException
      * @throws UnknownObjectException
@@ -242,7 +249,7 @@ abstract class Repository extends EntityRepository implements RepositoryInterfac
      */
     public function update($object): void
     {
-        if (!($object instanceof $this->objectType)) {
+        if (!$object instanceof $this->objectType) {
             throw new IllegalObjectTypeException('The modified object given to update() was not of the type (' . $this->objectType . ') this repository manages.', 1249479625);
         }
         $this->persistenceManager->update($object);
@@ -257,15 +264,15 @@ abstract class Repository extends EntityRepository implements RepositoryInterfac
      *  - countBy<PropertyName>($value, $caseSensitive = true)
      *
      * @param string $method Name of the method
-     * @param array $arguments The arguments
+     * @param array<mixed> $arguments The arguments
      * @return mixed The result of the repository method
      * @api
      */
     public function __call($method, $arguments)
     {
         $query = $this->createQuery();
-        $caseSensitive = isset($arguments[1]) ? (boolean)$arguments[1] : true;
-        $cacheResult = isset($arguments[2]) ? (boolean)$arguments[2] : false;
+        $caseSensitive = isset($arguments[1]) ? (bool)$arguments[1] : true;
+        $cacheResult = isset($arguments[2]) ? (bool)$arguments[2] : false;
 
         if (isset($method[10]) && strpos($method, 'findOneBy') === 0) {
             $propertyName = lcfirst(substr($method, 9));

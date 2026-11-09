@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Tests\Unit\Mvc;
 
 /*
@@ -14,9 +15,10 @@ namespace Neos\Flow\Tests\Unit\Mvc;
 use GuzzleHttp\Psr7\Response;
 use Neos\Flow\Http\ServerRequestAttributes;
 use Neos\Flow\Mvc\ActionRequest;
-use Neos\Flow\Mvc\DispatchMiddleware;
 use Neos\Flow\Mvc\Dispatcher;
+use Neos\Flow\Mvc\DispatchMiddleware;
 use Neos\Flow\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\Test;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
@@ -56,8 +58,6 @@ class DispatchMiddlewareTest extends UnitTestCase
      */
     protected function setUp(): void
     {
-        $this->dispatchMiddleware = new DispatchMiddleware();
-
         $this->mockRequestHandler = $this->getMockBuilder(RequestHandlerInterface::class)->disableOriginalConstructor()->getMock();
         $httpResponse = new Response();
         $this->mockRequestHandler->method('handle')->willReturn($httpResponse);
@@ -67,15 +67,13 @@ class DispatchMiddlewareTest extends UnitTestCase
         $this->mockHttpRequest->method('getUploadedFiles')->willReturn([]);
 
         $this->mockDispatcher = $this->getMockBuilder(Dispatcher::class)->getMock();
-        $this->inject($this->dispatchMiddleware, 'dispatcher', $this->mockDispatcher);
+        $this->dispatchMiddleware = new DispatchMiddleware($this->mockDispatcher);
 
         $this->mockActionRequest = $this->getMockBuilder(ActionRequest::class)->disableOriginalConstructor()->getMock();
         $this->mockHttpRequest->method('getAttribute')->with(ServerRequestAttributes::ACTION_REQUEST)->willReturn($this->mockActionRequest);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function processDispatchesTheRequest()
     {
         $testContentType = 'audio/ogg';

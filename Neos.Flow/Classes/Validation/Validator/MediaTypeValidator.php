@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Neos\Flow\Validation\Validator;
@@ -32,7 +33,7 @@ class MediaTypeValidator extends AbstractValidator
      * 2 => type
      * 3 => required (boolean, optional)
      *
-     * @var array
+     * @var array<string,mixed>
      */
     protected $supportedOptions = [
         'allowedTypes' => [[], 'Array of allowed media ranges', 'array', true],

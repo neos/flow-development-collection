@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Neos\Flow\Tests\Functional\Mvc;
 
 /*
@@ -10,20 +13,18 @@ namespace Neos\Flow\Tests\Functional\Mvc;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
 use GuzzleHttp\Psr7\ServerRequest;
 use GuzzleHttp\Psr7\Uri;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Tests\FunctionalTestCase;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Functional tests for the ActionRequest
  */
-class ActionRequestTest extends FunctionalTestCase
+final class ActionRequestTest extends FunctionalTestCase
 {
-    /**
-     * @test
-     */
+    #[Test]
     public function actionRequestStripsParentHttpRequest()
     {
         $httpRequest = new ServerRequest('GET', new Uri('http://neos.io'));
@@ -38,9 +39,7 @@ class ActionRequestTest extends FunctionalTestCase
         self::assertSame('foo', $unserializedActionRequest->getControllerActionName());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function actionRequestDoesNotStripParentActionRequest()
     {
         $httpRequest = new ServerRequest('GET', new Uri('http://neos.io'));

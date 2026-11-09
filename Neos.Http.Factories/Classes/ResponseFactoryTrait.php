@@ -1,10 +1,10 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Neos\Http\Factories;
 
 use GuzzleHttp\Psr7\Response;
-use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
 
 /**

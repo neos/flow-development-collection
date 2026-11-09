@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Neos\Cache\Tests\Unit\Psr\Cache;
 
 /*
@@ -10,118 +13,103 @@ namespace Neos\Cache\Tests\Unit\Psr\Cache;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
 use Neos\Cache\Backend\AbstractBackend;
 use Neos\Cache\Backend\BackendInterface;
-use Neos\Cache\Psr\Cache\CachePool;
 use Neos\Cache\Psr\Cache\CacheItem;
+use Neos\Cache\Psr\Cache\CachePool;
 use Neos\Cache\Psr\InvalidArgumentException;
 use Neos\Cache\Tests\BaseTestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\MockObject\MockObject;
 
 /**
  * Testcase for the PSR-6 cache frontend
  *
  */
-class CachePoolTest extends BaseTestCase
+final class CachePoolTest extends BaseTestCase
 {
-    public function validIdentifiersDataProvider(): array
+    public static function validIdentifiersDataProvider(): \Iterator
     {
-        return [
-            ['short'],
-            ['SomeValidIdentifier'],
-            ['withNumbers0123456789'],
-            ['withUnder_score'],
-            ['with.dot'],
-
-            // The following tests exceed the minimum requirements of the PSR-6 keys (@see https://www.php-fig.org/psr/psr-6/#definitions)
-            ['dashes-are-allowed'],
-            ['percent%sign'],
-            ['amper&sand'],
-            ['a-string-that-exceeds-the-psr-minimum-maxlength-of-sixtyfour-but-is-shorter-than-twohundredandfifty-characters'],
-        ];
+        yield ['short'];
+        yield ['SomeValidIdentifier'];
+        yield ['withNumbers0123456789'];
+        yield ['withUnder_score'];
+        yield ['with.dot'];
+        // The following tests exceed the minimum requirements of the PSR-6 keys (@see https://www.php-fig.org/psr/psr-6/#definitions)
+        yield ['dashes-are-allowed'];
+        yield ['percent%sign'];
+        yield ['amper&sand'];
+        yield ['a-string-that-exceeds-the-psr-minimum-maxlength-of-sixtyfour-but-is-shorter-than-twohundredandfifty-characters'];
     }
 
-    /**
-     * @test
-     * @dataProvider validIdentifiersDataProvider
-     */
+    #[DataProvider('validIdentifiersDataProvider')]
+    #[Test]
     public function validIdentifiers(string $identifier): void
     {
-        $mockBackend = $this->getMockBuilder(BackendInterface::class)->getMock();
+        $mockBackend = $this->createStub(BackendInterface::class);
         $cachePool = new CachePool($identifier, $mockBackend);
         self::assertInstanceOf(CachePool::class, $cachePool);
     }
 
-    public function invalidIdentifiersDataProvider(): array
+    public static function invalidIdentifiersDataProvider(): \Iterator
     {
-        return [
-            [''],
-            ['späcialcharacters'],
-            ['a-string-that-exceeds-the-maximum-allowed-length-of-twohundredandfifty-characters-which-is-pretty-large-as-it-turns-out-so-i-repeat-a-string-that-exceeds-the-maximum-allowed-length-of-twohundredandfifty-characters-still-not-there-wow-crazy-flow-rocks-though'],
-        ];
+        yield [''];
+        yield ['späcialcharacters'];
+        yield ['a-string-that-exceeds-the-maximum-allowed-length-of-twohundredandfifty-characters-which-is-pretty-large-as-it-turns-out-so-i-repeat-a-string-that-exceeds-the-maximum-allowed-length-of-twohundredandfifty-characters-still-not-there-wow-crazy-flow-rocks-though'];
     }
 
-    /**
-     * @test
-     * @dataProvider invalidIdentifiersDataProvider
-     */
+    #[DataProvider('invalidIdentifiersDataProvider')]
+    #[Test]
     public function invalidIdentifiers(string $identifier): void
     {
-        $mockBackend = $this->getMockBuilder(BackendInterface::class)->getMock();
+        $mockBackend = $this->createStub(BackendInterface::class);
 
         $this->expectException(\InvalidArgumentException::class);
         new CachePool($identifier, $mockBackend);
     }
 
-    
-    
-    /**
-     * @test
-     */
-    public function getItemChecksIfTheIdentifierIsValid()
+
+
+    #[Test]
+    public function getItemChecksIfTheIdentifierIsValid(): void
     {
         $this->expectException(InvalidArgumentException::class);
-        /** @var PsrFrontend|\PHPUnit\Framework\MockObject\MockObject $cache */
+        /** @var CachePool|MockObject $cache */
         $cache = $this->getMockBuilder(CachePool::class)
-            ->setMethods(['isValidEntryIdentifier'])
+            ->onlyMethods(['isValidEntryIdentifier'])
             ->disableOriginalConstructor()
             ->getMock();
-        $cache->expects(self::once())->method('isValidEntryIdentifier')->with('foo')->willReturn(false);
+        $cache->expects($this->once())->method('isValidEntryIdentifier')->with('foo')->willReturn(false);
         $cache->getItem('foo');
     }
 
-    /**
-     * @test
-     */
-    public function savePassesSerializedStringToBackend()
+    #[Test]
+    public function savePassesSerializedStringToBackend(): void
     {
         $theString = 'Just some value';
         $cacheItem = new CacheItem('PsrCacheTest', true, $theString);
         $backend = $this->prepareDefaultBackend();
-        $backend->expects(self::once())->method('set')->with(self::equalTo('PsrCacheTest'), self::equalTo(serialize($theString)));
+        $backend->expects($this->once())->method('set')->with(self::equalTo('PsrCacheTest'), self::equalTo(serialize($theString)));
 
         $cache = new CachePool('CachePool', $backend);
         $cache->save($cacheItem);
     }
 
-    /**
-     * @test
-     */
-    public function savePassesSerializedArrayToBackend()
+    #[Test]
+    public function savePassesSerializedArrayToBackend(): void
     {
         $theArray = ['Just some value', 'and another one.'];
         $cacheItem = new CacheItem('PsrCacheTest', true, $theArray);
         $backend = $this->prepareDefaultBackend();
-        $backend->expects(self::once())->method('set')->with(self::equalTo('PsrCacheTest'), self::equalTo(serialize($theArray)));
+        $backend->expects($this->once())->method('set')->with(self::equalTo('PsrCacheTest'), self::equalTo(serialize($theArray)));
 
         $cache = new CachePool('CachePool', $backend);
         $cache->save($cacheItem);
     }
 
-    /**
-     * @test
-     */
-    public function savePassesLifetimeToBackend()
+    #[Test]
+    public function savePassesLifetimeToBackend(): void
     {
         // Note that this test can fail due to fraction of second problems in the calculation of lifetime vs. expiration date.
         $theString = 'Just some value';
@@ -129,33 +117,29 @@ class CachePoolTest extends BaseTestCase
         $cacheItem = new CacheItem('PsrCacheTest', true, $theString);
         $cacheItem->expiresAfter($theLifetime);
         $backend = $this->prepareDefaultBackend();
-        $backend->expects(self::once())->method('set')->with(self::equalTo('PsrCacheTest'), self::equalTo(serialize($theString)), self::equalTo([]), self::equalTo($theLifetime, 1));
+        $backend->expects($this->once())->method('set')->with(self::equalTo('PsrCacheTest'), self::equalTo(serialize($theString)), self::equalTo([]), self::equalTo($theLifetime, 1));
 
         $cache = new CachePool('CachePool', $backend);
         $cache->save($cacheItem);
     }
 
-    /**
-     * @test
-     */
-    public function getItemFetchesValueFromBackend()
+    #[Test]
+    public function getItemFetchesValueFromBackend(): void
     {
         $theString = 'Just some value';
         $backend = $this->prepareDefaultBackend();
-        $backend->expects(self::any())->method('get')->willReturn(serialize($theString));
+        $backend->method('get')->willReturn(serialize($theString));
 
         $cache = new CachePool('CachePool', $backend);
         self::assertEquals(true, $cache->getItem('PsrCacheTest')->isHit(), 'The item should have been a hit but is not');
         self::assertEquals($theString, $cache->getItem('PsrCacheTest')->get(), 'The returned value was not the expected string.');
     }
 
-    /**
-     * @test
-     */
-    public function getItemFetchesFalseBooleanValueFromBackend()
+    #[Test]
+    public function getItemFetchesFalseBooleanValueFromBackend(): void
     {
         $backend = $this->prepareDefaultBackend();
-        $backend->expects(self::once())->method('get')->willReturn(serialize(false));
+        $backend->expects($this->once())->method('get')->willReturn(serialize(false));
 
         $cache = new CachePool('CachePool', $backend);
         $retrievedItem = $cache->getItem('PsrCacheTest');
@@ -163,46 +147,40 @@ class CachePoolTest extends BaseTestCase
         self::assertEquals(false, $retrievedItem->get(), 'The returned value was not the false.');
     }
 
-    /**
-     * @test
-     */
-    public function hasItemReturnsResultFromBackend()
+    #[Test]
+    public function hasItemReturnsResultFromBackend(): void
     {
         $backend = $this->prepareDefaultBackend();
-        $backend->expects(self::once())->method('has')->with(self::equalTo('PsrCacheTest'))->willReturn(true);
+        $backend->expects($this->once())->method('has')->with(self::equalTo('PsrCacheTest'))->willReturn(true);
 
         $cache = new CachePool('CachePool', $backend);
         self::assertTrue($cache->hasItem('PsrCacheTest'), 'hasItem() did not return true.');
     }
 
-    /**
-     * @test
-     */
-    public function deleteItemCallsBackend()
+    #[Test]
+    public function deleteItemCallsBackend(): void
     {
         $cacheIdentifier = 'someCacheIdentifier';
         $backend = $this->prepareDefaultBackend();
 
-        $backend->expects(self::once())->method('remove')->with(self::equalTo($cacheIdentifier))->willReturn(true);
+        $backend->expects($this->once())->method('remove')->with(self::equalTo($cacheIdentifier))->willReturn(true);
 
         $cache = new CachePool('CachePool', $backend);
         self::assertTrue($cache->deleteItem($cacheIdentifier), 'deleteItem() did not return true');
     }
 
     /**
-     * @return AbstractBackend|\PHPUnit\Framework\MockObject\MockObject
+     * @return AbstractBackend|MockObject
      */
     protected function prepareDefaultBackend()
     {
         return $this->getMockBuilder(AbstractBackend::class)
-            ->setMethods([
+            ->onlyMethods([
                 'get',
                 'set',
                 'has',
                 'remove',
-                'findIdentifiersByTag',
                 'flush',
-                'flushByTag',
                 'collectGarbage'
             ])
             ->disableOriginalConstructor()

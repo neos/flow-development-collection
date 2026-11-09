@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Tests\Functional\ObjectManagement\Fixtures;
 
 /*
@@ -17,7 +18,7 @@ namespace Neos\Flow\Tests\Functional\ObjectManagement\Fixtures;
 class ValueObjectClassB implements \JsonSerializable
 {
     public function __construct(
-        readonly public string $value,
+        public readonly string $value,
     ) {
         if ($value === '') {
             throw new \InvalidArgumentException('Value must not be empty', 1684166315);

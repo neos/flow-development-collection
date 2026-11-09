@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Neos\Flow\Tests\Unit\Package;
 
 /*
@@ -10,37 +13,29 @@ namespace Neos\Flow\Tests\Unit\Package;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
 use Neos\Flow\Composer\ComposerUtility;
 use Neos\Flow\Composer\Exception\MissingPackageManifestException;
 use Neos\Flow\Package\Package;
-use org\bovigo\vfs\vfsStream;
-use Neos\Flow\Package\PackageManager;
 use Neos\Flow\Tests\UnitTestCase;
+use org\bovigo\vfs\vfsStream;
+use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\MockObject\MockObject;
 
 /**
  * Testcase for the package class
  *
  */
-class PackageTest extends UnitTestCase
+final class PackageTest extends UnitTestCase
 {
-    /**
-     * @var PackageManager
-     */
-    protected $mockPackageManager;
-
     /**
      */
     protected function setUp(): void
     {
         ComposerUtility::flushCaches();
         vfsStream::setup('Packages');
-        $this->mockPackageManager = $this->getMockBuilder(\Neos\Flow\Package\PackageManager::class)->disableOriginalConstructor()->getMock();
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getClassFilesReturnsAListOfClassFilesOfThePackage()
     {
         $packagePath = 'vfs://Packages/Application/Acme.MyPackage/';
@@ -69,9 +64,7 @@ class PackageTest extends UnitTestCase
         }
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function packageManifestContainsPackageType()
     {
         $packagePath = 'vfs://Packages/Application/Acme.MyPackage/';
@@ -84,9 +77,7 @@ class PackageTest extends UnitTestCase
         self::assertEquals('flow-test', $packageType);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function throwExceptionWhenSpecifyingAPathWithMissingComposerManifest()
     {
         $this->expectException(MissingPackageManifestException::class);
@@ -96,13 +87,11 @@ class PackageTest extends UnitTestCase
         $package->getComposerManifest();
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getInstalledVersionReturnsFallback()
     {
-        /** @var Package|\PHPUnit\Framework\MockObject\MockObject $package */
-        $package = $this->getMockBuilder(\Neos\Flow\Package\Package::class)->setMethods(['getComposerManifest'])->setConstructorArgs(['Some.Package', 'some/package', 'vfs://Packages/Some/Path/Some.Package/', []])->getMock();
+        /** @var Package|MockObject $package */
+        $package = $this->getMockBuilder(Package::class)->onlyMethods(['getComposerManifest'])->setConstructorArgs(['Some.Package', 'some/package', 'vfs://Packages/Some/Path/Some.Package/', []])->getMock();
         $package->method('getComposerManifest')->willReturn('1.2.3');
 
         self::assertEquals('1.2.3', $package->getInstalledVersion('some/package'));

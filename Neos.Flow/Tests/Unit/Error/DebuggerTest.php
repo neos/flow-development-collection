@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Neos\Flow\Tests\Unit\Error;
 
 /*
@@ -10,34 +13,31 @@ namespace Neos\Flow\Tests\Unit\Error;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
 use Neos\Flow\Core\ApplicationContext;
 use Neos\Flow\Error\Debugger;
 use Neos\Flow\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\DoesNotPerformAssertions;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Testcase for the Debugger
  */
-class DebuggerTest extends UnitTestCase
+final class DebuggerTest extends UnitTestCase
 {
     protected function setUp(): void
     {
         Debugger::clearState();
     }
 
-    /**
-     * @test
-     * @doesNotPerformAssertions
-     */
+    #[Test]
+    #[DoesNotPerformAssertions]
     public function renderingClosuresWorksWithoutThrowingException()
     {
         Debugger::renderDump(function () {
         }, 0);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function considersProxyClassWhenIsProxyPropertyIsPresent()
     {
         $object = new \stdClass();
@@ -45,33 +45,27 @@ class DebuggerTest extends UnitTestCase
         self::assertMatchesRegularExpression('/\sclass=\"debug\-proxy\"/', Debugger::renderDump($object, 0, false));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function ignoredClassesRegexContainsFallback()
     {
         $ignoredClassesRegex = Debugger::getIgnoredClassesRegex();
         self::assertStringContainsString('Neos\\\\Flow\\\\Core\\\\.*', $ignoredClassesRegex);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function ignoredClassesAreNotRendered()
     {
         $object = new ApplicationContext('Development');
-        self::assertEquals('Neos\Flow\Core\ApplicationContext object', Debugger::renderDump($object, 0, true));
+        self::assertSame('Neos\Flow\Core\ApplicationContext object', Debugger::renderDump($object, 0, true));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function uninitializedTypedPropertiesAreNotAccessed()
     {
         // if the test fails, an exception raises an error, no assertion needed
         $this->expectNotToPerformAssertions();
 
-        $className = 'TestClass' . md5(uniqid(mt_rand(), true));
+        $className = 'TestClass' . md5(uniqid((string)mt_rand(), true));
         eval('
             class ' . $className . ' {
                 public string $stringProperty;

@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Eel;
 
 /*
@@ -11,8 +12,8 @@ namespace Neos\Eel;
  * source code.
  */
 
-use Neos\Flow\Package\Package as BasePackage;
 use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Package\Package as BasePackage;
 
 /**
  * Package base class of the Eel package.

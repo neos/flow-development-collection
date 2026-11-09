@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Validation\Validator;
 
 /*
@@ -21,7 +22,7 @@ use Neos\Flow\Validation\Exception\InvalidValidationOptionsException;
 class RegularExpressionValidator extends AbstractValidator
 {
     /**
-     * @var array
+     * @var array<string,mixed>
      */
     protected $supportedOptions = [
         'regularExpression' => ['', 'The regular expression to use for validation, used as given', 'string', true]

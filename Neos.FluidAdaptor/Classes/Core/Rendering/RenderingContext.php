@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\FluidAdaptor\Core\Rendering;
 
 /*
@@ -11,15 +12,15 @@ namespace Neos\FluidAdaptor\Core\Rendering;
  * source code.
  */
 
-use Neos\FluidAdaptor\Core\Cache\CacheAdaptor;
-use Neos\FluidAdaptor\Core\Parser\TemplateParser;
-use Neos\FluidAdaptor\Core\Parser\TemplateProcessor\EscapingFlagProcessor;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\Controller\ControllerContext;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
+use Neos\FluidAdaptor\Core\Cache\CacheAdaptor;
 use Neos\FluidAdaptor\Core\Parser\Interceptor\ResourceInterceptor;
 use Neos\FluidAdaptor\Core\Parser\SyntaxTree\Expression\LegacyNamespaceExpressionNode;
+use Neos\FluidAdaptor\Core\Parser\TemplateParser;
+use Neos\FluidAdaptor\Core\Parser\TemplateProcessor\EscapingFlagProcessor;
 use Neos\FluidAdaptor\Core\Parser\TemplateProcessor\NamespaceDetectionTemplateProcessor;
 use Neos\FluidAdaptor\Core\ViewHelper\TemplateVariableContainer;
 use Neos\FluidAdaptor\Core\ViewHelper\ViewHelperResolver;

@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Command;
 
 /*
@@ -19,12 +20,12 @@ use Neos\Flow\Configuration\Exception\InvalidConfigurationTypeException;
 use Neos\Flow\Mvc\Controller\AbstractController;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Reflection\ReflectionService;
+use Neos\Flow\Security\Authorization\Privilege\Method\MethodPrivilegeInterface;
+use Neos\Flow\Security\Authorization\Privilege\PrivilegeInterface;
 use Neos\Flow\Security\Cryptography\RsaWalletServicePhp;
 use Neos\Flow\Security\Exception as SecurityException;
 use Neos\Flow\Security\Exception\NoSuchRoleException;
 use Neos\Flow\Security\Policy\PolicyService;
-use Neos\Flow\Security\Authorization\Privilege\Method\MethodPrivilegeInterface;
-use Neos\Flow\Security\Authorization\Privilege\PrivilegeInterface;
 use Neos\Flow\Security\Policy\Role;
 use Neos\Utility\Arrays;
 
@@ -89,6 +90,10 @@ class SecurityCommandController extends CommandController
         $keyData = '';
         // no file_get_contents here because it does not work on php://stdin
         $fp = fopen('php://stdin', 'rb');
+        if ($fp === false) {
+            $this->outputLine('The public key could not be read');
+            $this->quit(1);
+        }
         while (!feof($fp)) {
             $keyData .= fgets($fp, 4096);
         }
@@ -144,6 +149,10 @@ class SecurityCommandController extends CommandController
         $keyData = '';
         // no file_get_contents here because it does not work on php://stdin
         $fp = fopen('php://stdin', 'rb');
+        if ($fp === false) {
+            $this->outputLine('The private key could not be read');
+            $this->quit(1);
+        }
         while (!feof($fp)) {
             $keyData .= fgets($fp, 4096);
         }
@@ -159,6 +168,7 @@ class SecurityCommandController extends CommandController
      *
      * @param string $privilegeType The privilege type ("entity", "method" or the FQN of a class implementing PrivilegeInterface)
      * @param string $roles A comma separated list of role identifiers. Shows policy for an unauthenticated user when left empty.
+     * @return void
      */
     public function showEffectivePolicyCommand(string $privilegeType, string $roles = '')
     {
@@ -325,6 +335,7 @@ class SecurityCommandController extends CommandController
         foreach ($this->reflectionService->getAllClassNames() as $className) {
             try {
                 $reflectionClass = new \ReflectionClass($className);
+                /** @phpstan-ignore catch.neverThrown */
             } catch (\ReflectionException $exception) {
                 continue;
             }

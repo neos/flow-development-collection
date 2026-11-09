@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Neos\Flow\Tests\Unit\Security\Authorization;
 
 /*
@@ -10,75 +13,69 @@ namespace Neos\Flow\Tests\Unit\Security\Authorization;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
 use Neos\Flow\Mvc\ActionRequest;
+use Neos\Flow\Security\Authorization\InterceptorInterface;
+use Neos\Flow\Security\Authorization\RequestFilter;
+use Neos\Flow\Security\RequestPatternInterface;
 use Neos\Flow\Tests\UnitTestCase;
-use Neos\Flow\Security;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Testcase for request filters
  */
-class RequestFilterTest extends UnitTestCase
+final class RequestFilterTest extends UnitTestCase
 {
-    /**
-     * @test
-     */
+    #[Test]
     public function theSetIncerceptorIsCalledIfTheRequestPatternMatches()
     {
-        $request = $this->createMock(ActionRequest::class);
-        $requestPattern = $this->createMock(Security\RequestPatternInterface::class);
-        $interceptor = $this->createMock(Security\Authorization\InterceptorInterface::class);
+        $request = $this->createStub(ActionRequest::class);
+        $requestPattern = $this->createMock(RequestPatternInterface::class);
+        $interceptor = $this->createMock(InterceptorInterface::class);
 
-        $requestPattern->expects(self::once())->method('matchRequest')->will(self::returnValue(true));
-        $interceptor->expects(self::once())->method('invoke');
+        $requestPattern->expects($this->once())->method('matchRequest')->willReturn((true));
+        $interceptor->expects($this->once())->method('invoke');
 
-        $requestFilter = new Security\Authorization\RequestFilter($requestPattern, $interceptor);
+        $requestFilter = new RequestFilter($requestPattern, $interceptor);
         $requestFilter->filterRequest($request);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function theSetIncerceptorIsNotCalledIfTheRequestPatternDoesNotMatch()
     {
-        $request = $this->createMock(ActionRequest::class);
-        $requestPattern = $this->createMock(Security\RequestPatternInterface::class);
-        $interceptor = $this->createMock(Security\Authorization\InterceptorInterface::class);
+        $request = $this->createStub(ActionRequest::class);
+        $requestPattern = $this->createMock(RequestPatternInterface::class);
+        $interceptor = $this->createMock(InterceptorInterface::class);
 
-        $requestPattern->expects(self::once())->method('matchRequest')->will(self::returnValue(false));
-        $interceptor->expects(self::never())->method('invoke');
+        $requestPattern->expects($this->once())->method('matchRequest')->willReturn((false));
+        $interceptor->expects($this->never())->method('invoke');
 
-        $requestFilter = new Security\Authorization\RequestFilter($requestPattern, $interceptor);
+        $requestFilter = new RequestFilter($requestPattern, $interceptor);
         $requestFilter->filterRequest($request);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function theFilterReturnsTrueIfThePatternMatched()
     {
-        $request = $this->createMock(ActionRequest::class);
-        $requestPattern = $this->createMock(Security\RequestPatternInterface::class);
-        $interceptor = $this->createMock(Security\Authorization\InterceptorInterface::class);
+        $request = $this->createStub(ActionRequest::class);
+        $requestPattern = $this->createMock(RequestPatternInterface::class);
+        $interceptor = $this->createStub(InterceptorInterface::class);
 
-        $requestPattern->expects(self::once())->method('matchRequest')->will(self::returnValue(true));
+        $requestPattern->expects($this->once())->method('matchRequest')->willReturn((true));
 
-        $requestFilter = new Security\Authorization\RequestFilter($requestPattern, $interceptor);
+        $requestFilter = new RequestFilter($requestPattern, $interceptor);
         self::assertTrue($requestFilter->filterRequest($request));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function theFilterReturnsFalseIfThePatternDidNotMatch()
     {
-        $request = $this->createMock(ActionRequest::class);
-        $requestPattern = $this->createMock(Security\RequestPatternInterface::class);
-        $interceptor = $this->createMock(Security\Authorization\InterceptorInterface::class);
+        $request = $this->createStub(ActionRequest::class);
+        $requestPattern = $this->createMock(RequestPatternInterface::class);
+        $interceptor = $this->createStub(InterceptorInterface::class);
 
-        $requestPattern->expects(self::once())->method('matchRequest')->will(self::returnValue(false));
+        $requestPattern->expects($this->once())->method('matchRequest')->willReturn((false));
 
-        $requestFilter = new Security\Authorization\RequestFilter($requestPattern, $interceptor);
+        $requestFilter = new RequestFilter($requestPattern, $interceptor);
         self::assertFalse($requestFilter->filterRequest($request));
     }
 }

@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Neos\FluidAdaptor\Core\Parser\TemplateProcessor;
@@ -22,7 +23,7 @@ use TYPO3Fluid\Fluid\Core\Parser\UnknownNamespaceException;
  *
  * Compared to TYPO3Fluid that just removes all CDATA sections from the template before parsing, this pre processor
  * finds CDATA and base65 encodes those areas of the template and surrounds that with a call to the Base64DecodeViewHelper
- * which results in the the CDATA section to be present in the final output without any changes from fluid.
+ * which results in the CDATA section to be present in the final output without any changes from fluid.
  */
 class NamespaceDetectionTemplateProcessor extends FluidNamespaceDetectionTemplateProcessor
 {
@@ -131,7 +132,7 @@ class NamespaceDetectionTemplateProcessor extends FluidNamespaceDetectionTemplat
         foreach ($splitTemplate as $templateElement) {
             if (preg_match(Patterns::$SCAN_PATTERN_TEMPLATE_VIEWHELPERTAG, $templateElement, $matchedVariables) > 0) {
                 if (!$viewHelperResolver->isNamespaceValidOrIgnored($matchedVariables['NamespaceIdentifier'])) {
-                    throw new UnknownNamespaceException('Unkown Namespace: ' . htmlspecialchars($matchedVariables[0]));
+                    throw new UnknownNamespaceException('Unknown Namespace: ' . htmlspecialchars($matchedVariables[0]));
                 }
                 continue;
             }

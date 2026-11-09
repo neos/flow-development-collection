@@ -143,7 +143,7 @@ Capitalize:
 Command Line
 ------------
 
-Write as two separate words when referring to the noun and use the hypenated form ``command-line``
+Write as two separate words when referring to the noun and use the hyphenated form ``command-line``
 for and adjective.
 
 Commas
@@ -204,6 +204,6 @@ dash with the word (or number) before it and the word (or number) after it.
 Kickstarter
 -----------
 
-A small application provided by the Kickstart paackage, which generates scaffolding for packages,
+A small application provided by the Kickstart package, which generates scaffolding for packages,
 models, controllers and more.
 

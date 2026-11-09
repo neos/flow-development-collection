@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\ResourceManagement;
 
 /*
@@ -12,12 +13,12 @@ namespace Neos\Flow\ResourceManagement;
  */
 
 use Neos\Flow\Annotations as Flow;
+use Neos\Flow\ResourceManagement\Exception as ResourceException;
 use Neos\Flow\ResourceManagement\Storage\PackageStorage;
 use Neos\Flow\ResourceManagement\Storage\StorageInterface;
 use Neos\Flow\ResourceManagement\Storage\StorageObject;
 use Neos\Flow\ResourceManagement\Storage\WritableStorageInterface;
 use Neos\Flow\ResourceManagement\Target\TargetInterface;
-use Neos\Flow\ResourceManagement\Exception as ResourceException;
 
 /**
  * A resource collection
@@ -40,7 +41,7 @@ class Collection implements CollectionInterface
     protected $target;
 
     /**
-     * @var array
+     * @var array<string>
      */
     protected $pathPatterns;
 
@@ -56,7 +57,7 @@ class Collection implements CollectionInterface
      * @param string $name User-space name of this collection, as specified in the settings
      * @param StorageInterface $storage The storage for data used in this collection
      * @param TargetInterface $target The publication target for this collection
-     * @param array $pathPatterns Glob patterns for paths to consider – only supported by specific storages
+     * @param array<string> $pathPatterns Glob patterns for paths to consider – only supported by specific storages
      */
     public function __construct($name, StorageInterface $storage, TargetInterface $target, array $pathPatterns)
     {

@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Persistence\Doctrine;
 
 /*
@@ -25,7 +26,6 @@ use Neos\Flow\Persistence\Exception as PersistenceException;
 use Neos\Flow\Persistence\Exception\KnownObjectException;
 use Neos\Flow\Persistence\Exception\UnknownObjectException;
 use Neos\Flow\Persistence\QueryInterface;
-use Neos\Flow\ObjectManagement\DependencyInjection\DependencyProxy;
 use Neos\Flow\Reflection\ReflectionService;
 use Neos\Flow\Validation\ValidatorResolver;
 use Neos\Utility\Exception\PropertyNotAccessibleException;
@@ -151,7 +151,7 @@ class PersistenceManager extends AbstractPersistenceManager
      */
     public function isNewObject($object): bool
     {
-        if (!$object instanceof PersistenceMagicInterface) {
+        if (!($object instanceof PersistenceMagicInterface)) {
             return true;
         }
 
@@ -194,9 +194,10 @@ class PersistenceManager extends AbstractPersistenceManager
      * backend. Otherwise NULL is returned.
      *
      * @param mixed $identifier
-     * @param class-string|null $objectType
+     * @param class-string<T>|null $objectType
      * @param boolean $useLazyLoading Set to true if you want to use lazy loading for this object
-     * @return object|null The object for the identifier if it is known, or NULL
+     * @return T|null The object for the identifier if it is known, or NULL
+     * @template T of object
      * @throws \RuntimeException
      * @throws ORMException
      * @api
@@ -207,6 +208,7 @@ class PersistenceManager extends AbstractPersistenceManager
             throw new \RuntimeException('Using only the identifier is not supported by Doctrine 2. Give classname as well or use repository to query identifier.', 1296646103);
         }
         if (isset($this->newObjects[$identifier])) {
+            /** @phpstan-ignore return.type */
             return $this->newObjects[$identifier];
         }
         if ($useLazyLoading === true) {
@@ -219,8 +221,9 @@ class PersistenceManager extends AbstractPersistenceManager
     /**
      * Return a query object for the given type.
      *
-     * @param string $type
-     * @return Query
+     * @param class-string<T> $type
+     * @return QueryInterface<T>
+     * @template T of object
      */
     public function createQueryForType(string $type): QueryInterface
     {
@@ -307,9 +310,6 @@ class PersistenceManager extends AbstractPersistenceManager
         // "driver" is used only for Doctrine, thus we (mis-)use it here
         // additionally, when no path is set, skip this step, assuming no DB is needed
         if ($this->settings['backendOptions']['driver'] !== null && $this->settings['backendOptions']['path'] !== null) {
-            if ($this->entityManager instanceof DependencyProxy) {
-                $this->entityManager->_activateDependency();
-            }
             $schemaTool = new SchemaTool($this->entityManager);
             if ($this->settings['backendOptions']['driver'] === 'pdo_sqlite') {
                 $schemaTool->createSchema($this->entityManager->getMetadataFactory()->getAllMetadata());

@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Mvc\Exception;
 
 /*
@@ -11,8 +12,8 @@ namespace Neos\Flow\Mvc\Exception;
  * source code.
  */
 
-use Psr\Http\Message\ResponseInterface;
 use Neos\Flow\Mvc\Controller\AbstractController;
+use Psr\Http\Message\ResponseInterface;
 
 /**
  * This exception is thrown by a controller to stop the execution of the current

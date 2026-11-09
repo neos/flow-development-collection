@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Neos\Flow\Tests\Unit\Mvc\Controller;
 
 /*
@@ -10,21 +13,19 @@ namespace Neos\Flow\Tests\Unit\Mvc\Controller;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
-use Neos\Flow\Mvc\Controller\Arguments;
-use Neos\Flow\Mvc\Controller\Argument;
-use Neos\Flow\Mvc\Exception\NoSuchArgumentException;
 use Neos\Error\Messages as FlowError;
+use Neos\Flow\Mvc\Controller\Argument;
+use Neos\Flow\Mvc\Controller\Arguments;
+use Neos\Flow\Mvc\Exception\NoSuchArgumentException;
 use Neos\Flow\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Testcase for the MVC Controller Arguments
  */
-class ArgumentsTest extends UnitTestCase
+final class ArgumentsTest extends UnitTestCase
 {
-    /**
-     * @test
-     */
+    #[Test]
     public function addingAnArgumentManuallyWorks()
     {
         $arguments = new Arguments();
@@ -34,9 +35,7 @@ class ArgumentsTest extends UnitTestCase
         self::assertSame($newArgument, $arguments->getArgument('argumentName1234'), 'The added and retrieved argument is not the same.');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function addingAnArgumentReplacesArgumentWithSameName()
     {
         $arguments = new Arguments();
@@ -50,9 +49,7 @@ class ArgumentsTest extends UnitTestCase
         self::assertSame($secondArgument, $arguments->getArgument('argumentName1234'), 'The added and retrieved argument is not the same.');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function addingArgumentThroughArrayAccessWorks()
     {
         $arguments = new Arguments();
@@ -62,9 +59,7 @@ class ArgumentsTest extends UnitTestCase
         self::assertSame($argument, $arguments->getArgument('argumentName1234'), 'Added and retrieved arguments are not the same.');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function retrievingArgumentThroughArrayAccessWorks()
     {
         $arguments = new Arguments();
@@ -72,9 +67,7 @@ class ArgumentsTest extends UnitTestCase
         self::assertSame($newArgument, $arguments['someArgument'], 'Argument retrieved by array access is not the one we added.');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getArgumentWithNonExistingArgumentNameThrowsException()
     {
         $arguments = new Arguments();
@@ -86,20 +79,16 @@ class ArgumentsTest extends UnitTestCase
         }
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function issetReturnsCorrectResult()
     {
         $arguments = new Arguments();
-        self::assertFalse(isset($arguments['someArgument']), 'isset() did not return false.');
+        self::assertArrayNotHasKey('someArgument', $arguments, 'isset() did not return false.');
         $arguments->addNewArgument('someArgument');
-        self::assertTrue(isset($arguments['someArgument']), 'isset() did not return true.');
+        self::assertArrayHasKey('someArgument', $arguments, 'isset() did not return true.');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getArgumentNamesReturnsNamesOfAddedArguments()
     {
         $arguments = new Arguments();
@@ -111,9 +100,7 @@ class ArgumentsTest extends UnitTestCase
         self::assertEquals($expectedArgumentNames, $arguments->getArgumentNames(), 'Returned argument names were not as expected.');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function addNewArgumentCreatesAndAddsNewArgument()
     {
         $arguments = new Arguments();
@@ -126,9 +113,7 @@ class ArgumentsTest extends UnitTestCase
         self::assertEquals('dummyName', $addedArgument->getName(), 'The name of the added argument is not as expected.');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function addNewArgumentCanAddArgumentsMarkedAsRequired()
     {
         $arguments = new Arguments();
@@ -136,9 +121,7 @@ class ArgumentsTest extends UnitTestCase
         self::assertTrue($addedArgument->isRequired(), 'addNewArgument() did not create an argument that is marked as required.');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function addNewArgumentCanAddArgumentsMarkedAsOptionalWithDefaultValues()
     {
         $arguments = new Arguments();
@@ -147,9 +130,7 @@ class ArgumentsTest extends UnitTestCase
         self::assertEquals($defaultValue, $addedArgument->getValue(), 'addNewArgument() did not store the default value in the argument.');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function callingInvalidMethodThrowsException()
     {
         $this->expectException(\LogicException::class);
@@ -157,9 +138,7 @@ class ArgumentsTest extends UnitTestCase
         $arguments->nonExistingMethod();
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function removeAllClearsAllArguments()
     {
         $arguments = new Arguments();
@@ -170,9 +149,7 @@ class ArgumentsTest extends UnitTestCase
         self::assertFalse($arguments->hasArgument('foo'));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getValidationResultsShouldFetchAllValidationResltsFromArguments()
     {
         $error1 = new FlowError\Error('Validation error', 1234);
@@ -184,11 +161,11 @@ class ArgumentsTest extends UnitTestCase
         $results2 = new FlowError\Result();
         $results2->addError($error2);
 
-        $argument1 = $this->getMockBuilder(Argument::class)->setMethods(['getValidationResults'])->setConstructorArgs(['name1', 'string'])->getMock();
-        $argument1->expects(self::once())->method('getValidationResults')->will(self::returnValue($results1));
+        $argument1 = $this->getMockBuilder(Argument::class)->onlyMethods(['getValidationResults'])->setConstructorArgs(['name1', 'string'])->getMock();
+        $argument1->expects($this->once())->method('getValidationResults')->willReturn(($results1));
 
-        $argument2 = $this->getMockBuilder(Argument::class)->setMethods(['getValidationResults'])->setConstructorArgs(['name2', 'string'])->getMock();
-        $argument2->expects(self::once())->method('getValidationResults')->will(self::returnValue($results2));
+        $argument2 = $this->getMockBuilder(Argument::class)->onlyMethods(['getValidationResults'])->setConstructorArgs(['name2', 'string'])->getMock();
+        $argument2->expects($this->once())->method('getValidationResults')->willReturn(($results2));
 
         $arguments = new Arguments();
         $arguments->addArgument($argument1);
@@ -196,9 +173,7 @@ class ArgumentsTest extends UnitTestCase
         self::assertSame(['name1' => [$error1], 'name2' => [$error2]], $arguments->getValidationResults()->getFlattenedErrors());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function addingAnArgumentUsesStringAsDataTypeDefault()
     {
         $arguments = new Arguments();

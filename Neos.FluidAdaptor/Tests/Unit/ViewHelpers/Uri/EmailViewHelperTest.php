@@ -1,5 +1,12 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Neos\FluidAdaptor\Tests\Unit\ViewHelpers\Uri;
+
+use Neos\FluidAdaptor\Tests\Unit\ViewHelpers\ViewHelperBaseTestcase;
+use Neos\FluidAdaptor\ViewHelpers\Uri\EmailViewHelper;
+use PHPUnit\Framework\Attributes\Test;
 
 /*
  * This file is part of the Neos.FluidAdaptor package.
@@ -16,7 +23,7 @@ require_once(__DIR__ . '/../ViewHelperBaseTestcase.php');
 /**
  * Testcase for the email uri view helper
  */
-class EmailViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\ViewHelperBaseTestcase
+final class EmailViewHelperTest extends ViewHelperBaseTestcase
 {
     /**
      * @var \Neos\FluidAdaptor\ViewHelpers\Uri\EmailViewHelper
@@ -26,13 +33,11 @@ class EmailViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\View
     protected function setUp(): void
     {
         parent::setUp();
-        $this->viewHelper = $this->getAccessibleMock(\Neos\FluidAdaptor\ViewHelpers\Uri\EmailViewHelper::class, ['renderChildren']);
+        $this->viewHelper = $this->getAccessibleMock(EmailViewHelper::class, ['renderChildren']);
         $this->injectDependenciesIntoViewHelper($this->viewHelper);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function renderPrependsEmailWithMailto()
     {
         $this->viewHelper = $this->prepareArguments($this->viewHelper, ['email' => 'some@email.tld']);

@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Property\TypeConverter;
 
 /*
@@ -11,9 +12,9 @@ namespace Neos\Flow\Property\TypeConverter;
  * source code.
  */
 
-use Neos\Flow\Annotations as Flow;
-use Neos\Error\Messages\Error;
 use GuzzleHttp\Psr7\Uri;
+use Neos\Error\Messages\Error;
+use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Property\PropertyMappingConfigurationInterface;
 use Psr\Http\Message\UriInterface;
 
@@ -46,7 +47,7 @@ class UriTypeConverter extends AbstractTypeConverter
      *
      * @param string $source The URI to be converted
      * @param string $targetType
-     * @param array $convertedChildProperties
+     * @param array<string,mixed> $convertedChildProperties
      * @param PropertyMappingConfigurationInterface|null $configuration
      * @return Uri|Error if the input format is not supported or could not be converted for other reasons
      */

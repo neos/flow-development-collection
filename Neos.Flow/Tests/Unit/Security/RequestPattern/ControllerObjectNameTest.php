@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Neos\Flow\Tests\Unit\Security\RequestPattern;
 
 /*
@@ -10,36 +13,32 @@ namespace Neos\Flow\Tests\Unit\Security\RequestPattern;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Security\RequestPattern\ControllerObjectName;
 use Neos\Flow\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Testcase for the controller object name request pattern
  */
-class ControllerObjectNameTest extends UnitTestCase
+final class ControllerObjectNameTest extends UnitTestCase
 {
-    /**
-     * @test
-     */
+    #[Test]
     public function matchRequestReturnsTrueIfTheCurrentRequestMatchesTheControllerObjectNamePattern()
     {
-        $request = $this->getMockBuilder(ActionRequest::class)->disableOriginalConstructor()->setMethods(['getControllerObjectName'])->getMock();
-        $request->expects(self::once())->method('getControllerObjectName')->will(self::returnValue('Neos\Flow\Security\Controller\LoginController'));
+        $request = $this->getMockBuilder(ActionRequest::class)->disableOriginalConstructor()->onlyMethods(['getControllerObjectName'])->getMock();
+        $request->expects($this->once())->method('getControllerObjectName')->willReturn(('Neos\Flow\Security\Controller\LoginController'));
 
         $requestPattern = new ControllerObjectName(['controllerObjectNamePattern' => 'Neos\Flow\Security\.*']);
 
         self::assertTrue($requestPattern->matchRequest($request));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function matchRequestReturnsFalseIfTheCurrentRequestDoesNotMatchTheControllerObjectNamePattern()
     {
-        $request = $this->getMockBuilder(ActionRequest::class)->disableOriginalConstructor()->setMethods(['getControllerObjectName'])->getMock();
-        $request->expects(self::once())->method('getControllerObjectName')->will(self::returnValue('Some\Package\Controller\SomeController'));
+        $request = $this->getMockBuilder(ActionRequest::class)->disableOriginalConstructor()->onlyMethods(['getControllerObjectName'])->getMock();
+        $request->expects($this->once())->method('getControllerObjectName')->willReturn(('Some\Package\Controller\SomeController'));
 
         $requestPattern = new ControllerObjectName(['controllerObjectNamePattern' => 'Neos\Flow\Security\.*']);
 

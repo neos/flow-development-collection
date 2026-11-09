@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Neos\Http\Factories;
@@ -46,8 +47,7 @@ trait ServerRequestFactoryTrait
         string $defaultUserAgent = 'Flow/' . FLOW_VERSION_BRANCH,
         string $scriptPath = 'index.php',
         string $defaultHttpVersion = '1.1'
-    )
-    {
+    ) {
         $this->uriFactory = $uriFactory;
         $this->defaultUserAgent = $defaultUserAgent;
         $this->scriptPath = $scriptPath;
@@ -56,7 +56,7 @@ trait ServerRequestFactoryTrait
 
     /**
      * @inheritDoc
-     * @param array<mixed> $serverParams
+     * @param array<string,mixed> $serverParams
      */
     public function createServerRequest(string $method, $uri, array $serverParams = []): ServerRequestInterface
     {

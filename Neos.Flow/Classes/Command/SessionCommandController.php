@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Command;
 
 /*
@@ -73,8 +74,8 @@ class SessionCommandController extends CommandController
     }
 
     /**
-     * Run garbage collection for sesions.
-     * This command will remove session-data and -metadate of outdated sessions
+     * Run garbage collection for sessions.
+     * This command will remove session-data and -metadata of outdated sessions
      * identified by lastActivityTimestamp being older than inactivityTimeout
      *
      * !!! This is usually done automatically after shutdown for the percentage

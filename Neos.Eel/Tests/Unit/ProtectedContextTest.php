@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Neos\Eel\Tests\Unit;
 
 /*
@@ -10,22 +13,21 @@ namespace Neos\Eel\Tests\Unit;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
 use Neos\Cache\Frontend\StringFrontend;
 use Neos\Eel\CompilingEvaluator;
+use Neos\Eel\Helper\StringHelper;
 use Neos\Eel\NotAllowedException;
 use Neos\Eel\ProtectedContext;
 use Neos\Eel\Tests\Unit\Fixtures\TestObject;
 use Neos\Flow\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Untrusted context test
  */
-class ProtectedContextTest extends UnitTestCase
+final class ProtectedContextTest extends UnitTestCase
 {
-    /**
-     * @test
-     */
+    #[Test]
     public function methodCallToAnyValueIsNotAllowed()
     {
         $this->expectException(NotAllowedException::class);
@@ -39,9 +41,7 @@ class ProtectedContextTest extends UnitTestCase
         $evaluator->evaluate('secure.callMe("Christopher")', $context);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function arrayAccessResultIsStillUntrusted()
     {
         $this->expectException(NotAllowedException::class);
@@ -55,9 +55,7 @@ class ProtectedContextTest extends UnitTestCase
         $evaluator->evaluate('secure[0].callMe("Christopher")', $context);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function propertyAccessToAnyValueIsAllowed()
     {
         $object = (object)[
@@ -74,13 +72,11 @@ class ProtectedContextTest extends UnitTestCase
         self::assertEquals('Bar', $result);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function methodCallToAllowedValueIsAllowed()
     {
         $context = new ProtectedContext([
-            'String' => new \Neos\Eel\Helper\StringHelper()
+            'String' => new StringHelper()
         ]);
         $context->allow('String.*');
 
@@ -91,9 +87,7 @@ class ProtectedContextTest extends UnitTestCase
         self::assertEquals('World', $result);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function firstLevelFunctionsHaveToBeAllowed()
     {
         $this->expectException(NotAllowedException::class);
@@ -108,9 +102,7 @@ class ProtectedContextTest extends UnitTestCase
         $evaluator->evaluate('ident(42)', $context);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function resultOfFirstLevelMethodCallIsProtected()
     {
         $securedObject = new TestObject();
@@ -132,9 +124,7 @@ class ProtectedContextTest extends UnitTestCase
         $evaluator->evaluate('ident(value).callMe("Foo")', $context);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function resultOfAllowedMethodCallIsProtected()
     {
         $securedObject = new TestObject();
@@ -158,9 +148,7 @@ class ProtectedContextTest extends UnitTestCase
         $evaluator->evaluate('Array.reverse(value)[0].callMe("Foo")', $context);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function chainedCallsArePossibleWithExplicitContextWrapping()
     {
         $context = new ProtectedContext([
@@ -182,9 +170,7 @@ class ProtectedContextTest extends UnitTestCase
         self::assertEquals(2, $result);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function protectedContextAwareInterfaceAllowsCallsDynamicallyWithoutAllowlist()
     {
         $securedObject = new TestObject();
@@ -201,9 +187,7 @@ class ProtectedContextTest extends UnitTestCase
         self::assertEquals('Hello, Foo!', $result);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function methodCallToNullValueDoesNotThrowNotAllowedException()
     {
         $context = new ProtectedContext([
@@ -220,8 +204,8 @@ class ProtectedContextTest extends UnitTestCase
      */
     protected function createEvaluator()
     {
-        $stringFrontendMock = $this->getMockBuilder(StringFrontend::class)->setMethods([])->disableOriginalConstructor()->getMock();
-        $stringFrontendMock->expects(self::any())->method('get')->willReturn(false);
+        $stringFrontendMock = $this->getMockBuilder(StringFrontend::class)->onlyMethods(['get', 'set'])->disableOriginalConstructor()->getMock();
+        $stringFrontendMock->method('get')->willReturn(false);
 
         $evaluator = new CompilingEvaluator();
         $evaluator->injectExpressionCache($stringFrontendMock);

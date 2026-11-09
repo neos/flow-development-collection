@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Neos\Flow\Tests\Unit\Validation\Validator;
 
 /*
@@ -10,9 +13,10 @@ namespace Neos\Flow\Tests\Unit\Validation\Validator;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
+use Neos\Flow\Validation\Error;
+use Neos\Flow\Validation\Exception\InvalidValidationOptionsException;
 use Neos\Flow\Validation\Validator\RegularExpressionValidator;
-use Neos\Flow\Validation;
+use PHPUnit\Framework\Attributes\Test;
 
 require_once('AbstractValidatorTestcase.php');
 
@@ -20,7 +24,7 @@ require_once('AbstractValidatorTestcase.php');
  * Testcase for the regular expression validator
  *
  */
-class RegularExpressionValidatorTest extends AbstractValidatorTestcase
+final class RegularExpressionValidatorTest extends AbstractValidatorTestcase
 {
     protected $validatorClassName = RegularExpressionValidator::class;
 
@@ -31,37 +35,29 @@ class RegularExpressionValidatorTest extends AbstractValidatorTestcase
     {
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function validateThrowsExceptionIfExpressionIsEmpty()
     {
-        $this->expectException(Validation\Exception\InvalidValidationOptionsException::class);
+        $this->expectException(InvalidValidationOptionsException::class);
         $this->validatorOptions([]);
         $this->validator->validate('foo');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function validateReturnsNoErrorIfTheGivenValueIsNull()
     {
         $this->validatorOptions(['regularExpression' => '/^.*$/']);
         self::assertFalse($this->validator->validate(null)->hasErrors());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function validateReturnsNoErrorIfTheGivenValueIsAnEmptyString()
     {
         $this->validatorOptions(['regularExpression' => '/^.*$/']);
         self::assertFalse($this->validator->validate('')->hasErrors());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function regularExpressionValidatorMatchesABasicExpressionCorrectly()
     {
         $this->validatorOptions(['regularExpression' => '/^simple[0-9]expression$/']);
@@ -70,14 +66,12 @@ class RegularExpressionValidatorTest extends AbstractValidatorTestcase
         self::assertTrue($this->validator->validate('simple1expressions')->hasErrors());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function regularExpressionValidatorCreatesTheCorrectErrorIfTheExpressionDidNotMatch()
     {
         $this->validatorOptions(['regularExpression' => '/^simple[0-9]expression$/']);
         $subject = 'some subject that will not match';
         $errors = $this->validator->validate($subject)->getErrors();
-        self::assertEquals([new Validation\Error('The given subject did not match the pattern. Got: %1$s', 1221565130, [$subject])], $errors);
+        self::assertEquals([new Error('The given subject did not match the pattern. Got: %1$s', 1221565130, [$subject])], $errors);
     }
 }

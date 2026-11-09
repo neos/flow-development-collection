@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Log\Psr;
 
 /*
@@ -26,7 +27,7 @@ class Logger implements LoggerInterface
 {
     use LoggerTrait;
 
-    const LOGLEVEL_MAPPING = [
+    public const LOGLEVEL_MAPPING = [
         LogLevel::EMERGENCY => LOG_EMERG,
         LogLevel::DEBUG => LOG_DEBUG,
         LogLevel::INFO => LOG_INFO,

@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Neos\Flow\Tests\Unit\Security\Policy;
 
 /*
@@ -10,65 +13,63 @@ namespace Neos\Flow\Tests\Unit\Security\Policy;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
 use Neos\Flow\Security\Policy\Role;
 use Neos\Flow\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\MockObject\MockObject;
 
 /**
- * Testcase for for Neos\Flow\Security\Policy\Role
+ * Testcase for Neos\Flow\Security\Policy\Role
  */
-class RoleTest extends UnitTestCase
+final class RoleTest extends UnitTestCase
 {
     /**
      * data provider
      *
-     * @return array
+     * @return \Iterator<(int | string), mixed>
      */
-    public function roleIdentifiersAndPackageKeysAndNames(): array
+    public static function roleIdentifiersAndPackageKeysAndNames(): \Iterator
     {
-        return [
-            ['Neos.Flow:Everybody', 'Everybody', 'Neos.Flow', 'A role for everybody', 'The role is automatically assigned to every session'],
-            ['Acme.Demo:Test', 'Test', 'Acme.Demo', 'just a label', ''],
-            ['Acme.Demo.Sub:Test', 'Test', 'Acme.Demo.Sub', '', 'A descriptive description']
-        ];
+        yield ['Neos.Flow:Everybody', 'Everybody', 'Neos.Flow', 'A role for everybody', 'The role is automatically assigned to every session'];
+        yield ['Acme.Demo:Test', 'Test', 'Acme.Demo', 'just a label', ''];
+        yield ['Acme.Demo.Sub:Test', 'Test', 'Acme.Demo.Sub', '', 'A descriptive description'];
     }
 
     /**
-     * @dataProvider roleIdentifiersAndPackageKeysAndNames
-     * @test
      * @param string $roleIdentifier
      * @param string $name
      * @param string $packageKey
      * @param string $label
      * @param string $description
      */
+    #[DataProvider('roleIdentifiersAndPackageKeysAndNames')]
+    #[Test]
     public function setNameTolePropertiesWork(string $roleIdentifier, string $name, string $packageKey, string $label, string $description): void
     {
         $role = new Role($roleIdentifier, [], $label, $description);
 
-        self::assertEquals($name, $role->getName());
-        self::assertEquals($packageKey, $role->getPackageKey());
-        self::assertEquals($description, $role->getDescription());
+        self::assertSame($name, $role->getName());
+        self::assertSame($packageKey, $role->getPackageKey());
+        self::assertSame($description, $role->getDescription());
 
         if ($label === '') {
-            self::assertEquals($role->getName(), $role->getLabel());
+            self::assertSame($role->getName(), $role->getLabel());
         } else {
-            self::assertEquals($label, $role->getLabel());
+            self::assertSame($label, $role->getLabel());
         }
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function setParentRolesMakesSureThatParentRolesDontContainDuplicates()
     {
-        /** @var Role|\PHPUnit\Framework\MockObject\MockObject $role */
-        $role = $this->getAccessibleMock(Role::class, ['dummy'], ['Acme.Demo:Test']);
+        /** @var Role|MockObject $role */
+        $role = $this->getAccessibleMock(Role::class, [], ['Acme.Demo:Test']);
 
-        /** @var Role|\PHPUnit\Framework\MockObject\MockObject $parentRole1 */
-        $parentRole1 = $this->getAccessibleMock(Role::class, ['dummy'], ['Acme.Demo:Parent1']);
-        /** @var Role|\PHPUnit\Framework\MockObject\MockObject $parentRole2 */
-        $parentRole2 = $this->getAccessibleMock(Role::class, ['dummy'], ['Acme.Demo:Parent2']);
+        /** @var Role|MockObject $parentRole1 */
+        $parentRole1 = $this->getAccessibleMock(Role::class, [], ['Acme.Demo:Parent1']);
+        /** @var Role|MockObject $parentRole2 */
+        $parentRole2 = $this->getAccessibleMock(Role::class, [], ['Acme.Demo:Parent2']);
 
         $parentRole2->addParentRole($parentRole1);
         $role->setParentRoles([$parentRole1, $parentRole2, $parentRole2, $parentRole1]);
@@ -78,7 +79,7 @@ class RoleTest extends UnitTestCase
             'Acme.Demo:Parent2' => $parentRole2
         ];
 
-        self::assertEquals(2, count($role->getParentRoles()));
+        self::assertCount(2, $role->getParentRoles());
         self::assertEquals($expectedParentRoles, $role->getParentRoles());
     }
 }

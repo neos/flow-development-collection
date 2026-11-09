@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Neos\Flow\Tests\Unit\Validation\Validator;
 
 /*
@@ -10,15 +13,15 @@ namespace Neos\Flow\Tests\Unit\Validation\Validator;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Flow\Validation\Exception\InvalidValidationOptionsException;
 use Neos\Flow\Validation\Validator\AbstractValidator;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Testcase for the Abstract Validator
  */
-class AbstractValidatorTest extends UnitTestCase
+final class AbstractValidatorTest extends UnitTestCase
 {
     protected $validator;
 
@@ -32,9 +35,7 @@ class AbstractValidatorTest extends UnitTestCase
         ]);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function abstractValidatorConstructWithRequiredOptionShouldNotFail()
     {
         $this->validator->__construct(['thirdPlaceHolder' => 'dummy']);
@@ -42,9 +43,7 @@ class AbstractValidatorTest extends UnitTestCase
         self::assertInstanceOf(AbstractValidator::class, $this->validator);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function abstractValidatorConstructWithoutRequiredOptionShouldFail()
     {
         $this->expectException(InvalidValidationOptionsException::class);

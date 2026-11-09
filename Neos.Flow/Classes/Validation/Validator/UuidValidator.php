@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Validation\Validator;
 
 /*
@@ -24,7 +25,7 @@ class UuidValidator extends AbstractValidator
      * A preg pattern to match against UUIDs
      * @var string
      */
-    const PATTERN_MATCH_UUID = '/^([a-f0-9]){8}-([a-f0-9]){4}-([a-f0-9]){4}-([a-f0-9]){4}-([a-f0-9]){12}$/';
+    public const PATTERN_MATCH_UUID = '/^([a-f0-9]){8}-([a-f0-9]){4}-([a-f0-9]){4}-([a-f0-9]){4}-([a-f0-9]){12}$/';
 
     /**
      * Checks if the given value is a syntactically valid UUID.

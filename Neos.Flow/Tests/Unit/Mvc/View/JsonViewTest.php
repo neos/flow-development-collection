@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Neos\Flow\Tests\Unit\Mvc\View;
 
 /*
@@ -10,25 +13,25 @@ namespace Neos\Flow\Tests\Unit\Mvc\View;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
 use Neos\Flow\Mvc;
+use Neos\Flow\Mvc\ActionResponse;
+use Neos\Flow\Mvc\Controller\ControllerContext;
+use Neos\Flow\Mvc\View\JsonView;
 use Neos\Flow\Persistence\Doctrine\PersistenceManager;
+use Neos\Flow\Tests\Unit\Mvc\View\Fixtures\NestedTestObject;
 use Neos\Flow\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Testcase for the JSON view
  */
-class JsonViewTest extends UnitTestCase
+final class JsonViewTest extends UnitTestCase
 {
     /**
      * @var Mvc\View\JsonView
      */
     protected $view;
-
-    /**
-     * @var Mvc\Controller\ControllerContext
-     */
-    protected $controllerContext;
 
     /**
      * @var Mvc\ActionResponse
@@ -41,18 +44,18 @@ class JsonViewTest extends UnitTestCase
      */
     protected function setUp(): void
     {
-        $this->view = $this->getMockBuilder(Mvc\View\JsonView::class)->setMethods(['loadConfigurationFromYamlFile'])->getMock();
-        $this->controllerContext = $this->getMockBuilder(Mvc\Controller\ControllerContext::class)->disableOriginalConstructor()->getMock();
-        $this->response = new Mvc\ActionResponse();
-        $this->controllerContext->expects(self::any())->method('getResponse')->will(self::returnValue($this->response));
-        $this->view->setControllerContext($this->controllerContext);
+        $this->view = $this->getMockBuilder(JsonView::class)->onlyMethods([])->getMock();
+        $controllerContext = $this->createMock(ControllerContext::class);
+        $this->response = new ActionResponse();
+        $controllerContext->method('getResponse')->willReturn(($this->response));
+        $this->view->setControllerContext($controllerContext);
     }
 
     /**
      * data provider for testTransformValue()
      * @return array
      */
-    public function jsonViewTestData()
+    public static function jsonViewTestData()
     {
         $output = [];
 
@@ -104,12 +107,8 @@ class JsonViewTest extends UnitTestCase
         $output[] = [$object, $configuration, $expected, 'array of objects should be serialized'];
 
         $properties = ['foo' => 'bar', 'prohibited' => 'xxx'];
-        $nestedObject = $this->createMock(Fixtures\NestedTestObject::class);
-        $nestedObject->expects(self::any())->method('getName')->will(self::returnValue('name'));
-        $nestedObject->expects(self::any())->method('getPath')->will(self::returnValue('path'));
-        $nestedObject->expects(self::any())->method('getProperties')->will(self::returnValue($properties));
-        $nestedObject->expects(self::never())->method('getOther');
-        $object = $nestedObject;
+        // Mock built in the test method (data providers must be static in PHPUnit 11).
+        $object = ['__mock' => NestedTestObject::class, '__properties' => $properties];
         $configuration = [
             '_only' => ['name', 'path', 'properties'],
             '_descend' => [
@@ -145,13 +144,20 @@ class JsonViewTest extends UnitTestCase
         return $output;
     }
 
-    /**
-     * @test
-     * @dataProvider jsonViewTestData
-     */
+    #[DataProvider('jsonViewTestData')]
+    #[Test]
     public function testTransformValue($object, $configuration, $expected, $description)
     {
-        $jsonView = $this->getAccessibleMock(Mvc\View\JsonView::class, ['dummy'], [], '');
+        if (is_array($object) && isset($object['__mock'])) {
+            $mock = $this->createMock($object['__mock']);
+            $mock->method('getName')->willReturn('name');
+            $mock->method('getPath')->willReturn('path');
+            $mock->method('getProperties')->willReturn($object['__properties']);
+            $mock->expects($this->never())->method('getOther');
+            $object = $mock;
+        }
+
+        $jsonView = $this->getAccessibleMock(JsonView::class, [], [], '');
 
         $actual = $jsonView->_call('transformValue', $object, $configuration);
 
@@ -162,7 +168,7 @@ class JsonViewTest extends UnitTestCase
      * data provider for testTransformValueWithObjectIdentifierExposure()
      * @return array
      */
-    public function objectIdentifierExposureTestData()
+    public static function objectIdentifierExposureTestData()
     {
         $output = [];
 
@@ -188,17 +194,15 @@ class JsonViewTest extends UnitTestCase
         return $output;
     }
 
-    /**
-     * @test
-     * @dataProvider objectIdentifierExposureTestData
-     */
+    #[DataProvider('objectIdentifierExposureTestData')]
+    #[Test]
     public function testTransformValueWithObjectIdentifierExposure($object, $configuration, $expected, $dummyIdentifier, $description)
     {
-        $persistenceManagerMock = $this->getMockBuilder(PersistenceManager::class)->setMethods(['getIdentifierByObject'])->getMock();
-        $jsonView = $this->getAccessibleMock(Mvc\View\JsonView::class, ['dummy'], [], '', false);
+        $persistenceManagerMock = $this->getMockBuilder(PersistenceManager::class)->onlyMethods(['getIdentifierByObject'])->getMock();
+        $jsonView = $this->getAccessibleMock(JsonView::class, [], [], '', false);
         $jsonView->_set('persistenceManager', $persistenceManagerMock);
 
-        $persistenceManagerMock->expects(self::once())->method('getIdentifierByObject')->with($object->value1)->will(self::returnValue($dummyIdentifier));
+        $persistenceManagerMock->expects($this->once())->method('getIdentifierByObject')->with($object->value1)->willReturn(($dummyIdentifier));
 
         $actual = $jsonView->_call('transformValue', $object, $configuration);
 
@@ -208,36 +212,32 @@ class JsonViewTest extends UnitTestCase
     /**
      * A data provider
      */
-    public function exposeClassNameSettingsAndResults()
+    public static function exposeClassNameSettingsAndResults(): \Iterator
     {
-        $className = 'DummyClass' . md5(uniqid(mt_rand(), true));
+        $className = 'DummyClass' . md5(uniqid((string)mt_rand(), true));
         $namespace = 'Neos\Flow\Tests\Unit\Mvc\View\\' . $className;
-        return [
-            [
-                Mvc\View\JsonView::EXPOSE_CLASSNAME_FULLY_QUALIFIED,
-                $className,
-                $namespace,
-                ['value1' => ['__class' => $namespace . '\\' . $className]]
-            ],
-            [
-                Mvc\View\JsonView::EXPOSE_CLASSNAME_UNQUALIFIED,
-                $className,
-                $namespace,
-                ['value1' => ['__class' => $className]]
-            ],
-            [
-                null,
-                $className,
-                $namespace,
-                ['value1' => []]
-            ]
+        yield [
+            JsonView::EXPOSE_CLASSNAME_FULLY_QUALIFIED,
+            $className,
+            $namespace,
+            ['value1' => ['__class' => $namespace . '\\' . $className]]
+        ];
+        yield [
+            JsonView::EXPOSE_CLASSNAME_UNQUALIFIED,
+            $className,
+            $namespace,
+            ['value1' => ['__class' => $className]]
+        ];
+        yield [
+            null,
+            $className,
+            $namespace,
+            ['value1' => []]
         ];
     }
 
-    /**
-     * @test
-     * @dataProvider exposeClassNameSettingsAndResults
-     */
+    #[DataProvider('exposeClassNameSettingsAndResults')]
+    #[Test]
     public function viewExposesClassNameFullyIfConfiguredSo($exposeClassNameSetting, $className, $namespace, $expected)
     {
         $fullyQualifiedClassName = $namespace . '\\' . $className;
@@ -255,7 +255,7 @@ class JsonViewTest extends UnitTestCase
             ]
         ];
 
-        $jsonView = $this->getAccessibleMock(Mvc\View\JsonView::class, ['dummy'], [], '', false);
+        $jsonView = $this->getAccessibleMock(JsonView::class, [], [], '', false);
         $actual = $jsonView->_call('transformValue', $object, $configuration);
         self::assertEquals($expected, $actual);
     }
@@ -265,14 +265,12 @@ class JsonViewTest extends UnitTestCase
      */
     public function renderSetsContentTypeHeader()
     {
-        $this->response->expects(self::once())->method('setHeader')->with('Content-Type', 'application/json');
+        $this->response->expects($this->once())->method('setHeader')->with('Content-Type', 'application/json');
 
         $this->view->render()->getBody()->getContents();
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function renderReturnsJsonRepresentationOfAssignedObject()
     {
         $object = new \stdClass();
@@ -284,9 +282,7 @@ class JsonViewTest extends UnitTestCase
         self::assertEquals($expectedResult, $actualResult);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function renderReturnsJsonRepresentationOfAssignedArray()
     {
         $array = ['foo' => 'Foo', 'bar' => 'Bar'];
@@ -297,9 +293,7 @@ class JsonViewTest extends UnitTestCase
         self::assertEquals($expectedResult, $actualResult);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function renderReturnsJsonRepresentationOfAssignedSimpleValue()
     {
         $value = 'Foo';
@@ -310,9 +304,7 @@ class JsonViewTest extends UnitTestCase
         self::assertEquals($expectedResult, $actualResult);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function renderReturnsNullIfNameOfAssignedVariableIsNotEqualToValue()
     {
         $value = 'Foo';
@@ -323,9 +315,7 @@ class JsonViewTest extends UnitTestCase
         self::assertEquals($expectedResult, $actualResult);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function renderOnlyRendersVariableWithTheNameValue()
     {
         $this->view
@@ -337,9 +327,7 @@ class JsonViewTest extends UnitTestCase
         self::assertEquals($expectedResult, $actualResult);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function setVariablesToRenderOverridesValueToRender()
     {
         $value = 'Foo';
@@ -351,9 +339,7 @@ class JsonViewTest extends UnitTestCase
         self::assertEquals($expectedResult, $actualResult);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function renderRendersMultipleValuesIfTheyAreSpecifiedAsVariablesToRender()
     {
         $this->view
@@ -367,9 +353,7 @@ class JsonViewTest extends UnitTestCase
         self::assertEquals($expectedResult, $actualResult);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function renderCanRenderMultipleComplexObjects()
     {
         $array = ['foo' => ['bar' => 'Baz']];
@@ -387,9 +371,7 @@ class JsonViewTest extends UnitTestCase
         self::assertEquals($expectedResult, $actualResult);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function renderCanRenderPlainArray()
     {
         $array = [['name' => 'Foo', 'secret' => true], ['name' => 'Bar', 'secret' => true]];
@@ -408,9 +390,7 @@ class JsonViewTest extends UnitTestCase
         self::assertEquals($expectedResult, $actualResult);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function descendAllKeepsArrayIndexes()
     {
         $array = [['name' => 'Foo', 'secret' => true], ['name' => 'Bar', 'secret' => true]];
@@ -429,13 +409,11 @@ class JsonViewTest extends UnitTestCase
         self::assertEquals($expectedResult, $actualResult);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function renderTransformsJsonSerializableValues()
     {
-        $value = $this->getMockBuilder('JsonSerializable')->setMethods(['jsonSerialize'])->getMock();
-        $value->expects(self::any())->method('jsonSerialize')->will(self::returnValue(['name' => 'Foo', 'age' => 42]));
+        $value = $this->getMockBuilder('JsonSerializable')->onlyMethods(['jsonSerialize'])->getMock();
+        $value->method('jsonSerialize')->willReturn((['name' => 'Foo', 'age' => 42]));
 
         $this->view->assign('value', $value);
         $this->view->setConfiguration([
@@ -449,9 +427,7 @@ class JsonViewTest extends UnitTestCase
         self::assertEquals($expectedResult, $actualResult);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function viewAcceptsJsonEncodingOptions()
     {
         $array = ['foo' => ['bar' => 'Baz', 'foo' => '1']];
@@ -469,9 +445,7 @@ class JsonViewTest extends UnitTestCase
         self::assertNotEquals($unexpectedResult, $actualResult);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function viewObeysDateTimeFormatOption()
     {
         $array = ['foo' => new \DateTime('2021-05-02T13:00:00+0000')];

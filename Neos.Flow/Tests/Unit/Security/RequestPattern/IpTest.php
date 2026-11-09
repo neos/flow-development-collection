@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Neos\Flow\Tests\Unit\Security\RequestPattern;
 
 /*
@@ -10,49 +13,46 @@ namespace Neos\Flow\Tests\Unit\Security\RequestPattern;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
 use Neos\Flow\Http\ServerRequestAttributes;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Security\RequestPattern\Ip;
 use Neos\Flow\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use Psr\Http\Message\ServerRequestInterface;
 
 /**
  * Testcase for the IP request pattern
  */
-class IpTest extends UnitTestCase
+final class IpTest extends UnitTestCase
 {
     /**
      * Data provider with valid and invalid IP ranges
      */
-    public function validAndInvalidIpPatterns()
+    public static function validAndInvalidIpPatterns(): \Iterator
     {
-        return [
-            ['127.0.0.1', '127.0.0.1', true],
-            ['127.0.0.0/24', '127.0.0.1', true],
-            ['255.255.255.255/0', '127.0.0.1', true],
-            ['127.0.255.255/16', '127.0.0.1', true],
-            ['127.0.0.1/32', '127.0.0.1', true],
-            ['1:2::3:4', '1:2:0:0:0:0:3:4', true],
-            ['127.0.0.2/32', '127.0.0.1', false],
-            ['127.0.1.0/24', '127.0.0.1', false],
-            ['127.0.0.255/31', '127.0.0.1', false],
-            ['::1', '127.0.0.1', false],
-            ['::127.0.0.1', '127.0.0.1', true],
-            ['127.0.0.1', '::127.0.0.1', true],
-        ];
+        yield ['127.0.0.1', '127.0.0.1', true];
+        yield ['127.0.0.0/24', '127.0.0.1', true];
+        yield ['255.255.255.255/0', '127.0.0.1', true];
+        yield ['127.0.255.255/16', '127.0.0.1', true];
+        yield ['127.0.0.1/32', '127.0.0.1', true];
+        yield ['1:2::3:4', '1:2:0:0:0:0:3:4', true];
+        yield ['127.0.0.2/32', '127.0.0.1', false];
+        yield ['127.0.1.0/24', '127.0.0.1', false];
+        yield ['127.0.0.255/31', '127.0.0.1', false];
+        yield ['::1', '127.0.0.1', false];
+        yield ['::127.0.0.1', '127.0.0.1', true];
+        yield ['127.0.0.1', '::127.0.0.1', true];
     }
 
-    /**
-     * @dataProvider validAndInvalidIpPatterns
-     * @test
-     */
+    #[DataProvider('validAndInvalidIpPatterns')]
+    #[Test]
     public function requestMatchingBasicallyWorks($pattern, $ip, $expected)
     {
-        $requestMock = $this->getMockBuilder(ServerRequestInterface::class)->disableOriginalConstructor()->getMock();
-        $requestMock->expects(self::once())->method('getAttribute')->with(ServerRequestAttributes::CLIENT_IP)->willReturn($ip);
-        $actionRequestMock = $this->getMockBuilder(ActionRequest::class)->disableOriginalConstructor()->getMock();
-        $actionRequestMock->expects(self::any())->method('getHttpRequest')->will(self::returnValue($requestMock));
+        $requestMock = $this->createMock(ServerRequestInterface::class);
+        $requestMock->expects($this->once())->method('getAttribute')->with(ServerRequestAttributes::CLIENT_IP)->willReturn($ip);
+        $actionRequestMock = $this->createMock(ActionRequest::class);
+        $actionRequestMock->method('getHttpRequest')->willReturn(($requestMock));
 
         $requestPattern = new Ip(['cidrPattern' => $pattern]);
 

@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Command;
 
 /*
@@ -39,7 +40,7 @@ use Psr\Log\LoggerInterface;
 class DoctrineCommandController extends CommandController
 {
     /**
-     * @var array
+     * @var array<string, mixed>
      */
     protected $settings = [];
 
@@ -70,7 +71,7 @@ class DoctrineCommandController extends CommandController
     /**
      * Injects the Flow settings, only the persistence part is kept for further use
      *
-     * @param array $settings
+     * @param array{persistence: array<string, mixed>} $settings
      * @return void
      */
     public function injectSettings(array $settings): void
@@ -505,6 +506,7 @@ class DoctrineCommandController extends CommandController
                 $packages[$package->getPackageKey()] = $package;
             }
 
+            /** @var string $selectedPackage */
             $selectedPackage = $this->output->select('Do you want to move the migration to one of these packages?', $choices, $choices[0]);
             $this->outputLine();
 
@@ -569,6 +571,9 @@ class DoctrineCommandController extends CommandController
         return sprintf('Neos\Flow\Persistence\Doctrine\Migrations\Version%s', $version);
     }
 
+    /**
+     * @return void
+     */
     private function maybeOutputMigrationFolderWarning(?string $migrationFolder = null)
     {
         if ($migrationFolder !== null) {

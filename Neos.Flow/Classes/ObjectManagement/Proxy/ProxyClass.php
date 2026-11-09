@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\ObjectManagement\Proxy;
 
 /*
@@ -28,58 +29,58 @@ class ProxyClass
      *
      * @var string
      */
-    protected $namespace = '';
+    protected string $namespace = '';
 
     /**
      * The original class name
      *
      * @var string
      */
-    protected $originalClassName;
+    protected string $originalClassName;
 
     /**
      * Fully qualified class name of the original class
      *
      * @var class-string
      */
-    protected $fullOriginalClassName;
+    protected string $fullOriginalClassName;
 
     /**
-     * @var ProxyConstructorGenerator
+     * @var ProxyConstructorGenerator|null
      */
-    protected $constructor;
+    protected ?ProxyConstructorGenerator $constructor = null;
 
     /**
-     * @var array
+     * @var array<string, ProxyMethodGenerator>
      */
-    protected $methods = [];
+    protected array $methods = [];
 
     /**
-     * @var array
+     * @var array<string, string>
      */
-    protected $constants = [];
+    protected array $constants = [];
 
     /**
      * Note: Not using ProxyInterface::class here, since the interface names must have a leading backslash.
      *
-     * @var array
+     * @var array<int, string>
      */
-    protected $interfaces = ['\Neos\Flow\ObjectManagement\Proxy\ProxyInterface'];
+    protected array $interfaces = ['\\' . ProxyInterface::class];
 
     /**
-     * @var array
+     * @var array<int, string>
      */
-    protected $traits = [];
+    protected array $traits = [];
 
     /**
-     * @var array
+     * @var array<string, array{initialValueCode: string|null, visibility: string, docComment: string}>
      */
-    protected $properties = [];
+    protected array $properties = [];
 
     /**
      * @var ReflectionService
      */
-    protected $reflectionService;
+    protected ReflectionService $reflectionService;
 
     /**
      * Creates a new ProxyClass instance.
@@ -88,10 +89,11 @@ class ProxyClass
      */
     public function __construct(string $fullOriginalClassName)
     {
-        if (!str_contains($fullOriginalClassName, '\\')) {
+        $namespaceSeperatorPosition = strrpos($fullOriginalClassName, '\\');
+        if ($namespaceSeperatorPosition === false) {
             $this->originalClassName = $fullOriginalClassName;
         } else {
-            $this->namespace = substr($fullOriginalClassName, 0, strrpos($fullOriginalClassName, '\\'));
+            $this->namespace = substr($fullOriginalClassName, 0, $namespaceSeperatorPosition);
             $this->originalClassName = substr($fullOriginalClassName, strlen($this->namespace) + 1);
         }
         $this->fullOriginalClassName = $fullOriginalClassName;
@@ -165,12 +167,12 @@ class ProxyClass
      * Adds a class property to this proxy class
      *
      * @param string $name Name of the property
-     * @param string $initialValueCode PHP code of the initial value assignment
+     * @param string|null $initialValueCode PHP code of the initial value assignment
      * @param string $visibility
      * @param string $docComment
      * @return void
      */
-    public function addProperty(string $name, string $initialValueCode, string $visibility = 'private', string $docComment = ''): void
+    public function addProperty(string $name, string|null $initialValueCode, string $visibility = 'private', string $docComment = ''): void
     {
         // TODO: Add support for PHP attributes?
         $this->properties[$name] = [
@@ -186,7 +188,7 @@ class ProxyClass
      * Note that the passed interface names must already have a leading backslash,
      * for example "\Neos\Flow\Foo\BarInterface".
      *
-     * @param array $interfaceNames Fully qualified names of the interfaces to introduce
+     * @param array<int, string> $interfaceNames Fully qualified names of the interfaces to introduce
      * @return void
      */
     public function addInterfaces(array $interfaceNames): void
@@ -195,12 +197,21 @@ class ProxyClass
     }
 
     /**
+     * Inspect currently added interfaces for this proxy class
+     * @return array|string[]
+     */
+    public function getInterfaces(): array
+    {
+        return $this->interfaces;
+    }
+
+    /**
      * Adds one or more traits to the class definition.
      *
      * Note that the passed trait names must have a leading backslash,
      * for example "\Neos\Flow\ObjectManagement\Proxy\PropertyInjectionTrait".
      *
-     * @param array $traitNames
+     * @param array<int, string> $traitNames
      * @return void
      */
     public function addTraits(array $traitNames): void
@@ -237,12 +248,6 @@ class ProxyClass
         if ($this->constructor !== null && $constructorBodyCode !== '') {
             $this->constructor->setBody($constructorBodyCode);
             $methodsCode .= PHP_EOL . $this->constructor->generate();
-
-            foreach (class_implements($this->fullOriginalClassName) as $interface) {
-                if (method_exists($interface, '__construct')) {
-                    throw new CannotBuildObjectException(sprintf('The class "%s" implements the interface "%s" which has a constructor. Proxy classes implementing an interface containing a constructor is not supported and constructors interfaces are generally strongly discouraged.', $this->fullOriginalClassName, $interface), 1685433328);
-                }
-            }
         }
 
         foreach ($this->methods as $proxyMethod) {
@@ -274,7 +279,7 @@ class ProxyClass
     {
         $classReflection = new ClassReflection($this->fullOriginalClassName);
 
-        $classDocumentation = str_replace("*/", "* @codeCoverageIgnore\n */", $classReflection->getDocComment()) . "\n";
+        $classDocumentation = str_replace("*/", "* @codeCoverageIgnore\n */", $classReflection->getDocComment() ?: '/**\n */') . "\n";
         foreach ($classReflection->getAttributes() as $attribute) {
             $classDocumentation .= Compiler::renderAttribute($attribute) . "\n";
         }
@@ -308,7 +313,7 @@ class ProxyClass
             if (!empty($attributes['docComment'])) {
                 $code .= '    ' . $attributes['docComment'] . "\n";
             }
-            $code .= '    ' . $attributes['visibility'] . ' $' . $name . ' = ' . $attributes['initialValueCode'] . ";\n";
+            $code .= '    ' . $attributes['visibility'] . ' $' . $name . ($attributes['initialValueCode'] ? (' = ' . $attributes['initialValueCode']) : '') . ";\n";
         }
         return $code;
     }

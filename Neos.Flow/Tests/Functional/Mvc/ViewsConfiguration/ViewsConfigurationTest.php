@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Neos\Flow\Tests\Functional\Mvc\ViewsConfiguration;
 
 /*
@@ -10,14 +13,15 @@ namespace Neos\Flow\Tests\Functional\Mvc\ViewsConfiguration;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
 use Neos\Flow\Package\PackageManager;
+use Neos\Flow\Tests\Functional\Mvc\ViewsConfiguration\Fixtures\TemplateView;
 use Neos\Flow\Tests\FunctionalTestCase;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Functional tests for the ActionController
  */
-class ViewsConfigurationTest extends FunctionalTestCase
+final class ViewsConfigurationTest extends FunctionalTestCase
 {
     /**
      * @var boolean
@@ -61,11 +65,7 @@ class ViewsConfigurationTest extends FunctionalTestCase
         ]);
     }
 
-    /**
-     *
-     *
-     * @test
-     */
+    #[Test]
     public function templatePathAndFilenameIsChanged()
     {
         $response = $this->browser->request('http://localhost/test/mvc/viewsconfigurationa/first');
@@ -74,20 +74,14 @@ class ViewsConfigurationTest extends FunctionalTestCase
         self::assertEquals('Changed on Controller Level', $response->getBody()->getContents());
     }
 
-    /**
-     *
-     *
-     * @test
-     */
+    #[Test]
     public function viewObjectNameChanged()
     {
         $response = $this->browser->request('http://localhost/test/mvc/viewsconfigurationc/index');
-        self::assertEquals(Fixtures\TemplateView::class, $response->getBody()->getContents());
+        self::assertEquals(TemplateView::class, $response->getBody()->getContents());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function changeTemplatePathAndFilenameForWidget()
     {
         if ($this->objectManager->get(PackageManager::class)->isPackageAvailable('Neos.FluidAdaptor') === false) {
@@ -95,6 +89,6 @@ class ViewsConfigurationTest extends FunctionalTestCase
         }
 
         $response = $this->browser->request('http://localhost/test/mvc/viewsconfigurationa/widget');
-        self::assertEquals('Changed on Package Level', trim($response->getBody()->getContents()));
+        self::assertSame('Changed on Package Level', trim($response->getBody()->getContents()));
     }
 }

@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\FluidAdaptor\Core\Parser\TemplateProcessor;
 
 /*
@@ -11,9 +12,9 @@ namespace Neos\FluidAdaptor\Core\Parser\TemplateProcessor;
  * source code.
  */
 
+use Neos\FluidAdaptor\Core\Exception;
 use TYPO3Fluid\Fluid\Core\Parser\TemplateProcessorInterface;
 use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
-use Neos\FluidAdaptor\Core\Exception;
 
 /**
  * Preprocessor to detect the "escapingEnabled" inline flag in a template.

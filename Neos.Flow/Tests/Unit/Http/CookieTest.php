@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Neos\Flow\Tests\Unit\Http;
 
 /*
@@ -10,59 +13,56 @@ namespace Neos\Flow\Tests\Unit\Http;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
 use GuzzleHttp\Psr7\Uri;
 use Neos\Flow\Http\Cookie;
 use Neos\Flow\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Test case for the Http Cookie class
  */
-class CookieTest extends UnitTestCase
+final class CookieTest extends UnitTestCase
 {
     /**
-     * @return array
+     * @return \Iterator<(int | string), mixed>
      */
-    public function invalidCookieNames()
+    public static function invalidCookieNames(): \Iterator
     {
-        return [
-            ['foo bar'],
-            ['foo(bar)'],
-            ['<foo>'],
-            ['@foo'],
-            ['foo[bar]'],
-            ['foo:bar'],
-            ['foo;'],
-            ['foo?'],
-            ['foo{bar}'],
-            ['"foo"'],
-            ['foo/bar'],
-            ['föö'],
-            ['„foo“'],
-        ];
+        yield ['foo bar'];
+        yield ['foo(bar)'];
+        yield ['<foo>'];
+        yield ['@foo'];
+        yield ['foo[bar]'];
+        yield ['foo:bar'];
+        yield ['foo;'];
+        yield ['foo?'];
+        yield ['foo{bar}'];
+        yield ['"foo"'];
+        yield ['foo/bar'];
+        yield ['föö'];
+        yield ['„foo“'];
     }
 
     /**
-     * @return array
+     * @return \Iterator<(int | string), mixed>
      */
-    public function validCookieNames()
+    public static function validCookieNames(): \Iterator
     {
-        return [
-            ['foo'],
-            ['foo_bar'],
-            ['foo\'bar'],
-            ['foo*bar'],
-            ['MyNameIsFooAndYoursIsBar1234567890'],
-            ['foo|bar'],
-            ['$foo%bar~baz'],
-        ];
+        yield ['foo'];
+        yield ['foo_bar'];
+        yield ['foo\'bar'];
+        yield ['foo*bar'];
+        yield ['MyNameIsFooAndYoursIsBar1234567890'];
+        yield ['foo|bar'];
+        yield ['$foo%bar~baz'];
     }
 
     /**
      * @param string  $cookieName
-     * @test
-     * @dataProvider invalidCookieNames
      */
+    #[DataProvider('invalidCookieNames')]
+    #[Test]
     public function constructorThrowsExceptionOnInvalidCookieNames($cookieName)
     {
         $this->expectException(\InvalidArgumentException::class);
@@ -71,18 +71,16 @@ class CookieTest extends UnitTestCase
 
     /**
      * @param string  $cookieName
-     * @test
-     * @dataProvider validCookieNames
      */
+    #[DataProvider('validCookieNames')]
+    #[Test]
     public function constructorAcceptsValidCookieNames($cookieName)
     {
         $cookie = new Cookie($cookieName);
         self::assertEquals($cookieName, $cookie->getName());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getValueReturnsTheSetValue()
     {
         $cookie = new Cookie('foo', 'bar');
@@ -93,7 +91,7 @@ class CookieTest extends UnitTestCase
         self::assertEquals('baz', $cookie->getValue());
 
         $cookie = new Cookie('foo', true);
-        self::assertSame(true, $cookie->getValue());
+        self::assertTrue($cookie->getValue());
 
         $uri = new Uri('http://localhost');
         $cookie = new Cookie('foo', $uri);
@@ -101,94 +99,82 @@ class CookieTest extends UnitTestCase
     }
 
     /**
-     * @return array
+     * @return \Iterator<(int | string), mixed>
      */
-    public function invalidExpiresParameters()
+    public static function invalidExpiresParameters(): \Iterator
     {
-        return [
-            ['foo'],
-            ['-1'],
-            [new \stdClass()],
-            [false]
-        ];
+        yield ['foo'];
+        yield ['-1'];
+        yield [new \stdClass()];
+        yield [false];
     }
 
     /**
      * @param mixed $parameter
-     * @test
-     * @dataProvider invalidExpiresParameters
      */
+    #[DataProvider('invalidExpiresParameters')]
+    #[Test]
     public function constructorThrowsExceptionOnInvalidExpiresParameter($parameter)
     {
         $this->expectException(\InvalidArgumentException::class);
         new Cookie('foo', 'bar', $parameter);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getExpiresAlwaysReturnsAUnixTimestamp()
     {
         $cookie = new Cookie('foo', 'bar', 1345110803);
         self::assertSame(1345110803, $cookie->getExpires());
 
-        $cookie = new Cookie('foo', 'bar', \DateTime::createFromFormat('U', 1345110803));
+        $cookie = new Cookie('foo', 'bar', \DateTime::createFromFormat('U', '1345110803'));
         self::assertSame(1345110803, $cookie->getExpires());
 
         $cookie = new Cookie('foo', 'bar');
         self::assertSame(0, $cookie->getExpires());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function constructorThrowsExceptionOnInvalidMaximumAgeParameter()
     {
         $this->expectException(\InvalidArgumentException::class);
         new Cookie('foo', 'bar', 0, 'urks');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getMaximumAgeReturnsTheMaximumAge()
     {
         $cookie = new Cookie('foo', 'bar');
-        self::assertSame(null, $cookie->getMaximumAge());
+        self::assertNull($cookie->getMaximumAge());
 
         $cookie = new Cookie('foo', 'bar', 0, 120);
         self::assertSame(120, $cookie->getMaximumAge());
     }
 
     /**
-     * @return array
+     * @return \Iterator<(int | string), mixed>
      */
-    public function invalidDomains()
+    public static function invalidDomains(): \Iterator
     {
-        return [
-            [' me.com'],
-            ['you .com'],
-            ['-neos.io'],
-            ['neos.io.'],
-            ['.neos.io'],
-            [false]
-        ];
+        yield [' me.com'];
+        yield ['you .com'];
+        yield ['-neos.io'];
+        yield ['neos.io.'];
+        yield ['.neos.io'];
+        yield [false];
     }
 
     /**
      * @param mixed $domain
-     * @test
-     * @dataProvider invalidDomains
      */
+    #[DataProvider('invalidDomains')]
+    #[Test]
     public function constructorThrowsExceptionOnInvalidDomain($domain)
     {
         $this->expectException(\InvalidArgumentException::class);
         new Cookie('foo', 'bar', 0, null, $domain);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getDomainReturnsDomain()
     {
         $cookie = new Cookie('foo', 'bar', 0, null, 'flow.neos.io');
@@ -196,32 +182,28 @@ class CookieTest extends UnitTestCase
     }
 
     /**
-     * @return array
+     * @return \Iterator<(int | string), mixed>
      */
-    public function invalidPaths()
+    public static function invalidPaths(): \Iterator
     {
-        return [
-            ['/foo;'],
-            ['/föö/bäär'],
-            ["\tfoo"],
-            [false]
-        ];
+        yield ['/foo;'];
+        yield ['/föö/bäär'];
+        yield ["\tfoo"];
+        yield [false];
     }
 
     /**
      * @param mixed $path
-     * @test
-     * @dataProvider invalidPaths
      */
+    #[DataProvider('invalidPaths')]
+    #[Test]
     public function constructorThrowsExceptionOnInvalidPath($path)
     {
         $this->expectException(\InvalidArgumentException::class);
         new Cookie('foo', 'bar', 0, null, null, $path);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getPathReturnsPath()
     {
         $cookie = new Cookie('foo', 'bar');
@@ -231,9 +213,7 @@ class CookieTest extends UnitTestCase
         self::assertSame('/about/us', $cookie->getPath());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function isSecureReturnsSecureFlag()
     {
         $cookie = new Cookie('foo', 'bar');
@@ -243,9 +223,7 @@ class CookieTest extends UnitTestCase
         self::assertTrue($cookie->isSecure());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function isHttpOnlyReturnsHttpOnlyFlag()
     {
         $cookie = new Cookie('foo', 'bar');
@@ -255,54 +233,42 @@ class CookieTest extends UnitTestCase
         self::assertFalse($cookie->isHttpOnly());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function SameSiteReturnsNone()
     {
         $cookie = new Cookie('foo', 'bar', 0, null, 'neos.io', '/', true, false, Cookie::SAMESITE_NONE);
         $this->assertSame(Cookie::SAMESITE_NONE, $cookie->getSameSite());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function SameSiteNoneEnablesSecure()
     {
         $cookie = new Cookie('foo', 'bar', 0, null, 'neos.io', '/', false, false, Cookie::SAMESITE_NONE);
         $this->assertTrue($cookie->isSecure());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function SameSiteReturnsLax()
     {
         $cookie = new Cookie('foo', 'bar', 0, null, 'neos.io', '/', false, false, Cookie::SAMESITE_LAX);
         $this->assertSame(Cookie::SAMESITE_LAX, $cookie->getSameSite());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function SameSiteReturnsStrict()
     {
         $cookie = new Cookie('foo', 'bar', 0, null, 'neos.io', '/', false, false, Cookie::SAMESITE_STRICT);
         $this->assertSame(Cookie::SAMESITE_STRICT, $cookie->getSameSite());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function SameSiteThrowsExceptionForInvalidValues()
     {
         $this->expectExceptionCode(1584955500);
         new Cookie('foo', 'bar', 0, null, 'neos.io', '/', false, false, 'foo');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function isExpiredTellsIfTheCookieIsExpired()
     {
         $cookie = new Cookie('foo', 'bar');
@@ -320,7 +286,7 @@ class CookieTest extends UnitTestCase
      *
      * @return array
      */
-    public function cookiesAndTheirStringRepresentations()
+    public static function cookiesAndTheirStringRepresentations()
     {
         $expiredCookie = new Cookie('foo', 'bar');
         $expiredCookie->expire();
@@ -335,7 +301,7 @@ class CookieTest extends UnitTestCase
             [new Cookie('foo', 'It\'s raining cats and dogs.'), 'foo=It%27s+raining+cats+and+dogs.; Path=/; HttpOnly; SameSite=lax'],
             [new Cookie('foo', 'Some characters, like "double quotes" must be escaped.'), 'foo=Some+characters%2C+like+%22double+quotes%22+must+be+escaped.; Path=/; HttpOnly; SameSite=lax'],
             [new Cookie('foo', 'bar', 1345108546), 'foo=bar; Expires=Thu, 16-Aug-2012 09:15:46 GMT; Path=/; HttpOnly; SameSite=lax'],
-            [new Cookie('foo', 'bar', \DateTime::createFromFormat('U', 1345108546)), 'foo=bar; Expires=Thu, 16-Aug-2012 09:15:46 GMT; Path=/; HttpOnly; SameSite=lax'],
+            [new Cookie('foo', 'bar', \DateTime::createFromFormat('U', '1345108546')), 'foo=bar; Expires=Thu, 16-Aug-2012 09:15:46 GMT; Path=/; HttpOnly; SameSite=lax'],
             [new Cookie('foo', 'bar', 0, null, 'flow.neos.io'), 'foo=bar; Domain=flow.neos.io; Path=/; HttpOnly; SameSite=lax'],
             [new Cookie('foo', 'bar', 0, null, 'flow.neos.io', '/about'), 'foo=bar; Domain=flow.neos.io; Path=/about; HttpOnly; SameSite=lax'],
             [new Cookie('foo', 'bar', 0, null, 'neos.io', '/', true), 'foo=bar; Domain=neos.io; Path=/; Secure; HttpOnly; SameSite=lax'],
@@ -355,26 +321,22 @@ class CookieTest extends UnitTestCase
      * @param Cookie $cookie
      * @param string $expectedString
      * @return void
-     * @test
-     * @dataProvider cookiesAndTheirStringRepresentations()
      */
+    #[DataProvider('cookiesAndTheirStringRepresentations')]
+    #[Test]
     public function stringRepresentationOfCookieIsValidSetCookieFieldValue(Cookie $cookie, $expectedString)
     {
         self::assertEquals($expectedString, (string)$cookie);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function createCookieFromRawReturnsNullIfBasicNameOrValueAreNotSatisfied()
     {
         self::assertNull(Cookie::createFromRawSetCookieHeader('Foobar'), 'The cookie without a = char at all is not discarded.');
         self::assertNull(Cookie::createFromRawSetCookieHeader('=Foobar'), 'The cookie with only a leading = char, hence without a name, is not discarded.');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function createCookieFromRawDoesntCareAboutUnkownAttributeValues()
     {
         $cookie = Cookie::createFromRawSetCookieHeader('ckName=someValue; someproperty=itsvalue');
@@ -382,117 +344,91 @@ class CookieTest extends UnitTestCase
         self::assertEquals('someValue', $cookie->getValue());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function createCookieFromRawParsesExpiryDateCorrectly()
     {
         $cookie = Cookie::createFromRawSetCookieHeader('ckName=someValue; Expires=Sun, 16-Oct-2022 17:53:36 GMT');
         self::assertSame(1665942816, $cookie->getExpires());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function createCookieFromRawAssumesExpiryDateZeroIfItCannotBeParsed()
     {
         $cookie = Cookie::createFromRawSetCookieHeader('ckName=someValue; Expires=trythis');
         self::assertSame(0, $cookie->getExpires());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function createCookieFromRawParsesMaxAgeCorrectly()
     {
         $cookie = Cookie::createFromRawSetCookieHeader('ckName=someValue; Max-Age=-20');
         self::assertSame(-20, $cookie->getMaximumAge());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function createCookieFromRawIgnoresMaxAgeIfInvalid()
     {
         $cookie = Cookie::createFromRawSetCookieHeader('ckName=someValue; Max-Age=--foo');
         self::assertNull($cookie->getMaximumAge());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function createCookieFromRawIgnoresDomainAttributeIfValueIsEmpty()
     {
         $cookie = Cookie::createFromRawSetCookieHeader('ckName=someValue; Domain=; more=nothing');
         self::assertNull($cookie->getDomain());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function createCookieFromRawRemovesLeadingDotForDomainIfPresent()
     {
         $cookie = Cookie::createFromRawSetCookieHeader('ckName=someValue; Domain=.example.org');
         self::assertEquals('example.org', $cookie->getDomain());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function createCookieFromRawLowerCasesDomainName()
     {
         $cookie = Cookie::createFromRawSetCookieHeader('ckName=someValue; Domain=EXample.org');
         self::assertEquals('example.org', $cookie->getDomain());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function createCookieFromRawAssumesDefaultPathIfNoLeadingSlashIsPresent()
     {
         $cookie = Cookie::createFromRawSetCookieHeader('ckName=someValue; Path=foo');
         self::assertEquals('/', $cookie->getPath());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function createCookieFromRawUsesPathCorrectly()
     {
         $cookie = Cookie::createFromRawSetCookieHeader('ckName=someValue; Path=/foo');
         self::assertEquals('/foo', $cookie->getPath());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function createCookieFromRawSetsSecureIfPresent()
     {
         $cookie = Cookie::createFromRawSetCookieHeader('ckName=someValue; Secure; more=nothing');
         self::assertTrue($cookie->isSecure());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function createCookieFromRawSetsHttpOnlyIfPresent()
     {
         $cookie = Cookie::createFromRawSetCookieHeader('ckName=someValue; HttpOnly; more=nothing');
         self::assertTrue($cookie->isHttpOnly());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function createCookieFromRawIgnoresSameSiteAttributeIfValueIsEmpty()
     {
         $cookie = Cookie::createFromRawSetCookieHeader('ckName=someValue; SameSite=; more=nothing');
         $this->assertSame(Cookie::SAMESITE_LAX, $cookie->getSameSite());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function createCookieFromRawLowerCasesSameSite()
     {
         $cookie = Cookie::createFromRawSetCookieHeader('ckName=someValue; SameSite=Lax');

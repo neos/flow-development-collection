@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Neos\Flow\Tests\Unit\Cli;
 
 /*
@@ -10,27 +13,22 @@ namespace Neos\Flow\Tests\Unit\Cli;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
 use Neos\Flow\Cli\ConsoleOutput;
 use Neos\Flow\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\Test;
+use Symfony\Component\Console\Exception\RuntimeException;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\StreamOutput;
-use Symfony\Component\Console\Exception\RuntimeException;
 
 /**
  * Test cases for CLI console output helpers
  */
-class ConsoleOutputTest extends UnitTestCase
+final class ConsoleOutputTest extends UnitTestCase
 {
     /**
      * @var ConsoleOutput
      */
     private $consoleOutput;
-
-    /**
-     * @var StreamOutput
-     */
-    private $output;
 
     /**
      * @var ArrayInput
@@ -45,16 +43,14 @@ class ConsoleOutputTest extends UnitTestCase
         $this->input = new ArrayInput([]);
         $this->answerNothing();
 
-        $this->output = new StreamOutput(fopen('php://memory', 'r+'));
+        $output = new StreamOutput(fopen('php://memory', 'r+'));
 
         $this->consoleOutput = new ConsoleOutput();
-        $this->consoleOutput->setOutput($this->output);
+        $this->consoleOutput->setOutput($output);
         $this->consoleOutput->setInput($this->input);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function outputIsSimpleOutput()
     {
         $string = 'simple output';
@@ -63,9 +59,7 @@ class ConsoleOutputTest extends UnitTestCase
         self::assertSame($string, $this->getActualConsoleOutput());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function outputIsLine()
     {
         $string = 'simple line';
@@ -74,9 +68,7 @@ class ConsoleOutputTest extends UnitTestCase
         self::assertSame($string . PHP_EOL, $this->getActualConsoleOutput());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function outputIsFormattedAndMaximumLineLengthIsObeyed()
     {
         $string =
@@ -95,31 +87,25 @@ class ConsoleOutputTest extends UnitTestCase
         self::assertSame($formattedString, $this->getActualConsoleOutput());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function questionIsAskedAnswerIsNo()
     {
         $this->answerNo();
         $userAnswer = $this->consoleOutput->askConfirmation('Is this a test?');
 
-        self::assertSame(false, $userAnswer);
+        self::assertFalse($userAnswer);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function questionIsAskedAnswerIsYes()
     {
         $this->answerYes();
         $userAnswer = $this->consoleOutput->askConfirmation('Are you lying?');
 
-        self::assertSame(true, $userAnswer);
+        self::assertTrue($userAnswer);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function questionIsWrittenToOutput()
     {
         $this->answerYes();
@@ -128,9 +114,7 @@ class ConsoleOutputTest extends UnitTestCase
         self::assertSame('Is this a test?', $this->getActualConsoleOutput());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function multiLineAnswerIsSplitIntoMultipleLines()
     {
         $this->answerYes();
@@ -139,12 +123,10 @@ class ConsoleOutputTest extends UnitTestCase
         self::assertSame('First line'.PHP_EOL.'Second line', $this->getActualConsoleOutput());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function askAndValidateWillReturnAnswerIfValidationSuccessful()
     {
-        $this->answerCustom(5);
+        $this->answerCustom('5');
         $validator = function ($answer) {
             if ($answer > 4) {
                 return $answer;
@@ -158,14 +140,12 @@ class ConsoleOutputTest extends UnitTestCase
         self::assertSame('5', $userAnswer);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function askAndValidateWillThrowExceptionIfNotSuccessful()
     {
         $this->expectException('RuntimeException');
 
-        $this->answerCustom(5);
+        $this->answerCustom('5');
         $validator = function ($answer) {
             if ($answer > 6) {
                 return $answer;
@@ -176,17 +156,13 @@ class ConsoleOutputTest extends UnitTestCase
         $userAnswer = $this->consoleOutput->askAndValidate('Enter a number higher than 4', $validator);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function questionWasAskedFallBackToDefaultAnswer()
     {
         self::assertSame('Not Sure', $this->consoleOutput->ask('Enter your name', 'Not Sure'));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function tableCanBeDrawn()
     {
         $this->consoleOutput->outputTable([['column1', 'column2']], ['header 1', 'header 2']);
@@ -202,9 +178,7 @@ class ConsoleOutputTest extends UnitTestCase
     }
 
 
-    /**
-     * @test
-     */
+    #[Test]
     public function drawProgressBar()
     {
         $this->consoleOutput->progressStart(100);
@@ -220,9 +194,7 @@ class ConsoleOutputTest extends UnitTestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function selectWithStringTypeChoiceKeys()
     {
         $this->answerCustom('y');
@@ -235,12 +207,10 @@ class ConsoleOutputTest extends UnitTestCase
         self::assertSame(['y'], $userAnswer, 'The answer is the key, NOT the value from the choices');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function selectWithIntegerTypeChoiceKeys()
     {
-        $this->answerCustom(2);
+        $this->answerCustom('2');
         $choices = [
             1 => 'No',
             2 => 'Yes'
@@ -250,9 +220,7 @@ class ConsoleOutputTest extends UnitTestCase
         self::assertSame(['Yes'], $userAnswer, 'The answer is the value, NOT the key from the choices');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function selectTheDefaultWhenAnswerIsNothing()
     {
         $this->answerNothing();

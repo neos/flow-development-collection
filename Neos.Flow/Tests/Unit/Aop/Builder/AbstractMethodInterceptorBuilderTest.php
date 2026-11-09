@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Neos\Flow\Tests\Unit\Aop\Builder;
 
 /*
@@ -10,24 +13,22 @@ namespace Neos\Flow\Tests\Unit\Aop\Builder;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
 use Neos\Flow\Aop\Builder\AbstractMethodInterceptorBuilder;
 use Neos\Flow\Aop\Builder\AdvisedConstructorInterceptorBuilder;
 use Neos\Flow\Reflection\ReflectionService;
 use Neos\Flow\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Testcase for the Abstract Method Interceptor Builder
  *
  */
-class AbstractMethodInterceptorBuilderTest extends UnitTestCase
+final class AbstractMethodInterceptorBuilderTest extends UnitTestCase
 {
-    /**
-     * @test
-     */
+    #[Test]
     public function buildMethodArgumentsArrayCodeRendersCodeForPassingParametersToTheJoinPoint()
     {
-        $className = 'TestClass' . md5(uniqid(mt_rand(), true));
+        $className = 'TestClass' . md5(uniqid((string)mt_rand(), true));
         eval('
 			class ' . $className . ' {
 				public function foo($arg1, array $arg2, \ArrayObject $arg3, &$arg4, $arg5= "foo", $arg6 = true) {}
@@ -78,8 +79,8 @@ class AbstractMethodInterceptorBuilderTest extends UnitTestCase
             ],
         ];
 
-        $mockReflectionService = $this->getMockBuilder(ReflectionService::class)->disableOriginalConstructor()->getMock();
-        $mockReflectionService->expects(self::any())->method('getMethodParameters')->with($className, 'foo')->will(self::returnValue($methodParameters));
+        $mockReflectionService = $this->createMock(ReflectionService::class);
+        $mockReflectionService->method('getMethodParameters')->with($className, 'foo')->willReturn(($methodParameters));
 
         $expectedCode = "
                 \$methodArguments = [];
@@ -99,9 +100,7 @@ class AbstractMethodInterceptorBuilderTest extends UnitTestCase
         self::assertSame($expectedCode, $actualCode);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function buildMethodArgumentsArrayCodeReturnsAnEmptyStringIfTheClassNameIsNULL()
     {
         $builder = $this->getAccessibleMock(AbstractMethodInterceptorBuilder::class, ['build'], [], '', false);
@@ -110,12 +109,10 @@ class AbstractMethodInterceptorBuilderTest extends UnitTestCase
         self::assertSame('', $actualCode);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function buildSavedConstructorParametersCodeReturnsTheCorrectParametersCode()
     {
-        $className = 'TestClass' . md5(uniqid(mt_rand(), true));
+        $className = 'TestClass' . md5(uniqid((string)mt_rand(), true));
         eval('
 			class ' . $className . ' {
 				public function __construct($arg1, array $arg2, \ArrayObject $arg3, $arg4= "__construct", $arg5 = true) {}
@@ -159,10 +156,10 @@ class AbstractMethodInterceptorBuilderTest extends UnitTestCase
             ],
         ];
 
-        $mockReflectionService = $this->getMockBuilder(ReflectionService::class)->disableOriginalConstructor()->getMock();
-        $mockReflectionService->expects(self::any())->method('getMethodParameters')->with($className, '__construct')->will(self::returnValue($methodParameters));
+        $mockReflectionService = $this->createMock(ReflectionService::class);
+        $mockReflectionService->method('getMethodParameters')->with($className, '__construct')->willReturn(($methodParameters));
 
-        $builder = $this->getAccessibleMock(AdvisedConstructorInterceptorBuilder::class, ['dummy'], [], '', false);
+        $builder = $this->getAccessibleMock(AdvisedConstructorInterceptorBuilder::class, [], [], '', false);
         $builder->injectReflectionService($mockReflectionService);
 
         $expectedCode = '$this->Flow_Aop_Proxy_originalConstructorArguments[\'arg1\'], $this->Flow_Aop_Proxy_originalConstructorArguments[\'arg2\'], $this->Flow_Aop_Proxy_originalConstructorArguments[\'arg3\'], $this->Flow_Aop_Proxy_originalConstructorArguments[\'arg4\'], $this->Flow_Aop_Proxy_originalConstructorArguments[\'arg5\']';

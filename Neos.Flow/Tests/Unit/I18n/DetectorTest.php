@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Neos\Flow\Tests\Unit\I18n;
 
 /*
@@ -10,14 +13,20 @@ namespace Neos\Flow\Tests\Unit\I18n;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
-use Neos\Flow\Tests\UnitTestCase;
 use Neos\Flow\I18n;
+use Neos\Flow\I18n\Configuration;
+use Neos\Flow\I18n\Detector;
+use Neos\Flow\I18n\Locale;
+use Neos\Flow\I18n\LocaleCollection;
+use Neos\Flow\I18n\Service;
+use Neos\Flow\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Testcase for the Locale Detector
  */
-class DetectorTest extends UnitTestCase
+final class DetectorTest extends UnitTestCase
 {
     /**
      * @var I18n\Detector
@@ -34,23 +43,23 @@ class DetectorTest extends UnitTestCase
             $localeIdentifier = (string)$args[0];
 
             if (in_array($localeIdentifier, ['en_US_POSIX', 'en_Shaw'])) {
-                return new I18n\Locale('en');
+                return new Locale('en');
             } elseif ($localeIdentifier === 'en_GB') {
-                return new I18n\Locale('en_GB');
+                return new Locale('en_GB');
             } elseif ($localeIdentifier === 'sr_RS') {
-                return new I18n\Locale('sr');
+                return new Locale('sr');
             } else {
                 return null;
             }
         };
 
-        $mockLocaleCollection = $this->createMock(I18n\LocaleCollection::class);
-        $mockLocaleCollection->expects(self::any())->method('findBestMatchingLocale')->will(self::returnCallBack($findBestMatchingLocaleCallback));
+        $mockLocaleCollection = $this->createMock(LocaleCollection::class);
+        $mockLocaleCollection->method('findBestMatchingLocale')->willReturnCallback($findBestMatchingLocaleCallback);
 
-        $mockLocalizationService = $this->createMock(I18n\Service::class);
-        $mockLocalizationService->expects(self::any())->method('getConfiguration')->will(self::returnValue(new I18n\Configuration('sv_SE')));
+        $mockLocalizationService = $this->createMock(Service::class);
+        $mockLocalizationService->method('getConfiguration')->willReturn((new Configuration('sv_SE')));
 
-        $this->detector = $this->getAccessibleMock(I18n\Detector::class, ['dummy']);
+        $this->detector = $this->getAccessibleMock(Detector::class, []);
         $this->detector->_set('localeBasePath', 'vfs://Foo/');
         $this->detector->injectLocaleCollection($mockLocaleCollection);
         $this->detector->injectLocalizationService($mockLocalizationService);
@@ -59,21 +68,17 @@ class DetectorTest extends UnitTestCase
     /**
      * Data provider with valid Accept-Language headers and expected results.
      *
-     * @return array
+     * @return \Iterator<(int | string), mixed>
      */
-    public function sampleHttpAcceptLanguageHeaders()
+    public static function sampleHttpAcceptLanguageHeaders(): \Iterator
     {
-        return [
-            ['pl, en-gb;q=0.8, en;q=0.7', new I18n\Locale('en_GB')],
-            ['de, *;q=0.8', new I18n\Locale('sv_SE')],
-            ['pl, de;q=0.5, sr-rs;q=0.1', new I18n\Locale('sr')],
-        ];
+        yield ['pl, en-gb;q=0.8, en;q=0.7', new Locale('en_GB')];
+        yield ['de, *;q=0.8', new Locale('sv_SE')];
+        yield ['pl, de;q=0.5, sr-rs;q=0.1', new Locale('sr')];
     }
 
-    /**
-     * @test
-     * @dataProvider sampleHttpAcceptLanguageHeaders
-     */
+    #[DataProvider('sampleHttpAcceptLanguageHeaders')]
+    #[Test]
     public function detectingBestMatchingLocaleFromHttpAcceptLanguageHeaderWorksCorrectly($acceptLanguageHeader, $expectedResult)
     {
         $locale = $this->detector->detectLocaleFromHttpHeader($acceptLanguageHeader);
@@ -83,21 +88,17 @@ class DetectorTest extends UnitTestCase
     /**
      * Data provider with valid locale identifiers (tags) and expected results.
      *
-     * @return array
+     * @return \Iterator<(int | string), mixed>
      */
-    public function sampleLocaleIdentifiers()
+    public static function sampleLocaleIdentifiers(): \Iterator
     {
-        return [
-            ['en_GB', new I18n\Locale('en_GB')],
-            ['en_US_POSIX', new I18n\Locale('en')],
-            ['en_Shaw', new I18n\Locale('en')],
-        ];
+        yield ['en_GB', new Locale('en_GB')];
+        yield ['en_US_POSIX', new Locale('en')];
+        yield ['en_Shaw', new Locale('en')];
     }
 
-    /**
-     * @test
-     * @dataProvider sampleLocaleIdentifiers
-     */
+    #[DataProvider('sampleLocaleIdentifiers')]
+    #[Test]
     public function detectingBestMatchingLocaleFromLocaleIdentifierWorksCorrectly($localeIdentifier, $expectedResult)
     {
         $locale = $this->detector->detectLocaleFromLocaleTag($localeIdentifier);

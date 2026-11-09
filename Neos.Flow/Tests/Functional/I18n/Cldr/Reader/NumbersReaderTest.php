@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Neos\Flow\Tests\Functional\I18n\Cldr\Reader;
@@ -12,17 +13,15 @@ namespace Neos\Flow\Tests\Functional\I18n\Cldr\Reader;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
 use Neos\Flow\I18n\Cldr\Reader\NumbersReader;
+use Neos\Flow\I18n\Locale;
 use Neos\Flow\Tests\FunctionalTestCase;
-use Neos\Flow\I18n;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 
-class NumbersReaderTest extends FunctionalTestCase
+final class NumbersReaderTest extends FunctionalTestCase
 {
-    /**
-     * @var NumbersReader
-     */
-    protected $numbersReader;
+    protected NumbersReader $numbersReader;
 
     protected function setUp(): void
     {
@@ -32,51 +31,32 @@ class NumbersReaderTest extends FunctionalTestCase
     }
 
 
-    public function currencyFormatExampleDataProvider(): array
+    public static function currencyFormatExampleDataProvider(): \Iterator
     {
-        return [
-            ['de', ['positivePrefix' => '', 'positiveSuffix' => " ¤", 'negativePrefix' => '-', 'negativeSuffix' => " ¤", 'multiplier' => 1, 'minDecimalDigits' => 2, 'maxDecimalDigits' => 2, 'minIntegerDigits' => 1, 'primaryGroupingSize' => 3, 'secondaryGroupingSize' => 3, 'rounding' => 0.0,]],
-            ['en', ['positivePrefix' => '¤', 'positiveSuffix' => '', 'negativePrefix' => '-¤', 'negativeSuffix' => '', 'multiplier' => 1, 'minDecimalDigits' => 2, 'maxDecimalDigits' => 2, 'minIntegerDigits' => 1, 'primaryGroupingSize' => 3, 'secondaryGroupingSize' => 3, 'rounding' => 0.0,]],
-        ];
+        yield ['de', ['positivePrefix' => '', 'positiveSuffix' => " ¤", 'negativePrefix' => '-', 'negativeSuffix' => " ¤", 'multiplier' => 1, 'minDecimalDigits' => 2, 'maxDecimalDigits' => 2, 'minIntegerDigits' => 1, 'primaryGroupingSize' => 3, 'secondaryGroupingSize' => 3, 'rounding' => 0.0,]];
+        yield ['en', ['positivePrefix' => '¤', 'positiveSuffix' => '', 'negativePrefix' => '-¤', 'negativeSuffix' => '', 'multiplier' => 1, 'minDecimalDigits' => 2, 'maxDecimalDigits' => 2, 'minIntegerDigits' => 1, 'primaryGroupingSize' => 3, 'secondaryGroupingSize' => 3, 'rounding' => 0.0,]];
     }
 
 
-    /**
-     * @test
-     * @dataProvider currencyFormatExampleDataProvider
-     *
-     * @param string $localeName
-     * @param string $expected
-     * @throws I18n\Cldr\Reader\Exception\InvalidFormatLengthException
-     * @throws I18n\Cldr\Reader\Exception\InvalidFormatTypeException
-     * @throws I18n\Cldr\Reader\Exception\UnableToFindFormatException
-     * @throws I18n\Cldr\Reader\Exception\UnsupportedNumberFormatException
-     */
+    #[DataProvider('currencyFormatExampleDataProvider')]
+    #[Test]
     public function parseFormatFromCldr(string $localeName, array $expected): void
     {
-        $locale = new I18n\Locale($localeName);
+        $locale = new Locale($localeName);
         $actual = $this->numbersReader->parseFormatFromCldr($locale, NumbersReader::FORMAT_TYPE_CURRENCY);
         self::assertEquals($expected, $actual);
     }
 
-    public function numberSystemDataProvider(): array
+    public static function numberSystemDataProvider(): \Iterator
     {
-        return [
-            ['de', 'latn'],
-            ['ar', 'arab'],
-        ];
+        yield ['de', 'latn'];
+        yield ['ar', 'arab'];
     }
 
-    /**
-     * @test
-     * @dataProvider numberSystemDataProvider
-     *
-     * @param string $localeString
-     * @param string $expected
-     * @throws I18n\Exception\InvalidLocaleIdentifierException
-     */
+    #[DataProvider('numberSystemDataProvider')]
+    #[Test]
     public function getDefaultNumberingSystem(string $localeString, string $expected): void
     {
-        self::assertEquals($expected, $this->numbersReader->getDefaultNumberingSystem(new I18n\Locale($localeString)));
+        self::assertSame($expected, $this->numbersReader->getDefaultNumberingSystem(new Locale($localeString)));
     }
 }

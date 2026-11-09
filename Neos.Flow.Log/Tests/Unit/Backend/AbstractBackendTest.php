@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Neos\Flow\Log\Tests\Unit\Backend;
 
 /*
@@ -10,49 +13,38 @@ namespace Neos\Flow\Log\Tests\Unit\Backend;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
 use Neos\Flow\Log\Backend\AbstractBackend;
 use Neos\Flow\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Testcase for the abstract log backend
  */
-class AbstractBackendTest extends UnitTestCase
+final class AbstractBackendTest extends UnitTestCase
 {
-    /**
-     * @var AbstractBackend
-     */
-    protected $backendClassName;
-
-    /**
-     * @return void
-     */
-    protected function setUp(): void
-    {
-        $this->backendClassName = 'ConcreteBackend_' . md5(uniqid(mt_rand(), true));
-        eval('
-			class ' . $this->backendClassName . ' extends \Neos\Flow\Log\Backend\AbstractBackend {
-				protected $someOption;
-				public function open(): void {}
-				public function append(string $message, int $severity = 1, $additionalData = NULL, string $packageKey = NULL, string $className = NULL, string $methodName = NULL): void {}
-				public function close(): void {}
-				public function setSomeOption($value) {
-					$this->someOption = $value;
-				}
-				public function getSomeOption() {
-					return $this->someOption;
-				}
-			}
-		');
-    }
-
-    /**
-     * @test
-     */
+    #[Test]
     public function theConstructorCallsSetterMethodsForAllSpecifiedOptions()
     {
-        $className = $this->backendClassName;
-        $backend = new $className(['someOption' => 'someValue']);
+        $backend = new class (['someOption' => 'someValue']) extends AbstractBackend {
+            protected $someOption;
+            public function open(): void
+            {
+            }
+            public function append(string $message, int $severity = 1, $additionalData = null, ?string $packageKey = null, ?string $className = null, ?string $methodName = null): void
+            {
+            }
+            public function close(): void
+            {
+            }
+            public function setSomeOption($value)
+            {
+                $this->someOption = $value;
+            }
+            public function getSomeOption()
+            {
+                return $this->someOption;
+            }
+        };
         self::assertSame('someValue', $backend->getSomeOption());
     }
 }

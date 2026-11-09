@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Tests\Functional\SignalSlot\Fixtures;
 
 /*

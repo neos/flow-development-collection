@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Validation\Validator;
 
 /*
@@ -22,7 +23,7 @@ use Neos\Flow\Annotations as Flow;
 class BooleanValueValidator extends AbstractValidator
 {
     /**
-     * @var array
+     * @var array<string,mixed>
      */
     protected $supportedOptions = [
         'expectedValue' => [true, 'The expected boolean value', 'boolean']

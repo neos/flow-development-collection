@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Tests\Unit\Mvc\Routing;
 
 /*
@@ -16,24 +17,21 @@ use Neos\Flow\Mvc\Routing;
 use Neos\Flow\Mvc\Routing\Route;
 use Neos\Flow\Mvc\Routing\Routes;
 use Neos\Flow\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Testcase for the MVC Web Routing Routes Class
  */
 class RoutesTest extends UnitTestCase
 {
-    /**
-     * @test
-     */
+    #[Test]
     public function emptyCreatesEmptyRoutes(): void
     {
         $routes = Routes::empty();
         $this->assertSame([], iterator_to_array($routes));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function fromConfigurationWorksAsExpected(): void
     {
         $route1 = new Route();
@@ -91,9 +89,7 @@ class RoutesTest extends UnitTestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function mergeRoutes(): void
     {
         $route1 = new Route();
@@ -107,9 +103,7 @@ class RoutesTest extends UnitTestCase
         $this->assertSame([$route1, $route2], iterator_to_array($routes));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function createRoutesFromConfigurationThrowsExceptionIfOnlySomeRoutesWithTheSameUriPatternHaveHttpMethodConstraints()
     {
         // multiple routes with the uriPattern and "httpMethods" option
@@ -127,9 +121,7 @@ class RoutesTest extends UnitTestCase
         Routes::fromConfiguration($routesConfiguration);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function createRoutesFromConfigurationParsesTheGivenConfigurationAndBuildsRouteObjectsFromIt()
     {
         $routesConfiguration = [];

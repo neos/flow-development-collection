@@ -8,9 +8,15 @@
       "../../flow doctrine:migrate --quiet",
       "../../bin/behat -f progress -c Neos.Flow/Tests/Behavior/behat.yml"
     ],
-    "lint:phpstan": "../../bin/phpstan analyse",
+    "lint:php-cs-fixer": "../../bin/php-cs-fixer check -v",
+    "lint:phpstan": "../../bin/phpstan analyse -v",
     "lint": [
+      "@lint:php-cs-fixer",
       "@lint:phpstan"
+    ],
+    "fix:php-cs-fixer": "../../bin/php-cs-fixer fix",
+    "fix": [
+      "@fix:php-cs-fixer"
     ]
   },
   "require": {

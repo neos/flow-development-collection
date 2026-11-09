@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Neos\Flow\Http\Middleware;
@@ -25,7 +26,7 @@ class MethodOverrideMiddleware implements MiddlewareInterface
     {
         if ($request->getMethod() === 'POST') {
             $parsedBody = $request->getParsedBody();
-            if (isset($parsedBody['__method'])) {
+            if (is_array($parsedBody) && isset($parsedBody['__method'])) {
                 $request = $request->withMethod($parsedBody['__method']);
             } elseif ($request->hasHeader('X-Http-Method-Override')) {
                 $request = $request->withMethod($request->getHeaderLine('X-Http-Method-Override'));

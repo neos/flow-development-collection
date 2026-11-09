@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Neos\Flow\Tests\Unit\Persistence\Doctrine;
 
 /*
@@ -10,55 +13,48 @@ namespace Neos\Flow\Tests\Unit\Persistence\Doctrine;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Mapping\ClassMetadata;
 use Neos\Flow\Persistence\Doctrine\Repository;
 use Neos\Flow\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\MockObject\MockObject;
 
 /**
  * Testcase for the doctrine Repository
  */
-class RepositoryTest extends UnitTestCase
+final class RepositoryTest extends UnitTestCase
 {
     /**
-     * @var EntityManagerInterface|\PHPUnit\Framework\MockObject\MockObject
+     * @var EntityManagerInterface|MockObject
      */
     protected $mockEntityManager;
-
-    /**
-     * @var ClassMetadata|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $mockClassMetadata;
 
     /**
      * @return void
      */
     protected function setUp(): void
     {
-        $this->mockEntityManager = $this->getMockBuilder(EntityManagerInterface::class)->disableOriginalConstructor()->getMock();
+        $this->mockEntityManager = $this->createMock(EntityManagerInterface::class);
 
-        $this->mockClassMetadata = $this->getMockBuilder(ClassMetadata::class)->disableOriginalConstructor()->getMock();
-        $this->mockEntityManager->expects(self::any())->method('getClassMetadata')->will(self::returnValue($this->mockClassMetadata));
+        $mockClassMetadata = $this->createMock(ClassMetadata::class);
+        $this->mockEntityManager->method('getClassMetadata')->willReturn(($mockClassMetadata));
     }
 
     /**
      * dataProvider for constructSetsObjectTypeFromClassName
      */
-    public function modelAndRepositoryClassNames()
+    public static function modelAndRepositoryClassNames(): \Iterator
     {
         $idSuffix = uniqid();
-        return [
-            ['TYPO3\Blog\Domain\Repository', 'C' . $idSuffix . 'BlogRepository', 'TYPO3\Blog\Domain\Model\\' . 'C' . $idSuffix . 'Blog'],
-            ['Domain\Repository\Content', 'C' . $idSuffix . 'PageRepository', 'Domain\Model\\Content\\' . 'C' . $idSuffix . 'Page'],
-            ['Domain\Repository', 'C' . $idSuffix . 'RepositoryRepository', 'Domain\Model\\' . 'C' . $idSuffix . 'Repository']
-        ];
+        yield ['TYPO3\Blog\Domain\Repository', 'C' . $idSuffix . 'BlogRepository', 'TYPO3\Blog\Domain\Model\\' . 'C' . $idSuffix . 'Blog'];
+        yield ['Domain\Repository\Content', 'C' . $idSuffix . 'PageRepository', 'Domain\Model\\Content\\' . 'C' . $idSuffix . 'Page'];
+        yield ['Domain\Repository', 'C' . $idSuffix . 'RepositoryRepository', 'Domain\Model\\' . 'C' . $idSuffix . 'Repository'];
     }
 
-    /**
-     * @test
-     * @dataProvider modelAndRepositoryClassNames
-     */
+    #[DataProvider('modelAndRepositoryClassNames')]
+    #[Test]
     public function constructSetsObjectTypeFromClassName($repositoryNamespace, $repositoryClassName, $modelClassName)
     {
         $mockClassName = $repositoryNamespace . '\\' . $repositoryClassName;

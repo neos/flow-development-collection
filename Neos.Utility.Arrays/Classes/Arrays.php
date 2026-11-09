@@ -24,7 +24,7 @@ abstract class Arrays
      *
      * @param non-empty-string $delimiter Delimiter string to explode with
      * @param string $string The string to explode
-     * @return array<mixed> Exploded values, all converted to integers
+     * @return array<int,int> Exploded values, all converted to integers
      */
     public static function integerExplode(string $delimiter, string $string): array
     {
@@ -44,7 +44,7 @@ abstract class Arrays
      * @param non-empty-string $delimiter Delimiter string to explode with
      * @param string $string The string to explode
      * @param boolean $onlyNonEmptyValues If disabled, even empty values (='') will be set in output
-     * @return array<mixed> Exploded values
+     * @return array<int,string> Exploded values
      */
     public static function trimExplode(string $delimiter, string $string, bool $onlyNonEmptyValues = true): array
     {
@@ -238,6 +238,7 @@ abstract class Arrays
      * @param array<mixed>|\ArrayAccess<int|string, mixed> $subject The array or ArrayAccess instance to work on
      * @param array<mixed>|string $path The path to follow. Either a simple array of keys or a string in the format 'foo.bar.baz'
      * @param mixed $value The value to set
+     * @phpstan-return ($subject is array<mixed> ? array<mixed> : \ArrayAccess<int|string, mixed>)
      * @return array<mixed>|\ArrayAccess<int|string, mixed> The modified array or object
      * @throws \InvalidArgumentException
      */

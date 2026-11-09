@@ -1,5 +1,12 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Neos\FluidAdaptor\Tests\Unit\ViewHelpers\Uri;
+
+use Neos\FluidAdaptor\Tests\Unit\ViewHelpers\ViewHelperBaseTestcase;
+use Neos\FluidAdaptor\ViewHelpers\Uri\ExternalViewHelper;
+use PHPUnit\Framework\Attributes\Test;
 
 /*
  * This file is part of the Neos.FluidAdaptor package.
@@ -17,7 +24,7 @@ require_once(__DIR__ . '/../ViewHelperBaseTestcase.php');
  * Testcase for the external uri view helper
  *
  */
-class ExternalViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\ViewHelperBaseTestcase
+final class ExternalViewHelperTest extends ViewHelperBaseTestcase
 {
     /**
      * var \Neos\FluidAdaptor\ViewHelpers\Uri\ExternalViewHelper
@@ -27,13 +34,11 @@ class ExternalViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\V
     protected function setUp(): void
     {
         parent::setUp();
-        $this->viewHelper = $this->getAccessibleMock(\Neos\FluidAdaptor\ViewHelpers\Uri\ExternalViewHelper::class, ['renderChildren']);
+        $this->viewHelper = $this->getAccessibleMock(ExternalViewHelper::class, ['renderChildren']);
         $this->injectDependenciesIntoViewHelper($this->viewHelper);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function renderReturnsSpecifiedUri()
     {
         $this->viewHelper = $this->prepareArguments($this->viewHelper, ['uri' => 'http://www.some-domain.tld']);
@@ -42,9 +47,7 @@ class ExternalViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\V
         self::assertEquals('http://www.some-domain.tld', $actualResult);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function renderAddsHttpPrefixIfSpecifiedUriDoesNotContainScheme()
     {
         $this->viewHelper = $this->prepareArguments($this->viewHelper, ['uri' => 'www.some-domain.tld']);
@@ -53,9 +56,7 @@ class ExternalViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\V
         self::assertEquals('http://www.some-domain.tld', $actualResult);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function renderAddsSpecifiedSchemeIfUriDoesNotContainScheme()
     {
         $this->viewHelper = $this->prepareArguments($this->viewHelper, ['uri' => 'some-domain.tld', 'defaultScheme' => 'ftp']);
@@ -64,9 +65,7 @@ class ExternalViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\V
         self::assertEquals('ftp://some-domain.tld', $actualResult);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function renderDoesNotAddEmptyScheme()
     {
         $this->viewHelper = $this->prepareArguments($this->viewHelper, ['uri' => 'some-domain.tld', 'defaultScheme' => '']);

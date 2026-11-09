@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\I18n\EelHelper;
 
 /*
@@ -11,14 +12,14 @@ namespace Neos\Flow\I18n\EelHelper;
  * source code.
  */
 
+use Neos\Eel\ProtectedContextAwareInterface;
 use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Exception as FlowException;
 use Neos\Flow\I18n\Exception\IndexOutOfBoundsException;
 use Neos\Flow\I18n\Exception\InvalidFormatPlaceholderException;
 use Neos\Flow\I18n\Exception\InvalidLocaleIdentifierException;
 use Neos\Flow\I18n\Locale;
 use Neos\Flow\I18n\Translator;
-use Neos\Flow\Exception as FlowException;
-use Neos\Eel\ProtectedContextAwareInterface;
 
 /**
  * Provides a chainable interface to collect all arguments needed to
@@ -36,7 +37,7 @@ class TranslationParameterToken implements ProtectedContextAwareInterface
     /**
      * Key/Value store to keep the collected parameters
      *
-     * @var array
+     * @var array<mixed>
      */
     protected $parameters = [];
 
@@ -61,7 +62,7 @@ class TranslationParameterToken implements ProtectedContextAwareInterface
      *
      * @param Translator $translator
      */
-    public function injectTranslator(Translator $translator)
+    public function injectTranslator(Translator $translator): void
     {
         $this->translator = $translator;
     }
@@ -93,7 +94,7 @@ class TranslationParameterToken implements ProtectedContextAwareInterface
     /**
      * Set the arguments.
      *
-     * @param array $arguments Numerically indexed array of values to be inserted into placeholders
+     * @param array<mixed> $arguments Numerically indexed array of values to be inserted into placeholders
      * @return TranslationParameterToken
      */
     public function arguments(array $arguments)
@@ -160,13 +161,14 @@ class TranslationParameterToken implements ProtectedContextAwareInterface
     /**
      * Translate according to currently collected parameters
      *
-     * @param array $overrides An associative array to override the collected parameters
+     * @param array<mixed> $overrides An associative array to override the collected parameters
      * @return string|null
      * @throws IndexOutOfBoundsException
      * @throws InvalidFormatPlaceholderException
      */
     public function translate(array $overrides = [])
     {
+        /** @phpstan-ignore function.resultUnused (whatever, @todo fixme) */
         array_replace_recursive($this->parameters, $overrides);
 
         $id = $this->parameters['id'] ?? null;
@@ -182,7 +184,7 @@ class TranslationParameterToken implements ProtectedContextAwareInterface
         }
 
         $translation = $this->translator->translateById($id, $arguments, $quantity, $locale, $source, $package);
-        if ($translation === null && $value !== null) {
+        if ($translation === null) {
             return $this->translator->translateByOriginalLabel($value, $arguments, $quantity, $locale, $source, $package);
         }
 

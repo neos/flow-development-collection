@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Neos\Eel\Tests\Unit\FlowQuery\Operations;
 
 /*
@@ -10,35 +13,34 @@ namespace Neos\Eel\Tests\Unit\FlowQuery\Operations;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
+use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Eel\FlowQuery\Operations\SliceOperation;
+use Neos\Flow\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * SliceOperation test
  */
-class SliceOperationTest extends \Neos\Flow\Tests\UnitTestCase
+final class SliceOperationTest extends UnitTestCase
 {
-    public function sliceExamples()
+    public static function sliceExamples(): \Iterator
     {
-        return [
-            'no argument' => [['a', 'b', 'c'], [], ['a', 'b', 'c']],
-            'empty array' => [[], [1], []],
-            'empty array with end' => [[], [1, 5], []],
-            'slice in bounds' => [['a', 'b', 'c', 'd'], [1, 3], ['b', 'c']],
-            'positive start' => [['a', 'b', 'c', 'd'], [2], ['c', 'd']],
-            'negative start' => [['a', 'b', 'c', 'd'], [-1], ['d']],
-            'end out of bounds' => [['a', 'b', 'c', 'd'], [3, 10], ['d']],
-            'negative start and end' => [['a', 'b', 'c', 'd'], [-3, -1], ['b', 'c']],
-        ];
+        yield 'no argument' => [['a', 'b', 'c'], [], ['a', 'b', 'c']];
+        yield 'empty array' => [[], [1], []];
+        yield 'empty array with end' => [[], [1, 5], []];
+        yield 'slice in bounds' => [['a', 'b', 'c', 'd'], [1, 3], ['b', 'c']];
+        yield 'positive start' => [['a', 'b', 'c', 'd'], [2], ['c', 'd']];
+        yield 'negative start' => [['a', 'b', 'c', 'd'], [-1], ['d']];
+        yield 'end out of bounds' => [['a', 'b', 'c', 'd'], [3, 10], ['d']];
+        yield 'negative start and end' => [['a', 'b', 'c', 'd'], [-3, -1], ['b', 'c']];
     }
 
-    /**
-     * @test
-     * @dataProvider sliceExamples
-     */
+    #[DataProvider('sliceExamples')]
+    #[Test]
     public function evaluateSetsTheCorrectPartOfTheContextArray($value, $arguments, $expected)
     {
-        $flowQuery = new \Neos\Eel\FlowQuery\FlowQuery($value);
+        $flowQuery = new FlowQuery($value);
 
         $operation = new SliceOperation();
         $operation->evaluate($flowQuery, $arguments);

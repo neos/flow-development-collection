@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Neos\Flow\Tests\Unit\I18n;
 
 /*
@@ -10,36 +13,33 @@ namespace Neos\Flow\Tests\Unit\I18n;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
+use Neos\Flow\I18n\AbstractXmlParser;
+use Neos\Flow\I18n\Exception\InvalidXmlFileException;
 use Neos\Flow\Tests\UnitTestCase;
-use Neos\Flow\I18n;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Testcase for the AbstractXmlParser class
  */
-class AbstractXmlParserTest extends UnitTestCase
+final class AbstractXmlParserTest extends UnitTestCase
 {
-    /**
-     * @test
-     */
+    #[Test]
     public function invokesDoParsingFromRootMethodForActualParsing()
     {
         $sampleXmlFilePath = __DIR__ . '/Fixtures/MockCldrData.xml';
 
-        $parser = $this->getAccessibleMock(I18n\AbstractXmlParser::class, ['doParsingFromRoot']);
-        $parser->expects(self::once())->method('doParsingFromRoot');
+        $parser = $this->getAccessibleMock(AbstractXmlParser::class, ['doParsingFromRoot']);
+        $parser->expects($this->once())->method('doParsingFromRoot');
         $parser->getParsedData($sampleXmlFilePath);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function throwsExceptionWhenBadFilenameGiven()
     {
-        $this->expectException(I18n\Exception\InvalidXmlFileException::class);
+        $this->expectException(InvalidXmlFileException::class);
         $mockFilenamePath = 'foo';
 
-        $parser = $this->getAccessibleMock(I18n\AbstractXmlParser::class, ['doParsingFromRoot']);
+        $parser = $this->getAccessibleMock(AbstractXmlParser::class, ['doParsingFromRoot']);
         $parser->getParsedData($mockFilenamePath);
     }
 }

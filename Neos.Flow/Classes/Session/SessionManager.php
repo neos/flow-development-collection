@@ -1,5 +1,7 @@
 <?php
+
 declare(strict_types=1);
+
 namespace Neos\Flow\Session;
 
 /*
@@ -27,17 +29,21 @@ use Neos\Flow\Utility\Algorithms;
 class SessionManager implements SessionManagerInterface
 {
     protected ?SessionInterface $currentSession = null;
+
+    /**
+     * @var array<string,Session>
+     */
     protected array $remoteSessions = [];
 
     public function __construct(
-        readonly protected SessionMetaDataStore $sessionMetaDataStore,
-        readonly protected SessionKeyValueStore $sessionKeyValueStore,
+        protected readonly SessionMetaDataStore $sessionMetaDataStore,
+        protected readonly SessionKeyValueStore $sessionKeyValueStore,
         #[Flow\InjectConfiguration(path: "session.garbageCollection.probability")]
-        readonly protected float $garbageCollectionProbability,
+        protected readonly float $garbageCollectionProbability,
         #[Flow\InjectConfiguration(path: "session.garbageCollection.maximumPerRun")]
-        readonly protected int $garbageCollectionMaximumPerRun,
+        protected readonly int $garbageCollectionMaximumPerRun,
         #[Flow\InjectConfiguration(path: "session.inactivityTimeout")]
-        readonly protected int $inactivityTimeout,
+        protected readonly int $inactivityTimeout,
     ) {
     }
 
@@ -139,7 +145,7 @@ class SessionManager implements SessionManagerInterface
      * Returns all sessions which are tagged by the specified tag.
      *
      * @param string $tag A valid Cache Frontend tag
-     * @return array A collection of Session objects or an empty array if tag did not match
+     * @return array<SessionInterface> A collection of Session objects or an empty array if tag did not match
      * @throws NotSupportedByBackendException
      * @api
      */
@@ -195,10 +201,8 @@ class SessionManager implements SessionManagerInterface
         foreach ($this->sessionMetaDataStore->retrieveAll() as $sessionMetadata) {
             $lastActivitySecondsAgo = $now - $sessionMetadata->lastActivityTimestamp;
             if ($lastActivitySecondsAgo > $this->inactivityTimeout) {
-                if ($sessionMetadata->lastActivityTimestamp !== null) {
-                    $this->sessionKeyValueStore->remove($sessionMetadata->storageIdentifier);
-                    $sessionRemovalCount++;
-                }
+                $this->sessionKeyValueStore->remove($sessionMetadata->storageIdentifier);
+                $sessionRemovalCount++;
                 $this->sessionMetaDataStore->remove($sessionMetadata);
             }
             if ($sessionRemovalCount >= $this->garbageCollectionMaximumPerRun) {
@@ -223,7 +227,7 @@ class SessionManager implements SessionManagerInterface
     public function shutdownObject(): void
     {
         if (str_contains((string)$this->garbageCollectionProbability, '.')) {
-            $decimals = strlen(strrchr((string)$this->garbageCollectionProbability, '.')) - 1;
+            $decimals = strlen(strrchr((string)$this->garbageCollectionProbability, '.') ?: '') - 1;
             $factor = $decimals * 10;
         } else {
             $factor = 1;

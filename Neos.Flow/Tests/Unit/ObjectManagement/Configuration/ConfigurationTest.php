@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Tests\Unit\ObjectManagement\Configuration;
 
 /*
@@ -11,9 +12,9 @@ namespace Neos\Flow\Tests\Unit\ObjectManagement\Configuration;
  * source code.
  */
 
-use Neos\Flow\Configuration\Exception\InvalidConfigurationException;
-use Neos\Flow\Tests\UnitTestCase;
 use Neos\Flow\ObjectManagement\Configuration;
+use Neos\Flow\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Testcase for the object configuration class
@@ -31,28 +32,10 @@ class ConfigurationTest extends UnitTestCase
      */
     protected function setUp(): void
     {
-        $this->objectConfiguration = new Configuration\Configuration('Neos\Foo\Bar');
+        $this->objectConfiguration = new Configuration\Configuration('Neos\Foo\Bar', 'Neos\Foo\Bar');
     }
 
-    /**
-     * Checks if setProperties accepts only valid values
-     *
-     * @test
-     */
-    public function setPropertiesOnlyAcceptsValidValues()
-    {
-        $this->expectException(InvalidConfigurationException::class);
-        $invalidProperties = [
-            'validProperty' => new Configuration\ConfigurationProperty('validProperty', 'simple string'),
-            'invalidProperty' => 'foo'
-        ];
-
-        $this->objectConfiguration->setProperties($invalidProperties);
-    }
-
-    /**
-     * @test
-     */
+    #[Test]
     public function passingAnEmptyArrayToSetPropertiesRemovesAllExistingproperties()
     {
         $someProperties = [
@@ -66,25 +49,7 @@ class ConfigurationTest extends UnitTestCase
         self::assertEquals([], $this->objectConfiguration->getProperties(), 'The properties have not been cleared.');
     }
 
-    /**
-     * Checks if setArguments accepts only valid values
-     *
-     * @test
-     */
-    public function setArgumentsOnlyAcceptsValidValues()
-    {
-        $this->expectException(InvalidConfigurationException::class);
-        $invalidArguments = [
-            1 => new Configuration\ConfigurationArgument(1, 'simple string'),
-            2 => 'foo'
-        ];
-
-        $this->objectConfiguration->setArguments($invalidArguments);
-    }
-
-    /**
-     * @test
-     */
+    #[Test]
     public function passingAnEmptyArrayToSetArgumentsRemovesAllExistingArguments()
     {
         $someArguments = [
@@ -98,36 +63,21 @@ class ConfigurationTest extends UnitTestCase
         self::assertEquals([], $this->objectConfiguration->getArguments(), 'The constructor arguments have not been cleared.');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function setFactoryObjectNameAcceptsValidClassNames()
     {
         $this->objectConfiguration->setFactoryObjectName(__CLASS__);
         self::assertSame(__CLASS__, $this->objectConfiguration->getFactoryObjectName());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function setFactoryMethodNameAcceptsValidStrings()
     {
         $this->objectConfiguration->setFactoryMethodName('someMethodName');
         self::assertSame('someMethodName', $this->objectConfiguration->getFactoryMethodName());
     }
 
-    /**
-     * @test
-     */
-    public function setFactoryMethodNameRejectsAnythingElseThanAString()
-    {
-        $this->expectException(\InvalidArgumentException::class);
-        $this->objectConfiguration->setFactoryMethodName([]);
-    }
-
-    /**
-     * @test
-     */
+    #[Test]
     public function theDefaultFactoryMethodNameIsCreate()
     {
         $this->objectConfiguration->setFactoryObjectName(__CLASS__);

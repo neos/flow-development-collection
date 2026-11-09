@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Tests\Unit\Session\Data;
 
 /*
@@ -15,13 +16,15 @@ use Neos\Flow\Session\Data\SessionIdentifier;
 use Neos\Flow\Session\Data\SessionMetaData;
 use Neos\Flow\Session\Data\StorageIdentifier;
 use Neos\Flow\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Unit tests for the Flow SessionDataStore implementation
  */
 class SessionMetaDataTest extends UnitTestCase
 {
-    public function isSameDataProvider(): \Generator
+    public static function isSameDataProvider(): \Generator
     {
         yield "same" => [
             new SessionMetaData(SessionIdentifier::createFromString('foo'), StorageIdentifier::createFromString('bar'), 123, ['baz']),
@@ -66,17 +69,15 @@ class SessionMetaDataTest extends UnitTestCase
         ];
     }
 
-    /**
-     * @test
-     * @dataProvider isSameDataProvider
-     */
+    #[DataProvider('isSameDataProvider')]
+    #[Test]
     public function isSameWorks(SessionMetaData $a, SessionMetaData $b, bool $expectSame): void
     {
         $this->assertEquals($expectSame, $a->isSame($b));
     }
 
 
-    public function ageDifferenceDataProvider(): \Generator
+    public static function ageDifferenceDataProvider(): \Generator
     {
         yield "same" => [
             new SessionMetaData(SessionIdentifier::createFromString('foo'), StorageIdentifier::createFromString('bar'), 999, ['baz']),
@@ -91,10 +92,8 @@ class SessionMetaDataTest extends UnitTestCase
         ];
     }
 
-    /**
-     * @test
-     * @dataProvider ageDifferenceDataProvider
-     */
+    #[DataProvider('ageDifferenceDataProvider')]
+    #[Test]
     public function ageDifferenceWorks(SessionMetaData $a, SessionMetaData $b, int $expectedAgeDifference): void
     {
         $this->assertEquals($expectedAgeDifference, $a->ageDifference($b));

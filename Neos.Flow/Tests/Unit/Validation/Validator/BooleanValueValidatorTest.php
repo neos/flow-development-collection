@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Neos\Flow\Tests\Unit\Validation\Validator;
 
 /*
@@ -10,70 +13,56 @@ namespace Neos\Flow\Tests\Unit\Validation\Validator;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
 use Neos\Flow\Validation\Validator\BooleanValueValidator;
+use PHPUnit\Framework\Attributes\Test;
 
 require_once('AbstractValidatorTestcase.php');
 
 /**
  * Testcase for the true validator
  */
-class BooleanValueValidatorTest extends AbstractValidatorTestcase
+final class BooleanValueValidatorTest extends AbstractValidatorTestcase
 {
     protected $validatorClassName = BooleanValueValidator::class;
 
-    /**
-     * @test
-     */
+    #[Test]
     public function validateReturnsNoErrorIfTheGivenValueIsAnEmptyString()
     {
         self::assertFalse($this->validator->validate('')->hasErrors());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function validateReturnsNoErrorIfTheGivenValueIsNull()
     {
         self::assertFalse($this->validator->validate(null)->hasErrors());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function validateReturnsNoErrorIfTheGivenValueIsTrueAndNoOptionIsSet()
     {
         self::assertFalse($this->validator->validate(true)->hasErrors());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function validateReturnsNoErrorIfTheGivenValueIsFalseAndExpectedValueIsFalse()
     {
         $this->validatorOptions(['expectedValue' => false]);
         self::assertFalse($this->validator->validate(false)->hasErrors());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function validateReturnsErrorIfTheGivenValueIsAString()
     {
         self::assertTrue($this->validator->validate('1')->hasErrors());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function validateReturnsErrorIfTheGivenValueIsFalse()
     {
         self::assertTrue($this->validator->validate(false)->hasErrors());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function validateReturnsErrorIfTheGivenValueIsAnInteger()
     {
         self::assertTrue($this->validator->validate(1)->hasErrors());

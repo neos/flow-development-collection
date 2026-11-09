@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Tests\Unit\Mvc\Routing;
 
 /*
@@ -17,15 +18,14 @@ use Neos\Flow\Mvc\Routing\Route;
 use Neos\Flow\Mvc\Routing\Routes;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Testcase for the MVC Web Routing Routes Class
  */
 class ConfigurationRoutesProviderTest extends UnitTestCase
 {
-    /**
-     * @test
-     */
+    #[Test]
     public function configurationManagerIsNotCalledInConstructor(): void
     {
         $mockObjectManager = $this->createMock(ObjectManagerInterface::class);
@@ -35,9 +35,7 @@ class ConfigurationRoutesProviderTest extends UnitTestCase
         $this->assertInstanceOf(Routing\ConfigurationRoutesProvider::class, $configurationRoutesProvider);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function configurationFomConfigurationManagerIsHandled(): void
     {
         $configuration = [
@@ -78,9 +76,7 @@ class ConfigurationRoutesProviderTest extends UnitTestCase
         $this->assertEquals($expectedRoutes, $configurationRoutesProvider->getRoutes());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function configuredProvidersAreCalledToGenerateSubroutes(): void
     {
         $configuration = [

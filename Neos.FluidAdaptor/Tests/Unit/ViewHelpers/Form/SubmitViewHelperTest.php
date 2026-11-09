@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Neos\FluidAdaptor\Tests\Unit\ViewHelpers\Form;
 
 /*
@@ -10,13 +13,17 @@ namespace Neos\FluidAdaptor\Tests\Unit\ViewHelpers\Form;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+use Neos\FluidAdaptor\Tests\Unit\ViewHelpers\ViewHelperBaseTestcase;
+use Neos\FluidAdaptor\ViewHelpers\Form\SubmitViewHelper;
+use PHPUnit\Framework\Attributes\Test;
+use TYPO3Fluid\Fluid\Core\ViewHelper\TagBuilder;
 
-require_once(__DIR__ . '/FormFieldViewHelperBaseTestcase.php');
+require_once(__DIR__ . '/../ViewHelperBaseTestcase.php');
 
 /**
  * Test for the "Submit" Form view helper
  */
-class SubmitViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\Form\FormFieldViewHelperBaseTestcase
+final class SubmitViewHelperTest extends ViewHelperBaseTestcase
 {
     /**
      * @var \Neos\FluidAdaptor\ViewHelpers\Form\SubmitViewHelper
@@ -26,24 +33,25 @@ class SubmitViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\For
     protected function setUp(): void
     {
         parent::setUp();
-        $this->viewHelper = new \Neos\FluidAdaptor\ViewHelpers\Form\SubmitViewHelper();
+        $this->viewHelper = new SubmitViewHelper();
         $this->arguments['name'] = '';
         $this->injectDependenciesIntoViewHelper($this->viewHelper);
         $this->viewHelper->initializeArguments();
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function renderCorrectlySetsTagNameAndDefaultAttributes()
     {
-        $mockTagBuilder = $this->getMockBuilder(\TYPO3Fluid\Fluid\Core\ViewHelper\TagBuilder::class)->setMethods(['setTagName', 'addAttribute'])->getMock();
-        $mockTagBuilder->expects(self::atLeastOnce())->method('setTagName')->with('input');
-        $mockTagBuilder->expects(self::atLeastOnce())->method('addAttribute')->withConsecutive(
-            ['type', 'submit'],
-            [self::anything()],
-            [self::anything()]
-        );
+        $mockTagBuilder = $this->getMockBuilder(TagBuilder::class)->onlyMethods(['setTagName', 'addAttribute'])->getMock();
+        $mockTagBuilder->expects($this->atLeastOnce())->method('setTagName')->with('input');
+        $matcher = self::atLeastOnce();
+        $mockTagBuilder->expects($matcher)->method('addAttribute')->willReturnCallback(function (...$parameters) use ($matcher) {
+            if ($matcher->numberOfInvocations() === 1) {
+                $this->assertSame('type', $parameters[0]);
+                $this->assertSame('submit', $parameters[1]);
+            }
+            // Invocations 2 and 3 (name/value attributes from the form context) accept any value.
+        });
 
         $this->viewHelper->injectTagBuilder($mockTagBuilder);
 

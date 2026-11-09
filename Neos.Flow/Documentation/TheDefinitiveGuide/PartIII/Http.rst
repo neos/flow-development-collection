@@ -357,7 +357,7 @@ Arguments
 
 The ``ActionRequest`` features a few methods for retrieving and setting arguments. These arguments are the result of merging any
 GET, POST and PUT arguments and even the information about uploaded files. Note that these arguments have already been processed
-by the validation and property mapping layerns and thus are suitable for being used in controller actions. If you, however, need to
+by the validation and property mapping layers and thus are suitable for being used in controller actions. If you, however, need to
 access the raw data, you can access these via the ``getCookieParams()``, ``getQueryParams()``, ``getUploadedFiles()`` and ``getParsedBody()``
 methods of the ``HttpRequest``  respectively.
 
@@ -403,7 +403,7 @@ Additionally Flow respects the ``X-HTTP-Method`` respectively ``X-HTTP-Method-Ov
 Trusted Proxies
 ~~~~~~~~~~~~~~~
 
-If your server is behind a reverse proxy or a CDN, some of the request information like the the host name, the port,
+If your server is behind a reverse proxy or a CDN, some of the request information like the host name, the port,
 the protocol and the original client IP address are provided via additional request headers.
 Since those headers can also easily be sent by an adversary, possibly bypassing security measurements, you should make
 sure that those headers are only accepted from trusted proxies.

@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Validation\Validator;
 
 /*
@@ -12,8 +13,8 @@ namespace Neos\Flow\Validation\Validator;
  */
 
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\I18n\Cldr\Reader\DatesReader;
 use Neos\Flow\I18n;
+use Neos\Flow\I18n\Cldr\Reader\DatesReader;
 
 /**
  * Validator for DateTime objects.
@@ -23,7 +24,7 @@ use Neos\Flow\I18n;
 class DateTimeValidator extends AbstractValidator
 {
     /**
-     * @var array
+     * @var array<string,mixed>
      */
     protected $supportedOptions = [
         'locale' => [null, 'The locale to use for date parsing', 'string|Locale'],

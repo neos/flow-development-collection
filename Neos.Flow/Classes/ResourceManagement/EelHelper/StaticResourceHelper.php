@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Neos\Flow\ResourceManagement\EelHelper;
@@ -13,10 +14,10 @@ namespace Neos\Flow\ResourceManagement\EelHelper;
  * source code.
  */
 
-use Neos\Flow\Annotations as Flow;
 use Neos\Eel\ProtectedContextAwareInterface;
-use Neos\Flow\ResourceManagement\ResourceManager;
+use Neos\Flow\Annotations as Flow;
 use Neos\Flow\I18n\Service as I18nService;
+use Neos\Flow\ResourceManagement\ResourceManager;
 
 class StaticResourceHelper implements ProtectedContextAwareInterface
 {
@@ -73,7 +74,7 @@ class StaticResourceHelper implements ProtectedContextAwareInterface
         $resourcePath = sprintf('resource://%s/%s', $packageKey, $pathAndFilename);
         if ($localize === true) {
             $localizedResourcePathData = $this->i18nService->getLocalizedFilename($resourcePath);
-            $resourcePath = $localizedResourcePathData[0] ?? $resourcePath;
+            $resourcePath = $localizedResourcePathData[0];
         }
         return $resourcePath;
     }

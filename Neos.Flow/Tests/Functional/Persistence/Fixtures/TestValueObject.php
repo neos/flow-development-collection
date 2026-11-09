@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Neos\Flow\Tests\Functional\Persistence\Fixtures;
@@ -29,9 +30,6 @@ class TestValueObject
      */
     protected $value;
 
-    /**
-     * @param string $value The string value of this value object
-     */
     public function __construct($value)
     {
         $this->value = $value;

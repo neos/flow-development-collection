@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Security;
 
 /*
@@ -35,7 +36,7 @@ class DummyContext extends Context
 
     /**
      * Array of configured tokens (might have request patterns)
-     * @var array
+     * @var array<TokenInterface>
      */
     protected $tokens = [];
 
@@ -86,7 +87,7 @@ class DummyContext extends Context
      * Sets the Authentication\Tokens of the security context which should be active.
      *
      * @param TokenInterface[] $tokens Array of set tokens
-     * @return array
+     * @return array<TokenInterface>
      */
     public function setAuthenticationTokens(array $tokens)
     {
@@ -110,7 +111,7 @@ class DummyContext extends Context
      * active for the current request and of the given type. If a token has a request pattern that cannot match
      * against the current request it is determined as not active.
      *
-     * @param string $className The class name
+     * @param class-string<TokenInterface> $className The class name
      * @return TokenInterface[] Array of set tokens of the specified type
      */
     public function getAuthenticationTokensOfType($className)
@@ -132,7 +133,7 @@ class DummyContext extends Context
      *
      * The "Neos.Flow:Everybody" roles is always returned.
      *
-     * @return Role[]
+     * @return Role[]|null
      */
     public function getRoles()
     {
@@ -185,7 +186,7 @@ class DummyContext extends Context
      * Returns the current CSRF protection token. A new one is created when needed, depending on the  configured CSRF
      * protection strategy.
      *
-     * @return string
+     * @return string|null
      */
     public function getCsrfProtectionToken()
     {
@@ -231,7 +232,7 @@ class DummyContext extends Context
      * Returns the request, that has been stored for later resuming after it
      * has been intercepted by a security exception, NULL if there is none.
      *
-     * @return ActionRequest
+     * @return ActionRequest|null
      */
     public function getInterceptedRequest()
     {

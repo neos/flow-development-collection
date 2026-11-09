@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Neos\Flow\Tests\Functional\Http\Client;
 
 /*
@@ -10,13 +13,13 @@ namespace Neos\Flow\Tests\Functional\Http\Client;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
 use Neos\Flow\Tests\FunctionalTestCase;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Functional tests for the HTTP client internal request engine
  */
-class InternalRequestEngineTest extends FunctionalTestCase
+final class InternalRequestEngineTest extends FunctionalTestCase
 {
     /**
      * @var boolean
@@ -48,9 +51,8 @@ class InternalRequestEngineTest extends FunctionalTestCase
      * making sure that the tokens match the request pattern of the request.
      *
      * Bug #37377
-     *
-     * @test
      */
+    #[Test]
     public function securityContextContainsTokens()
     {
         $response = $this->browser->request('http://localhost/test/security/restricted');

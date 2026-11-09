@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Neos\Flow\Security\Authentication\Token;
@@ -30,7 +31,7 @@ class BearerToken extends AbstractToken implements SessionlessTokenInterface
 {
     /**
      * The password credentials
-     * @var array
+     * @var array{bearer: string}
      * @Flow\Transient
      */
     protected $credentials = ['bearer' => ''];

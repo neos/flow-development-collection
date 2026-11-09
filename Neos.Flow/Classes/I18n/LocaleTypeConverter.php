@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\I18n;
 
 /*
@@ -43,7 +44,7 @@ class LocaleTypeConverter extends AbstractTypeConverter
      *
      * @param string $source the locale string
      * @param string $targetType
-     * @param array $convertedChildProperties
+     * @param array<string,mixed> $convertedChildProperties
      * @param PropertyMappingConfigurationInterface $configuration
      * @return Locale
      * @api

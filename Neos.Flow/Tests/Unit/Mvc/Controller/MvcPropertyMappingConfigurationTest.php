@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Neos\Flow\Tests\Unit\Mvc\Controller;
 
 /*
@@ -10,14 +13,15 @@ namespace Neos\Flow\Tests\Unit\Mvc\Controller;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
 use Neos\Flow\Mvc\Controller\MvcPropertyMappingConfiguration;
 use Neos\Flow\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Testcase for the MVC Controller Argument
  */
-class MvcPropertyMappingConfigurationTest extends UnitTestCase
+final class MvcPropertyMappingConfigurationTest extends UnitTestCase
 {
     /**
      * @var MvcPropertyMappingConfiguration
@@ -35,7 +39,7 @@ class MvcPropertyMappingConfigurationTest extends UnitTestCase
     /**
      * @return array Signature: $methodToTestForFluentInterface [, $argumentsForMethod = array() ]
      */
-    public function fluentInterfaceMethodsDataProvider()
+    public static function fluentInterfaceMethodsDataProvider()
     {
         return [
             ['allowCreationForSubProperty', ['some.property.path']],
@@ -45,10 +49,8 @@ class MvcPropertyMappingConfigurationTest extends UnitTestCase
         ];
     }
 
-    /**
-     * @test
-     * @dataProvider fluentInterfaceMethodsDataProvider
-     */
+    #[DataProvider('fluentInterfaceMethodsDataProvider')]
+    #[Test]
     public function respectiveMethodsProvideFluentInterface($methodToTestForFluentInterface, array $argumentsForMethod = [])
     {
         $actualResult = call_user_func_array([$this->mvcPropertyMappingConfiguration, $methodToTestForFluentInterface], $argumentsForMethod);

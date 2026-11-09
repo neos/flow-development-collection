@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Neos\Flow\Tests\Functional\Configuration;
 
 /*
@@ -10,44 +13,36 @@ namespace Neos\Flow\Tests\Functional\Configuration;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Core\Bootstrap;
-use Neos\Flow\Tests\FunctionalTestCase;
 use Neos\Flow\Package\PackageManager;
-use Neos\Utility\SchemaValidator;
+use Neos\Flow\Tests\FunctionalTestCase;
 use Neos\Utility\Files;
+use Neos\Utility\SchemaValidator;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use Symfony\Component\Yaml\Yaml;
 
 /**
  * Testcase for the Flow Validation Framework
  *
+ * Not final: Neos.Neos extends this test case to validate its own schemas.
  */
 class SchemaValidationTest extends FunctionalTestCase
 {
-    /**
-     * @var array<string>
-     */
-    protected $schemaPackageKeys = ['Neos.Flow', 'Neos.FluidAdaptor', 'Neos.Eel', 'Neos.Kickstart'];
+    protected static array $schemaPackageKeys = ['Neos.Flow', 'Neos.FluidAdaptor', 'Neos.Eel', 'Neos.Kickstart'];
 
     /**
      * The schema-schema yaml
-     *
-     * @var string
      */
-    protected $schemaSchemaResource = 'resource://Neos.Flow/Private/Schema/Schema.schema.yaml';
+    protected string $schemaSchemaResource = 'resource://Neos.Flow/Private/Schema/Schema.schema.yaml';
 
     /**
      * The parsed schema-schema
-     *
-     * @var array
      */
-    protected $schemaSchema;
+    protected array $schemaSchema;
 
-    /**
-     * @var SchemaValidator
-     */
-    protected $schemaValidator;
+    protected SchemaValidator $schemaValidator;
 
     protected function setUp(): void
     {
@@ -56,19 +51,17 @@ class SchemaValidationTest extends FunctionalTestCase
         $this->schemaSchema = Yaml::parseFile($this->schemaSchemaResource);
     }
 
-    /**
-     * @return array
-     */
-    public function schemaFilesAreValidDataProvider()
+    public static function schemaFilesAreValidDataProvider(): array
     {
         $bootstrap = Bootstrap::$staticObjectManager->get(Bootstrap::class);
         $objectManager = $bootstrap->getObjectManager();
         $packageManager = $objectManager->get(PackageManager::class);
 
         $activePackages = $packageManager->getAvailablePackages();
+        $schemaPackages = [];
         foreach ($activePackages as $package) {
             $packageKey = $package->getPackageKey();
-            if (in_array($packageKey, $this->schemaPackageKeys)) {
+            if (in_array($packageKey, static::$schemaPackageKeys, true)) {
                 $schemaPackages[] = $package;
             }
         }
@@ -88,11 +81,10 @@ class SchemaValidationTest extends FunctionalTestCase
 
     /**
      * Validate that all the given files are valid schemas
-     *
-     * @test
-     * @dataProvider schemaFilesAreValidDataProvider
      */
-    public function schemaFilesAreValid($schemaFile)
+    #[DataProvider('schemaFilesAreValidDataProvider')]
+    #[Test]
+    public function schemaFilesAreValid(string $schemaFile): void
     {
         $schema = Yaml::parseFile($schemaFile);
         $result = $this->schemaValidator->validate($schema, $this->schemaSchema);

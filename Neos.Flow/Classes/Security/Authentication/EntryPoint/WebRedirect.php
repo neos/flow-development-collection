@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Security\Authentication\EntryPoint;
 
 /*
@@ -11,6 +12,7 @@ namespace Neos\Flow\Security\Authentication\EntryPoint;
  * source code.
  */
 
+use GuzzleHttp\Psr7\Utils;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Http\BaseUriProvider;
 use Neos\Flow\Mvc\ActionRequest;
@@ -18,7 +20,6 @@ use Neos\Flow\Mvc\Routing\UriBuilder;
 use Neos\Flow\Security\Exception\MissingConfigurationException;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use GuzzleHttp\Psr7\Utils;
 
 /**
  * An authentication entry point, that redirects to another webpage.
@@ -75,7 +76,7 @@ class WebRedirect extends AbstractEntryPoint
     }
 
     /**
-     * @param array $routeValues
+     * @param array<string,mixed> $routeValues
      * @param ServerRequestInterface $request
      * @return string
      * @throws \Neos\Flow\Mvc\Routing\Exception\MissingActionNameException
@@ -96,7 +97,7 @@ class WebRedirect extends AbstractEntryPoint
      * Returns the entry $key from the array $routeValues removing the original array item.
      * If $key does not exist, NULL is returned.
      *
-     * @param array $routeValues
+     * @param array<string,mixed> $routeValues
      * @param string $key
      * @return mixed the specified route value or NULL if it is not set
      */

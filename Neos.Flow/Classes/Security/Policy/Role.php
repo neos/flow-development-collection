@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Neos\Flow\Security\Policy;
@@ -14,6 +15,7 @@ namespace Neos\Flow\Security\Policy;
  */
 
 use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Security\Authorization\Privilege\Parameter\PrivilegeParameterInterface;
 use Neos\Flow\Security\Authorization\Privilege\PrivilegeInterface;
 
 /**
@@ -246,7 +248,7 @@ class Role
 
     /**
      * @param string $privilegeTargetIdentifier
-     * @param array $privilegeParameters
+     * @param array<PrivilegeParameterInterface> $privilegeParameters
      * @return PrivilegeInterface|null the matching privilege or NULL if no privilege exists for the given constraints
      */
     public function getPrivilegeForTarget(string $privilegeTargetIdentifier, array $privilegeParameters = []): ?PrivilegeInterface

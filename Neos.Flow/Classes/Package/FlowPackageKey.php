@@ -37,7 +37,7 @@ final readonly class FlowPackageKey
         }
     }
 
-    public static function fromString(string $value)
+    public static function fromString(string $value): self
     {
         return new self($value);
     }
@@ -63,6 +63,9 @@ final readonly class FlowPackageKey
      * case version of the composer name / namespace will be used, with backslashes replaced by dots.
      *
      * Else the composer name will be used with the slash replaced by a dot
+     *
+     * // @todo replace with ComposerManifest array shape / object from ComposerUtility
+     * @param array<string,mixed> $manifest
      */
     public static function deriveFromManifestOrPath(array $manifest, string $packagePath): self
     {
@@ -77,6 +80,7 @@ final readonly class FlowPackageKey
         $type = $manifest['type'] ?? null;
         if (isset($manifest['autoload']['psr-0']) && is_array($manifest['autoload']['psr-0'])) {
             $namespaces = array_keys($manifest['autoload']['psr-0']);
+            /** @var string $autoloadNamespace */
             $autoloadNamespace = reset($namespaces);
         }
         return self::derivePackageKeyInternal($composerName, $type, $packagePath, $autoloadNamespace);
@@ -110,7 +114,7 @@ final readonly class FlowPackageKey
         }
 
         $packageKey = trim($packageKey, '.');
-        $packageKey = preg_replace('/[^A-Za-z0-9.]/', '', $packageKey);
+        $packageKey = preg_replace('/[^A-Za-z0-9.]/', '', $packageKey) ?: '';
 
         return new self($packageKey);
     }

@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Neos\Cache\Tests\Functional\Backend;
 
 include_once(__DIR__ . '/../../BaseTestCase.php');
@@ -13,11 +16,13 @@ include_once(__DIR__ . '/../../BaseTestCase.php');
  * source code.
  */
 
-use Neos\Cache\Backend\BackendInterface;
 use Neos\Cache\Backend\PdoBackend;
 use Neos\Cache\EnvironmentConfiguration;
-use Neos\Cache\Tests\BaseTestCase;
 use Neos\Cache\Frontend\FrontendInterface;
+use Neos\Cache\Tests\BaseTestCase;
+use PHPUnit\Framework\Attributes\RequiresPhpExtension;
+use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\MockObject\MockObject;
 
 /**
  * Testcase for the PDO cache backend
@@ -25,20 +30,23 @@ use Neos\Cache\Frontend\FrontendInterface;
  * These tests use actual database servers and will place and remove keys in the db!
  * Since all keys have the 'TestCache:' prefix, running the tests should have
  * no side effects on non-related cache entries.
- *
- * @requires extension pdo
  */
-class PdoBackendTest extends BaseTestCase
+#[RequiresPhpExtension('pdo')]
+final class PdoBackendTest extends BaseTestCase
 {
     /**
      * @var PdoBackend[]
      */
-    private $backends = [];
+    private array $backends = [];
 
-    /**
-     * @var \PHPUnit\Framework\MockObject\MockObject|FrontendInterface
-     */
-    private $cache;
+    private FrontendInterface|MockObject $cache;
+
+    protected function setUp(): void
+    {
+        $this->cache = $this->createMock(FrontendInterface::class);
+        $this->cache->method('getIdentifier')->willReturn('TestCache');
+        $this->setupBackends();
+    }
 
     protected function tearDown(): void
     {
@@ -47,49 +55,39 @@ class PdoBackendTest extends BaseTestCase
         }
     }
 
-    public function backendsToTest(): array
+    #[Test]
+    public function setAddsCacheEntry(): void
     {
-        $this->cache = $this->createMock(FrontendInterface::class);
-        $this->cache->method('getIdentifier')->willReturn('TestCache');
-        $this->setupBackends();
-        return $this->backends;
-    }
+        foreach ($this->backends as $backend) {
+            $backend->flush();
 
-    /**
-     * @test
-     * @dataProvider backendsToTest
-     */
-    public function setAddsCacheEntry(BackendInterface $backend): void
-    {
-        $backend->flush();
-
-        // use data that contains binary junk
-        $data = random_bytes(2048);
-        $backend->set('some_entry', $data);
-        self::assertEquals($data, $backend->get('some_entry'));
-    }
-
-    /**
-     * @test
-     * @dataProvider backendsToTest
-     */
-    public function cacheEntriesCanBeIterated(BackendInterface $backend): void
-    {
-        $backend->flush();
-
-        // use data that contains binary junk
-        $data = random_bytes(128);
-        $backend->set('first_entry', $data);
-        $backend->set('second_entry', $data);
-        $backend->set('third_entry', $data);
-
-        $entries = 0;
-        foreach ($backend as $entry) {
-            self::assertEquals($data, $entry);
-            $entries++;
+            // use data that contains binary junk
+            $data = random_bytes(2048);
+            $backend->set('some_entry', $data);
+            self::assertEquals($data, $backend->get('some_entry'));
         }
+    }
 
-        self::assertEquals(3, $entries);
+    #[Test]
+    public function cacheEntriesCanBeIterated(): void
+    {
+        foreach ($this->backends as $backend) {
+            $backend->flush();
+
+            // use data that contains binary junk
+            $data = random_bytes(128);
+            $backend->set('first_entry', $data);
+            $backend->set('second_entry', $data);
+            $backend->set('third_entry', $data);
+
+            $entries = 0;
+            foreach ($backend as $entry) {
+                self::assertEquals($data, $entry);
+                $entries++;
+            }
+
+            self::assertSame(3, $entries);
+        }
     }
 
     private function setupBackends(): void
@@ -105,9 +103,8 @@ class PdoBackendTest extends BaseTestCase
             $backend->setup();
             $backend->setCache($this->cache);
             $backend->flush();
-            $this->backends['sqlite'] = [$backend];
-        } catch (\Throwable $t) {
-            $this->addWarning('SQLite DB is not reachable: ' . $t->getMessage());
+            $this->backends['sqlite'] = $backend;
+        } catch (\Throwable) {
         }
 
         try {
@@ -123,9 +120,8 @@ class PdoBackendTest extends BaseTestCase
             $backend->setup();
             $backend->setCache($this->cache);
             $backend->flush();
-            $this->backends['mysql'] = [$backend];
-        } catch (\Throwable $t) {
-            $this->addWarning('MySQL DB server is not reachable: ' . $t->getMessage());
+            $this->backends['mysql'] = $backend;
+        } catch (\Throwable) {
         }
 
         try {
@@ -141,9 +137,8 @@ class PdoBackendTest extends BaseTestCase
             $backend->setup();
             $backend->setCache($this->cache);
             $backend->flush();
-            $this->backends['pgsql'] = [$backend];
-        } catch (\Throwable $t) {
-            $this->addWarning('PostgreSQL DB server is not reachable: ' . $t->getMessage());
+            $this->backends['pgsql'] = $backend;
+        } catch (\Throwable) {
         }
     }
 }

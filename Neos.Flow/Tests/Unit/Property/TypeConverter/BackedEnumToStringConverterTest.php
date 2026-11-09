@@ -21,18 +21,17 @@ use Neos\Flow\Property\TypeConverter\BackedEnumToStringConverter;
 use Neos\Flow\Tests\Unit\Property\TypeConverter\Fixture\ExampleIntBackedEnum;
 use Neos\Flow\Tests\Unit\Property\TypeConverter\Fixture\ExampleStringBackedEnum;
 use PHPUnit\Framework\Assert;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 /**
  * Test case for the BackedEnumToStringConverter
- *
- * @covers \Neos\Flow\Property\TypeConverter\BackedEnumToStringConverter<extended>
  */
+#[CoversClass(BackedEnumToStringConverter::class)]
 class BackedEnumToStringConverterTest extends TestCase
 {
-    /**
-     * @dataProvider canConvertFromProvider
-     */
+    #[DataProvider('canConvertFromProvider')]
     public function testCanConvertFrom(ExampleIntBackedEnum|ExampleStringBackedEnum $source, string $targetType, bool $expectedResult): void
     {
         Assert::assertSame(
@@ -58,9 +57,7 @@ class BackedEnumToStringConverterTest extends TestCase
             'expectedResult' => true,
         ];
     }
-    /**
-     * @dataProvider convertFromProvider
-     */
+    #[DataProvider('convertFromProvider')]
     public function testConvertFrom(ExampleIntBackedEnum|ExampleStringBackedEnum $source, string $targetType, string|int $expectedResult): void
     {
         Assert::assertSame(

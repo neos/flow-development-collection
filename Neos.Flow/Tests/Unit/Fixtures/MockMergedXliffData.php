@@ -1,6 +1,9 @@
 <?php
+
+use Neos\Flow\I18n\Locale;
+
 return [
-    'sourceLocale' => new \Neos\Flow\I18n\Locale('en_US'),
+    'sourceLocale' => new Locale('en_US'),
     'fileIdentifier' => 'foo.po',
     'translationUnits' => [
         'key1' => [

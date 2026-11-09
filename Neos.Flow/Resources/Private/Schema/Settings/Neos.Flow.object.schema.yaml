@@ -18,3 +18,5 @@ properties:
       excludeClassesFromConstructorAutowiring:
         type: array
         items: { type: string, required: true }
+      prototypeAutowiring:
+        type: boolean

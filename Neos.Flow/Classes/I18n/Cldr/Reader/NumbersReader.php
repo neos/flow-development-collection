@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Neos\Flow\I18n\Cldr\Reader;
@@ -13,8 +14,8 @@ namespace Neos\Flow\I18n\Cldr\Reader;
  * source code.
  */
 
-use Neos\Flow\Annotations as Flow;
 use Neos\Cache\Frontend\VariableFrontend;
+use Neos\Flow\Annotations as Flow;
 use Neos\Flow\I18n\Cldr\CldrRepository;
 use Neos\Flow\I18n\Locale;
 
@@ -33,6 +34,19 @@ use Neos\Flow\I18n\Locale;
  * - formatting numbers in other number systems than "latn"
  * - currency symbol substitution is simplified
  *
+ * @phpstan-type ParsedFormat array{
+ *     positivePrefix: string,
+ *     positiveSuffix: string,
+ *     negativePrefix: string,
+ *     negativeSuffix: string,
+ *     multiplier: int,
+ *     minDecimalDigits: int,
+ *     maxDecimalDigits: int,
+ *     minIntegerDigits: int,
+ *     primaryGroupingSize: int,
+ *     secondaryGroupingSize: int,
+ *     rounding: float
+ * }
  * @Flow\Scope("singleton")
  * @see http://www.unicode.org/reports/tr35/#Number_Elements
  * @see http://www.unicode.org/reports/tr35/#Number_Format_Patterns
@@ -43,7 +57,7 @@ class NumbersReader
      * An expression to catch one subformat. One format string can have
      * one or two subformats (positive and negative, separated by semicolon).
      */
-    const PATTERN_MATCH_SUBFORMAT = '/^(.*?)[0-9#\.,]+(.*?)$/';
+    public const PATTERN_MATCH_SUBFORMAT = '/^(.*?)[0-9#\.,]+(.*?)$/';
 
     /**
      * An expression to catch float or decimal number embedded in the format
@@ -51,23 +65,23 @@ class NumbersReader
      * format string looks like '#,##0.05', it means that formatted number
      * should be rounded to the nearest 0.05.
      */
-    const PATTERN_MATCH_ROUNDING = '/([0-9]+(?:\.[0-9]+)?)/';
+    public const PATTERN_MATCH_ROUNDING = '/([0-9]+(?:\.[0-9]+)?)/';
 
     /**
      * Constants for available format types.
      */
-    const FORMAT_TYPE_DECIMAL = 'decimal';
-    const FORMAT_TYPE_PERCENT = 'percent';
-    const FORMAT_TYPE_CURRENCY = 'currency';
+    public const FORMAT_TYPE_DECIMAL = 'decimal';
+    public const FORMAT_TYPE_PERCENT = 'percent';
+    public const FORMAT_TYPE_CURRENCY = 'currency';
 
     /**
      * Constants for available format lengths.
      */
-    const FORMAT_LENGTH_DEFAULT = 'default';
-    const FORMAT_LENGTH_FULL = 'full';
-    const FORMAT_LENGTH_LONG = 'long';
-    const FORMAT_LENGTH_MEDIUM = 'medium';
-    const FORMAT_LENGTH_SHORT = 'short';
+    public const FORMAT_LENGTH_DEFAULT = 'default';
+    public const FORMAT_LENGTH_FULL = 'full';
+    public const FORMAT_LENGTH_LONG = 'long';
+    public const FORMAT_LENGTH_MEDIUM = 'medium';
+    public const FORMAT_LENGTH_SHORT = 'short';
 
     /**
      * @var CldrRepository
@@ -126,7 +140,7 @@ class NumbersReader
      * localized during formatting (eg minus sign, percent etc), or other chars
      * which will be used as-is.
      *
-     * @var array
+     * @var array<string,ParsedFormat>
      */
     protected $parsedFormats;
 
@@ -147,7 +161,7 @@ class NumbersReader
      *     ...
      * );
      *
-     * @var array
+     * @var array<string,array<string,array<string,string>>>
      */
     protected $parsedFormatsIndices;
 
@@ -157,7 +171,7 @@ class NumbersReader
      * Locale identifiers are keys for this array. Values are arrays of symbols,
      * as defined in /ldml/numbers/symbols path in CLDR files.
      *
-     * @var array
+     * @var array<string,array<mixed>>
      */
     protected $localizedSymbols;
 
@@ -218,7 +232,7 @@ class NumbersReader
      * @param Locale $locale
      * @param string $formatType A type of format (one of constant values)
      * @param string $formatLength A length of format (one of constant values)
-     * @return array An array representing parsed format
+     * @return ParsedFormat An array representing parsed format
      * @throws Exception\InvalidFormatLengthException
      * @throws Exception\InvalidFormatTypeException
      * @throws Exception\UnableToFindFormatException When there is no proper format string in CLDR
@@ -245,6 +259,9 @@ class NumbersReader
         }
 
         $model = $this->cldrRepository->getModelForLocale($locale);
+        if (!$model) {
+            throw new \Exception('Missing model for locale ' . $locale, 1744411694);
+        }
         $format = $model->getElement($formatPath);
 
         if (empty($format)) {
@@ -264,6 +281,9 @@ class NumbersReader
     public function getDefaultNumberingSystem(Locale $locale): string
     {
         $model = $this->cldrRepository->getModelForLocale($locale);
+        if (!$model) {
+            throw new \Exception('Missing model for locale '. $locale, 1744411670);
+        }
         $result = $model->findNodesWithinPath('numbers', 'defaultNumberingSystem');
         return $result['defaultNumberingSystem'] ?? 'latn';
     }
@@ -272,7 +292,7 @@ class NumbersReader
      * Returns parsed date or time format string provided as parameter.
      *
      * @param string $format Format string to parse
-     * @return array An array representing parsed format
+     * @return ParsedFormat An array representing parsed format
      * @throws Exception\UnsupportedNumberFormatException
      */
     public function parseCustomFormat(string $format): array
@@ -294,15 +314,19 @@ class NumbersReader
      * Symbols arrays for every requested locale are cached.
      *
      * @param Locale $locale
-     * @return array Symbols array
+     * @return array{decimal: string} Symbols array
      */
     public function getLocalizedSymbolsForLocale(Locale $locale): array
     {
         if (isset($this->localizedSymbols[(string)$locale])) {
+            /** @phpstan-ignore return.type (@todo enforce with extractor) */
             return $this->localizedSymbols[(string)$locale];
         }
 
         $model = $this->cldrRepository->getModelForLocale($locale);
+        if (!$model) {
+            throw new \Exception('missing model for locale ' . $locale, 1744411617);
+        }
         return $this->localizedSymbols[(string)$locale] = $model->getRawArray('numbers/symbols');
     }
 
@@ -343,7 +367,7 @@ class NumbersReader
      * documentation for this class for details what is missing.
      *
      * @param string $format
-     * @return array Parsed format
+     * @return ParsedFormat Parsed format
      * @throws Exception\UnsupportedNumberFormatException When unsupported format characters encountered
      * @see NumbersReader::$parsedFormats
      */
@@ -403,7 +427,7 @@ class NumbersReader
 
         if (preg_match(self::PATTERN_MATCH_ROUNDING, $format, $matches) === 1) {
             $parsedFormat['rounding'] = (float)$matches[1];
-            $format = preg_replace('/[1-9]/', '0', $format);
+            $format = preg_replace('/[1-9]/', '0', $format) ?: '';
         }
 
         if (($positionOfDecimalSeparator = strpos($format, '.')) !== false) {

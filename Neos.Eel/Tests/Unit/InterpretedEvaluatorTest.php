@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Neos\Eel\Tests\Unit;
 
 /*
@@ -17,7 +20,7 @@ use Neos\Eel\InterpretedEvaluator;
 /**
  * Interpreted evaluator test
  */
-class InterpretedEvaluatorTest extends AbstractEvaluatorTest
+final class InterpretedEvaluatorTest extends AbstractEvaluatorTestcase
 {
     /**
      * @return Context

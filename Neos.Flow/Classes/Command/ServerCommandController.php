@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Command;
 
 /*
@@ -24,7 +25,7 @@ class ServerCommandController extends CommandController
 {
     /**
      * @Flow\InjectConfiguration
-     * @var array
+     * @var array<string, mixed>
      */
     protected $settings;
 
@@ -43,6 +44,7 @@ class ServerCommandController extends CommandController
      */
     public function runCommand(string $host = '127.0.0.1', int $port = 8081)
     {
+        /** @phpstan-ignore argument.type    */
         $command = Scripts::buildPhpCommand($this->settings);
 
         $address = sprintf('%s:%s', $host, $port);

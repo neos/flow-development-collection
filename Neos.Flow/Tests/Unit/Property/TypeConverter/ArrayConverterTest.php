@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Neos\Flow\Tests\Unit\Property\TypeConverter;
 
 /*
@@ -10,16 +13,17 @@ namespace Neos\Flow\Tests\Unit\Property\TypeConverter;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
 use Neos\Flow\Property\PropertyMappingConfiguration;
 use Neos\Flow\Property\TypeConverter\ArrayConverter;
-use Neos\Flow\Tests\UnitTestCase;
 use Neos\Flow\ResourceManagement\PersistentResource;
+use Neos\Flow\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Testcase for the Array converter
  */
-class ArrayConverterTest extends UnitTestCase
+final class ArrayConverterTest extends UnitTestCase
 {
     /**
      * @var ArrayConverter
@@ -31,9 +35,7 @@ class ArrayConverterTest extends UnitTestCase
         $this->converter = new ArrayConverter();
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function checkMetadata()
     {
         self::assertEquals(['array', 'string', PersistentResource::class], $this->converter->getSupportedSourceTypes(), 'Source types do not match');
@@ -41,29 +43,23 @@ class ArrayConverterTest extends UnitTestCase
         self::assertEquals(1, $this->converter->getPriority(), 'Priority does not match');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function convertFromDoesNotModifyTheSourceArray()
     {
         $sourceArray = ['Foo' => 'Bar', 'Baz'];
         self::assertEquals($sourceArray, $this->converter->convertFrom($sourceArray, 'array'));
     }
 
-    public function stringToArrayDataProvider()
+    public static function stringToArrayDataProvider(): \Iterator
     {
-        return [
-            ['Foo,Bar,Baz', ['Foo', 'Bar', 'Baz'], []],
-            ['Foo, Bar, Baz', ['Foo', 'Bar', 'Baz'], [ArrayConverter::CONFIGURATION_STRING_DELIMITER => ', ']],
-            ['', [], []],
-            ['[1,2,"foo"]', [1,2, 'foo'], [ArrayConverter::CONFIGURATION_STRING_FORMAT => ArrayConverter::STRING_FORMAT_JSON]]
-        ];
+        yield ['Foo,Bar,Baz', ['Foo', 'Bar', 'Baz'], []];
+        yield ['Foo, Bar, Baz', ['Foo', 'Bar', 'Baz'], [ArrayConverter::CONFIGURATION_STRING_DELIMITER => ', ']];
+        yield ['', [], []];
+        yield ['[1,2,"foo"]', [1,2, 'foo'], [ArrayConverter::CONFIGURATION_STRING_FORMAT => ArrayConverter::STRING_FORMAT_JSON]];
     }
 
-    /**
-     * @test
-     * @dataProvider stringToArrayDataProvider
-     */
+    #[DataProvider('stringToArrayDataProvider')]
+    #[Test]
     public function canConvertFromStringToArray($source, $expectedResult, $mappingConfiguration)
     {
         // Create a map of arguments to return values.
@@ -74,9 +70,8 @@ class ArrayConverterTest extends UnitTestCase
 
         $propertyMappingConfiguration = $this->createMock(PropertyMappingConfiguration::class);
         $propertyMappingConfiguration
-            ->expects(self::any())
             ->method('getConfigurationValue')
-            ->will($this->returnValueMap($configurationValueMap));
+            ->willReturnMap($configurationValueMap);
 
         self::assertEquals($expectedResult, $this->converter->convertFrom($source, 'array', [], $propertyMappingConfiguration));
     }

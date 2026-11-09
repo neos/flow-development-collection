@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Neos\Flow\Cache\Tests\Unit\Backend;
 
 include_once(__DIR__ . '/../../BaseTestCase.php');
@@ -16,16 +19,18 @@ include_once(__DIR__ . '/../../BaseTestCase.php');
 use Neos\Cache\Backend\ApcuBackend;
 use Neos\Cache\EnvironmentConfiguration;
 use Neos\Cache\Exception;
-use Neos\Cache\Tests\BaseTestCase;
 use Neos\Cache\Frontend\FrontendInterface;
 use Neos\Cache\Frontend\VariableFrontend;
+use Neos\Cache\Tests\BaseTestCase;
+use PHPUnit\Framework\Attributes\RequiresPhpExtension;
+use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\MockObject\MockObject;
 
 /**
  * Testcase for the APCu cache backend
- *
- * @requires extension apcu
  */
-class ApcuBackendTest extends BaseTestCase
+#[RequiresPhpExtension('apcu')]
+final class ApcuBackendTest extends BaseTestCase
 {
     /**
      * Sets up this testcase
@@ -42,26 +47,22 @@ class ApcuBackendTest extends BaseTestCase
         }
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function setThrowsExceptionIfNoFrontEndHasBeenSet()
     {
         $this->expectException(Exception::class);
         $backend = new ApcuBackend($this->getEnvironmentConfiguration(), []);
         $data = 'Some data';
-        $identifier = 'MyIdentifier' . md5(uniqid(mt_rand(), true));
+        $identifier = 'MyIdentifier' . md5(uniqid((string)mt_rand(), true));
         $backend->set($identifier, $data);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function itIsPossibleToSetAndCheckExistenceInCache()
     {
         $backend = $this->setUpBackend();
         $data = 'Some data';
-        $identifier = 'MyIdentifier' . md5(uniqid(mt_rand(), true));
+        $identifier = 'MyIdentifier' . md5(uniqid((string)mt_rand(), true));
         $backend->set($identifier, $data);
         $inCache = $backend->has($identifier);
         self::assertTrue($inCache, 'APCu backend failed to set and check entry');
@@ -74,34 +75,30 @@ class ApcuBackendTest extends BaseTestCase
     {
         $backend = $this->setUpBackend();
         $data = 'Some data';
-        $identifier = 'MyIdentifier' . md5(uniqid(mt_rand(), true));
+        $identifier = 'MyIdentifier' . md5(uniqid((string)mt_rand(), true));
         $backend->set($identifier, $data);
         $fetchedData = $backend->get($identifier);
         self::assertEquals($data, $fetchedData, 'APCu backend failed to set and retrieve data');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function itIsPossibleToRemoveEntryFromCache()
     {
         $backend = $this->setUpBackend();
         $data = 'Some data';
-        $identifier = 'MyIdentifier' . md5(uniqid(mt_rand(), true));
+        $identifier = 'MyIdentifier' . md5(uniqid((string)mt_rand(), true));
         $backend->set($identifier, $data);
         $backend->remove($identifier);
         $inCache = $backend->has($identifier);
         self::assertFalse($inCache, 'Failed to set and remove data from APCu backend');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function itIsPossibleToOverwriteAnEntryInTheCache()
     {
         $backend = $this->setUpBackend();
         $data = 'Some data';
-        $identifier = 'MyIdentifier' . md5(uniqid(mt_rand(), true));
+        $identifier = 'MyIdentifier' . md5(uniqid((string)mt_rand(), true));
         $backend->set($identifier, $data);
         $otherData = 'some other data';
         $backend->set($identifier, $otherData);
@@ -109,15 +106,13 @@ class ApcuBackendTest extends BaseTestCase
         self::assertEquals($otherData, $fetchedData, 'APCu backend failed to overwrite and retrieve data');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function findIdentifiersByTagFindsSetEntries()
     {
         $backend = $this->setUpBackend();
 
         $data = 'Some data';
-        $identifier = 'MyIdentifier' . md5(uniqid(mt_rand(), true));
+        $identifier = 'MyIdentifier' . md5(uniqid((string)mt_rand(), true));
         $backend->set($identifier, $data, ['UnitTestTag%tag1', 'UnitTestTag%tag2']);
 
         $retrieved = $backend->findIdentifiersByTag('UnitTestTag%tag1');
@@ -127,15 +122,13 @@ class ApcuBackendTest extends BaseTestCase
         self::assertEquals($identifier, $retrieved[0], 'Could not retrieve expected entry by tag.');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function setRemovesTagsFromPreviousSet()
     {
         $backend = $this->setUpBackend();
 
         $data = 'Some data';
-        $identifier = 'MyIdentifier' . md5(uniqid(mt_rand(), true));
+        $identifier = 'MyIdentifier' . md5(uniqid((string)mt_rand(), true));
         $backend->set($identifier, $data, ['UnitTestTag%tag1', 'UnitTestTag%tagX']);
         $backend->set($identifier, $data, ['UnitTestTag%tag3']);
 
@@ -143,31 +136,25 @@ class ApcuBackendTest extends BaseTestCase
         self::assertEquals([], $retrieved, 'Found entry which should no longer exist.');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function hasReturnsFalseIfTheEntryDoesntExist()
     {
         $backend = $this->setUpBackend();
-        $identifier = 'NonExistingIdentifier' . md5(uniqid(mt_rand(), true));
+        $identifier = 'NonExistingIdentifier' . md5(uniqid((string)mt_rand(), true));
         $inCache = $backend->has($identifier);
         self::assertFalse($inCache, '"has" did not return false when checking on non existing identifier');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function removeReturnsFalseIfTheEntryDoesntExist()
     {
         $backend = $this->setUpBackend();
-        $identifier = 'NonExistingIdentifier' . md5(uniqid(mt_rand(), true));
+        $identifier = 'NonExistingIdentifier' . md5(uniqid((string)mt_rand(), true));
         $inCache = $backend->remove($identifier);
         self::assertFalse($inCache, '"remove" did not return false when checking on non existing identifier');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function flushByTagRemovesCacheEntriesWithSpecifiedTag()
     {
         $backend = $this->setUpBackend();
@@ -184,9 +171,7 @@ class ApcuBackendTest extends BaseTestCase
         self::assertTrue($backend->has('BackendAPCUTest3'), 'BackendAPCUTest3');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function flushByTagsRemovesCacheEntriesWithSpecifiedTags()
     {
         $backend = $this->setUpBackend();
@@ -203,9 +188,7 @@ class ApcuBackendTest extends BaseTestCase
         self::assertTrue($backend->has('BackendAPCUTest3'), 'BackendAPCUTest3');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function flushRemovesAllCacheEntries()
     {
         $backend = $this->setUpBackend();
@@ -222,18 +205,16 @@ class ApcuBackendTest extends BaseTestCase
         self::assertFalse($backend->has('BackendAPCUTest3'), 'BackendAPCUTest3');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function flushRemovesOnlyOwnEntries()
     {
         $thisCache = $this->createMock(FrontendInterface::class);
-        $thisCache->expects(self::any())->method('getIdentifier')->will(self::returnValue('thisCache'));
+        $thisCache->method('getIdentifier')->willReturn(('thisCache'));
         $thisBackend = new ApcuBackend($this->getEnvironmentConfiguration(), []);
         $thisBackend->setCache($thisCache);
 
         $thatCache = $this->createMock(FrontendInterface::class);
-        $thatCache->expects(self::any())->method('getIdentifier')->will(self::returnValue('thatCache'));
+        $thatCache->method('getIdentifier')->willReturn(('thatCache'));
         $thatBackend = new ApcuBackend($this->getEnvironmentConfiguration(), []);
         $thatBackend->setCache($thatCache);
 
@@ -247,24 +228,21 @@ class ApcuBackendTest extends BaseTestCase
 
     /**
      * Check if we can store ~5 MB of data, this gives some headroom.
-     *
-     * @test
      */
+    #[Test]
     public function largeDataIsStored()
     {
         $backend = $this->setUpBackend();
 
         $data = str_repeat('abcde', 1024 * 1024);
-        $identifier = 'tooLargeData' . md5(uniqid(mt_rand(), true));
+        $identifier = 'tooLargeData' . md5(uniqid((string)mt_rand(), true));
         $backend->set($identifier, $data);
 
         self::assertTrue($backend->has($identifier));
         self::assertEquals($backend->get($identifier), $data);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function backendAllowsForIteratingOverEntries()
     {
         $backend = $this->setUpBackend();
@@ -285,16 +263,14 @@ class ApcuBackendTest extends BaseTestCase
         natsort($entries);
         $i = 0;
         foreach ($entries as $entryIdentifier => $data) {
-            self::assertEquals(sprintf('entry-%s', $i), $entryIdentifier);
+            self::assertSame(sprintf('entry-%s', $i), $entryIdentifier);
             self::assertEquals('some data ' . $i, $data);
             $i++;
         }
-        self::assertEquals(100, $i);
+        self::assertSame(100, $i);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function iterationOverEmptyCacheYieldsNoData()
     {
         $backend = $this->setUpBackend();
@@ -305,9 +281,7 @@ class ApcuBackendTest extends BaseTestCase
         self::assertEmpty($data);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function iterationOverNotEmptyCacheYieldsData()
     {
         $backend = $this->setUpBackend();
@@ -319,15 +293,15 @@ class ApcuBackendTest extends BaseTestCase
         $data = \iterator_to_array(
             $cache->getIterator()
         );
-        self::assertEquals(
+        // APCu does not guarantee any particular iteration order
+        ksort($data);
+        self::assertSame(
             ['first' => 'firstData', 'second' => 'secondData'],
             $data
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function iterationResetsWhenDataIsSet()
     {
         $backend = $this->setUpBackend();
@@ -345,15 +319,15 @@ class ApcuBackendTest extends BaseTestCase
         $data = \iterator_to_array(
             $cache->getIterator()
         );
-        self::assertEquals(
+        // APCu does not guarantee any particular iteration order
+        ksort($data);
+        self::assertSame(
             ['first' => 'firstData', 'second' => 'secondData', 'third' => 'thirdData'],
             $data
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function iterationResetsWhenDataFlushed()
     {
         $backend = $this->setUpBackend();
@@ -372,9 +346,7 @@ class ApcuBackendTest extends BaseTestCase
         self::assertEmpty($data);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function iterationResetsWhenDataFlushedByTag()
     {
         $backend = $this->setUpBackend();
@@ -393,9 +365,7 @@ class ApcuBackendTest extends BaseTestCase
         self::assertEmpty($data);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function iterationResetsWhenDataGetsRemoved()
     {
         $backend = $this->setUpBackend();
@@ -422,16 +392,15 @@ class ApcuBackendTest extends BaseTestCase
      */
     protected function setUpBackend()
     {
-        $cache = $this->createMock(FrontendInterface::class);
         $backend = new ApcuBackend($this->getEnvironmentConfiguration(), []);
-        $backend->setCache($cache);
+        $backend->setCache($this->createStub(FrontendInterface::class));
         $backend->flush(); // I'd rather start with a clean directory in the first place, but I can't get the "vfs" thing to work
 
         return $backend;
     }
 
     /**
-     * @return EnvironmentConfiguration|\PHPUnit\Framework\MockObject\MockObject
+     * @return EnvironmentConfiguration|MockObject
      */
     public function getEnvironmentConfiguration()
     {

@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Tests\Unit\ObjectManagement;
 
 /*
@@ -11,11 +12,14 @@ namespace Neos\Flow\Tests\Unit\ObjectManagement;
  * source code.
  */
 
-use org\bovigo\vfs\vfsStream;
+use Neos\Flow\Configuration\ConfigurationManager;
+use Neos\Flow\Core\ApplicationContext;
 use Neos\Flow\ObjectManagement\CompileTimeObjectManager;
 use Neos\Flow\Package\Package;
 use Neos\Flow\Package\PackageManager;
 use Neos\Flow\Tests\UnitTestCase;
+use org\bovigo\vfs\vfsStream;
+use PHPUnit\Framework\Attributes\Test;
 use Psr\Log\LoggerInterface;
 
 class CompileTimeObjectManagerTest extends UnitTestCase
@@ -34,9 +38,8 @@ class CompileTimeObjectManagerTest extends UnitTestCase
     {
         vfsStream::setup('Packages');
         $this->mockPackageManager = $this->getMockBuilder(PackageManager::class)->disableOriginalConstructor()->getMock();
-        $this->compileTimeObjectManager = $this->getAccessibleMock(CompileTimeObjectManager::class, ['dummy'], [], '', false);
-        $this->compileTimeObjectManager->injectLogger($this->createMock(LoggerInterface::class));
-        $configurations = [
+        $mockConfigurationManager = $this->getMockBuilder(ConfigurationManager::class)->disableOriginalConstructor()->getMock();
+        $mockConfigurationManager->method('getConfiguration')->willReturn([
             'Neos' => [
                 'Flow' => [
                     'object' => [
@@ -51,13 +54,14 @@ class CompileTimeObjectManagerTest extends UnitTestCase
                     ]
                 ]
             ]
-        ];
-        $this->compileTimeObjectManager->injectAllSettings($configurations);
+        ]);
+        $context = $this->createMock(ApplicationContext::class);
+        $logger = $this->createMock(LoggerInterface::class);
+        $this->compileTimeObjectManager = $this->getAccessibleMock(CompileTimeObjectManager::class, [], [$context, $logger], '', true);
+        $this->compileTimeObjectManager->injectConfigurationManager($mockConfigurationManager);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function flowPackageClassesAreNotFilteredFromObjectManagementByDefault()
     {
         $packagePath = 'vfs://Packages/Vendor.TestPackage/';
@@ -73,9 +77,7 @@ class CompileTimeObjectManagerTest extends UnitTestCase
         self::assertArrayHasKey('Vendor.TestPackage', $objectManagementEnabledClasses);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function nonFlowPackageClassesAreFilteredFromObjectManagementByDefault()
     {
         $packagePath = 'vfs://Packages/NonFlow.TestPackage/';
@@ -90,9 +92,7 @@ class CompileTimeObjectManagerTest extends UnitTestCase
         self::assertCount(1, $objectManagementEnabledClasses);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function nonFlowPackageClassesCanBeIncludedInObjectManagementByConfiguration()
     {
         $packagePath = 'vfs://Packages/NonFlow.IncludeAllClasses/';
@@ -108,9 +108,7 @@ class CompileTimeObjectManagerTest extends UnitTestCase
         self::assertArrayHasKey('NonFlow.IncludeAllClasses', $objectManagementEnabledClasses);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function nonFlowPackageClassesExcludedAndIncludedWillNotBeIncluded()
     {
         $packagePath = 'vfs://Packages/NonFlow.IncludeAndExclude/';
@@ -125,9 +123,7 @@ class CompileTimeObjectManagerTest extends UnitTestCase
         self::assertCount(1, $objectManagementEnabledClasses);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function flowPackageClassesForNonMatchingIncludesAreRemoved()
     {
         $packagePath = 'vfs://Packages/Vendor.AnotherPackage/';

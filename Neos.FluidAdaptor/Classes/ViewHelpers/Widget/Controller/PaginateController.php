@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\FluidAdaptor\ViewHelpers\Widget\Controller;
 
 /*
@@ -12,8 +13,8 @@ namespace Neos\FluidAdaptor\ViewHelpers\Widget\Controller;
  */
 
 use Neos\Flow\Persistence\QueryResultInterface;
-use Neos\Utility\Arrays;
 use Neos\FluidAdaptor\Core\Widget\AbstractWidgetController;
+use Neos\Utility\Arrays;
 
 /**
  * Controller for the paginate widget
@@ -21,7 +22,7 @@ use Neos\FluidAdaptor\Core\Widget\AbstractWidgetController;
 class PaginateController extends AbstractWidgetController
 {
     /**
-     * @var QueryResultInterface
+     * @var QueryResultInterface<object>
      */
     protected $objects;
 
@@ -72,8 +73,8 @@ class PaginateController extends AbstractWidgetController
     {
         $this->objects = $this->widgetConfiguration['objects'];
         $this->configuration = Arrays::arrayMergeRecursiveOverrule($this->configuration, $this->widgetConfiguration['configuration'], true);
-        $this->numberOfPages = (integer)ceil(count($this->objects) / (integer)$this->configuration['itemsPerPage']);
-        $this->maximumNumberOfLinks = (integer)$this->configuration['maximumNumberOfLinks'];
+        $this->numberOfPages = (int)ceil(count($this->objects) / (int)$this->configuration['itemsPerPage']);
+        $this->maximumNumberOfLinks = (int)$this->configuration['maximumNumberOfLinks'];
     }
 
     /**
@@ -82,18 +83,18 @@ class PaginateController extends AbstractWidgetController
      */
     public function indexAction($currentPage = 1)
     {
-        $this->currentPage = (integer)$currentPage;
+        $this->currentPage = (int)$currentPage;
         if ($this->currentPage < 1) {
             $this->currentPage = 1;
         } elseif ($this->currentPage > $this->numberOfPages) {
             $this->currentPage = $this->numberOfPages;
         }
 
-        $itemsPerPage = (integer)$this->configuration['itemsPerPage'];
+        $itemsPerPage = (int)$this->configuration['itemsPerPage'];
         $query = $this->objects->getQuery();
         $query->setLimit($itemsPerPage);
         if ($this->currentPage > 1) {
-            $query->setOffset((integer)($itemsPerPage * ($this->currentPage - 1)));
+            $query->setOffset((int)($itemsPerPage * ($this->currentPage - 1)));
         }
         $modifiedObjects = $query->execute();
 
@@ -125,8 +126,8 @@ class PaginateController extends AbstractWidgetController
         if ($displayRangeEnd > $this->numberOfPages) {
             $displayRangeStart -= ($displayRangeEnd - $this->numberOfPages);
         }
-        $this->displayRangeStart = (integer)max($displayRangeStart, 1);
-        $this->displayRangeEnd = (integer)min($displayRangeEnd, $this->numberOfPages);
+        $this->displayRangeStart = (int)max($displayRangeStart, 1);
+        $this->displayRangeEnd = (int)min($displayRangeEnd, $this->numberOfPages);
     }
 
     /**

@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Eel\Validation;
 
 use Neos\Eel\EelParser;

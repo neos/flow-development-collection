@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Security\Authentication\Provider;
 
 /*
@@ -16,8 +17,8 @@ use Neos\Flow\Security\AccountRepository;
 use Neos\Flow\Security\Authentication\Token\UsernamePasswordTokenInterface;
 use Neos\Flow\Security\Authentication\TokenInterface;
 use Neos\Flow\Security\Context;
-use Neos\Flow\Security\Cryptography\PrecomposedHashProvider;
 use Neos\Flow\Security\Cryptography\HashService;
+use Neos\Flow\Security\Cryptography\PrecomposedHashProvider;
 use Neos\Flow\Security\Exception\UnsupportedAuthenticationTokenException;
 
 /**
@@ -62,7 +63,7 @@ class PersistedUsernamePasswordProvider extends AbstractProvider
     /**
      * Returns the class names of the tokens this provider can authenticate.
      *
-     * @return array
+     * @return array<class-string<TokenInterface>>
      */
     public function getTokenClassNames()
     {

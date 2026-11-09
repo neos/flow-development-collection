@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Validation\Validator;
 
 /*
@@ -24,29 +25,29 @@ abstract class AbstractCompositeValidator implements ObjectValidatorInterface, \
     /**
      * This contains the supported options, their default values and descriptions.
      *
-     * @var array
+     * @var array<mixed>
      */
     protected $supportedOptions = [];
 
     /**
-     * @var array
+     * @var array<mixed>
      */
     protected $options = [];
 
     /**
-     * @var \SplObjectStorage
+     * @var \SplObjectStorage<ValidatorInterface,mixed>
      */
     protected $validators;
 
     /**
-     * @var \SplObjectStorage
+     * @var \SplObjectStorage<object,mixed>
      */
     protected $validatedInstancesContainer;
 
     /**
      * Constructs the composite validator and sets validation options
      *
-     * @param array $options Options for the validator
+     * @param array<mixed> $options Options for the validator
      * @api
      * @throws InvalidValidationOptionsException
      */
@@ -79,12 +80,13 @@ abstract class AbstractCompositeValidator implements ObjectValidatorInterface, \
             $options
         );
         $this->validators = new \SplObjectStorage();
+        $this->validatedInstancesContainer = new \SplObjectStorage();
     }
 
     /**
      * Allows to set a container to keep track of validated instances.
      *
-     * @param \SplObjectStorage $validatedInstancesContainer A container to keep track of validated instances
+     * @param \SplObjectStorage<object,mixed> $validatedInstancesContainer A container to keep track of validated instances
      * @return void
      * @api
      */
@@ -102,7 +104,7 @@ abstract class AbstractCompositeValidator implements ObjectValidatorInterface, \
      */
     public function addValidator(ValidatorInterface $validator)
     {
-        if ($validator instanceof ObjectValidatorInterface && isset($this->validatedInstancesContainer)) {
+        if ($validator instanceof ObjectValidatorInterface) {
             $validator->setValidatedInstancesContainer($this->validatedInstancesContainer);
         }
         $this->validators->attach($validator);
@@ -113,6 +115,7 @@ abstract class AbstractCompositeValidator implements ObjectValidatorInterface, \
      *
      * @param ValidatorInterface $validator The validator to remove
      * @throws NoSuchValidatorException
+     * @return void
      * @api
      */
     public function removeValidator(ValidatorInterface $validator)
@@ -137,7 +140,7 @@ abstract class AbstractCompositeValidator implements ObjectValidatorInterface, \
     /**
      * Returns the child validators of this Composite Validator
      *
-     * @return \SplObjectStorage
+     * @return \SplObjectStorage<ValidatorInterface,mixed>
      */
     public function getValidators()
     {
@@ -147,7 +150,7 @@ abstract class AbstractCompositeValidator implements ObjectValidatorInterface, \
     /**
      * Returns the options for this validator
      *
-     * @return array
+     * @return array<mixed>
      */
     public function getOptions()
     {

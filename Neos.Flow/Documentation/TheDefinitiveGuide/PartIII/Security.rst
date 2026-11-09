@@ -208,7 +208,7 @@ Flow ships with the following authentication tokens:
 
 #. ``UsernamePassword``: Extracts username & password from a POST parameter.
    Options: ``usernamePostField`` and ``passwordPostField``
-#. ``UsernamePasswordHttpBasic``: Extracts username & password from the the ``Authorization``
+#. ``UsernamePasswordHttpBasic``: Extracts username & password from the ``Authorization``
    header (Basic auth). This token is sessionless (see below)
 #. ``BearerToken``: Extracts a rfc6750 bearer token (See: `RFC 6750 <https://tools.ietf.org/html/rfc6750>`_) from a given
    ``Authorization`` header. This token is sessionless (see below) and has no configuration options.
@@ -589,7 +589,7 @@ There is another configuration option for authentication providers called ``toke
 which can be specified in the provider settings. By this option you can specify which
 token should be used for a provider. Remember the token is responsible for the credentials
 retrieval, i.e. if you want to authenticate let's say via username and password this setting
-enables to to specify where these credentials come from. So e.g. you could reuse the one
+enables to specify where these credentials come from. So e.g. you could reuse the one
 username/password provider class and specify, whether authentication credentials are sent
 in a POST request or set in an HTTP Basic authentication header.
 
@@ -1278,7 +1278,7 @@ from the functional tests, show some more advanced matcher statements:
       matcher: 'isType("Acme\MyPackage\EntityC") && property("simpleStringProperty").in(["Andi", "Robert", "Karsten"])'
 
     'Acme.MyPackage.ComparingWithObjectCollectionFromGlobalObjects':
-      matcher: 'isType("Acme\MyPackage\EntityC") && property("relatedEntityD").in("context.someGloablObject.someEntityDCollection")'
+      matcher: 'isType("Acme\MyPackage\EntityC") && property("relatedEntityD").in("context.someGlobalObject.someEntityDCollection")'
 
 .. warning:: When using class inheritance for your entities, entity privileges will only work with the root entity type.
    For example, if your entity ``Acme\MyPackage\EntityB`` extends ``Acme\MyPackage\EntityA``, the expression
@@ -1361,7 +1361,7 @@ all privilege targets that are not granted to the current user.
   the filter instance from `$entityManager->getFilters()->getEnabledFilters()` and call `setParameter()` then.
 
   Alternatively, you can use the mechanism from above, where you register a global context object in `Neos.Flow.aop.globalObjects`
-  and use it to provide additional identifiers for the caching; effectively seggregating the Doctrine cache some more.
+  and use it to provide additional identifiers for the caching; effectively segregating the Doctrine cache some more.
 
 Creating your custom privilege
 ==============================
@@ -1390,14 +1390,14 @@ framework with the needed information about which methods have to be  intercepte
 
 In case of the EntityPrivilege permissions are not enforced directly with the entities, but by changing SQL queries.
 One could says the database is responsible to enforce the rules by evaluating the SQL. The additional SQL is returned
-by the EnitiyPrivilege’s method ``getSqlConstraint()``, which of course can be overriden to support an alternative
+by the EntityPrivilege’s method ``getSqlConstraint()``, which of course can be overridden to support an alternative
 matcher syntax.
 
 .. tip::
 
   You might still want to use the existing SQL generators, as this is where the hard lowlevel
   magic is happening. You can compose your constraint logic by these generator objects in a
-  nice programmatical way.
+  nice programmatic way.
 
 Coming back to the second use case to create your completely custom privilege type, you also have to implement a
 privilege class with the two functionalities from above:

@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Cache;
 
 /*
@@ -14,9 +15,9 @@ namespace Neos\Flow\Cache;
 use Neos\Cache\Backend\BackendInterface;
 use Neos\Cache\Backend\SimpleFileBackend;
 use Neos\Cache\EnvironmentConfiguration;
+use Neos\Cache\Exception\InvalidBackendException;
 use Neos\Cache\Frontend\FrontendInterface;
 use Neos\Flow\Annotations as Flow;
-use Neos\Cache\Exception\InvalidBackendException;
 use Neos\Flow\Core\ApplicationContext;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Utility\Environment;
@@ -83,7 +84,7 @@ class CacheFactory extends \Neos\Cache\CacheFactory
      * @param string $cacheIdentifier
      * @param string $cacheObjectName
      * @param string $backendObjectName
-     * @param array $backendOptions
+     * @param array<mixed> $backendOptions
      * @param bool $persistent
      * @return FrontendInterface
      */
@@ -112,7 +113,7 @@ class CacheFactory extends \Neos\Cache\CacheFactory
 
     /**
      * @param string $backendObjectName
-     * @param array $backendOptions
+     * @param array<string,mixed> $backendOptions
      * @param EnvironmentConfiguration $environmentConfiguration
      * @param boolean $persistent
      * @return BackendInterface

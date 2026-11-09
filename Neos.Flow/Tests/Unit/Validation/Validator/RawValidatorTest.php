@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Neos\Flow\Tests\Unit\Validation\Validator;
 
 /*
@@ -10,21 +13,19 @@ namespace Neos\Flow\Tests\Unit\Validation\Validator;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
 use Neos\Flow\Validation\Validator\RawValidator;
+use PHPUnit\Framework\Attributes\Test;
 
 require_once('AbstractValidatorTestcase.php');
 
 /**
  * Testcase for the raw validator
  */
-class RawValidatorTest extends AbstractValidatorTestcase
+final class RawValidatorTest extends AbstractValidatorTestcase
 {
     protected $validatorClassName = RawValidator::class;
 
-    /**
-     * @test
-     */
+    #[Test]
     public function theRawValidatorAlwaysReturnsNoErrors()
     {
         $rawValidator = new RawValidator([]);

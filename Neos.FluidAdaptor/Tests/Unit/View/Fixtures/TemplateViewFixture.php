@@ -1,5 +1,8 @@
 <?php
+
 namespace Neos\FluidAdaptor\View\Fixture;
+
+use Neos\FluidAdaptor\View\TemplateView;
 
 /*
  * This file is part of the Neos.FluidAdaptor package.
@@ -10,11 +13,10 @@ namespace Neos\FluidAdaptor\View\Fixture;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
 /**
  * Template view fixture
  */
-class TemplateViewFixture extends \Neos\FluidAdaptor\View\TemplateView
+class TemplateViewFixture extends TemplateView
 {
     public $syntaxTree;
 

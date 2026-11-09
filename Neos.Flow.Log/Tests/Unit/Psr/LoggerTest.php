@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Neos\Flow\Log\Tests\Unit\Psr;
 
 /*
@@ -10,72 +13,74 @@ namespace Neos\Flow\Log\Tests\Unit\Psr;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
 use Neos\Flow\Log\Backend\BackendInterface;
 use Neos\Flow\Log\Psr\Logger;
 use Neos\Flow\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use Psr\Log\LogLevel;
 
 /**
  * Test case for PSR-3 based logger.
  */
-class LoggerTest extends UnitTestCase
+final class LoggerTest extends UnitTestCase
 {
     /**
-     * @return array
+     * @return \Iterator<(int | string), mixed>
      */
-    public function logLevelDataSource()
+    public static function logLevelDataSource(): \Iterator
     {
-        return [
-            [LogLevel::EMERGENCY, LOG_EMERG, false],
-            [LogLevel::DEBUG, LOG_DEBUG, false],
-            [LogLevel::INFO, LOG_INFO, false],
-            [LogLevel::NOTICE, LOG_NOTICE, false],
-            [LogLevel::WARNING, LOG_WARNING, false],
-            [LogLevel::ERROR, LOG_ERR, false],
-            [LogLevel::CRITICAL, LOG_CRIT, false],
-            [LogLevel::ALERT, LOG_ALERT, false],
-            ['non existing loglevel', 'does not matter', true]
-        ];
+        yield [LogLevel::EMERGENCY, LOG_EMERG, false];
+        yield [LogLevel::DEBUG, LOG_DEBUG, false];
+        yield [LogLevel::INFO, LOG_INFO, false];
+        yield [LogLevel::NOTICE, LOG_NOTICE, false];
+        yield [LogLevel::WARNING, LOG_WARNING, false];
+        yield [LogLevel::ERROR, LOG_ERR, false];
+        yield [LogLevel::CRITICAL, LOG_CRIT, false];
+        yield [LogLevel::ALERT, LOG_ALERT, false];
+        yield ['non existing loglevel', 'does not matter', true];
     }
 
     /**
-     * @dataProvider logLevelDataSource
-     * @test
      *
      * @param string $psrLogLevel
      * @param int $legacyLogLevel
      * @param bool $willError
      * @throws \ReflectionException
      */
-    public function logAcceptsOnlyValidLogLevels($psrLogLevel, $legacyLogLevel, $willError)
+    #[DataProvider('logLevelDataSource')]
+    #[Test]
+    public function logAcceptsOnlyValidLogLevels($psrLogLevel, $legacyLogLevel, $willError): void
     {
         $mockBackend = $this->createMock(BackendInterface::class);
         if (!$willError) {
-            $mockBackend->expects(self::once())->method('append')->with('some message', $legacyLogLevel);
+            $mockBackend->expects($this->once())->method('append')->with('some message', $legacyLogLevel);
         }
         $psrLogger = new Logger([$mockBackend]);
-
+        set_error_handler(static function (int $errno, string $errstr): never {
+            throw new \RuntimeException($errstr, $errno);
+        }, E_USER_WARNING);
         try {
             $psrLogger->log($psrLogLevel, 'some message');
         } catch (\Throwable $throwable) {
             self::assertTrue($willError, $throwable->getMessage());
         }
+        restore_error_handler();
     }
 
     /**
-     * @dataProvider logLevelDataSource
-     * @test
      *
      * @param string $psrLogLevel
      * @param int $legacyLogLevel
      * @param bool $willError
      * @throws \ReflectionException
      */
-    public function levelSpecificMethodsAreSupported($psrLogLevel, $legacyLogLevel, $willError)
+    #[DataProvider('logLevelDataSource')]
+    #[Test]
+    public function levelSpecificMethodsAreSupported($psrLogLevel, $legacyLogLevel, $willError): void
     {
         $mockBackend = $this->createMock(BackendInterface::class);
-        $mockBackend->expects(self::once())->method('append')->with('some message', $legacyLogLevel);
+        $mockBackend->expects($this->once())->method('append')->with('some message', $legacyLogLevel);
 
         $psrLogger = new Logger([$mockBackend]);
 
@@ -86,15 +91,13 @@ class LoggerTest extends UnitTestCase
         $psrLogger->$psrLogLevel('some message');
     }
 
-    /**
-     * @test
-     */
-    public function logSupportsContext()
+    #[Test]
+    public function logSupportsContext(): void
     {
         $message = 'some message';
         $context = ['something' => 123, 'else' => true];
         $mockBackend = $this->createMock(BackendInterface::class);
-        $mockBackend->expects(self::once())->method('append')->with('some message', LOG_INFO, $context);
+        $mockBackend->expects($this->once())->method('append')->with('some message', LOG_INFO, $context);
 
         $psrLogger = new Logger([$mockBackend]);
         $psrLogger->log(LogLevel::INFO, $message, $context);

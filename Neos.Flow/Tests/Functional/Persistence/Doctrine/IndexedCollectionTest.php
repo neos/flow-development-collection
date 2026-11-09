@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Neos\Flow\Tests\Functional\Persistence\Doctrine;
@@ -12,17 +13,19 @@ namespace Neos\Flow\Tests\Functional\Persistence\Doctrine;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Persistence\Doctrine\PersistenceManager;
-use Neos\Flow\Tests\Functional\Persistence\Fixtures;
+use Neos\Flow\Tests\Functional\Persistence\Fixtures\AnnotatedIdentitiesEntity;
+use Neos\Flow\Tests\Functional\Persistence\Fixtures\EntityWithIndexedRelation;
+use Neos\Flow\Tests\Functional\Persistence\Fixtures\RelatedIndexEntity;
 use Neos\Flow\Tests\FunctionalTestCase;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Test for Doctrine indexed Collections
  * @Flow\Scope("prototype")
  */
-class IndexedCollectionTest extends FunctionalTestCase
+final class IndexedCollectionTest extends FunctionalTestCase
 {
     protected static $testablePersistenceEnabled = true;
 
@@ -39,20 +42,19 @@ class IndexedCollectionTest extends FunctionalTestCase
 
     /**
      * This tests calls two indexed Relations and ensure that indexes are restored after fetching from persistence
-     *
-     * @test
      */
+    #[Test]
     public function collectionsWithIndexAttributeAreIndexed(): void
     {
-        $entityWithIndexedRelation = new Fixtures\EntityWithIndexedRelation();
+        $entityWithIndexedRelation = new EntityWithIndexedRelation();
         for ($i = 0; $i < 3; $i++) {
-            $annotatedIdentitiesEntity = new Fixtures\AnnotatedIdentitiesEntity();
+            $annotatedIdentitiesEntity = new AnnotatedIdentitiesEntity();
             $annotatedIdentitiesEntity->setAuthor('Author' . ((string) $i));
             $annotatedIdentitiesEntity->setTitle('Author' . ((string) $i));
             $entityWithIndexedRelation->getAnnotatedIdentitiesEntities()->add($annotatedIdentitiesEntity);
         }
 
-        $entityWithIndexedRelation->setRelatedIndexEntity('test', new Fixtures\RelatedIndexEntity());
+        $entityWithIndexedRelation->setRelatedIndexEntity('test', new RelatedIndexEntity());
 
         $this->persistenceManager->add($entityWithIndexedRelation);
         $this->persistenceManager->persistAll();
@@ -62,7 +64,7 @@ class IndexedCollectionTest extends FunctionalTestCase
         $this->persistenceManager->clearState();
         unset($entityWithIndexedRelation);
 
-        $entityWithIndexedRelation = $this->persistenceManager->getObjectByIdentifier($id, Fixtures\EntityWithIndexedRelation::class);
+        $entityWithIndexedRelation = $this->persistenceManager->getObjectByIdentifier($id, EntityWithIndexedRelation::class);
         for ($i = 0; $i < 3; $i++) {
             self::assertArrayHasKey('Author' . $i, $entityWithIndexedRelation->getAnnotatedIdentitiesEntities());
         }
@@ -70,6 +72,6 @@ class IndexedCollectionTest extends FunctionalTestCase
 
         self::assertArrayHasKey('test', $entityWithIndexedRelation->getRelatedIndexEntities());
         self::assertArrayNotHasKey(0, $entityWithIndexedRelation->getRelatedIndexEntities());
-        self::assertInstanceOf(Fixtures\RelatedIndexEntity::class, $entityWithIndexedRelation->getRelatedIndexEntities()->get('test'));
+        self::assertInstanceOf(RelatedIndexEntity::class, $entityWithIndexedRelation->getRelatedIndexEntities()->get('test'));
     }
 }

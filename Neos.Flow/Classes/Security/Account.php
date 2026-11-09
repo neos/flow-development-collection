@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Security;
 
 /*
@@ -55,7 +56,7 @@ class Account
     protected $creationDate;
 
     /**
-     * @var \DateTime
+     * @var \DateTime|null
      * @ORM\Column(nullable=true)
      */
     protected $expirationDate;
@@ -73,7 +74,7 @@ class Account
     protected $failedAuthenticationCount;
 
     /**
-     * @var array of strings
+     * @var array<string>
      * @ORM\Column(type="simple_array", nullable=true)
      */
     protected $roleIdentifiers = [];
@@ -225,9 +226,6 @@ class Account
         $this->roleIdentifiers = [];
         $this->roles = [];
         foreach ($roles as $role) {
-            if (!$role instanceof Role) {
-                throw new \InvalidArgumentException(sprintf('setRoles() only accepts an array of %s instances, given: "%s"', Role::class, gettype($role)), 1397125997);
-            }
             $this->addRole($role);
         }
     }
@@ -310,7 +308,7 @@ class Account
     /**
      * Sets the date on which this account will become inactive
      *
-     * @param \DateTime $expirationDate
+     * @param ?\DateTime $expirationDate
      * @return void
      * @api
      */

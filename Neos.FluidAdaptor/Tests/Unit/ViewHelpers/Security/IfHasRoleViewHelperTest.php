@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Neos\FluidAdaptor\Tests\Unit\ViewHelpers\Security;
 
 /*
@@ -10,56 +13,60 @@ namespace Neos\FluidAdaptor\Tests\Unit\ViewHelpers\Security;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
 use GuzzleHttp\Psr7\ServerRequest;
-use Neos\Flow\Reflection\ReflectionService;
-use Neos\FluidAdaptor\Core\Rendering\RenderingContext;
+use Neos\Flow\Mvc\ActionRequest;
+use Neos\Flow\Mvc\Controller\ControllerContext;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
+use Neos\Flow\Reflection\ReflectionService;
+use Neos\Flow\Security\Account;
 use Neos\Flow\Security\Context;
 use Neos\Flow\Security\Policy\PolicyService;
 use Neos\Flow\Security\Policy\Role;
-use Neos\FluidAdaptor\ViewHelpers\Security\IfHasRoleViewHelper;
+use Neos\FluidAdaptor\Core\Rendering\RenderingContext;
 use Neos\FluidAdaptor\Tests\Unit\ViewHelpers\ViewHelperBaseTestcase;
+use Neos\FluidAdaptor\ViewHelpers\Security\IfHasRoleViewHelper;
+use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\MockObject\MockObject;
 
 /**
  * Test case for IfHasRoleViewHelper
  *
  */
-class IfHasRoleViewHelperTest extends ViewHelperBaseTestcase
+final class IfHasRoleViewHelperTest extends ViewHelperBaseTestcase
 {
     /**
-     * @var IfHasRoleViewHelper|\PHPUnit\Framework\MockObject\MockObject
+     * @var IfHasRoleViewHelper|MockObject
      */
     protected $mockViewHelper;
 
     /**
-     * @var Context|\PHPUnit\Framework\MockObject\MockObject
+     * @var Context|MockObject
      */
     protected $mockSecurityContext;
 
     /**
-     * @var PolicyService|\PHPUnit\Framework\MockObject\MockObject
+     * @var PolicyService|MockObject
      */
     protected $mockPolicyService;
 
     protected function setUp(): void
     {
         parent::setUp();
-        $this->mockViewHelper = $this->getMockBuilder(\Neos\FluidAdaptor\ViewHelpers\Security\IfHasRoleViewHelper::class)->setMethods([
+        $this->mockViewHelper = $this->getMockBuilder(IfHasRoleViewHelper::class)->onlyMethods([
             'renderThenChild',
             'renderElseChild'
         ])->getMock();
 
-        $this->mockSecurityContext = $this->getMockBuilder(\Neos\Flow\Security\Context::class)->disableOriginalConstructor()->getMock();
-        $this->mockSecurityContext->expects(self::any())->method('canBeInitialized')->willReturn(true);
+        $this->mockSecurityContext = $this->createMock(Context::class);
+        $this->mockSecurityContext->method('canBeInitialized')->willReturn(true);
 
-        $this->mockPolicyService = $this->getMockBuilder(\Neos\Flow\Security\Policy\PolicyService::class)->disableOriginalConstructor()->getMock();
+        $this->mockPolicyService = $this->createMock(PolicyService::class);
 
-        $reflectionService = $this->getMockBuilder(ReflectionService::class)->disableOriginalConstructor()->getMock();
-        $reflectionService->expects(self::any())->method('getMethodParameters')->willReturn([]);
+        $reflectionService = $this->createMock(ReflectionService::class);
+        $reflectionService->method('getMethodParameters')->willReturn([]);
 
-        $objectManager = $this->getMockBuilder(ObjectManagerInterface::class)->disableOriginalConstructor()->getMock();
-        $objectManager->expects(self::any())->method('get')->willReturnCallback(function ($objectName) use ($reflectionService) {
+        $objectManager = $this->createMock(ObjectManagerInterface::class);
+        $objectManager->method('get')->willReturnCallback(function ($objectName) use ($reflectionService) {
             switch ($objectName) {
                 case Context::class:
                     return $this->mockSecurityContext;
@@ -73,9 +80,9 @@ class IfHasRoleViewHelperTest extends ViewHelperBaseTestcase
             }
         });
 
-        $renderingContext = $this->getMockBuilder(RenderingContext::class)->disableOriginalConstructor()->getMock();
-        $renderingContext->expects(self::any())->method('getObjectManager')->willReturn($objectManager);
-        $renderingContext->expects(self::any())->method('getControllerContext')->willReturn($this->getMockControllerContext());
+        $renderingContext = $this->createMock(RenderingContext::class);
+        $renderingContext->method('getObjectManager')->willReturn($objectManager);
+        $renderingContext->method('getControllerContext')->willReturn($this->getMockControllerContext());
 
         $this->inject($this->mockViewHelper, 'objectManager', $objectManager);
         $this->inject($this->mockViewHelper, 'renderingContext', $renderingContext);
@@ -84,31 +91,29 @@ class IfHasRoleViewHelperTest extends ViewHelperBaseTestcase
     /**
      * Create a mock controllerContext
      *
-     * @return \PHPUnit\Framework\MockObject\MockObject
+     * @return MockObject
      */
     protected function getMockControllerContext()
     {
         $httpRequest = new ServerRequest('GET', 'http://robertlemke.com/blog');
-        $mockRequest = $this->getMockBuilder(\Neos\Flow\Mvc\ActionRequest::class)->disableOriginalConstructor()->getMock();
-        $mockRequest->expects(self::any())->method('getControllerPackageKey')->will(self::returnValue('Acme.Demo'));
+        $mockRequest = $this->createMock(ActionRequest::class);
+        $mockRequest->method('getControllerPackageKey')->willReturn(('Acme.Demo'));
 
-        $mockControllerContext = $this->getMockBuilder(\Neos\Flow\Mvc\Controller\ControllerContext::class)->setMethods(['getRequest'])->disableOriginalConstructor()->getMock();
-        $mockControllerContext->expects(self::any())->method('getRequest')->will(self::returnValue($mockRequest));
+        $mockControllerContext = $this->getMockBuilder(ControllerContext::class)->onlyMethods(['getRequest'])->disableOriginalConstructor()->getMock();
+        $mockControllerContext->method('getRequest')->willReturn(($mockRequest));
 
         return $mockControllerContext;
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function viewHelperRendersThenPartIfHasRoleReturnsTrue()
     {
         $role = new Role('Acme.Demo:SomeRole');
 
-        $this->mockSecurityContext->expects(self::once())->method('hasRole')->with('Acme.Demo:SomeRole')->will(self::returnValue(true));
-        $this->mockPolicyService->expects(self::once())->method('getRole')->with('Acme.Demo:SomeRole')->will(self::returnValue($role));
+        $this->mockSecurityContext->expects($this->once())->method('hasRole')->with('Acme.Demo:SomeRole')->willReturn((true));
+        $this->mockPolicyService->expects($this->once())->method('getRole')->with('Acme.Demo:SomeRole')->willReturn(($role));
 
-        $this->mockViewHelper->expects(self::once())->method('renderThenChild')->will(self::returnValue('then-child'));
+        $this->mockViewHelper->expects($this->once())->method('renderThenChild')->willReturn(('then-child'));
 
         $arguments = [
             'role' => 'SomeRole',
@@ -119,22 +124,20 @@ class IfHasRoleViewHelperTest extends ViewHelperBaseTestcase
         self::assertEquals('then-child', $actualResult);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function viewHelperHandlesPackageKeyAttributeCorrectly()
     {
-        $this->mockSecurityContext->expects(self::any())->method('hasRole')->will(self::returnCallBack(function ($role) {
+        $this->mockSecurityContext->method('hasRole')->willReturnCallback(function ($role) {
             switch ($role) {
                 case 'Neos.FluidAdaptor:Administrator':
                     return true;
                 case 'Neos.FluidAdaptor:User':
                     return false;
             }
-        }));
+        });
 
-        $this->mockViewHelper->expects(self::any())->method('renderThenChild')->will(self::returnValue('true'));
-        $this->mockViewHelper->expects(self::any())->method('renderElseChild')->will(self::returnValue('false'));
+        $this->mockViewHelper->method('renderThenChild')->willReturn(('true'));
+        $this->mockViewHelper->method('renderElseChild')->willReturn(('false'));
 
         $arguments = [
             'role' => new Role('Neos.FluidAdaptor:Administrator'),
@@ -154,21 +157,19 @@ class IfHasRoleViewHelperTest extends ViewHelperBaseTestcase
         self::assertEquals('false', $actualResult);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function viewHelperUsesSpecifiedAccountForCheck()
     {
-        $mockAccount = $this->createMock(\Neos\Flow\Security\Account::class);
-        $mockAccount->expects(self::any())->method('hasRole')->will(self::returnCallBack(function (Role $role) {
+        $mockAccount = $this->createMock(Account::class);
+        $mockAccount->method('hasRole')->willReturnCallback(function (Role $role) {
             switch ($role->getIdentifier()) {
                 case 'Neos.FluidAdaptor:Administrator':
                     return true;
             }
-        }));
+        });
 
-        $this->mockViewHelper->expects(self::any())->method('renderThenChild')->will(self::returnValue('true'));
-        $this->mockViewHelper->expects(self::any())->method('renderElseChild')->will(self::returnValue('false'));
+        $this->mockViewHelper->method('renderThenChild')->willReturn(('true'));
+        $this->mockViewHelper->method('renderElseChild')->willReturn(('false'));
 
         $arguments = [
             'role' => new Role('Neos.FluidAdaptor:Administrator'),

@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Neos\Flow\Tests\Functional\ObjectManagement;
 
 /*
@@ -10,24 +13,37 @@ namespace Neos\Flow\Tests\Functional\ObjectManagement;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
 use Neos\Flow\Cache\CacheManager;
 use Neos\Flow\Configuration\ConfigurationManager;
 use Neos\Flow\ObjectManagement\Proxy\ProxyInterface;
+use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\ClassWithInjectedCache;
+use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\ClassWithInjectedConfiguration;
+use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\ClassWithNonNamespacedDependencies;
 use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\FinalClassWithDependencies;
 use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\Flow175\ClassWithTransitivePrototypeDependency;
+use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\PHP81\ClassWithNonPromotedReadonlyProperties;
 use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\PrototypeClassA;
+use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\PrototypeClassAishInterface;
+use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\PrototypeClassDsub;
+use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\PrototypeClassE;
 use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\PrototypeClassH;
 use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\PrototypeClassL;
 use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\SingletonClassA;
+use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\SingletonClassB;
+use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\SingletonClassC;
+use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\SingletonClassD;
+use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\SingletonClassF;
+use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\SingletonClassG;
+use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\SubNamespace\AnotherClass;
 use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\ValueObjectClassA;
 use Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\ValueObjectClassB;
 use Neos\Flow\Tests\FunctionalTestCase;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Functional tests for the Dependency Injection features
  */
-class DependencyInjectionTest extends FunctionalTestCase
+final class DependencyInjectionTest extends FunctionalTestCase
 {
     protected ConfigurationManager $configurationManager;
     protected CacheManager $cacheManager;
@@ -40,35 +56,29 @@ class DependencyInjectionTest extends FunctionalTestCase
         $this->cacheManager = $this->objectManager->get(CacheManager::class);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function singletonObjectsCanBeInjectedIntoConstructorsOfSingletonObjects(): void
     {
-        $objectA = $this->objectManager->get(Fixtures\SingletonClassA::class);
-        $objectB = $this->objectManager->get(Fixtures\SingletonClassB::class);
+        $objectA = $this->objectManager->get(SingletonClassA::class);
+        $objectB = $this->objectManager->get(SingletonClassB::class);
 
         self::assertSame($objectB, $objectA->getObjectB());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function constructorInjectionCanHandleCombinationsOfRequiredAutowiredAndOptionalArguments(): void
     {
-        $objectC = $this->objectManager->get(Fixtures\SingletonClassC::class);
+        $objectC = $this->objectManager->get(SingletonClassC::class);
 
         // Note: The "requiredArgument" and "thirdOptionalArgument" are defined in the Objects.yaml of the Flow package (testing context)
         self::assertSame('this is required', $objectC->requiredArgument);
         self::assertEquals(['thisIs' => ['anArray' => 'asProperty']], $objectC->thirdOptionalArgument);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function propertiesOfVariousPrimitiveTypeAreSetInSingletonPropertiesIfConfigured(): void
     {
-        $objectC = $this->objectManager->get(Fixtures\SingletonClassC::class);
+        $objectC = $this->objectManager->get(SingletonClassC::class);
 
         // Note: The arguments are defined in the Objects.yaml of the Flow package (testing context)
         self::assertSame('a defined string', $objectC->getProtectedStringPropertySetViaObjectsYaml());
@@ -79,233 +89,189 @@ class DependencyInjectionTest extends FunctionalTestCase
         self::assertNull($objectC->getProtectedNullPropertySetViaObjectsYaml());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function ifItExistsASetterIsUsedToInjectPrimitiveTypePropertiesFromConfiguration(): void
     {
-        $objectC = $this->objectManager->get(Fixtures\SingletonClassC::class);
+        $objectC = $this->objectManager->get(SingletonClassC::class);
 
         // Note: The argument is defined in the Objects.yaml of the Flow package (testing context)
         self::assertSame(['has' => 'some default value', 'and' => 'something from Objects.yaml'], $objectC->getProtectedArrayPropertyWithSetterSetViaObjectsYaml());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function propertiesAreReinjectedIfTheObjectIsUnserialized(): void
     {
-        $className = Fixtures\PrototypeClassA::class;
+        $className = PrototypeClassA::class;
 
-        $singletonA = $this->objectManager->get(Fixtures\SingletonClassA::class);
+        $singletonA = $this->objectManager->get(SingletonClassA::class);
 
         $prototypeA = unserialize('O:' . strlen($className) . ':"' . $className . '":0:{}');
         self::assertSame($singletonA, $prototypeA->getSingletonA());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function virtualObjectsDefinedInObjectsYamlCanUseAFactoryForTheirActualImplementation(): void
     {
-        $prototypeA = $this->objectManager->get(Fixtures\PrototypeClassAishInterface::class);
+        $prototypeA = $this->objectManager->get(PrototypeClassAishInterface::class);
 
         # Note: The "someProperty" injection is defined in the Objects.yaml of the Flow package (Testing context)
         #       for the object "Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\PrototypeClassAishInterface"
-        self::assertInstanceOf(Fixtures\PrototypeClassA::class, $prototypeA);
+        self::assertInstanceOf(PrototypeClassA::class, $prototypeA);
         self::assertSame('value defined in Objects.yaml', $prototypeA->getSomeProperty());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function constructorInjectionInSingletonCanHandleArgumentDefinedInSettings(): void
     {
-        $objectC = $this->objectManager->get(Fixtures\SingletonClassC::class);
+        $objectC = $this->objectManager->get(SingletonClassC::class);
 
         // Note: The "settingsArgument" is defined in the Settings.yaml of the Flow package (Testing context)
         self::assertSame('setting injected singleton value', $objectC->settingsArgument);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function singletonCanHandleInjectedPrototypeWithSettingArgument(): void
     {
-        $objectD = $this->objectManager->get(Fixtures\SingletonClassD::class);
+        $objectD = $this->objectManager->get(SingletonClassD::class);
 
         // Note: The "settingsArgument" is defined in the Settings.yaml of the Flow package (testing context)
         self::assertSame('setting injected property value', $objectD->prototypeClassC->settingsArgument);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function singletonCanHandleInjectedPrototypeWithCustomFactory(): void
     {
-        $objectD = $this->objectManager->get(Fixtures\SingletonClassD::class);
+        $objectD = $this->objectManager->get(SingletonClassD::class);
 
         // Note: The "prototypeClassA" is defined with a custom factory in the Objects.yaml of the Flow package (testing context)
         self::assertNotNull($objectD->prototypeClassA);
         self::assertSame('value defined in Objects.yaml', $objectD->prototypeClassA->getSomeProperty());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function singletonCanHandleConstructorArgumentWithCustomFactory(): void
     {
-        $objectG = $this->objectManager->get(Fixtures\SingletonClassG::class);
+        $objectG = $this->objectManager->get(SingletonClassG::class);
 
         // Note: The "prototypeClassA" is defined with a custom factory in the Objects.yaml of the Flow package (testing context)
         self::assertNotNull($objectG->prototypeA);
         self::assertSame('Constructor injection with factory', $objectG->prototypeA->getSomeProperty());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function onCreationOfObjectInjectionInParentClassIsDoneOnlyOnce(): void
     {
-        $prototypeDsub = $this->objectManager->get(Fixtures\PrototypeClassDsub::class);
+        $prototypeDsub = $this->objectManager->get(PrototypeClassDsub::class);
         self::assertSame(1, $prototypeDsub->injectionRuns);
     }
 
     /**
      * See http://forge.typo3.org/issues/43659
-     *
-     * @test
      */
+    #[Test]
     public function injectedPropertiesAreAvailableInInitializeObjectEvenIfTheClassHasBeenExtended(): void
     {
-        $prototypeDsub = $this->objectManager->get(Fixtures\PrototypeClassDsub::class);
+        $prototypeDsub = $this->objectManager->get(PrototypeClassDsub::class);
         self::assertFalse($prototypeDsub->injectedPropertyWasUnavailable);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function constructorsOfSingletonObjectsAcceptNullArguments(): void
     {
-        $objectF = $this->objectManager->get(Fixtures\SingletonClassF::class);
+        $objectF = $this->objectManager->get(SingletonClassF::class);
 
         self::assertNull($objectF->getNullValue());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function constructorsOfPrototypeObjectsAcceptNullArguments(): void
     {
-        $objectE = $this->objectManager->get(Fixtures\PrototypeClassE::class, null);
+        $objectE = $this->objectManager->get(PrototypeClassE::class, null);
 
         self::assertNull($objectE->getNullValue());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function injectionOfObjectFromSameNamespace(): void
     {
-        $nonNamespacedDependencies = new Fixtures\ClassWithNonNamespacedDependencies();
-        $classB = $this->objectManager->get(Fixtures\SingletonClassB::class);
+        $nonNamespacedDependencies = new ClassWithNonNamespacedDependencies();
+        $classB = $this->objectManager->get(SingletonClassB::class);
         self::assertSame($classB, $nonNamespacedDependencies->getSingletonClassB());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function injectionOfObjectFromSubNamespace(): void
     {
-        $nonNamespacedDependencies = new Fixtures\ClassWithNonNamespacedDependencies();
-        $aClassFromSubNamespace = $this->objectManager->get(Fixtures\SubNamespace\AnotherClass::class);
+        $nonNamespacedDependencies = new ClassWithNonNamespacedDependencies();
+        $aClassFromSubNamespace = $this->objectManager->get(AnotherClass::class);
         self::assertSame($aClassFromSubNamespace, $nonNamespacedDependencies->getClassFromSubNamespace());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function injectionOfAllSettings(): void
     {
-        $classWithInjectedConfiguration = new Fixtures\ClassWithInjectedConfiguration();
+        $classWithInjectedConfiguration = new ClassWithInjectedConfiguration();
         $actualSettings = $this->configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'Neos.Flow');
         self::assertSame($actualSettings, $classWithInjectedConfiguration->getSettings());
     }
 
-
-    /**
-     * @test
-     */
+    #[Test]
     public function injectionOfSpecifiedPackageSettings(): void
     {
-        $classWithInjectedConfiguration = new Fixtures\ClassWithInjectedConfiguration();
+        $classWithInjectedConfiguration = new ClassWithInjectedConfiguration();
 
         $actualSettings = $this->configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'Neos.Flow');
         self::assertSame($actualSettings, $classWithInjectedConfiguration->getInjectedSpecifiedPackageSettings());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function injectionOfCurrentPackageSettings(): void
     {
-        $classWithInjectedConfiguration = new Fixtures\ClassWithInjectedConfiguration();
+        $classWithInjectedConfiguration = new ClassWithInjectedConfiguration();
 
         $actualSettings = $this->configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'Neos.Flow');
         self::assertSame($actualSettings, $classWithInjectedConfiguration->getInjectedCurrentPackageSettings());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function injectionOfNonExistingSettingsOverridesDefaultValue(): void
     {
-        $classWithInjectedConfiguration = new Fixtures\ClassWithInjectedConfiguration();
+        $classWithInjectedConfiguration = new ClassWithInjectedConfiguration();
         self::assertNull($classWithInjectedConfiguration->getNonExistingSetting());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function injectionOfSingleSettings(): void
     {
-        $classWithInjectedConfiguration = new Fixtures\ClassWithInjectedConfiguration();
+        $classWithInjectedConfiguration = new ClassWithInjectedConfiguration();
         self::assertSame('injected setting', $classWithInjectedConfiguration->getInjectedSettingA());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function injectionOfSingleSettingsFromSpecificPackage(): void
     {
-        $classWithInjectedConfiguration = new Fixtures\ClassWithInjectedConfiguration();
+        $classWithInjectedConfiguration = new ClassWithInjectedConfiguration();
         self::assertSame('injected setting', $classWithInjectedConfiguration->getInjectedSettingB());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function injectionOfConfigurationCallsRespectiveSetterIfItExists(): void
     {
-        $classWithInjectedConfiguration = new Fixtures\ClassWithInjectedConfiguration();
+        $classWithInjectedConfiguration = new ClassWithInjectedConfiguration();
         self::assertSame('INJECTED SETTING', $classWithInjectedConfiguration->getInjectedSettingWithSetter());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function injectionOfOtherConfigurationTypes(): void
     {
-        $classWithInjectedConfiguration = new Fixtures\ClassWithInjectedConfiguration();
+        $classWithInjectedConfiguration = new ClassWithInjectedConfiguration();
         self::assertSame($this->configurationManager->getConfiguration('Views'), $classWithInjectedConfiguration->getInjectedViewsConfiguration());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function injectionOfCaches(): void
     {
-        $classWithInjectedCache = new Fixtures\ClassWithInjectedCache();
+        $classWithInjectedCache = new ClassWithInjectedCache();
         self::assertSame($this->cacheManager->getCache('Flow_Monitor'), $classWithInjectedCache->getCacheInjectedViaAttribute());
         self::assertSame($this->cacheManager->getCache('Flow_Monitor'), $classWithInjectedCache->getCacheInjectedViaAnnotation());
     }
@@ -318,27 +284,23 @@ class DependencyInjectionTest extends FunctionalTestCase
      * constructor argument and that dependency was explicitly configured
      * in the package's Objects.yaml.
      *
-     * @test
      * @see https://jira.neos.io/browse/FLOW-175
      */
+    #[Test]
     public function transitivePrototypeDependenciesWithExplicitObjectConfigurationAreConstructedCorrectly(): void
     {
         $classWithTransitivePrototypeDependency = new ClassWithTransitivePrototypeDependency();
         self::assertEquals('Hello World!', $classWithTransitivePrototypeDependency->getTestValue());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function dependencyInjectionWorksForFinalClasses(): void
     {
         $object = $this->objectManager->get(FinalClassWithDependencies::class);
         self::assertInstanceOf(SingletonClassA::class, $object->dependency);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function noProxyClassIsGeneratedForClassesWhoseConstructorAutowiringIsDisabledViaSettings(): void
     {
         $object = new PrototypeClassH(
@@ -351,16 +313,101 @@ class DependencyInjectionTest extends FunctionalTestCase
         self::assertInstanceOf(ProxyInterface::class, $object);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function constructorSettingsInjectionViaInjectAnnotation(): void
     {
         $object = $this->objectManager->get(PrototypeClassL::class);
-        self::assertInstanceOf(ProxyInterface::class, $object);
+        self::assertInstanceOf(PrototypeClassL::class, $object);
         self::assertSame('injected setting', $object->value);
 
         $object = new PrototypeClassL('override');
         self::assertSame('override', $object->value);
+    }
+
+    /**
+     * Test that proxy constructors support PHP 8+ named arguments (issue #3076)
+     */
+    #[Test]
+    public function prototypeObjectsCanBeInstantiatedWithNamedArguments(): void
+    {
+        $valueObject = new Fixtures\ValueObjectClassA('test-value');
+        $object = new Fixtures\ClassWithNamedConstructorArguments(
+            valueObject: $valueObject,
+            stringValue: 'named-value'
+        );
+
+        self::assertSame($valueObject, $object->getValueObject());
+        self::assertSame('named-value', $object->getStringValue());
+    }
+
+    /**
+     * Test that named arguments work with positional arguments
+     */
+    #[Test]
+    public function prototypeObjectsCanBeInstantiatedWithPositionalArguments(): void
+    {
+        $valueObject = new Fixtures\ValueObjectClassA('test-value');
+        $object = new Fixtures\ClassWithNamedConstructorArguments($valueObject, 'positional-value');
+
+        self::assertSame($valueObject, $object->getValueObject());
+        self::assertSame('positional-value', $object->getStringValue());
+    }
+
+    /**
+     * Test that named arguments work with default values
+     */
+    #[Test]
+    public function prototypeObjectsCanBeInstantiatedWithNamedArgumentsAndDefaults(): void
+    {
+        $valueObject = new Fixtures\ValueObjectClassA('test-value');
+        $object = new Fixtures\ClassWithNamedConstructorArguments(valueObject: $valueObject);
+
+        self::assertSame($valueObject, $object->getValueObject());
+        self::assertSame('default', $object->getStringValue());
+    }
+
+    /**
+     * Test that constructor injection still works with named argument support
+     */
+    #[Test]
+    public function singletonObjectsWithConstructorInjectionStillWorkWithNamedArgumentSupport(): void
+    {
+        $singleton = $this->objectManager->get(Fixtures\SingletonWithConstructorInjection::class);
+
+        self::assertInstanceOf(Fixtures\SingletonClassA::class, $singleton->getSingletonA());
+        self::assertNull($singleton->getOptionalValue());
+    }
+
+    /**
+     * Readonly properties which are not promoted constructor properties are assigned in the
+     * constructor body of the original class – the proxy constructor must not interfere with that.
+     */
+    #[Test]
+    public function nonPromotedReadonlyPropertiesAreSetWhenAProxiedObjectIsCreated(): void
+    {
+        $object = $this->objectManager->get(ClassWithNonPromotedReadonlyProperties::class);
+
+        self::assertInstanceOf(ProxyInterface::class, $object);
+        self::assertSame('the default label', $object->label);
+        self::assertSame(84, $object->getNumber());
+        self::assertInstanceOf(SingletonClassA::class, $object->getSingletonA());
+    }
+
+    #[Test]
+    public function nonPromotedReadonlyPropertiesRespectConstructorArguments(): void
+    {
+        $object = $this->objectManager->get(ClassWithNonPromotedReadonlyProperties::class, 'a custom label', 21);
+
+        self::assertSame('a custom label', $object->label);
+        self::assertSame(42, $object->getNumber());
+    }
+
+    #[Test]
+    public function nonPromotedReadonlyPropertiesOfProxiedObjectsCannotBeModified(): void
+    {
+        $object = $this->objectManager->get(ClassWithNonPromotedReadonlyProperties::class);
+
+        $this->expectException(\Error::class);
+        $object->label = 'a new label';
     }
 }

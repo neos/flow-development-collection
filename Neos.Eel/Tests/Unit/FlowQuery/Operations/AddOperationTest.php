@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Neos\Eel\Tests\Unit\FlowQuery\Operations;
 
 /*
@@ -13,17 +16,18 @@ namespace Neos\Eel\Tests\Unit\FlowQuery\Operations;
 
 use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Eel\FlowQuery\Operations\AddOperation;
+use Neos\Flow\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * AddOperation test
  */
-class AddOperationTest extends \Neos\Flow\Tests\UnitTestCase
+final class AddOperationTest extends UnitTestCase
 {
     /**
      * This corresponds to ${q(node).add(q(someOtherNode))}
-     *
-     * @test
      */
+    #[Test]
     public function addWithFlowQueryArgumentAppendsToCurrentContext()
     {
         $object1 = new \stdClass();
@@ -42,9 +46,8 @@ class AddOperationTest extends \Neos\Flow\Tests\UnitTestCase
 
     /**
      * This corresponds to ${q(node).add(someOtherNode)}
-     *
-     * @test
      */
+    #[Test]
     public function addWithNodeArgumentAppendsToCurrentContext()
     {
         $object1 = new \stdClass();
@@ -63,9 +66,8 @@ class AddOperationTest extends \Neos\Flow\Tests\UnitTestCase
 
     /**
      * This corresponds to ${q(node).add([someOtherNode, ...]))}
-     *
-     * @test
      */
+    #[Test]
     public function addWithArrayArgumentAppendsToCurrentContext()
     {
         $object1 = new \stdClass();

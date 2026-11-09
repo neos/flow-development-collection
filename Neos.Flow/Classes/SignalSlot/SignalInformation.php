@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Neos\Flow\SignalSlot;
@@ -35,10 +36,13 @@ final class SignalInformation
     protected $signalName;
 
     /**
-     * @var array
+     * @var array<mixed>
      */
     protected $signalArguments;
 
+    /**
+     * @param array<mixed> $signalArguments
+     */
     public function __construct(string $signalClassName, string $signalName, array $signalArguments)
     {
         $this->signalClassName = $signalClassName;
@@ -56,6 +60,9 @@ final class SignalInformation
         return $this->signalName;
     }
 
+    /**
+     * @return array<mixed>
+     */
     public function getSignalArguments(): array
     {
         return $this->signalArguments;

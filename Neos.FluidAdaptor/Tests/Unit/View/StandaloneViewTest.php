@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Neos\FluidAdaptor\Tests\Unit\View;
 
 /*
@@ -10,48 +13,33 @@ namespace Neos\FluidAdaptor\Tests\Unit\View;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
-
-use Neos\FluidAdaptor\View\Exception\InvalidTemplateResourceException;
-use org\bovigo\vfs\vfsStreamWrapper;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\Controller\ControllerContext;
 use Neos\Flow\Tests\UnitTestCase;
+use Neos\FluidAdaptor\View\Exception\InvalidTemplateResourceException;
 use Neos\FluidAdaptor\View\StandaloneView;
+use org\bovigo\vfs\vfsStreamWrapper;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Testcase for the StandaloneView
  */
-class StandaloneViewTest extends UnitTestCase
+final class StandaloneViewTest extends UnitTestCase
 {
     /**
      * @var StandaloneView
      */
     protected $standaloneView;
 
-    /**
-     * @var ControllerContext
-     */
-    protected $mockControllerContext;
-
-    /**
-     * @var ActionRequest
-     */
-    protected $mockRequest;
-
     protected function setUp(): void
     {
-        $this->standaloneView = $this->getAccessibleMock(\Neos\FluidAdaptor\View\StandaloneView::class, ['dummy']);
-
-        $this->mockRequest = $this->getMockBuilder(\Neos\Flow\Mvc\ActionRequest::class)->disableOriginalConstructor()->getMock();
-        $this->mockControllerContext = $this->getMockBuilder(\Neos\Flow\Mvc\Controller\ControllerContext::class)->disableOriginalConstructor()->getMock();
-        $this->mockControllerContext->expects(self::any())->method('getRequest')->will(self::returnValue($this->mockRequest));
-        $this->inject($this->standaloneView, 'controllerContext', $this->mockControllerContext);
+        $this->standaloneView = $this->getAccessibleMock(StandaloneView::class, []);
+        $mockControllerContext = $this->createMock(ControllerContext::class);
+        $mockControllerContext->method('getRequest')->willReturn(($this->createMock(ActionRequest::class)));
+        $this->inject($this->standaloneView, 'controllerContext', $mockControllerContext);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getLayoutPathAndFilenameThrowsExceptionIfSpecifiedLayoutRootPathIsNoDirectory()
     {
         $this->expectException(InvalidTemplateResourceException::class);
@@ -62,9 +50,7 @@ class StandaloneViewTest extends UnitTestCase
         $this->standaloneView->getTemplatePaths()->getLayoutSource();
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getLayoutPathAndFilenameThrowsExceptionIfLayoutFileIsADirectory()
     {
         $this->expectException(InvalidTemplateResourceException::class);
@@ -74,9 +60,7 @@ class StandaloneViewTest extends UnitTestCase
         $this->standaloneView->getTemplatePaths()->getLayoutSource('NotAFile');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getPartialPathAndFilenameThrowsExceptionIfSpecifiedPartialRootPathIsNoDirectory()
     {
         $this->expectException(InvalidTemplateResourceException::class);
@@ -87,9 +71,7 @@ class StandaloneViewTest extends UnitTestCase
         $this->standaloneView->getTemplatePaths()->getPartialSource('SomePartial');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getPartialPathAndFilenameThrowsExceptionIfPartialFileIsADirectory()
     {
         $this->expectException(InvalidTemplateResourceException::class);

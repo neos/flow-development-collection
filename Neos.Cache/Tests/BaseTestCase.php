@@ -1,5 +1,10 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Neos\Cache\Tests;
+
+use PHPUnit\Framework\TestCase;
 
 /*
  * This file is part of the Neos.Cache package.
@@ -10,12 +15,11 @@ namespace Neos\Cache\Tests;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
 /**
  * The mother of all test cases.
  *
  */
-abstract class BaseTestCase extends \PHPUnit\Framework\TestCase
+abstract class BaseTestCase extends TestCase
 {
     /**
      * @var array

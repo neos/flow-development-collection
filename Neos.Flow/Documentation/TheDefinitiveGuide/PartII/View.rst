@@ -255,7 +255,7 @@ one template and omit the ``<f:layout>`` and ``<f:section>`` tags.
 The main job of this template is to display a list of the most recent posts.
 An ``<f:if>`` condition makes sure that the list of posts is only rendered if
 ``blog`` actually contains posts. But currently the view doesn't know anything
-about a blog - you need to adapt the the ``PostController`` to assign the current blog::
+about a blog - you need to adapt the ``PostController`` to assign the current blog::
 
 *Classes/Acme/Blog/Controller/PostController.php*:
 

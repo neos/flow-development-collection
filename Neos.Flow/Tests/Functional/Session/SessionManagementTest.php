@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Neos\Flow\Tests\Functional\Session;
 
 /*
@@ -10,11 +13,14 @@ namespace Neos\Flow\Tests\Functional\Session;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
-use Neos\Flow\Tests\FunctionalTestCase;
 use Neos\Flow\Session;
+use Neos\Flow\Session\SessionInterface;
+use Neos\Flow\Session\SessionManagerInterface;
+use Neos\Flow\Tests\FunctionalTestCase;
+use PHPUnit\Framework\Attributes\DoesNotPerformAssertions;
+use PHPUnit\Framework\Attributes\Test;
 
-class SessionManagementTest extends FunctionalTestCase
+final class SessionManagementTest extends FunctionalTestCase
 {
     /**
      * @return void
@@ -31,24 +37,20 @@ class SessionManagementTest extends FunctionalTestCase
                 '@subpackage' => 'Tests\Functional\Session\Fixtures',
                 '@controller' => 'SessionTest',
                 '@action' => 'sessionStart',
-                '@format' =>'html'
+                '@format' => 'html'
             ]
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function objectManagerAlwaysReturnsTheSameSessionIfInterfaceIsSpecified()
     {
-        $session1 = $this->objectManager->get(Session\SessionInterface::class);
-        $session2 = $this->objectManager->get(Session\SessionInterface::class);
+        $session1 = $this->objectManager->get(SessionInterface::class);
+        $session2 = $this->objectManager->get(SessionInterface::class);
         self::assertSame($session1, $session2);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function objectManagerAlwaysReturnsANewSessionInstanceIfClassNameIsSpecified()
     {
         $session1 = $this->objectManager->get(Session\Session::class);
@@ -59,14 +61,13 @@ class SessionManagementTest extends FunctionalTestCase
     /**
      * Checks if getCurrentSessionSession() returns the one and only session which can also
      * be retrieved through Dependency Injection using the SessionInterface.
-     *
-     * @test
      */
+    #[Test]
     public function getCurrentSessionReturnsTheCurrentlyActiveSession()
     {
-        $injectedSession = $this->objectManager->get(Session\SessionInterface::class);
-        $sessionManager = $this->objectManager->get(Session\SessionManagerInterface::class);
-        $otherInjectedSession = $this->objectManager->get(Session\SessionInterface::class);
+        $injectedSession = $this->objectManager->get(SessionInterface::class);
+        $sessionManager = $this->objectManager->get(SessionManagerInterface::class);
+        $otherInjectedSession = $this->objectManager->get(SessionInterface::class);
 
         $retrievedSession = $sessionManager->getCurrentSession();
         self::assertSame($injectedSession, $retrievedSession);
@@ -79,13 +80,12 @@ class SessionManagementTest extends FunctionalTestCase
      * the session initialization in order to retrieve or set the session cookie.
      *
      * See bug #43590
-     *
-     * @test
-     * @doesNotPerformAssertions
      */
+    #[Test]
+    #[DoesNotPerformAssertions]
     public function aSessionCanBeStartedInAFunctionalTest()
     {
-        $session = $this->objectManager->get(Session\SessionInterface::class);
+        $session = $this->objectManager->get(SessionInterface::class);
         $session->start();
     }
 
@@ -93,9 +93,8 @@ class SessionManagementTest extends FunctionalTestCase
      * This test makes sure that if a session is used through the HTTP Browser in
      * a functional test, the Session does not have side effects which result, for
      * example, in a cookie sent only at the end of the first request.
-     *
-     * @test
      */
+    #[Test]
     public function aSessionUsedInAFunctionalTestVirtualBrowserSendsCookiesOnEachRequest()
     {
         $response = $this->browser->request('http://localhost/test/session');

@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Neos\Flow\Tests\Unit\I18n\Cldr\Reader;
 
 /*
@@ -10,15 +13,22 @@ namespace Neos\Flow\Tests\Unit\I18n\Cldr\Reader;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
 use Neos\Cache\Frontend\VariableFrontend;
-use Neos\Flow\Tests\UnitTestCase;
 use Neos\Flow\I18n;
+use Neos\Flow\I18n\Cldr\CldrModel;
+use Neos\Flow\I18n\Cldr\CldrRepository;
+use Neos\Flow\I18n\Cldr\Reader\Exception\UnsupportedNumberFormatException;
+use Neos\Flow\I18n\Cldr\Reader\NumbersReader;
+use Neos\Flow\I18n\Locale;
+use Neos\Flow\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\MockObject\MockObject;
 
 /**
  * Testcase for the NumbersReader
  */
-class NumbersReaderTest extends UnitTestCase
+final class NumbersReaderTest extends UnitTestCase
 {
     /**
      * Dummy locale used in methods where locale is needed.
@@ -33,7 +43,7 @@ class NumbersReaderTest extends UnitTestCase
      *
      * @var array
      */
-    protected $templateFormat = [
+    protected static $templateFormat = [
         'positivePrefix' => '',
         'positiveSuffix' => '',
         'negativePrefix' => '-',
@@ -57,32 +67,66 @@ class NumbersReaderTest extends UnitTestCase
      */
     protected function setUp(): void
     {
-        $this->sampleLocale = new I18n\Locale('en');
+        $this->sampleLocale = new Locale('en');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function formatIsCorrectlyReadFromCldr(): void
     {
-        $mockModel = $this->createMock(I18n\Cldr\CldrModel::class);
-        $mockModel->expects(self::once())->method('getElement')->with('numbers/decimalFormats/decimalFormatLength/decimalFormat/pattern')->willReturn('mockFormatString');
+        $mockModel = $this->createMock(CldrModel::class);
+        $mockModel->expects($this->once())->method('getElement')->with('numbers/decimalFormats/decimalFormatLength/decimalFormat/pattern')->willReturn('mockFormatString');
 
-        $mockRepository = $this->createMock(I18n\Cldr\CldrRepository::class);
-        $mockRepository->expects(self::once())->method('getModelForLocale')->with($this->sampleLocale)->willReturn($mockModel);
+        $mockRepository = $this->createMock(CldrRepository::class);
+        $mockRepository->expects($this->once())->method('getModelForLocale')->with($this->sampleLocale)->willReturn($mockModel);
 
-        $mockCache = $this->getMockBuilder(VariableFrontend::class)->disableOriginalConstructor()->getMock();
-        $mockCache->expects(self::atLeast(3))->method('has')->withConsecutive(['parsedFormats'], ['parsedFormatsIndices'], ['localizedSymbols'])->willReturn(true);
-        $mockCache->expects(self::atLeast(3))->method('get')->withConsecutive(['parsedFormats'], ['parsedFormatsIndices'], ['localizedSymbols'])->willReturn([]);
-        $mockCache->expects(self::atLeast(3))->method('set')->withConsecutive(['parsedFormats'], ['parsedFormatsIndices'], ['localizedSymbols']);
+        $mockCache = $this->createMock(VariableFrontend::class);
+        $matcher = self::atLeast(3);
+        $mockCache->expects($matcher)->method('has')->willReturnCallback(function (...$parameters) use ($matcher) {
+            if ($matcher->numberOfInvocations() === 1) {
+                $this->assertSame('parsedFormats', $parameters[0]);
+            }
+            if ($matcher->numberOfInvocations() === 2) {
+                $this->assertSame('parsedFormatsIndices', $parameters[0]);
+            }
+            if ($matcher->numberOfInvocations() === 3) {
+                $this->assertSame('localizedSymbols', $parameters[0]);
+            }
+            return true;
+        });
+        $matcher = self::atLeast(3);
+        $mockCache->expects($matcher)->method('get')->willReturnCallback(function (...$parameters) use ($matcher) {
+            if ($matcher->numberOfInvocations() === 1) {
+                $this->assertSame('parsedFormats', $parameters[0]);
+            }
+            if ($matcher->numberOfInvocations() === 2) {
+                $this->assertSame('parsedFormatsIndices', $parameters[0]);
+            }
+            if ($matcher->numberOfInvocations() === 3) {
+                $this->assertSame('localizedSymbols', $parameters[0]);
+            }
+            return [];
+        });
+        $matcher = self::atLeast(3);
+        $mockCache->expects($matcher)->method('set')->willReturnCallback(function (...$parameters) use ($matcher) {
+            if ($matcher->numberOfInvocations() === 1) {
+                $this->assertSame('parsedFormats', $parameters[0]);
+            }
+            if ($matcher->numberOfInvocations() === 2) {
+                $this->assertSame('parsedFormatsIndices', $parameters[0]);
+            }
+            if ($matcher->numberOfInvocations() === 3) {
+                $this->assertSame('localizedSymbols', $parameters[0]);
+            }
+        });
 
-        $reader = $this->getAccessibleMock(I18n\Cldr\Reader\NumbersReader::class, ['parseFormat']);
-        $reader->expects(self::once())->method('parseFormat')->with('mockFormatString')->willReturn(['mockParsedFormat']);
+        /** @var MockObject|I18n\Cldr\Reader\NumbersReader $reader */
+        $reader = $this->getAccessibleMock(NumbersReader::class, ['parseFormat']);
+        $reader->expects($this->once())->method('parseFormat')->with('mockFormatString')->willReturn(['mockParsedFormat']);
         $reader->injectCldrRepository($mockRepository);
         $reader->injectCache($mockCache);
         $reader->initializeObject();
 
-        $result = $reader->parseFormatFromCldr($this->sampleLocale, I18n\Cldr\Reader\NumbersReader::FORMAT_TYPE_DECIMAL);
+        $result = $reader->parseFormatFromCldr($this->sampleLocale, NumbersReader::FORMAT_TYPE_DECIMAL);
         self::assertEquals(['mockParsedFormat'], $result);
 
         $reader->shutdownObject();
@@ -91,27 +135,25 @@ class NumbersReaderTest extends UnitTestCase
     /**
      * Data provider with valid format strings and expected results.
      *
-     * @return array
+     * @return \Iterator<(int | string), mixed>
      */
-    public function formatStringsAndParsedFormats(): array
+    public static function formatStringsAndParsedFormats(): \Iterator
     {
-        return [
-            ['#,##0.###', array_merge($this->templateFormat, ['maxDecimalDigits' => 3, 'primaryGroupingSize' => 3, 'secondaryGroupingSize' => 3])],
-            ['#,##,##0%', array_merge($this->templateFormat, ['positiveSuffix' => '%', 'negativeSuffix' => '%', 'multiplier' => 100, 'primaryGroupingSize' => 3, 'secondaryGroupingSize' => 2])],
-            ['¤ #,##0.00;¤ #,##0.00-', array_merge($this->templateFormat, ['positivePrefix' => '¤ ', 'negativePrefix' => '¤ ', 'negativeSuffix' => '-', 'minDecimalDigits' => 2, 'maxDecimalDigits' => 2, 'primaryGroupingSize' => 3, 'secondaryGroupingSize' => 3])],
-            ['#,##0.05', array_merge($this->templateFormat, ['minDecimalDigits' => 2, 'maxDecimalDigits' => 2, 'primaryGroupingSize' => 3, 'secondaryGroupingSize' => 3, 'rounding' => 0.05])],
-        ];
+        yield ['#,##0.###', array_merge(self::$templateFormat, ['maxDecimalDigits' => 3, 'primaryGroupingSize' => 3, 'secondaryGroupingSize' => 3])];
+        yield ['#,##,##0%', array_merge(self::$templateFormat, ['positiveSuffix' => '%', 'negativeSuffix' => '%', 'multiplier' => 100, 'primaryGroupingSize' => 3, 'secondaryGroupingSize' => 2])];
+        yield ['¤ #,##0.00;¤ #,##0.00-', array_merge(self::$templateFormat, ['positivePrefix' => '¤ ', 'negativePrefix' => '¤ ', 'negativeSuffix' => '-', 'minDecimalDigits' => 2, 'maxDecimalDigits' => 2, 'primaryGroupingSize' => 3, 'secondaryGroupingSize' => 3])];
+        yield ['#,##0.05', array_merge(self::$templateFormat, ['minDecimalDigits' => 2, 'maxDecimalDigits' => 2, 'primaryGroupingSize' => 3, 'secondaryGroupingSize' => 3, 'rounding' => 0.05])];
     }
 
     /**
-     * @test
-     * @dataProvider formatStringsAndParsedFormats
      * @param string $format
      * @param array $expectedResult
      */
+    #[DataProvider('formatStringsAndParsedFormats')]
+    #[Test]
     public function formatStringsAreParsedCorrectly(string $format, array $expectedResult): void
     {
-        $reader = $this->getAccessibleMock(I18n\Cldr\Reader\NumbersReader::class, ['dummy']);
+        $reader = $this->getAccessibleMock(NumbersReader::class, []);
 
         $result = $reader->_call('parseFormat', $format);
         self::assertEquals($expectedResult, $result);
@@ -121,27 +163,25 @@ class NumbersReaderTest extends UnitTestCase
      * Data provider with formats not supported by current implementation of
      * NumbersReader.
      *
-     * @return array
+     * @return \Iterator<(int | string), mixed>
      */
-    public function unsupportedFormats(): array
+    public static function unsupportedFormats(): \Iterator
     {
-        return [
-            ['0.###E0'],
-            ['@##'],
-            ['* #0'],
-            ['\'#\'##'],
-        ];
+        yield ['0.###E0'];
+        yield ['@##'];
+        yield ['* #0'];
+        yield ['\'#\'##'];
     }
 
     /**
-     * @test
-     * @dataProvider unsupportedFormats
      * @param string $format
      */
+    #[DataProvider('unsupportedFormats')]
+    #[Test]
     public function throwsExceptionWhenUnsupportedFormatsEncountered(string $format): void
     {
-        $this->expectException(I18n\Cldr\Reader\Exception\UnsupportedNumberFormatException::class);
-        $reader = $this->getAccessibleMock(I18n\Cldr\Reader\NumbersReader::class, ['dummy']);
+        $this->expectException(UnsupportedNumberFormatException::class);
+        $reader = $this->getAccessibleMock(NumbersReader::class, []);
 
         $reader->_call('parseFormat', $format);
     }

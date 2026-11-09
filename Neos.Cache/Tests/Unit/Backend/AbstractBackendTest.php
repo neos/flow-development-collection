@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Neos\Cache\Tests\Unit\Backend;
 
 include_once(__DIR__ . '/../../BaseTestCase.php');
@@ -16,12 +19,13 @@ include_once(__DIR__ . '/../../BaseTestCase.php');
 use Neos\Cache\Backend\AbstractBackend;
 use Neos\Cache\EnvironmentConfiguration;
 use Neos\Cache\Tests\BaseTestCase;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Testcase for the abstract cache backend
  *
  */
-class AbstractBackendTest extends BaseTestCase
+final class AbstractBackendTest extends BaseTestCase
 {
     /**
      * @var AbstractBackend
@@ -33,34 +37,47 @@ class AbstractBackendTest extends BaseTestCase
      */
     protected function setUp(): void
     {
-        class_exists(AbstractBackend::class);
-        $className = 'ConcreteBackend_' . md5(uniqid(mt_rand(), true));
-        eval('
-            #[\AllowDynamicProperties]
-            class ' . $className . ' extends \Neos\Cache\Backend\AbstractBackend {
-                public function set(string $entryIdentifier, string $data, array $tags = [], int $lifetime = NULL): void {}
-                public function get(string $entryIdentifier): string {}
-                public function has(string $entryIdentifier): bool {}
-                public function remove(string $entryIdentifier): bool {}
-                public function flush(): void {}
-                public function flushByTag(string $tag): int {}
-                public function flushByTags(array $tags): int {}
-                public function findIdentifiersByTag(string $tag): array {}
-                public function collectGarbage(): void {}
-                public function setSomeOption($value) {
-                    $this->someOption = $value;
-                }
-                public function getSomeOption() {
-                    return $this->someOption;
-                }
+        $this->backend = new class (new EnvironmentConfiguration('Ultraman Neos Testing', '/some/path', PHP_MAXPATHLEN)) extends AbstractBackend {
+            protected $someOption;
+            public function set(string $entryIdentifier, string $data, array $tags = [], ?int $lifetime = null): void
+            {
             }
-        ');
-        $this->backend = new $className(new EnvironmentConfiguration('Ultraman Neos Testing', '/some/path', PHP_MAXPATHLEN));
+            public function get(string $entryIdentifier): string
+            {
+            }
+            public function has(string $entryIdentifier): bool
+            {
+            }
+            public function remove(string $entryIdentifier): bool
+            {
+            }
+            public function flush(): void
+            {
+            }
+            public function flushByTag(string $tag): int
+            {
+            }
+            public function flushByTags(array $tags): int
+            {
+            }
+            public function findIdentifiersByTag(string $tag): array
+            {
+            }
+            public function collectGarbage(): void
+            {
+            }
+            public function setSomeOption($value)
+            {
+                $this->someOption = $value;
+            }
+            public function getSomeOption()
+            {
+                return $this->someOption;
+            }
+        };
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function theConstructorCallsSetterMethodsForAllSpecifiedOptions()
     {
         $className = get_class($this->backend);

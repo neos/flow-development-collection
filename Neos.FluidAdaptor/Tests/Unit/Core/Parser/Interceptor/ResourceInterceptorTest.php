@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Neos\FluidAdaptor\Tests\Unit\Core\Parser\Interceptor;
 
 /*
@@ -10,10 +13,11 @@ namespace Neos\FluidAdaptor\Tests\Unit\Core\Parser\Interceptor;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
+use Neos\Flow\Tests\UnitTestCase;
 use Neos\FluidAdaptor\Core\Parser\Interceptor\ResourceInterceptor;
 use Neos\FluidAdaptor\Core\Parser\SyntaxTree\ResourceUriNode;
-use Neos\Flow\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use TYPO3Fluid\Fluid\Core\Parser\InterceptorInterface;
 use TYPO3Fluid\Fluid\Core\Parser\ParsingState;
 use TYPO3Fluid\Fluid\Core\Parser\SyntaxTree\RootNode;
@@ -24,11 +28,9 @@ use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
  * Testcase for Interceptor\ResourceInterceptor
  *
  */
-class ResourceInterceptorTest extends UnitTestCase
+final class ResourceInterceptorTest extends UnitTestCase
 {
-    /**
-     * @test
-     */
+    #[Test]
     public function resourcesInCssUrlsAreReplacedCorrectly()
     {
         $originalText1 = '<style type="text/css">
@@ -41,11 +43,11 @@ class ResourceInterceptorTest extends UnitTestCase
 				background-repeat: no-repeat;
 			}';
         $originalText = $originalText1 . $originalText2 . $originalText3;
-        $mockTextNode = $this->getMockBuilder(TextNode::class)->setMethods(['evaluateChildNodes'])->setConstructorArgs([$originalText])->getMock();
+        $mockTextNode = $this->getMockBuilder(TextNode::class)->onlyMethods(['evaluateChildNodes'])->setConstructorArgs([$originalText])->getMock();
         self::assertEquals($originalText, $mockTextNode->evaluate($this->createMock(RenderingContextInterface::class)));
 
         $interceptor = new ResourceInterceptor();
-        $resultingNodeTree = $interceptor->process($mockTextNode, InterceptorInterface::INTERCEPT_TEXT, $this->createMock(ParsingState::class));
+        $resultingNodeTree = $interceptor->process($mockTextNode, InterceptorInterface::INTERCEPT_TEXT, $this->createStub(ParsingState::class));
         self::assertInstanceOf(RootNode::class, $resultingNodeTree);
         self::assertCount(3, $resultingNodeTree->getChildNodes());
         foreach ($resultingNodeTree->getChildNodes() as $parserNode) {
@@ -60,63 +62,59 @@ class ResourceInterceptorTest extends UnitTestCase
     /**
      * Return source parts and expected results.
      *
-     * @return array
+     * @return \Iterator<(int | string), mixed>
      * @see supportedUrlsAreDetected
      */
-    public function supportedUrls()
+    public static function supportedUrls(): \Iterator
     {
-        return [
-            [ // mostly harmless
-                '<link rel="stylesheet" type="text/css" href="',
-                '../../../Public/Backend/Styles/Login.css',
-                '">',
-                'Backend/Styles/Login.css',
-                'Acme.Demo'
-            ],
-            [ // refer to another package
-                '<link rel="stylesheet" type="text/css" href="',
-                '../../../../Acme.OtherPackage/Resources/Public/Backend/Styles/FromOtherPackage.css',
-                '">',
-                'Backend/Styles/FromOtherPackage.css',
-                'Acme.OtherPackage'
-            ],
-            [ // refer to another package in different category
-                '<link rel="stylesheet" type="text/css" href="',
-                '../../../Plugins/Acme.OtherPackage/Resources/Public/Backend/Styles/FromOtherPackage.css',
-                '">',
-                'Backend/Styles/FromOtherPackage.css',
-                'Acme.OtherPackage'
-            ],
-            [ // path with spaces (ugh!)
-                '<link rel="stylesheet" type="text/css" href="',
-                '../../Public/Backend/Styles/With Spaces.css',
-                '">',
-                'Backend/Styles/With Spaces.css',
-                'Acme.Demo'
-            ],
-            [ // single quote around url and spaces
-                '<link rel="stylesheet" type="text/css" href=\'',
-                '../Public/Backend/Styles/With Spaces.css',
-                '\'>',
-                'Backend/Styles/With Spaces.css',
-                'Acme.Demo'
-            ]
+        yield [ // mostly harmless
+            '<link rel="stylesheet" type="text/css" href="',
+            '../../../Public/Backend/Styles/Login.css',
+            '">',
+            'Backend/Styles/Login.css',
+            'Acme.Demo'
+        ];
+        yield [ // refer to another package
+            '<link rel="stylesheet" type="text/css" href="',
+            '../../../../Acme.OtherPackage/Resources/Public/Backend/Styles/FromOtherPackage.css',
+            '">',
+            'Backend/Styles/FromOtherPackage.css',
+            'Acme.OtherPackage'
+        ];
+        yield [ // refer to another package in different category
+            '<link rel="stylesheet" type="text/css" href="',
+            '../../../Plugins/Acme.OtherPackage/Resources/Public/Backend/Styles/FromOtherPackage.css',
+            '">',
+            'Backend/Styles/FromOtherPackage.css',
+            'Acme.OtherPackage'
+        ];
+        yield [ // path with spaces (ugh!)
+            '<link rel="stylesheet" type="text/css" href="',
+            '../../Public/Backend/Styles/With Spaces.css',
+            '">',
+            'Backend/Styles/With Spaces.css',
+            'Acme.Demo'
+        ];
+        yield [ // single quote around url and spaces
+            '<link rel="stylesheet" type="text/css" href=\'',
+            '../Public/Backend/Styles/With Spaces.css',
+            '\'>',
+            'Backend/Styles/With Spaces.css',
+            'Acme.Demo'
         ];
     }
 
-    /**
-     * @dataProvider supportedUrls
-     * @test
-     */
+    #[DataProvider('supportedUrls')]
+    #[Test]
     public function supportedUrlsAreDetected($part1, $part2, $part3, $expectedPath, $expectedPackageKey)
     {
         $originalText = $part1 . $part2 . $part3;
-        $mockTextNode = $this->getMockBuilder(TextNode::class)->setMethods(['evaluateChildNodes'])->setConstructorArgs([$originalText])->getMock();
+        $mockTextNode = $this->getMockBuilder(TextNode::class)->onlyMethods(['evaluateChildNodes'])->setConstructorArgs([$originalText])->getMock();
         self::assertEquals($originalText, $mockTextNode->evaluate($this->createMock(RenderingContextInterface::class)));
 
         $interceptor = new ResourceInterceptor();
         $interceptor->setDefaultPackageKey('Acme.Demo');
-        $resultingNodeTree = $interceptor->process($mockTextNode, InterceptorInterface::INTERCEPT_TEXT, $this->createMock(ParsingState::class));
+        $resultingNodeTree = $interceptor->process($mockTextNode, InterceptorInterface::INTERCEPT_TEXT, $this->createStub(ParsingState::class));
 
         self::assertInstanceOf(RootNode::class, $resultingNodeTree);
         self::assertCount(3, $resultingNodeTree->getChildNodes());

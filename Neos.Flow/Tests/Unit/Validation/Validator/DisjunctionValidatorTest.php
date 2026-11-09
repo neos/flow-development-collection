@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Neos\Flow\Tests\Unit\Validation\Validator;
 
 /*
@@ -10,31 +13,29 @@ namespace Neos\Flow\Tests\Unit\Validation\Validator;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
+use Neos\Error\Messages as Error;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Flow\Validation\Validator\DisjunctionValidator;
 use Neos\Flow\Validation\Validator\ValidatorInterface;
-use Neos\Error\Messages as Error;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Testcase for the Disjunction Validator
  */
-class DisjunctionValidatorTest extends UnitTestCase
+final class DisjunctionValidatorTest extends UnitTestCase
 {
-    /**
-     * @test
-     */
+    #[Test]
     public function validateReturnsNoErrorsIfOneValidatorReturnsNoError()
     {
         $validatorDisjunction = new DisjunctionValidator([]);
         $validatorObject = $this->createMock(ValidatorInterface::class);
-        $validatorObject->expects(self::any())->method('validate')->will(self::returnValue(new Error\Result()));
+        $validatorObject->method('validate')->willReturn((new Error\Result()));
 
         $errors = new Error\Result();
         $errors->addError(new Error\Error('Error', 123));
 
         $secondValidatorObject = $this->createMock(ValidatorInterface::class);
-        $secondValidatorObject->expects(self::any())->method('validate')->will(self::returnValue($errors));
+        $secondValidatorObject->method('validate')->willReturn(($errors));
 
         $validatorDisjunction->addValidator($validatorObject);
         $validatorDisjunction->addValidator($secondValidatorObject);
@@ -42,9 +43,7 @@ class DisjunctionValidatorTest extends UnitTestCase
         self::assertFalse($validatorDisjunction->validate('some subject')->hasErrors());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function validateReturnsAllErrorsIfAllValidatorsReturnErrrors()
     {
         $validatorDisjunction = new DisjunctionValidator([]);
@@ -55,12 +54,12 @@ class DisjunctionValidatorTest extends UnitTestCase
         $errors1 = new Error\Result();
         $errors1->addError($error1);
         $validatorObject = $this->createMock(ValidatorInterface::class);
-        $validatorObject->expects(self::any())->method('validate')->will(self::returnValue($errors1));
+        $validatorObject->method('validate')->willReturn(($errors1));
 
         $errors2 = new Error\Result();
         $errors2->addError($error2);
         $secondValidatorObject = $this->createMock(ValidatorInterface::class);
-        $secondValidatorObject->expects(self::any())->method('validate')->will(self::returnValue($errors2));
+        $secondValidatorObject->method('validate')->willReturn(($errors2));
 
         $validatorDisjunction->addValidator($validatorObject);
         $validatorDisjunction->addValidator($secondValidatorObject);

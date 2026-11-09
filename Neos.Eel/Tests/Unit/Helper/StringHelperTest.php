@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Neos\Eel\Tests\Unit;
 
 /*
@@ -10,35 +13,32 @@ namespace Neos\Eel\Tests\Unit;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
 use Neos\Eel\Helper\StringHelper;
 use Neos\Eel\Tests\Unit\Fixtures\TestObject;
 use Neos\Flow\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Tests for StringHelper
  */
-class StringHelperTest extends UnitTestCase
+final class StringHelperTest extends UnitTestCase
 {
-    public function substrExamples()
+    public static function substrExamples(): \Iterator
     {
-        return [
-            'positive start and length lower count' => ['Hello, World!', 7, 5, 'World'],
-            'start equal to count' => ['Foo', 3, 42, ''],
-            'start greater than count' => ['Foo', 42, 5, ''],
-            'start negative' => ['Hello, World!', -6, 5, 'World'],
-            'start negative larger than abs(count)' => ['Hello, World!', -42, 5, 'Hello'],
-            'start positive and length omitted' => ['Hello, World!', 7, null, 'World!'],
-            'start positive and length is 0' => ['Hello, World!', 7, 0, ''],
-            'start positive and length is negative' => ['Hello, World!', 7, -1, ''],
-            'unicode content is extracted' => ['Öaßaä', 2, 1, 'ß']
-        ];
+        yield 'positive start and length lower count' => ['Hello, World!', 7, 5, 'World'];
+        yield 'start equal to count' => ['Foo', 3, 42, ''];
+        yield 'start greater than count' => ['Foo', 42, 5, ''];
+        yield 'start negative' => ['Hello, World!', -6, 5, 'World'];
+        yield 'start negative larger than abs(count)' => ['Hello, World!', -42, 5, 'Hello'];
+        yield 'start positive and length omitted' => ['Hello, World!', 7, null, 'World!'];
+        yield 'start positive and length is 0' => ['Hello, World!', 7, 0, ''];
+        yield 'start positive and length is negative' => ['Hello, World!', 7, -1, ''];
+        yield 'unicode content is extracted' => ['Öaßaä', 2, 1, 'ß'];
     }
 
-    /**
-     * @test
-     * @dataProvider substrExamples
-     */
+    #[DataProvider('substrExamples')]
+    #[Test]
     public function substrWorks($string, $start, $length, $expected)
     {
         $helper = new StringHelper();
@@ -46,24 +46,20 @@ class StringHelperTest extends UnitTestCase
         self::assertSame($expected, $result);
     }
 
-    public function substringExamples()
+    public static function substringExamples(): \Iterator
     {
-        return [
-            'start equals end' => ['Hello, World!', 7, 7, ''],
-            'end omitted' => ['Hello, World!', 7, null, 'World!'],
-            'negative start' => ['Hello, World!', -7, null, 'Hello, World!'],
-            'negative end' => ['Hello, World!', 5, -5, 'Hello'],
-            'start greater than end' => ['Hello, World!', 5, 0, 'Hello'],
-            'start greater than count' => ['Hello, World!', 15, 0, 'Hello, World!'],
-            'end greater than count' => ['Hello, World!', 7, 15, 'World!'],
-            'unicode content is extracted' => ['Öaßaä', 2, 3, 'ß']
-        ];
+        yield 'start equals end' => ['Hello, World!', 7, 7, ''];
+        yield 'end omitted' => ['Hello, World!', 7, null, 'World!'];
+        yield 'negative start' => ['Hello, World!', -7, null, 'Hello, World!'];
+        yield 'negative end' => ['Hello, World!', 5, -5, 'Hello'];
+        yield 'start greater than end' => ['Hello, World!', 5, 0, 'Hello'];
+        yield 'start greater than count' => ['Hello, World!', 15, 0, 'Hello, World!'];
+        yield 'end greater than count' => ['Hello, World!', 7, 15, 'World!'];
+        yield 'unicode content is extracted' => ['Öaßaä', 2, 3, 'ß'];
     }
 
-    /**
-     * @test
-     * @dataProvider substringExamples
-     */
+    #[DataProvider('substringExamples')]
+    #[Test]
     public function substringWorks($string, $start, $end, $expected)
     {
         $helper = new StringHelper();
@@ -71,20 +67,16 @@ class StringHelperTest extends UnitTestCase
         self::assertSame($expected, $result);
     }
 
-    public function charAtExamples()
+    public static function charAtExamples(): \Iterator
     {
-        return [
-            'index in string' => ['Hello, World!', 5, ','],
-            'index greater than count' => ['Hello, World!', 42, ''],
-            'index negative' => ['Hello, World!', -1, ''],
-            'unicode content can be accessed' => ['Öaßaü', 2, 'ß']
-        ];
+        yield 'index in string' => ['Hello, World!', 5, ','];
+        yield 'index greater than count' => ['Hello, World!', 42, ''];
+        yield 'index negative' => ['Hello, World!', -1, ''];
+        yield 'unicode content can be accessed' => ['Öaßaü', 2, 'ß'];
     }
 
-    /**
-     * @test
-     * @dataProvider charAtExamples
-     */
+    #[DataProvider('charAtExamples')]
+    #[Test]
     public function charAtWorks($string, $index, $expected)
     {
         $helper = new StringHelper();
@@ -92,20 +84,16 @@ class StringHelperTest extends UnitTestCase
         self::assertSame($expected, $result);
     }
 
-    public function endsWithExamples()
+    public static function endsWithExamples(): \Iterator
     {
-        return [
-            'search matched' => ['To be, or not to be, that is the question.', 'question.', null, true],
-            'search not matched' => ['To be, or not to be, that is the question.', 'to be', null, false],
-            'search with position' => ['To be, or not to be, that is the question.', 'to be', 19, true],
-            'unicode content can be searched' => ['Öaßaü', 'aü', null, true]
-        ];
+        yield 'search matched' => ['To be, or not to be, that is the question.', 'question.', null, true];
+        yield 'search not matched' => ['To be, or not to be, that is the question.', 'to be', null, false];
+        yield 'search with position' => ['To be, or not to be, that is the question.', 'to be', 19, true];
+        yield 'unicode content can be searched' => ['Öaßaü', 'aü', null, true];
     }
 
-    /**
-     * @test
-     * @dataProvider endsWithExamples
-     */
+    #[DataProvider('endsWithExamples')]
+    #[Test]
     public function endsWithWorks($string, $search, $position, $expected)
     {
         $helper = new StringHelper();
@@ -113,19 +101,15 @@ class StringHelperTest extends UnitTestCase
         self::assertSame($expected, $result);
     }
 
-    public function chrExamples()
+    public static function chrExamples(): \Iterator
     {
-        return [
-            ['value' => 65, 'expected' => 'A'],
-            ['value' => 256, 'expected' => chr(256)],
-            ['value' => 0, 'expected' => chr(0)],
-        ];
+        yield ['value' => 65, 'expected' => 'A'];
+        yield ['value' => 256, 'expected' => chr(256)];
+        yield ['value' => 0, 'expected' => chr(0)];
     }
 
-    /**
-     * @test
-     * @dataProvider chrExamples
-     */
+    #[DataProvider('chrExamples')]
+    #[Test]
     public function chrWorks($value, $expected)
     {
         $helper = new StringHelper();
@@ -133,20 +117,16 @@ class StringHelperTest extends UnitTestCase
         self::assertSame($expected, $result);
     }
 
-    public function ordExamples()
+    public static function ordExamples(): \Iterator
     {
-        return [
-            ['value' => 'A', 'expected' => 65],
-            ['value' => '', 'expected' => 0],
-            ['value' => 1, 'expected' => 49],
-            ['value' => 'longer string', 'expected' => 108],
-        ];
+        yield ['value' => 'A', 'expected' => 65];
+        yield ['value' => '', 'expected' => 0];
+        yield ['value' => 1, 'expected' => 49];
+        yield ['value' => 'longer string', 'expected' => 108];
     }
 
-    /**
-     * @test
-     * @dataProvider ordExamples
-     */
+    #[DataProvider('ordExamples')]
+    #[Test]
     public function ordWorks($value, $expected)
     {
         $helper = new StringHelper();
@@ -154,26 +134,22 @@ class StringHelperTest extends UnitTestCase
         self::assertSame($expected, $result);
     }
 
-    public function indexOfExamples()
+    public static function indexOfExamples(): \Iterator
     {
-        return [
-            'match at start' => ['Blue Whale', 'Blue', null, 0],
-            'no match' => ['Blute', 'Blue', null, -1],
-            'from index at start' => ['Blue Whale', 'Whale', 0, 5],
-            'from index at begin of match' => ['Blue Whale', 'Whale', 5, 5],
-            'from index after match' => ['Blue Whale', 'Whale', 6, -1],
-            'empty search' => ['Blue Whale', '', null, 0],
-            'empty search with from index' => ['Blue Whale', '', 9, 9],
-            'empty search with from index larger than count' => ['Blue Whale', '', 11, 10],
-            'case sensitive match' => ['Blue Whale', 'blue', null, -1],
-            'unicode content is matched' => ['Öaßaü', 'ßa', null, 2]
-        ];
+        yield 'match at start' => ['Blue Whale', 'Blue', null, 0];
+        yield 'no match' => ['Blute', 'Blue', null, -1];
+        yield 'from index at start' => ['Blue Whale', 'Whale', 0, 5];
+        yield 'from index at begin of match' => ['Blue Whale', 'Whale', 5, 5];
+        yield 'from index after match' => ['Blue Whale', 'Whale', 6, -1];
+        yield 'empty search' => ['Blue Whale', '', null, 0];
+        yield 'empty search with from index' => ['Blue Whale', '', 9, 9];
+        yield 'empty search with from index larger than count' => ['Blue Whale', '', 11, 10];
+        yield 'case sensitive match' => ['Blue Whale', 'blue', null, -1];
+        yield 'unicode content is matched' => ['Öaßaü', 'ßa', null, 2];
     }
 
-    /**
-     * @test
-     * @dataProvider indexOfExamples
-     */
+    #[DataProvider('indexOfExamples')]
+    #[Test]
     public function indexOfWorks($string, $search, $fromIndex, $expected)
     {
         $helper = new StringHelper();
@@ -181,21 +157,17 @@ class StringHelperTest extends UnitTestCase
         self::assertSame($expected, $result);
     }
 
-    public function lastIndexOfExamples()
+    public static function lastIndexOfExamples(): \Iterator
     {
-        return [
-            'match last occurence' => ['canal', 'a', null, 3],
-            'match with from index' => ['canal', 'a', 2, 1],
-            'no match with from index too low' => ['canal', 'a', 0, -1],
-            'no match' => ['canal', 'x', null, -1],
-            'unicode content is matched' => ['Öaßaü', 'a', null, 3]
-        ];
+        yield 'match last occurence' => ['canal', 'a', null, 3];
+        yield 'match with from index' => ['canal', 'a', 2, 1];
+        yield 'no match with from index too low' => ['canal', 'a', 0, -1];
+        yield 'no match' => ['canal', 'x', null, -1];
+        yield 'unicode content is matched' => ['Öaßaü', 'a', null, 3];
     }
 
-    /**
-     * @test
-     * @dataProvider lastIndexOfExamples
-     */
+    #[DataProvider('lastIndexOfExamples')]
+    #[Test]
     public function lastIndexOfWorks($string, $search, $fromIndex, $expected)
     {
         $helper = new StringHelper();
@@ -203,17 +175,13 @@ class StringHelperTest extends UnitTestCase
         self::assertSame($expected, $result);
     }
 
-    public function pregMatchExamples()
+    public static function pregMatchExamples(): \Iterator
     {
-        return [
-            'matches' => ['For more information, see Chapter 3.4.5.1', '/(chapter \d+(\.\d)*)/i', ['Chapter 3.4.5.1', 'Chapter 3.4.5.1', '.1']]
-        ];
+        yield 'matches' => ['For more information, see Chapter 3.4.5.1', '/(chapter \d+(\.\d)*)/i', ['Chapter 3.4.5.1', 'Chapter 3.4.5.1', '.1']];
     }
 
-    /**
-     * @test
-     * @dataProvider pregMatchExamples
-     */
+    #[DataProvider('pregMatchExamples')]
+    #[Test]
     public function pregMatchWorks($string, $pattern, $expected)
     {
         $helper = new StringHelper();
@@ -221,17 +189,13 @@ class StringHelperTest extends UnitTestCase
         self::assertSame($expected, $result);
     }
 
-    public function pregMatchAllExamples()
+    public static function pregMatchAllExamples(): \Iterator
     {
-        return [
-            'matches' => ['<hr id="icon-one" /><hr id="icon-two" />', '/id="icon-(.+?)"/', [['id="icon-one"', 'id="icon-two"'],['one','two']]]
-        ];
+        yield 'matches' => ['<hr id="icon-one" /><hr id="icon-two" />', '/id="icon-(.+?)"/', [['id="icon-one"', 'id="icon-two"'],['one','two']]];
     }
 
-    /**
-     * @test
-     * @dataProvider pregMatchAllExamples
-     */
+    #[DataProvider('pregMatchAllExamples')]
+    #[Test]
     public function pregMatchAllWorks($string, $pattern, $expected)
     {
         $helper = new StringHelper();
@@ -239,21 +203,17 @@ class StringHelperTest extends UnitTestCase
         self::assertSame($expected, $result);
     }
 
-    public function pregReplaceExamples()
+    public static function pregReplaceExamples(): \Iterator
     {
-        return [
-            'replace non-alphanumeric characters' => ['Some.String with sp:cial characters', '/[[:^alnum:]]/', '-', null, 'Some-String-with-sp-cial-characters'],
-            'replace non-alphanumeric characters width limit' => ['Some.String with sp:cial characters', '/[[:^alnum:]]/', '-', 1, 'Some-String with sp:cial characters'],
-            'no match' => ['canal', '/x/', 'y', null, 'canal'],
-            'unicode replacement' => ['Öaßaü', '/aßa/', 'g', null, 'Ögü'],
-            'references' => ['2016-08-31', '/([0-9]+)-([0-9]+)-([0-9]+)/', '$3.$2.$1', null, '31.08.2016']
-        ];
+        yield 'replace non-alphanumeric characters' => ['Some.String with sp:cial characters', '/[[:^alnum:]]/', '-', null, 'Some-String-with-sp-cial-characters'];
+        yield 'replace non-alphanumeric characters width limit' => ['Some.String with sp:cial characters', '/[[:^alnum:]]/', '-', 1, 'Some-String with sp:cial characters'];
+        yield 'no match' => ['canal', '/x/', 'y', null, 'canal'];
+        yield 'unicode replacement' => ['Öaßaü', '/aßa/', 'g', null, 'Ögü'];
+        yield 'references' => ['2016-08-31', '/([0-9]+)-([0-9]+)-([0-9]+)/', '$3.$2.$1', null, '31.08.2016'];
     }
 
-    /**
-     * @test
-     * @dataProvider pregReplaceExamples
-     */
+    #[DataProvider('pregReplaceExamples')]
+    #[Test]
     public function pregReplaceWorks($string, $pattern, $replace, $limit, $expected)
     {
         $helper = new StringHelper();
@@ -261,18 +221,14 @@ class StringHelperTest extends UnitTestCase
         self::assertSame($expected, $result);
     }
 
-    public function pregSplitExamples()
+    public static function pregSplitExamples(): \Iterator
     {
-        return [
-            'matches' => ['foo bar   baz', '/\s+/', -1, ['foo', 'bar', 'baz']],
-            'matches with limit' => ['first second third', '/\s+/', 2, ['first', 'second third']]
-        ];
+        yield 'matches' => ['foo bar   baz', '/\s+/', -1, ['foo', 'bar', 'baz']];
+        yield 'matches with limit' => ['first second third', '/\s+/', 2, ['first', 'second third']];
     }
 
-    /**
-     * @test
-     * @dataProvider pregSplitExamples
-     */
+    #[DataProvider('pregSplitExamples')]
+    #[Test]
     public function pregMSplitWorks($string, $pattern, $limit, $expected)
     {
         $helper = new StringHelper();
@@ -280,20 +236,16 @@ class StringHelperTest extends UnitTestCase
         self::assertSame($expected, $result);
     }
 
-    public function replaceExamples()
+    public static function replaceExamples(): \Iterator
     {
-        return [
-            'replace' => ['canal', 'ana', 'oo', 'cool'],
-            'replace-array' => ['cool gridge', ['oo', 'gri'], ['ana', 'bri'], 'canal bridge'],
-            'no match' => ['canal', 'x', 'y', 'canal'],
-            'unicode replacement' => ['Öaßaü', 'aßa', 'g', 'Ögü']
-        ];
+        yield 'replace' => ['canal', 'ana', 'oo', 'cool'];
+        yield 'replace-array' => ['cool gridge', ['oo', 'gri'], ['ana', 'bri'], 'canal bridge'];
+        yield 'no match' => ['canal', 'x', 'y', 'canal'];
+        yield 'unicode replacement' => ['Öaßaü', 'aßa', 'g', 'Ögü'];
     }
 
-    /**
-     * @test
-     * @dataProvider replaceExamples
-     */
+    #[DataProvider('replaceExamples')]
+    #[Test]
     public function replaceWorks($string, $search, $replace, $expected)
     {
         $helper = new StringHelper();
@@ -302,20 +254,16 @@ class StringHelperTest extends UnitTestCase
     }
 
 
-    public function splitExamples()
+    public static function splitExamples(): \Iterator
     {
-        return [
-            'split' => ['My hovercraft is full of eels', ' ', null, ['My', 'hovercraft', 'is', 'full', 'of', 'eels']],
-            'NULL separator' => ['The bad parts', null, null, ['The bad parts']],
-            'empty separator' => ['Foo', '', null, ['F', 'o', 'o']],
-            'empty separator with limit' => ['Foo', '', 2, ['F', 'o']]
-        ];
+        yield 'split' => ['My hovercraft is full of eels', ' ', null, ['My', 'hovercraft', 'is', 'full', 'of', 'eels']];
+        yield 'NULL separator' => ['The bad parts', null, null, ['The bad parts']];
+        yield 'empty separator' => ['Foo', '', null, ['F', 'o', 'o']];
+        yield 'empty separator with limit' => ['Foo', '', 2, ['F', 'o']];
     }
 
-    /**
-     * @test
-     * @dataProvider splitExamples
-     */
+    #[DataProvider('splitExamples')]
+    #[Test]
     public function splitWorks($string, $separator, $limit, $expected)
     {
         $helper = new StringHelper();
@@ -323,21 +271,17 @@ class StringHelperTest extends UnitTestCase
         self::assertSame($expected, $result);
     }
 
-    public function startsWithExamples()
+    public static function startsWithExamples(): \Iterator
     {
-        return [
-            'search matched' => ['To be, or not to be, that is the question.', 'To be', null, true],
-            'search not matched' => ['To be, or not to be, that is the question.', 'not to be', null, false],
-            'search with position' => ['To be, or not to be, that is the question.', 'that is', 21, true],
-            'search with duplicate match' => ['to be, or not to be, that is the question.', 'to be', null, true],
-            'unicode content can be searched' => ['Öaßaü', 'Öa', null, true]
-        ];
+        yield 'search matched' => ['To be, or not to be, that is the question.', 'To be', null, true];
+        yield 'search not matched' => ['To be, or not to be, that is the question.', 'not to be', null, false];
+        yield 'search with position' => ['To be, or not to be, that is the question.', 'that is', 21, true];
+        yield 'search with duplicate match' => ['to be, or not to be, that is the question.', 'to be', null, true];
+        yield 'unicode content can be searched' => ['Öaßaü', 'Öa', null, true];
     }
 
-    /**
-     * @test
-     * @dataProvider startsWithExamples
-     */
+    #[DataProvider('startsWithExamples')]
+    #[Test]
     public function startsWithWorks($string, $search, $position, $expected)
     {
         $helper = new StringHelper();
@@ -345,18 +289,14 @@ class StringHelperTest extends UnitTestCase
         self::assertSame($expected, $result);
     }
 
-    public function firstLetterToUpperCaseExamples()
+    public static function firstLetterToUpperCaseExamples(): \Iterator
     {
-        return [
-            'lowercase' => ['foo', 'Foo'],
-            'firstLetterUpperCase' => ['Foo', 'Foo']
-        ];
+        yield 'lowercase' => ['foo', 'Foo'];
+        yield 'firstLetterUpperCase' => ['Foo', 'Foo'];
     }
 
-    /**
-     * @test
-     * @dataProvider firstLetterToUpperCaseExamples
-     */
+    #[DataProvider('firstLetterToUpperCaseExamples')]
+    #[Test]
     public function firstLetterToUpperCaseWorks($string, $expected)
     {
         $helper = new StringHelper();
@@ -364,18 +304,14 @@ class StringHelperTest extends UnitTestCase
         self::assertSame($expected, $result);
     }
 
-    public function firstLetterToLowerCaseExamples()
+    public static function firstLetterToLowerCaseExamples(): \Iterator
     {
-        return [
-            'lowercase' => ['foo', 'foo'],
-            'firstLetterUpperCase' => ['Foo', 'foo']
-        ];
+        yield 'lowercase' => ['foo', 'foo'];
+        yield 'firstLetterUpperCase' => ['Foo', 'foo'];
     }
 
-    /**
-     * @test
-     * @dataProvider firstLetterToLowerCaseExamples
-     */
+    #[DataProvider('firstLetterToLowerCaseExamples')]
+    #[Test]
     public function firstLetterToLowerCaseWorks($string, $expected)
     {
         $helper = new StringHelper();
@@ -383,17 +319,13 @@ class StringHelperTest extends UnitTestCase
         self::assertSame($expected, $result);
     }
 
-    public function toLowerCaseExamples()
+    public static function toLowerCaseExamples(): \Iterator
     {
-        return [
-            'lowercase' => ['Foo bAr BaZ', 'foo bar baz']
-        ];
+        yield 'lowercase' => ['Foo bAr BaZ', 'foo bar baz'];
     }
 
-    /**
-     * @test
-     * @dataProvider toLowerCaseExamples
-     */
+    #[DataProvider('toLowerCaseExamples')]
+    #[Test]
     public function toLowerCaseWorks($string, $expected)
     {
         $helper = new StringHelper();
@@ -401,17 +333,13 @@ class StringHelperTest extends UnitTestCase
         self::assertSame($expected, $result);
     }
 
-    public function toUpperCaseExamples()
+    public static function toUpperCaseExamples(): \Iterator
     {
-        return [
-            'uppercase' => ['Foo bAr BaZ', 'FOO BAR BAZ']
-        ];
+        yield 'uppercase' => ['Foo bAr BaZ', 'FOO BAR BAZ'];
     }
 
-    /**
-     * @test
-     * @dataProvider toUpperCaseExamples
-     */
+    #[DataProvider('toUpperCaseExamples')]
+    #[Test]
     public function toUpperCaseWorks($string, $expected)
     {
         $helper = new StringHelper();
@@ -419,20 +347,16 @@ class StringHelperTest extends UnitTestCase
         self::assertSame($expected, $result);
     }
 
-    public function isBlankExamples()
+    public static function isBlankExamples(): \Iterator
     {
-        return [
-            'string with whitespace' => ['  	', true],
-            'string with characters' => [' abc ', false],
-            'empty string' => ['', true],
-            'NULL string' => [null, true]
-        ];
+        yield 'string with whitespace' => ['  	', true];
+        yield 'string with characters' => [' abc ', false];
+        yield 'empty string' => ['', true];
+        yield 'NULL string' => [null, true];
     }
 
-    /**
-     * @test
-     * @dataProvider isBlankExamples
-     */
+    #[DataProvider('isBlankExamples')]
+    #[Test]
     public function isBlankWorks($string, $expected)
     {
         $helper = new StringHelper();
@@ -440,20 +364,16 @@ class StringHelperTest extends UnitTestCase
         self::assertSame($expected, $result);
     }
 
-    public function trimExamples()
+    public static function trimExamples(): \Iterator
     {
-        return [
-            'string with whitespace' => ['  	', null, ''],
-            'string with characters and whitespace' => [" Foo Bar \n", null, 'Foo Bar'],
-            'empty string' => ['', null, ''],
-            'trim with charlist' => ['< abc >', '<>', ' abc ']
-        ];
+        yield 'string with whitespace' => ['  	', null, ''];
+        yield 'string with characters and whitespace' => [" Foo Bar \n", null, 'Foo Bar'];
+        yield 'empty string' => ['', null, ''];
+        yield 'trim with charlist' => ['< abc >', '<>', ' abc '];
     }
 
-    /**
-     * @test
-     * @dataProvider trimExamples
-     */
+    #[DataProvider('trimExamples')]
+    #[Test]
     public function trimWorks($string, $charlist, $expected)
     {
         $helper = new StringHelper();
@@ -461,33 +381,26 @@ class StringHelperTest extends UnitTestCase
         self::assertSame($expected, $result);
     }
 
-    public function typeConversionExamples()
+    public static function typeConversionExamples(): \Iterator
     {
-        return [
-            'string numeric value' => ['toString', 42, '42'],
-            'string true boolean value' => ['toString', true, '1'],
-            'string false boolean value' => ['toString', false, ''],
-
-            'integer numeric value' => ['toInteger', '42', 42],
-            'integer empty value' => ['toInteger', '', 0],
-            'integer invalid value' => ['toInteger', 'x12', 0],
-
-            'float numeric value' => ['toFloat', '3.141', 3.141],
-            'float invalid value' => ['toFloat', 'x1.0', 0.0],
-            'float exp notation' => ['toFloat', '4.0e8', 4.0e8],
-
-            'boolean true' => ['toBoolean', 'true', true],
-            'boolean 1' => ['toBoolean', '1', true],
-            'boolean false' => ['toBoolean', 'false', false],
-            'boolean 0' => ['toBoolean', '0', false],
-            'boolean anything' => ['toBoolean', 'xz', false]
-        ];
+        yield 'string numeric value' => ['toString', 42, '42'];
+        yield 'string true boolean value' => ['toString', true, '1'];
+        yield 'string false boolean value' => ['toString', false, ''];
+        yield 'integer numeric value' => ['toInteger', '42', 42];
+        yield 'integer empty value' => ['toInteger', '', 0];
+        yield 'integer invalid value' => ['toInteger', 'x12', 0];
+        yield 'float numeric value' => ['toFloat', '3.141', 3.141];
+        yield 'float invalid value' => ['toFloat', 'x1.0', 0.0];
+        yield 'float exp notation' => ['toFloat', '4.0e8', 4.0e8];
+        yield 'boolean true' => ['toBoolean', 'true', true];
+        yield 'boolean 1' => ['toBoolean', '1', true];
+        yield 'boolean false' => ['toBoolean', 'false', false];
+        yield 'boolean 0' => ['toBoolean', '0', false];
+        yield 'boolean anything' => ['toBoolean', 'xz', false];
     }
 
-    /**
-     * @test
-     * @dataProvider typeConversionExamples
-     */
+    #[DataProvider('typeConversionExamples')]
+    #[Test]
     public function typeConversionWorks($method, $string, $expected)
     {
         $helper = new StringHelper();
@@ -495,19 +408,15 @@ class StringHelperTest extends UnitTestCase
         self::assertSame($expected, $result);
     }
 
-    public function stripTagsExamples()
+    public static function stripTagsExamples(): \Iterator
     {
-        return [
-            'strip tags' => ['<a href="#">here</a>', null, 'here'],
-            'strip tags with allowed tags' => ['<p><strong>important text</strong></p>', '<strong>', '<strong>important text</strong>'],
-            'strip tags with multiple allowed tags' => ['<div><p><strong>important text</strong></p></div>', '<strong>, <p>', '<p><strong>important text</strong></p>']
-        ];
+        yield 'strip tags' => ['<a href="#">here</a>', null, 'here'];
+        yield 'strip tags with allowed tags' => ['<p><strong>important text</strong></p>', '<strong>', '<strong>important text</strong>'];
+        yield 'strip tags with multiple allowed tags' => ['<div><p><strong>important text</strong></p></div>', '<strong>, <p>', '<p><strong>important text</strong></p>'];
     }
 
-    /**
-     * @test
-     * @dataProvider stripTagsExamples
-     */
+    #[DataProvider('stripTagsExamples')]
+    #[Test]
     public function stripTagsWorks($string, $allowedTags, $expected)
     {
         $helper = new StringHelper();
@@ -515,9 +424,7 @@ class StringHelperTest extends UnitTestCase
         self::assertSame($expected, $result);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function nl2brWorks()
     {
         $helper = new StringHelper();
@@ -525,9 +432,7 @@ class StringHelperTest extends UnitTestCase
         self::assertSame('some<br />' . chr(10) . 'string', $result);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function rawUrlEncodeWorks()
     {
         $helper = new StringHelper();
@@ -535,18 +440,14 @@ class StringHelperTest extends UnitTestCase
         self::assertSame('%26foo%7Cbar', $result);
     }
 
-    public function htmlSpecialCharsExamples()
+    public static function htmlSpecialCharsExamples(): \Iterator
     {
-        return [
-            'encode entities' => ['Foo &amp; Bar', false, 'Foo &amp;amp; Bar'],
-            'preserve entities' => ['Foo &amp; <a href="#">Bar</a>', true, 'Foo &amp; &lt;a href="#"&gt;Bar&lt;/a&gt;']
-        ];
+        yield 'encode entities' => ['Foo &amp; Bar', false, 'Foo &amp;amp; Bar'];
+        yield 'preserve entities' => ['Foo &amp; <a href="#">Bar</a>', true, 'Foo &amp; &lt;a href="#"&gt;Bar&lt;/a&gt;'];
     }
 
-    /**
-     * @test
-     * @dataProvider htmlSpecialCharsExamples
-     */
+    #[DataProvider('htmlSpecialCharsExamples')]
+    #[Test]
     public function htmlSpecialCharsWorks($string, $preserveEntities, $expected)
     {
         $helper = new StringHelper();
@@ -554,51 +455,47 @@ class StringHelperTest extends UnitTestCase
         self::assertSame($expected, $result);
     }
 
-    public function cropExamples()
+    public static function cropExamples(): \Iterator
     {
-        return [
-            'standard options' => [
-                'methodName' => 'crop',
-                'maximumCharacters' => 18,
-                'suffixString' => '...',
-                'text' => 'Kasper Skårhøj implemented the original version of the crop function.',
-                'expected' => 'Kasper Skårhøj imp...'
-            ],
-            'crop at word' => [
-                'methodName' => 'cropAtWord',
-                'maximumCharacters' => 18,
-                'suffixString' => '...',
-                'text' => 'Kasper Skårhøj implemented the original version of the crop function.',
-                'expected' => 'Kasper Skårhøj ...'
-            ],
-            'crop at sentence' => [
-                'methodName' => 'cropAtSentence',
-                'maximumCharacters' => 80,
-                'suffixString' => '...',
-                'text' => 'Kasper Skårhøj implemented the original version of the crop function. But now we are using a TextIterator. Not too bad either.',
-                'expected' => 'Kasper Skårhøj implemented the original version of the crop function. ...'
-            ],
-            'prefixCanBeChanged' => [
-                'methodName' => 'crop',
-                'maximumCharacters' => 15,
-                'suffixString' => '!',
-                'text' => 'Kasper Skårhøj implemented the original version of the crop function.',
-                'expected' => 'Kasper Skårhøj !'
-            ],
-            'subject is not modified if run without options' => [
-                'methodName' => 'crop',
-                'maximumCharacters' => null,
-                'suffixString' => '',
-                'text' => 'Kasper Skårhøj implemented the original version of the crop function.',
-                'expected' => 'Kasper Skårhøj implemented the original version of the crop function.'
-            ]
+        yield 'standard options' => [
+            'methodName' => 'crop',
+            'maximumCharacters' => 18,
+            'suffixString' => '...',
+            'text' => 'Kasper Skårhøj implemented the original version of the crop function.',
+            'expected' => 'Kasper Skårhøj imp...'
+        ];
+        yield 'crop at word' => [
+            'methodName' => 'cropAtWord',
+            'maximumCharacters' => 18,
+            'suffixString' => '...',
+            'text' => 'Kasper Skårhøj implemented the original version of the crop function.',
+            'expected' => 'Kasper Skårhøj ...'
+        ];
+        yield 'crop at sentence' => [
+            'methodName' => 'cropAtSentence',
+            'maximumCharacters' => 80,
+            'suffixString' => '...',
+            'text' => 'Kasper Skårhøj implemented the original version of the crop function. But now we are using a TextIterator. Not too bad either.',
+            'expected' => 'Kasper Skårhøj implemented the original version of the crop function. ...'
+        ];
+        yield 'prefixCanBeChanged' => [
+            'methodName' => 'crop',
+            'maximumCharacters' => 15,
+            'suffixString' => '!',
+            'text' => 'Kasper Skårhøj implemented the original version of the crop function.',
+            'expected' => 'Kasper Skårhøj !'
+        ];
+        yield 'subject is not modified if run without options' => [
+            'methodName' => 'crop',
+            'maximumCharacters' => null,
+            'suffixString' => '',
+            'text' => 'Kasper Skårhøj implemented the original version of the crop function.',
+            'expected' => 'Kasper Skårhøj implemented the original version of the crop function.'
         ];
     }
 
-    /**
-     * @test
-     * @dataProvider cropExamples
-     */
+    #[DataProvider('cropExamples')]
+    #[Test]
     public function cropWorks($methodName, $maximumCharacters, $suffixString, $text, $expected)
     {
         $helper = new StringHelper();
@@ -606,9 +503,7 @@ class StringHelperTest extends UnitTestCase
         self::assertSame($expected, $result);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function md5Works()
     {
         $helper = new StringHelper();
@@ -616,9 +511,7 @@ class StringHelperTest extends UnitTestCase
         self::assertSame('bacb98acf97e0b6112b1d1b650b84971', $result);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function sha1Works()
     {
         $helper = new StringHelper();
@@ -626,20 +519,16 @@ class StringHelperTest extends UnitTestCase
         self::assertSame('063b3d108bed9f88fa618c6046de0dccadcf3158', $result);
     }
 
-    public function lengthExamples()
+    public static function lengthExamples(): \Iterator
     {
-        return [
-            'null' => [null, 0],
-            'empty' => ['', 0],
-            'non-empty' => ['Foo', 3],
-            'UTF-8' => ['Cäche Flüsh', 11]
-        ];
+        yield 'null' => [null, 0];
+        yield 'empty' => ['', 0];
+        yield 'non-empty' => ['Foo', 3];
+        yield 'UTF-8' => ['Cäche Flüsh', 11];
     }
 
-    /**
-     * @test
-     * @dataProvider lengthExamples
-     */
+    #[DataProvider('lengthExamples')]
+    #[Test]
     public function lengthWorks($input, $expected)
     {
         $helper = new StringHelper();
@@ -647,24 +536,19 @@ class StringHelperTest extends UnitTestCase
         self::assertSame($expected, $result);
     }
 
-    public function wordCountExamples()
+    public static function wordCountExamples(): \Iterator
     {
-        return [
-            'null' => [null, 0],
-            'empty' => ['', 0],
-            'non-empty' =>
-                [
-                    'Hello	  	fri3nd,	you\'re
+        yield 'null' => [null, 0];
+        yield 'empty' => ['', 0];
+        yield 'non-empty' => [
+            'Hello	  	fri3nd,	you\'re
                     looking          good 	 tod@y!', 6
-                ],
-            'UTF-8' => ['Cäche Flüsh', 2]
         ];
+        yield 'UTF-8' => ['Cäche Flüsh', 2];
     }
 
-    /**
-     * @test
-     * @dataProvider wordCountExamples
-     */
+    #[DataProvider('wordCountExamples')]
+    #[Test]
     public function wordCountWorks($input, $expected)
     {
         $helper = new StringHelper();
@@ -672,54 +556,48 @@ class StringHelperTest extends UnitTestCase
         self::assertSame($expected, $result);
     }
 
-    public function base64encodeEncodesDataProvider()
+    public static function base64encodeEncodesDataProvider(): \Iterator
     {
-        return [
-            'empty string' => ['input' => '', 'expectedResult' => ''],
-            'simple string' => ['input' => 'Flow rocks', 'expectedResult' => 'RmxvdyByb2Nrcw=='],
-            'special characters' => ['input' => 'Flow röckß', 'expectedResult' => 'RmxvdyByw7Zja8Of'],
-            'integer' => ['input' => 123, 'expectedResult' => 'MTIz'],
-            'Stringable object' => ['input' => new TestObject(), 'expectedResult' => 'VGVzdCBPYmplY3Q='],
-        ];
+        yield 'empty string' => ['input' => '', 'expectedResult' => ''];
+        yield 'simple string' => ['input' => 'Flow rocks', 'expectedResult' => 'RmxvdyByb2Nrcw=='];
+        yield 'special characters' => ['input' => 'Flow röckß', 'expectedResult' => 'RmxvdyByw7Zja8Of'];
+        yield 'integer' => ['input' => 123, 'expectedResult' => 'MTIz'];
+        yield 'Stringable object' => ['input' => new TestObject(), 'expectedResult' => 'VGVzdCBPYmplY3Q='];
     }
 
     /**
      * @param mixed $input
      * @param string|bool $expectedResult
-     * @test
-     * @dataProvider base64encodeEncodesDataProvider
      */
+    #[DataProvider('base64encodeEncodesDataProvider')]
+    #[Test]
     public function base64encodeEncodesTests($input, $expectedResult)
     {
         $helper = new StringHelper();
         self::assertSame($expectedResult, $helper->base64encode($input));
     }
 
-    public function base64decodeEncodesDataProvider()
+    public static function base64decodeEncodesDataProvider(): \Iterator
     {
-        return [
-            'empty string' => ['input' => '', 'expectedResult' => ''],
-            'simple string' => ['input' => 'RmxvdyByb2Nrcw==', 'expectedResult' => 'Flow rocks'],
-            'special characters' => ['input' => 'RmxvdyByw7Zja8Of', 'expectedResult' => 'Flow röckß'],
-            'integer' => ['input' => 'MTIz', 'expectedResult' => '123'],
-        ];
+        yield 'empty string' => ['input' => '', 'expectedResult' => ''];
+        yield 'simple string' => ['input' => 'RmxvdyByb2Nrcw==', 'expectedResult' => 'Flow rocks'];
+        yield 'special characters' => ['input' => 'RmxvdyByw7Zja8Of', 'expectedResult' => 'Flow röckß'];
+        yield 'integer' => ['input' => 'MTIz', 'expectedResult' => '123'];
     }
 
     /**
      * @param mixed $input
      * @param string|bool $expectedResult
-     * @test
-     * @dataProvider base64decodeEncodesDataProvider
      */
+    #[DataProvider('base64decodeEncodesDataProvider')]
+    #[Test]
     public function base64decodeEncodesTests($input, $expectedResult)
     {
         $helper = new StringHelper();
         self::assertSame($expectedResult, $helper->base64decode($input));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function base64decodeReturnsFalseIfGivenStringIsInvalidAndStrictModeIsSet()
     {
         $helper = new StringHelper();

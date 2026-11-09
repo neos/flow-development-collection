@@ -1,20 +1,25 @@
 <?php
+
 namespace Neos\Flow\Tests\Behavior\Features\Bootstrap;
 
 use Neos\Flow\Exception;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\ObjectManagement\Exception\UnknownObjectException;
-use Neos\Flow\Utility\Environment;
-use Neos\Utility\ObjectAccess;
 use Neos\Flow\Security;
+use Neos\Flow\Security\Account;
+use Neos\Flow\Security\AccountRepository;
 use Neos\Flow\Security\Authentication\AuthenticationProviderManager;
 use Neos\Flow\Security\Authentication\Provider\TestingProvider;
+use Neos\Flow\Security\Authentication\TokenAndProviderFactoryInterface;
 use Neos\Flow\Security\Authentication\TokenInterface;
 use Neos\Flow\Security\Authorization\PrivilegeManagerInterface;
+use Neos\Flow\Security\Context;
 use Neos\Flow\Security\Exception\AccessDeniedException;
 use Neos\Flow\Security\Policy\PolicyService;
 use Neos\Flow\Tests\Functional\Security\Fixtures\Controller\AuthenticationController;
+use Neos\Flow\Utility\Environment;
 use Neos\Utility\Arrays;
+use Neos\Utility\ObjectAccess;
 use PHPUnit\Framework\Assert;
 use Psr\Http\Message\ServerRequestFactoryInterface;
 
@@ -216,16 +221,16 @@ trait SecurityOperationsTrait
         $this->privilegeManager->reset();
 
         $this->policyService = $this->getObject(PolicyService::class);
-        $this->accountRepository = $this->getObject(Security\AccountRepository::class);
+        $this->accountRepository = $this->getObject(AccountRepository::class);
         $this->authenticationManager = $this->getObject(AuthenticationProviderManager::class);
-        $this->tokenAndProviderFactory = $this->getObject(Security\Authentication\TokenAndProviderFactoryInterface::class);
+        $this->tokenAndProviderFactory = $this->getObject(TokenAndProviderFactoryInterface::class);
 
         // Making sure providers and tokens were actually build, so the singleton TestingProvider exists.
         $this->tokenAndProviderFactory->getProviders();
 
         $this->testingProvider = $this->tokenAndProviderFactory->getProviders()['TestingProvider'];
 
-        $this->securityContext = $this->getObject(Security\Context::class);
+        $this->securityContext = $this->getObject(Context::class);
         $this->securityContext->clearContext();
         $httpRequest = $this->getObject(ServerRequestFactoryInterface::class)->createServerRequest('GET', 'http://localhost/');
         $this->mockActionRequest = ActionRequest::fromHttpRequest($httpRequest);
@@ -246,7 +251,7 @@ trait SecurityOperationsTrait
      */
     protected function authenticateRoles(array $roleNames)
     {
-        $account = new Security\Account();
+        $account = new Account();
         $account->setAccountIdentifier('TestAccount');
         $roles = [];
         foreach ($roleNames as $roleName) {
@@ -266,7 +271,7 @@ trait SecurityOperationsTrait
      * @throws Security\Exception
      * @throws Security\Exception\AuthenticationRequiredException
      */
-    protected function authenticateAccount(Security\Account $account)
+    protected function authenticateAccount(Account $account)
     {
         $this->testingProvider->setAuthenticationStatus(TokenInterface::AUTHENTICATION_SUCCESSFUL);
         $this->testingProvider->setAccount($account);

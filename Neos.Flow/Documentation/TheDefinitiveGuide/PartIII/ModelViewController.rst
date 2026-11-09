@@ -378,7 +378,7 @@ supported:
 * ``initializeView()``
 
 The first method executed after the base initialization is ``initializeAction()``.
-The Action Controller only provides an empty method which can be overriden by a
+The Action Controller only provides an empty method which can be overridden by a
 concrete Action Controller. The information about action method arguments and
 the corresponding validators has already been collected at this point, but any
 arguments sent through the request have not yet been mapped or validated. Therefore,
@@ -646,7 +646,7 @@ The general syntax of a view configuration looks like this:
 	    fusionPathPatterns:
 	      - 'resource://Neos.Fusion/Private/Fusion'
 	      - 'resource://My.Package/Private/Fusion'
-	    fusionPath: 'yourProtoype'
+	    fusionPath: 'yourPrototype'
 
 The requestFilter is based on Neos.Eel allowing you to match arbitrary requests
 so that you can override View configuration for various scenarios.
@@ -672,7 +672,7 @@ You can combine any of these matchers with boolean operators:
 	(isPackage("My.Foo") || isPackage('My.Bar')) && isFormat("html")
 
 The order of the configurations is in most cases unimportant. Each matcher has a
-specific weight similar to CSS specifity (ID, class, inline, important) to determine
+specific weight similar to CSS specificity (ID, class, inline, important) to determine
 which configuration outweighs the other. For each match resulting matcher the weight
 will be increased by a certain value.
 
@@ -716,7 +716,7 @@ Validation
 ----------
 
 Arguments which were sent along with the HTTP request are usually sanitized and
-valdidated before they are passed to an action method of a controller. Behind the
+validated before they are passed to an action method of a controller. Behind the
 scenes, the :doc:`Property Mapper <PropertyMapping>` is used for mapping and
 validating the raw input. During this process, the validators are invoked:
 

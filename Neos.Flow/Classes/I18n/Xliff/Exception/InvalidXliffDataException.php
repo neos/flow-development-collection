@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\I18n\Xliff\Exception;
 
 /*

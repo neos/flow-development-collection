@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Neos\Flow\Tests\Unit\Mvc\Controller;
 
 /*
@@ -10,74 +13,76 @@ namespace Neos\Flow\Tests\Unit\Mvc\Controller;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
+use Neos\Flow\Mvc;
+use Neos\Flow\Mvc\ActionRequest;
+use Neos\Flow\Mvc\Controller\Arguments;
 use Neos\Flow\Mvc\Controller\MvcPropertyMappingConfiguration;
+use Neos\Flow\Mvc\Controller\MvcPropertyMappingConfigurationService;
 use Neos\Flow\Property\TypeConverter\PersistentObjectConverter;
 use Neos\Flow\Security\Cryptography\HashService;
 use Neos\Flow\Security\Exception\InvalidArgumentForHashGenerationException;
 use Neos\Flow\Tests\UnitTestCase;
-use Neos\Flow\Mvc;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Testcase for the MVC Property Mapping Configuration Service
  */
-class MvcPropertyMappingConfigurationServiceTest extends UnitTestCase
+final class MvcPropertyMappingConfigurationServiceTest extends UnitTestCase
 {
     /**
      * Data provider for generating the list of trusted properties
      *
-     * @return array
+     * @return \Iterator<(int | string), mixed>
      */
-    public function dataProviderForgenerateTrustedPropertiesToken()
+    public static function dataProviderForgenerateTrustedPropertiesToken(): \Iterator
     {
-        return [
-            'Simple Case - Empty' => [
-                [],
-                [],
+        yield 'Simple Case - Empty' => [
+            [],
+            [],
+        ];
+        yield 'Simple Case - Single Value' => [
+            ['field1'],
+            ['field1' => 1],
+        ];
+        yield 'Simple Case - Two Values' => [
+            ['field1', 'field2'],
+            [
+                'field1' => 1,
+                'field2' => 1
             ],
-            'Simple Case - Single Value' => [
-                ['field1'],
-                ['field1' => 1],
+        ];
+        yield 'Recursion' => [
+            ['field1', 'field[subfield1]', 'field[subfield2]'],
+            [
+                'field1' => 1,
+                'field' => [
+                    'subfield1' => 1,
+                    'subfield2' => 1
+                ]
             ],
-            'Simple Case - Two Values' => [
-                ['field1', 'field2'],
-                [
-                    'field1' => 1,
-                    'field2' => 1
-                ],
+        ];
+        yield 'recursion with duplicated field name' => [
+            ['field1', 'field[subfield1]', 'field[subfield2]', 'field1'],
+            [
+                'field1' => 1,
+                'field' => [
+                    'subfield1' => 1,
+                    'subfield2' => 1
+                ]
             ],
-            'Recursion' => [
-                ['field1', 'field[subfield1]', 'field[subfield2]'],
-                [
-                    'field1' => 1,
-                    'field' => [
-                        'subfield1' => 1,
-                        'subfield2' => 1
-                    ]
-                ],
-            ],
-            'recursion with duplicated field name' => [
-                ['field1', 'field[subfield1]', 'field[subfield2]', 'field1'],
-                [
-                    'field1' => 1,
-                    'field' => [
-                        'subfield1' => 1,
-                        'subfield2' => 1
-                    ]
-                ],
-            ],
-            'Recursion with un-named fields at the end (...[]). There, they should be made explicit by increasing the counter' => [
-                ['field1', 'field[subfield1][]', 'field[subfield1][]', 'field[subfield2]'],
-                [
-                    'field1' => 1,
-                    'field' => [
-                        'subfield1' => [
-                            0 => 1,
-                            1 => 1
-                        ],
-                        'subfield2' => 1
-                    ]
-                ],
+        ];
+        yield 'Recursion with un-named fields at the end (...[]). There, they should be made explicit by increasing the counter' => [
+            ['field1', 'field[subfield1][]', 'field[subfield1][]', 'field[subfield2]'],
+            [
+                'field1' => 1,
+                'field' => [
+                    'subfield1' => [
+                        0 => 1,
+                        1 => 1
+                    ],
+                    'subfield2' => 1
+                ]
             ],
         ];
     }
@@ -86,55 +91,46 @@ class MvcPropertyMappingConfigurationServiceTest extends UnitTestCase
      * Data Provider for invalid values in generating the list of trusted properties,
      * which should result in an exception
      *
-     * @return array
+     * @return \Iterator<(int | string), mixed>
      */
-    public function dataProviderForgenerateTrustedPropertiesTokenWithUnallowedValues()
+    public static function dataProviderForgenerateTrustedPropertiesTokenWithUnallowedValues(): \Iterator
     {
-        return [
-            'Overriding form fields (string overridden by array) - 1' => [
-                ['field1', 'field2', 'field2[bla]', 'field2[blubb]'],
-            ],
-            'Overriding form fields (string overridden by array) - 2' => [
-                ['field1', 'field2[bla]', 'field2[bla][blubb][blubb]'],
-            ],
-            'Overriding form fields (array overridden by string) - 1' => [
-                ['field1', 'field2[bla]', 'field2[blubb]', 'field2'],
-            ],
-            'Overriding form fields (array overridden by string) - 2' => [
-                ['field1', 'field2[bla][blubb][blubb]', 'field2[bla]'],
-            ],
-            'Empty [] not as last argument' => [
-                ['field1', 'field2[][bla]'],
-            ]
-
+        yield 'Overriding form fields (string overridden by array) - 1' => [
+            ['field1', 'field2', 'field2[bla]', 'field2[blubb]'],
+        ];
+        yield 'Overriding form fields (string overridden by array) - 2' => [
+            ['field1', 'field2[bla]', 'field2[bla][blubb][blubb]'],
+        ];
+        yield 'Overriding form fields (array overridden by string) - 1' => [
+            ['field1', 'field2[bla]', 'field2[blubb]', 'field2'],
+        ];
+        yield 'Overriding form fields (array overridden by string) - 2' => [
+            ['field1', 'field2[bla][blubb][blubb]', 'field2[bla]'],
+        ];
+        yield 'Empty [] not as last argument' => [
+            ['field1', 'field2[][bla]'],
         ];
     }
 
-    /**
-     * @test
-     * @dataProvider dataProviderForgenerateTrustedPropertiesToken
-     */
+    #[DataProvider('dataProviderForgenerateTrustedPropertiesToken')]
+    #[Test]
     public function generateTrustedPropertiesTokenGeneratesTheCorrectHashesInNormalOperation($input, $expected)
     {
-        $requestHashService = $this->getMockBuilder(Mvc\Controller\MvcPropertyMappingConfigurationService::class)->setMethods(['serializeAndHashFormFieldArray'])->getMock();
-        $requestHashService->expects(self::once())->method('serializeAndHashFormFieldArray')->with($expected);
+        $requestHashService = $this->getMockBuilder(MvcPropertyMappingConfigurationService::class)->onlyMethods(['serializeAndHashFormFieldArray'])->getMock();
+        $requestHashService->expects($this->once())->method('serializeAndHashFormFieldArray')->with($expected);
         $requestHashService->generateTrustedPropertiesToken($input);
     }
 
-    /**
-     * @test
-     * @dataProvider dataProviderForgenerateTrustedPropertiesTokenWithUnallowedValues
-     */
+    #[DataProvider('dataProviderForgenerateTrustedPropertiesTokenWithUnallowedValues')]
+    #[Test]
     public function generateTrustedPropertiesTokenThrowsExceptionInWrongCases($input)
     {
         $this->expectException(InvalidArgumentForHashGenerationException::class);
-        $requestHashService = $this->getMockBuilder(Mvc\Controller\MvcPropertyMappingConfigurationService::class)->setMethods(['serializeAndHashFormFieldArray'])->getMock();
+        $requestHashService = $this->getMockBuilder(MvcPropertyMappingConfigurationService::class)->onlyMethods(['serializeAndHashFormFieldArray'])->getMock();
         $requestHashService->generateTrustedPropertiesToken($input);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function serializeAndHashFormFieldArrayWorks()
     {
         $formFieldArray = [
@@ -145,10 +141,10 @@ class MvcPropertyMappingConfigurationServiceTest extends UnitTestCase
         ];
         $mockHash = '12345';
 
-        $hashService = $this->getAccessibleMock(Mvc\Controller\MvcPropertyMappingConfigurationService::class, ['appendHmac']);
-        $hashService->expects(self::once())->method('appendHmac')->with(serialize($formFieldArray))->will(self::returnValue(serialize($formFieldArray) . $mockHash));
+        $hashService = $this->getAccessibleMock(HashService::class, ['appendHmac']);
+        $hashService->expects($this->once())->method('appendHmac')->with(serialize($formFieldArray))->willReturn((serialize($formFieldArray) . $mockHash));
 
-        $requestHashService = $this->getAccessibleMock(Mvc\Controller\MvcPropertyMappingConfigurationService::class, ['dummy']);
+        $requestHashService = $this->getAccessibleMock(MvcPropertyMappingConfigurationService::class, []);
         $requestHashService->_set('hashService', $hashService);
 
         $expected = serialize($formFieldArray) . $mockHash;
@@ -156,23 +152,18 @@ class MvcPropertyMappingConfigurationServiceTest extends UnitTestCase
         self::assertEquals($expected, $actual);
     }
 
-    /**
-     * @test
-     * @doesNotPerformAssertions
-     */
+    #[Test]
     public function initializePropertyMappingConfigurationDoesNothingIfTrustedPropertiesAreNotSet()
     {
-        $request = $this->getMockBuilder(Mvc\ActionRequest::class)->setMethods(['getInternalArgument'])->disableOriginalConstructor()->getMock();
-        $request->expects(self::any())->method('getInternalArgument')->with('__trustedProperties')->will(self::returnValue(null));
-        $arguments = new Mvc\Controller\Arguments();
+        $request = $this->getMockBuilder(ActionRequest::class)->onlyMethods(['getInternalArgument'])->disableOriginalConstructor()->getMock();
+        $request->method('getInternalArgument')->with('__trustedProperties')->willReturn((null));
+        $arguments = new Arguments();
 
-        $requestHashService = new Mvc\Controller\MvcPropertyMappingConfigurationService();
+        $requestHashService = new MvcPropertyMappingConfigurationService();
         $requestHashService->initializePropertyMappingConfigurationFromRequest($request, $arguments);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function initializePropertyMappingConfigurationReturnsEarlyIfNoTrustedPropertiesAreSet()
     {
         $trustedProperties = [
@@ -181,9 +172,7 @@ class MvcPropertyMappingConfigurationServiceTest extends UnitTestCase
         $this->initializePropertyMappingConfiguration($trustedProperties);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function initializePropertyMappingConfigurationReturnsEarlyIfArgumentIsUnknown()
     {
         $trustedProperties = [
@@ -193,9 +182,7 @@ class MvcPropertyMappingConfigurationServiceTest extends UnitTestCase
         self::assertFalse($arguments->hasArgument('nonExistingArgument'));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function initializePropertyMappingConfigurationSetsModificationAllowedIfIdentityPropertyIsSet()
     {
         $trustedProperties = [
@@ -217,9 +204,7 @@ class MvcPropertyMappingConfigurationServiceTest extends UnitTestCase
         self::assertFalse($propertyMappingConfiguration->forProperty('nested')->shouldMap('someProperty'));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function initializePropertyMappingConfigurationSetsCreationAllowedIfIdentityPropertyIsNotSet()
     {
         $trustedProperties = [
@@ -238,9 +223,7 @@ class MvcPropertyMappingConfigurationServiceTest extends UnitTestCase
         self::assertFalse($propertyMappingConfiguration->forProperty('bar')->shouldMap('someProperty'));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function initializePropertyMappingConfigurationSetsAllowedFields()
     {
         $trustedProperties = [
@@ -254,9 +237,7 @@ class MvcPropertyMappingConfigurationServiceTest extends UnitTestCase
         self::assertTrue($propertyMappingConfiguration->shouldMap('bar'));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function initializePropertyMappingConfigurationSetsAllowedFieldsRecursively()
     {
         $trustedProperties = [
@@ -273,7 +254,6 @@ class MvcPropertyMappingConfigurationServiceTest extends UnitTestCase
         self::assertTrue($propertyMappingConfiguration->forProperty('bar')->shouldMap('foo'));
     }
 
-
     /**
      * Helper which initializes the property mapping configuration and returns arguments
      *
@@ -282,16 +262,16 @@ class MvcPropertyMappingConfigurationServiceTest extends UnitTestCase
      */
     protected function initializePropertyMappingConfiguration(array $trustedProperties)
     {
-        $request = $this->getMockBuilder(Mvc\ActionRequest::class)->setMethods(['getInternalArgument'])->disableOriginalConstructor()->getMock();
-        $request->expects(self::any())->method('getInternalArgument')->with('__trustedProperties')->will(self::returnValue('fooTrustedProperties'));
-        $arguments = new Mvc\Controller\Arguments();
-        $mockHashService = $this->getMockBuilder(HashService::class)->setMethods(['validateAndStripHmac'])->getMock();
-        $mockHashService->expects(self::once())->method('validateAndStripHmac')->with('fooTrustedProperties')->will(self::returnValue(serialize($trustedProperties)));
+        $request = $this->getMockBuilder(ActionRequest::class)->onlyMethods(['getInternalArgument'])->disableOriginalConstructor()->getMock();
+        $request->method('getInternalArgument')->with('__trustedProperties')->willReturn(('fooTrustedProperties'));
+        $arguments = new Arguments();
+        $mockHashService = $this->getMockBuilder(HashService::class)->onlyMethods(['validateAndStripHmac'])->getMock();
+        $mockHashService->expects($this->once())->method('validateAndStripHmac')->with('fooTrustedProperties')->willReturn((serialize($trustedProperties)));
 
         $arguments->addNewArgument('foo', 'something');
         $this->inject($arguments->getArgument('foo'), 'propertyMappingConfiguration', new MvcPropertyMappingConfiguration());
 
-        $requestHashService = new Mvc\Controller\MvcPropertyMappingConfigurationService();
+        $requestHashService = new MvcPropertyMappingConfigurationService();
         $this->inject($requestHashService, 'hashService', $mockHashService);
 
         $requestHashService->initializePropertyMappingConfigurationFromRequest($request, $arguments);

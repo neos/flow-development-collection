@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Neos\Flow\Tests\Unit\Cli;
 
 /*
@@ -10,19 +13,17 @@ namespace Neos\Flow\Tests\Unit\Cli;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
 use Neos\Flow\Cli\Request;
 use Neos\Flow\Command\CacheCommandController;
 use Neos\Flow\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Testcase for the CLI Request class
  */
-class RequestTest extends UnitTestCase
+final class RequestTest extends UnitTestCase
 {
-    /**
-     * @test
-     */
+    #[Test]
     public function getCommandReturnsTheCommandObjectReflectingTheRequestInformation()
     {
         $request = new Request();
@@ -30,12 +31,10 @@ class RequestTest extends UnitTestCase
         $request->setControllerCommandName('flush');
 
         $command = $request->getCommand();
-        self::assertEquals('neos.flow:cache:flush', $command->getCommandIdentifier());
+        self::assertSame('neos.flow:cache:flush', $command->getCommandIdentifier());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function setControllerObjectNameAndSetControllerCommandNameUnsetTheBuiltCommandObject()
     {
         $request = new Request();
@@ -47,6 +46,6 @@ class RequestTest extends UnitTestCase
         $request->setControllerCommandName('drink');
 
         $command = $request->getCommand();
-        self::assertEquals('neos.flow:beer:drink', $command->getCommandIdentifier());
+        self::assertSame('neos.flow:beer:drink', $command->getCommandIdentifier());
     }
 }

@@ -74,6 +74,8 @@ properties:
     additionalProperties: false
     required: true
     properties:
+      'encryptionKey': { type: string, required: true }
+
       'hashingStrategies':
         type: dictionary
         additionalProperties: { type: string, format: class-name }

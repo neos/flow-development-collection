@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Tests\Functional\Security\Fixtures;
 
 /*
@@ -22,7 +23,7 @@ class TestEntityADoctrineRepository extends Repository
     /**
      * @var string
      */
-    const ENTITY_CLASSNAME = TestEntityA::class;
+    public const ENTITY_CLASSNAME = TestEntityA::class;
 
     /**
      * Returns all TestEntityA objects from persistence

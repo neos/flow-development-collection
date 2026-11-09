@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Neos\Flow\Tests\Unit\Utility;
 
 /*
@@ -10,13 +13,15 @@ namespace Neos\Flow\Tests\Unit\Utility;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
 use Neos\Utility\SchemaGenerator;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Testcase for the Schema Generator
  */
-class SchemaGeneratorTest extends \PHPUnit\Framework\TestCase
+final class SchemaGeneratorTest extends TestCase
 {
     /**
      * @var SchemaGenerator
@@ -29,24 +34,20 @@ class SchemaGeneratorTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @return array
+     * @return \Iterator<(int | string), mixed>
      */
-    public function schemaGenerationForSimpleTypesDataProvider()
+    public static function schemaGenerationForSimpleTypesDataProvider(): \Iterator
     {
-        return [
-            ['string', ['type' => 'string']],
-            [false, ['type' => 'boolean']],
-            [true, ['type' => 'boolean']],
-            [10.75, ['type' => 'number']],
-            [1234, ['type' => 'integer']],
-            [null, ['type' => 'null']]
-        ];
+        yield ['string', ['type' => 'string']];
+        yield [false, ['type' => 'boolean']];
+        yield [true, ['type' => 'boolean']];
+        yield [10.75, ['type' => 'number']];
+        yield [1234, ['type' => 'integer']];
+        yield [null, ['type' => 'null']];
     }
 
-    /**
-     * @dataProvider schemaGenerationForSimpleTypesDataProvider
-     * @test
-     */
+    #[DataProvider('schemaGenerationForSimpleTypesDataProvider')]
+    #[Test]
     public function testSchemaGenerationForSimpleTypes($value, array $expectedSchema)
     {
         $schema = $this->configurationGenerator->generate($value);
@@ -54,21 +55,17 @@ class SchemaGeneratorTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @return array
+     * @return \Iterator<(int | string), mixed>
      */
-    public function schemaGenerationForArrayOfTypesDataProvider()
+    public static function schemaGenerationForArrayOfTypesDataProvider(): \Iterator
     {
-        return [
-            [['string'], ['type' => 'array', 'items' => ['type' => 'string']]],
-            [['string', 'foo', 'bar'], ['type' => 'array', 'items' => ['type' => 'string']]],
-            [['string', 'foo', 123],  ['type' => 'array', 'items' => [['type' => 'string'], ['type' => 'integer']]]]
-        ];
+        yield [['string'], ['type' => 'array', 'items' => ['type' => 'string']]];
+        yield [['string', 'foo', 'bar'], ['type' => 'array', 'items' => ['type' => 'string']]];
+        yield [['string', 'foo', 123],  ['type' => 'array', 'items' => [['type' => 'string'], ['type' => 'integer']]]];
     }
 
-    /**
-     * @dataProvider schemaGenerationForArrayOfTypesDataProvider
-     * @test
-     */
+    #[DataProvider('schemaGenerationForArrayOfTypesDataProvider')]
+    #[Test]
     public function testSchemaGenerationForArrayOfTypes(array $value, array $expectedSchema)
     {
         $schema = $this->configurationGenerator->generate($value);

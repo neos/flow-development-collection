@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Neos\FluidAdaptor\Tests\Unit\ViewHelpers\Security;
 
 /*
@@ -11,17 +14,19 @@ namespace Neos\FluidAdaptor\Tests\Unit\ViewHelpers\Security;
  * source code.
  */
 
-use Neos\FluidAdaptor\Core\Rendering\RenderingContext;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Security\Authorization\PrivilegeManagerInterface;
-use Neos\FluidAdaptor\ViewHelpers\Security\IfAccessViewHelper;
+use Neos\FluidAdaptor\Core\Rendering\RenderingContext;
 use Neos\FluidAdaptor\Tests\Unit\ViewHelpers\ViewHelperBaseTestcase;
+use Neos\FluidAdaptor\ViewHelpers\Security\IfAccessViewHelper;
+use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\MockObject\MockObject;
 
 /**
  * Testcase for IfAccessViewHelper
  *
  */
-class IfAccessViewHelperTest extends ViewHelperBaseTestcase
+final class IfAccessViewHelperTest extends ViewHelperBaseTestcase
 {
     /**
      * @var IfAccessViewHelper
@@ -29,16 +34,16 @@ class IfAccessViewHelperTest extends ViewHelperBaseTestcase
     protected $ifAccessViewHelper;
 
     /**
-     * @var PrivilegeManagerInterface|\PHPUnit\Framework\MockObject\MockObject
+     * @var PrivilegeManagerInterface|MockObject
      */
     protected $mockPrivilegeManager;
 
     protected function setUp(): void
     {
-        $this->mockPrivilegeManager = $this->getMockBuilder(\Neos\Flow\Security\Authorization\PrivilegeManagerInterface::class)->disableOriginalConstructor()->getMock();
+        $this->mockPrivilegeManager = $this->createMock(PrivilegeManagerInterface::class);
 
-        $objectManager = $this->getMockBuilder(ObjectManagerInterface::class)->disableOriginalConstructor()->getMock();
-        $objectManager->expects(self::any())->method('get')->willReturnCallback(function ($objectName) {
+        $objectManager = $this->createMock(ObjectManagerInterface::class);
+        $objectManager->method('get')->willReturnCallback(function ($objectName) {
             switch ($objectName) {
                 case PrivilegeManagerInterface::class:
                     return $this->mockPrivilegeManager;
@@ -46,20 +51,18 @@ class IfAccessViewHelperTest extends ViewHelperBaseTestcase
             }
         });
 
-        $renderingContext = $this->getMockBuilder(RenderingContext::class)->disableOriginalConstructor()->getMock();
-        $renderingContext->expects(self::any())->method('getObjectManager')->willReturn($objectManager);
+        $renderingContext = $this->createMock(RenderingContext::class);
+        $renderingContext->method('getObjectManager')->willReturn($objectManager);
 
-        $this->ifAccessViewHelper = $this->getAccessibleMock(\Neos\FluidAdaptor\ViewHelpers\Security\IfAccessViewHelper::class, ['renderThenChild', 'renderElseChild']);
+        $this->ifAccessViewHelper = $this->getAccessibleMock(IfAccessViewHelper::class, ['renderThenChild', 'renderElseChild']);
         $this->inject($this->ifAccessViewHelper, 'renderingContext', $renderingContext);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function viewHelperRendersThenIfHasAccessToPrivilegeTargetReturnsTrue()
     {
-        $this->mockPrivilegeManager->expects(self::once())->method('isPrivilegeTargetGranted')->with('somePrivilegeTarget')->will(self::returnValue(true));
-        $this->ifAccessViewHelper->expects(self::once())->method('renderThenChild')->will(self::returnValue('foo'));
+        $this->mockPrivilegeManager->expects($this->once())->method('isPrivilegeTargetGranted')->with('somePrivilegeTarget')->willReturn((true));
+        $this->ifAccessViewHelper->expects($this->once())->method('renderThenChild')->willReturn(('foo'));
 
         $arguments = [
             'privilegeTarget' => 'somePrivilegeTarget',
@@ -70,13 +73,11 @@ class IfAccessViewHelperTest extends ViewHelperBaseTestcase
         self::assertEquals('foo', $actualResult);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function viewHelperRendersElseIfHasAccessToPrivilegeTargetReturnsFalse()
     {
-        $this->mockPrivilegeManager->expects(self::once())->method('isPrivilegeTargetGranted')->with('somePrivilegeTarget')->will(self::returnValue(false));
-        $this->ifAccessViewHelper->expects(self::once())->method('renderElseChild')->will(self::returnValue('ElseViewHelperResults'));
+        $this->mockPrivilegeManager->expects($this->once())->method('isPrivilegeTargetGranted')->with('somePrivilegeTarget')->willReturn((false));
+        $this->ifAccessViewHelper->expects($this->once())->method('renderElseChild')->willReturn(('ElseViewHelperResults'));
 
         $arguments = [
             'privilegeTarget' => 'somePrivilegeTarget',

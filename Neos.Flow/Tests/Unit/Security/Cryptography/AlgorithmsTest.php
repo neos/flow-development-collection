@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Neos\Flow\Tests\Unit\Security\Cryptography;
 
 /*
@@ -10,14 +13,15 @@ namespace Neos\Flow\Tests\Unit\Security\Cryptography;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
 use Neos\Flow\Security\Cryptography\Algorithms;
 use Neos\Flow\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Testcase for the cryptographic algorithms
  */
-class AlgorithmsTest extends UnitTestCase
+final class AlgorithmsTest extends UnitTestCase
 {
     /**
      * Data provider for pbkdf2TestVectorsAreCorrect()
@@ -26,7 +30,7 @@ class AlgorithmsTest extends UnitTestCase
      *
      * @return array
      */
-    public function pbkdf2TestVectors()
+    public static function pbkdf2TestVectors()
     {
         $output = [];
 
@@ -39,10 +43,8 @@ class AlgorithmsTest extends UnitTestCase
         return $output;
     }
 
-    /**
-     * @test
-     * @dataProvider pbkdf2TestVectors
-     */
+    #[DataProvider('pbkdf2TestVectors')]
+    #[Test]
     public function pbkdf2TestVectorsAreCorrect($password, $salt, $iterationCount, $derivedKeyLength, $output)
     {
         $result = Algorithms::pbkdf2($password, $salt, $iterationCount, $derivedKeyLength, 'sha1');

@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Neos\Flow\Tests\Unit\Validation\Validator;
 
 /*
@@ -10,8 +13,9 @@ namespace Neos\Flow\Tests\Unit\Validation\Validator;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
 use Neos\Flow\Validation\Validator\LabelValidator;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 
 require_once('AbstractValidatorTestcase.php');
 
@@ -19,21 +23,17 @@ require_once('AbstractValidatorTestcase.php');
  * Testcase for the label validator
  *
  */
-class LabelValidatorTest extends AbstractValidatorTestcase
+final class LabelValidatorTest extends AbstractValidatorTestcase
 {
     protected $validatorClassName = LabelValidator::class;
 
-    /**
-     * @test
-     */
+    #[Test]
     public function validateReturnsNoErrorIfTheGivenValueIsNull()
     {
         self::assertFalse($this->validator->validate(null)->hasErrors());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function validateReturnsNoErrorIfTheGivenValueIsAnEmptyString()
     {
         self::assertFalse($this->validator->validate('')->hasErrors());
@@ -42,51 +42,43 @@ class LabelValidatorTest extends AbstractValidatorTestcase
     /**
      * Data provider with valid labels
      *
-     * @return array
+     * @return \Iterator<(int | string), mixed>
      */
-    public function validLabels()
+    public static function validLabels(): \Iterator
     {
-        return [
-            [''],
-            ['The quick brown fox drinks no coffee'],
-            ['Kasper Skårhøj doesn\'t like his iPad'],
-            ['老 时态等的曲折变化 年代出生的人都会书写常用的繁体汉字事实'],
-            ['Где только языках насколько бы, найденных'],
-            ['I hope, that the above doesn\'t mean anything harmful'],
-            ['Punctuation marks like ,.:;?!%§&"\'/+-_=()# are all allowed'],
-            ['Nothing speaks against numbers 0123456789'],
-            ['Currencies like £₱௹€$¥ could be important']
-        ];
+        yield [''];
+        yield ['The quick brown fox drinks no coffee'];
+        yield ['Kasper Skårhøj doesn\'t like his iPad'];
+        yield ['老 时态等的曲折变化 年代出生的人都会书写常用的繁体汉字事实'];
+        yield ['Где только языках насколько бы, найденных'];
+        yield ['I hope, that the above doesn\'t mean anything harmful'];
+        yield ['Punctuation marks like ,.:;?!%§&"\'/+-_=()# are all allowed'];
+        yield ['Nothing speaks against numbers 0123456789'];
+        yield ['Currencies like £₱௹€$¥ could be important'];
     }
 
     /**
      * Data provider with invalid labels
      *
-     * @return array
+     * @return \Iterator<(int | string), mixed>
      */
-    public function invalidLabels()
+    public static function invalidLabels(): \Iterator
     {
-        return [
-            ['<tags> are not allowed'],
-            ["\t tabs are not allowed either"],
-            ["\n new line? no!"],
-            ['☔☃☕ are funny signs, but we don\'t want them in labels'],
-        ];
+        yield ['<tags> are not allowed'];
+        yield ["\t tabs are not allowed either"];
+        yield ["\n new line? no!"];
+        yield ['☔☃☕ are funny signs, but we don\'t want them in labels'];
     }
 
-    /**
-     * @test
-     * @dataProvider validLabels
-     */
+    #[DataProvider('validLabels')]
+    #[Test]
     public function labelValidatorReturnsNoErrorForValidLabels($label)
     {
         self::assertFalse($this->validator->validate($label)->hasErrors());
     }
 
-    /**
-     * @test
-     * @dataProvider invalidLabels
-     */
+    #[DataProvider('invalidLabels')]
+    #[Test]
     public function labelValidatorReturnsErrorsForInvalidLabels($label)
     {
         self::assertTrue($this->validator->validate($label)->hasErrors());

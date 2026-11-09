@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Eel\Helper;
 
 /*
@@ -11,13 +12,13 @@ namespace Neos\Eel\Helper;
  * source code.
  */
 
-use Neos\Flow\Annotations as Flow;
 use Neos\Eel\ProtectedContextAwareInterface;
+use Neos\Flow\Annotations as Flow;
 
 /**
  * Math helpers for Eel contexts
  *
- * The implementation sticks to the JavaScript specificiation including EcmaScript 6 proposals.
+ * The implementation sticks to the JavaScript specification including EcmaScript 6 proposals.
  *
  * See https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Math for a documentation and
  * specification of the JavaScript implementation.
@@ -367,7 +368,7 @@ class MathHelper implements ProtectedContextAwareInterface
     }
 
     /**
-     * Get a random foating point number between 0 (inclusive) and 1 (exclusive)
+     * Get a random floating point number between 0 (inclusive) and 1 (exclusive)
      *
      * That means a result will always be less than 1 and greater or equal to 0, the same way Math.random() works in
      * JavaScript.

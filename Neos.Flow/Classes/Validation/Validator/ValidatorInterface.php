@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Validation\Validator;
 
 /*
@@ -41,7 +42,7 @@ interface ValidatorInterface
     /**
      * Returns the options of this validator which can be specified in the constructor
      *
-     * @return array
+     * @return array<mixed>
      */
     public function getOptions();
 }

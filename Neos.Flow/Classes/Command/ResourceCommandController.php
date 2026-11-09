@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Command;
 
 /*
@@ -11,16 +12,16 @@ namespace Neos\Flow\Command;
  * source code.
  */
 
+use Neos\Error\Messages\Message;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Cli\CommandController;
-use Neos\Error\Messages\Message;
 use Neos\Flow\Exception;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Package\PackageManager;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Flow\ResourceManagement\CollectionInterface;
-use Neos\Flow\ResourceManagement\Publishing\MessageCollector;
 use Neos\Flow\ResourceManagement\PersistentResource;
+use Neos\Flow\ResourceManagement\Publishing\MessageCollector;
 use Neos\Flow\ResourceManagement\ResourceManager;
 use Neos\Flow\ResourceManagement\ResourceRepository;
 use Neos\Media\Domain\Repository\AssetRepository;
@@ -306,9 +307,7 @@ class ResourceCommandController extends CommandController
                         $this->persistenceManager->persistAll();
                     }
                     $brokenResourcesCounter = count($brokenResources);
-                    if ($brokenResourcesCounter > 0) {
-                        $this->outputLine('Removed %s resource object(s) from the database.', [$brokenResourcesCounter]);
-                    }
+                    $this->outputLine('Removed %s resource object(s) from the database.', [$brokenResourcesCounter]);
                     if ($brokenAssetCounter > 0) {
                         $this->outputLine('Removed %s asset object(s) from the database.', [$brokenAssetCounter]);
                     }
@@ -319,7 +318,6 @@ class ResourceCommandController extends CommandController
                 case 'n':
                     $this->outputLine('Did not delete any resource objects.');
                     $this->quit(0);
-                    break;
             }
         }
     }

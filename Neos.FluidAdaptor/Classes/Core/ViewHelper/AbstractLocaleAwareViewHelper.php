@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\FluidAdaptor\Core\ViewHelper;
 
 /*
@@ -11,8 +12,8 @@ namespace Neos\FluidAdaptor\Core\ViewHelper;
  * source code.
  */
 
-use Neos\FluidAdaptor\Core\ViewHelper\Exception\InvalidVariableException;
 use Neos\Flow\I18n;
+use Neos\FluidAdaptor\Core\ViewHelper\Exception\InvalidVariableException;
 
 /**
  * Abstract view helper with locale awareness.

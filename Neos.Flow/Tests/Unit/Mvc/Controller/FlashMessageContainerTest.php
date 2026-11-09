@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Neos\Flow\Tests\Unit\Mvc\Controller;
 
 /*
@@ -10,15 +13,15 @@ namespace Neos\Flow\Tests\Unit\Mvc\Controller;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
 use Neos\Error\Messages as FlowError;
-use Neos\Flow\Tests\UnitTestCase;
 use Neos\Flow\Mvc\FlashMessage\FlashMessageContainer;
+use Neos\Flow\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Testcase for the Flash Messages Container
  */
-class FlashMessageContainerTest extends UnitTestCase
+final class FlashMessageContainerTest extends UnitTestCase
 {
     /**
      * @var FlashMessageContainer
@@ -30,9 +33,7 @@ class FlashMessageContainerTest extends UnitTestCase
         $this->flashMessageContainer = new FlashMessageContainer();
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function addedFlashMessageCanBeReadOutAgain()
     {
         $messages = [
@@ -43,7 +44,7 @@ class FlashMessageContainerTest extends UnitTestCase
         $this->flashMessageContainer->addMessage($messages[1]);
         $returnedFlashMessages = $this->flashMessageContainer->getMessages();
 
-        self::assertEquals(count($returnedFlashMessages), 2);
+        self::assertCount(2, $returnedFlashMessages);
 
         $i = 0;
         foreach ($returnedFlashMessages as $flashMessage) {
@@ -51,9 +52,7 @@ class FlashMessageContainerTest extends UnitTestCase
         }
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function flushResetsFlashMessages()
     {
         $message1 = new FlowError\Message('This is a test message');
@@ -62,9 +61,7 @@ class FlashMessageContainerTest extends UnitTestCase
         self::assertEquals([], $this->flashMessageContainer->getMessages());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getMessagesAndFlushFetchesAllEntriesAndFlushesTheFlashMessages()
     {
         $messages = [
@@ -75,7 +72,7 @@ class FlashMessageContainerTest extends UnitTestCase
         $this->flashMessageContainer->addMessage($messages[1]);
         $returnedFlashMessages = $this->flashMessageContainer->getMessagesAndFlush();
 
-        self::assertEquals(count($returnedFlashMessages), 2);
+        self::assertCount(2, $returnedFlashMessages);
 
         $i = 0;
         foreach ($returnedFlashMessages as $flashMessage) {
@@ -85,9 +82,7 @@ class FlashMessageContainerTest extends UnitTestCase
         self::assertEquals([], $this->flashMessageContainer->getMessages());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function messagesCanBeFilteredBySeverity()
     {
         $messages = [
@@ -99,16 +94,14 @@ class FlashMessageContainerTest extends UnitTestCase
 
         $filteredFlashMessages = $this->flashMessageContainer->getMessages(FlowError\Message::SEVERITY_NOTICE);
 
-        self::assertEquals(count($filteredFlashMessages), 1);
+        self::assertCount(1, $filteredFlashMessages);
 
         reset($filteredFlashMessages);
         $flashMessage = current($filteredFlashMessages);
         self::assertEquals($messages[0], $flashMessage);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getMessagesAndFlushCanAlsoFilterBySeverity()
     {
         $messages = [
@@ -120,7 +113,7 @@ class FlashMessageContainerTest extends UnitTestCase
 
         $filteredFlashMessages = $this->flashMessageContainer->getMessagesAndFlush(FlowError\Message::SEVERITY_NOTICE);
 
-        self::assertEquals(count($filteredFlashMessages), 1);
+        self::assertCount(1, $filteredFlashMessages);
 
         reset($filteredFlashMessages);
         $flashMessage = current($filteredFlashMessages);

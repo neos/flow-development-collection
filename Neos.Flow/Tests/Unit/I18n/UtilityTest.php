@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Neos\Flow\Tests\Unit\I18n;
 
 /*
@@ -10,65 +13,58 @@ namespace Neos\Flow\Tests\Unit\I18n;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
+use Neos\Flow\I18n\Utility;
 use Neos\Flow\Tests\UnitTestCase;
-use Neos\Flow\I18n;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Testcase for the Locale Utility
  */
-class UtilityTest extends UnitTestCase
+final class UtilityTest extends UnitTestCase
 {
     /**
      * Data provider with valid Accept-Language headers and expected results.
      *
-     * @return array
+     * @return \Iterator<(int | string), mixed>
      */
-    public function sampleHttpAcceptLanguageHeaders()
+    public static function sampleHttpAcceptLanguageHeaders(): \Iterator
     {
-        return [
-            ['pl, en-gb;q=0.8, en;q=0.7', ['pl', 'en-gb', 'en']],
-            ['de, *;q=0.8', ['de', '*']],
-            ['sv, wont-accept;q=0.8, en;q=0.5', ['sv', 'en']],
-            ['de-DE,de;q=0.8,en-US;q=0.6,en;q=0.4', ['de-DE', 'de', 'en-US', 'en']],
-        ];
+        yield ['pl, en-gb;q=0.8, en;q=0.7', ['pl', 'en-gb', 'en']];
+        yield ['de, *;q=0.8', ['de', '*']];
+        yield ['sv, wont-accept;q=0.8, en;q=0.5', ['sv', 'en']];
+        yield ['de-DE,de;q=0.8,en-US;q=0.6,en;q=0.4', ['de-DE', 'de', 'en-US', 'en']];
     }
 
-    /**
-     * @test
-     * @dataProvider sampleHttpAcceptLanguageHeaders
-     */
+    #[DataProvider('sampleHttpAcceptLanguageHeaders')]
+    #[Test]
     public function httpAcceptLanguageHeadersAreParsedCorrectly($acceptLanguageHeader, array $expectedResult)
     {
-        $languages = I18n\Utility::parseAcceptLanguageHeader($acceptLanguageHeader);
+        $languages = Utility::parseAcceptLanguageHeader($acceptLanguageHeader);
         self::assertEquals($expectedResult, $languages);
     }
 
     /**
      * Data provider with filenames with locale tags and expected results.
      *
-     * @return array
+     * @return \Iterator<(int | string), mixed>
      */
-    public function filenamesWithLocale()
+    public static function filenamesWithLocale(): \Iterator
     {
-        return [
-            ['foobar.en_GB.ext', 'en_GB'],
-            ['en_GB.xlf', 'en_GB'],
-            ['foobar.ext', false],
-            ['foobar', false],
-            ['foobar.php.tmpl', false],
-            ['foobar.rss.php', false],
-            ['foobar.xml.php', false],
-        ];
+        yield ['foobar.en_GB.ext', 'en_GB'];
+        yield ['en_GB.xlf', 'en_GB'];
+        yield ['foobar.ext', false];
+        yield ['foobar', false];
+        yield ['foobar.php.tmpl', false];
+        yield ['foobar.rss.php', false];
+        yield ['foobar.xml.php', false];
     }
 
-    /**
-     * @test
-     * @dataProvider filenamesWithLocale
-     */
+    #[DataProvider('filenamesWithLocale')]
+    #[Test]
     public function localeIdentifiersAreCorrectlyExtractedFromFilename($filename, $expectedResult)
     {
-        $result = I18n\Utility::extractLocaleTagFromFilename($filename);
+        $result = Utility::extractLocaleTagFromFilename($filename);
         self::assertEquals($expectedResult, $result);
     }
 
@@ -77,38 +73,32 @@ class UtilityTest extends UnitTestCase
      * comparison methods. The third argument denotes whether needle is same
      * as beginning of the haystack, or it's ending, or both or none.
      *
-     * @return array
+     * @return \Iterator<(int | string), mixed>
      */
-    public function sampleHaystackStringsAndNeedleStrings()
+    public static function sampleHaystackStringsAndNeedleStrings(): \Iterator
     {
-        return [
-            ['teststring', 'test', 'beginning'],
-            ['foo', 'bar', 'none'],
-            ['baz', '', 'none'],
-            ['foo', 'foo', 'both'],
-            ['foobaz', 'baz', 'ending'],
-        ];
+        yield ['teststring', 'test', 'beginning'];
+        yield ['foo', 'bar', 'none'];
+        yield ['baz', '', 'none'];
+        yield ['foo', 'foo', 'both'];
+        yield ['foobaz', 'baz', 'ending'];
     }
 
-    /**
-     * @test
-     * @dataProvider sampleHaystackStringsAndNeedleStrings
-     */
+    #[DataProvider('sampleHaystackStringsAndNeedleStrings')]
+    #[Test]
     public function stringIsFoundAtBeginningOfAnotherString($haystack, $needle, $comparison)
     {
         $expectedResult = ($comparison === 'beginning' || $comparison === 'both') ? true : false;
-        $result = I18n\Utility::stringBeginsWith($haystack, $needle);
+        $result = Utility::stringBeginsWith($haystack, $needle);
         self::assertEquals($expectedResult, $result);
     }
 
-    /**
-     * @test
-     * @dataProvider sampleHaystackStringsAndNeedleStrings
-     */
+    #[DataProvider('sampleHaystackStringsAndNeedleStrings')]
+    #[Test]
     public function stringIsFoundAtEndingOfAnotherString($haystack, $needle, $comparison)
     {
         $expectedResult = ($comparison === 'ending' || $comparison === 'both') ? true : false;
-        $result = I18n\Utility::stringEndsWith($haystack, $needle);
+        $result = Utility::stringEndsWith($haystack, $needle);
         self::assertEquals($expectedResult, $result);
     }
 }

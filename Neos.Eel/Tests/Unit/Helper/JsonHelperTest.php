@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Neos\Eel\Tests\Unit;
 
 /*
@@ -10,36 +13,34 @@ namespace Neos\Eel\Tests\Unit;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
 use Neos\Eel\Helper\JsonHelper;
+use Neos\Flow\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Tests for JsonHelper
  */
-class JsonHelperTest extends \Neos\Flow\Tests\UnitTestCase
+final class JsonHelperTest extends UnitTestCase
 {
-    public function stringifyExamples()
+    public static function stringifyExamples(): \Iterator
     {
-        return [
-            'string value' => [
-                'Foo', '"Foo"'
-            ],
-            'null value' => [
-                null, 'null'
-            ],
-            'numeric value' => [
-                42, '42'
-            ],
-            'array value' => [
-                ['Foo', 'Bar'], '["Foo","Bar"]'
-            ]
+        yield 'string value' => [
+            'Foo', '"Foo"'
+        ];
+        yield 'null value' => [
+            null, 'null'
+        ];
+        yield 'numeric value' => [
+            42, '42'
+        ];
+        yield 'array value' => [
+            ['Foo', 'Bar'], '["Foo","Bar"]'
         ];
     }
 
-    /**
-     * @test
-     * @dataProvider stringifyExamples
-     */
+    #[DataProvider('stringifyExamples')]
+    #[Test]
     public function stringifyWorks($value, $expected)
     {
         $helper = new JsonHelper();
@@ -47,34 +48,30 @@ class JsonHelperTest extends \Neos\Flow\Tests\UnitTestCase
         self::assertEquals($expected, $result);
     }
 
-    public function parseExamples()
+    public static function parseExamples(): \Iterator
     {
-        return [
-            'string value' => [
-                ['"Foo"'], 'Foo'
-            ],
-            'null value' => [
-                ['null'], null
-            ],
-            'numeric value' => [
-                ['42'], 42
-            ],
-            'array value' => [
-                ['["Foo","Bar"]'], ['Foo', 'Bar']
-            ],
-            'object value is parsed as associative array by default' => [
-                ['{"name":"Foo"}'], ['name' => 'Foo']
-            ],
-            'object value without associative array' => [
-                ['{"name":"Foo"}', false], (object)['name' => 'Foo']
-            ]
+        yield 'string value' => [
+            ['"Foo"'], 'Foo'
+        ];
+        yield 'null value' => [
+            ['null'], null
+        ];
+        yield 'numeric value' => [
+            ['42'], 42
+        ];
+        yield 'array value' => [
+            ['["Foo","Bar"]'], ['Foo', 'Bar']
+        ];
+        yield 'object value is parsed as associative array by default' => [
+            ['{"name":"Foo"}'], ['name' => 'Foo']
+        ];
+        yield 'object value without associative array' => [
+            ['{"name":"Foo"}', false], (object)['name' => 'Foo']
         ];
     }
 
-    /**
-     * @test
-     * @dataProvider parseExamples
-     */
+    #[DataProvider('parseExamples')]
+    #[Test]
     public function parseWorks($arguments, $expected)
     {
         $helper = new JsonHelper();

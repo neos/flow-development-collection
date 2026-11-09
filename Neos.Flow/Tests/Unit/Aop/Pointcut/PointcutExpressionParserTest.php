@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Neos\Flow\Tests\Unit\Aop\Pointcut;
 
 /*
@@ -10,32 +13,29 @@ namespace Neos\Flow\Tests\Unit\Aop\Pointcut;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
+use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Aop\Exception\InvalidPointcutExpressionException;
 use Neos\Flow\Aop\Pointcut\PointcutExpressionParser;
+use Neos\Flow\Aop\Pointcut\PointcutFilter;
 use Neos\Flow\Aop\Pointcut\PointcutFilterComposite;
+use Neos\Flow\Aop\Pointcut\PointcutMethodNameFilter;
 use Neos\Flow\Log\PsrLoggerFactoryInterface;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
-use Neos\Utility\ObjectAccess;
 use Neos\Flow\Reflection\ReflectionService;
 use Neos\Flow\Tests\UnitTestCase;
-use Neos\Flow\Aop;
-use Neos\Flow\Annotations as Flow;
+use Neos\Utility\ObjectAccess;
+use PHPUnit\Framework\Attributes\Test;
 use Psr\Log\LoggerInterface;
 
 /**
  * Testcase for the default AOP Pointcut Expression Parser implementation
  */
-class PointcutExpressionParserTest extends UnitTestCase
+final class PointcutExpressionParserTest extends UnitTestCase
 {
     /**
      * @var ObjectManagerInterface
      */
     protected $mockObjectManager;
-
-    /**
-     * @var ReflectionService
-     */
-    protected $mockReflectionService;
 
     /**
      * Setup
@@ -45,47 +45,32 @@ class PointcutExpressionParserTest extends UnitTestCase
     protected function setUp(): void
     {
         $this->mockObjectManager = $this->createMock(ObjectManagerInterface::class);
-        $this->mockReflectionService = $this->getMockBuilder(ReflectionService::class)->disableOriginalConstructor()->getMock();
     }
 
-    /**
-     * @test
-     */
-    public function parseThrowsExceptionIfPointcutExpressionIsNotAString()
-    {
-        $this->expectException(Aop\Exception\InvalidPointcutExpressionException::class);
-        $parser = new PointcutExpressionParser();
-        $parser->parse(false, 'Unit Test');
-    }
-
-    /**
-     * @test
-     */
+    #[Test]
     public function parseThrowsExceptionIfThePointcutExpressionContainsNoDesignator()
     {
-        $this->expectException(Aop\Exception\InvalidPointcutExpressionException::class);
+        $this->expectException(InvalidPointcutExpressionException::class);
         $parser = new PointcutExpressionParser();
         $parser->injectObjectManager($this->mockObjectManager);
         $parser->parse('()', 'Unit Test');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function parseCallsSpecializedMethodsToParseEachDesignator()
     {
         $mockMethods = ['parseDesignatorPointcut', 'parseDesignatorClassAnnotatedWith', 'parseDesignatorClass', 'parseDesignatorMethodAnnotatedWith', 'parseDesignatorMethod', 'parseDesignatorWithin', 'parseDesignatorFilter', 'parseDesignatorSetting', 'parseRuntimeEvaluations'];
-        $parser = $this->getMockBuilder(PointcutExpressionParser::class)->setMethods($mockMethods)->disableOriginalConstructor()->getMock();
+        $parser = $this->getMockBuilder(PointcutExpressionParser::class)->onlyMethods($mockMethods)->disableOriginalConstructor()->getMock();
 
-        $parser->expects(self::once())->method('parseDesignatorPointcut')->with('&&', '\Foo\Bar->baz');
-        $parser->expects(self::once())->method('parseDesignatorClassAnnotatedWith')->with('&&', Flow\Aspect::class);
-        $parser->expects(self::once())->method('parseDesignatorClass')->with('&&', 'Foo');
-        $parser->expects(self::once())->method('parseDesignatorMethodAnnotatedWith')->with('&&', Flow\Session::class);
-        $parser->expects(self::once())->method('parseDesignatorMethod')->with('&&', 'Foo->Bar()');
-        $parser->expects(self::once())->method('parseDesignatorWithin')->with('&&', 'Bar');
-        $parser->expects(self::once())->method('parseDesignatorFilter')->with('&&', '\Foo\Bar\Baz');
-        $parser->expects(self::once())->method('parseDesignatorSetting')->with('&&', 'Foo.Bar.baz');
-        $parser->expects(self::once())->method('parseRuntimeEvaluations')->with('&&', 'Foo.Bar.baz == "test"');
+        $parser->expects($this->once())->method('parseDesignatorPointcut')->with('&&', '\Foo\Bar->baz');
+        $parser->expects($this->once())->method('parseDesignatorClassAnnotatedWith')->with('&&', Flow\Aspect::class);
+        $parser->expects($this->once())->method('parseDesignatorClass')->with('&&', 'Foo');
+        $parser->expects($this->once())->method('parseDesignatorMethodAnnotatedWith')->with('&&', Flow\Session::class);
+        $parser->expects($this->once())->method('parseDesignatorMethod')->with('&&', 'Foo->Bar()');
+        $parser->expects($this->once())->method('parseDesignatorWithin')->with('&&', 'Bar');
+        $parser->expects($this->once())->method('parseDesignatorFilter')->with('&&', '\Foo\Bar\Baz');
+        $parser->expects($this->once())->method('parseDesignatorSetting')->with('&&', 'Foo.Bar.baz');
+        $parser->expects($this->once())->method('parseRuntimeEvaluations')->with('&&', 'Foo.Bar.baz == "test"');
 
         $parser->parse('\Foo\Bar->baz', 'Unit Test');
         $parser->parse('classAnnotatedWith(Neos\Flow\Annotations\Aspect)', 'Unit Test');
@@ -98,132 +83,116 @@ class PointcutExpressionParserTest extends UnitTestCase
         $parser->parse('evaluate(Foo.Bar.baz == "test")', 'Unit Test');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function parseCallsParseDesignatorMethodWithTheCorrectSignaturePatternStringIfTheExpressionContainsArgumentPatterns()
     {
         $mockMethods = ['parseDesignatorMethod'];
-        $parser = $this->getMockBuilder(PointcutExpressionParser::class)->setMethods($mockMethods)->disableOriginalConstructor()->getMock();
+        $parser = $this->getMockBuilder(PointcutExpressionParser::class)->onlyMethods($mockMethods)->disableOriginalConstructor()->getMock();
         $parser->injectObjectManager($this->mockObjectManager);
 
-        $parser->expects(self::once())->method('parseDesignatorMethod')->with('&&', 'Foo->Bar(firstArgument = "baz", secondArgument = true)');
+        $parser->expects($this->once())->method('parseDesignatorMethod')->with('&&', 'Foo->Bar(firstArgument = "baz", secondArgument = true)');
 
         $parser->parse('method(Foo->Bar(firstArgument = "baz", secondArgument = true))', 'Unit Test');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function parseSplitsUpTheExpressionIntoDesignatorsAndPassesTheOperatorsToTheDesginatorParseMethod()
     {
         $mockMethods = ['parseDesignatorPointcut', 'parseDesignatorClass', 'parseDesignatorMethod', 'parseDesignatorWithin', 'parseDesignatorFilter', 'parseDesignatorSetting'];
-        $parser = $this->getMockBuilder(PointcutExpressionParser::class)->setMethods($mockMethods)->disableOriginalConstructor()->getMock();
+        $parser = $this->getMockBuilder(PointcutExpressionParser::class)->onlyMethods($mockMethods)->disableOriginalConstructor()->getMock();
         $parser->injectObjectManager($this->mockObjectManager);
 
-        $parser->expects(self::once())->method('parseDesignatorClass')->with('&&', 'Foo');
-        $parser->expects(self::once())->method('parseDesignatorMethod')->with('||', 'Foo->Bar()');
-        $parser->expects(self::once())->method('parseDesignatorWithin')->with('&&!', 'Bar');
+        $parser->expects($this->once())->method('parseDesignatorClass')->with('&&', 'Foo');
+        $parser->expects($this->once())->method('parseDesignatorMethod')->with('||', 'Foo->Bar()');
+        $parser->expects($this->once())->method('parseDesignatorWithin')->with('&&!', 'Bar');
 
         $parser->parse('class(Foo) || method(Foo->Bar()) && !within(Bar)', 'Unit Test');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function parseDesignatorClassAnnotatedWithAddsAFilterToTheGivenFilterComposite()
     {
-        $mockPsrLoggerFactory = $this->getMockBuilder(PsrLoggerFactoryInterface::class)->getMock();
-        $mockPsrLoggerFactory->expects(self::any())->method('get')->willReturn($this->createMock(LoggerInterface::class));
+        $mockPsrLoggerFactory = $this->createMock(PsrLoggerFactoryInterface::class);
+        $mockPsrLoggerFactory->method('get')->willReturn($this->createMock(LoggerInterface::class));
 
-        $this->mockObjectManager->expects(self::any())->method('get')->willReturn($mockPsrLoggerFactory);
+        $this->mockObjectManager->method('get')->willReturn($mockPsrLoggerFactory);
 
-        $mockPointcutFilterComposite = $this->getMockBuilder(PointcutFilterComposite::class)->disableOriginalConstructor()->getMock();
-        $mockPointcutFilterComposite->expects(self::once())->method('addFilter')->with('&&');
+        $mockPointcutFilterComposite = $this->createMock(PointcutFilterComposite::class);
+        $mockPointcutFilterComposite->expects($this->once())->method('addFilter')->with('&&');
 
-        $parser = $this->getAccessibleMock(PointcutExpressionParser::class, ['dummy'], [], '', false);
-        $parser->injectReflectionService($this->mockReflectionService);
+        $parser = $this->getAccessibleMock(PointcutExpressionParser::class, [], [], '', false);
+        $parser->injectReflectionService($this->createStub(ReflectionService::class));
         $parser->injectObjectManager($this->mockObjectManager);
 
         $parser->_call('parseDesignatorClassAnnotatedWith', '&&', 'foo', $mockPointcutFilterComposite);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function parseDesignatorClassAddsAFilterToTheGivenFilterComposite()
     {
-        $mockPointcutFilterComposite = $this->getMockBuilder(PointcutFilterComposite::class)->disableOriginalConstructor()->getMock();
-        $mockPointcutFilterComposite->expects(self::once())->method('addFilter')->with('&&');
+        $mockPointcutFilterComposite = $this->createMock(PointcutFilterComposite::class);
+        $mockPointcutFilterComposite->expects($this->once())->method('addFilter')->with('&&');
 
-        $parser = $this->getAccessibleMock(PointcutExpressionParser::class, ['dummy'], [], '', false);
-        $parser->injectReflectionService($this->mockReflectionService);
+        $parser = $this->getAccessibleMock(PointcutExpressionParser::class, [], [], '', false);
+        $parser->injectReflectionService($this->createStub(ReflectionService::class));
 
         $parser->_call('parseDesignatorClass', '&&', 'Foo', $mockPointcutFilterComposite);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function parseDesignatorMethodAnnotatedWithAddsAFilterToTheGivenFilterComposite()
     {
-        $mockPsrLoggerFactory = $this->getMockBuilder(PsrLoggerFactoryInterface::class)->getMock();
-        $mockPsrLoggerFactory->expects(self::any())->method('get')->willReturn($this->createMock(LoggerInterface::class));
+        $mockPsrLoggerFactory = $this->createMock(PsrLoggerFactoryInterface::class);
+        $mockPsrLoggerFactory->method('get')->willReturn($this->createMock(LoggerInterface::class));
 
-        $this->mockObjectManager->expects(self::any())->method('get')->willReturn($mockPsrLoggerFactory);
+        $this->mockObjectManager->method('get')->willReturn($mockPsrLoggerFactory);
 
-        $mockPointcutFilterComposite = $this->getMockBuilder(PointcutFilterComposite::class)->disableOriginalConstructor()->getMock();
-        $mockPointcutFilterComposite->expects(self::once())->method('addFilter')->with('&&');
+        $mockPointcutFilterComposite = $this->createMock(PointcutFilterComposite::class);
+        $mockPointcutFilterComposite->expects($this->once())->method('addFilter')->with('&&');
 
-        $parser = $this->getAccessibleMock(PointcutExpressionParser::class, ['dummy'], [], '', false);
-        $parser->injectReflectionService($this->mockReflectionService);
+        $parser = $this->getAccessibleMock(PointcutExpressionParser::class, [], [], '', false);
+        $parser->injectReflectionService($this->createStub(ReflectionService::class));
         $parser->injectObjectManager($this->mockObjectManager);
 
         $parser->_call('parseDesignatorMethodAnnotatedWith', '&&', 'foo', $mockPointcutFilterComposite);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function parseDesignatorMethodThrowsAnExceptionIfTheExpressionLacksTheClassMethodArrow()
     {
-        $this->expectException(Aop\Exception\InvalidPointcutExpressionException::class);
-        $mockComposite = $this->getMockBuilder(PointcutFilterComposite::class)->disableOriginalConstructor()->getMock();
-        $parser = $this->getAccessibleMock(PointcutExpressionParser::class, ['dummy'], [], '', false);
+        $this->expectException(InvalidPointcutExpressionException::class);
+        $mockComposite = $this->createStub(PointcutFilterComposite::class);
+        $parser = $this->getAccessibleMock(PointcutExpressionParser::class, [], [], '', false);
         $parser->_call('parseDesignatorMethod', '&&', 'Foo bar', $mockComposite);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function parseDesignatorMethodParsesVisibilityForPointcutMethodNameFilter()
     {
-        $composite = $this->getAccessibleMock(PointcutFilterComposite::class, ['dummy']);
+        $composite = $this->getAccessibleMock(PointcutFilterComposite::class, []);
 
-        $mockPsrLoggerFactory = $this->getMockBuilder(PsrLoggerFactoryInterface::class)->getMock();
-        $mockPsrLoggerFactory->expects(self::any())->method('get')->willReturn($this->createMock(LoggerInterface::class));
+        $mockPsrLoggerFactory = $this->createMock(PsrLoggerFactoryInterface::class);
+        $mockPsrLoggerFactory->method('get')->willReturn($this->createMock(LoggerInterface::class));
 
-        $this->mockObjectManager->expects(self::any())->method('get')->willReturn($mockPsrLoggerFactory);
+        $this->mockObjectManager->method('get')->willReturn($mockPsrLoggerFactory);
 
-        $parser = $this->getAccessibleMock(PointcutExpressionParser::class, ['dummy'], [], '', false);
-        $parser->injectReflectionService($this->mockReflectionService);
+        $parser = $this->getAccessibleMock(PointcutExpressionParser::class, [], [], '', false);
+        $parser->injectReflectionService($this->createStub(ReflectionService::class));
         $parser->injectObjectManager($this->mockObjectManager);
 
         $parser->_call('parseDesignatorMethod', '&&', 'protected Foo->bar()', $composite);
         $filters = $composite->_get('filters');
         foreach ($filters as $operatorAndFilter) {
             list(, $filter) = $operatorAndFilter;
-            if ($filter instanceof Aop\Pointcut\PointcutMethodNameFilter) {
-                self::assertEquals('protected', $filter->getMethodVisibility());
+            if ($filter instanceof PointcutMethodNameFilter) {
+                self::assertSame('protected', $filter->getMethodVisibility());
                 return;
             }
         }
         $this->fail('No filter for method name found');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getArgumentConstraintsFromMethodArgumentsPatternWorks()
     {
         $methodArgumentsPattern = 'arg1 == "blub,ber",   arg2 != false  ,arg3 in   (true, some.object.access, "fa,sel", \'blub\'), arg4 contains false,arg2==true,arg5 matches (1,2,3), arg6 matches current.party.accounts';
@@ -264,60 +233,52 @@ class PointcutExpressionParserTest extends UnitTestCase
             ]
         ];
 
-        $parser = $this->getAccessibleMock(PointcutExpressionParser::class, ['dummy'], [], '', false);
+        $parser = $this->getAccessibleMock(PointcutExpressionParser::class, [], [], '', false);
 
         $result = $parser->_call('getArgumentConstraintsFromMethodArgumentsPattern', $methodArgumentsPattern);
         self::assertEquals($expectedConditions, $result, 'The argument condition string has not been parsed as expected.');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function parseDesignatorPointcutThrowsAnExceptionIfTheExpressionLacksTheAspectClassMethodArrow()
     {
-        $this->expectException(Aop\Exception\InvalidPointcutExpressionException::class);
-        $mockComposite = $this->getMockBuilder(PointcutFilterComposite::class)->disableOriginalConstructor()->getMock();
-        $parser = $this->getAccessibleMock(PointcutExpressionParser::class, ['dummy'], [], '', false);
+        $this->expectException(InvalidPointcutExpressionException::class);
+        $mockComposite = $this->createStub(PointcutFilterComposite::class);
+        $parser = $this->getAccessibleMock(PointcutExpressionParser::class, [], [], '', false);
         $parser->_call('parseDesignatorPointcut', '&&', '\Foo\Bar', $mockComposite);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function parseDesignatorFilterAddsACustomFilterToTheGivenFilterComposite()
     {
-        $mockFilter = $this->getMockBuilder(Aop\Pointcut\PointcutFilter::class)->disableOriginalConstructor()->getMock();
-        $mockPointcutFilterComposite = $this->getMockBuilder(PointcutFilterComposite::class)->disableOriginalConstructor()->getMock();
-        $mockPointcutFilterComposite->expects(self::once())->method('addFilter')->with('&&', $mockFilter);
+        $mockFilter = $this->createStub(PointcutFilter::class);
+        $mockPointcutFilterComposite = $this->createMock(PointcutFilterComposite::class);
+        $mockPointcutFilterComposite->expects($this->once())->method('addFilter')->with('&&', $mockFilter);
 
-        $this->mockObjectManager->expects(self::once())->method('get')->with('Neos\Foo\Custom\Filter')->will(self::returnValue($mockFilter));
+        $this->mockObjectManager->expects($this->once())->method('get')->with('Neos\Foo\Custom\Filter')->willReturn(($mockFilter));
 
-        $parser = $this->getAccessibleMock(PointcutExpressionParser::class, ['dummy'], [], '', false);
+        $parser = $this->getAccessibleMock(PointcutExpressionParser::class, [], [], '', false);
         $parser->injectObjectManager($this->mockObjectManager);
 
         $parser->_call('parseDesignatorFilter', '&&', 'Neos\Foo\Custom\Filter', $mockPointcutFilterComposite);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function parseDesignatorFilterThrowsAnExceptionIfACustomFilterDoesNotImplementThePointcutFilterInterface()
     {
-        $this->expectException(Aop\Exception\InvalidPointcutExpressionException::class);
+        $this->expectException(InvalidPointcutExpressionException::class);
         $mockFilter = new \ArrayObject();
-        $mockPointcutFilterComposite = $this->getMockBuilder(PointcutFilterComposite::class)->disableOriginalConstructor()->getMock();
+        $mockPointcutFilterComposite = $this->createStub(PointcutFilterComposite::class);
 
-        $this->mockObjectManager->expects(self::once())->method('get')->with('Neos\Foo\Custom\Filter')->will(self::returnValue($mockFilter));
+        $this->mockObjectManager->expects($this->once())->method('get')->with('Neos\Foo\Custom\Filter')->willReturn(($mockFilter));
 
-        $parser = $this->getAccessibleMock(PointcutExpressionParser::class, ['dummy'], [], '', false);
+        $parser = $this->getAccessibleMock(PointcutExpressionParser::class, [], [], '', false);
         $parser->injectObjectManager($this->mockObjectManager);
 
         $parser->_call('parseDesignatorFilter', '&&', 'Neos\Foo\Custom\Filter', $mockPointcutFilterComposite);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function parseRuntimeEvaluationsBasicallyWorks()
     {
         $expectedRuntimeEvaluationsDefinition = [
@@ -328,18 +289,16 @@ class PointcutExpressionParserTest extends UnitTestCase
             ]
         ];
 
-        $mockPointcutFilterComposite = $this->getMockBuilder(PointcutFilterComposite::class)->disableOriginalConstructor()->getMock();
-        $mockPointcutFilterComposite->expects(self::once())->method('setGlobalRuntimeEvaluationsDefinition')->with($expectedRuntimeEvaluationsDefinition);
+        $mockPointcutFilterComposite = $this->createMock(PointcutFilterComposite::class);
+        $mockPointcutFilterComposite->expects($this->once())->method('setGlobalRuntimeEvaluationsDefinition')->with($expectedRuntimeEvaluationsDefinition);
 
         $parser = $this->getAccessibleMock(PointcutExpressionParser::class, ['getRuntimeEvaluationConditionsFromEvaluateString'], [], '', false);
-        $parser->expects(self::once())->method('getRuntimeEvaluationConditionsFromEvaluateString')->with('some == constraint')->will(self::returnValue(['parsed constraints']));
+        $parser->expects($this->once())->method('getRuntimeEvaluationConditionsFromEvaluateString')->with('some == constraint')->willReturn((['parsed constraints']));
 
         $parser->_call('parseRuntimeEvaluations', '&&', 'some == constraint', $mockPointcutFilterComposite);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getRuntimeEvaluationConditionsFromEvaluateStringReturnsTheCorrectArrayForAnEvaluateString()
     {
         $expectedRuntimeEvaluationsDefinition = [
@@ -377,26 +336,24 @@ class PointcutExpressionParserTest extends UnitTestCase
 
         $evaluateString = '"blub" == 5, current.party.name <= \'foo\', this.attendee.name != current.party.person.name, this.some.object in (true, some.object.access), this.some.object matches (1, 2, 3), this.some.arrayProperty matches current.party.accounts';
 
-        $parser = $this->getAccessibleMock(PointcutExpressionParser::class, ['dummy'], [], '', false);
+        $parser = $this->getAccessibleMock(PointcutExpressionParser::class, [], [], '', false);
         $result = $parser->_call('getRuntimeEvaluationConditionsFromEvaluateString', $evaluateString);
 
         self::assertEquals($result, $expectedRuntimeEvaluationsDefinition, 'The string has not been parsed correctly.');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function parseDesignatorClassAnnotatedWithObservesAnnotationPropertyConstraints()
     {
-        $mockPsrLoggerFactory = $this->getMockBuilder(PsrLoggerFactoryInterface::class)->getMock();
-        $mockPsrLoggerFactory->expects(self::any())->method('get')->willReturn($this->createMock(LoggerInterface::class));
+        $mockPsrLoggerFactory = $this->createMock(PsrLoggerFactoryInterface::class);
+        $mockPsrLoggerFactory->method('get')->willReturn($this->createMock(LoggerInterface::class));
 
-        $this->mockObjectManager->expects(self::any())->method('get')->willReturn($mockPsrLoggerFactory);
+        $this->mockObjectManager->method('get')->willReturn($mockPsrLoggerFactory);
 
         $pointcutFilterComposite = new PointcutFilterComposite();
 
-        $parser = $this->getAccessibleMock(PointcutExpressionParser::class, ['dummy'], [], '', false);
-        $parser->injectReflectionService($this->mockReflectionService);
+        $parser = $this->getAccessibleMock(PointcutExpressionParser::class, [], [], '', false);
+        $parser->injectReflectionService($this->createStub(ReflectionService::class));
         $parser->injectObjectManager($this->mockObjectManager);
 
         $parser->_call('parseDesignatorClassAnnotatedWith', '&&', 'foo(bar == false)', $pointcutFilterComposite);
@@ -421,20 +378,18 @@ class PointcutExpressionParserTest extends UnitTestCase
         self::assertEquals($expectedAnnotationValueConstraints, $annotationValueConstraints);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function parseDesignatorMethodAnnotatedWithObservesAnnotationPropertyConstraints()
     {
-        $mockPsrLoggerFactory = $this->getMockBuilder(PsrLoggerFactoryInterface::class)->getMock();
-        $mockPsrLoggerFactory->expects(self::any())->method('get')->willReturn($this->createMock(LoggerInterface::class));
+        $mockPsrLoggerFactory = $this->createMock(PsrLoggerFactoryInterface::class);
+        $mockPsrLoggerFactory->method('get')->willReturn($this->createMock(LoggerInterface::class));
 
-        $this->mockObjectManager->expects(self::any())->method('get')->willReturn($mockPsrLoggerFactory);
+        $this->mockObjectManager->method('get')->willReturn($mockPsrLoggerFactory);
 
         $pointcutFilterComposite = new PointcutFilterComposite();
 
-        $parser = $this->getAccessibleMock(PointcutExpressionParser::class, ['dummy'], [], '', false);
-        $parser->injectReflectionService($this->mockReflectionService);
+        $parser = $this->getAccessibleMock(PointcutExpressionParser::class, [], [], '', false);
+        $parser->injectReflectionService($this->createStub(ReflectionService::class));
         $parser->injectObjectManager($this->mockObjectManager);
 
         $parser->_call('parseDesignatorMethodAnnotatedWith', '&&', 'foo(bar == false)', $pointcutFilterComposite);

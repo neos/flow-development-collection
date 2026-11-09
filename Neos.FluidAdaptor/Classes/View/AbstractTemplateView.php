@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\FluidAdaptor\View;
 
 /*
@@ -11,10 +12,10 @@ namespace Neos\FluidAdaptor\View;
  * source code.
  */
 
-use Neos\FluidAdaptor\Exception;
 use Neos\Flow\Mvc\Controller\ControllerContext;
 use Neos\Flow\Mvc\View\ViewInterface;
 use Neos\FluidAdaptor\Core\Rendering\RenderingContext;
+use Neos\FluidAdaptor\Exception;
 use Neos\Http\Factories\StreamFactoryTrait;
 use Psr\Http\Message\StreamInterface;
 

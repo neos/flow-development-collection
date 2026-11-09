@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Security\RequestPattern;
 
 /*
@@ -21,14 +22,14 @@ use Neos\Flow\Security\RequestPatternInterface;
 class Uri implements RequestPatternInterface
 {
     /**
-     * @var array
+     * @var array<string,string>
      */
     protected $options;
 
     /**
      * Expects options in the form array('uriPattern' => '<URI pattern>')
      *
-     * @param array $options
+     * @param array<string,string> $options
      */
     public function __construct(array $options)
     {
@@ -47,6 +48,6 @@ class Uri implements RequestPatternInterface
         if (!isset($this->options['uriPattern'])) {
             throw new InvalidRequestPatternException('Missing option "uriPattern" in the Uri request pattern configuration', 1446224530);
         }
-        return (boolean)preg_match('/^' . str_replace('/', '\/', $this->options['uriPattern']) . '$/', $request->getHttpRequest()->getUri()->getPath());
+        return (bool)preg_match('/^' . str_replace('/', '\/', $this->options['uriPattern']) . '$/', $request->getHttpRequest()->getUri()->getPath());
     }
 }

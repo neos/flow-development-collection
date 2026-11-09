@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Neos\Eel\Tests\Unit;
 
 /*
@@ -10,38 +13,38 @@ namespace Neos\Eel\Tests\Unit;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
 use Neos\Eel\Context;
+use Neos\Eel\Tests\Unit\Fixtures\TestObject;
+use Neos\Flow\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Eel context test
  */
-class ContextTest extends \Neos\Flow\Tests\UnitTestCase
+final class ContextTest extends UnitTestCase
 {
     /**
      * Data provider with simple values
      *
-     * @return array
+     * @return \Iterator<(int | string), mixed>
      */
-    public function simpleValues()
+    public static function simpleValues(): \Iterator
     {
-        return [
-            ['Test', 'Test'],
-            [true, true],
-            [42, 42],
-            [7.0, 7.0],
-            [null, null]
-        ];
+        yield ['Test', 'Test'];
+        yield [true, true];
+        yield [42, 42];
+        yield [7.0, 7.0];
+        yield [null, null];
     }
 
     /**
-     * @test
-     * @dataProvider simpleValues
-     *
      * @param mixed $value
      * @param mixed $expectedUnwrappedValue
      */
-    public function unwrapSimpleValues($value, $expectedUnwrappedValue)
+    #[DataProvider('simpleValues')]
+    #[Test]
+    public function unwrapSimpleValues($value, $expectedUnwrappedValue): void
     {
         $context = new Context($value);
         $unwrappedValue = $context->unwrap();
@@ -51,27 +54,24 @@ class ContextTest extends \Neos\Flow\Tests\UnitTestCase
     /**
      * Data provider with array values
      *
-     * @return array
+     * @return \Iterator<(int | string), mixed>
      */
-    public function arrayValues()
+    public static function arrayValues(): \Iterator
     {
-        return [
-            [[], []],
-            [[1, 2, 3], [1, 2, 3]],
-            // Unwrap has to be recursive
-            [[new Context('Foo')], ['Foo']],
-            [['arr' => [new Context('Foo')]], ['arr' => ['Foo']]]
-        ];
+        yield [[], []];
+        yield [[1, 2, 3], [1, 2, 3]];
+        // Unwrap has to be recursive
+        yield [[new Context('Foo')], ['Foo']];
+        yield [['arr' => [new Context('Foo')]], ['arr' => ['Foo']]];
     }
 
     /**
-     * @test
-     * @dataProvider arrayValues
-     *
      * @param mixed $value
      * @param mixed $expectedUnwrappedValue
      */
-    public function unwrapArrayValues($value, $expectedUnwrappedValue)
+    #[DataProvider('arrayValues')]
+    #[Test]
+    public function unwrapArrayValues($value, $expectedUnwrappedValue): void
     {
         $context = new Context($value);
         $unwrappedValue = $context->unwrap();
@@ -81,28 +81,26 @@ class ContextTest extends \Neos\Flow\Tests\UnitTestCase
     /**
      * Data provider with array values
      *
-     * @return array
+     * @return \Iterator<(int | string), mixed>
      */
-    public function arrayGetValues()
+    public static function arrayGetValues(): \Iterator
     {
-        return [
-            [[], 'foo', null],
-            [['foo' => 'bar'], 'foo', 'bar'],
-            [[1, 2, 3], '1', 2],
-            [['foo' => ['bar' => 'baz']], 'foo', ['bar' => 'baz']],
-            [new \ArrayObject(['foo' => 'bar']), 'foo', 'bar']
-        ];
+        yield [[], 'foo', null];
+        yield [['foo' => 'bar'], 'foo', 'bar'];
+        yield [[1, 2, 3], '1', 2];
+        yield [['foo' => ['bar' => 'baz']], 'foo', ['bar' => 'baz']];
+        yield [new \ArrayObject(['foo' => 'bar']), 'foo', 'bar'];
     }
 
     /**
-     * @test
-     * @dataProvider arrayGetValues
      *
      * @param mixed $value
      * @param string $path
      * @param mixed $expectedGetValue
      */
-    public function getValueByPathForArrayValues($value, $path, $expectedGetValue)
+    #[DataProvider('arrayGetValues')]
+    #[Test]
+    public function getValueByPathForArrayValues($value, $path, $expectedGetValue): void
     {
         $context = new Context($value);
         $getValue = $context->get($path);
@@ -114,11 +112,11 @@ class ContextTest extends \Neos\Flow\Tests\UnitTestCase
      *
      * @return array
      */
-    public function objectGetValues()
+    public static function objectGetValues(): array
     {
         $simpleObject = new \stdClass();
         $simpleObject->foo = 'bar';
-        $getterObject = new \Neos\Eel\Tests\Unit\Fixtures\TestObject();
+        $getterObject = new TestObject();
         $getterObject->setProperty('some value');
         $getterObject->setBooleanProperty(true);
 
@@ -132,14 +130,14 @@ class ContextTest extends \Neos\Flow\Tests\UnitTestCase
     }
 
     /**
-     * @test
-     * @dataProvider objectGetValues
      *
      * @param mixed $value
      * @param string $path
      * @param mixed $expectedGetValue
      */
-    public function getValueByPathForObjectValues($value, $path, $expectedGetValue)
+    #[DataProvider('objectGetValues')]
+    #[Test]
+    public function getValueByPathForObjectValues($value, $path, $expectedGetValue): void
     {
         $context = new Context($value);
         $getValue = $context->get($path);

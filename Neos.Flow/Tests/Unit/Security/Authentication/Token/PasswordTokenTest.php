@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Neos\Flow\Tests\Unit\Security\Authentication\Token;
 
 /*
@@ -10,17 +13,17 @@ namespace Neos\Flow\Tests\Unit\Security\Authentication\Token;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
 use Neos\Flow\Mvc\ActionRequest;
-use Neos\Flow\Security\Authentication\TokenInterface;
 use Neos\Flow\Security\Authentication\Token\PasswordToken;
+use Neos\Flow\Security\Authentication\TokenInterface;
 use Neos\Flow\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\Test;
 use Psr\Http\Message\ServerRequestInterface;
 
 /**
  * Testcase for password authentication token
  */
-class PasswordTokenTest extends UnitTestCase
+final class PasswordTokenTest extends UnitTestCase
 {
     /**
      * @var PasswordToken
@@ -44,22 +47,20 @@ class PasswordTokenTest extends UnitTestCase
     {
         $this->token = new PasswordToken();
 
-        $this->mockActionRequest = $this->getMockBuilder(ActionRequest::class)->disableOriginalConstructor()->getMock();
+        $this->mockActionRequest = $this->createMock(ActionRequest::class);
 
-        $this->mockHttpRequest = $this->getMockBuilder(ServerRequestInterface::class)->disableOriginalConstructor()->getMock();
-        $this->mockActionRequest->expects(self::any())->method('getHttpRequest')->will(self::returnValue($this->mockHttpRequest));
+        $this->mockHttpRequest = $this->createMock(ServerRequestInterface::class);
+        $this->mockActionRequest->method('getHttpRequest')->willReturn(($this->mockHttpRequest));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function credentialsAreSetCorrectlyFromPostArguments()
     {
         $arguments = [];
         $arguments['__authentication']['Neos']['Flow']['Security']['Authentication']['Token']['PasswordToken']['password'] = 'verysecurepassword';
 
-        $this->mockHttpRequest->expects(self::atLeastOnce())->method('getMethod')->will(self::returnValue('POST'));
-        $this->mockActionRequest->expects(self::atLeastOnce())->method('getInternalArguments')->will(self::returnValue($arguments));
+        $this->mockHttpRequest->expects($this->atLeastOnce())->method('getMethod')->willReturn(('POST'));
+        $this->mockActionRequest->expects($this->atLeastOnce())->method('getInternalArguments')->willReturn(($arguments));
 
         $this->token->updateCredentials($this->mockActionRequest);
 
@@ -67,42 +68,38 @@ class PasswordTokenTest extends UnitTestCase
         self::assertEquals($expectedCredentials, $this->token->getCredentials(), 'The credentials have not been extracted correctly from the POST arguments');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function updateCredentialsSetsTheCorrectAuthenticationStatusIfNewCredentialsArrived()
     {
         $arguments = [];
         $arguments['__authentication']['Neos']['Flow']['Security']['Authentication']['Token']['PasswordToken']['password'] = 'verysecurepassword';
 
-        $this->mockHttpRequest->expects(self::atLeastOnce())->method('getMethod')->will(self::returnValue('POST'));
-        $this->mockActionRequest->expects(self::atLeastOnce())->method('getInternalArguments')->will(self::returnValue($arguments));
+        $this->mockHttpRequest->expects($this->atLeastOnce())->method('getMethod')->willReturn(('POST'));
+        $this->mockActionRequest->expects($this->atLeastOnce())->method('getInternalArguments')->willReturn(($arguments));
 
         $this->token->updateCredentials($this->mockActionRequest);
 
         self::assertSame(TokenInterface::AUTHENTICATION_NEEDED, $this->token->getAuthenticationStatus());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function updateCredentialsIgnoresAnythingOtherThanPostRequests()
     {
         $arguments = [];
         $arguments['__authentication']['Neos']['Flow']['Security']['Authentication']['Token']['PasswordToken']['password'] = 'verysecurepassword';
 
-        $this->mockHttpRequest->expects(self::atLeastOnce())->method('getMethod')->will(self::returnValue('POST'));
-        $this->mockActionRequest->expects(self::atLeastOnce())->method('getInternalArguments')->will(self::returnValue($arguments));
+        $this->mockHttpRequest->expects($this->atLeastOnce())->method('getMethod')->willReturn(('POST'));
+        $this->mockActionRequest->expects($this->atLeastOnce())->method('getInternalArguments')->willReturn(($arguments));
 
         $this->token->updateCredentials($this->mockActionRequest);
         self::assertEquals(['password' => 'verysecurepassword'], $this->token->getCredentials());
 
         $secondToken = new PasswordToken();
-        $secondMockActionRequest = $this->getMockBuilder(ActionRequest::class)->disableOriginalConstructor()->getMock();
+        $secondMockActionRequest = $this->createMock(ActionRequest::class);
 
-        $secondMockHttpRequest = $this->getMockBuilder(ServerRequestInterface::class)->disableOriginalConstructor()->getMock();
-        $secondMockActionRequest->expects(self::any())->method('getHttpRequest')->will(self::returnValue($secondMockHttpRequest));
-        $secondMockHttpRequest->expects(self::atLeastOnce())->method('getMethod')->will(self::returnValue('GET'));
+        $secondMockHttpRequest = $this->createMock(ServerRequestInterface::class);
+        $secondMockActionRequest->method('getHttpRequest')->willReturn(($secondMockHttpRequest));
+        $secondMockHttpRequest->expects($this->atLeastOnce())->method('getMethod')->willReturn(('GET'));
         $secondToken->updateCredentials($secondMockActionRequest);
         self::assertEquals(['password' => ''], $secondToken->getCredentials());
     }

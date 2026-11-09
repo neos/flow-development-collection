@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Neos\Flow\Tests\Functional\Security\Authorization\Privilege\Entity\Doctrine;
 
 /*
@@ -10,27 +13,22 @@ namespace Neos\Flow\Tests\Functional\Security\Authorization\Privilege\Entity\Doc
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
 use Doctrine\ORM\EntityManagerInterface;
+use Neos\Eel\Context;
 use Neos\Flow\Persistence\Doctrine\PersistenceManager;
 use Neos\Flow\Security\Authorization\Privilege\Entity\Doctrine\ConditionGenerator;
 use Neos\Flow\Security\Authorization\Privilege\Entity\Doctrine\EntityPrivilegeExpressionEvaluator;
 use Neos\Flow\Security\Authorization\Privilege\Entity\Doctrine\SqlFilter;
+use Neos\Flow\Tests\Functional\Security\Fixtures\RestrictableEntity;
 use Neos\Flow\Tests\Functional\Security\Fixtures\TestEntityC;
 use Neos\Flow\Tests\FunctionalTestCase;
-use Neos\Eel;
-use Neos\Flow\Tests\Functional\Security\Fixtures;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 
-class EntityPrivilegeExpressionEvaluatorTest extends FunctionalTestCase
+final class EntityPrivilegeExpressionEvaluatorTest extends FunctionalTestCase
 {
-    /**
-     * @var boolean
-     */
     protected static $testablePersistenceEnabled = true;
 
-    /**
-     * @return void
-     */
     protected function setUp(): void
     {
         parent::setUp();
@@ -39,35 +37,23 @@ class EntityPrivilegeExpressionEvaluatorTest extends FunctionalTestCase
         }
     }
 
-    /**
-     * Data provider for expressions
-     *
-     * @return array
-     */
-    public function expressions()
+    public static function expressions(): \Iterator
     {
-        return [
-            [
-                'isType("Neos\Flow\Tests\Functional\Security\Fixtures\RestrictableEntity") && property("name").equals("live")',
-                '(t0.name = \'live\')'
-            ],
-
-            [
-                'isType("Neos\Flow\Tests\Functional\Security\Fixtures\RestrictableEntity") && property("name") == "live"',
-                '(t0.name = \'live\')'
-            ]
+        yield [
+            'isType("Neos\Flow\Tests\Functional\Security\Fixtures\RestrictableEntity") && property("name").equals("live")',
+            '(t0.name = \'live\')'
+        ];
+        yield [
+            'isType("Neos\Flow\Tests\Functional\Security\Fixtures\RestrictableEntity") && property("name") == "live"',
+            '(t0.name = \'live\')'
         ];
     }
 
-    /**
-     * @test
-     * @dataProvider expressions
-     *
-     * @param $expression
-     */
-    public function evaluatingSomeExpressionWorks($expression, $expectedSqlCode)
+    #[DataProvider('expressions')]
+    #[Test]
+    public function evaluatingSomeExpressionWorks(string $expression, string $expectedSqlCode): void
     {
-        $context = new Eel\Context(new ConditionGenerator());
+        $context = new Context(new ConditionGenerator());
 
         $evaluator = new EntityPrivilegeExpressionEvaluator();
         $result = $evaluator->evaluate($expression, $context);
@@ -75,16 +61,14 @@ class EntityPrivilegeExpressionEvaluatorTest extends FunctionalTestCase
         $entityManager = $this->objectManager->get(EntityManagerInterface::class);
         $sqlFilter = new SqlFilter($entityManager);
 
-        self::assertEquals(Fixtures\RestrictableEntity::class, $result['entityType']);
-        self::assertEquals($expectedSqlCode, $result['conditionGenerator']->getSql($sqlFilter, $entityManager->getClassMetadata(Fixtures\RestrictableEntity::class), 't0'));
+        self::assertEquals(RestrictableEntity::class, $result['entityType']);
+        self::assertEquals($expectedSqlCode, $result['conditionGenerator']->getSql($sqlFilter, $entityManager->getClassMetadata(RestrictableEntity::class), 't0'));
     }
 
-    /**
-     * @test
-     */
-    public function propertyContainsExpressionGeneratesExpectedSqlFilterForOneToMany()
+    #[Test]
+    public function propertyContainsExpressionGeneratesExpectedSqlFilterForOneToMany(): void
     {
-        $context = new Eel\Context(new ConditionGenerator());
+        $context = new Context(new ConditionGenerator());
 
         $evaluator = new EntityPrivilegeExpressionEvaluator();
         $result = $evaluator->evaluate('isType("Neos\Flow\Tests\Functional\Security\Fixtures\TestEntityC") && property("oneToManyToRelatedEntityD").contains("c1ed7ad7-3618-4e0d-bcf8-c849a505dfe1")', $context);
@@ -99,12 +83,10 @@ class EntityPrivilegeExpressionEvaluatorTest extends FunctionalTestCase
         );
     }
 
-    /**
-     * @test
-     */
-    public function propertyContainsExpressionGeneratesExpectedSqlFilterForManyToMany()
+    #[Test]
+    public function propertyContainsExpressionGeneratesExpectedSqlFilterForManyToMany(): void
     {
-        $context = new Eel\Context(new ConditionGenerator());
+        $context = new Context(new ConditionGenerator());
 
         $evaluator = new EntityPrivilegeExpressionEvaluator();
         $result = $evaluator->evaluate('isType("Neos\Flow\Tests\Functional\Security\Fixtures\TestEntityC") && property("manyToManyToRelatedEntityD").contains("c1ed7ad7-3618-4e0d-bcf8-c849a505dfe1")', $context);

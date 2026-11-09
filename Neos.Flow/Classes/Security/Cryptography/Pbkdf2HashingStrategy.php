@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Neos\Flow\Security\Cryptography;
@@ -68,6 +69,15 @@ class Pbkdf2HashingStrategy implements PasswordHashingStrategyInterface
     public function hashPassword($password, $staticSalt = null)
     {
         $dynamicSalt = UtilityAlgorithms::generateRandomBytes($this->dynamicSaltLength);
+        if (!$this->algorithm) {
+            throw new \Exception('Algorithm must not be falsy', 1743877215);
+        }
+        if ($this->iterationCount < 1) {
+            throw new \Exception('Iteration count too low, must be at least 1', 1743877176);
+        }
+        if ($this->derivedKeyLength < 0) {
+            throw new \Exception('Derived key length too low, must be at least 0', 1743877275);
+        }
         $result = hash_pbkdf2($this->algorithm, $password, $dynamicSalt . $staticSalt, $this->iterationCount, $this->derivedKeyLength, true);
         return base64_encode($dynamicSalt) . ',' . base64_encode($result);
     }
@@ -87,6 +97,12 @@ class Pbkdf2HashingStrategy implements PasswordHashingStrategyInterface
         $parts = explode(',', $hashedPasswordAndSalt);
         if (count($parts) !== 2) {
             throw new \InvalidArgumentException('The derived key with salt must contain a salt, separated with a comma from the derived key', 1306172911);
+        }
+        if (!$this->algorithm) {
+            throw new \Exception('Algorithm must not be falsy', 1743877215);
+        }
+        if ($this->iterationCount < 1) {
+            throw new \Exception('Iteration count too low, must be at least 1', 1743877176);
         }
         $dynamicSalt = base64_decode($parts[0]);
         $derivedKey = base64_decode($parts[1]);

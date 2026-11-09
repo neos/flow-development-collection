@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Mvc\Controller;
 
 /*
@@ -48,7 +49,7 @@ class MvcPropertyMappingConfigurationService
     /**
      * Generate a request hash for a list of form fields
      *
-     * @param array $formFieldNames Array of form fields
+     * @param array<mixed> $formFieldNames Array of form fields
      * @param string $fieldNamePrefix
      * @return string trusted properties token
      * @throws InvalidArgumentForHashGenerationException
@@ -58,7 +59,7 @@ class MvcPropertyMappingConfigurationService
         $formFieldArray = [];
         foreach ($formFieldNames as $formField) {
             $formFieldParts = explode('[', $formField);
-            $currentPosition =& $formFieldArray;
+            $currentPosition = & $formFieldArray;
             $formFieldPartsCount = count($formFieldParts);
             for ($i = 0; $i < $formFieldPartsCount; $i++) {
                 $formFieldPart = $formFieldParts[$i];
@@ -69,6 +70,7 @@ class MvcPropertyMappingConfigurationService
                 }
 
                 if ($i === count($formFieldParts) - 1) {
+                    /** @phpstan-ignore booleanAnd.rightAlwaysFalse (not sure, though) */
                     if (isset($currentPosition[$formFieldPart]) && is_array($currentPosition[$formFieldPart])) {
                         throw new InvalidArgumentForHashGenerationException('The form field "' . $formField . '" is declared as string, but it collides with a previous form field of the same name which declared the field as array. This is an inconsistency you need to fix inside your generated form. (Array overridden by String)', 1255072587);
                     }
@@ -85,11 +87,12 @@ class MvcPropertyMappingConfigurationService
                     if (!isset($currentPosition[$formFieldPart])) {
                         $currentPosition[$formFieldPart] = [];
                     }
-                    $currentPosition =& $currentPosition[$formFieldPart];
+                    $currentPosition = & $currentPosition[$formFieldPart];
                 }
             }
         }
         if ($fieldNamePrefix !== '') {
+            /** @phpstan-ignore nullCoalesce.offset (set by reference) */
             $formFieldArray = $formFieldArray[$fieldNamePrefix] ?? [];
         }
         return $this->serializeAndHashFormFieldArray($formFieldArray);
@@ -98,7 +101,7 @@ class MvcPropertyMappingConfigurationService
     /**
      * Serialize and hash the form field array
      *
-     * @param array $formFieldArray form field array to be serialized and hashed
+     * @param array<mixed> $formFieldArray form field array to be serialized and hashed
      * @return string Hash
      */
     protected function serializeAndHashFormFieldArray($formFieldArray)
@@ -128,10 +131,11 @@ class MvcPropertyMappingConfigurationService
 
         $trustedProperties = unserialize($serializedTrustedProperties);
         foreach ($trustedProperties as $propertyName => $propertyConfiguration) {
-            if (!$controllerArguments->hasArgument($propertyName)) {
+            $argument = $controllerArguments->hasArgument($propertyName) ? $controllerArguments->getArgument($propertyName) : null;
+            if ($argument === null) {
                 continue;
             }
-            $propertyMappingConfiguration = $controllerArguments->getArgument($propertyName)->getPropertyMappingConfiguration();
+            $propertyMappingConfiguration = $argument->getPropertyMappingConfiguration();
             $this->modifyPropertyMappingConfiguration($propertyConfiguration, $propertyMappingConfiguration);
         }
     }
@@ -143,7 +147,7 @@ class MvcPropertyMappingConfigurationService
      *
      * All other properties are specified as allowed properties.
      *
-     * @param array $propertyConfiguration
+     * @param mixed $propertyConfiguration
      * @param PropertyMappingConfiguration $propertyMappingConfiguration
      * @return void
      */

@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Neos\FluidAdaptor\Tests\Unit\ViewHelpers\Form;
 
 /*
@@ -10,13 +13,18 @@ namespace Neos\FluidAdaptor\Tests\Unit\ViewHelpers\Form;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+use Neos\FluidAdaptor\Tests\Unit\ViewHelpers\ViewHelperBaseTestcase;
+use Neos\FluidAdaptor\ViewHelpers\Form\RadioViewHelper;
+use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\MockObject\MockObject;
+use TYPO3Fluid\Fluid\Core\ViewHelper\TagBuilder;
 
-require_once(__DIR__ . '/FormFieldViewHelperBaseTestcase.php');
+require_once(__DIR__ . '/../ViewHelperBaseTestcase.php');
 
 /**
  * Test for the "Radio" Form view helper
  */
-class RadioViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\Form\FormFieldViewHelperBaseTestcase
+final class RadioViewHelperTest extends ViewHelperBaseTestcase
 {
     /**
      * @var \Neos\FluidAdaptor\ViewHelpers\Form\RadioViewHelper
@@ -24,81 +32,118 @@ class RadioViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\Form
     protected $viewHelper;
 
     /**
-     * @var \PHPUnit\Framework\MockObject\MockObject|\TYPO3Fluid\Fluid\Core\ViewHelper\TagBuilder
+     * @var MockObject|\TYPO3Fluid\Fluid\Core\ViewHelper\TagBuilder
      */
     protected $mockTagBuilder;
 
     protected function setUp(): void
     {
         parent::setUp();
-        $this->viewHelper = $this->getAccessibleMock(\Neos\FluidAdaptor\ViewHelpers\Form\RadioViewHelper::class, ['setErrorClassAttribute', 'getName', 'getValueAttribute', 'isObjectAccessorMode', 'getPropertyValue', 'registerFieldNameForFormTokenGeneration']);
+        $this->viewHelper = $this->getAccessibleMock(RadioViewHelper::class, ['setErrorClassAttribute', 'getName', 'getValueAttribute', 'isObjectAccessorMode', 'getPropertyValue', 'registerFieldNameForFormTokenGeneration']);
         $this->injectDependenciesIntoViewHelper($this->viewHelper);
-        $this->mockTagBuilder = $this->getMockBuilder(\TYPO3Fluid\Fluid\Core\ViewHelper\TagBuilder::class)->setMethods(['setTagName', 'addAttribute'])->getMock();
+        $this->mockTagBuilder = $this->getMockBuilder(TagBuilder::class)->onlyMethods(['setTagName', 'addAttribute'])->getMock();
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function renderCorrectlySetsTagNameAndDefaultAttributes()
     {
-        $this->mockTagBuilder->expects(self::atLeastOnce())->method('setTagName')->with('input');
-        $this->mockTagBuilder->expects(self::exactly(3))->method('addAttribute')->withConsecutive(
-            ['type', 'radio'],
-            ['name', 'foo'],
-            ['value', 'bar']
-        );
+        $this->mockTagBuilder->expects($this->atLeastOnce())->method('setTagName')->with('input');
+        $matcher = self::exactly(3);
+        $this->mockTagBuilder->expects($matcher)->method('addAttribute')->willReturnCallback(function (...$parameters) use ($matcher) {
+            if ($matcher->numberOfInvocations() === 1) {
+                $this->assertSame('type', $parameters[0]);
+                $this->assertSame('radio', $parameters[1]);
+            }
+            if ($matcher->numberOfInvocations() === 2) {
+                $this->assertSame('name', $parameters[0]);
+                $this->assertSame('foo', $parameters[1]);
+            }
+            if ($matcher->numberOfInvocations() === 3) {
+                $this->assertSame('value', $parameters[0]);
+                $this->assertSame('bar', $parameters[1]);
+            }
+        });
 
-        $this->viewHelper->expects(self::once())->method('registerFieldNameForFormTokenGeneration')->with('foo');
-        $this->viewHelper->expects(self::any())->method('getName')->will(self::returnValue('foo'));
-        $this->viewHelper->expects(self::any())->method('getValueAttribute')->will(self::returnValue('bar'));
+        $this->viewHelper->expects($this->once())->method('registerFieldNameForFormTokenGeneration')->with('foo');
+        $this->viewHelper->method('getName')->willReturn(('foo'));
+        $this->viewHelper->method('getValueAttribute')->willReturn(('bar'));
         $this->viewHelper->injectTagBuilder($this->mockTagBuilder);
 
         $this->viewHelper = $this->prepareArguments($this->viewHelper, []);
         $this->viewHelper->render();
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function renderSetsCheckedAttributeIfSpecified()
     {
-        $this->mockTagBuilder->expects(self::exactly(4))->method('addAttribute')->withConsecutive(
-            ['type', 'radio'],
-            ['name', 'foo'],
-            ['value', 'bar'],
-            ['checked', '']
-        );
+        $matcher = self::exactly(4);
+        $this->mockTagBuilder->expects($matcher)->method('addAttribute')->willReturnCallback(function (...$parameters) use ($matcher) {
+            if ($matcher->numberOfInvocations() === 1) {
+                $this->assertSame('type', $parameters[0]);
+                $this->assertSame('radio', $parameters[1]);
+            }
+            if ($matcher->numberOfInvocations() === 2) {
+                $this->assertSame('name', $parameters[0]);
+                $this->assertSame('foo', $parameters[1]);
+            }
+            if ($matcher->numberOfInvocations() === 3) {
+                $this->assertSame('value', $parameters[0]);
+                $this->assertSame('bar', $parameters[1]);
+            }
+            if ($matcher->numberOfInvocations() === 4) {
+                $this->assertSame('checked', $parameters[0]);
+                $this->assertSame('', $parameters[1]);
+            }
+        });
 
-        $this->viewHelper->expects(self::once())->method('registerFieldNameForFormTokenGeneration')->with('foo');
-        $this->viewHelper->expects(self::any())->method('getName')->will(self::returnValue('foo'));
-        $this->viewHelper->expects(self::any())->method('getValueAttribute')->will(self::returnValue('bar'));
+        $this->viewHelper->expects($this->once())->method('registerFieldNameForFormTokenGeneration')->with('foo');
+        $this->viewHelper->method('getName')->willReturn(('foo'));
+        $this->viewHelper->method('getValueAttribute')->willReturn(('bar'));
         $this->viewHelper->injectTagBuilder($this->mockTagBuilder);
 
         $this->viewHelper = $this->prepareArguments($this->viewHelper, ['checked' => true]);
         $this->viewHelper->render();
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function renderIgnoresBoundPropertyIfCheckedIsSet()
     {
-        $this->mockTagBuilder->expects(self::exactly(7))->method('addAttribute')->withConsecutive(
-            // first invocation below
-            ['type', 'radio'],
-            ['name', 'foo'],
-            ['value', 'bar'],
-            ['checked', ''],
-            // second invocation below
-            ['type', 'radio'],
-            ['name', 'foo'],
-            ['value', 'bar']
-        );
+        $matcher = self::exactly(7);
+        $this->mockTagBuilder->expects($matcher)->method('addAttribute')->willReturnCallback(function (...$parameters) use ($matcher) {
+            if ($matcher->numberOfInvocations() === 1) {
+                $this->assertSame('type', $parameters[0]);
+                $this->assertSame('radio', $parameters[1]);
+            }
+            if ($matcher->numberOfInvocations() === 2) {
+                $this->assertSame('name', $parameters[0]);
+                $this->assertSame('foo', $parameters[1]);
+            }
+            if ($matcher->numberOfInvocations() === 3) {
+                $this->assertSame('value', $parameters[0]);
+                $this->assertSame('bar', $parameters[1]);
+            }
+            if ($matcher->numberOfInvocations() === 4) {
+                $this->assertSame('checked', $parameters[0]);
+                $this->assertSame('', $parameters[1]);
+            }
+            if ($matcher->numberOfInvocations() === 5) {
+                $this->assertSame('type', $parameters[0]);
+                $this->assertSame('radio', $parameters[1]);
+            }
+            if ($matcher->numberOfInvocations() === 6) {
+                $this->assertSame('name', $parameters[0]);
+                $this->assertSame('foo', $parameters[1]);
+            }
+            if ($matcher->numberOfInvocations() === 7) {
+                $this->assertSame('value', $parameters[0]);
+                $this->assertSame('bar', $parameters[1]);
+            }
+        });
 
-        $this->viewHelper->expects(self::any())->method('getName')->will(self::returnValue('foo'));
-        $this->viewHelper->expects(self::any())->method('getValueAttribute')->will(self::returnValue('bar'));
-        $this->viewHelper->expects(self::any())->method('isObjectAccessorMode')->will(self::returnValue(true));
-        $this->viewHelper->expects(self::any())->method('getPropertyValue')->will(self::returnValue('propertyValue'));
+        $this->viewHelper->method('getName')->willReturn(('foo'));
+        $this->viewHelper->method('getValueAttribute')->willReturn(('bar'));
+        $this->viewHelper->method('isObjectAccessorMode')->willReturn((true));
+        $this->viewHelper->method('getPropertyValue')->willReturn(('propertyValue'));
         $this->viewHelper->injectTagBuilder($this->mockTagBuilder);
 
         $this->viewHelper = $this->prepareArguments($this->viewHelper, ['checked' => true]);
@@ -108,45 +153,64 @@ class RadioViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\Form
         $this->viewHelper->render();
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function renderCorrectlySetsCheckedAttributeIfCheckboxIsBoundToAPropertyOfTypeBoolean()
     {
-        $this->mockTagBuilder->expects(self::exactly(4))->method('addAttribute')->withConsecutive(
-            ['type', 'radio'],
-            ['name', 'foo'],
-            ['value', 'bar'],
-            ['checked', '']
-        );
+        $matcher = self::exactly(4);
+        $this->mockTagBuilder->expects($matcher)->method('addAttribute')->willReturnCallback(function (...$parameters) use ($matcher) {
+            if ($matcher->numberOfInvocations() === 1) {
+                $this->assertSame('type', $parameters[0]);
+                $this->assertSame('radio', $parameters[1]);
+            }
+            if ($matcher->numberOfInvocations() === 2) {
+                $this->assertSame('name', $parameters[0]);
+                $this->assertSame('foo', $parameters[1]);
+            }
+            if ($matcher->numberOfInvocations() === 3) {
+                $this->assertSame('value', $parameters[0]);
+                $this->assertSame('bar', $parameters[1]);
+            }
+            if ($matcher->numberOfInvocations() === 4) {
+                $this->assertSame('checked', $parameters[0]);
+                $this->assertSame('', $parameters[1]);
+            }
+        });
 
-        $this->viewHelper->expects(self::once())->method('registerFieldNameForFormTokenGeneration')->with('foo');
-        $this->viewHelper->expects(self::any())->method('getName')->will(self::returnValue('foo'));
-        $this->viewHelper->expects(self::any())->method('getValueAttribute')->will(self::returnValue('bar'));
-        $this->viewHelper->expects(self::any())->method('isObjectAccessorMode')->will(self::returnValue(true));
-        $this->viewHelper->expects(self::any())->method('getPropertyValue')->will(self::returnValue(true));
+        $this->viewHelper->expects($this->once())->method('registerFieldNameForFormTokenGeneration')->with('foo');
+        $this->viewHelper->method('getName')->willReturn(('foo'));
+        $this->viewHelper->method('getValueAttribute')->willReturn(('bar'));
+        $this->viewHelper->method('isObjectAccessorMode')->willReturn((true));
+        $this->viewHelper->method('getPropertyValue')->willReturn((true));
         $this->viewHelper->injectTagBuilder($this->mockTagBuilder);
 
         $this->viewHelper = $this->prepareArguments($this->viewHelper);
         $this->viewHelper->render();
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function renderDoesNotAppendSquareBracketsToNameAttributeIfBoundToAPropertyOfTypeArray()
     {
-        $this->mockTagBuilder->expects(self::exactly(3))->method('addAttribute')->withConsecutive(
-            ['type', 'radio'],
-            ['name', 'foo'],
-            ['value', 'bar']
-        );
+        $matcher = self::exactly(3);
+        $this->mockTagBuilder->expects($matcher)->method('addAttribute')->willReturnCallback(function (...$parameters) use ($matcher) {
+            if ($matcher->numberOfInvocations() === 1) {
+                $this->assertSame('type', $parameters[0]);
+                $this->assertSame('radio', $parameters[1]);
+            }
+            if ($matcher->numberOfInvocations() === 2) {
+                $this->assertSame('name', $parameters[0]);
+                $this->assertSame('foo', $parameters[1]);
+            }
+            if ($matcher->numberOfInvocations() === 3) {
+                $this->assertSame('value', $parameters[0]);
+                $this->assertSame('bar', $parameters[1]);
+            }
+        });
 
-        $this->viewHelper->expects(self::once())->method('registerFieldNameForFormTokenGeneration')->with('foo');
-        $this->viewHelper->expects(self::any())->method('getName')->will(self::returnValue('foo'));
-        $this->viewHelper->expects(self::any())->method('getValueAttribute')->will(self::returnValue('bar'));
-        $this->viewHelper->expects(self::any())->method('isObjectAccessorMode')->will(self::returnValue(true));
-        $this->viewHelper->expects(self::any())->method('getPropertyValue')->will(self::returnValue([]));
+        $this->viewHelper->expects($this->once())->method('registerFieldNameForFormTokenGeneration')->with('foo');
+        $this->viewHelper->method('getName')->willReturn(('foo'));
+        $this->viewHelper->method('getValueAttribute')->willReturn(('bar'));
+        $this->viewHelper->method('isObjectAccessorMode')->willReturn((true));
+        $this->viewHelper->method('getPropertyValue')->willReturn(([]));
         $this->viewHelper->injectTagBuilder($this->mockTagBuilder);
 
 
@@ -154,35 +218,44 @@ class RadioViewHelperTest extends \Neos\FluidAdaptor\Tests\Unit\ViewHelpers\Form
         $this->viewHelper->render();
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function renderCorrectlySetsCheckedAttributeIfCheckboxIsBoundToAPropertyOfTypeString()
     {
-        $this->mockTagBuilder->expects(self::exactly(4))->method('addAttribute')->withConsecutive(
-            ['type', 'radio'],
-            ['name', 'foo'],
-            ['value', 'bar'],
-            ['checked', '']
-        );
+        $matcher = self::exactly(4);
+        $this->mockTagBuilder->expects($matcher)->method('addAttribute')->willReturnCallback(function (...$parameters) use ($matcher) {
+            if ($matcher->numberOfInvocations() === 1) {
+                $this->assertSame('type', $parameters[0]);
+                $this->assertSame('radio', $parameters[1]);
+            }
+            if ($matcher->numberOfInvocations() === 2) {
+                $this->assertSame('name', $parameters[0]);
+                $this->assertSame('foo', $parameters[1]);
+            }
+            if ($matcher->numberOfInvocations() === 3) {
+                $this->assertSame('value', $parameters[0]);
+                $this->assertSame('bar', $parameters[1]);
+            }
+            if ($matcher->numberOfInvocations() === 4) {
+                $this->assertSame('checked', $parameters[0]);
+                $this->assertSame('', $parameters[1]);
+            }
+        });
 
-        $this->viewHelper->expects(self::once())->method('registerFieldNameForFormTokenGeneration')->with('foo');
-        $this->viewHelper->expects(self::any())->method('getName')->will(self::returnValue('foo'));
-        $this->viewHelper->expects(self::any())->method('getValueAttribute')->will(self::returnValue('bar'));
-        $this->viewHelper->expects(self::any())->method('isObjectAccessorMode')->will(self::returnValue(true));
-        $this->viewHelper->expects(self::any())->method('getPropertyValue')->will(self::returnValue('bar'));
+        $this->viewHelper->expects($this->once())->method('registerFieldNameForFormTokenGeneration')->with('foo');
+        $this->viewHelper->method('getName')->willReturn(('foo'));
+        $this->viewHelper->method('getValueAttribute')->willReturn(('bar'));
+        $this->viewHelper->method('isObjectAccessorMode')->willReturn((true));
+        $this->viewHelper->method('getPropertyValue')->willReturn(('bar'));
         $this->viewHelper->injectTagBuilder($this->mockTagBuilder);
 
         $this->viewHelper = $this->prepareArguments($this->viewHelper);
         $this->viewHelper->render();
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function renderCallsSetErrorClassAttribute()
     {
-        $this->viewHelper->expects(self::once())->method('setErrorClassAttribute');
+        $this->viewHelper->expects($this->once())->method('setErrorClassAttribute');
         $this->viewHelper = $this->prepareArguments($this->viewHelper);
         $this->viewHelper->render();
     }

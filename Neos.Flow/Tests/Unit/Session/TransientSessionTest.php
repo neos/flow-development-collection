@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Neos\Flow\Tests\Unit\Session;
 
 /*
@@ -10,61 +13,54 @@ namespace Neos\Flow\Tests\Unit\Session;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
-use Neos\Flow\Tests\UnitTestCase;
 use Neos\Flow\Session;
+use Neos\Flow\Session\Exception\SessionNotStartedException;
+use Neos\Flow\Session\SessionInterface;
+use Neos\Flow\Session\TransientSession;
+use Neos\Flow\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Testcase for the Transient Session implementation
  */
-class TransientSessionTest extends UnitTestCase
+final class TransientSessionTest extends UnitTestCase
 {
-    /**
-     * @test
-     */
+    #[Test]
     public function theTransientSessionImplementsTheSessionInterface()
     {
-        $session = new Session\TransientSession();
-        self::assertInstanceOf(Session\SessionInterface::class, $session);
+        $session = new TransientSession();
+        self::assertInstanceOf(SessionInterface::class, $session);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function aSessionIdIsGeneratedOnStartingTheSession()
     {
-        $session = new Session\TransientSession();
+        $session = new TransientSession();
         $session->start();
-        self::assertTrue(strlen($session->getId()) == 13);
+        self::assertSame(13, strlen($session->getId()));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function tryingToGetTheSessionIdWithoutStartingTheSessionThrowsAnException()
     {
-        $this->expectException(Session\Exception\SessionNotStartedException::class);
-        $session = new Session\TransientSession();
+        $this->expectException(SessionNotStartedException::class);
+        $session = new TransientSession();
         $session->getId();
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function stringsCanBeStoredByCallingPutData()
     {
-        $session = new Session\TransientSession();
+        $session = new TransientSession();
         $session->start();
         $session->putData('theKey', 'some data');
         self::assertEquals('some data', $session->getData('theKey'));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function allSessionDataCanBeFlushedByCallingDestroy()
     {
-        $session = new Session\TransientSession();
+        $session = new TransientSession();
         $session->start();
         $session->putData('theKey', 'some data');
         $session->destroy();
@@ -72,12 +68,10 @@ class TransientSessionTest extends UnitTestCase
         self::assertNull($session->getData('theKey'));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function hasKeyReturnsTrueOrFalseAccordingToAvailableKeys()
     {
-        $session = new Session\TransientSession();
+        $session = new TransientSession();
         $session->start();
         $session->putData('theKey', 'some data');
         self::assertTrue($session->hasKey('theKey'));

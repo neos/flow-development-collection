@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Neos\Flow\Tests\Unit\Mvc\Routing\Dto;
 
 use Neos\Flow\Annotations as Flow;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -12,9 +13,7 @@ use PHPUnit\Framework\TestCase;
  */
 class RouteAnnotationTest extends TestCase
 {
-    /**
-     * @test
-     */
+    #[Test]
     public function simpleRoutes()
     {
         $route = new Flow\Route(uriPattern: 'my/path');
@@ -35,9 +34,7 @@ class RouteAnnotationTest extends TestCase
         self::assertSame(['test' => 'foo'], $route->defaults);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function preservedDefaults()
     {
         $this->expectExceptionCode(1711129638);
@@ -45,9 +42,7 @@ class RouteAnnotationTest extends TestCase
         new Flow\Route(uriPattern: 'my/path', defaults: ['@action' => 'index']);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function preservedInUriPattern()
     {
         $this->expectExceptionCode(1711129634);
@@ -55,9 +50,7 @@ class RouteAnnotationTest extends TestCase
         new Flow\Route(uriPattern: 'my/{@package}');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function uriPatternMustNotStartWithLeadingSlash()
     {
         $this->expectExceptionCode(1711529592);
@@ -65,9 +58,7 @@ class RouteAnnotationTest extends TestCase
         new Flow\Route(uriPattern: '/absolute');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function uriPatternMustNotBeEmpty()
     {
         $this->expectExceptionCode(1711529592);
@@ -75,9 +66,7 @@ class RouteAnnotationTest extends TestCase
         new Flow\Route(uriPattern: '');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function httpMethodMustNotBeEmptyString()
     {
         $this->expectExceptionCode(1711530485);
@@ -85,9 +74,7 @@ class RouteAnnotationTest extends TestCase
         new Flow\Route(uriPattern: 'foo', httpMethods: ['']);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function httpMethodMustBeUpperCase()
     {
         $this->expectExceptionCode(1711530485);

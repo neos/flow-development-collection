@@ -23,7 +23,7 @@ Storage
 
 The file contents belonging to a specific ``PersistentResource`` need to be stored in some place, they
 are not stored in the database together with the object. Applications should be able to store this
-content in several places as needed, therefor the concept of a *Storage* exists.
+content in several places as needed, therefore the concept of a *Storage* exists.
 A *Storage* is configured via ``Settings.yaml``:
 
 .. code-block:: yaml
@@ -75,7 +75,7 @@ persistent storage above is configured like this:
               baseUri: '_Resources/Persistent/'
 
 This configures the ``Target`` named ``localWebDirectoryPersistentResourcesTarget``. Resources using this
-target will be published into the the given ``path`` which is inside the public web folder of Flow.
+target will be published into the given ``path`` which is inside the public web folder of Flow.
 The class ``Neos\Flow\ResourceManagement\Target\FileSystemSymlinkTarget`` is the implementation responsible for
 publishing the resources and providing public URIs to it. From the name you can guess that it creates
 symlinks to the resources stored on the local filesystem to save space. Other ``Target`` implementations
@@ -375,7 +375,7 @@ method in the ``ResourceManager`` like this:
 
 	$resourceUri = $this->resourceManager->getPublicPackageResourceUri('Acme.Demo', 'Images/Icons/FooIcon.png');
 
-The same can be done in Fluid templates by using the the built-in resource ViewHelper:
+The same can be done in Fluid templates by using the built-in resource ViewHelper:
 
 .. code-block:: html
 
@@ -412,7 +412,7 @@ One advantage of using the sha1 hash of the resource content as part of the path
 resource changes it gets a new path and is displayed correctly regardless of the cache
 settings in the user's web browser.
 
-If you need to access a resource`s data directly in your code you can aquire a stream via the ``getStream()``
+If you need to access a resource`s data directly in your code you can acquire a stream via the ``getStream()``
 method of the ``PersistentResource``. If a stream is not enough and you need a file path to work with
 the ``createTemporaryLocalCopy()`` will return one for you.
 

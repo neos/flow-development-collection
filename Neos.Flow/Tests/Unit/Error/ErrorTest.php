@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Neos\Flow\Tests\Unit\Error;
 
 /*
@@ -10,34 +13,30 @@ namespace Neos\Flow\Tests\Unit\Error;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
-use Neos\Flow\Tests\UnitTestCase;
 use Neos\Error\Messages\Error as FlowError;
+use Neos\Flow\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Testcase for the Error object
  */
-class ErrorTest extends UnitTestCase
+final class ErrorTest extends UnitTestCase
 {
-    /**
-     * @test
-     */
+    #[Test]
     public function theConstructorSetsTheErrorMessageCorrectly()
     {
         $errorMessage = 'The message';
         $error = new FlowError($errorMessage, 0);
 
-        self::assertEquals($errorMessage, $error->getMessage());
+        self::assertSame($errorMessage, $error->getMessage());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function theConstructorSetsTheErrorCodeCorrectly()
     {
         $errorCode = 123456789;
         $error = new FlowError('', $errorCode);
 
-        self::assertEquals($errorCode, $error->getCode());
+        self::assertSame($errorCode, $error->getCode());
     }
 }

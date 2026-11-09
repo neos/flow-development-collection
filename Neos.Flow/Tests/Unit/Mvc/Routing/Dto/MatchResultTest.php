@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Neos\Flow\Tests\Unit\Mvc\Routing\Dto;
 
 /*
@@ -10,19 +13,17 @@ namespace Neos\Flow\Tests\Unit\Mvc\Routing\Dto;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
 use Neos\Flow\Mvc\Routing\Dto\MatchResult;
 use Neos\Flow\Mvc\Routing\Dto\RouteTags;
 use Neos\Flow\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Testcase for the MatchResult DTO
  */
-class MatchResultTest extends UnitTestCase
+final class MatchResultTest extends UnitTestCase
 {
-    /**
-     * @test
-     */
+    #[Test]
     public function matchedValueCanBeRetrieved()
     {
         $matchedValue = new \stdClass();
@@ -30,18 +31,14 @@ class MatchResultTest extends UnitTestCase
         self::assertSame($matchedValue, $matchResult->getMatchedValue());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function hasTagsIsFalseByDefault()
     {
         $matchResult = new MatchResult('matchedValue');
         self::assertFalse($matchResult->hasTags());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function hasTagsIsTrueIfTagsAreSet()
     {
         $tags = RouteTags::createEmpty();
@@ -49,18 +46,14 @@ class MatchResultTest extends UnitTestCase
         self::assertTrue($matchResult->hasTags());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getTagsReturnsNullByDefault()
     {
         $matchResult = new MatchResult('matchedValue');
         self::assertNull($matchResult->getTags());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getTagsReturnsSpecifiedTags()
     {
         $tags = RouteTags::createEmpty()->withTag('foo');

@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Neos\Flow\Tests\Functional\Http;
 
 /*
@@ -14,22 +17,21 @@ namespace Neos\Flow\Tests\Functional\Http;
 use Neos\Flow\Configuration\ConfigurationManager;
 use Neos\Flow\Http\RequestHandler;
 use Neos\Flow\Tests\FunctionalTestCase;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use Psr\Http\Message\ResponseInterface;
 
 /**
  * Functional tests for the HTTP Request Handler
  */
-class RequestHandlerTest extends FunctionalTestCase
+final class RequestHandlerTest extends FunctionalTestCase
 {
     /**
      * @var boolean
      */
     protected static $testablePersistenceEnabled = true;
 
-    /**
-     * @test
-     */
+    #[Test]
     public function httpRequestIsConvertedToAnActionRequestAndDispatchedToTheRespectiveController(): void
     {
         if (

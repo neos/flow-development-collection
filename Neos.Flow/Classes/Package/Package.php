@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Package;
 
 /*
@@ -11,8 +12,8 @@ namespace Neos\Flow\Package;
  * source code.
  */
 
-use Neos\Utility\Files;
 use Neos\Flow\Core\Bootstrap;
+use Neos\Utility\Files;
 
 /**
  * A Flow Package
@@ -42,8 +43,12 @@ class Package extends GenericPackage implements FlowPackageInterface, BootablePa
         $namespaces = $this->getNamespaces();
         if (is_dir($this->packagePath . self::DIRECTORY_TESTS_FUNCTIONAL)) {
             // TODO REFACTOR replace with usage of "autoload-dev"
+            $namespace = reset($namespaces);
+            if (!$namespace) {
+                throw new \Exception('Missing namespace', 1744144110);
+            }
             $namespacePrefix = str_replace('/', '\\', Files::concatenatePaths([
-                reset($namespaces),
+                $namespace,
                 '\\Tests\\Functional\\'
             ]));
             foreach ($this->getClassesInNormalizedAutoloadPath($this->packagePath . FlowPackageInterface::DIRECTORY_TESTS_FUNCTIONAL, $namespacePrefix) as $className => $classPath) {

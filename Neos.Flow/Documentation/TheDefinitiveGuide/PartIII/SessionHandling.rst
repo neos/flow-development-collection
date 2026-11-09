@@ -127,7 +127,7 @@ Session Storage
 
 	Since Flow 5.2 Sessions are no longer destroyed by default when caches are flushed. This is
 	due to the session caches being marked as "persistent". This previously lead to all sessions
-	being destroyed on each deployment, which was undesireable.
+	being destroyed on each deployment, which was undesirable.
 
 If you deploy changes that change the structure of data that is stored in the session or the class
 of an `@Flow\scope("session")` object, you need to manually destroy sessions to avoid deserialization

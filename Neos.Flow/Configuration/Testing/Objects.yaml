@@ -106,3 +106,16 @@ Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\Flow175\OuterPrototype:
     1:
       object:
         name: Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\Flow175\DifferentGreeter
+
+Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\InterfaceToTestConstructorInjection:
+  className: Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\ClassImplementingInterfaceToTestConstructorInjection
+
+Neos\Flow\Tests\Functional\ObjectManagement\Fixtures\ClassImplementingInterfaceToTestConstructorInjection:
+  arguments:
+    1:
+      object:
+        factoryObjectName: Neos\Flow\Cache\CacheManager
+        factoryMethodName: getCache
+        arguments:
+          1:
+            value: Flow_Persistence_Doctrine_Results

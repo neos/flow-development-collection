@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Tests\Unit\Session\Data;
 
 /*
@@ -14,10 +15,12 @@ namespace Neos\Flow\Tests\Unit\Session\Data;
 use Neos\Cache\Frontend\StringFrontend;
 use Neos\Cache\Frontend\VariableFrontend;
 use Neos\Flow\Session\Data\SessionIdentifier;
-use Neos\Flow\Session\Data\SessionMetaDataStore;
 use Neos\Flow\Session\Data\SessionMetaData;
+use Neos\Flow\Session\Data\SessionMetaDataStore;
 use Neos\Flow\Session\Data\StorageIdentifier;
 use Neos\Flow\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 
 /**
@@ -40,16 +43,14 @@ class SessionMetaDataStoreTest extends UnitTestCase
         $this->inject($this->store, 'updateMetadataThreshold', 60);
     }
 
-    public function hasDataSource(): \Generator
+    public static function hasDataSource(): \Generator
     {
         yield "key1 exists" => ['key1', true];
         yield "key2 does not exist" => ['key2', false];
     }
 
-    /**
-     * @test
-     * @dataProvider hasDataSource
-     */
+    #[DataProvider('hasDataSource')]
+    #[Test]
     public function hasOperationsArePassedToTheCache(string $sessionId, bool $expectation): void
     {
         $sessionId = SessionIdentifier::createFromString($sessionId);
@@ -60,9 +61,7 @@ class SessionMetaDataStoreTest extends UnitTestCase
         $this->assertEquals($expectation, $this->store->has($sessionId));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function retrieverOperationsArePassedToTheCache(): void
     {
         $sessionId = SessionIdentifier::createFromString('ZPjPj3A0Opd7JeDoe7rzUQYCoDMcxscb');
@@ -74,9 +73,7 @@ class SessionMetaDataStoreTest extends UnitTestCase
         $this->assertEquals($sessionMetaData, $this->store->retrieve($sessionId));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function retrieverOperationsUpcastsOldArrayFormat(): void
     {
         $sessionId = SessionIdentifier::createFromString('ZPjPj3A0Opd7JeDoe7rzUQYCoDMcxscb');
@@ -84,13 +81,11 @@ class SessionMetaDataStoreTest extends UnitTestCase
         $lastActivityTimestamp = time();
 
         $sessionMetaData = new SessionMetaData($sessionId, $storageId, $lastActivityTimestamp, []);
-        $this->mockCache->expects($this->once())->method('get')->with($sessionId->value)->willReturn(['storageIdentifier'=>$storageId->value, 'tags' => [], 'lastActivityTimestamp' => $lastActivityTimestamp]);
+        $this->mockCache->expects($this->once())->method('get')->with($sessionId->value)->willReturn(['storageIdentifier' => $storageId->value, 'tags' => [], 'lastActivityTimestamp' => $lastActivityTimestamp]);
         $this->assertEquals($sessionMetaData, $this->store->retrieve($sessionId));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function storeOperationsArePassedToTheCache(): void
     {
         $sessionId = SessionIdentifier::createFromString('ZPjPj3A0Opd7JeDoe7rzUQYCoDMcxscb');
@@ -103,9 +98,7 @@ class SessionMetaDataStoreTest extends UnitTestCase
         $this->store->store($sessionMetaData);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function storeOperationsAreNotPassedToTheCacheIfTheSameDataWasReadBefore(): void
     {
         $sessionId = SessionIdentifier::createFromString('ZPjPj3A0Opd7JeDoe7rzUQYCoDMcxscb');
@@ -121,9 +114,7 @@ class SessionMetaDataStoreTest extends UnitTestCase
         $this->store->store($sessionMetaDataUpdated);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function storeOperationsArePassedToTheCacheIfTheSameDataWasReadBeforeButWasOutdated(): void
     {
         $sessionId = SessionIdentifier::createFromString('ZPjPj3A0Opd7JeDoe7rzUQYCoDMcxscb');
@@ -139,9 +130,7 @@ class SessionMetaDataStoreTest extends UnitTestCase
         $this->store->store($sessionMetaDataUpdated);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function storeOperationsAreNotPassedToTheCacheIfTheSameDataWasStoredBefore(): void
     {
         $sessionId = SessionIdentifier::createFromString('ZPjPj3A0Opd7JeDoe7rzUQYCoDMcxscb');
@@ -156,9 +145,7 @@ class SessionMetaDataStoreTest extends UnitTestCase
         $this->store->store($sessionMetaDataUpdated);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function storeOperationsArePassedToTheCacheIfTheSameDataWasStoredBeforeButOutdated(): void
     {
         $sessionId = SessionIdentifier::createFromString('ZPjPj3A0Opd7JeDoe7rzUQYCoDMcxscb');
@@ -167,10 +154,17 @@ class SessionMetaDataStoreTest extends UnitTestCase
 
         $sessionMetaData = new SessionMetaData($sessionId, $storageId, $lastActivityTimestamp, []);
         $sessionMetaDataUpdated = $sessionMetaData->withLastActivityTimestamp($lastActivityTimestamp + 70);
-        $this->mockCache->expects($this->exactly(2))->method('set')->withConsecutive(
-            [$sessionMetaData->sessionIdentifier->value, $sessionMetaData, [$sessionMetaData->sessionIdentifier->value], 0],
-            [$sessionMetaData->sessionIdentifier->value, $sessionMetaDataUpdated, [$sessionMetaData->sessionIdentifier->value], 0]
-        );
+        $matcher = $this->exactly(2);
+        $this->mockCache->expects($matcher)->method('set')
+            ->willReturnCallback(function (...$parameters) use ($matcher, $sessionMetaData, $sessionMetaDataUpdated) {
+                $this->assertSame($sessionMetaData->sessionIdentifier->value, $parameters[0]);
+                $this->assertSame(
+                    $matcher->numberOfInvocations() === 1 ? $sessionMetaData : $sessionMetaDataUpdated,
+                    $parameters[1]
+                );
+                $this->assertSame([$sessionMetaData->sessionIdentifier->value], $parameters[2]);
+                $this->assertSame(0, $parameters[3]);
+            });
 
         $this->store->store($sessionMetaData);
         $this->store->store($sessionMetaDataUpdated);

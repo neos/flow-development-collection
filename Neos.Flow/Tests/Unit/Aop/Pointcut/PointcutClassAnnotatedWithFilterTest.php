@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Neos\Flow\Tests\Unit\Aop\Pointcut;
 
 /*
@@ -10,34 +13,31 @@ namespace Neos\Flow\Tests\Unit\Aop\Pointcut;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
+use Neos\Flow\Aop\Builder\ClassNameIndex;
+use Neos\Flow\Aop\Pointcut\PointcutClassAnnotatedWithFilter;
 use Neos\Flow\Reflection\ReflectionService;
 use Neos\Flow\Tests\UnitTestCase;
-use Neos\Flow\Aop;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Testcase for the Pointcut Class-Annotated-With Filter
  */
-class PointcutClassAnnotatedWithFilterTest extends UnitTestCase
+final class PointcutClassAnnotatedWithFilterTest extends UnitTestCase
 {
-    /**
-     * @test
-     */
+    #[Test]
     public function matchesTellsIfTheSpecifiedRegularExpressionMatchesTheGivenAnnotation()
     {
         $mockReflectionService = $this->createMock(ReflectionService::class, ['getClassAnnotations'], [], '', false, true);
-        $mockReflectionService->expects(self::any())->method('getClassAnnotations')->with('Acme\Some\Class', 'Acme\Some\Annotation')->will($this->onConsecutiveCalls(['SomeAnnotation'], []));
+        $mockReflectionService->method('getClassAnnotations')->with('Acme\Some\Class', 'Acme\Some\Annotation')->willReturnOnConsecutiveCalls(['SomeAnnotation'], []);
 
-        $filter = new Aop\Pointcut\PointcutClassAnnotatedWithFilter('Acme\Some\Annotation');
+        $filter = new PointcutClassAnnotatedWithFilter('Acme\Some\Annotation');
         $filter->injectReflectionService($mockReflectionService);
 
         self::assertTrue($filter->matches('Acme\Some\Class', 'foo', 'Acme\Some\Other\Class', 1234));
         self::assertFalse($filter->matches('Acme\Some\Class', 'foo', 'Acme\Some\Other\Class', 1234));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function reduceTargetClassNamesFiltersAllClassesNotHavingTheGivenAnnotation()
     {
         $availableClassNames = [
@@ -47,13 +47,13 @@ class PointcutClassAnnotatedWithFilterTest extends UnitTestCase
             'TestPackage\Subpackage2\Class4'
         ];
         sort($availableClassNames);
-        $availableClassNamesIndex = new Aop\Builder\ClassNameIndex();
+        $availableClassNamesIndex = new ClassNameIndex();
         $availableClassNamesIndex->setClassNames($availableClassNames);
 
-        $mockReflectionService = $this->getMockBuilder(ReflectionService::class)->disableOriginalConstructor()->getMock();
-        $mockReflectionService->expects(self::any())->method('getClassNamesByAnnotation')->with('SomeAnnotationClass')->will(self::returnValue(['TestPackage\Subpackage\Class1', 'TestPackage\Subpackage\SubSubPackage\Class3', 'SomeMoreClass']));
+        $mockReflectionService = $this->createMock(ReflectionService::class);
+        $mockReflectionService->method('getClassNamesByAnnotation')->with('SomeAnnotationClass')->willReturn((['TestPackage\Subpackage\Class1', 'TestPackage\Subpackage\SubSubPackage\Class3', 'SomeMoreClass']));
 
-        $classAnnotatedWithFilter = new Aop\Pointcut\PointcutClassAnnotatedWithFilter('SomeAnnotationClass');
+        $classAnnotatedWithFilter = new PointcutClassAnnotatedWithFilter('SomeAnnotationClass');
         $classAnnotatedWithFilter->injectReflectionService($mockReflectionService);
 
         $expectedClassNames = [
@@ -61,7 +61,7 @@ class PointcutClassAnnotatedWithFilterTest extends UnitTestCase
             'TestPackage\Subpackage\SubSubPackage\Class3'
         ];
         sort($expectedClassNames);
-        $expectedClassNamesIndex = new Aop\Builder\ClassNameIndex();
+        $expectedClassNamesIndex = new ClassNameIndex();
         $expectedClassNamesIndex->setClassNames($expectedClassNames);
 
         $result = $classAnnotatedWithFilter->reduceTargetClassNames($availableClassNamesIndex);

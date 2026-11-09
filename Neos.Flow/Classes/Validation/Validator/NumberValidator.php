@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Validation\Validator;
 
 /*
@@ -12,8 +13,8 @@ namespace Neos\Flow\Validation\Validator;
  */
 
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\I18n\Cldr\Reader\NumbersReader;
 use Neos\Flow\I18n;
+use Neos\Flow\I18n\Cldr\Reader\NumbersReader;
 
 /**
  * Validator for general numbers.
@@ -23,7 +24,7 @@ use Neos\Flow\I18n;
 class NumberValidator extends AbstractValidator
 {
     /**
-     * @var array
+     * @var array<string,mixed>
      */
     protected $supportedOptions = [
         'locale' => [null, 'The locale to use for number parsing', 'string|Locale'],

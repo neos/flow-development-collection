@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Tests\Functional\Persistence\FixturesPHP8;
 
 /*
@@ -11,8 +12,8 @@ namespace Neos\Flow\Tests\Functional\Persistence\FixturesPHP8;
  * source code.
  */
 
-use Neos\Flow\Persistence\Repository;
 use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Persistence\Repository;
 
 /**
  * A repository for comments
@@ -23,5 +24,5 @@ class CommentRepository extends Repository
     /**
      * @var string
      */
-    const ENTITY_CLASSNAME = Comment::class;
+    public const ENTITY_CLASSNAME = Comment::class;
 }

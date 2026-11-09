@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\I18n;
 
 /*
@@ -42,7 +43,7 @@ class Locale
      *
      * @see http://rfc.net/rfc4646.html
      */
-    const PATTERN_MATCH_LOCALEIDENTIFIER = '/^(?P<language>[a-zA-Z]{2,3})(?:[-_](?P<script>[a-zA-Z]{4}))?(?:[-_](?P<region>[a-zA-Z]{2}|[0-9]{3})){0,1}(?:[-_](?P<variant>(?:[a-zA-Z0-9]{5,8})|(?:[0-9][a-zA-Z0-9]{3})))?(?:[-_].+)*$/';
+    public const PATTERN_MATCH_LOCALEIDENTIFIER = '/^(?P<language>[a-zA-Z]{2,3})(?:[-_](?P<script>[a-zA-Z]{4}))?(?:[-_](?P<region>[a-zA-Z]{2}|[0-9]{3})){0,1}(?:[-_](?P<variant>(?:[a-zA-Z0-9]{5,8})|(?:[0-9][a-zA-Z0-9]{3})))?(?:[-_].+)*$/';
 
     /**
      * The language identifier - a BCP47, ISO 639-3 or 639-5 code
@@ -74,7 +75,7 @@ class Locale
     protected $region = null;
 
     /**
-     * The optional variant identifier - one of the registered registered variants according to BCP47
+     * The optional variant identifier - one of the registered variants according to BCP47
      *
      * @var string
      * @see http://rfc.net/bcp47.html
@@ -89,11 +90,8 @@ class Locale
      * @throws Exception\InvalidLocaleIdentifierException If the locale identifier is not valid
      * @api
      */
-    public function __construct($localeIdentifier)
+    public function __construct(string $localeIdentifier)
     {
-        if (!is_string($localeIdentifier)) {
-            throw new \InvalidArgumentException('A locale identifier must be of type string, ' . gettype($localeIdentifier) . ' given.', 1221216120);
-        }
         if (preg_match(self::PATTERN_MATCH_LOCALEIDENTIFIER, $localeIdentifier, $matches) !== 1) {
             throw new Exception\InvalidLocaleIdentifierException('"' . $localeIdentifier . '" is not a valid locale identifier.', 1221137814);
         }

@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Tests\Functional\Mvc\Fixtures\Controller;
 
 /*
@@ -11,9 +12,9 @@ namespace Neos\Flow\Tests\Functional\Mvc\Fixtures\Controller;
  * source code.
  */
 
+use Neos\Error\Messages\Message;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\Controller\ActionController;
-use Neos\Error\Messages\Message;
 
 /**
  * A controller fixture for testing the AbstractController functionality.

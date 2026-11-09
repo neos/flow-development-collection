@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Tests\Functional\Aop\Fixtures;
 
 /*
@@ -48,16 +49,16 @@ class TargetClassWithPhp8Features
     }
 
     // This needs https://github.com/laminas/laminas-code/pull/186 to be merged in order to work:
-//    /**
-//     * @throws RuntimeException
-//     */
-//    public function alwaysNull(bool $throwException = true): null
-//    {
-//        if ($throwException) {
-//            throw new RuntimeException('The $throwException flag in ' . __METHOD__ . ' was not set to false.');
-//        }
-//        return null;
-//    }
+    //    /**
+    //     * @throws RuntimeException
+    //     */
+    //    public function alwaysNull(bool $throwException = true): null
+    //    {
+    //        if ($throwException) {
+    //            throw new RuntimeException('The $throwException flag in ' . __METHOD__ . ' was not set to false.');
+    //        }
+    //        return null;
+    //    }
 
     /**
      * @throws RuntimeException

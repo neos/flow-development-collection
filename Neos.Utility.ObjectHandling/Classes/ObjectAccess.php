@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Utility;
 
 /*
@@ -41,9 +42,9 @@ abstract class ObjectAccess
      */
     protected static array $propertyGetterCache = [];
 
-    const ACCESS_GET = 0;
-    const ACCESS_SET = 1;
-    const ACCESS_PUBLIC = 2;
+    public const ACCESS_GET = 0;
+    public const ACCESS_SET = 1;
+    public const ACCESS_PUBLIC = 2;
 
     /**
      * Get a property of a given object or array.
@@ -236,10 +237,12 @@ abstract class ObjectAccess
      *   on it without checking if it existed.
      * - else, return false
      *
-     * @param array<mixed>|object $subject The target object or array
+     * @template T of object
+     * @param array<mixed>|T &$subject The target object or array
      * @param string|integer $propertyName Name or index of the property to set
      * @param mixed $propertyValue Value of the property
      * @param boolean $forceDirectAccess directly access property using reflection(!)
+     * @param-out ($subject is array ? array<mixed> : T) $subject
      * @return boolean true if the property could be set, false otherwise
      * @throws \InvalidArgumentException in case $object was not an object or $propertyName was not a string
      */

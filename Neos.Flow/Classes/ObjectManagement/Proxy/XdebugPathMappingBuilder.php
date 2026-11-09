@@ -29,12 +29,12 @@ class XdebugPathMappingBuilder
     protected $cacheManager;
 
     /**
-     * @var array
+     * @var array<string, mixed>
      */
     protected $settings;
 
     /**
-     * @param array $settings
+     * @param array<string, mixed> $settings
      * @return void
      */
     public function injectSettings(array $settings): void
@@ -49,9 +49,10 @@ class XdebugPathMappingBuilder
 
     /**
      * @param array<string, array{path: string, proxyClassIdentifier: string}> $compiledClasses
+     * @param string $flowContextName
      * @return void
      */
-    public function buildFromCompiledClasses(array $compiledClasses): void
+    public function buildFromCompiledClasses(array $compiledClasses, string $flowContextName): void
     {
         if ($compiledClasses === []) {
             return;
@@ -89,8 +90,9 @@ class XdebugPathMappingBuilder
         $mappingFileLines[] = '';
 
         Files::createDirectoryRecursively($this->getXdebugMappingFilePath());
+        $mappingFileName = sprintf("%s.flow.map", str_replace("/", "_", $flowContextName));
         file_put_contents(
-            Files::concatenatePaths([$this->getXdebugMappingFilePath(), 'flow.map']),
+            Files::concatenatePaths([$this->getXdebugMappingFilePath(), $mappingFileName]),
             implode("\n", $mappingFileLines)
         );
     }

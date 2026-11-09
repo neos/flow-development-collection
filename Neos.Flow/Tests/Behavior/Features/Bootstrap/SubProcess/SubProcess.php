@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Tests\Features\Bootstrap\SubProcess;
 
 use Neos\Flow\Core\ApplicationContext;

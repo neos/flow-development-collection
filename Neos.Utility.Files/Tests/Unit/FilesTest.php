@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Neos\Flow\Tests\Unit\Utility;
 
 /*
@@ -10,15 +13,17 @@ namespace Neos\Flow\Tests\Unit\Utility;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
 use Neos\Utility\Exception\FilesException;
-use org\bovigo\vfs\vfsStream;
 use Neos\Utility\Files;
+use org\bovigo\vfs\vfsStream;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Testcase for the Utility Files class
  */
-class FilesTest extends \PHPUnit\Framework\TestCase
+final class FilesTest extends TestCase
 {
     /**
      * @var string
@@ -60,148 +65,116 @@ class FilesTest extends \PHPUnit\Framework\TestCase
         }
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getUnixStylePathWorksForPathWithoutSlashes()
     {
         $path = 'foobar';
-        self::assertEquals('foobar', Files::getUnixStylePath($path));
+        self::assertSame('foobar', Files::getUnixStylePath($path));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getUnixStylePathWorksForPathWithForwardSlashes()
     {
         $path = 'foo/bar/test/';
-        self::assertEquals('foo/bar/test/', Files::getUnixStylePath($path));
+        self::assertSame('foo/bar/test/', Files::getUnixStylePath($path));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getUnixStylePathWorksForPathWithBackwardSlashes()
     {
         $path = 'foo\\bar\\test\\';
-        self::assertEquals('foo/bar/test/', Files::getUnixStylePath($path));
+        self::assertSame('foo/bar/test/', Files::getUnixStylePath($path));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getUnixStylePathWorksForPathWithForwardAndBackwardSlashes()
     {
         $path = 'foo/bar\\test/';
-        self::assertEquals('foo/bar/test/', Files::getUnixStylePath($path));
+        self::assertSame('foo/bar/test/', Files::getUnixStylePath($path));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function concatenatePathsWorksForEmptyPath()
     {
-        self::assertEquals('', Files::concatenatePaths([]));
+        self::assertSame('', Files::concatenatePaths([]));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function concatenatePathsWorksForOnePath()
     {
-        self::assertEquals('foo', Files::concatenatePaths(['foo']));
+        self::assertSame('foo', Files::concatenatePaths(['foo']));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function concatenatePathsWorksForTwoPath()
     {
-        self::assertEquals('foo/bar', Files::concatenatePaths(['foo', 'bar']));
+        self::assertSame('foo/bar', Files::concatenatePaths(['foo', 'bar']));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function concatenatePathsWorksForPathsWithLeadingSlash()
     {
-        self::assertEquals('/foo/bar', Files::concatenatePaths(['/foo', 'bar']));
+        self::assertSame('/foo/bar', Files::concatenatePaths(['/foo', 'bar']));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function concatenatePathsWorksForPathsWithTrailingSlash()
     {
-        self::assertEquals('foo/bar', Files::concatenatePaths(['foo', 'bar/']));
+        self::assertSame('foo/bar', Files::concatenatePaths(['foo', 'bar/']));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function concatenatePathsWorksForPathsWithLeadingAndTrailingSlash()
     {
-        self::assertEquals('/foo/bar/bar/foo', Files::concatenatePaths(['/foo/bar/', '/bar/foo/']));
+        self::assertSame('/foo/bar/bar/foo', Files::concatenatePaths(['/foo/bar/', '/bar/foo/']));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function concatenatePathsWorksForBrokenPaths()
     {
-        self::assertEquals('/foo/bar/bar', Files::concatenatePaths(['\\foo/bar\\', '\\bar']));
+        self::assertSame('/foo/bar/bar', Files::concatenatePaths(['\\foo/bar\\', '\\bar']));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function concatenatePathsWorksForEmptyPathArrayElements()
     {
-        self::assertEquals('foo/bar', Files::concatenatePaths(['foo', '', 'bar']));
+        self::assertSame('foo/bar', Files::concatenatePaths(['foo', '', 'bar']));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getUnixStylePathWorksForPathWithDriveLetterAndBackwardSlashes()
     {
         $path = 'c:\\foo\\bar\\test\\';
-        self::assertEquals('c:/foo/bar/test/', Files::getUnixStylePath($path));
+        self::assertSame('c:/foo/bar/test/', Files::getUnixStylePath($path));
     }
 
     /**
      */
-    public function pathsWithProtocol()
+    public static function pathsWithProtocol(): \Iterator
     {
-        return [
-            ['file:///foo\\bar', 'file:///foo/bar'],
-            ['vfs:///foo\\bar', 'vfs:///foo/bar'],
-            ['phar:///foo\\bar', 'phar:///foo/bar']
-        ];
+        yield ['file:///foo\\bar', 'file:///foo/bar'];
+        yield ['vfs:///foo\\bar', 'vfs:///foo/bar'];
+        yield ['phar:///foo\\bar', 'phar:///foo/bar'];
     }
 
     /**
-     * @test
      * @param string $path
      * @param string $expected
-     * @dataProvider pathsWithProtocol
      */
+    #[DataProvider('pathsWithProtocol')]
+    #[Test]
     public function getUnixStylePathWorksForPathWithProtocol($path, $expected)
     {
         self::assertEquals($expected, Files::getUnixStylePath($path));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function is_linkReturnsFalseForNonExistingFiles()
     {
         self::assertFalse(Files::is_link('NonExistingPath'));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function is_linkReturnsFalseForExistingFileThatIsNoSymlink()
     {
         $targetPathAndFilename = tempnam($this->temporaryDirectory, 'FlowFilesTestFile');
@@ -209,9 +182,7 @@ class FilesTest extends \PHPUnit\Framework\TestCase
         self::assertFalse(Files::is_link($targetPathAndFilename));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function is_linkReturnsTrueForExistingSymlink()
     {
         $targetPathAndFilename = tempnam($this->temporaryDirectory, 'FlowFilesTestFile');
@@ -224,9 +195,7 @@ class FilesTest extends \PHPUnit\Framework\TestCase
         self::assertTrue(Files::is_link($linkPathAndFilename));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function is_linkReturnsFalseForExistingDirectoryThatIsNoSymlink()
     {
         $targetPath = Files::concatenatePaths([dirname(tempnam($this->temporaryDirectory, '')), 'FlowFilesTestDirectory']) . '/';
@@ -236,9 +205,7 @@ class FilesTest extends \PHPUnit\Framework\TestCase
         self::assertFalse(Files::is_link($targetPath));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function is_linkReturnsTrueForExistingSymlinkDirectory()
     {
         $targetPath = Files::concatenatePaths([dirname(tempnam($this->temporaryDirectory, '')), 'FlowFilesTestDirectory']);
@@ -253,9 +220,7 @@ class FilesTest extends \PHPUnit\Framework\TestCase
         self::assertTrue(Files::is_link($linkPath));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function is_linkReturnsFalseForStreamWrapperPaths()
     {
         $targetPath = 'vfs://Foo/Bar';
@@ -265,89 +230,73 @@ class FilesTest extends \PHPUnit\Framework\TestCase
         self::assertFalse(Files::is_link($targetPath));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function emptyDirectoryRecursivelyThrowsExceptionIfSpecifiedPathDoesNotExist()
     {
         $this->expectException(FilesException::class);
         Files::emptyDirectoryRecursively('NonExistingPath');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function removeDirectoryRecursivelyThrowsExceptionIfSpecifiedPathDoesNotExist()
     {
         $this->expectException(FilesException::class);
         Files::removeDirectoryRecursively('NonExistingPath');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function removeEmptyDirectoriesOnPathRemovesAllDirectoriesOnPathIfTheyAreEmpty()
     {
         Files::createDirectoryRecursively('vfs://Foo/Bar/Baz/Quux');
         Files::removeEmptyDirectoriesOnPath('vfs://Foo/Bar/Baz/Quux');
-        self::assertFalse(file_exists('vfs://Foo'));
+        self::assertFileDoesNotExist('vfs://Foo');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function removeEmptyDirectoriesOnPathRemovesOnlyDirectoriesWhichAreEmpty()
     {
         Files::createDirectoryRecursively('vfs://Foo/Bar/Baz/Quux');
         file_put_contents('vfs://Foo/Bar/someFile.txt', 'x');
         Files::removeEmptyDirectoriesOnPath('vfs://Foo/Bar/Baz/Quux');
-        self::assertTrue(file_exists('vfs://Foo/Bar/someFile.txt'));
-        self::assertFalse(file_exists('vfs://Foo/Bar/Baz'));
+        self::assertFileExists('vfs://Foo/Bar/someFile.txt');
+        self::assertFileDoesNotExist('vfs://Foo/Bar/Baz');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function removeEmptyDirectoriesOnPathDoesNotRemoveAnythingIfTopLevelPathContainsFile()
     {
         Files::createDirectoryRecursively('vfs://Foo/Bar/Baz/Quux');
         file_put_contents('vfs://Foo/Bar/Baz/Quux/someFile.txt', 'x');
         Files::removeEmptyDirectoriesOnPath('vfs://Foo/Bar/Baz/Quux');
-        self::assertTrue(file_exists('vfs://Foo/Bar/Baz/Quux/someFile.txt'));
+        self::assertFileExists('vfs://Foo/Bar/Baz/Quux/someFile.txt');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function removeEmptyDirectoriesOnPathAlsoRemovesOSXFinderFilesIfNecessary()
     {
         Files::createDirectoryRecursively('vfs://Foo/Bar/Baz/Quux');
         file_put_contents('vfs://Foo/Bar/someFile.txt', 'x');
         file_put_contents('vfs://Foo/Bar/Baz/.DS_Store', 'x');
         Files::removeEmptyDirectoriesOnPath('vfs://Foo/Bar/Baz/Quux');
-        self::assertTrue(file_exists('vfs://Foo/Bar/someFile.txt'));
-        self::assertFalse(file_exists('vfs://Foo/Bar/Baz'));
+        self::assertFileExists('vfs://Foo/Bar/someFile.txt');
+        self::assertFileDoesNotExist('vfs://Foo/Bar/Baz');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function removeEmptyDirectoriesOnPathRemovesOnlyDirectoriesBelowTheGivenBasePath()
     {
         Files::createDirectoryRecursively('vfs://Foo/Bar/Baz/Quux');
         Files::removeEmptyDirectoriesOnPath('vfs://Foo/Bar/Baz/Quux', 'vfs://Foo/Bar');
-        self::assertFalse(file_exists('vfs://Foo/Bar/Baz'));
-        self::assertTrue(file_exists('vfs://Foo/Bar'));
+        self::assertFileDoesNotExist('vfs://Foo/Bar/Baz');
+        self::assertFileExists('vfs://Foo/Bar');
 
         Files::createDirectoryRecursively('vfs://Foo/Bar/Baz/Quux');
         Files::removeEmptyDirectoriesOnPath('vfs://Foo/Bar/Baz/Quux', 'vfs://Foo/Bar/');
-        self::assertFalse(file_exists('vfs://Foo/Bar/Baz'));
-        self::assertTrue(file_exists('vfs://Foo/Bar'));
+        self::assertFileDoesNotExist('vfs://Foo/Bar/Baz');
+        self::assertFileExists('vfs://Foo/Bar');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function removeEmptyDirectoriesOnPathThrowsExceptionIfBasePathIsNotParentOfPath()
     {
         $this->expectException(FilesException::class);
@@ -355,9 +304,7 @@ class FilesTest extends \PHPUnit\Framework\TestCase
         Files::removeEmptyDirectoriesOnPath('vfs://Foo/Bar/Baz/Quux', 'vfs://Other/Bar');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function unlinkProperlyRemovesSymlinksPointingToFiles()
     {
         $targetPathAndFilename = tempnam($this->temporaryDirectory, 'FlowFilesTestFile');
@@ -368,13 +315,11 @@ class FilesTest extends \PHPUnit\Framework\TestCase
         }
         $this->trySymlink($targetPathAndFilename, $linkPathAndFilename);
         self::assertTrue(Files::unlink($linkPathAndFilename));
-        self::assertTrue(file_exists($targetPathAndFilename));
-        self::assertFalse(file_exists($linkPathAndFilename));
+        self::assertFileExists($targetPathAndFilename);
+        self::assertFileDoesNotExist($linkPathAndFilename);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function unlinkProperlyRemovesSymlinksPointingToDirectories()
     {
         $targetPath = Files::concatenatePaths([dirname(tempnam($this->temporaryDirectory, '')), 'FlowFilesTestDirectory']);
@@ -387,23 +332,21 @@ class FilesTest extends \PHPUnit\Framework\TestCase
         }
         $this->trySymlink($targetPath, $linkPath);
         self::assertTrue(Files::unlink($linkPath));
-        self::assertTrue(file_exists($targetPath));
-        self::assertFalse(file_exists($linkPath));
+        self::assertFileExists($targetPath);
+        self::assertFileDoesNotExist($linkPath);
     }
 
     /**
-     * @test
      * @outputBuffering enabled
      *     ... because the chmod call in ResourceManager emits a warning making this fail in strict mode
      */
+    #[Test]
     public function unlinkReturnsTrueIfSpecifiedPathDoesNotExist()
     {
         self::assertTrue(Files::unlink('NonExistingPath'));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function copyDirectoryRecursivelyCreatesTargetAsExpected()
     {
         Files::createDirectoryRecursively('vfs://Foo/source/bar/baz');
@@ -411,14 +354,12 @@ class FilesTest extends \PHPUnit\Framework\TestCase
 
         Files::copyDirectoryRecursively('vfs://Foo/source', 'vfs://Foo/target');
 
-        self::assertTrue(is_dir('vfs://Foo/target/bar/baz'));
+        self::assertDirectoryExists('vfs://Foo/target/bar/baz');
         self::assertTrue(is_file('vfs://Foo/target/bar/baz/file.txt'));
-        self::assertEquals('source content', file_get_contents('vfs://Foo/target/bar/baz/file.txt'));
+        self::assertSame('source content', file_get_contents('vfs://Foo/target/bar/baz/file.txt'));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function copyDirectoryRecursivelyCopiesDotFilesIfRequested()
     {
         Files::createDirectoryRecursively('vfs://Foo/source/bar/baz');
@@ -426,14 +367,12 @@ class FilesTest extends \PHPUnit\Framework\TestCase
 
         Files::copyDirectoryRecursively('vfs://Foo/source', 'vfs://Foo/target', false, true);
 
-        self::assertTrue(is_dir('vfs://Foo/target/bar/baz'));
+        self::assertDirectoryExists('vfs://Foo/target/bar/baz');
         self::assertTrue(is_file('vfs://Foo/target/bar/baz/.file.txt'));
-        self::assertEquals('source content', file_get_contents('vfs://Foo/target/bar/baz/.file.txt'));
+        self::assertSame('source content', file_get_contents('vfs://Foo/target/bar/baz/.file.txt'));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function copyDirectoryRecursivelyOverwritesTargetFiles()
     {
         Files::createDirectoryRecursively('vfs://Foo/source/bar/baz');
@@ -443,12 +382,10 @@ class FilesTest extends \PHPUnit\Framework\TestCase
         file_put_contents('vfs://Foo/target/bar/baz/file.txt', 'target content');
 
         Files::copyDirectoryRecursively('vfs://Foo/source', 'vfs://Foo/target');
-        self::assertEquals('source content', file_get_contents('vfs://Foo/target/bar/baz/file.txt'));
+        self::assertSame('source content', file_get_contents('vfs://Foo/target/bar/baz/file.txt'));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function copyDirectoryRecursivelyKeepsExistingTargetFilesIfRequested()
     {
         Files::createDirectoryRecursively('vfs://Foo/source/bar/baz');
@@ -458,110 +395,106 @@ class FilesTest extends \PHPUnit\Framework\TestCase
         file_put_contents('vfs://Foo/target/bar/baz/file.txt', 'target content');
 
         Files::copyDirectoryRecursively('vfs://Foo/source', 'vfs://Foo/target', true);
-        self::assertEquals('target content', file_get_contents('vfs://Foo/target/bar/baz/file.txt'));
+        self::assertSame('target content', file_get_contents('vfs://Foo/target/bar/baz/file.txt'));
     }
 
     /**
-     * @return array
+     * @return \Iterator<(int | string), mixed>
      */
-    public function bytesToSizeStringDataProvider()
+    public static function bytesToSizeStringDataProvider(): \Iterator
     {
-        return [
-
-            // invalid values
-            [
-                'bytes' => 'invalid',
-                'decimals' => null,
-                'decimalSeparator' => null,
-                'thousandsSeparator' => null,
-                'expected' => '0 B'
-            ],
-            [
-                'bytes' => '-100',
-                'decimals' => 2,
-                'decimalSeparator' => null,
-                'thousandsSeparator' => null,
-                'expected' => '0.00 B'
-            ],
-            [
-                'bytes' => -100,
-                'decimals' => 2,
-                'decimalSeparator' => null,
-                'thousandsSeparator' => null,
-                'expected' => '0.00 B'
-            ],
-            [
-                'bytes' => '',
-                'decimals' => 2,
-                'decimalSeparator' => null,
-                'thousandsSeparator' => null,
-                'expected' => '0.00 B'
-            ],
-            [
-                'bytes' => [],
-                'decimals' => 2,
-                'decimalSeparator' => ',',
-                'thousandsSeparator' => null,
-                'expected' => '0,00 B'
-            ],
-
-            // valid values
-            [
-                'bytes' => 123,
-                'decimals' => null,
-                'decimalSeparator' => null,
-                'thousandsSeparator' => null,
-                'expected' => '123 B'
-            ],
-            [
-                'bytes' => '43008',
-                'decimals' => 1,
-                'decimalSeparator' => null,
-                'thousandsSeparator' => null,
-                'expected' => '42.0 KB'
-            ],
-            [
-                'bytes' => 1024,
-                'decimals' => 1,
-                'decimalSeparator' => null,
-                'thousandsSeparator' => null,
-                'expected' => '1.0 KB'
-            ],
-            [
-                'bytes' => 1023,
-                'decimals' => 2,
-                'decimalSeparator' => null,
-                'thousandsSeparator' => null,
-                'expected' => '1,023.00 B'
-            ],
-            [
-                'bytes' => 1073741823,
-                'decimals' => null,
-                'decimalSeparator' => null,
-                'thousandsSeparator' => null,
-                'expected' => '1,024 MB'
-            ],
-            [
-                'bytes' => 1073741823,
-                'decimals' => 1,
-                'decimalSeparator' => null,
-                'thousandsSeparator' => '.',
-                'expected' => '1.024.0 MB'
-            ],
-            [
-                'bytes' => pow(1024, 5),
-                'decimals' => 1,
-                'decimalSeparator' => null,
-                'thousandsSeparator' => null,
-                'expected' => '1.0 PB'
-            ],
-            [
-                'bytes' => pow(1024, 8),
-                'decimals' => 1,
-                'decimalSeparator' => null,
-                'thousandsSeparator' => null,
-                'expected' => '1.0 YB'
-            ]
+        // invalid values
+        yield [
+            'bytes' => 'invalid',
+            'decimals' => null,
+            'decimalSeparator' => null,
+            'thousandsSeparator' => null,
+            'expected' => '0 B'
+        ];
+        yield [
+            'bytes' => '-100',
+            'decimals' => 2,
+            'decimalSeparator' => null,
+            'thousandsSeparator' => null,
+            'expected' => '0.00 B'
+        ];
+        yield [
+            'bytes' => -100,
+            'decimals' => 2,
+            'decimalSeparator' => null,
+            'thousandsSeparator' => null,
+            'expected' => '0.00 B'
+        ];
+        yield [
+            'bytes' => '',
+            'decimals' => 2,
+            'decimalSeparator' => null,
+            'thousandsSeparator' => null,
+            'expected' => '0.00 B'
+        ];
+        yield [
+            'bytes' => [],
+            'decimals' => 2,
+            'decimalSeparator' => ',',
+            'thousandsSeparator' => null,
+            'expected' => '0,00 B'
+        ];
+        // valid values
+        yield [
+            'bytes' => 123,
+            'decimals' => null,
+            'decimalSeparator' => null,
+            'thousandsSeparator' => null,
+            'expected' => '123 B'
+        ];
+        yield [
+            'bytes' => '43008',
+            'decimals' => 1,
+            'decimalSeparator' => null,
+            'thousandsSeparator' => null,
+            'expected' => '42.0 KB'
+        ];
+        yield [
+            'bytes' => 1024,
+            'decimals' => 1,
+            'decimalSeparator' => null,
+            'thousandsSeparator' => null,
+            'expected' => '1.0 KB'
+        ];
+        yield [
+            'bytes' => 1023,
+            'decimals' => 2,
+            'decimalSeparator' => null,
+            'thousandsSeparator' => null,
+            'expected' => '1,023.00 B'
+        ];
+        yield [
+            'bytes' => 1073741823,
+            'decimals' => null,
+            'decimalSeparator' => null,
+            'thousandsSeparator' => null,
+            'expected' => '1,024 MB'
+        ];
+        yield [
+            'bytes' => 1073741823,
+            'decimals' => 1,
+            'decimalSeparator' => null,
+            'thousandsSeparator' => '.',
+            'expected' => '1.024.0 MB'
+        ];
+        yield [
+            'bytes' => pow(1024, 5),
+            'decimals' => 1,
+            'decimalSeparator' => null,
+            'thousandsSeparator' => null,
+            'expected' => '1.0 PB'
+        ];
+        yield [
+            'bytes' => pow(1024, 8),
+            'decimals' => 1,
+            'decimalSeparator' => null,
+            'thousandsSeparator' => null,
+            'expected' => '1.0 YB'
         ];
     }
 
@@ -571,9 +504,9 @@ class FilesTest extends \PHPUnit\Framework\TestCase
      * @param $decimalSeparator
      * @param $thousandsSeparator
      * @param $expected
-     * @test
-     * @dataProvider bytesToSizeStringDataProvider
      */
+    #[DataProvider('bytesToSizeStringDataProvider')]
+    #[Test]
     public function bytesToSizeStringTests($bytes, $decimals, $decimalSeparator, $thousandsSeparator, $expected)
     {
         $actualResult = Files::bytesToSizeString($bytes, $decimals, $decimalSeparator, $thousandsSeparator);
@@ -581,81 +514,71 @@ class FilesTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @return array
+     * @return \Iterator<(int | string), mixed>
      */
-    public function sizeStringToBytesDataProvider()
+    public static function sizeStringToBytesDataProvider(): \Iterator
     {
-        return [
-
-            // invalid values
-            [
-                'sizeString' => 'invalid',
-                'expected' => 0.0
-            ],
-            [
-                'sizeString' => '',
-                'expected' => 0.0
-            ],
-            [
-                'sizeString' => false,
-                'expected' => 0.0
-            ],
-
-            // valid values
-            [
-                'sizeString' => '12345',
-                'expected' => 12345.0
-            ],
-            [
-                'sizeString' => '54321 b',
-                'expected' => 54321.0
-            ],
-            [
-                'sizeString' => '1024M',
-                'expected' => 1073741824.0
-            ],
-            [
-                'sizeString' => '1024.0 MB',
-                'expected' => 1073741824.0
-            ],
-            [
-                'sizeString' => '500 MB',
-                'expected' => 524288000.0
-            ],
-            [
-                'sizeString' => '500m',
-                'expected' => 524288000.0
-            ],
-            [
-                'sizeString' => '1.0 KB',
-                'expected' => 1024.0
-            ],
-            [
-                'sizeString' => '1 GB',
-                'expected' => (float)pow(1024, 3)
-            ],
-            [
-                'sizeString' => '1 Z',
-                'expected' => (float)pow(1024, 7)
-            ]
+        // invalid values
+        yield [
+            'sizeString' => 'invalid',
+            'expected' => 0.0
+        ];
+        yield [
+            'sizeString' => '',
+            'expected' => 0.0
+        ];
+        // valid values
+        yield [
+            'sizeString' => '12345',
+            'expected' => 12345.0
+        ];
+        yield [
+            'sizeString' => '54321 b',
+            'expected' => 54321.0
+        ];
+        yield [
+            'sizeString' => '1024M',
+            'expected' => 1073741824.0
+        ];
+        yield [
+            'sizeString' => '1024.0 MB',
+            'expected' => 1073741824.0
+        ];
+        yield [
+            'sizeString' => '500 MB',
+            'expected' => 524288000.0
+        ];
+        yield [
+            'sizeString' => '500m',
+            'expected' => 524288000.0
+        ];
+        yield [
+            'sizeString' => '1.0 KB',
+            'expected' => 1024.0
+        ];
+        yield [
+            'sizeString' => '1 GB',
+            'expected' => (float)pow(1024, 3)
+        ];
+        yield [
+            'sizeString' => '1 Z',
+            'expected' => (float)pow(1024, 7)
         ];
     }
 
     /**
      * @param string $sizeString
      * @param float $expected
-     * @test
-     * @dataProvider sizeStringToBytesDataProvider
      */
+    #[DataProvider('sizeStringToBytesDataProvider')]
+    #[Test]
     public function sizeStringToBytesTests($sizeString, $expected)
     {
         $actualResult = Files::sizeStringToBytes($sizeString);
         self::assertSame($expected, $actualResult);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function sizeStringThrowsExceptionIfTheSpecifiedUnitIsUnknown()
     {
         $this->expectException(FilesException::class);

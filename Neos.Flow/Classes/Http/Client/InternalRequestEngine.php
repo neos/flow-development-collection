@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Http\Client;
 
 /*
@@ -26,9 +27,9 @@ use Neos\Flow\Security\Context;
 use Neos\Flow\Session\SessionInterface;
 use Neos\Flow\Session\SessionManager;
 use Neos\Flow\Validation\ValidatorResolver;
+use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ServerRequestFactoryInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\StreamFactoryInterface;
@@ -129,7 +130,7 @@ class InternalRequestEngine implements RequestEngineInterface
             throw new Http\Exception('The browser\'s internal request engine has only been designed for use within functional tests.', 1335523749);
         }
 
-        /** @phpstan-ignore-next-line composer doesnt autoload this class */
+        /** @phpstan-ignore-next-line composer doesn't autoload this class */
         $requestHandler->setHttpRequest($httpRequest);
         $this->securityContext->clearContext();
         $this->validatorResolver->reset();
@@ -141,7 +142,7 @@ class InternalRequestEngine implements RequestEngineInterface
          */
         $middlewaresChain = $objectManager->get(Http\Middleware\MiddlewaresChain::class);
         $middlewaresChain->onStep(function (ServerRequestInterface $request) use ($requestHandler) {
-            /** @phpstan-ignore-next-line composer doesnt autoload this class */
+            /** @phpstan-ignore-next-line composer doesn't autoload this class */
             $requestHandler->setHttpRequest($request);
         });
 
@@ -174,7 +175,7 @@ class InternalRequestEngine implements RequestEngineInterface
     /**
      * Prepare a response in case an error occurred.
      *
-     * @param object $exception \Exception or \Throwable
+     * @param \Throwable $exception
      * @param ResponseInterface $response
      * @return ResponseInterface
      */
@@ -197,7 +198,7 @@ class InternalRequestEngine implements RequestEngineInterface
         return $response
             ->withStatus($statusCode)
             ->withBody($this->contentFactory->createStream($content))
-            ->withHeader('X-Flow-ExceptionCode', $exception->getCode())
+            ->withHeader('X-Flow-ExceptionCode', (string)$exception->getCode())
             ->withHeader('X-Flow-ExceptionMessage', base64_encode($exception->getMessage()));
     }
 }

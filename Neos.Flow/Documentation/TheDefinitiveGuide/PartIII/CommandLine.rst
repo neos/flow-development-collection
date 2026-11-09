@@ -268,7 +268,7 @@ is rendered by using the information provided by the method code and DocComment:
 
 * the first line of the DocComment contains the short description of the command
 * the second line must be empty
-* the the following lines contain the long description
+* the following lines contain the long description
 * the descriptions of the @param annotations are used for the argument
   descriptions
 * the type specified in the @param annotations is used for validation and to

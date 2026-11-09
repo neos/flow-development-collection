@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Neos\Flow\Tests\Unit\Property\TypeConverter;
@@ -12,16 +13,17 @@ namespace Neos\Flow\Tests\Unit\Property\TypeConverter;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
 use Neos\Flow\Property\PropertyMappingConfiguration;
 use Neos\Flow\Property\TypeConverter\ArrayConverter;
 use Neos\Flow\Property\TypeConverter\ArrayObjectConverter;
 use Neos\Flow\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Testcase for the ArrayObject converter
  */
-class ArrayObjectConverterTest extends UnitTestCase
+final class ArrayObjectConverterTest extends UnitTestCase
 {
     /**
      * @var ArrayConverter
@@ -33,9 +35,7 @@ class ArrayObjectConverterTest extends UnitTestCase
         $this->converter = new ArrayObjectConverter();
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function checkMetadata(): void
     {
         self::assertEquals([\ArrayObject::class], $this->converter->getSupportedSourceTypes(), 'Source types do not match');
@@ -43,21 +43,17 @@ class ArrayObjectConverterTest extends UnitTestCase
         self::assertEquals(1, $this->converter->getPriority(), 'Priority does not match');
     }
 
-    public function arrayObjectDataProvider(): array
+    public static function arrayObjectDataProvider(): \Iterator
     {
-        return [
-            [new \ArrayObject(['Foo', 1, true, 'Bar']), ['Foo', 1, true, 'Bar']],
-            [new \ArrayObject(), []]
-        ];
+        yield [new \ArrayObject(['Foo', 1, true, 'Bar']), ['Foo', 1, true, 'Bar']];
+        yield [new \ArrayObject(), []];
     }
 
-    /**
-     * @test
-     * @dataProvider arrayObjectDataProvider
-     */
+    #[DataProvider('arrayObjectDataProvider')]
+    #[Test]
     public function canConvertToArray(\ArrayObject $source, array $expectedResult): void
     {
-        $propertyMappingConfiguration = $this->createMock(PropertyMappingConfiguration::class);
+        $propertyMappingConfiguration = $this->createStub(PropertyMappingConfiguration::class);
         self::assertEquals($expectedResult, $this->converter->convertFrom($source, 'array', [], $propertyMappingConfiguration));
     }
 }

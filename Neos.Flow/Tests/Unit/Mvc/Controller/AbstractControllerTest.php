@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Neos\Flow\Tests\Unit\Mvc\Controller;
 
 /*
@@ -10,13 +13,11 @@ namespace Neos\Flow\Tests\Unit\Mvc\Controller;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
 use GuzzleHttp\Psr7\ServerRequest;
 use GuzzleHttp\Psr7\Uri;
-use Neos\Flow\Mvc\Routing\RouteValuesNormalizerInterface;
-use PHPUnit\Framework\Assert;
-use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\ServerRequestInterface;
+use Neos\Error\Messages as FlowError;
+use Neos\Flow\Cli\Request;
+use Neos\Flow\Cli\Response;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\ActionResponse;
 use Neos\Flow\Mvc\Controller\AbstractController;
@@ -26,22 +27,21 @@ use Neos\Flow\Mvc\Exception\ForwardException;
 use Neos\Flow\Mvc\Exception\RequiredArgumentMissingException;
 use Neos\Flow\Mvc\Exception\StopActionException;
 use Neos\Flow\Mvc\FlashMessage\FlashMessageContainer;
+use Neos\Flow\Mvc\Routing\RouteValuesNormalizerInterface;
 use Neos\Flow\Mvc\Routing\UriBuilder;
 use Neos\Flow\Property\PropertyMapper;
 use Neos\Flow\Tests\UnitTestCase;
-use Neos\Flow\Cli;
-use Neos\Error\Messages as FlowError;
+use PHPUnit\Framework\Assert;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 
 /**
  * Testcase for the MVC Abstract Controller
  */
-class AbstractControllerTest extends UnitTestCase
+final class AbstractControllerTest extends UnitTestCase
 {
-    /**
-     * @var ServerRequestInterface
-     */
-    protected $mockHttpRequest;
-
     /**
      * @var ActionResponse
      */
@@ -54,21 +54,19 @@ class AbstractControllerTest extends UnitTestCase
 
     protected function setUp(): void
     {
-        $this->mockHttpRequest = $this->getMockBuilder(ServerRequestInterface::class)->disableOriginalConstructor()->getMock();
+        $mockHttpRequest = $this->createMock(ServerRequestInterface::class);
 
         $this->actionResponse = new ActionResponse();
 
-        $this->mockActionRequest = $this->getMockBuilder(ActionRequest::class)->disableOriginalConstructor()->getMock();
-        $this->mockActionRequest->method('getHttpRequest')->willReturn($this->mockHttpRequest);
+        $this->mockActionRequest = $this->createMock(ActionRequest::class);
+        $this->mockActionRequest->method('getHttpRequest')->willReturn($mockHttpRequest);
     }
 
-    /**
-     * @test
-     */
-    public function initializeControllerWillThrowAnExceptionIfTheGivenRequestIsNotSupported()
+    #[Test]
+    public function initializeControllerWillThrowAnExceptionIfTheGivenRequestIsNotSupported(): void
     {
-        $request = new Cli\Request();
-        $response = new Cli\Response();
+        $request = new Request();
+        $response = new Response();
 
         $controller = $this->getAccessibleMock(AbstractController::class, ['processRequest']);
         try {
@@ -78,10 +76,8 @@ class AbstractControllerTest extends UnitTestCase
         }
     }
 
-    /**
-     * @test
-     */
-    public function initializeControllerInitializesRequestUriBuilderArgumentsAndContext()
+    #[Test]
+    public function initializeControllerInitializesRequestUriBuilderArgumentsAndContext(): void
     {
         $request = ActionRequest::fromHttpRequest(new ServerRequest('GET', new Uri('http://localhost/foo')));
 
@@ -95,44 +91,40 @@ class AbstractControllerTest extends UnitTestCase
     }
 
     /**
-     * @return array
+     * @return \Iterator<(int | string), mixed>
      */
-    public function addFlashMessageDataProvider()
+    public static function addFlashMessageDataProvider(): \Iterator
     {
-        return [
-            [
-                new FlowError\Message('MessageBody'),
-                'MessageBody'
-            ],
-            [
-                new FlowError\Message('Some Other Message', 123, ['foo' => 'bar'], 'Message Title'),
-                'Some Other Message', 'Message Title', FlowError\Message::SEVERITY_OK, ['foo' => 'bar'], 123
-            ],
-            [
-                new FlowError\Notice('Some Notice', 123, ['foo' => 'bar'], 'Message Title'),
-                'Some Notice', 'Message Title', FlowError\Message::SEVERITY_NOTICE, ['foo' => 'bar'], 123
-            ],
-            [
-                new FlowError\Warning('Some Warning', 123, ['foo' => 'bar'], 'Message Title'),
-                'Some Warning', 'Message Title', FlowError\Message::SEVERITY_WARNING, ['foo' => 'bar'], 123
-            ],
-            [
-                new FlowError\Error('Some Error', 123, ['foo' => 'bar'], 'Message Title'),
-                'Some Error', 'Message Title', FlowError\Message::SEVERITY_ERROR, ['foo' => 'bar'], 123
-            ],
+        yield [
+            new FlowError\Message('MessageBody'),
+            'MessageBody'
+        ];
+        yield [
+            new FlowError\Message('Some Other Message', 123, ['foo' => 'bar'], 'Message Title'),
+            'Some Other Message', 'Message Title', FlowError\Message::SEVERITY_OK, ['foo' => 'bar'], 123
+        ];
+        yield [
+            new FlowError\Notice('Some Notice', 123, ['foo' => 'bar'], 'Message Title'),
+            'Some Notice', 'Message Title', FlowError\Message::SEVERITY_NOTICE, ['foo' => 'bar'], 123
+        ];
+        yield [
+            new FlowError\Warning('Some Warning', 123, ['foo' => 'bar'], 'Message Title'),
+            'Some Warning', 'Message Title', FlowError\Message::SEVERITY_WARNING, ['foo' => 'bar'], 123
+        ];
+        yield [
+            new FlowError\Error('Some Error', 123, ['foo' => 'bar'], 'Message Title'),
+            'Some Error', 'Message Title', FlowError\Message::SEVERITY_ERROR, ['foo' => 'bar'], 123
         ];
     }
 
-    /**
-     * @test
-     * @dataProvider addFlashMessageDataProvider()
-     */
-    public function addFlashMessageTests($expectedMessage, $messageBody, $messageTitle = '', $severity = FlowError\Message::SEVERITY_OK, array $messageArguments = [], $messageCode = null)
+    #[DataProvider('addFlashMessageDataProvider')]
+    #[Test]
+    public function addFlashMessageTests($expectedMessage, $messageBody, $messageTitle = '', $severity = FlowError\Message::SEVERITY_OK, array $messageArguments = [], $messageCode = null): void
     {
         $flashMessageContainer = new FlashMessageContainer();
         $controller = $this->getAccessibleMock(AbstractController::class, ['processRequest']);
 
-        $controllerContext = $this->getMockBuilder(ControllerContext::class)->disableOriginalConstructor()->getMock();
+        $controllerContext = $this->createMock(ControllerContext::class);
         $controllerContext->method('getFlashMessageContainer')->willReturn($flashMessageContainer);
         $this->inject($controller, 'controllerContext', $controllerContext);
 
@@ -140,38 +132,34 @@ class AbstractControllerTest extends UnitTestCase
         self::assertEquals([$expectedMessage], $flashMessageContainer->getMessages());
     }
 
-    /**
-     * @test
-     */
-    public function addFlashMessageThrowsExceptionOnInvalidMessageBody()
+    #[Test]
+    public function addFlashMessageThrowsExceptionOnInvalidMessageBody(): void
     {
         $this->expectException(\InvalidArgumentException::class);
         $flashMessageContainer = new FlashMessageContainer();
         $controller = $this->getAccessibleMock(AbstractController::class, ['processRequest']);
 
-        $controllerContext = $this->getMockBuilder(ControllerContext::class)->disableOriginalConstructor()->getMock();
+        $controllerContext = $this->createMock(ControllerContext::class);
         $controllerContext->method('getFlashMessageContainer')->willReturn($flashMessageContainer);
         $this->inject($controller, 'controllerContext', $controllerContext);
 
         $controller->addFlashMessage(new \stdClass());
     }
 
-    /**
-     * @test
-     */
-    public function forwardSetsControllerAndArgumentsAtTheRequestObjectIfTheyAreSpecified()
+    #[Test]
+    public function forwardSetsControllerAndArgumentsAtTheRequestObjectIfTheyAreSpecified(): void
     {
         $routeValuesNormalizer = $this->createMock(RouteValuesNormalizerInterface::class);
-        $routeValuesNormalizer->expects(self::once())->method('normalizeObjects')->will($this->returnArgument(0));
+        $routeValuesNormalizer->expects($this->once())->method('normalizeObjects')->willReturnArgument(0);
 
         $controller = $this->getAccessibleMock(AbstractController::class, ['processRequest']);
         $this->inject($controller, 'routeValuesNormalizer', $routeValuesNormalizer);
         $controller->_call('initializeController', $this->mockActionRequest, $this->actionResponse);
 
-        $this->mockActionRequest->expects(self::atLeastOnce())->method('setControllerActionName')->with('theTarget');
-        $this->mockActionRequest->expects(self::atLeastOnce())->method('setControllerName')->with('Bar');
-        $this->mockActionRequest->expects(self::atLeastOnce())->method('setControllerPackageKey')->with('MyPackage');
-        $this->mockActionRequest->expects(self::atLeastOnce())->method('setArguments')->with(['foo' => 'bar']);
+        $this->mockActionRequest->expects($this->atLeastOnce())->method('setControllerActionName')->with('theTarget');
+        $this->mockActionRequest->expects($this->atLeastOnce())->method('setControllerName')->with('Bar');
+        $this->mockActionRequest->expects($this->atLeastOnce())->method('setControllerPackageKey')->with('MyPackage');
+        $this->mockActionRequest->expects($this->atLeastOnce())->method('setArguments')->with(['foo' => 'bar']);
 
         try {
             $controller->_call('forward', 'theTarget', 'Bar', 'MyPackage', ['foo' => 'bar']);
@@ -183,13 +171,11 @@ class AbstractControllerTest extends UnitTestCase
         }
     }
 
-    /**
-     * @test
-     */
-    public function forwardResetsControllerArguments()
+    #[Test]
+    public function forwardResetsControllerArguments(): void
     {
         $routeValuesNormalizer = $this->createMock(RouteValuesNormalizerInterface::class);
-        $routeValuesNormalizer->expects(self::once())->method('normalizeObjects')->will($this->returnArgument(0));
+        $routeValuesNormalizer->expects($this->once())->method('normalizeObjects')->willReturnArgument(0);
 
         $controller = $this->getAccessibleMock(AbstractController::class, ['processRequest']);
         $this->inject($controller, 'routeValuesNormalizer', $routeValuesNormalizer);
@@ -209,22 +195,20 @@ class AbstractControllerTest extends UnitTestCase
         self::assertFalse($arguments->hasArgument('foo'));
     }
 
-    /**
-     * @test
-     */
-    public function forwardSetsSubpackageKeyIfNeeded()
+    #[Test]
+    public function forwardSetsSubpackageKeyIfNeeded(): void
     {
         $routeValuesNormalizer = $this->createMock(RouteValuesNormalizerInterface::class);
-        $routeValuesNormalizer->expects(self::once())->method('normalizeObjects')->will($this->returnArgument(0));
+        $routeValuesNormalizer->expects($this->once())->method('normalizeObjects')->willReturnArgument(0);
 
         $controller = $this->getAccessibleMock(AbstractController::class, ['processRequest']);
         $this->inject($controller, 'routeValuesNormalizer', $routeValuesNormalizer);
         $controller->_call('initializeController', $this->mockActionRequest, $this->actionResponse);
 
-        $this->mockActionRequest->expects(self::atLeastOnce())->method('setControllerActionName')->with('theTarget');
-        $this->mockActionRequest->expects(self::atLeastOnce())->method('setControllerName')->with('Bar');
-        $this->mockActionRequest->expects(self::atLeastOnce())->method('setControllerPackageKey')->with('MyPackage');
-        $this->mockActionRequest->expects(self::atLeastOnce())->method('setControllerSubpackageKey')->with('MySubPackage');
+        $this->mockActionRequest->expects($this->atLeastOnce())->method('setControllerActionName')->with('theTarget');
+        $this->mockActionRequest->expects($this->atLeastOnce())->method('setControllerName')->with('Bar');
+        $this->mockActionRequest->expects($this->atLeastOnce())->method('setControllerPackageKey')->with('MyPackage');
+        $this->mockActionRequest->expects($this->atLeastOnce())->method('setControllerSubpackageKey')->with('MySubPackage');
 
         try {
             $controller->_call('forward', 'theTarget', 'Bar', 'MyPackage\MySubPackage', ['foo' => 'bar']);
@@ -232,22 +216,20 @@ class AbstractControllerTest extends UnitTestCase
         }
     }
 
-    /**
-     * @test
-     */
-    public function forwardResetsSubpackageKeyIfNotSetInPackageKey()
+    #[Test]
+    public function forwardResetsSubpackageKeyIfNotSetInPackageKey(): void
     {
         $routeValuesNormalizer = $this->createMock(RouteValuesNormalizerInterface::class);
-        $routeValuesNormalizer->expects(self::once())->method('normalizeObjects')->will($this->returnArgument(0));
+        $routeValuesNormalizer->expects($this->once())->method('normalizeObjects')->willReturnArgument(0);
 
         $controller = $this->getAccessibleMock(AbstractController::class, ['processRequest']);
         $this->inject($controller, 'routeValuesNormalizer', $routeValuesNormalizer);
         $controller->_call('initializeController', $this->mockActionRequest, $this->actionResponse);
 
-        $this->mockActionRequest->expects(self::atLeastOnce())->method('setControllerActionName')->with('theTarget');
-        $this->mockActionRequest->expects(self::atLeastOnce())->method('setControllerName')->with('Bar');
-        $this->mockActionRequest->expects(self::atLeastOnce())->method('setControllerPackageKey')->with('MyPackage');
-        $this->mockActionRequest->expects(self::atLeastOnce())->method('setControllerSubpackageKey')->with(null);
+        $this->mockActionRequest->expects($this->atLeastOnce())->method('setControllerActionName')->with('theTarget');
+        $this->mockActionRequest->expects($this->atLeastOnce())->method('setControllerName')->with('Bar');
+        $this->mockActionRequest->expects($this->atLeastOnce())->method('setControllerPackageKey')->with('MyPackage');
+        $this->mockActionRequest->expects($this->atLeastOnce())->method('setControllerSubpackageKey')->with(null);
 
         try {
             $controller->_call('forward', 'theTarget', 'Bar', 'MyPackage', ['foo' => 'bar']);
@@ -255,22 +237,20 @@ class AbstractControllerTest extends UnitTestCase
         }
     }
 
-    /**
-     * @test
-     */
-    public function forwardConvertsObjectsFoundInArgumentsIntoIdentifiersBeforePassingThemToRequest()
+    #[Test]
+    public function forwardConvertsObjectsFoundInArgumentsIntoIdentifiersBeforePassingThemToRequest(): void
     {
         $originalArguments = ['foo' => 'bar', 'bar' => ['someObject' => new \stdClass()]];
         $convertedArguments = ['foo' => 'bar', 'bar' => ['someObject' => ['__identity' => 'x']]];
 
         $routeValuesNormalizer = $this->createMock(RouteValuesNormalizerInterface::class);
-        $routeValuesNormalizer->expects(self::once())->method('normalizeObjects')->with($originalArguments)->willReturn($convertedArguments);
+        $routeValuesNormalizer->expects($this->once())->method('normalizeObjects')->with($originalArguments)->willReturn($convertedArguments);
 
         $controller = $this->getAccessibleMock(AbstractController::class, ['processRequest']);
         $this->inject($controller, 'routeValuesNormalizer', $routeValuesNormalizer);
         $controller->_call('initializeController', $this->mockActionRequest, $this->actionResponse);
 
-        $this->mockActionRequest->expects(self::atLeastOnce())->method('setArguments')->with($convertedArguments);
+        $this->mockActionRequest->expects($this->atLeastOnce())->method('setArguments')->with($convertedArguments);
 
         try {
             $controller->_call('forward', 'other', 'Bar', 'MyPackage', $originalArguments);
@@ -278,18 +258,16 @@ class AbstractControllerTest extends UnitTestCase
         }
     }
 
-    /**
-     * @test
-     */
-    public function redirectRedirectsToTheSpecifiedAction()
+    #[Test]
+    public function redirectRedirectsToTheSpecifiedAction(): void
     {
         $mockUriBuilder = $this->createMock(UriBuilder::class);
-        $mockUriBuilder->expects(self::once())->method('reset')->willReturn($mockUriBuilder);
-        $mockUriBuilder->expects(self::once())->method('setFormat')->with('doc')->willReturn($mockUriBuilder);
-        $mockUriBuilder->expects(self::once())->method('setCreateAbsoluteUri')->willReturn($mockUriBuilder);
-        $mockUriBuilder->expects(self::once())->method('uriFor')->with('show', ['foo' => 'bar'], 'Stuff', 'Super', 'Duper\Package')->willReturn('the_uri');
+        $mockUriBuilder->expects($this->once())->method('reset')->willReturn($mockUriBuilder);
+        $mockUriBuilder->expects($this->once())->method('setFormat')->with('doc')->willReturn($mockUriBuilder);
+        $mockUriBuilder->expects($this->once())->method('setCreateAbsoluteUri')->willReturn($mockUriBuilder);
+        $mockUriBuilder->expects($this->once())->method('uriFor')->with('show', ['foo' => 'bar'], 'Stuff', 'Super', 'Duper\Package')->willReturn('the_uri');
 
-        $controller = new class extends AbstractController {
+        $controller = new class () extends AbstractController {
             public function processRequest(ActionRequest $request): ResponseInterface
             {
                 $response = new ActionResponse();
@@ -321,20 +299,18 @@ class AbstractControllerTest extends UnitTestCase
         Assert::assertTrue(false, 'Expected to be redirected.');
     }
 
-    /**
-     * @test
-     */
-    public function redirectUsesRequestFormatAsDefaultAndUnsetsSubPackageKeyIfNecessary()
+    #[Test]
+    public function redirectUsesRequestFormatAsDefaultAndUnsetsSubPackageKeyIfNecessary(): void
     {
-        $this->mockActionRequest->expects(self::atLeastOnce())->method('getFormat')->willReturn('json');
+        $this->mockActionRequest->expects($this->atLeastOnce())->method('getFormat')->willReturn('json');
 
         $mockUriBuilder = $this->createMock(UriBuilder::class);
-        $mockUriBuilder->expects(self::once())->method('reset')->willReturn($mockUriBuilder);
-        $mockUriBuilder->expects(self::once())->method('setFormat')->with('json')->willReturn($mockUriBuilder);
-        $mockUriBuilder->expects(self::once())->method('setCreateAbsoluteUri')->willReturn($mockUriBuilder);
-        $mockUriBuilder->expects(self::once())->method('uriFor')->with('show', ['foo' => 'bar'], 'Stuff', 'Super', null)->willReturn('the_uri');
+        $mockUriBuilder->expects($this->once())->method('reset')->willReturn($mockUriBuilder);
+        $mockUriBuilder->expects($this->once())->method('setFormat')->with('json')->willReturn($mockUriBuilder);
+        $mockUriBuilder->expects($this->once())->method('setCreateAbsoluteUri')->willReturn($mockUriBuilder);
+        $mockUriBuilder->expects($this->once())->method('uriFor')->with('show', ['foo' => 'bar'], 'Stuff', 'Super', null)->willReturn('the_uri');
 
-        $controller = new class extends AbstractController {
+        $controller = new class () extends AbstractController {
             public function processRequest(ActionRequest $request): ResponseInterface
             {
                 $response = new ActionResponse();
@@ -366,10 +342,8 @@ class AbstractControllerTest extends UnitTestCase
         Assert::assertTrue(false, 'Expected to be redirected.');
     }
 
-    /**
-     * @test
-     */
-    public function redirectToUriThrowsStopActionException()
+    #[Test]
+    public function redirectToUriThrowsStopActionException(): void
     {
         $this->expectException(StopActionException::class);
         $controller = $this->getAccessibleMock(AbstractController::class, ['processRequest']);
@@ -378,10 +352,8 @@ class AbstractControllerTest extends UnitTestCase
         $controller->_call('redirectToUri', 'http://some.uri');
     }
 
-    /**
-     * @test
-     */
-    public function redirectToUriSetsStatus()
+    #[Test]
+    public function redirectToUriSetsStatus(): void
     {
         /** @var AbstractController $controller */
         $controller = $this->getAccessibleMock(AbstractController::class, ['processRequest']);
@@ -399,10 +371,8 @@ class AbstractControllerTest extends UnitTestCase
         self::assertSame(303, $response->getStatusCode());
     }
 
-    /**
-     * @test
-     */
-    public function redirectToUriSetsRedirectUri()
+    #[Test]
+    public function redirectToUriSetsRedirectUri(): void
     {
         $uri = 'http://flow.neos.io/awesomeness';
 
@@ -421,10 +391,8 @@ class AbstractControllerTest extends UnitTestCase
         self::assertSame($uri, $response->getHeaderLine('Location'));
     }
 
-    /**
-     * @test
-     */
-    public function redirectToUriDoesNotSetLocationHeaderIfDelayIsNotZero()
+    #[Test]
+    public function redirectToUriDoesNotSetLocationHeaderIfDelayIsNotZero(): void
     {
         $uri = 'http://flow.neos.io/awesomeness';
 
@@ -439,10 +407,8 @@ class AbstractControllerTest extends UnitTestCase
         self::assertNull($this->actionResponse->getRedirectUri());
     }
 
-    /**
-     * @test
-     */
-    public function throwStatusSetsThrowsStopActionException()
+    #[Test]
+    public function throwStatusSetsThrowsStopActionException(): void
     {
         $this->expectException(StopActionException::class);
         $controller = $this->getAccessibleMock(AbstractController::class, ['processRequest']);
@@ -451,10 +417,8 @@ class AbstractControllerTest extends UnitTestCase
         $controller->_call('throwStatus', 404);
     }
 
-    /**
-     * @test
-     */
-    public function throwStatusSetsTheSpecifiedStatusHeaderAndStopsTheCurrentAction()
+    #[Test]
+    public function throwStatusSetsTheSpecifiedStatusHeaderAndStopsTheCurrentAction(): void
     {
         $controller = $this->getAccessibleMock(AbstractController::class, ['processRequest']);
         $controller->_call('initializeController', $this->mockActionRequest, $this->actionResponse);
@@ -472,10 +436,8 @@ class AbstractControllerTest extends UnitTestCase
         self::fail('Expected throwStatus to throw.');
     }
 
-    /**
-     * @test
-     */
-    public function throwStatusSetsTheStatusMessageAsContentIfNoFurtherContentIsProvided()
+    #[Test]
+    public function throwStatusSetsTheStatusMessageAsContentIfNoFurtherContentIsProvided(): void
     {
         $controller = $this->getAccessibleMock(AbstractController::class, ['processRequest']);
         $controller->_call('initializeController', $this->mockActionRequest, $this->actionResponse);
@@ -491,13 +453,11 @@ class AbstractControllerTest extends UnitTestCase
         self::fail('Expected throwStatus to throw.');
     }
 
-    /**
-     * @test
-     */
-    public function mapRequestArgumentsToControllerArgumentsDoesJustThat()
+    #[Test]
+    public function mapRequestArgumentsToControllerArgumentsDoesJustThat(): void
     {
-        $mockPropertyMapper = $this->getMockBuilder(PropertyMapper::class)->disableOriginalConstructor()->setMethods(['convert'])->getMock();
-        $mockPropertyMapper->expects(self::atLeastOnce())->method('convert')->will($this->returnArgument(0));
+        $mockPropertyMapper = $this->getMockBuilder(PropertyMapper::class)->disableOriginalConstructor()->onlyMethods(['convert'])->getMock();
+        $mockPropertyMapper->expects($this->atLeastOnce())->method('convert')->willReturnArgument(0);
 
         $controllerArguments = new Arguments();
         $controllerArguments->addNewArgument('foo', 'string', true);
@@ -509,22 +469,28 @@ class AbstractControllerTest extends UnitTestCase
 
         $controller = $this->getAccessibleMock(AbstractController::class, ['processRequest']);
 
-        $this->mockActionRequest->expects(self::atLeast(2))->method('hasArgument')->withConsecutive(['foo'], ['baz'])->willReturn(true);
-        $this->mockActionRequest->expects(self::atLeast(2))->method('getArgument')->withConsecutive(['foo'], ['baz'])->willReturnOnConsecutiveCalls('bar', 'quux');
+        $this->mockActionRequest->expects(self::atLeast(2))->method('hasArgument')
+            ->willReturnCallback(function (string $argumentName) {
+                self::assertContains($argumentName, ['foo', 'baz']);
+                return true;
+            });
+        $this->mockActionRequest->expects(self::atLeast(2))->method('getArgument')
+            ->willReturnCallback(fn (string $argumentName) => match ($argumentName) {
+                'foo' => 'bar',
+                'baz' => 'quux',
+            });
 
         $controller->_call('mapRequestArgumentsToControllerArguments', $this->mockActionRequest, $controllerArguments);
         self::assertEquals('bar', $controllerArguments['foo']->getValue());
         self::assertEquals('quux', $controllerArguments['baz']->getValue());
     }
 
-    /**
-     * @test
-     */
-    public function mapRequestArgumentsToControllerArgumentsThrowsExceptionIfRequiredArgumentWasNotSet()
+    #[Test]
+    public function mapRequestArgumentsToControllerArgumentsThrowsExceptionIfRequiredArgumentWasNotSet(): void
     {
         $this->expectException(RequiredArgumentMissingException::class);
-        $mockPropertyMapper = $this->getMockBuilder(PropertyMapper::class)->disableOriginalConstructor()->setMethods(['convert'])->getMock();
-        $mockPropertyMapper->expects(self::atLeastOnce())->method('convert')->will($this->returnArgument(0));
+        $mockPropertyMapper = $this->getMockBuilder(PropertyMapper::class)->disableOriginalConstructor()->onlyMethods(['convert'])->getMock();
+        $mockPropertyMapper->expects($this->atLeastOnce())->method('convert')->willReturnArgument(0);
 
         $controllerArguments = new Arguments();
         $controllerArguments->addNewArgument('foo', 'string', true);
@@ -536,8 +502,12 @@ class AbstractControllerTest extends UnitTestCase
 
         $controller = $this->getAccessibleMock(AbstractController::class, ['processRequest']);
 
-        $this->mockActionRequest->expects(self::exactly(2))->method('hasArgument')->withConsecutive(['foo'], ['baz'])->willReturnOnConsecutiveCalls(true, false);
-        $this->mockActionRequest->expects(self::once())->method('getArgument')->with('foo')->willReturn('bar');
+        $this->mockActionRequest->expects(self::exactly(2))->method('hasArgument')
+            ->willReturnCallback(fn (string $argumentName) => match ($argumentName) {
+                'foo' => true,
+                'baz' => false,
+            });
+        $this->mockActionRequest->expects($this->once())->method('getArgument')->with('foo')->willReturn('bar');
 
         $controller->_call('mapRequestArgumentsToControllerArguments', $this->mockActionRequest, $controllerArguments);
     }

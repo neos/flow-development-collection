@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Neos\Flow\Tests\Unit\Http\Middleware;
 
 /*
@@ -10,23 +13,26 @@ namespace Neos\Flow\Tests\Unit\Http\Middleware;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
-use Neos\Flow\Tests\Unit\Http\Fixtures\SpyRequestHandler;
-use Psr\Http\Server\RequestHandlerInterface;
+use GuzzleHttp\Psr7\Uri;
 use Neos\Flow\Http\Middleware\TrustedProxiesMiddleware;
 use Neos\Flow\Http\ServerRequestAttributes;
-use GuzzleHttp\Psr7\Uri;
+use Neos\Flow\Tests\Unit\Http\Fixtures\SpyRequestHandler;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Http\Factories\ServerRequestFactory;
 use Neos\Http\Factories\UriFactory;
+use PHPUnit\Framework\Attributes\BackupGlobals;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\MockObject\MockObject;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestFactoryInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\RequestHandlerInterface;
 
 /**
  * Test case for the TrustedProxiesMiddleware
  */
-class TrustedProxiesMiddlewareTest extends UnitTestCase
+final class TrustedProxiesMiddlewareTest extends UnitTestCase
 {
     /**
      * @var TrustedProxiesMiddleware
@@ -39,17 +45,17 @@ class TrustedProxiesMiddlewareTest extends UnitTestCase
     protected $trustedProxiesSettings;
 
     /**
-     * @var ServerRequestInterface|\PHPUnit\Framework\MockObject\MockObject
+     * @var ServerRequestInterface|MockObject
      */
     protected $mockHttpRequest;
 
     /**
-     * @var ResponseInterface|\PHPUnit\Framework\MockObject\MockObject
+     * @var ResponseInterface|MockObject
      */
     protected $mockHttpResponse;
 
     /**
-     * @var RequestHandlerInterface|\PHPUnit\Framework\MockObject\MockObject
+     * @var RequestHandlerInterface|MockObject
      */
     protected $mockHttpRequestHandler;
 
@@ -60,9 +66,9 @@ class TrustedProxiesMiddlewareTest extends UnitTestCase
 
     protected function setUp(): void
     {
-        $this->mockHttpRequest = $this->getMockBuilder(ServerRequestInterface::class)->disableOriginalConstructor()->getMock();
-        $this->mockHttpResponse = $this->getMockBuilder(ResponseInterface::class)->disableOriginalConstructor()->getMock();
-        $this->mockHttpRequestHandler = $this->getMockBuilder(RequestHandlerInterface::class)->disableOriginalConstructor()->getMock();
+        $this->mockHttpRequest = $this->createMock(ServerRequestInterface::class);
+        $this->mockHttpResponse = $this->createMock(ResponseInterface::class);
+        $this->mockHttpRequestHandler = $this->createMock(RequestHandlerInterface::class);
 
         $this->serverRequestFactory = new ServerRequestFactory(new UriFactory());
         $this->trustedProxiesMiddleware = new TrustedProxiesMiddleware();
@@ -101,9 +107,9 @@ class TrustedProxiesMiddlewareTest extends UnitTestCase
 
     /**
      * RFC 2616 / 14.23 (Host)
-     * @test
-     * @backupGlobals disabled
      */
+    #[BackupGlobals(false)]
+    #[Test]
     public function portInProxyHeaderIsAcknowledged()
     {
         $server = array_merge($_SERVER, [
@@ -125,8 +131,8 @@ class TrustedProxiesMiddlewareTest extends UnitTestCase
      * RFC 2616 / 14.23 (Host)
      *
      * @test_disabled
-     * @backupGlobals disabled
      */
+    #[BackupGlobals(false)]
     public function portInProxyHeaderIsAcknowledgedWithIpv6()
     {
         $server = array_merge($_SERVER, [
@@ -148,29 +154,25 @@ class TrustedProxiesMiddlewareTest extends UnitTestCase
     /**
      * Data Provider
      */
-    public function serverEnvironmentsForClientIpAddresses()
+    public static function serverEnvironmentsForClientIpAddresses(): \Iterator
     {
-        return [
-            [[], '17.172.224.47'],
-            [['HTTP_CLIENT_IP' => 'murks'], '17.172.224.47'],
-            [['HTTP_CLIENT_IP' => '17.149.160.49'], '17.149.160.49'],
-            [['HTTP_CLIENT_IP' => '17.149.160.49', 'HTTP_X_FORWARDED_FOR' => '123.123.123.123'], '17.149.160.49'],
-            [['HTTP_X_FORWARDED_FOR' => '123.123.123.123'], '123.123.123.123'],
-            [['HTTP_X_FORWARDED_FOR' => '123.123.123.123', 'HTTP_X_FORWARDED' => '209.85.148.101'], '123.123.123.123'],
-            [['HTTP_X_FORWARDED_FOR' => '123.123.123', 'HTTP_FORWARDED_FOR' => '209.85.148.101'], '209.85.148.101'],
-            [['HTTP_X_FORWARDED_FOR' => '192.168.178.1', 'HTTP_FORWARDED_FOR' => '209.85.148.101'], '209.85.148.101'],
-            [['HTTP_X_FORWARDED_FOR' => '123.123.123.123, 209.85.148.101, 209.85.148.102'], '123.123.123.123'],
-            [['HTTP_X_CLUSTER_CLIENT_IP' => '209.85.148.101, 209.85.148.102'], '209.85.148.101'],
-            [['HTTP_FORWARDED_FOR' => '209.85.148.101'], '209.85.148.101'],
-            [['REMOTE_ADDR' => '127.0.0.1'], '127.0.0.1'],
-            [['HTTP_X_FORWARDED_FOR' => '2607:ff10:c5:509a::1'], '2607:ff10:c5:509a::1'],
-        ];
+        yield [[], '17.172.224.47'];
+        yield [['HTTP_CLIENT_IP' => 'murks'], '17.172.224.47'];
+        yield [['HTTP_CLIENT_IP' => '17.149.160.49'], '17.149.160.49'];
+        yield [['HTTP_CLIENT_IP' => '17.149.160.49', 'HTTP_X_FORWARDED_FOR' => '123.123.123.123'], '17.149.160.49'];
+        yield [['HTTP_X_FORWARDED_FOR' => '123.123.123.123'], '123.123.123.123'];
+        yield [['HTTP_X_FORWARDED_FOR' => '123.123.123.123', 'HTTP_X_FORWARDED' => '209.85.148.101'], '123.123.123.123'];
+        yield [['HTTP_X_FORWARDED_FOR' => '123.123.123', 'HTTP_FORWARDED_FOR' => '209.85.148.101'], '209.85.148.101'];
+        yield [['HTTP_X_FORWARDED_FOR' => '192.168.178.1', 'HTTP_FORWARDED_FOR' => '209.85.148.101'], '209.85.148.101'];
+        yield [['HTTP_X_FORWARDED_FOR' => '123.123.123.123, 209.85.148.101, 209.85.148.102'], '123.123.123.123'];
+        yield [['HTTP_X_CLUSTER_CLIENT_IP' => '209.85.148.101, 209.85.148.102'], '209.85.148.101'];
+        yield [['HTTP_FORWARDED_FOR' => '209.85.148.101'], '209.85.148.101'];
+        yield [['REMOTE_ADDR' => '127.0.0.1'], '127.0.0.1'];
+        yield [['HTTP_X_FORWARDED_FOR' => '2607:ff10:c5:509a::1'], '2607:ff10:c5:509a::1'];
     }
 
-    /**
-     * @test
-     * @dataProvider serverEnvironmentsForClientIpAddresses
-     */
+    #[DataProvider('serverEnvironmentsForClientIpAddresses')]
+    #[Test]
     public function getClientIpAddressReturnsTheIpAddressDerivedFromSeveralServerEnvironmentVariables(array $serverEnvironment, $expectedIpAddress)
     {
         $defaultServerEnvironment = [
@@ -195,20 +197,16 @@ class TrustedProxiesMiddlewareTest extends UnitTestCase
     /**
      * Data Provider
      */
-    public function serverEnvironmentsForForwardedHeader()
+    public static function serverEnvironmentsForForwardedHeader(): \Iterator
     {
-        return [
-            [['HTTP_FORWARDED' => 'for=209.85.148.101; proto=https; host=www.acme.org'], '209.85.148.101', 'https', 'www.acme.org', null],
-            [['HTTP_FORWARDED' => 'For=123.123.123.123, for=209.85.148.101'], '123.123.123.123', 'http', 'flow.neos.io', null],
-            [['HTTP_FORWARDED' => 'FOR=192.0.2.60, for=209.85.148.101; proto=https; HOST="123.123.123.123:4711", host=www.acme.org:8080; by=203.0.113.43'], '192.0.2.60', 'https', '123.123.123.123', 4711],
-            [['HTTP_FORWARDED' => 'for=192.0.2.60; proto=https; host=www.acme.org:8080; by=203.0.113.43'], '192.0.2.60', 'https', 'www.acme.org', 8080],
-        ];
+        yield [['HTTP_FORWARDED' => 'for=209.85.148.101; proto=https; host=www.acme.org'], '209.85.148.101', 'https', 'www.acme.org', null];
+        yield [['HTTP_FORWARDED' => 'For=123.123.123.123, for=209.85.148.101'], '123.123.123.123', 'http', 'flow.neos.io', null];
+        yield [['HTTP_FORWARDED' => 'FOR=192.0.2.60, for=209.85.148.101; proto=https; HOST="123.123.123.123:4711", host=www.acme.org:8080; by=203.0.113.43'], '192.0.2.60', 'https', '123.123.123.123', 4711];
+        yield [['HTTP_FORWARDED' => 'for=192.0.2.60; proto=https; host=www.acme.org:8080; by=203.0.113.43'], '192.0.2.60', 'https', 'www.acme.org', 8080];
     }
 
-    /**
-     * @test
-     * @dataProvider serverEnvironmentsForForwardedHeader
-     */
+    #[DataProvider('serverEnvironmentsForForwardedHeader')]
+    #[Test]
     public function trustedProxyCorrectlyParsesForwardedHeaders(array $serverEnvironment, $expectedIpAddress, $expectedProto, $expectedHost, $expectedPort)
     {
         $defaultServerEnvironment = [
@@ -234,9 +232,7 @@ class TrustedProxiesMiddlewareTest extends UnitTestCase
         self::assertSame($expectedPort, $trustedRequest->getUri()->getPort());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function isSecureReturnsTrueEvenIfTheSchemeIsHttpButTheRequestWasForwardedAndOriginallyWasHttps()
     {
         $server = [
@@ -247,13 +243,11 @@ class TrustedProxiesMiddlewareTest extends UnitTestCase
 
         $request = $this->serverRequestFactory->createServerRequest('GET', new Uri('http://acme.com'), $server);
         $trustedRequest = $this->callWithRequest($request);
-        self::assertEquals('https://acme.com', (string)$trustedRequest->getUri());
+        self::assertSame('https://acme.com', (string)$trustedRequest->getUri());
         self::assertEquals('https', $trustedRequest->getUri()->getScheme());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function isSecureReturnsFalseIfTheRequestWasForwardedAndOriginallyWasHttp()
     {
         $server = [
@@ -264,13 +258,11 @@ class TrustedProxiesMiddlewareTest extends UnitTestCase
 
         $request = $this->serverRequestFactory->createServerRequest('GET', new Uri('https://acme.com'), $server);
         $trustedRequest = $this->callWithRequest($request);
-        self::assertEquals('http://acme.com', (string)$trustedRequest->getUri());
+        self::assertSame('http://acme.com', (string)$trustedRequest->getUri());
         self::assertEquals('http', $trustedRequest->getUri()->getScheme());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function isFromTrustedProxyByDefault()
     {
         $request = $this->serverRequestFactory->createServerRequest('GET', new Uri('https://acme.com'));
@@ -278,9 +270,7 @@ class TrustedProxiesMiddlewareTest extends UnitTestCase
         self::assertTrue($trustedRequest->getAttribute(ServerRequestAttributes::TRUSTED_PROXY));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function isFromTrustedProxyIfRemoteAddressMatchesRange()
     {
         $this->withTrustedProxiesSettings(['proxies' => ['127.0.0.0/24']]);
@@ -289,9 +279,7 @@ class TrustedProxiesMiddlewareTest extends UnitTestCase
         self::assertTrue($trustedRequest->getAttribute(ServerRequestAttributes::TRUSTED_PROXY));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function isNotFromTrustedProxyIfNoProxiesAreTrusted()
     {
         $this->withTrustedProxiesSettings(['proxies' => []]);
@@ -300,9 +288,7 @@ class TrustedProxiesMiddlewareTest extends UnitTestCase
         self::assertFalse($trustedRequest->getAttribute(ServerRequestAttributes::TRUSTED_PROXY));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function isNotFromTrustedProxyIfRemoteAddressDoesntMatch()
     {
         $this->withTrustedProxiesSettings(['proxies' => ['10.0.0.1/24']]);
@@ -311,9 +297,7 @@ class TrustedProxiesMiddlewareTest extends UnitTestCase
         self::assertFalse($trustedRequest->getAttribute(ServerRequestAttributes::TRUSTED_PROXY));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function trustedClientIpAddressIsRemoteAddressIfNoProxiesAreTrusted()
     {
         $this->withTrustedProxiesSettings(['proxies' => [], 'headers' => [TrustedProxiesMiddleware::HEADER_CLIENT_IP => 'X-Forwarded-For']]);
@@ -322,9 +306,7 @@ class TrustedProxiesMiddlewareTest extends UnitTestCase
         self::assertEquals('127.0.0.1', $trustedRequest->getAttribute(ServerRequestAttributes::CLIENT_IP));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function trustedClientIpAddressIsRemoteAddressIfHeaderNotTrusted()
     {
         $this->withTrustedProxiesSettings(['proxies' => ['127.0.0.1'], 'headers' => []]);
@@ -333,9 +315,7 @@ class TrustedProxiesMiddlewareTest extends UnitTestCase
         self::assertEquals('127.0.0.1', $trustedRequest->getAttribute(ServerRequestAttributes::CLIENT_IP));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function trustedClientIpAddressIsForwardedForAddressIfProxyTrusted()
     {
         $this->withTrustedProxiesSettings(['proxies' => ['127.0.0.1'], 'headers' => [TrustedProxiesMiddleware::HEADER_CLIENT_IP => 'X-Forwarded-For']]);
@@ -344,9 +324,7 @@ class TrustedProxiesMiddlewareTest extends UnitTestCase
         self::assertEquals('13.0.0.1', $trustedRequest->getAttribute(ServerRequestAttributes::CLIENT_IP));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function trustedClientIpV6AddressIsForwardedForAddressIfProxyTrusted()
     {
         if (PHP_VERSION_ID < 80316 || (PHP_VERSION_ID >= 80400 && PHP_VERSION_ID < 80403)) {
@@ -358,9 +336,7 @@ class TrustedProxiesMiddlewareTest extends UnitTestCase
         self::assertEquals('2001:db8:cafe::17', $trustedRequest->getAttribute(ServerRequestAttributes::CLIENT_IP));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function trustedClientIpAddressIsFirstForwardedForAddressIfAllProxiesTrusted()
     {
         $this->withTrustedProxiesSettings(['proxies' => '*', 'headers' => [TrustedProxiesMiddleware::HEADER_CLIENT_IP => 'X-Forwarded-For']]);
@@ -369,9 +345,7 @@ class TrustedProxiesMiddlewareTest extends UnitTestCase
         self::assertEquals('13.0.0.1', $trustedRequest->getAttribute(ServerRequestAttributes::CLIENT_IP));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function trustedClientIpAddressIsRightMostForwardedForAddressThatIsNotTrusted()
     {
         $this->withTrustedProxiesSettings(['proxies' => ['127.0.0.1','10.0.0.1/24'], 'headers' => [TrustedProxiesMiddleware::HEADER_CLIENT_IP => 'X-Forwarded-For']]);
@@ -380,9 +354,7 @@ class TrustedProxiesMiddlewareTest extends UnitTestCase
         self::assertEquals('215.0.0.1', $trustedRequest->getAttribute(ServerRequestAttributes::CLIENT_IP));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function trustedClientIpAddressIsRemoteAddressIfTheHeaderIsNotTrusted()
     {
         $this->withTrustedProxiesSettings(['proxies' => '*', 'headers' => [TrustedProxiesMiddleware::HEADER_CLIENT_IP => 'X-Forwarded-Ip']]);
@@ -391,9 +363,7 @@ class TrustedProxiesMiddlewareTest extends UnitTestCase
         self::assertEquals('127.0.0.1', $trustedRequest->getAttribute(ServerRequestAttributes::CLIENT_IP));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function portIsNotOverridenIfTheHeaderIsNotTrusted()
     {
         $this->withTrustedProxiesSettings(['proxies' => '*', 'headers' => []]);
@@ -402,9 +372,7 @@ class TrustedProxiesMiddlewareTest extends UnitTestCase
         self::assertEquals(null, $trustedRequest->getUri()->getPort());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function protocolIsNotOverridenIfTheHeaderIsNotTrusted()
     {
         $this->withTrustedProxiesSettings(['proxies' => '*', 'headers' => []]);
@@ -413,9 +381,7 @@ class TrustedProxiesMiddlewareTest extends UnitTestCase
         self::assertEquals('http', $trustedRequest->getUri()->getScheme());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function hostIsNotOverridenIfTheHeaderIsNotTrusted()
     {
         $this->withTrustedProxiesSettings(['proxies' => '*', 'headers' => []]);
@@ -424,9 +390,7 @@ class TrustedProxiesMiddlewareTest extends UnitTestCase
         self::assertEquals('acme.com', $trustedRequest->getUri()->getHost());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function hostIsOverridenIfTheHeaderIsTrusted()
     {
         $request = $this->serverRequestFactory->createServerRequest('GET', new Uri('http://acme.com'), ['HTTP_X_FORWARDED_HOST' => 'neos.io']);
@@ -434,9 +398,7 @@ class TrustedProxiesMiddlewareTest extends UnitTestCase
         self::assertEquals('neos.io', $trustedRequest->getUri()->getHost());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function portIsOverridenIfTheHostHeaderContainsPort()
     {
         $request = $this->serverRequestFactory->createServerRequest('GET', new Uri('http://acme.com'), ['HTTP_X_FORWARDED_HOST' => 'neos.io:443']);
@@ -444,9 +406,7 @@ class TrustedProxiesMiddlewareTest extends UnitTestCase
         self::assertEquals(443, $trustedRequest->getUri()->getPort());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function portIsOverridenIfTheHostHeaderContainsJustThePort()
     {
         $request = $this->serverRequestFactory->createServerRequest('GET', new Uri('http://acme.com'), ['HTTP_X_FORWARDED_HOST' => ':443']);
@@ -454,9 +414,7 @@ class TrustedProxiesMiddlewareTest extends UnitTestCase
         self::assertEquals(443, $trustedRequest->getUri()->getPort());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function portIsOverridenIfTheHostHeaderContainsPortAlsoIfProtocolHeaderIsSet()
     {
         $request = $this->serverRequestFactory->createServerRequest('GET', new Uri('http://acme.com'), ['HTTP_X_FORWARDED_HOST' => 'neos.io:443', 'HTTP_X_FORWARDED_PROTO' => 'http']);
@@ -464,9 +422,7 @@ class TrustedProxiesMiddlewareTest extends UnitTestCase
         self::assertEquals(443, $trustedRequest->getUri()->getPort());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function portFromHostHeaderIsOverriddenByPortHeader()
     {
         $request = $this->serverRequestFactory->createServerRequest('GET', new Uri('http://acme.com'), ['HTTP_X_FORWARDED_PORT' => 8080, 'HTTP_X_FORWARDED_HOST' => 'neos.io:443']);
@@ -475,126 +431,119 @@ class TrustedProxiesMiddlewareTest extends UnitTestCase
     }
 
     /**
-     * @return array
+     * @return \Iterator<(int | string), mixed>
      */
-    public function forwardHeaderTestsDataProvider()
+    public static function forwardHeaderTestsDataProvider(): \Iterator
     {
-        return [
-            [
-                'forwardedProtocol' => null,
-                'forwardedPort' => null,
-                'requestUri' => 'http://acme.com',
-                'expectedUri' => 'http://acme.com',
-            ],
-
-            // forwarded protocol overrules requested protocol
-            [
-                'forwardedProtocol' => 'https',
-                'forwardedPort' => null,
-                'requestUri' => 'http://acme.com',
-                'expectedUri' => 'https://acme.com',
-            ],
-            [
-                'forwardedProtocol' => 'https',
-                'forwardedPort' => null,
-                'requestUri' => 'https://acme.com',
-                'expectedUri' => 'https://acme.com',
-            ],
-            [
-                'forwardedProtocol' => 'http',
-                'forwardedPort' => null,
-                'requestUri' => 'https://acme.com',
-                'expectedUri' => 'http://acme.com',
-            ],
-            [
-                'forwardedProtocol' => 'http',
-                'forwardedPort' => null,
-                'requestUri' => 'http://acme.com',
-                'expectedUri' => 'http://acme.com',
-            ],
-
-            // forwarded port overrules requested port
-            [
-                'forwardedProtocol' => null,
-                'forwardedPort' => 80,
-                'requestUri' => 'http://acme.com',
-                'expectedUri' => 'http://acme.com',
-            ],
-            [
-                'forwardedProtocol' => null,
-                'forwardedPort' => '8080',
-                'requestUri' => 'http://acme.com',
-                'expectedUri' => 'http://acme.com:8080',
-            ],
-            [
-                'forwardedProtocol' => null,
-                'forwardedPort' => 8080,
-                'requestUri' => 'http://acme.com:8000',
-                'expectedUri' => 'http://acme.com:8080',
-            ],
-            [
-                'forwardedProtocol' => null,
-                'forwardedPort' => '443',
-                'requestUri' => 'https://acme.com',
-                'expectedUri' => 'https://acme.com',
-            ],
-
-            // forwarded protocol & port
-            [
-                'forwardedProtocol' => 'http',
-                'forwardedPort' => 80,
-                'requestUri' => 'http://acme.com',
-                'expectedUri' => 'http://acme.com',
-            ],
-            [
-                'forwardedProtocol' => 'http',
-                'forwardedPort' => 8080,
-                'requestUri' => 'http://acme.com',
-                'expectedUri' => 'http://acme.com:8080',
-            ],
-            [
-                'forwardedProtocol' => 'http',
-                'forwardedPort' => 443,
-                'requestUri' => 'https://acme.com',
-                'expectedUri' => 'http://acme.com:443',
-            ],
-            [
-                'forwardedProtocol' => 'https',
-                'forwardedPort' => 443,
-                'requestUri' => 'http://acme.com',
-                'expectedUri' => 'https://acme.com',
-            ],
-            [
-                'forwardedProtocol' => 'https',
-                'forwardedPort' => 443,
-                'requestUri' => 'https://acme.com',
-                'expectedUri' => 'https://acme.com',
-            ],
-            [
-                'forwardedProtocol' => 'https',
-                'forwardedPort' => 80,
-                'requestUri' => 'https://acme.com',
-                'expectedUri' => 'https://acme.com:80',
-            ],
-            [
-                'forwardedProtocol' => 'HTTPS',
-                'forwardedPort' => null,
-                'requestUri' => 'http://acme.com',
-                'expectedUri' => 'https://acme.com',
-            ],
-            [
-                'forwardedProtocol' => 'http',
-                'forwardedPort' => 80,
-                'requestUri' => 'http://[2a00:f48:1008::212:183:10]',
-                'expectedUri' => 'http://[2a00:f48:1008::212:183:10]',
-            ],
+        yield [
+            'forwardedProtocol' => null,
+            'forwardedPort' => null,
+            'requestUri' => 'http://acme.com',
+            'expectedUri' => 'http://acme.com',
+        ];
+        // forwarded protocol overrules requested protocol
+        yield [
+            'forwardedProtocol' => 'https',
+            'forwardedPort' => null,
+            'requestUri' => 'http://acme.com',
+            'expectedUri' => 'https://acme.com',
+        ];
+        yield [
+            'forwardedProtocol' => 'https',
+            'forwardedPort' => null,
+            'requestUri' => 'https://acme.com',
+            'expectedUri' => 'https://acme.com',
+        ];
+        yield [
+            'forwardedProtocol' => 'http',
+            'forwardedPort' => null,
+            'requestUri' => 'https://acme.com',
+            'expectedUri' => 'http://acme.com',
+        ];
+        yield [
+            'forwardedProtocol' => 'http',
+            'forwardedPort' => null,
+            'requestUri' => 'http://acme.com',
+            'expectedUri' => 'http://acme.com',
+        ];
+        // forwarded port overrules requested port
+        yield [
+            'forwardedProtocol' => null,
+            'forwardedPort' => 80,
+            'requestUri' => 'http://acme.com',
+            'expectedUri' => 'http://acme.com',
+        ];
+        yield [
+            'forwardedProtocol' => null,
+            'forwardedPort' => '8080',
+            'requestUri' => 'http://acme.com',
+            'expectedUri' => 'http://acme.com:8080',
+        ];
+        yield [
+            'forwardedProtocol' => null,
+            'forwardedPort' => 8080,
+            'requestUri' => 'http://acme.com:8000',
+            'expectedUri' => 'http://acme.com:8080',
+        ];
+        yield [
+            'forwardedProtocol' => null,
+            'forwardedPort' => '443',
+            'requestUri' => 'https://acme.com',
+            'expectedUri' => 'https://acme.com',
+        ];
+        // forwarded protocol & port
+        yield [
+            'forwardedProtocol' => 'http',
+            'forwardedPort' => 80,
+            'requestUri' => 'http://acme.com',
+            'expectedUri' => 'http://acme.com',
+        ];
+        yield [
+            'forwardedProtocol' => 'http',
+            'forwardedPort' => 8080,
+            'requestUri' => 'http://acme.com',
+            'expectedUri' => 'http://acme.com:8080',
+        ];
+        yield [
+            'forwardedProtocol' => 'http',
+            'forwardedPort' => 443,
+            'requestUri' => 'https://acme.com',
+            'expectedUri' => 'http://acme.com:443',
+        ];
+        yield [
+            'forwardedProtocol' => 'https',
+            'forwardedPort' => 443,
+            'requestUri' => 'http://acme.com',
+            'expectedUri' => 'https://acme.com',
+        ];
+        yield [
+            'forwardedProtocol' => 'https',
+            'forwardedPort' => 443,
+            'requestUri' => 'https://acme.com',
+            'expectedUri' => 'https://acme.com',
+        ];
+        yield [
+            'forwardedProtocol' => 'https',
+            'forwardedPort' => 80,
+            'requestUri' => 'https://acme.com',
+            'expectedUri' => 'https://acme.com:80',
+        ];
+        yield [
+            'forwardedProtocol' => 'HTTPS',
+            'forwardedPort' => null,
+            'requestUri' => 'http://acme.com',
+            'expectedUri' => 'https://acme.com',
+        ];
+        yield [
+            'forwardedProtocol' => 'http',
+            'forwardedPort' => 80,
+            'requestUri' => 'http://[2a00:f48:1008::212:183:10]',
+            'expectedUri' => 'http://[2a00:f48:1008::212:183:10]',
         ];
     }
 
-    /**
-     * @test
-     * @dataProvider forwardHeaderTestsDataProvider
-     */
+    #[DataProvider('forwardHeaderTestsDataProvider')]
+    #[Test]
     public function forwardHeaderTests(?string $forwardedProtocol, $forwardedPort, string $requestUri, string $expectedUri)
     {
         $server = [];
@@ -606,6 +555,6 @@ class TrustedProxiesMiddlewareTest extends UnitTestCase
         }
         $request = $this->serverRequestFactory->createServerRequest('GET', new Uri($requestUri), $server);
         $trustedRequest = $this->callWithRequest($request);
-        self::assertEquals($expectedUri, (string)$trustedRequest->getUri());
+        self::assertSame($expectedUri, (string)$trustedRequest->getUri());
     }
 }

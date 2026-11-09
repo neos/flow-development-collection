@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Tests\Unit\ResourceManagement\Storage;
 
 /*
@@ -15,13 +16,14 @@ use Neos\Flow\ResourceManagement\CollectionInterface;
 use Neos\Flow\ResourceManagement\ResourceRepository;
 use Neos\Flow\ResourceManagement\Storage\FileSystemStorage;
 use Neos\Flow\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\Test;
 
 class FileSystemStorageTest extends UnitTestCase
 {
     /**
      * Assert that `getObjectsByCollection` returns an empty generator https://github.com/neos/flow-development-collection/pull/2167
-     * @test
      */
+    #[Test]
     public function getObjectsByCollectionWithNoResourcesShouldYieldEmpty(): void
     {
         $mockResourceRepository = $this->getMockBuilder(ResourceRepository::class)->getMock();

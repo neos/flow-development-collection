@@ -1,5 +1,12 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Neos\Kickstarter\Tests\Unit\Service;
+
+use Neos\Flow\Tests\UnitTestCase;
+use Neos\Kickstarter\Service\GeneratorService;
+use PHPUnit\Framework\Attributes\Test;
 
 /*
  * This file is part of the Neos.Kickstarter package.
@@ -10,19 +17,16 @@ namespace Neos\Kickstarter\Tests\Unit\Service;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
 /**
  * Testcase for the generator service
  *
  */
-class GeneratorServiceTest extends \Neos\Flow\Tests\UnitTestCase
+final class GeneratorServiceTest extends UnitTestCase
 {
-    /**
-     * @test
-     */
+    #[Test]
     public function normalizeFieldDefinitionsConvertsBoolTypeToBoolean()
     {
-        $service = $this->getAccessibleMock(\Neos\Kickstarter\Service\GeneratorService::class, array('dummy'));
+        $service = $this->getAccessibleMock(GeneratorService::class);
         $fieldDefinitions = array(
             'field' => array(
                 'type' => 'bool'
@@ -32,12 +36,10 @@ class GeneratorServiceTest extends \Neos\Flow\Tests\UnitTestCase
         self::assertEquals('boolean', $normalizedFieldDefinitions['field']['type']);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function normalizeFieldDefinitionsPrefixesGlobalClassesWithBackslash()
     {
-        $service = $this->getAccessibleMock(\Neos\Kickstarter\Service\GeneratorService::class, array('dummy'));
+        $service = $this->getAccessibleMock(GeneratorService::class);
         $fieldDefinitions = array(
             'field' => array(
                 'type' => 'DateTime'
@@ -47,13 +49,11 @@ class GeneratorServiceTest extends \Neos\Flow\Tests\UnitTestCase
         self::assertEquals('\DateTime', $normalizedFieldDefinitions['field']['type']);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function normalizeFieldDefinitionsPrefixesLocalTypesWithNamespaceIfNeeded()
     {
         $uniqueClassName = uniqid('Class');
-        $service = $this->getAccessibleMock(\Neos\Kickstarter\Service\GeneratorService::class, array('dummy'));
+        $service = $this->getAccessibleMock(GeneratorService::class);
         $fieldDefinitions = array(
             'field' => array(
                 'type' => $uniqueClassName

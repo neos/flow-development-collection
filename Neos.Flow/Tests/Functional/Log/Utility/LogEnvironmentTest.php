@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Neos\Flow\Tests\Functional\Log\Utility;
 
 /*
@@ -10,51 +13,41 @@ namespace Neos\Flow\Tests\Functional\Log\Utility;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
 use Neos\Flow\Log\Utility\LogEnvironment;
 use Neos\Flow\Tests\FunctionalTestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 
-class LogEnvironmentTest extends FunctionalTestCase
+final class LogEnvironmentTest extends FunctionalTestCase
 {
-    /**
-     * @return array
-     */
-    public function fromMethodNameDataProvider(): array
+    public static function fromMethodNameDataProvider(): \Iterator
     {
-        return [
-            'packageKeyCanBeDetermined' => [
-                'method' => __METHOD__,
-                'expected' => [
-                    'FLOW_LOG_ENVIRONMENT' => [
-                        'packageKey' => 'Neos.Flow',
-                        'className' => 'Neos\Flow\Tests\Functional\Log\Utility\LogEnvironmentTest',
-                        'methodName' => 'fromMethodNameDataProvider'
-                    ]
+        yield 'packageKeyCanBeDetermined' => [
+            'method' => __METHOD__,
+            'expected' => [
+                'FLOW_LOG_ENVIRONMENT' => [
+                    'packageKey' => 'Neos.Flow',
+                    'className' => 'Neos\Flow\Tests\Functional\Log\Utility\LogEnvironmentTest',
+                    'methodName' => 'fromMethodNameDataProvider'
                 ]
-            ],
-            'unknownPackageKeyReturnsFirstPart' => [
-                'method' => 'Some\Unknown\CLass\Path::methodName',
-                'expected' => [
-                    'FLOW_LOG_ENVIRONMENT' => [
-                        'packageKey' => 'Some',
-                        'className' => 'Some\Unknown\CLass\Path',
-                        'methodName' => 'methodName'
-                    ]
+            ]
+        ];
+        yield 'unknownPackageKeyReturnsFirstPart' => [
+            'method' => 'Some\Unknown\CLass\Path::methodName',
+            'expected' => [
+                'FLOW_LOG_ENVIRONMENT' => [
+                    'packageKey' => 'Some',
+                    'className' => 'Some\Unknown\CLass\Path',
+                    'methodName' => 'methodName'
                 ]
             ]
         ];
     }
 
 
-    /**
-     * @test
-     *
-     * @param $method
-     * @param $expected
-     *
-     * @dataProvider fromMethodNameDataProvider
-     */
-    public function fromMethodName($method, $expected)
+    #[DataProvider('fromMethodNameDataProvider')]
+    #[Test]
+    public function fromMethodName(string $method, array $expected): void
     {
         $actual = LogEnvironment::fromMethodName($method);
         self::assertEquals($expected, $actual);

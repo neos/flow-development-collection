@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Tests\Functional\Reflection\Fixtures;
 
 /*
@@ -23,7 +24,6 @@ class BrokenClassImplementingDoctrineProxy
     // run during functional tests will fail, as it expects to find a class named
     // like the file. It is NOT used for the testcase.
 }
-
 
 namespace Neos\Flow\Persistence\Doctrine\Proxies;
 

@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Neos\Flow\Http\Middleware;
@@ -26,12 +27,12 @@ use Psr\Http\Server\RequestHandlerInterface;
 class StandardsComplianceMiddleware implements MiddlewareInterface
 {
     /**
-     * @var array
+     * @var array<mixed>
      */
     protected $options;
 
     /**
-     * @param array $options
+     * @param array<mixed> $options
      */
     public function __construct(array $options = [])
     {

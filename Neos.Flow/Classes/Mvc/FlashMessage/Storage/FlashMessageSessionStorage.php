@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Mvc\FlashMessage\Storage;
 
 /*
@@ -15,12 +16,12 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\FlashMessage\FlashMessageContainer;
 use Neos\Flow\Mvc\FlashMessage\FlashMessageStorageInterface;
 use Neos\Flow\Session\SessionInterface;
-use Psr\Http\Message\ServerRequestInterface as HttpRequestInterface;
 use Psr\Http\Message\ResponseInterface as HttpResponseInterface;
+use Psr\Http\Message\ServerRequestInterface as HttpRequestInterface;
 
 class FlashMessageSessionStorage implements FlashMessageStorageInterface
 {
-    const DEFAULT_SESSION_KEY = 'Neos_Flow_FlashMessages';
+    public const DEFAULT_SESSION_KEY = 'Neos_Flow_FlashMessages';
 
     /**
      * @Flow\Inject
@@ -29,7 +30,7 @@ class FlashMessageSessionStorage implements FlashMessageStorageInterface
     protected $session;
 
     /**
-     * @var array
+     * @var array<mixed>
      */
     private $options;
 
@@ -44,7 +45,7 @@ class FlashMessageSessionStorage implements FlashMessageStorageInterface
     private $flashMessageContainer;
 
     /**
-     * @param array $options
+     * @param array<mixed> $options
      */
     public function __construct(array $options = [])
     {

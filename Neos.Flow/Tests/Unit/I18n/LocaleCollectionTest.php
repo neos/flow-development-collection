@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Neos\Flow\Tests\Unit\I18n;
 
 /*
@@ -10,14 +13,16 @@ namespace Neos\Flow\Tests\Unit\I18n;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
 use Neos\Flow\I18n;
+use Neos\Flow\I18n\Locale;
+use Neos\Flow\I18n\LocaleCollection;
 use Neos\Flow\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Testcase for the LocaleCollection class
  */
-class LocaleCollectionTest extends UnitTestCase
+final class LocaleCollectionTest extends UnitTestCase
 {
     /**
      * @var array<I18n\Locale>
@@ -35,18 +40,16 @@ class LocaleCollectionTest extends UnitTestCase
     protected function setUp(): void
     {
         $this->locales = [
-            new I18n\Locale('en'),
-            new I18n\Locale('pl_PL'),
-            new I18n\Locale('de'),
-            new I18n\Locale('pl'),
+            new Locale('en'),
+            new Locale('pl_PL'),
+            new Locale('de'),
+            new Locale('pl'),
         ];
 
-        $this->localeCollection = new I18n\LocaleCollection();
+        $this->localeCollection = new LocaleCollection();
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function localesAreAddedToTheCollectionCorrectlyWithHierarchyRelation()
     {
         foreach ($this->locales as $locale) {
@@ -56,20 +59,16 @@ class LocaleCollectionTest extends UnitTestCase
         self::assertEquals($this->locales[3], $this->localeCollection->getParentLocaleOf($this->locales[1]));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function existingLocaleIsNotAddedToTheCollection()
     {
         $localeShouldBeAdded = $this->localeCollection->addLocale($this->locales[0]);
-        $localeShouldNotBeAdded = $this->localeCollection->addLocale(new I18n\Locale('en'));
+        $localeShouldNotBeAdded = $this->localeCollection->addLocale(new Locale('en'));
         self::assertTrue($localeShouldBeAdded);
         self::assertFalse($localeShouldNotBeAdded);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function bestMatchingLocalesAreFoundCorrectly()
     {
         foreach ($this->locales as $locale) {
@@ -77,20 +76,18 @@ class LocaleCollectionTest extends UnitTestCase
         }
 
         self::assertEquals($this->locales[1], $this->localeCollection->findBestMatchingLocale($this->locales[1]));
-        self::assertEquals($this->locales[1], $this->localeCollection->findBestMatchingLocale(new I18n\Locale('pl_PL_DVORAK')));
-        self::assertNull($this->localeCollection->findBestMatchingLocale(new I18n\Locale('sv')));
+        self::assertEquals($this->locales[1], $this->localeCollection->findBestMatchingLocale(new Locale('pl_PL_DVORAK')));
+        self::assertNull($this->localeCollection->findBestMatchingLocale(new Locale('sv')));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function returnsNullWhenNoParentLocaleCouldBeFound()
     {
         foreach ($this->locales as $locale) {
             $this->localeCollection->addLocale($locale);
         }
 
-        self::assertNull($this->localeCollection->getParentLocaleOf(new I18n\Locale('sv')));
+        self::assertNull($this->localeCollection->getParentLocaleOf(new Locale('sv')));
         self::assertNull($this->localeCollection->getParentLocaleOf($this->locales[0]));
     }
 }

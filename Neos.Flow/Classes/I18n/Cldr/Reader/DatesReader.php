@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Neos\Flow\I18n\Cldr\Reader;
@@ -13,8 +14,8 @@ namespace Neos\Flow\I18n\Cldr\Reader;
  * source code.
  */
 
-use Neos\Flow\Annotations as Flow;
 use Neos\Cache\Frontend\VariableFrontend;
+use Neos\Flow\Annotations as Flow;
 use Neos\Flow\I18n\Cldr\CldrModel;
 use Neos\Flow\I18n\Cldr\CldrRepository;
 use Neos\Flow\I18n\Locale;
@@ -37,56 +38,56 @@ class DatesReader
      *
      * @var string
      */
-    const FORMAT_TYPE_DATE = 'date';
+    public const FORMAT_TYPE_DATE = 'date';
 
     /**
      * Constant for time-only format
      *
      * @var string
      */
-    const FORMAT_TYPE_TIME = 'time';
+    public const FORMAT_TYPE_TIME = 'time';
 
     /**
      * Constant for date and time format
      *
      * @var string
      */
-    const FORMAT_TYPE_DATETIME = 'dateTime';
+    public const FORMAT_TYPE_DATETIME = 'dateTime';
 
     /**
      * Constant for default length
      *
      * @var string
      */
-    const FORMAT_LENGTH_DEFAULT = 'default';
+    public const FORMAT_LENGTH_DEFAULT = 'default';
 
     /**
      * Constant for full length
      *
      * @var string
      */
-    const FORMAT_LENGTH_FULL = 'full';
+    public const FORMAT_LENGTH_FULL = 'full';
 
     /**
      * Constant for long length
      *
      * @var string
      */
-    const FORMAT_LENGTH_LONG = 'long';
+    public const FORMAT_LENGTH_LONG = 'long';
 
     /**
      * Constant for medium length
      *
      * @var string
      */
-    const FORMAT_LENGTH_MEDIUM = 'medium';
+    public const FORMAT_LENGTH_MEDIUM = 'medium';
 
     /**
      * Constant for short length
      *
      * @var string
      */
-    const FORMAT_LENGTH_SHORT = 'short';
+    public const FORMAT_LENGTH_SHORT = 'short';
 
     /**
      * @var CldrRepository
@@ -108,7 +109,7 @@ class DatesReader
      * When length is set to zero, it means that corresponding format has no
      * maximal length.
      *
-     * @var array
+     * @var array<string,int>
      */
     protected static $maxLengthOfSubformats = [
         'G' => 5,
@@ -163,7 +164,7 @@ class DatesReader
      * are stored as one-element arrays in the same array. Order of elements
      * in array is important.
      *
-     * @var array
+     * @var array<mixed>
      */
     protected $parsedFormats;
 
@@ -184,7 +185,7 @@ class DatesReader
      *     ...
      * );
      *
-     * @var array
+     * @var array<mixed>
      */
     protected $parsedFormatsIndices;
 
@@ -194,7 +195,7 @@ class DatesReader
      * Locale tags are keys for this array. Values are arrays of literals, i.e.
      * names defined in months, days, quarters etc tags.
      *
-     * @var array
+     * @var array<mixed>
      */
     protected $localizedLiterals;
 
@@ -255,7 +256,7 @@ class DatesReader
      * @param Locale $locale
      * @param string $formatType A type of format (one of constant values)
      * @param string $formatLength A length of format (one of constant values)
-     * @return array An array representing parsed format
+     * @return array<mixed> An array representing parsed format
      * @throws Exception\InvalidDateTimeFormatException
      * @throws Exception\InvalidFormatLengthException
      * @throws Exception\InvalidFormatTypeException
@@ -273,6 +274,9 @@ class DatesReader
         }
 
         $model = $this->cldrRepository->getModelForLocale($locale);
+        if (!$model) {
+            throw new \Exception('Missing model for locale ' . $locale, 1744411881);
+        }
         $realFormatLength = $formatLength === '' || $formatLength === 'default' ? 'medium' : $formatLength;
 
         $format = $model->getElement('dates/calendars/calendar[@type="gregorian"]/' . $formatType . 'Formats/' . $formatType . 'FormatLength[@type="' . $realFormatLength . '"]/' . $formatType . 'Format/pattern');
@@ -301,7 +305,7 @@ class DatesReader
      * Returns parsed date or time format string provided as parameter.
      *
      * @param string $format Format string to parse
-     * @return array An array representing parsed format
+     * @return array<mixed> An array representing parsed format
      * @throws Exception\InvalidDateTimeFormatException
      */
     public function parseCustomFormat(string $format): array
@@ -319,7 +323,7 @@ class DatesReader
      * If array was not generated earlier, it will be generated and cached.
      *
      * @param Locale $locale
-     * @return array An array with localized literals
+     * @return array<mixed> An array with localized literals
      */
     public function getLocalizedLiteralsForLocale(Locale $locale): array
     {
@@ -328,6 +332,9 @@ class DatesReader
         }
 
         $model = $this->cldrRepository->getModelForLocale($locale);
+        if (!$model) {
+            throw new \Exception('Missing model for locale ' . $locale, 1744411830);
+        }
 
         $localizedLiterals['months'] = $this->parseLocalizedLiterals($model, 'month');
         $localizedLiterals['days'] = $this->parseLocalizedLiterals($model, 'day');
@@ -375,7 +382,7 @@ class DatesReader
      * documentation for this class for details what is missing.
      *
      * @param string $format
-     * @return array Parsed format
+     * @return array<mixed> Parsed format
      * @throws Exception\InvalidDateTimeFormatException When subformat is longer than maximal value defined in $maxLengthOfSubformats property
      * @see DatesReader::$parsedFormats
      */
@@ -448,7 +455,7 @@ class DatesReader
      *
      * @param CldrModel $model CldrModel to read data from
      * @param string $literalType One of: month, day, quarter, dayPeriod
-     * @return array An array with localized literals for given type
+     * @return array<mixed> An array with localized literals for given type
      * @todo the two array checks should go away - but that needs clean input data
      */
     protected function parseLocalizedLiterals(CldrModel $model, string $literalType): array
@@ -481,7 +488,7 @@ class DatesReader
      * Parses "eras" child of "dates" node and returns it's array representation.
      *
      * @param CldrModel $model CldrModel to read data from
-     * @return array An array with localized literals for "eras" node
+     * @return array<mixed> An array with localized literals for "eras" node
      */
     protected function parseLocalizedEras(CldrModel $model): array
     {
@@ -508,7 +515,7 @@ class DatesReader
      * @param string $format DateTime format
      * @param Locale $locale Locale to use
      * @param string $formatLength A length of format (full, long, medium, short) or 'default' to use default one from CLDR
-     * @return array Merged formats of date and time
+     * @return array<mixed> Merged formats of date and time
      * @throws Exception\InvalidDateTimeFormatException
      * @throws Exception\InvalidFormatLengthException
      * @throws Exception\InvalidFormatTypeException
@@ -538,7 +545,7 @@ class DatesReader
 
         if ($positionOfFirstPlaceholder !== 0) {
             // Add everything before placeholder as literal
-            $parsedFormat[] = [substr($format, 0, $positionOfFirstPlaceholder)];
+            $parsedFormat[] = [substr($format, 0, $positionOfFirstPlaceholder ?: 0)];
         }
 
         $parsedFormat = array_merge($parsedFormat, $firstParsedFormat);

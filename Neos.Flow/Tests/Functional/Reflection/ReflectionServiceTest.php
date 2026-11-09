@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Neos\Flow\Tests\Functional\Reflection;
 
 /*
@@ -10,19 +13,34 @@ namespace Neos\Flow\Tests\Functional\Reflection;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
+use Neos\Flow\Reflection\ClassSchema;
 use Neos\Flow\Reflection\ReflectionService;
+use Neos\Flow\Tests\Functional\Persistence;
+use Neos\Flow\Tests\Functional\Reflection;
+use Neos\Flow\Tests\Functional\Reflection\Fixtures\AnnotatedClass;
+use Neos\Flow\Tests\Functional\Reflection\Fixtures\AnnotatedClassWithUseStatements;
+use Neos\Flow\Tests\Functional\Reflection\Fixtures\ClassSchemaFixture;
+use Neos\Flow\Tests\Functional\Reflection\Fixtures\DummyClassWithProperties;
+use Neos\Flow\Tests\Functional\Reflection\Fixtures\DummyClassWithTypeHints;
+use Neos\Flow\Tests\Functional\Reflection\Fixtures\DummyReadonlyClass;
+use Neos\Flow\Tests\Functional\Reflection\Fixtures\Model\EntityExtendingPlainObject;
+use Neos\Flow\Tests\Functional\Reflection\Fixtures\Model\EntityWithUseStatements;
 use Neos\Flow\Tests\Functional\Reflection\Fixtures\Model\SubEntity;
 use Neos\Flow\Tests\Functional\Reflection\Fixtures\Model\SubSubEntity;
 use Neos\Flow\Tests\Functional\Reflection\Fixtures\Model\SubSubSubEntity;
-use Neos\Flow\Tests\Functional\Persistence;
-use Neos\Flow\Tests\Functional\Reflection;
+use Neos\Flow\Tests\Functional\Reflection\Fixtures\Model\SuperEntity;
+use Neos\Flow\Tests\Functional\Reflection\Fixtures\PHP8\DummyClassWithDisjunctiveNormalFormTypes;
+use Neos\Flow\Tests\Functional\Reflection\Fixtures\PHP8\DummyClassWithUnionTypeHints;
+use Neos\Flow\Tests\Functional\Reflection\Fixtures\Repository\SubSubEntityRepository;
+use Neos\Flow\Tests\Functional\Reflection\Fixtures\Repository\SuperEntityRepository;
 use Neos\Flow\Tests\FunctionalTestCase;
+use PHPUnit\Framework\Attributes\DoesNotPerformAssertions;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Functional tests for the Reflection Service features
  */
-class ReflectionServiceTest extends FunctionalTestCase
+final class ReflectionServiceTest extends FunctionalTestCase
 {
     protected ReflectionService $reflectionService;
 
@@ -32,36 +50,34 @@ class ReflectionServiceTest extends FunctionalTestCase
         $this->reflectionService = $this->objectManager->get(ReflectionService::class);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function theReflectionServiceBuildsClassSchemataForEntities(): void
     {
-        $classSchema = $this->reflectionService->getClassSchema(Reflection\Fixtures\ClassSchemaFixture::class);
+        $classSchema = $this->reflectionService->getClassSchema(ClassSchemaFixture::class);
 
         self::assertNotNull($classSchema);
-        self::assertSame(Reflection\Fixtures\ClassSchemaFixture::class, $classSchema->getClassName());
+        $this->assertInstanceOf(ClassSchema::class, $classSchema);
+        self::assertSame(ClassSchemaFixture::class, $classSchema->getClassName());
     }
 
     /**
      * Test for https://jira.neos.io/browse/FLOW-316
-     *
-     * @test
-     * @doesNotPerformAssertions
      */
+    #[Test]
+    #[DoesNotPerformAssertions]
     public function classSchemaCanBeBuiltForAggregateRootsWithPlainOldPhpBaseClasses(): void
     {
-        $this->reflectionService->getClassSchema(Reflection\Fixtures\Model\EntityExtendingPlainObject::class);
+        $this->reflectionService->getClassSchema(EntityExtendingPlainObject::class);
     }
 
     /**
-     * @test
      * @throws
      * @deprecated since 8.4
      */
+    #[Test]
     public function theReflectionServiceCorrectlyBuildsMethodTagsValues(): void
     {
-        $actual = $this->reflectionService->getMethodTagsValues(Reflection\Fixtures\ClassSchemaFixture::class, 'setName');
+        $actual = $this->reflectionService->getMethodTagsValues(ClassSchemaFixture::class, 'setName');
 
         $expected = [
             'param' => [
@@ -79,133 +95,112 @@ class ReflectionServiceTest extends FunctionalTestCase
         self::assertSame($expected, $actual);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function aggregateRootAssignmentsInHierarchiesAreCorrect(): void
     {
-        self::assertEquals(Reflection\Fixtures\Repository\SuperEntityRepository::class, $this->reflectionService->getClassSchema(Reflection\Fixtures\Model\SuperEntity::class)->getRepositoryClassName());
-        self::assertEquals(Reflection\Fixtures\Repository\SuperEntityRepository::class, $this->reflectionService->getClassSchema(Reflection\Fixtures\Model\SubEntity::class)->getRepositoryClassName());
-        self::assertEquals(Reflection\Fixtures\Repository\SubSubEntityRepository::class, $this->reflectionService->getClassSchema(Reflection\Fixtures\Model\SubSubEntity::class)->getRepositoryClassName());
-        self::assertEquals(Reflection\Fixtures\Repository\SubSubEntityRepository::class, $this->reflectionService->getClassSchema(Reflection\Fixtures\Model\SubSubSubEntity::class)->getRepositoryClassName());
+        self::assertEquals(SuperEntityRepository::class, $this->reflectionService->getClassSchema(SuperEntity::class)->getRepositoryClassName());
+        self::assertEquals(SuperEntityRepository::class, $this->reflectionService->getClassSchema(SubEntity::class)->getRepositoryClassName());
+        self::assertEquals(SubSubEntityRepository::class, $this->reflectionService->getClassSchema(SubSubEntity::class)->getRepositoryClassName());
+        self::assertEquals(SubSubEntityRepository::class, $this->reflectionService->getClassSchema(SubSubSubEntity::class)->getRepositoryClassName());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function propertyTypesAreExpandedWithUseStatements(): void
     {
-        $varTagValues = $this->reflectionService->getPropertyTagValues(Reflection\Fixtures\AnnotatedClassWithUseStatements::class, 'reflectionService', 'var');
+        $varTagValues = $this->reflectionService->getPropertyTagValues(AnnotatedClassWithUseStatements::class, 'reflectionService', 'var');
         $expected = [ReflectionService::class];
         self::assertSame($expected, $varTagValues);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function propertyTypesFromAbstractBaseClassAreExpandedWithRelativeNamespaces(): void
     {
-        $varTagValues = $this->reflectionService->getPropertyTagValues(Reflection\Fixtures\AnnotatedClassWithUseStatements::class, 'subSubEntity', 'var');
-        $expected = [Reflection\Fixtures\Model\SubSubEntity::class];
+        $varTagValues = $this->reflectionService->getPropertyTagValues(AnnotatedClassWithUseStatements::class, 'subSubEntity', 'var');
+        $expected = [SubSubEntity::class];
         self::assertSame($expected, $varTagValues);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function propertyTypesFromAbstractBaseClassAreExpandedWithUseStatements(): void
     {
-        $varTagValues = $this->reflectionService->getPropertyTagValues(Reflection\Fixtures\AnnotatedClassWithUseStatements::class, 'superEntity', 'var');
-        $expected = [Reflection\Fixtures\Model\SuperEntity::class];
+        $varTagValues = $this->reflectionService->getPropertyTagValues(AnnotatedClassWithUseStatements::class, 'superEntity', 'var');
+        $expected = [SuperEntity::class];
         self::assertSame($expected, $varTagValues);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function propertyTypesFromSameSubpackageAreRetrievedCorrectly(): void
     {
-        $varTagValues = $this->reflectionService->getPropertyTagValues(Reflection\Fixtures\AnnotatedClassWithUseStatements::class, 'annotatedClass', 'var');
-        $expected = [Reflection\Fixtures\AnnotatedClass::class];
+        $varTagValues = $this->reflectionService->getPropertyTagValues(AnnotatedClassWithUseStatements::class, 'annotatedClass', 'var');
+        $expected = [AnnotatedClass::class];
         self::assertSame($expected, $varTagValues);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function propertyTypesFromNestedSubpackageAreRetrievedCorrectly(): void
     {
-        $varTagValues = $this->reflectionService->getPropertyTagValues(Reflection\Fixtures\AnnotatedClassWithUseStatements::class, 'subEntity', 'var');
-        $expected = [Reflection\Fixtures\Model\SubEntity::class];
+        $varTagValues = $this->reflectionService->getPropertyTagValues(AnnotatedClassWithUseStatements::class, 'subEntity', 'var');
+        $expected = [SubEntity::class];
         self::assertSame($expected, $varTagValues);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function domainModelPropertyTypesAreExpandedWithUseStatementsInClassSchema(): void
     {
-        $classSchema = $this->reflectionService->getClassSchema(Reflection\Fixtures\Model\EntityWithUseStatements::class);
-        self::assertEquals(Reflection\Fixtures\Model\SubSubEntity::class, $classSchema->getProperty('subSubEntity')['type']);
+        $classSchema = $this->reflectionService->getClassSchema(EntityWithUseStatements::class);
+        $this->assertInstanceOf(ClassSchema::class, $classSchema);
+        self::assertEquals(SubSubEntity::class, $classSchema->getProperty('subSubEntity')['type']);
 
         self::assertEquals(Persistence\Fixtures\SubEntity::class, $classSchema->getProperty('propertyFromOtherNamespace')['type']);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function methodParameterTypeExpansionWorksWithFullyQualifiedClassName(): void
     {
-        $methodParameters = $this->reflectionService->getMethodParameters(Reflection\Fixtures\Model\EntityWithUseStatements::class, 'fullyQualifiedClassName');
+        $methodParameters = $this->reflectionService->getMethodParameters(EntityWithUseStatements::class, 'fullyQualifiedClassName');
 
-        $expectedType = Reflection\Fixtures\Model\SubEntity::class;
+        $expectedType = SubEntity::class;
         $actualType = $methodParameters['parameter']['type'];
         self::assertSame($expectedType, $actualType);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function methodParameterTypeExpansionWorksWithAliasedClassName(): void
     {
-        $methodParameters = $this->reflectionService->getMethodParameters(Reflection\Fixtures\Model\EntityWithUseStatements::class, 'aliasedClassName');
+        $methodParameters = $this->reflectionService->getMethodParameters(EntityWithUseStatements::class, 'aliasedClassName');
 
         $expectedType = Persistence\Fixtures\SubEntity::class;
         $actualType = $methodParameters['parameter']['type'];
         self::assertSame($expectedType, $actualType);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function methodParameterTypeExpansionWorksWithRelativeClassName(): void
     {
-        $methodParameters = $this->reflectionService->getMethodParameters(Reflection\Fixtures\Model\EntityWithUseStatements::class, 'relativeClassName');
+        $methodParameters = $this->reflectionService->getMethodParameters(EntityWithUseStatements::class, 'relativeClassName');
 
-        $expectedType = Reflection\Fixtures\Model\SubEntity::class;
+        $expectedType = SubEntity::class;
         $actualType = $methodParameters['parameter']['type'];
         self::assertSame($expectedType, $actualType);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function methodParameterTypeExpansionWorksWithNullable(): void
     {
-        $methodParameters = $this->reflectionService->getMethodParameters(Reflection\Fixtures\Model\EntityWithUseStatements::class, 'nullableClassName');
+        $methodParameters = $this->reflectionService->getMethodParameters(EntityWithUseStatements::class, 'nullableClassName');
 
-        $expectedType = Reflection\Fixtures\Model\SubEntity::class . '|null';
+        $expectedType = SubEntity::class . '|null';
         $actualType = $methodParameters['parameter']['type'];
         self::assertSame($expectedType, $actualType);
     }
 
     /**
-     * @test
      * @see https://github.com/neos/flow-development-collection/issues/3423
      */
+    #[Test]
     public function methodParameterTypeExpansionWorksWithParamsWithPartialAnnotationCoverage()
     {
-        $methodParameters = $this->reflectionService->getMethodParameters(Reflection\Fixtures\Model\EntityWithUseStatements::class, 'multipleParamsWithPartialAnnotationCoverage');
+        $methodParameters = $this->reflectionService->getMethodParameters(EntityWithUseStatements::class, 'multipleParamsWithPartialAnnotationCoverage');
         $expectedResult = [
             'param1' => [
                 'position' => 0,
@@ -247,24 +242,20 @@ class ReflectionServiceTest extends FunctionalTestCase
         self::assertSame($expectedResult, $methodParameters);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function methodParameterTypeExpansionDoesNotModifySimpleTypes(): void
     {
-        $methodParameters = $this->reflectionService->getMethodParameters(Reflection\Fixtures\Model\EntityWithUseStatements::class, 'simpleType');
+        $methodParameters = $this->reflectionService->getMethodParameters(EntityWithUseStatements::class, 'simpleType');
 
         $expectedType = 'float';
         $actualType = $methodParameters['parameter']['type'];
         self::assertSame($expectedType, $actualType);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function integerPropertiesGetANormlizedType()
     {
-        $className = Reflection\Fixtures\DummyClassWithProperties::class;
+        $className = DummyClassWithProperties::class;
 
         $varTagValues = $this->reflectionService->getPropertyTagValues($className, 'intProperty', 'var');
         self::assertCount(1, $varTagValues);
@@ -275,12 +266,10 @@ class ReflectionServiceTest extends FunctionalTestCase
         self::assertEquals('integer', $varTagValues[0]);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function booleanPropertiesGetANormlizedType(): void
     {
-        $className = Reflection\Fixtures\DummyClassWithProperties::class;
+        $className = DummyClassWithProperties::class;
 
         $varTagValues = $this->reflectionService->getPropertyTagValues($className, 'boolProperty', 'var');
         self::assertCount(1, $varTagValues);
@@ -291,120 +280,104 @@ class ReflectionServiceTest extends FunctionalTestCase
         self::assertEquals('boolean', $varTagValues[0]);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function methodParametersGetNormalizedType(): void
     {
-        $methodParameters = $this->reflectionService->getMethodParameters(Reflection\Fixtures\AnnotatedClass::class, 'intAndIntegerParameters');
+        $methodParameters = $this->reflectionService->getMethodParameters(AnnotatedClass::class, 'intAndIntegerParameters');
 
         foreach ($methodParameters as $methodParameter) {
             self::assertEquals('integer', $methodParameter['type']);
         }
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function nullableMethodParametersWorkCorrectly(): void
     {
-        $nativeNullableMethodParameters = $this->reflectionService->getMethodParameters(Reflection\Fixtures\AnnotatedClass::class, 'nativeNullableParameter');
-        $annotatedNullableMethodParameters = $this->reflectionService->getMethodParameters(Reflection\Fixtures\AnnotatedClass::class, 'annotatedNullableParameter');
-        $reverseAnnotatedNullableMethodParameters = $this->reflectionService->getMethodParameters(Reflection\Fixtures\AnnotatedClass::class, 'reverseAnnotatedNullableParameter');
-        $annotatedAndNativeNullableMethodParameters = $this->reflectionService->getMethodParameters(Reflection\Fixtures\AnnotatedClass::class, 'annotatedAndNativeNullableParameter');
+        $nativeNullableMethodParameters = $this->reflectionService->getMethodParameters(AnnotatedClass::class, 'nativeNullableParameter');
+        $annotatedNullableMethodParameters = $this->reflectionService->getMethodParameters(AnnotatedClass::class, 'annotatedNullableParameter');
+        $reverseAnnotatedNullableMethodParameters = $this->reflectionService->getMethodParameters(AnnotatedClass::class, 'reverseAnnotatedNullableParameter');
+        $annotatedAndNativeNullableMethodParameters = $this->reflectionService->getMethodParameters(AnnotatedClass::class, 'annotatedAndNativeNullableParameter');
 
         self::assertTrue($nativeNullableMethodParameters['nullable']['allowsNull']);
         self::assertTrue($annotatedNullableMethodParameters['nullable']['allowsNull']);
         self::assertTrue($reverseAnnotatedNullableMethodParameters['nullable']['allowsNull']);
         self::assertTrue($annotatedAndNativeNullableMethodParameters['nullable']['allowsNull']);
 
-        self::assertEquals(Reflection\Fixtures\AnnotatedClass::class, $nativeNullableMethodParameters['nullable']['type']);
-        self::assertEquals(Reflection\Fixtures\AnnotatedClass::class . '|null', $annotatedNullableMethodParameters['nullable']['type']);
-        self::assertEquals(Reflection\Fixtures\AnnotatedClass::class . '|null', $reverseAnnotatedNullableMethodParameters['nullable']['type']);
-        self::assertEquals(Reflection\Fixtures\AnnotatedClass::class . '|null', $annotatedAndNativeNullableMethodParameters['nullable']['type']);
+        self::assertEquals(AnnotatedClass::class, $nativeNullableMethodParameters['nullable']['type']);
+        self::assertEquals(AnnotatedClass::class . '|null', $annotatedNullableMethodParameters['nullable']['type']);
+        self::assertEquals(AnnotatedClass::class . '|null', $reverseAnnotatedNullableMethodParameters['nullable']['type']);
+        self::assertEquals(AnnotatedClass::class . '|null', $annotatedAndNativeNullableMethodParameters['nullable']['type']);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function scalarTypeHintsWorkCorrectly(): void
     {
-        $methodWithTypeHintsParameters = $this->reflectionService->getMethodParameters(Reflection\Fixtures\DummyClassWithTypeHints::class, 'methodWithScalarTypeHints');
+        $methodWithTypeHintsParameters = $this->reflectionService->getMethodParameters(DummyClassWithTypeHints::class, 'methodWithScalarTypeHints');
 
         self::assertEquals('int', $methodWithTypeHintsParameters['integer']['type']);
         self::assertEquals('string', $methodWithTypeHintsParameters['string']['type']);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function arrayTypeHintsWorkCorrectly(): void
     {
-        $methodWithTypeHintsParameters = $this->reflectionService->getMethodParameters(Reflection\Fixtures\DummyClassWithTypeHints::class, 'methodWithArrayTypeHint');
+        $methodWithTypeHintsParameters = $this->reflectionService->getMethodParameters(DummyClassWithTypeHints::class, 'methodWithArrayTypeHint');
         self::assertEquals('array', $methodWithTypeHintsParameters['array']['type']);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function annotatedArrayTypeHintsWorkCorrectly(): void
     {
-        $methodWithTypeHintsParameters = $this->reflectionService->getMethodParameters(Reflection\Fixtures\DummyClassWithTypeHints::class, 'methodWithArrayTypeHintAndAnnotation');
+        $methodWithTypeHintsParameters = $this->reflectionService->getMethodParameters(DummyClassWithTypeHints::class, 'methodWithArrayTypeHintAndAnnotation');
         self::assertEquals('array<string>', $methodWithTypeHintsParameters['array']['type']);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function unionReturnTypesWorkCorrectly(): void
     {
-        $returnTypeA = $this->reflectionService->getMethodDeclaredReturnType(Reflection\Fixtures\PHP8\DummyClassWithUnionTypeHints::class, 'methodWithUnionReturnTypeA');
-        $returnTypeB = $this->reflectionService->getMethodDeclaredReturnType(Reflection\Fixtures\PHP8\DummyClassWithUnionTypeHints::class, 'methodWithUnionReturnTypesB');
-        $returnTypeC = $this->reflectionService->getMethodDeclaredReturnType(Reflection\Fixtures\PHP8\DummyClassWithUnionTypeHints::class, 'methodWithUnionReturnTypesC');
+        $returnTypeA = $this->reflectionService->getMethodDeclaredReturnType(DummyClassWithUnionTypeHints::class, 'methodWithUnionReturnTypeA');
+        $returnTypeB = $this->reflectionService->getMethodDeclaredReturnType(DummyClassWithUnionTypeHints::class, 'methodWithUnionReturnTypesB');
+        $returnTypeC = $this->reflectionService->getMethodDeclaredReturnType(DummyClassWithUnionTypeHints::class, 'methodWithUnionReturnTypesC');
 
-        self::assertEquals('string|false', $returnTypeA);
-        self::assertEquals('\Neos\Flow\Tests\Functional\Reflection\Fixtures\PHP8\DummyClassWithUnionTypeHints|false', $returnTypeB);
-        self::assertEquals('?\Neos\Flow\Tests\Functional\Reflection\Fixtures\PHP8\DummyClassWithUnionTypeHints', $returnTypeC);
+        self::assertSame('string|false', $returnTypeA);
+        self::assertSame('\Neos\Flow\Tests\Functional\Reflection\Fixtures\PHP8\DummyClassWithUnionTypeHints|false', $returnTypeB);
+        self::assertSame('?\Neos\Flow\Tests\Functional\Reflection\Fixtures\PHP8\DummyClassWithUnionTypeHints', $returnTypeC);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function disjunctiveNormalFormTypesWorkCorrectly(): void
     {
-        $parameters = $this->reflectionService->getMethodParameters(Reflection\Fixtures\PHP8\DummyClassWithDisjunctiveNormalFormTypes::class, 'dnfTypesA');
+        $parameters = $this->reflectionService->getMethodParameters(DummyClassWithDisjunctiveNormalFormTypes::class, 'dnfTypesA');
         self::assertEquals(
-            Reflection\Fixtures\DummyReadonlyClass::class .
+            DummyReadonlyClass::class .
             '|(' .
-            Reflection\Fixtures\DummyClassWithTypeHints::class .
+            DummyClassWithTypeHints::class .
             '&' .
-            Reflection\Fixtures\PHP8\DummyClassWithUnionTypeHints::class .
+            DummyClassWithUnionTypeHints::class .
             ')|null',
             $parameters['theParameter']['type']
         );
 
-        $parameters = $this->reflectionService->getMethodParameters(Reflection\Fixtures\PHP8\DummyClassWithDisjunctiveNormalFormTypes::class, 'dnfTypesB');
+        $parameters = $this->reflectionService->getMethodParameters(DummyClassWithDisjunctiveNormalFormTypes::class, 'dnfTypesB');
         self::assertEquals(
-            Reflection\Fixtures\DummyReadonlyClass::class .
+            DummyReadonlyClass::class .
             '|(' .
-            Reflection\Fixtures\DummyClassWithTypeHints::class .
+            DummyClassWithTypeHints::class .
             '&' .
-            Reflection\Fixtures\PHP8\DummyClassWithUnionTypeHints::class .
+            DummyClassWithUnionTypeHints::class .
             ')|(' .
-            Reflection\Fixtures\DummyClassWithTypeHints::class .
+            DummyClassWithTypeHints::class .
             '&' .
-            Reflection\Fixtures\DummyClassWithProperties::class .
+            DummyClassWithProperties::class .
             ')|null',
             $parameters['theParameter']['type']
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function readonlyClassIsDetectedCorrectly(): void
     {
-        $isReadonly = $this->reflectionService->isClassReadOnly(Reflection\Fixtures\DummyReadonlyClass::class);
+        $isReadonly = $this->reflectionService->isClassReadOnly(DummyReadonlyClass::class);
         self::assertTrue($isReadonly);
     }
 }

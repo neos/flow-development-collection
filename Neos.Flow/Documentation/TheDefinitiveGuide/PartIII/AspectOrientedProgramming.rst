@@ -192,7 +192,7 @@ After returning advice
 	exception, the after returning advice is not executed.
 
 After throwing advice
-	An after throwing advice is only executed if the target method throwed an
+	An after throwing advice is only executed if the target method threw an
 	exception. The after throwing advice may fetch the exception type from the
 	join point object.
 
@@ -298,6 +298,22 @@ aspect.
 	This can be explicitly disabled with a ``@Flow\Proxy(false)`` annotation on the
 	class in question.
 
+.. Note::
+	Methods returning by reference (``public function &foo()``) cannot be advised:
+	the return value travels through the advice chain by value, therefore the
+	reference would be lost silently. Instead of changing the semantics of such a
+	method, Flow refuses to build the interceptor code and throws an exception
+	while compiling the proxy classes.
+
+.. Note::
+	Classes declared ``readonly`` cannot be advised: the woven advice code needs
+	mutable state (the advice chains and the re-entrance flags), which a readonly
+	class does not allow. Flow refuses to build such a proxy class and throws an
+	exception while compiling the proxy classes. Either remove the advice for that
+	class or drop the ``readonly`` modifier. Note that this also applies to a
+	readonly class annotated with ``@Flow\Scope("session")``, because the session
+	scope implicitly pulls in Flow's lazy loading aspect.
+
 Pointcuts
 =========
 
@@ -344,7 +360,7 @@ the pointcut matches and advices which refer to this pointcut become active.
 Pointcut designators
 --------------------
 
-A pointcut expression always consists of two parts: The poincut designator and
+A pointcut expression always consists of two parts: The pointcut designator and
 its parameter(s). The following designators are supported by Flow:
 
 method()
@@ -720,7 +736,7 @@ advices may read the result of the target method, but can't modify it.
 	/**
 	 * After returning advice
 	 *
-	 * @Flow\AfterReturning("method(public Example\News\FeedAgregator->[import|update].*()) || Example\MyPackage\MyAspect->someOtherPointcut")
+	 * @Flow\AfterReturning("method(public Example\News\FeedAggregator->[import|update].*()) || Example\MyPackage\MyAspect->someOtherPointcut")
 	 */
 	public function myAfterReturningAdvice(\Neos\Flow\AOP\JoinPointInterface $joinPoint): void
 	{

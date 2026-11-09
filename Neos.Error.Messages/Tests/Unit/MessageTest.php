@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Neos\Error\Messages\Tests\Unit;
 
 /*
@@ -10,61 +13,52 @@ namespace Neos\Error\Messages\Tests\Unit;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
 use Neos\Error\Messages\Message;
+use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Testcase for the Message object
  */
-class MessageTest extends \PHPUnit\Framework\TestCase
+final class MessageTest extends TestCase
 {
-    /**
-     * @test
-     */
+    #[Test]
     public function constructorSetsMessage()
     {
         $someMessage = 'The message';
         $someMessageCode = 12345;
         $message = new Message($someMessage, $someMessageCode);
-        self::assertEquals($someMessage, $message->getMessage());
+        self::assertSame($someMessage, $message->getMessage());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function constructorSetsArguments()
     {
         $someArguments = ['Foo', 'Bar'];
         $someMessageCode = 12345;
         $message = new Message('', $someMessageCode, $someArguments);
-        self::assertEquals($someArguments, $message->getArguments());
+        self::assertSame($someArguments, $message->getArguments());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function constructorSetsCode()
     {
         $someMessage = 'The message';
         $someMessageCode = 12345;
         $message = new Message($someMessage, $someMessageCode);
-        self::assertEquals($someMessageCode, $message->getCode());
+        self::assertSame($someMessageCode, $message->getCode());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function renderReturnsTheMessageTextIfNoArgumentsAreSpecified()
     {
         $someMessage = 'The message';
         $someMessageCode = 12345;
         $message = new Message($someMessage, $someMessageCode);
-        self::assertEquals($someMessage, $message->render());
+        self::assertSame($someMessage, $message->render());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function renderReplacesArgumentsInTheMessageText()
     {
         $someMessage = 'The message with %2$s and %1$s';
@@ -74,12 +68,10 @@ class MessageTest extends \PHPUnit\Framework\TestCase
 
         $expectedResult = 'The message with Bar and Foo';
         $actualResult = $message->render();
-        self::assertEquals($expectedResult, $actualResult);
+        self::assertSame($expectedResult, $actualResult);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function convertingTheMessageToStringRendersIt()
     {
         $someMessage = 'The message with %2$s and %1$s';
@@ -89,6 +81,6 @@ class MessageTest extends \PHPUnit\Framework\TestCase
 
         $expectedResult = 'The message with Bar and Foo';
         $actualResult = (string)$message;
-        self::assertEquals($expectedResult, $actualResult);
+        self::assertSame($expectedResult, $actualResult);
     }
 }

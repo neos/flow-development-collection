@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Cache;
 
 /*
@@ -10,8 +11,8 @@ namespace Neos\Cache;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use Neos\Cache\Exception\InvalidCacheException;
 use Neos\Cache\Exception\InvalidBackendException;
+use Neos\Cache\Exception\InvalidCacheException;
 use Neos\Cache\Frontend\FrontendInterface;
 
 /**

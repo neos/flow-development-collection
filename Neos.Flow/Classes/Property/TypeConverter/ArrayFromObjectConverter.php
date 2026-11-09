@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Property\TypeConverter;
 
 /*
@@ -12,8 +13,8 @@ namespace Neos\Flow\Property\TypeConverter;
  */
 
 use Doctrine\Persistence\Proxy as DoctrineProxy;
-use Neos\Flow\Annotations as Flow;
 use Neos\Error\Messages\Error;
+use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Persistence\Aspect\PersistenceMagicInterface;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Flow\Property\PropertyMappingConfigurationInterface;
@@ -50,7 +51,7 @@ class ArrayFromObjectConverter extends AbstractTypeConverter
      * Convert all properties in the source array
      *
      * @param mixed $source
-     * @return array
+     * @return array<string,mixed>
      */
     public function getSourceChildPropertiesToBeConverted($source)
     {
@@ -90,7 +91,7 @@ class ArrayFromObjectConverter extends AbstractTypeConverter
      *
      * @param mixed $source
      * @param string $targetType
-     * @param array $convertedChildProperties
+     * @param array<string,mixed> $convertedChildProperties
      * @param PropertyMappingConfigurationInterface|null $configuration
      * @return mixed|Error the target type, or an error object if a user-error occurred
      * @api

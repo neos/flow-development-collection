@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\FluidAdaptor\Tests\Functional\Core\Fixtures\ViewHelpers\Controller\View;
 
 /*

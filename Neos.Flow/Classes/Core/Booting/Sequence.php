@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Core\Booting;
 
 /*
@@ -28,7 +29,7 @@ class Sequence
     protected $identifier;
 
     /**
-     * @var array
+     * @var array<string,array<int|string,Step>>
      */
     protected $steps = [];
 

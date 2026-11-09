@@ -1,22 +1,24 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Neos\Eel\Tests\Unit\Validation;
 
 use Neos\Eel\Validation\ExpressionSyntaxValidator;
 use Neos\Flow\Tests\Unit\Validation\Validator\AbstractValidatorTestcase;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Tests for the ExpressionSyntaxValidator
  */
-class ExpressionSyntaxValidatorTest extends AbstractValidatorTestcase
+final class ExpressionSyntaxValidatorTest extends AbstractValidatorTestcase
 {
     /**
      * @var string
      */
     protected $validatorClassName = ExpressionSyntaxValidator::class;
 
-    /**
-     * @test
-     */
+    #[Test]
     public function validExpressionPasses()
     {
         self::assertFalse(
@@ -24,9 +26,7 @@ class ExpressionSyntaxValidatorTest extends AbstractValidatorTestcase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function invalidExpressionIsConsideredErroneous()
     {
         self::assertTrue(
@@ -34,9 +34,7 @@ class ExpressionSyntaxValidatorTest extends AbstractValidatorTestcase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function invalidExpressionGivesErrorPositionInformation()
     {
         $errorArguments =

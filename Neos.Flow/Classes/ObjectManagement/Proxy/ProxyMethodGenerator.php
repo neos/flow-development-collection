@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\ObjectManagement\Proxy;
 
 /*
@@ -43,8 +44,9 @@ class ProxyMethodGenerator extends MethodGenerator
     {
         $instance = parent::copyMethodSignature($reflectionMethod);
         assert($instance instanceof static);
-        if ($reflectionMethod->getDocComment() !== false) {
-            $instance->setDocBlock(DocBlockGenerator::fromReflection($reflectionMethod->getDocBlock()));
+        $docBlock = $reflectionMethod->getDocBlock();
+        if ($docBlock !== false) {
+            $instance->setDocBlock(DocBlockGenerator::fromReflection($docBlock));
         }
         $instance->fullOriginalClassName = $reflectionMethod->getDeclaringClass()->getName();
         $instance->attributesCode = $instance->buildAttributesCode($reflectionMethod);
@@ -169,14 +171,21 @@ class ProxyMethodGenerator extends MethodGenerator
                     $code .= '    ' . $callParentMethodCode;
                 }
             } else {
-                $code .= '$result = ' . ($callParentMethodCode === '' ? "null;\n" : $callParentMethodCode);
+                # A method returning by reference must assign the parent call by reference as well,
+                # otherwise the "return $result;" below would return a copy instead of the reference:
+                $referenceOperator = ($this->returnsReference() ? '&' : '');
+                $code .= '$result = ' . ($callParentMethodCode === '' ? "null;\n" : $referenceOperator . $callParentMethodCode);
             }
             $code .= $this->addedPostParentCallCode;
             if (!$returnTypeIsVoidOrNever) {
                 $code .= "return \$result;\n";
             }
-        } elseif (!$returnTypeIsVoidOrNever && $callParentMethodCode !== '') {
-            $code .= 'return ' . $callParentMethodCode . ";\n";
+        } elseif ($callParentMethodCode !== '') {
+            if ($returnTypeIsVoidOrNever) {
+                $code .= '    ' . $callParentMethodCode;
+            } else {
+                $code .= 'return ' . $callParentMethodCode . ";\n";
+            }
         }
         return $code;
     }
@@ -219,7 +228,9 @@ class ProxyMethodGenerator extends MethodGenerator
                 if ($addTypeAndDefaultValue) {
                     $parameterOutput[] = $parameter->generate();
                 } else {
-                    $parameterOutput[] = '$' . $parameter->getName();
+                    # A variadic parameter arrives as an array and thus needs to be unpacked again
+                    # when it is passed on to the original method:
+                    $parameterOutput[] = ($parameter->getVariadic() ? '...' : '') . '$' . $parameter->getName();
                 }
             }
             $methodParametersCode .= implode(', ', $parameterOutput);

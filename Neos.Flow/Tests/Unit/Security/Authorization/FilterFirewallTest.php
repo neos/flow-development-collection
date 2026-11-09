@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Neos\Flow\Tests\Unit\Security\Authorization;
 
 /*
@@ -10,7 +13,6 @@ namespace Neos\Flow\Tests\Unit\Security\Authorization;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Security\Authorization\FilterFirewall;
@@ -22,17 +24,18 @@ use Neos\Flow\Security\Exception\AccessDeniedException;
 use Neos\Flow\Security\RequestPattern\Uri;
 use Neos\Flow\Security\RequestPatternResolver;
 use Neos\Flow\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Testcase for the filter firewall
  *
  */
-class FilterFirewallTest extends UnitTestCase
+final class FilterFirewallTest extends UnitTestCase
 {
     /**
-     * @test
      * @return void
      */
+    #[Test]
     public function configuredFiltersAreCreatedCorrectlyUsingNewSettingsFormat()
     {
         $resolveRequestPatternClassCallback = function () {
@@ -55,10 +58,10 @@ class FilterFirewallTest extends UnitTestCase
             }
         };
 
-        $mockRequestPattern1 = $this->createMock(Uri::class);
-        $mockRequestPattern2 = $this->createMock(Uri::class);
-        $accessGrant = $this->createMock(AccessGrant::class);
-        $testInterceptor = $this->createMock(InterceptorInterface::class);
+        $mockRequestPattern1 = $this->createStub(Uri::class);
+        $mockRequestPattern2 = $this->createStub(Uri::class);
+        $accessGrant = $this->createStub(AccessGrant::class);
+        $testInterceptor = $this->createStub(InterceptorInterface::class);
 
         $getObjectCallback = function () use ($mockRequestPattern1, $mockRequestPattern2, $accessGrant, $testInterceptor) {
             $args = func_get_args();
@@ -84,11 +87,11 @@ class FilterFirewallTest extends UnitTestCase
         };
 
         $mockObjectManager = $this->createMock(ObjectManagerInterface::class);
-        $mockObjectManager->expects(self::any())->method('get')->will(self::returnCallBack($getObjectCallback));
-        $mockPatternResolver = $this->getMockBuilder(RequestPatternResolver::class)->disableOriginalConstructor()->getMock();
-        $mockPatternResolver->expects(self::any())->method('resolveRequestPatternClass')->will(self::returnCallBack($resolveRequestPatternClassCallback));
-        $mockInterceptorResolver = $this->getMockBuilder(InterceptorResolver::class)->disableOriginalConstructor()->getMock();
-        $mockInterceptorResolver->expects(self::any())->method('resolveInterceptorClass')->will(self::returnCallBack($resolveInterceptorClassCallback));
+        $mockObjectManager->method('get')->willReturnCallback($getObjectCallback);
+        $mockPatternResolver = $this->createMock(RequestPatternResolver::class);
+        $mockPatternResolver->method('resolveRequestPatternClass')->willReturnCallback($resolveRequestPatternClassCallback);
+        $mockInterceptorResolver = $this->createMock(InterceptorResolver::class);
+        $mockInterceptorResolver->method('resolveInterceptorClass')->willReturnCallback($resolveInterceptorClassCallback);
 
         $settings = [
             'Some.Package:AllowedUris' => [
@@ -122,43 +125,38 @@ class FilterFirewallTest extends UnitTestCase
         self::assertEquals($testInterceptor, $result[1]->getSecurityInterceptor());
     }
 
-
-    /**
-     * @test
-     */
+    #[Test]
     public function allConfiguredFiltersAreCalled()
     {
-        $mockActionRequest = $this->getMockBuilder(ActionRequest::class)->disableOriginalConstructor()->getMock();
+        $mockActionRequest = $this->createStub(ActionRequest::class);
 
-        $mockFilter1 = $this->getMockBuilder(RequestFilter::class)->disableOriginalConstructor()->getMock();
-        $mockFilter1->expects(self::once())->method('filterRequest')->with($mockActionRequest);
-        $mockFilter2 = $this->getMockBuilder(RequestFilter::class)->disableOriginalConstructor()->getMock();
-        $mockFilter2->expects(self::once())->method('filterRequest')->with($mockActionRequest);
-        $mockFilter3 = $this->getMockBuilder(RequestFilter::class)->disableOriginalConstructor()->getMock();
-        $mockFilter3->expects(self::once())->method('filterRequest')->with($mockActionRequest);
+        $mockFilter1 = $this->createMock(RequestFilter::class);
+        $mockFilter1->expects($this->once())->method('filterRequest')->with($mockActionRequest);
+        $mockFilter2 = $this->createMock(RequestFilter::class);
+        $mockFilter2->expects($this->once())->method('filterRequest')->with($mockActionRequest);
+        $mockFilter3 = $this->createMock(RequestFilter::class);
+        $mockFilter3->expects($this->once())->method('filterRequest')->with($mockActionRequest);
 
-        $firewall = $this->getAccessibleMock(FilterFirewall::class, ['dummy'], [], '', false);
+        $firewall = $this->getAccessibleMock(FilterFirewall::class, [], [], '', false);
         $firewall->_set('filters', [$mockFilter1, $mockFilter2, $mockFilter3]);
 
         $firewall->blockIllegalRequests($mockActionRequest);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function ifRejectAllIsSetAndNoFilterExplicitlyAllowsTheRequestAPermissionDeniedExceptionIsThrown()
     {
         $this->expectException(AccessDeniedException::class);
-        $mockActionRequest = $this->getMockBuilder(ActionRequest::class)->disableOriginalConstructor()->getMock();
+        $mockActionRequest = $this->createStub(ActionRequest::class);
 
-        $mockFilter1 = $this->getMockBuilder(RequestFilter::class)->disableOriginalConstructor()->getMock();
-        $mockFilter1->expects(self::once())->method('filterRequest')->with($mockActionRequest)->will(self::returnValue(false));
-        $mockFilter2 = $this->getMockBuilder(RequestFilter::class)->disableOriginalConstructor()->getMock();
-        $mockFilter2->expects(self::once())->method('filterRequest')->with($mockActionRequest)->will(self::returnValue(false));
-        $mockFilter3 = $this->getMockBuilder(RequestFilter::class)->disableOriginalConstructor()->getMock();
-        $mockFilter3->expects(self::once())->method('filterRequest')->with($mockActionRequest)->will(self::returnValue(false));
+        $mockFilter1 = $this->createMock(RequestFilter::class);
+        $mockFilter1->expects($this->once())->method('filterRequest')->with($mockActionRequest)->willReturn((false));
+        $mockFilter2 = $this->createMock(RequestFilter::class);
+        $mockFilter2->expects($this->once())->method('filterRequest')->with($mockActionRequest)->willReturn((false));
+        $mockFilter3 = $this->createMock(RequestFilter::class);
+        $mockFilter3->expects($this->once())->method('filterRequest')->with($mockActionRequest)->willReturn((false));
 
-        $firewall = $this->getAccessibleMock(FilterFirewall::class, ['dummy'], [], '', false);
+        $firewall = $this->getAccessibleMock(FilterFirewall::class, [], [], '', false);
         $firewall->_set('filters', [$mockFilter1, $mockFilter2, $mockFilter3]);
         $firewall->_set('rejectAll', true);
 

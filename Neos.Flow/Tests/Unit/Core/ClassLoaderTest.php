@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Neos\Flow\Tests\Unit\Core;
 
 /*
@@ -10,17 +13,18 @@ namespace Neos\Flow\Tests\Unit\Core;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
-use org\bovigo\vfs\vfsStream;
 use Neos\Flow\Core\ClassLoader;
 use Neos\Flow\Package\Package;
 use Neos\Flow\Tests\UnitTestCase;
+use org\bovigo\vfs\vfsStream;
+use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\MockObject\MockObject;
 
 /**
  * Testcase for the object class loader
  *
  */
-class ClassLoaderTest extends UnitTestCase
+final class ClassLoaderTest extends UnitTestCase
 {
     /**
      * @var ClassLoader
@@ -28,17 +32,17 @@ class ClassLoaderTest extends UnitTestCase
     protected $classLoader;
 
     /**
-     * @var Package|\PHPUnit\Framework\MockObject\MockObject
+     * @var Package|MockObject
      */
     protected $mockPackage1;
 
     /**
-     * @var Package|\PHPUnit\Framework\MockObject\MockObject
+     * @var Package|MockObject
      */
     protected $mockPackage2;
 
     /**
-     * @var Package[]|\PHPUnit\Framework\MockObject\MockObject[]
+     * @var Package[]|MockObject[]
      */
     protected $mockPackages;
 
@@ -66,10 +70,10 @@ class ClassLoaderTest extends UnitTestCase
 
         $this->classLoader = new ClassLoader();
 
-        $this->mockPackage1 = $this->getMockBuilder(Package::class)->disableOriginalConstructor()->getMock();
-        $this->mockPackage1->expects(self::any())->method('getNamespaces')->will(self::returnValue(['Acme\\MyApp']));
-        $this->mockPackage1->expects(self::any())->method('getPackagePath')->will(self::returnValue('vfs://Test/Packages/Application/Acme.MyApp/'));
-        $this->mockPackage1->expects(self::any())->method('getFlattenedAutoloadConfiguration')->will(self::returnValue([
+        $this->mockPackage1 = $this->createMock(Package::class);
+        $this->mockPackage1->method('getNamespaces')->willReturn((['Acme\\MyApp']));
+        $this->mockPackage1->method('getPackagePath')->willReturn(('vfs://Test/Packages/Application/Acme.MyApp/'));
+        $this->mockPackage1->method('getFlattenedAutoloadConfiguration')->willReturn(([
             [
                 'namespace' => 'Acme\\MyApp',
                 'classPath' => 'vfs://Test/Packages/Application/Acme.MyApp/Classes/',
@@ -77,10 +81,10 @@ class ClassLoaderTest extends UnitTestCase
             ]
         ]));
 
-        $this->mockPackage2 = $this->getMockBuilder(Package::class)->disableOriginalConstructor()->getMock();
-        $this->mockPackage2->expects(self::any())->method('getNamespaces')->will(self::returnValue(['Acme\\MyAppAddon']));
-        $this->mockPackage2->expects(self::any())->method('getPackagePath')->will(self::returnValue('vfs://Test/Packages/Application/Acme.MyAppAddon/'));
-        $this->mockPackage2->expects(self::any())->method('getFlattenedAutoloadConfiguration')->will(self::returnValue([
+        $this->mockPackage2 = $this->createMock(Package::class);
+        $this->mockPackage2->method('getNamespaces')->willReturn((['Acme\\MyAppAddon']));
+        $this->mockPackage2->method('getPackagePath')->willReturn(('vfs://Test/Packages/Application/Acme.MyAppAddon/'));
+        $this->mockPackage2->method('getFlattenedAutoloadConfiguration')->willReturn(([
             [
                 'namespace' => 'Acme\MyAppAddon',
                 'classPath' => 'vfs://Test/Packages/Application/Acme.MyAppAddon/Classes/',
@@ -95,9 +99,8 @@ class ClassLoaderTest extends UnitTestCase
 
     /**
      * Checks if the package autoloader loads classes from subdirectories.
-     *
-     * @test
      */
+    #[Test]
     public function classesFromSubDirectoriesAreLoaded()
     {
         mkdir('vfs://Test/Packages/Application/Acme.MyApp/Classes/Acme/MyApp/SubDirectory', 0770, true);
@@ -109,9 +112,8 @@ class ClassLoaderTest extends UnitTestCase
 
     /**
      * Checks if the class loader loads classes from the functional tests directory
-     *
-     * @test
      */
+    #[Test]
     public function classesFromFunctionalTestsDirectoriesAreLoaded()
     {
         mkdir('vfs://Test/Packages/Application/Acme.MyApp/Tests/Functional/Essentials', 0770, true);
@@ -124,9 +126,7 @@ class ClassLoaderTest extends UnitTestCase
         self::assertTrue(self::$testClassWasLoaded);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function classesFromDeeplyNestedSubDirectoriesAreLoaded()
     {
         mkdir('vfs://Test/Packages/Application/Acme.MyApp/Classes/Acme/MyApp/SubDirectory/A/B/C/D', 0770, true);
@@ -139,9 +139,8 @@ class ClassLoaderTest extends UnitTestCase
     /**
      * Checks if the package autoloader loads classes from packages that match a
      * substring of another package (e.g. Media vs. Neos).
-     *
-     * @test
      */
+    #[Test]
     public function classesFromSubMatchingPackagesAreLoaded()
     {
         mkdir('vfs://Test/Packages/Application/Acme.MyAppAddon/Classes/Acme/MyAppAddon', 0770, true);
@@ -153,9 +152,8 @@ class ClassLoaderTest extends UnitTestCase
 
     /**
      * Checks if the package autoloader loads classes from subdirectories.
-     *
-     * @test
      */
+    #[Test]
     public function classesWithUnderscoresAreLoaded()
     {
         mkdir('vfs://Test/Packages/Application/Acme.MyApp/Classes/Acme/MyApp', 0770, true);
@@ -167,9 +165,8 @@ class ClassLoaderTest extends UnitTestCase
 
     /**
      * Checks if the package autoloader loads classes from subdirectories with underscores.
-     *
-     * @test
      */
+    #[Test]
     public function namespaceWithUnderscoresAreLoaded()
     {
         mkdir('vfs://Test/Packages/Application/Acme.MyApp/Classes/Acme/MyApp/My_Underscore', 0770, true);
@@ -181,9 +178,8 @@ class ClassLoaderTest extends UnitTestCase
 
     /**
      * Checks if the package autoloader loads classes from subdirectories.
-     *
-     * @test
      */
+    #[Test]
     public function classesWithOnlyUnderscoresAreLoaded()
     {
         mkdir('vfs://Test/Packages/Application/Acme.MyApp/Classes/Acme/MyApp', 0770, true);
@@ -193,9 +189,7 @@ class ClassLoaderTest extends UnitTestCase
         self::assertTrue(self::$testClassWasLoaded);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function classesWithLeadingBackslashAreLoaded()
     {
         mkdir('vfs://Test/Packages/Application/Acme.MyApp/Classes/Acme/MyApp', 0770, true);
@@ -205,9 +199,7 @@ class ClassLoaderTest extends UnitTestCase
         self::assertTrue(self::$testClassWasLoaded);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function classesFromInactivePackagesAreNotLoaded()
     {
         $this->classLoader = new ClassLoader();
@@ -221,15 +213,13 @@ class ClassLoaderTest extends UnitTestCase
         self::assertFalse(self::$testClassWasLoaded);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function classesFromPsr4PackagesAreLoaded()
     {
-        $this->mockPackage1 = $this->getMockBuilder(Package::class)->disableOriginalConstructor()->getMock();
-        $this->mockPackage1->expects(self::any())->method('getNamespaces')->will(self::returnValue(['Acme\\MyApp']));
-        $this->mockPackage1->expects(self::any())->method('getPackagePath')->will(self::returnValue('vfs://Test/Packages/Application/Acme.MyApp/'));
-        $this->mockPackage1->expects(self::any())->method('getFlattenedAutoloadConfiguration')->will(self::returnValue([
+        $this->mockPackage1 = $this->createMock(Package::class);
+        $this->mockPackage1->method('getNamespaces')->willReturn((['Acme\\MyApp']));
+        $this->mockPackage1->method('getPackagePath')->willReturn(('vfs://Test/Packages/Application/Acme.MyApp/'));
+        $this->mockPackage1->method('getFlattenedAutoloadConfiguration')->willReturn(([
             [
                 'namespace' => 'Acme\\MyApp',
                 'classPath' => 'vfs://Test/Packages/Application/Acme.MyApp/Classes/',
@@ -246,16 +236,14 @@ class ClassLoaderTest extends UnitTestCase
         self::assertTrue(self::$testClassWasLoaded);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function classesFromOverlayedPsr4PackagesAreLoaded()
     {
         $this->classLoader = new ClassLoader();
 
-        $mockPackage1 = $this->getMockBuilder(Package::class)->disableOriginalConstructor()->getMock();
-        $mockPackage1->expects(self::any())->method('getNamespaces')->will(self::returnValue(['TestPackage\\Subscriber\\Log']));
-        $mockPackage1->expects(self::any())->method('getFlattenedAutoloadConfiguration')->will(self::returnValue([
+        $mockPackage1 = $this->createMock(Package::class);
+        $mockPackage1->method('getNamespaces')->willReturn((['TestPackage\\Subscriber\\Log']));
+        $mockPackage1->method('getFlattenedAutoloadConfiguration')->willReturn(([
             [
                 'namespace' => 'TestPackage\Subscriber\Log',
                 'classPath' => 'vfs://Test/Packages/Libraries/test/subPackage/src/',
@@ -263,8 +251,8 @@ class ClassLoaderTest extends UnitTestCase
             ]
         ]));
 
-        $mockPackage2 = $this->getMockBuilder(Package::class)->disableOriginalConstructor()->getMock();
-        $mockPackage2->expects(self::any())->method('getFlattenedAutoloadConfiguration')->will(self::returnValue([
+        $mockPackage2 = $this->createMock(Package::class);
+        $mockPackage2->method('getFlattenedAutoloadConfiguration')->willReturn(([
             [
                 'namespace' => 'TestPackage',
                 'classPath' => 'vfs://Test/Packages/Libraries/test/mainPackage/src/',
@@ -289,16 +277,14 @@ class ClassLoaderTest extends UnitTestCase
         self::assertTrue(self::$testClassWasLoaded);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function classesFromOverlayedPsr4PackagesAreOverwritten()
     {
         $this->classLoader = new ClassLoader();
 
-        $mockPackage1 = $this->getMockBuilder(Package::class)->disableOriginalConstructor()->getMock();
-        $mockPackage1->expects(self::any())->method('getNamespaces')->will(self::returnValue(['TestPackage\\Foo']));
-        $mockPackage1->expects(self::any())->method('getFlattenedAutoloadConfiguration')->will(self::returnValue([
+        $mockPackage1 = $this->createMock(Package::class);
+        $mockPackage1->method('getNamespaces')->willReturn((['TestPackage\\Foo']));
+        $mockPackage1->method('getFlattenedAutoloadConfiguration')->willReturn(([
             [
                 'namespace' => 'TestPackage\Foo',
                 'classPath' => 'vfs://Test/Packages/Libraries/test/subPackage/src/',
@@ -306,9 +292,9 @@ class ClassLoaderTest extends UnitTestCase
             ]
         ]));
 
-        $mockPackage2 = $this->getMockBuilder(Package::class)->disableOriginalConstructor()->getMock();
-        $mockPackage2->expects(self::any())->method('getNamespaces')->will(self::returnValue(['TestPackage']));
-        $mockPackage2->expects(self::any())->method('getFlattenedAutoloadConfiguration')->will(self::returnValue([
+        $mockPackage2 = $this->createMock(Package::class);
+        $mockPackage2->method('getNamespaces')->willReturn((['TestPackage']));
+        $mockPackage2->method('getFlattenedAutoloadConfiguration')->willReturn(([
             [
                 'namespace' => 'TestPackage',
                 'classPath' => 'vfs://Test/Packages/Libraries/test/mainPackage/src/',

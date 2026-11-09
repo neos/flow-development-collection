@@ -1,5 +1,9 @@
 <?php
+
 namespace Neos\Eel\Tests\Functional\FlowQuery\Fixtures;
+
+use Neos\Eel\FlowQuery\FlowQuery;
+use Neos\Eel\FlowQuery\Operations\AbstractOperation;
 
 /*
  * This file is part of the Neos.Eel package.
@@ -10,16 +14,14 @@ namespace Neos\Eel\Tests\Functional\FlowQuery\Fixtures;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
-
-class ExampleFinalOperationWithHigherPriority extends \Neos\Eel\FlowQuery\Operations\AbstractOperation
+class ExampleFinalOperationWithHigherPriority extends AbstractOperation
 {
     protected static $shortName = 'exampleFinalOperation';
     protected static $final = true;
 
     protected static $priority = 100;
 
-    public function evaluate(\Neos\Eel\FlowQuery\FlowQuery $query, array $arguments)
+    public function evaluate(FlowQuery $query, array $arguments)
     {
         return 'Priority 100';
     }

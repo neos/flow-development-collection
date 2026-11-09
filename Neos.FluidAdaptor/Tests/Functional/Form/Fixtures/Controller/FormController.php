@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\FluidAdaptor\Tests\Functional\Form\Fixtures\Controller;
 
 /*
@@ -10,14 +11,15 @@ namespace Neos\FluidAdaptor\Tests\Functional\Form\Fixtures\Controller;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
 use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Mvc\Controller\ActionController;
+use Neos\FluidAdaptor\Tests\Functional\Form\Fixtures\Domain\Model\Post;
 
 /**
  * Controller for simple CRUD actions, to test Fluid forms in
  * combination with Property Mapping
  */
-class FormController extends \Neos\Flow\Mvc\Controller\ActionController
+class FormController extends ActionController
 {
     /**
      * Display a start page
@@ -29,10 +31,10 @@ class FormController extends \Neos\Flow\Mvc\Controller\ActionController
     }
 
     /**
-     * @param \Neos\FluidAdaptor\Tests\Functional\Form\Fixtures\Domain\Model\Post $post
+     * @param Post $post
      * @return string
      */
-    public function createAction(\Neos\FluidAdaptor\Tests\Functional\Form\Fixtures\Domain\Model\Post $post)
+    public function createAction(Post $post)
     {
         return $post->getName() . '|' . $post->getAuthor()->getEmailAddress();
     }
@@ -40,20 +42,20 @@ class FormController extends \Neos\Flow\Mvc\Controller\ActionController
     /**
      * We deliberately use a different variable name in the index action and the create action; as the same variable name is not required!
      *
-     * @param \Neos\FluidAdaptor\Tests\Functional\Form\Fixtures\Domain\Model\Post $fooPost
+     * @param Post $fooPost
      * @return void
      * @Flow\IgnoreValidation("$fooPost")
      */
-    public function editAction(?\Neos\FluidAdaptor\Tests\Functional\Form\Fixtures\Domain\Model\Post $fooPost = null)
+    public function editAction(?Post $fooPost = null)
     {
         $this->view->assign('fooPost', $fooPost);
     }
 
     /**
-     * @param \Neos\FluidAdaptor\Tests\Functional\Form\Fixtures\Domain\Model\Post $post
+     * @param Post $post
      * @return string
      */
-    public function updateAction(\Neos\FluidAdaptor\Tests\Functional\Form\Fixtures\Domain\Model\Post $post)
+    public function updateAction(Post $post)
     {
         return $post->getName() . '|' . $post->getAuthor()->getEmailAddress();
     }

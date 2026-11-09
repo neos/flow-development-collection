@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Neos\Flow\Tests\Unit\Property;
 
 /*
@@ -10,7 +13,6 @@ namespace Neos\Flow\Tests\Unit\Property;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
 use Neos\Flow\Core\Bootstrap;
 use Neos\Flow\Property\Exception\DuplicateTypeConverterException;
 use Neos\Flow\Property\Exception\InvalidSourceException;
@@ -23,13 +25,17 @@ use Neos\Flow\Property\TypeConverterInterface;
 use Neos\Flow\Security\Exception;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Utility\TypeHandling;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\DoesNotPerformAssertions;
+use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\MockObject\MockObject;
 
 require_once(__DIR__ . '/../Fixtures/ClassWithSetters.php');
 
 /**
  * Testcase for the Property Mapper
  */
-class PropertyMapperTest extends UnitTestCase
+final class PropertyMapperTest extends UnitTestCase
 {
     protected $mockConfiguration;
     protected static ?\WeakMap $mockTypeConverterNames = null;
@@ -45,48 +51,40 @@ class PropertyMapperTest extends UnitTestCase
     }
 
     /**
-     * @return array
+     * @return \Iterator<(int | string), mixed>
      */
-    public function validSourceTypes()
+    public static function validSourceTypes(): \Iterator
     {
-        return [
-            ['someString', ['string']],
-            [42, ['integer']],
-            [3.5, ['float']],
-            [true, ['boolean']],
-            [[], ['array']],
-            [new \stdClass(), ['stdClass', 'object']]
-        ];
+        yield ['someString', ['string']];
+        yield [42, ['integer']];
+        yield [3.5, ['float']];
+        yield [true, ['boolean']];
+        yield [[], ['array']];
+        yield [new \stdClass(), ['stdClass', 'object']];
     }
 
-    /**
-     * @test
-     * @dataProvider validSourceTypes
-     */
-    public function sourceTypeCanBeCorrectlyDetermined($source, $sourceTypes)
+    #[DataProvider('validSourceTypes')]
+    #[Test]
+    public function sourceTypeCanBeCorrectlyDetermined($source, $sourceTypes): void
     {
-        $propertyMapper = $this->getAccessibleMock(PropertyMapper::class, ['dummy']);
+        $propertyMapper = $this->getAccessibleMock(PropertyMapper::class, []);
         self::assertEquals($sourceTypes, $propertyMapper->_call('determineSourceTypes', $source));
     }
 
     /**
-     * @return array
+     * @return \Iterator<(int | string), mixed>
      */
-    public function invalidSourceTypes()
+    public static function invalidSourceTypes(): \Iterator
     {
-        return [
-            [null]
-        ];
+        yield [null];
     }
 
-    /**
-     * @test
-     * @dataProvider invalidSourceTypes
-     */
-    public function sourceWhichIsNoSimpleTypeOrObjectThrowsException($source)
+    #[DataProvider('invalidSourceTypes')]
+    #[Test]
+    public function sourceWhichIsNoSimpleTypeOrObjectThrowsException($source): void
     {
         $this->expectException(InvalidSourceException::class);
-        $propertyMapper = $this->getAccessibleMock(PropertyMapper::class, ['dummy']);
+        $propertyMapper = $this->getAccessibleMock(PropertyMapper::class, []);
         $propertyMapper->_call('determineSourceTypes', $source);
     }
 
@@ -95,16 +93,16 @@ class PropertyMapperTest extends UnitTestCase
      * @param boolean $canConvertFrom
      * @param array $properties
      * @param string $typeOfSubObject
-     * @return TypeConverterInterface|\PHPUnit\Framework\MockObject\MockObject
+     * @return TypeConverterInterface|MockObject
      */
     protected function getMockTypeConverter($name = '', $canConvertFrom = true, array $properties = [], $typeOfSubObject = '')
     {
         $mockTypeConverter = $this->createMock(TypeConverterInterface::class);
-        $mockTypeConverter->expects(self::any())->method('canConvertFrom')->will(self::returnValue($canConvertFrom));
-        $mockTypeConverter->expects(self::any())->method('convertFrom')->will(self::returnValue($name));
-        $mockTypeConverter->expects(self::any())->method('getSourceChildPropertiesToBeConverted')->will(self::returnValue($properties));
+        $mockTypeConverter->method('canConvertFrom')->willReturn(($canConvertFrom));
+        $mockTypeConverter->method('convertFrom')->willReturn(($name));
+        $mockTypeConverter->method('getSourceChildPropertiesToBeConverted')->willReturn(($properties));
 
-        $mockTypeConverter->expects(self::any())->method('getTypeOfChildProperty')->will(self::returnValue($typeOfSubObject));
+        $mockTypeConverter->method('getTypeOfChildProperty')->willReturn(($typeOfSubObject));
 
         if (self::$mockTypeConverterNames === null) {
             self::$mockTypeConverterNames = new \WeakMap();
@@ -114,84 +112,84 @@ class PropertyMapperTest extends UnitTestCase
         return $mockTypeConverter;
     }
 
-    /**
-     * @test
-     */
-    public function findTypeConverterShouldReturnTypeConverterFromConfigurationIfItIsSet()
+    #[Test]
+    public function findTypeConverterShouldReturnTypeConverterFromConfigurationIfItIsSet(): void
     {
         $mockTypeConverter = $this->getMockTypeConverter();
-        $this->mockConfiguration->expects(self::any())->method('getTypeConverter')->will(self::returnValue($mockTypeConverter));
+        $this->mockConfiguration->method('getTypeConverter')->willReturn(($mockTypeConverter));
 
-        $propertyMapper = $this->getAccessibleMock(PropertyMapper::class, ['dummy']);
+        $propertyMapper = $this->getAccessibleMock(PropertyMapper::class, []);
         self::assertSame($mockTypeConverter, $propertyMapper->_call('findTypeConverter', 'someSource', 'someTargetType', $this->mockConfiguration));
     }
 
     /**
      * Simple type conversion
-     * @return array
+     * @return \Iterator<(int | string), mixed>
      */
-    public function dataProviderForFindTypeConverter()
+    public static function dataProviderForFindTypeConverter(): \Iterator
     {
-        return [
-            ['someStringSource', 'string', [
+        // Mocks are materialized in the test method; leaves are mock-name strings.
+        yield ['someStringSource', 'string', [
+            'string' => [
                 'string' => [
-                    'string' => [
-                        10 => $this->getMockTypeConverter('string2string,prio10'),
-                        1 => $this->getMockTypeConverter('string2string,prio1')
-                    ]
-                ]], 'string2string,prio10'
-            ],
-            [['some' => 'array'], 'string', [
-                'array' => [
-                    'string' => [
-                        10 => $this->getMockTypeConverter('array2string,prio10'),
-                        1 => $this->getMockTypeConverter('array2string,prio1')
-                    ]
-                ]], 'array2string,prio10'
-            ],
-            ['someStringSource', 'bool', [
+                    10 => 'string2string,prio10',
+                    1 => 'string2string,prio1'
+                ]
+            ]], 'string2string,prio10'
+        ];
+        yield [['some' => 'array'], 'string', [
+            'array' => [
                 'string' => [
-                    'boolean' => [
-                        10 => $this->getMockTypeConverter('string2boolean,prio10'),
-                        1 => $this->getMockTypeConverter('string2boolean,prio1')
-                    ]
-                ]], 'string2boolean,prio10'
-            ],
-            ['someStringSource', 'int', [
-                'string' => [
-                    'integer' => [
-                        10 => $this->getMockTypeConverter('string2integer,prio10'),
-                        1 => $this->getMockTypeConverter('string2integer,prio1')
-                    ]
-                ]], 'string2integer,prio10'
-            ]
+                    10 => 'array2string,prio10',
+                    1 => 'array2string,prio1'
+                ]
+            ]], 'array2string,prio10'
+        ];
+        yield ['someStringSource', 'bool', [
+            'string' => [
+                'boolean' => [
+                    10 => 'string2boolean,prio10',
+                    1 => 'string2boolean,prio1'
+                ]
+            ]], 'string2boolean,prio10'
+        ];
+        yield ['someStringSource', 'int', [
+            'string' => [
+                'integer' => [
+                    10 => 'string2integer,prio10',
+                    1 => 'string2integer,prio1'
+                ]
+            ]], 'string2integer,prio10'
         ];
     }
 
-    /**
-     * @test
-     * @dataProvider dataProviderForFindTypeConverter
-     */
-    public function findTypeConverterShouldReturnHighestPriorityTypeConverterForSimpleType($source, $targetType, $typeConverters, $expectedTypeConverter)
+    #[DataProvider('dataProviderForFindTypeConverter')]
+    #[Test]
+    public function findTypeConverterShouldReturnHighestPriorityTypeConverterForSimpleType($source, $targetType, $typeConverters, $expectedTypeConverter): void
     {
-        $propertyMapper = $this->getAccessibleMock(PropertyMapper::class, ['dummy']);
+        foreach ($typeConverters as $sourceType => $targetTypes) {
+            foreach ($targetTypes as $tType => $priorities) {
+                foreach ($priorities as $prio => $name) {
+                    $typeConverters[$sourceType][$tType][$prio] = $this->getMockTypeConverter($name);
+                }
+            }
+        }
+        $propertyMapper = $this->getAccessibleMock(PropertyMapper::class, []);
         $propertyMapper->_set('typeConverters', $typeConverters);
         $actualTypeConverter = $propertyMapper->_call('findTypeConverter', $source, $targetType, $this->mockConfiguration);
         self::assertSame($expectedTypeConverter, self::$mockTypeConverterNames[$actualTypeConverter]);
     }
 
-    /**
-     * @test
-     */
-    public function findEligibleConverterWithHighestPrioritySkipsConvertersWithNegativePriorities()
+    #[Test]
+    public function findEligibleConverterWithHighestPrioritySkipsConvertersWithNegativePriorities(): void
     {
         $internalTypeConverter1 = $this->getMockTypeConverter('string2string,prio-1');
-        $internalTypeConverter1->expects(self::atLeastOnce())->method('getPriority')->will(self::returnValue(-1));
+        $internalTypeConverter1->expects($this->atLeastOnce())->method('getPriority')->willReturn((-1));
 
         $internalTypeConverter2 = $this->getMockTypeConverter('string2string,prio-1');
-        $internalTypeConverter2->expects(self::atLeastOnce())->method('getPriority')->will(self::returnValue(-2));
+        $internalTypeConverter2->expects($this->atLeastOnce())->method('getPriority')->willReturn((-2));
 
-        $propertyMapper = $this->getAccessibleMock(PropertyMapper::class, ['dummy']);
+        $propertyMapper = $this->getAccessibleMock(PropertyMapper::class, []);
         $mockTypeConverters = [
             $internalTypeConverter1,
             $internalTypeConverter2,
@@ -199,19 +197,17 @@ class PropertyMapperTest extends UnitTestCase
         self::assertNull($propertyMapper->_call('findEligibleConverterWithHighestPriority', $mockTypeConverters, 'foo', 'string'));
     }
 
-    /**
-     * @test
-     */
-    public function findTypeConverterThrowsExceptionIfAllMatchingConvertersHaveNegativePriorities()
+    #[Test]
+    public function findTypeConverterThrowsExceptionIfAllMatchingConvertersHaveNegativePriorities(): void
     {
         $this->expectException(TypeConverterException::class);
         $internalTypeConverter1 = $this->getMockTypeConverter('string2string,prio-1');
-        $internalTypeConverter1->expects(self::atLeastOnce())->method('getPriority')->will(self::returnValue(-1));
+        $internalTypeConverter1->expects($this->atLeastOnce())->method('getPriority')->willReturn((-1));
 
         $internalTypeConverter2 = $this->getMockTypeConverter('string2string,prio-1');
-        $internalTypeConverter2->expects(self::atLeastOnce())->method('getPriority')->will(self::returnValue(-2));
+        $internalTypeConverter2->expects($this->atLeastOnce())->method('getPriority')->willReturn((-2));
 
-        $propertyMapper = $this->getAccessibleMock(PropertyMapper::class, ['dummy']);
+        $propertyMapper = $this->getAccessibleMock(PropertyMapper::class, []);
         $propertyMapper->_set('typeConverters', [
             'string' => [
                 'string' => [
@@ -226,10 +222,9 @@ class PropertyMapperTest extends UnitTestCase
     /**
      * @return array
      */
-    public function dataProviderForObjectTypeConverters()
+    public static function dataProviderForObjectTypeConverters(): array
     {
         $data = [];
-
 
         $className1 = uniqid('Neos_Flow_Testclass1_', false);
         $className2 = uniqid('Neos_Flow_Testclass2_', false);
@@ -250,17 +245,18 @@ class PropertyMapperTest extends UnitTestCase
 			class ' . $className3 . ' extends ' . $className2 . ' implements ' . $interfaceName3 . ' {}
 		');
 
+        // Mocks are materialized in the test method; leaves are [name, canConvertFrom?] specs.
         // The most specific converter should win
         $data[] = [
             'target' => $className3,
             'expectedConverter' => 'Class3Converter',
             'typeConverters' => [
-                $className2 => [0 => $this->getMockTypeConverter('Class2Converter')],
-                $className3 => [0 => $this->getMockTypeConverter('Class3Converter')],
+                $className2 => [0 => ['Class2Converter']],
+                $className3 => [0 => ['Class3Converter']],
 
-                $interfaceName1 => [0 => $this->getMockTypeConverter('Interface1Converter')],
-                $interfaceName2 => [0 => $this->getMockTypeConverter('Interface2Converter')],
-                $interfaceName3 => [0 => $this->getMockTypeConverter('Interface3Converter')],
+                $interfaceName1 => [0 => ['Interface1Converter']],
+                $interfaceName2 => [0 => ['Interface2Converter']],
+                $interfaceName3 => [0 => ['Interface3Converter']],
             ]
         ];
 
@@ -269,12 +265,12 @@ class PropertyMapperTest extends UnitTestCase
             'target' => $className3,
             'expectedConverter' => 'Class2Converter',
             'typeConverters' => [
-                $className2 => [0 => $this->getMockTypeConverter('Class2Converter')],
-                $className3 => [0 => $this->getMockTypeConverter('Class3Converter', false)],
+                $className2 => [0 => ['Class2Converter']],
+                $className3 => [0 => ['Class3Converter', false]],
 
-                $interfaceName1 => [0 => $this->getMockTypeConverter('Interface1Converter')],
-                $interfaceName2 => [0 => $this->getMockTypeConverter('Interface2Converter')],
-                $interfaceName3 => [0 => $this->getMockTypeConverter('Interface3Converter')],
+                $interfaceName1 => [0 => ['Interface1Converter']],
+                $interfaceName2 => [0 => ['Interface2Converter']],
+                $interfaceName3 => [0 => ['Interface3Converter']],
             ]
         ];
 
@@ -283,7 +279,7 @@ class PropertyMapperTest extends UnitTestCase
             'target' => $className3,
             'expectedConverter' => 'Class2Converter-HighPriority',
             'typeConverters' => [
-                $className2 => [0 => $this->getMockTypeConverter('Class2Converter'), 10 => $this->getMockTypeConverter('Class2Converter-HighPriority')]
+                $className2 => [0 => ['Class2Converter'], 10 => ['Class2Converter-HighPriority']]
             ]
         ];
 
@@ -292,11 +288,11 @@ class PropertyMapperTest extends UnitTestCase
             'target' => $className3,
             'expectedConverter' => 'Interface1Converter',
             'typeConverters' => [
-                $className2 => [0 => $this->getMockTypeConverter('Class2Converter', false), 10 => $this->getMockTypeConverter('Class2Converter-HighPriority', false)],
+                $className2 => [0 => ['Class2Converter', false], 10 => ['Class2Converter-HighPriority', false]],
 
-                $interfaceName1 => [4 => $this->getMockTypeConverter('Interface1Converter')],
-                $interfaceName2 => [1 => $this->getMockTypeConverter('Interface2Converter')],
-                $interfaceName3 => [2 => $this->getMockTypeConverter('Interface3Converter')],
+                $interfaceName1 => [4 => ['Interface1Converter']],
+                $interfaceName2 => [1 => ['Interface2Converter']],
+                $interfaceName3 => [2 => ['Interface3Converter']],
             ]
         ];
 
@@ -305,11 +301,11 @@ class PropertyMapperTest extends UnitTestCase
             'target' => $className3,
             'expectedConverter' => 'Interface1Converter',
             'typeConverters' => [
-                $className2 => [0 => $this->getMockTypeConverter('Class2Converter', false), 10 => $this->getMockTypeConverter('Class2Converter-HighPriority', false)],
+                $className2 => [0 => ['Class2Converter', false], 10 => ['Class2Converter-HighPriority', false]],
 
-                $interfaceName1 => [4 => $this->getMockTypeConverter('Interface1Converter')],
-                $interfaceName2 => [2 => $this->getMockTypeConverter('Interface2Converter')],
-                $interfaceName3 => [2 => $this->getMockTypeConverter('Interface3Converter')],
+                $interfaceName1 => [4 => ['Interface1Converter']],
+                $interfaceName2 => [2 => ['Interface2Converter']],
+                $interfaceName3 => [2 => ['Interface3Converter']],
             ],
             'shouldFailWithException' => DuplicateTypeConverterException::class
         ];
@@ -319,12 +315,12 @@ class PropertyMapperTest extends UnitTestCase
             'target' => $className3,
             'expectedConverter' => 'GenericObjectConverter-HighPriority',
             'typeConverters' => [
-                $className2 => [0 => $this->getMockTypeConverter('Class2Converter', false), 10 => $this->getMockTypeConverter('Class2Converter-HighPriority', false)],
+                $className2 => [0 => ['Class2Converter', false], 10 => ['Class2Converter-HighPriority', false]],
 
-                $interfaceName1 => [4 => $this->getMockTypeConverter('Interface1Converter', false)],
-                $interfaceName2 => [3 => $this->getMockTypeConverter('Interface2Converter', false)],
-                $interfaceName3 => [2 => $this->getMockTypeConverter('Interface3Converter', false)],
-                'object' => [1 => $this->getMockTypeConverter('GenericObjectConverter'), 10 => $this->getMockTypeConverter('GenericObjectConverter-HighPriority')]
+                $interfaceName1 => [4 => ['Interface1Converter', false]],
+                $interfaceName2 => [3 => ['Interface2Converter', false]],
+                $interfaceName3 => [2 => ['Interface3Converter', false]],
+                'object' => [1 => ['GenericObjectConverter'], 10 => ['GenericObjectConverter-HighPriority']]
             ],
         ];
 
@@ -346,7 +342,7 @@ class PropertyMapperTest extends UnitTestCase
 
         // If The target type is no string, we expect an exception.
         $data[] = [
-            'target' => new \stdClass,
+            'target' => new \stdClass(),
             'expectedConverter' => '',
             'typeConverters' => [],
             'shouldFailWithException' => InvalidTargetException::class
@@ -354,20 +350,23 @@ class PropertyMapperTest extends UnitTestCase
         return $data;
     }
 
-    /**
-     * @test
-     * @dataProvider dataProviderForObjectTypeConverters
-     */
-    public function findTypeConverterShouldReturnConverterForTargetObjectIfItExists($targetClass, $expectedTypeConverter, $typeConverters, $shouldFailWithException = false)
+    #[DataProvider('dataProviderForObjectTypeConverters')]
+    #[Test]
+    public function findTypeConverterShouldReturnConverterForTargetObjectIfItExists($target, $expectedConverter, $typeConverters, $shouldFailWithException = false): void
     {
-        $propertyMapper = $this->getAccessibleMock(PropertyMapper::class, ['dummy']);
+        foreach ($typeConverters as $key => $priorities) {
+            foreach ($priorities as $prio => $spec) {
+                $typeConverters[$key][$prio] = $this->getMockTypeConverter($spec[0], $spec[1] ?? true);
+            }
+        }
+        $propertyMapper = $this->getAccessibleMock(PropertyMapper::class, []);
         $propertyMapper->_set('typeConverters', ['string' => $typeConverters]);
         try {
-            $actualTypeConverter = $propertyMapper->_call('findTypeConverter', 'someSourceString', $targetClass, $this->mockConfiguration);
+            $actualTypeConverter = $propertyMapper->_call('findTypeConverter', 'someSourceString', $target, $this->mockConfiguration);
             if ($shouldFailWithException) {
                 $this->fail('Expected exception ' . $shouldFailWithException . ' which was not thrown.');
             }
-            self::assertSame($expectedTypeConverter, self::$mockTypeConverterNames[$actualTypeConverter]);
+            self::assertSame($expectedConverter, self::$mockTypeConverterNames[$actualTypeConverter]);
         } catch (\Exception $e) {
             if ($shouldFailWithException === false) {
                 throw $e;
@@ -376,12 +375,10 @@ class PropertyMapperTest extends UnitTestCase
         }
     }
 
-    /**
-     * @test
-     */
-    public function convertShouldAskConfigurationBuilderForDefaultConfiguration()
+    #[Test]
+    public function convertShouldAskConfigurationBuilderForDefaultConfiguration(): void
     {
-        $propertyMapper = $this->getAccessibleMock(PropertyMapper::class, ['dummy']);
+        $propertyMapper = $this->getAccessibleMock(PropertyMapper::class, []);
 
         $converter = $this->getMockTypeConverter('string2string');
         $typeConverters = [
@@ -394,56 +391,46 @@ class PropertyMapperTest extends UnitTestCase
         self::assertEquals('string2string', $propertyMapper->convert('source', 'string'));
     }
 
-    /**
-     * @test
-     */
-    public function convertDoesNotCatchSecurityExceptions()
+    #[Test]
+    public function convertDoesNotCatchSecurityExceptions(): void
     {
         $this->expectException(Exception::class);
         $propertyMapper = $this->getAccessibleMock(PropertyMapper::class, ['doMapping']);
-        $propertyMapper->expects(self::once())->method('doMapping')->with('sourceType', 'targetType', $this->mockConfiguration)->will(self::throwException(new Exception()));
+        $propertyMapper->expects($this->once())->method('doMapping')->with('sourceType', 'targetType', $this->mockConfiguration)->willThrowException(new Exception());
 
         $propertyMapper->convert('sourceType', 'targetType', $this->mockConfiguration);
     }
 
-    /**
-     * @test
-     */
-    public function findFirstEligibleTypeConverterInObjectHierarchyShouldReturnNullIfSourceTypeIsUnknown()
+    #[Test]
+    public function findFirstEligibleTypeConverterInObjectHierarchyShouldReturnNullIfSourceTypeIsUnknown(): void
     {
-        $propertyMapper = $this->getAccessibleMock(PropertyMapper::class, ['dummy']);
+        $propertyMapper = $this->getAccessibleMock(PropertyMapper::class, []);
         self::assertNull($propertyMapper->_call('findFirstEligibleTypeConverterInObjectHierarchy', 'source', 'unknownSourceType', Bootstrap::class));
     }
 
-    /**
-     * @test
-     */
-    public function doMappingReturnsSourceUnchangedIfAlreadyConverted()
+    #[Test]
+    public function doMappingReturnsSourceUnchangedIfAlreadyConverted(): void
     {
         $source = new \ArrayObject();
         $targetType = 'ArrayObject';
         $propertyPath = '';
-        $propertyMapper = $this->getAccessibleMock(PropertyMapper::class, ['dummy']);
+        $propertyMapper = $this->getAccessibleMock(PropertyMapper::class, []);
         self::assertSame($source, $propertyMapper->_callRef('doMapping', $source, $targetType, $this->mockConfiguration, $propertyPath));
     }
 
-    /**
-     * @test
-     */
-    public function doMappingReturnsSourceUnchangedIfAlreadyConvertedToCompositeType()
+    #[Test]
+    public function doMappingReturnsSourceUnchangedIfAlreadyConvertedToCompositeType(): void
     {
         $source = new \ArrayObject();
         $targetType = 'ArrayObject<SomeEntity>';
         $propertyPath = '';
-        $propertyMapper = $this->getAccessibleMock(PropertyMapper::class, ['dummy']);
+        $propertyMapper = $this->getAccessibleMock(PropertyMapper::class, []);
         self::assertSame($source, $propertyMapper->_callRef('doMapping', $source, $targetType, $this->mockConfiguration, $propertyPath));
     }
 
-    /**
-     * @test
-     * @doesNotPerformAssertions
-     */
-    public function convertSkipsPropertiesIfConfiguredTo()
+    #[Test]
+    #[DoesNotPerformAssertions]
+    public function convertSkipsPropertiesIfConfiguredTo(): void
     {
         $source = ['firstProperty' => 1, 'secondProperty' => 2];
         $typeConverters = [
@@ -456,17 +443,15 @@ class PropertyMapperTest extends UnitTestCase
         ];
         $configuration = new PropertyMappingConfiguration();
 
-        $propertyMapper = $this->getAccessibleMock(PropertyMapper::class, ['dummy']);
+        $propertyMapper = $this->getAccessibleMock(PropertyMapper::class, []);
         $propertyMapper->_set('typeConverters', $typeConverters);
 
         $propertyMapper->convert($source, 'stdClass', $configuration->allowProperties('firstProperty')->skipProperties('secondProperty'));
     }
 
-    /**
-     * @test
-     * @doesNotPerformAssertions
-     */
-    public function convertSkipsUnknownPropertiesIfConfiguredTo()
+    #[Test]
+    #[DoesNotPerformAssertions]
+    public function convertSkipsUnknownPropertiesIfConfiguredTo(): void
     {
         $source = ['firstProperty' => 1, 'secondProperty' => 2];
         $typeConverters = [
@@ -479,94 +464,84 @@ class PropertyMapperTest extends UnitTestCase
         ];
         $configuration = new PropertyMappingConfiguration();
 
-        $propertyMapper = $this->getAccessibleMock(PropertyMapper::class, ['dummy']);
+        $propertyMapper = $this->getAccessibleMock(PropertyMapper::class, []);
         $propertyMapper->_set('typeConverters', $typeConverters);
 
         $propertyMapper->convert($source, 'stdClass', $configuration->allowProperties('firstProperty')->skipUnknownProperties());
     }
 
     /**
-     * @return array
+     * @return \Iterator<(int | string), mixed>
      */
-    public function convertCallsCanConvertFromWithTheFullNormalizedTargetTypeDataProvider()
+    public static function convertCallsCanConvertFromWithTheFullNormalizedTargetTypeDataProvider(): \Iterator
     {
-        return [
-            ['source' => 'foo', 'fullTargetType' => 'string'],
-            ['source' => 'foo', 'fullTargetType' => 'array'],
-            ['source' => 'foo', 'fullTargetType' => 'array<string>'],
-            ['source' => 'foo', 'fullTargetType' => 'SplObjectStorage'],
-            ['source' => 'foo', 'fullTargetType' => 'SplObjectStorage<Some\Element\Type>'],
-        ];
+        yield ['source' => 'foo', 'fullTargetType' => 'string'];
+        yield ['source' => 'foo', 'fullTargetType' => 'array'];
+        yield ['source' => 'foo', 'fullTargetType' => 'array<string>'];
+        yield ['source' => 'foo', 'fullTargetType' => 'SplObjectStorage'];
+        yield ['source' => 'foo', 'fullTargetType' => 'SplObjectStorage<Some\Element\Type>'];
     }
 
-    /**
-     * @test
-     * @dataProvider convertCallsCanConvertFromWithTheFullNormalizedTargetTypeDataProvider
-     */
-    public function convertCallsCanConvertFromWithTheFullNormalizedTargetType($source, $fullTargetType)
+    #[DataProvider('convertCallsCanConvertFromWithTheFullNormalizedTargetTypeDataProvider')]
+    #[Test]
+    public function convertCallsCanConvertFromWithTheFullNormalizedTargetType($source, $fullTargetType): void
     {
         $mockTypeConverter = $this->getMockTypeConverter();
-        $mockTypeConverter->expects(self::atLeastOnce())->method('canConvertFrom')->with($source, $fullTargetType);
+        $mockTypeConverter->expects($this->atLeastOnce())->method('canConvertFrom')->with($source, $fullTargetType);
         $truncatedTargetType = TypeHandling::truncateElementType($fullTargetType);
         $mockTypeConverters = [
             gettype($source) => [
                 $truncatedTargetType => [1 => $mockTypeConverter]
             ],
         ];
-        $propertyMapper = $this->getAccessibleMock(PropertyMapper::class, ['dummy']);
+        $propertyMapper = $this->getAccessibleMock(PropertyMapper::class, []);
         $propertyMapper->_set('typeConverters', $mockTypeConverters);
 
-        $mockConfiguration = $this->getMockBuilder(PropertyMappingConfiguration::class)->disableOriginalConstructor()->getMock();
+        $mockConfiguration = $this->createStub(PropertyMappingConfiguration::class);
         $propertyMapper->convert($source, $fullTargetType, $mockConfiguration);
     }
 
     /**
-     * @return array
+     * @return \Iterator<(int | string), mixed>
      */
-    public function convertCallsCanConvertFromWithNullableTargetTypeDataProvider()
+    public static function convertCallsCanConvertFromWithNullableTargetTypeDataProvider(): \Iterator
     {
-        return [
-            ['source' => 'foo', 'fullTargetType' => 'string|null'],
-            ['source' => 'foo', 'fullTargetType' => 'array|null'],
-            ['source' => 'foo', 'fullTargetType' => 'array<string>|null'],
-            ['source' => 'foo', 'fullTargetType' => 'SplObjectStorage|null'],
-            ['source' => 'foo', 'fullTargetType' => 'SplObjectStorage<Some\Element\Type>|null'],
-        ];
+        yield ['source' => 'foo', 'fullTargetType' => 'string|null'];
+        yield ['source' => 'foo', 'fullTargetType' => 'array|null'];
+        yield ['source' => 'foo', 'fullTargetType' => 'array<string>|null'];
+        yield ['source' => 'foo', 'fullTargetType' => 'SplObjectStorage|null'];
+        yield ['source' => 'foo', 'fullTargetType' => 'SplObjectStorage<Some\Element\Type>|null'];
     }
 
-    /**
-     * @test
-     * @dataProvider convertCallsCanConvertFromWithNullableTargetTypeDataProvider
-     */
-    public function convertCallsCanConvertFromWithNullableTargetType($source, $fullTargetType)
+    #[DataProvider('convertCallsCanConvertFromWithNullableTargetTypeDataProvider')]
+    #[Test]
+    public function convertCallsCanConvertFromWithNullableTargetType($source, $fullTargetType): void
     {
         $fullTargetTypeWithoutNull = TypeHandling::stripNullableType($fullTargetType);
         $mockTypeConverter = $this->getMockTypeConverter();
-        $mockTypeConverter->expects(self::atLeastOnce())->method('canConvertFrom')->with($source, $fullTargetTypeWithoutNull);
+        $mockTypeConverter->expects($this->atLeastOnce())->method('canConvertFrom')->with($source, $fullTargetTypeWithoutNull);
         $truncatedTargetType = TypeHandling::truncateElementType($fullTargetTypeWithoutNull);
         $mockTypeConverters = [
             gettype($source) => [
                 $truncatedTargetType => [1 => $mockTypeConverter]
             ],
         ];
-        $propertyMapper = $this->getAccessibleMock(PropertyMapper::class, ['dummy']);
+        $propertyMapper = $this->getAccessibleMock(PropertyMapper::class, []);
         $propertyMapper->_set('typeConverters', $mockTypeConverters);
 
-        $mockConfiguration = $this->getMockBuilder(PropertyMappingConfiguration::class)->disableOriginalConstructor()->getMock();
+        $mockConfiguration = $this->createStub(PropertyMappingConfiguration::class);
         $propertyMapper->convert($source, $fullTargetType, $mockConfiguration);
     }
 
-    /**
-     * @test
-     */
-    public function convertCallsConvertToNullWithNullableTargetType()
+    #[Test]
+    public function convertCallsConvertToNullWithNullableTargetType(): void
     {
         $source = null;
         $fullTargetType = 'SplObjectStorage|null';
 
-        $propertyMapper = $this->getAccessibleMock(PropertyMapper::class, ['dummy']);
+        $propertyMapper = $this->getAccessibleMock(PropertyMapper::class, []);
 
-        $mockConfiguration = $this->getMockBuilder(PropertyMappingConfiguration::class)->disableOriginalConstructor()->getMock();
+        $mockConfiguration = $this->createStub(PropertyMappingConfiguration::class);
         self::assertEquals(null, $propertyMapper->convert($source, $fullTargetType, $mockConfiguration));
     }
 }

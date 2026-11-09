@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Neos\Utility\Arrays\Tests\Unit;
 
 /*
@@ -10,67 +13,55 @@ namespace Neos\Utility\Arrays\Tests\Unit;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
 use Neos\Utility\Arrays;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Testcase for the Utility Array class
  */
-class ArraysTest extends \PHPUnit\Framework\TestCase
+final class ArraysTest extends TestCase
 {
-    /**
-     * @test
-     */
+    #[Test]
     public function containsMultipleTypesReturnsFalseOnEmptyArray()
     {
         self::assertFalse(Arrays::containsMultipleTypes([]), 'An empty array was seen as containing multiple types');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function containsMultipleTypesReturnsFalseOnArrayWithIntegers()
     {
         self::assertFalse(Arrays::containsMultipleTypes([1, 2, 3]), 'An array with only integers was seen as containing multiple types');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function containsMultipleTypesReturnsFalseOnArrayWithObjects()
     {
         self::assertFalse(Arrays::containsMultipleTypes([new \stdClass(), new \stdClass(), new \stdClass()]), 'An array with only \stdClass was seen as containing multiple types');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function containsMultipleTypesReturnsTrueOnMixedArray()
     {
         self::assertTrue(Arrays::containsMultipleTypes([1, 'string', 1.25, new \stdClass()]), 'An array with mixed contents was not seen as containing multiple types');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getValueByPathReturnsTheValueOfANestedArrayByFollowingTheGivenSimplePath()
     {
         $array = ['Foo' => 'the value'];
         self::assertSame('the value', Arrays::getValueByPath($array, ['Foo']));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getValueByPathReturnsTheValueOfANestedArrayByFollowingTheGivenPath()
     {
         $array = ['Foo' => ['Bar' => ['Baz' => [2 => 'the value']]]];
         self::assertSame('the value', Arrays::getValueByPath($array, ['Foo', 'Bar', 'Baz', 2]));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getValueByPathReturnsTheValueOfANestedArrayByFollowingTheGivenPathIfPathIsString()
     {
         $path = 'Foo.Bar.Baz.2';
@@ -80,9 +71,7 @@ class ArraysTest extends \PHPUnit\Framework\TestCase
         self::assertSame($expectedResult, $actualResult);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getValueByPathThrowsExceptionIfPathIsNoArrayOrString()
     {
         $this->expectException(\TypeError::class);
@@ -90,54 +79,42 @@ class ArraysTest extends \PHPUnit\Framework\TestCase
         Arrays::getValueByPath($array, null);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getValueByPathReturnsNullIfTheSegementsOfThePathDontExist()
     {
         $array = ['Foo' => ['Bar' => ['Baz' => [2 => 'the value']]]];
         self::assertNull(Arrays::getValueByPath($array, ['Foo', 'Bar', 'Bax', 2]));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getValueByPathReturnsNullIfThePathHasMoreSegmentsThanTheGivenArray()
     {
         $array = ['Foo' => ['Bar' => ['Baz' => 'the value']]];
         self::assertNull(Arrays::getValueByPath($array, ['Foo', 'Bar', 'Baz', 'Bux']));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getAccessorByPathReturnsTheValueOfANestedArrayByFollowingTheGivenSimplePath()
     {
         $array = ['Foo' => 'the value'];
         self::assertSame('the value', Arrays::getAccessorByPath($array, ['Foo'])->string());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getAccessorByPathReturnsTheValueOfANestedArrayByFollowingTheGivenPath()
     {
         $array = ['Foo' => ['Bar' => ['Baz' => [2 => 'the value']]]];
         self::assertSame('the value', Arrays::getAccessorByPath($array, ['Foo', 'Bar', 'Baz', 2])->string());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getAccessorByPathReturnsTheValueOfANestedArrayByFollowingTheGivenPathIfPathIsString()
     {
         $array = ['Foo' => ['Bar' => ['Baz' => [2 => 'the value']]]];
         self::assertSame('the value', Arrays::getAccessorByPath($array, 'Foo.Bar.Baz.2')->string());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getAccessorByPathThrowsExceptionIfPathIsNoArrayOrString()
     {
         $this->expectException(\TypeError::class);
@@ -145,27 +122,21 @@ class ArraysTest extends \PHPUnit\Framework\TestCase
         Arrays::getAccessorByPath($array, null);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getAccessorByPathReturnsNullIfTheSegementsOfThePathDontExist()
     {
         $array = ['Foo' => ['Bar' => ['Baz' => [2 => 'the value']]]];
         self::assertNull(Arrays::getAccessorByPath($array, ['Foo', 'Bar', 'Bax', 2])->intOrNull());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getAccessorByPathReturnsNullIfThePathHasMoreSegmentsThanTheGivenArray()
     {
         $array = ['Foo' => ['Bar' => ['Baz' => 'the value']]];
         self::assertNull(Arrays::getAccessorByPath($array, ['Foo', 'Bar', 'Baz', 'Bux'])->intOrNull());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getAccessorByPathUnexpectedValueExceptionContainsPathForNonMatchingTypes()
     {
         $array = ['Foo' => ['Bar' => ['Baz' => 'the value']]];
@@ -174,9 +145,7 @@ class ArraysTest extends \PHPUnit\Framework\TestCase
         Arrays::getAccessorByPath($array, ['Foo', 'Bar', 'Baz'])->int();
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getAccessorByPathUnexpectedValueExceptionContainsPathForNonMatchingTypesOnRoot()
     {
         $array = ['Foo' => 'string'];
@@ -185,9 +154,7 @@ class ArraysTest extends \PHPUnit\Framework\TestCase
         Arrays::getAccessorByPath($array, ['Foo'])->int();
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getAccessorByPathUnexpectedValueExceptionContainsPathForNonExistingPathes()
     {
         $array = ['Foo' => ['Bar' => ['Baz' => 'the value']]];
@@ -196,9 +163,7 @@ class ArraysTest extends \PHPUnit\Framework\TestCase
         Arrays::getAccessorByPath($array, ['Foo', 'Bar', 'Bax'])->int();
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function convertObjectToArrayConvertsNestedObjectsToArray()
     {
         $object = new \stdClass();
@@ -224,9 +189,7 @@ class ArraysTest extends \PHPUnit\Framework\TestCase
         self::assertEquals($expected, $array);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function setValueByPathSetsValueRecursivelyIfPathIsArray()
     {
         $array = [];
@@ -236,9 +199,7 @@ class ArraysTest extends \PHPUnit\Framework\TestCase
         self::assertEquals($expectedValue, $actualValue);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function setValueByPathSetsValueRecursivelyIfPathIsString()
     {
         $array = [];
@@ -248,9 +209,7 @@ class ArraysTest extends \PHPUnit\Framework\TestCase
         self::assertEquals($expectedValue, $actualValue);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function setValueByPathRecursivelyMergesAnArray()
     {
         $array = ['foo' => ['bar' => 'should be overriden'], 'bar' => 'Baz'];
@@ -260,9 +219,7 @@ class ArraysTest extends \PHPUnit\Framework\TestCase
         self::assertEquals($expectedValue, $actualValue);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function setValueByPathThrowsExceptionIfPathIsNoArrayOrString()
     {
         $this->expectException(\InvalidArgumentException::class);
@@ -270,9 +227,7 @@ class ArraysTest extends \PHPUnit\Framework\TestCase
         Arrays::setValueByPath($array, null, 'Some Value');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function setValueByPathThrowsExceptionIfSubjectIsNoArray()
     {
         $this->expectException(\InvalidArgumentException::class);
@@ -280,9 +235,7 @@ class ArraysTest extends \PHPUnit\Framework\TestCase
         Arrays::setValueByPath($subject, 'foo', 'bar');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function setValueByPathThrowsExceptionIfSubjectIsNoArrayAccess()
     {
         $this->expectException(\InvalidArgumentException::class);
@@ -290,31 +243,25 @@ class ArraysTest extends \PHPUnit\Framework\TestCase
         Arrays::setValueByPath($subject, 'foo', 'bar');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function setValueByLeavesInputArrayUnchanged()
     {
         $subject = $subjectBackup = ['foo' => 'bar'];
         Arrays::setValueByPath($subject, 'foo', 'baz');
-        self::assertEquals($subject, $subjectBackup);
+        self::assertSame($subject, $subjectBackup);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function unsetValueByPathDoesNotModifyAnArrayIfThePathWasNotFound()
     {
         $array = ['foo' => ['bar' => ['baz' => 'Some Value']], 'bar' => 'Baz'];
         $path = ['foo', 'bar', 'nonExistingKey'];
         $expectedValue = $array;
         $actualValue = Arrays::unsetValueByPath($array, $path);
-        self::assertEquals($expectedValue, $actualValue);
+        self::assertSame($expectedValue, $actualValue);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function unsetValueByPathRemovesSpecifiedKey()
     {
         $array = ['foo' => ['bar' => ['baz' => 'Some Value']], 'bar' => 'Baz'];
@@ -322,12 +269,10 @@ class ArraysTest extends \PHPUnit\Framework\TestCase
         $expectedValue = ['foo' => ['bar' => []], 'bar' => 'Baz'];
         ;
         $actualValue = Arrays::unsetValueByPath($array, $path);
-        self::assertEquals($expectedValue, $actualValue);
+        self::assertSame($expectedValue, $actualValue);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function unsetValueByPathRemovesSpecifiedKeyIfPathIsString()
     {
         $array = ['foo' => ['bar' => ['baz' => 'Some Value']], 'bar' => 'Baz'];
@@ -335,12 +280,10 @@ class ArraysTest extends \PHPUnit\Framework\TestCase
         $expectedValue = ['foo' => ['bar' => []], 'bar' => 'Baz'];
         ;
         $actualValue = Arrays::unsetValueByPath($array, $path);
-        self::assertEquals($expectedValue, $actualValue);
+        self::assertSame($expectedValue, $actualValue);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function unsetValueByPathRemovesSpecifiedBranch()
     {
         $array = ['foo' => ['bar' => ['baz' => 'Some Value']], 'bar' => 'Baz'];
@@ -348,12 +291,10 @@ class ArraysTest extends \PHPUnit\Framework\TestCase
         $expectedValue = ['bar' => 'Baz'];
         ;
         $actualValue = Arrays::unsetValueByPath($array, $path);
-        self::assertEquals($expectedValue, $actualValue);
+        self::assertSame($expectedValue, $actualValue);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function unsetValueByPathThrowsExceptionIfPathIsNoArrayOrString()
     {
         $this->expectException(\InvalidArgumentException::class);
@@ -361,243 +302,225 @@ class ArraysTest extends \PHPUnit\Framework\TestCase
         Arrays::unsetValueByPath($array, null);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function removeEmptyElementsRecursivelyRemovesNullValues()
     {
         $array = ['EmptyElement' => null, 'Foo' => ['Bar' => ['Baz' => ['NotNull' => '', 'AnotherEmptyElement' => null]]]];
         $expectedResult = ['Foo' => ['Bar' => ['Baz' => ['NotNull' => '']]]];
         $actualResult = Arrays::removeEmptyElementsRecursively($array);
-        self::assertEquals($expectedResult, $actualResult);
+        self::assertSame($expectedResult, $actualResult);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function removeEmptyElementsRecursivelyRemovesEmptySubArrays()
     {
         $array = ['EmptyElement' => [], 'Foo' => ['Bar' => ['Baz' => ['AnotherEmptyElement' => null]]], 'NotNull' => 123];
         $expectedResult = ['NotNull' => 123];
         $actualResult = Arrays::removeEmptyElementsRecursively($array);
-        self::assertEquals($expectedResult, $actualResult);
+        self::assertSame($expectedResult, $actualResult);
     }
 
-    public function arrayMergeRecursiveOverruleData()
+    public static function arrayMergeRecursiveOverruleData(): \Iterator
     {
-        return [
-            'simple usage' => [
-                'inputArray1' => [
-                    'k1' => 'v1',
-                    'k2' => 'v2',
-                ],
-                'inputArray2' => [
-                    'k2' => 'v2a',
-                    'k3' => 'v3'
-                ],
-                'dontAddNewKeys' => false, // default
-                'emptyValuesOverride' => true, // default
-                'expected' => [
-                    'k1' => 'v1',
-                    'k2' => 'v2a',
-                    'k3' => 'v3'
-                ]
+        yield 'simple usage' => [
+            'inputArray1' => [
+                'k1' => 'v1',
+                'k2' => 'v2',
             ],
-
-            'simple usage with recursion' => [
-                'inputArray1' => [
-                    'k1' => 'v1',
-                    'k2' => [
-                        'k2.1' => 'v2.1',
-                        'k2.2' => 'v2.2'
-                    ],
-                ],
-                'inputArray2' => [
-                    'k2' => [
-                        'k2.2' => 'v2.2a',
-                        'k2.3' => 'v2.3'
-                    ],
-                    'k3' => 'v3'
-                ],
-                'dontAddNewKeys' => false, // default
-                'emptyValuesOverride' => true, // default
-                'expected' => [
-                    'k1' => 'v1',
-                    'k2' => [
-                        'k2.1' => 'v2.1',
-                        'k2.2' => 'v2.2a',
-                        'k2.3' => 'v2.3'
-                    ],
-                    'k3' => 'v3'
-                ]
+            'inputArray2' => [
+                'k2' => 'v2a',
+                'k3' => 'v3'
             ],
-
-            'nested array with recursion' => [
-                'inputArray1' => [
-                    'k1' => 'v1',
-                    'k2' => [
-                        'k2.1' => 'v2.1',
-                        'k2.2' => 'v2.2',
-                        'k2.4' => [
-                            'k2.4.1' => 'v2.4.1'
-                        ]
-                    ],
+            'dontAddNewKeys' => false, // default
+            'emptyValuesOverride' => true, // default
+            'expected' => [
+                'k1' => 'v1',
+                'k2' => 'v2a',
+                'k3' => 'v3'
+            ]
+        ];
+        yield 'simple usage with recursion' => [
+            'inputArray1' => [
+                'k1' => 'v1',
+                'k2' => [
+                    'k2.1' => 'v2.1',
+                    'k2.2' => 'v2.2'
                 ],
-                'inputArray2' => [
-                    'k2' => [
-                        'k2.2' => 'v2.2a',
-                        'k2.3' => 'v2.3',
-                        'k2.4' => [
-                            'k2.4.2' => 'v2.4.2'
-                        ]
-                    ],
-                    'k3' => 'v3'
-                ],
-                'dontAddNewKeys' => false, // default
-                'emptyValuesOverride' => true, // default
-                'expected' => [
-                    'k1' => 'v1',
-                    'k2' => [
-                        'k2.1' => 'v2.1',
-                        'k2.2' => 'v2.2a',
-                        'k2.4' => [
-                            'k2.4.1' => 'v2.4.1',
-                            'k2.4.2' => 'v2.4.2'
-                        ],
-                        'k2.3' => 'v2.3'
-                    ],
-                    'k3' => 'v3'
-                ]
             ],
-
-            'simple type should override array (k2)' => [
-                'inputArray1' => [
-                    'k1' => 'v1',
-                    'k2' => [
-                        'k2.1' => 'v2.1'
-                    ],
+            'inputArray2' => [
+                'k2' => [
+                    'k2.2' => 'v2.2a',
+                    'k2.3' => 'v2.3'
                 ],
-                'inputArray2' => [
-                    'k2' => 'v2a',
-                    'k3' => 'v3'
-                ],
-                'dontAddNewKeys' => false, // default
-                'emptyValuesOverride' => true, // default
-                'expected' => [
-                    'k1' => 'v1',
-                    'k2' => 'v2a',
-                    'k3' => 'v3'
-                ]
+                'k3' => 'v3'
             ],
-
-            'null should override array (k2)' => [
-                'inputArray1' => [
-                    'k1' => 'v1',
-                    'k2' => [
-                        'k2.1' => 'v2.1'
-                    ],
+            'dontAddNewKeys' => false, // default
+            'emptyValuesOverride' => true, // default
+            'expected' => [
+                'k1' => 'v1',
+                'k2' => [
+                    'k2.1' => 'v2.1',
+                    'k2.2' => 'v2.2a',
+                    'k2.3' => 'v2.3'
                 ],
-                'inputArray2' => [
-                    'k2' => null,
-                    'k3' => 'v3'
-                ],
-                'dontAddNewKeys' => false, // default
-                'emptyValuesOverride' => true, // default
-                'expected' => [
-                    'k1' => 'v1',
-                    'k2' => null,
-                    'k3' => 'v3'
-                ]
-            ],
-
-            'empty array should override array (k2)' => [
-                'inputArray1' => [
-                    'k2' => [
-                        'k2.1' => 'v2.1'
-                    ],
-                ],
-                'inputArray2' => [
-                    'k2' => [],
-                ],
-                'dontAddNewKeys' => false, // default
-                'emptyValuesOverride' => true, // default
-                'expected' => [
-                    'k2' => []
-                ]
-            ],
-
-            'empty array without emptyValuesOverride should not override array (k2)' => [
-                'inputArray1' => [
-                    'k2' => [
-                        'k2.1' => 'v2.1'
-                    ],
-                ],
-                'inputArray2' => [
-                    'k2' => [],
-                ],
-                'dontAddNewKeys' => false, // default
-                'emptyValuesOverride' => false,
-                'expected' => [
-                    'k2' => [
-                        'k2.1' => 'v2.1'
+                'k3' => 'v3'
+            ]
+        ];
+        yield 'nested array with recursion' => [
+            'inputArray1' => [
+                'k1' => 'v1',
+                'k2' => [
+                    'k2.1' => 'v2.1',
+                    'k2.2' => 'v2.2',
+                    'k2.4' => [
+                        'k2.4.1' => 'v2.4.1'
                     ]
-                ]
+                ],
             ],
-
-            'empty array without emptyValuesOverride should add new key (k3)' => [
-                'inputArray1' => [
-                    'k2' => [
-                        'k2.1' => 'v2.1'
-                    ],
+            'inputArray2' => [
+                'k2' => [
+                    'k2.2' => 'v2.2a',
+                    'k2.3' => 'v2.3',
+                    'k2.4' => [
+                        'k2.4.2' => 'v2.4.2'
+                    ]
                 ],
-                'inputArray2' => [
-                    'k3' => [],
-                ],
-                'dontAddNewKeys' => false, // default
-                'emptyValuesOverride' => false,
-                'expected' => [
-                    'k2' => [
-                        'k2.1' => 'v2.1'
-                    ],
-                    'k3' => []
-                ]
+                'k3' => 'v3'
             ],
-
-            'empty array without emptyValuesOverride should not override existing key (k3)' => [
-                'inputArray1' => [
-                    'k2' => [
-                        'k2.1' => 'v2.1'
+            'dontAddNewKeys' => false, // default
+            'emptyValuesOverride' => true, // default
+            'expected' => [
+                'k1' => 'v1',
+                'k2' => [
+                    'k2.1' => 'v2.1',
+                    'k2.2' => 'v2.2a',
+                    'k2.4' => [
+                        'k2.4.1' => 'v2.4.1',
+                        'k2.4.2' => 'v2.4.2'
                     ],
-                    'k3' => 'v3'
+                    'k2.3' => 'v2.3'
                 ],
-                'inputArray2' => [
-                    'k3' => [],
+                'k3' => 'v3'
+            ]
+        ];
+        yield 'simple type should override array (k2)' => [
+            'inputArray1' => [
+                'k1' => 'v1',
+                'k2' => [
+                    'k2.1' => 'v2.1'
                 ],
-                'dontAddNewKeys' => false, // default
-                'emptyValuesOverride' => false,
-                'expected' => [
-                    'k2' => [
-                        'k2.1' => 'v2.1'
-                    ],
-                    'k3' => 'v3'
+            ],
+            'inputArray2' => [
+                'k2' => 'v2a',
+                'k3' => 'v3'
+            ],
+            'dontAddNewKeys' => false, // default
+            'emptyValuesOverride' => true, // default
+            'expected' => [
+                'k1' => 'v1',
+                'k2' => 'v2a',
+                'k3' => 'v3'
+            ]
+        ];
+        yield 'null should override array (k2)' => [
+            'inputArray1' => [
+                'k1' => 'v1',
+                'k2' => [
+                    'k2.1' => 'v2.1'
+                ],
+            ],
+            'inputArray2' => [
+                'k2' => null,
+                'k3' => 'v3'
+            ],
+            'dontAddNewKeys' => false, // default
+            'emptyValuesOverride' => true, // default
+            'expected' => [
+                'k1' => 'v1',
+                'k2' => null,
+                'k3' => 'v3'
+            ]
+        ];
+        yield 'empty array should override array (k2)' => [
+            'inputArray1' => [
+                'k2' => [
+                    'k2.1' => 'v2.1'
+                ],
+            ],
+            'inputArray2' => [
+                'k2' => [],
+            ],
+            'dontAddNewKeys' => false, // default
+            'emptyValuesOverride' => true, // default
+            'expected' => [
+                'k2' => []
+            ]
+        ];
+        yield 'empty array without emptyValuesOverride should not override array (k2)' => [
+            'inputArray1' => [
+                'k2' => [
+                    'k2.1' => 'v2.1'
+                ],
+            ],
+            'inputArray2' => [
+                'k2' => [],
+            ],
+            'dontAddNewKeys' => false, // default
+            'emptyValuesOverride' => false,
+            'expected' => [
+                'k2' => [
+                    'k2.1' => 'v2.1'
                 ]
+            ]
+        ];
+        yield 'empty array without emptyValuesOverride should add new key (k3)' => [
+            'inputArray1' => [
+                'k2' => [
+                    'k2.1' => 'v2.1'
+                ],
+            ],
+            'inputArray2' => [
+                'k3' => [],
+            ],
+            'dontAddNewKeys' => false, // default
+            'emptyValuesOverride' => false,
+            'expected' => [
+                'k2' => [
+                    'k2.1' => 'v2.1'
+                ],
+                'k3' => []
+            ]
+        ];
+        yield 'empty array without emptyValuesOverride should not override existing key (k3)' => [
+            'inputArray1' => [
+                'k2' => [
+                    'k2.1' => 'v2.1'
+                ],
+                'k3' => 'v3'
+            ],
+            'inputArray2' => [
+                'k3' => [],
+            ],
+            'dontAddNewKeys' => false, // default
+            'emptyValuesOverride' => false,
+            'expected' => [
+                'k2' => [
+                    'k2.1' => 'v2.1'
+                ],
+                'k3' => 'v3'
             ]
         ];
     }
 
-    /**
-     * @dataProvider arrayMergeRecursiveOverruleData
-     * @test
-     */
+    #[DataProvider('arrayMergeRecursiveOverruleData')]
+    #[Test]
     public function arrayMergeRecursiveOverruleMergesSimpleArrays(array $inputArray1, array $inputArray2, bool $dontAddNewKeys, bool $emptyValuesOverride, array $expected)
     {
         $actual = Arrays::arrayMergeRecursiveOverrule($inputArray1, $inputArray2, $dontAddNewKeys, $emptyValuesOverride);
         self::assertSame($expected, $actual);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function arrayMergeRecursiveCallbackConvertsSimpleValuesWithGivenClosure()
     {
         $inputArray1 = [
@@ -625,9 +548,7 @@ class ArraysTest extends \PHPUnit\Framework\TestCase
         self::assertSame($expected, $actual);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function arrayMergeRecursiveCallbackConvertsSimpleValuesWithGivenClosureAndReturnedSimpleTypesOverwrite()
     {
         $inputArray1 = [
@@ -661,9 +582,7 @@ class ArraysTest extends \PHPUnit\Framework\TestCase
         self::assertSame($expected, $actual);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function arrayMergeRecursiveCallbackOverrideFirstArrayValuesGivenClosure()
     {
         $inputArray1 = [

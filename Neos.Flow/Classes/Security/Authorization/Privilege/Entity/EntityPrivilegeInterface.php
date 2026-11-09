@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Security\Authorization\Privilege\Entity;
 
 /*
@@ -11,7 +12,7 @@ namespace Neos\Flow\Security\Authorization\Privilege\Entity;
  * source code.
  */
 
-use Doctrine\Persistence\Mapping\ClassMetadata;
+use Doctrine\ORM\Mapping\ClassMetadata;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Security\Authorization\Privilege\PrivilegeInterface;
 
@@ -32,9 +33,9 @@ interface EntityPrivilegeInterface extends PrivilegeInterface
     public function matchesEntityType($entityType);
 
     /**
-     * @param ClassMetadata $targetEntity
+     * @param ClassMetadata<object> $targetEntity
      * @param string $targetTableAlias
-     * @return string
+     * @return string|null
      */
     public function getSqlConstraint(ClassMetadata $targetEntity, $targetTableAlias);
 }

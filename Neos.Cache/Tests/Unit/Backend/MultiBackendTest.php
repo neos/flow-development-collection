@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Neos\Cache\Tests\Unit\Backend;
@@ -10,12 +11,11 @@ use Neos\Cache\Backend\NullBackend;
 use Neos\Cache\Backend\RedisBackend;
 use Neos\Cache\EnvironmentConfiguration;
 use Neos\Cache\Tests\BaseTestCase;
+use PHPUnit\Framework\Attributes\Test;
 
-class MultiBackendTest extends BaseTestCase
+final class MultiBackendTest extends BaseTestCase
 {
-    /**
-     * @test
-     */
+    #[Test]
     public function noExceptionIsThrownIfBackendFailsToBeCreated(): void
     {
         $backendOptions = [
@@ -36,9 +36,7 @@ class MultiBackendTest extends BaseTestCase
         self::assertFalse($result);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function debugModeWillBubbleExceptions(): void
     {
         $this->expectException(\Throwable::class);
@@ -61,17 +59,15 @@ class MultiBackendTest extends BaseTestCase
         self::assertFalse($result);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function writesToAllBackends(): void
     {
         $mockBuilder = $this->getMockBuilder(NullBackend::class);
         $firstNullBackendMock = $mockBuilder->getMock();
         $secondNullBackendMock = $mockBuilder->getMock();
 
-        $firstNullBackendMock->expects(self::once())->method('set')->withAnyParameters();
-        $secondNullBackendMock->expects(self::once())->method('set')->withAnyParameters();
+        $firstNullBackendMock->expects($this->once())->method('set')->withAnyParameters();
+        $secondNullBackendMock->expects($this->once())->method('set')->withAnyParameters();
 
         $multiBackend = new MultiBackend($this->getEnvironmentConfiguration(), []);
         $this->inject($multiBackend, 'backends', [$firstNullBackendMock, $secondNullBackendMock]);
@@ -80,17 +76,15 @@ class MultiBackendTest extends BaseTestCase
         $multiBackend->set('foo', 'data');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function fallsBackToSecondaryBackend(): void
     {
         $mockBuilder = $this->getMockBuilder(NullBackend::class);
         $firstNullBackendMock = $mockBuilder->getMock();
         $secondNullBackendMock = $mockBuilder->getMock();
 
-        $firstNullBackendMock->expects(self::once())->method('get')->with('foo')->willThrowException(new \Exception('Backend failure'));
-        $secondNullBackendMock->expects(self::once())->method('get')->with('foo')->willReturn(5);
+        $firstNullBackendMock->expects($this->once())->method('get')->with('foo')->willThrowException(new \Exception('Backend failure'));
+        $secondNullBackendMock->expects($this->once())->method('get')->with('foo')->willReturn(5);
 
         $multiBackend = new MultiBackend($this->getEnvironmentConfiguration(), []);
         $this->inject($multiBackend, 'backends', [$firstNullBackendMock, $secondNullBackendMock]);
@@ -100,17 +94,15 @@ class MultiBackendTest extends BaseTestCase
         self::assertSame(5, $result);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function removesUnhealthyBackend(): void
     {
         $mockBuilder = $this->getMockBuilder(NullBackend::class);
         $firstNullBackendMock = $mockBuilder->getMock();
         $secondNullBackendMock = $mockBuilder->getMock();
 
-        $firstNullBackendMock->expects(self::once())->method('get')->with('foo')->willThrowException(new \Exception('Backend failure'));
-        $secondNullBackendMock->expects(self::exactly(2))->method('get')->with('foo')->willReturn(5);
+        $firstNullBackendMock->expects($this->once())->method('get')->with('foo')->willThrowException(new \Exception('Backend failure'));
+        $secondNullBackendMock->expects($this->exactly(2))->method('get')->with('foo')->willReturn(5);
 
         $multiBackend = new MultiBackend($this->getEnvironmentConfiguration(), []);
         $multiBackend->setRemoveUnhealthyBackends(true);

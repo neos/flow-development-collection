@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Neos\Flow\Tests\Unit\Mvc\Routing\Dto;
 
 /*
@@ -10,61 +13,58 @@ namespace Neos\Flow\Tests\Unit\Mvc\Routing\Dto;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
 use Neos\Cache\CacheAwareInterface;
 use Neos\Flow\Mvc\Routing\Dto\RouteParameters;
 use Neos\Flow\Mvc\Routing\RouterInterface;
 use Neos\Flow\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Testcase for the RouteParameters DTO
  */
-class RouteParametersTest extends UnitTestCase
+final class RouteParametersTest extends UnitTestCase
 {
-    public function withParameterThrowsExceptionForInvalidParameterValuesDataProvider()
+    public static function withParameterThrowsExceptionForInvalidParameterValuesDataProvider(): \Iterator
     {
-        return [
-            ['parameterValue' => new \stdClass()],
-            ['parameterValue' => $this->getMockBuilder(RouterInterface::class)->getMock()],
-            ['parameterValue' => null],
-        ];
+        yield 'stdClass' => ['parameterValue' => new \stdClass()];
+        yield 'RouterInterface mock' => ['parameterValue' => '__mock:' . RouterInterface::class];
+        yield 'null' => ['parameterValue' => null];
     }
 
-    /**
-     * @test
-     * @dataProvider withParameterThrowsExceptionForInvalidParameterValuesDataProvider
-     */
+    #[DataProvider('withParameterThrowsExceptionForInvalidParameterValuesDataProvider')]
+    #[Test]
     public function withParameterThrowsExceptionForInvalidParameterValues($parameterValue)
     {
+        if (is_string($parameterValue) && str_starts_with($parameterValue, '__mock:')) {
+            $parameterValue = $this->createMock(substr($parameterValue, 7));
+        }
         $this->expectException(\InvalidArgumentException::class);
         RouteParameters::createEmpty()->withParameter('someParameter', $parameterValue);
     }
 
-    public function withParameterAcceptsValidParameterValuesDataProvider()
+    public static function withParameterAcceptsValidParameterValuesDataProvider(): \Iterator
     {
-        return [
-            ['parameterValue' => 'string'],
-            ['parameterValue' => 123],
-            ['parameterValue' => 123.45],
-            ['parameterValue' => true],
-            ['parameterValue' => false],
-            ['parameterValue' => $this->getMockBuilder(CacheAwareInterface::class)->getMock()],
-        ];
+        yield ['parameterValue' => 'string'];
+        yield ['parameterValue' => 123];
+        yield ['parameterValue' => 123.45];
+        yield ['parameterValue' => true];
+        yield ['parameterValue' => false];
+        yield ['parameterValue' => '__stub:' . CacheAwareInterface::class];
     }
 
-    /**
-     * @test
-     * @dataProvider withParameterAcceptsValidParameterValuesDataProvider
-     */
+    #[DataProvider('withParameterAcceptsValidParameterValuesDataProvider')]
+    #[Test]
     public function withParameterAcceptsValidParameterValues($parameterValue)
     {
+        if (is_string($parameterValue) && str_starts_with($parameterValue, '__stub:')) {
+            $parameterValue = $this->createStub(substr($parameterValue, 7));
+        }
         RouteParameters::createEmpty()->withParameter('someParameter', $parameterValue);
         $this->addToAssertionCount(1);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function withParameterDoesNotMutateTheObject()
     {
         $originalParameters = RouteParameters::createEmpty();
@@ -72,18 +72,14 @@ class RouteParametersTest extends UnitTestCase
         self::assertFalse($originalParameters->has('someParameter'));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function withParameterReturnsANewInstanceWithTheGivenParameter()
     {
         $originalParameters = RouteParameters::createEmpty()->withParameter('someParameter', 'someValue');
         self::assertSame('someValue', $originalParameters->getValue('someParameter'));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function withParameterOverridesAnyPreviousParameters()
     {
         $originalParameters = RouteParameters::createEmpty()->withParameter('someParameter', 'someValue');

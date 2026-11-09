@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Monitor\ChangeDetectionStrategy;
 
 /*
@@ -12,8 +13,8 @@ namespace Neos\Flow\Monitor\ChangeDetectionStrategy;
  */
 
 use Neos\Cache\Frontend\StringFrontend;
-use Neos\Flow\Monitor\FileMonitor;
 use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Monitor\FileMonitor;
 
 /**
  * A change detection strategy based on modification times
@@ -31,7 +32,7 @@ class ModificationTimeStrategy implements ChangeDetectionStrategyInterface, Stra
     protected $cache;
 
     /**
-     * @var array
+     * @var array<string,int>
      */
     protected $filesAndModificationTimes = [];
 
@@ -61,7 +62,7 @@ class ModificationTimeStrategy implements ChangeDetectionStrategyInterface, Stra
     public function setFileMonitor(FileMonitor $fileMonitor)
     {
         $this->fileMonitor = $fileMonitor;
-        $this->filesAndModificationTimes = json_decode($this->cache->get($this->fileMonitor->getIdentifier() . '_filesAndModificationTimes'), true);
+        $this->filesAndModificationTimes = json_decode($this->cache->get($this->fileMonitor->getIdentifier() . '_filesAndModificationTimes') ?: '', true);
     }
 
     /**
@@ -120,7 +121,7 @@ class ModificationTimeStrategy implements ChangeDetectionStrategyInterface, Stra
     public function shutdownObject()
     {
         if ($this->modificationTimesChanged === true) {
-            $this->cache->set($this->fileMonitor->getIdentifier() . '_filesAndModificationTimes', json_encode($this->filesAndModificationTimes));
+            $this->cache->set($this->fileMonitor->getIdentifier() . '_filesAndModificationTimes', json_encode($this->filesAndModificationTimes, JSON_THROW_ON_ERROR));
         }
     }
 }

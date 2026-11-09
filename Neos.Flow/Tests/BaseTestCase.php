@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Neos\Flow\Tests;
 
 /*
@@ -10,6 +13,8 @@ namespace Neos\Flow\Tests;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 
 /**
  * The mother of all test cases.
@@ -19,7 +24,7 @@ namespace Neos\Flow\Tests;
  *
  * @deprecated its utilities are deprecated.
  */
-abstract class BaseTestCase extends \PHPUnit\Framework\TestCase
+abstract class BaseTestCase extends TestCase
 {
     /**
      * @var array
@@ -42,37 +47,19 @@ abstract class BaseTestCase extends \PHPUnit\Framework\TestCase
      * @param string $mockClassName
      * @param boolean $callOriginalConstructor
      * @param boolean $callOriginalClone
-     * @param boolean $callAutoload
-     * @param boolean $cloneArguments
-     * @param boolean $callOriginalMethods
-     * @param object $proxyTarget
-     * @return T&\PHPUnit\Framework\MockObject\MockObject&AccessibleProxyInterface
+     * @param boolean $cloneArguments no longer has an effect
+     * @return T&MockObject&AccessibleProxyInterface
      * @deprecated please don't use this {@see AccessibleProxyInterface}
      */
-    protected function getAccessibleMock($originalClassName, $methods = [], array $arguments = [], $mockClassName = '', $callOriginalConstructor = true, $callOriginalClone = true, $callAutoload = true, $cloneArguments = false, $callOriginalMethods = false, $proxyTarget = null)
+    protected function getAccessibleMock(string $originalClassName, array $methods = [], array $arguments = [], $mockClassName = '', $callOriginalConstructor = true, $callOriginalClone = true, $cloneArguments = false)
     {
         $mockBuilder = $this->getMockBuilder($this->buildAccessibleProxy($originalClassName));
-        $mockBuilder->setMethods($methods)->setConstructorArgs($arguments)->setMockClassName($mockClassName);
+        $mockBuilder->onlyMethods($methods)->setConstructorArgs($arguments)->setMockClassName($mockClassName);
         if ($callOriginalConstructor === false) {
             $mockBuilder->disableOriginalConstructor();
         }
         if ($callOriginalClone === false) {
             $mockBuilder->disableOriginalClone();
-        }
-        if ($callAutoload === false) {
-            $mockBuilder->disableAutoload();
-        }
-        if ($callAutoload === false) {
-            $mockBuilder->enableArgumentCloning();
-        }
-        if ($cloneArguments === true) {
-            $mockBuilder->enableArgumentCloning();
-        }
-        if ($callOriginalMethods === true) {
-            $mockBuilder->enableProxyingToOriginalMethods();
-        }
-        if ($proxyTarget !== null) {
-            $mockBuilder->setProxyTarget($proxyTarget);
         }
 
         $mockObject = $mockBuilder->getMock();
@@ -92,15 +79,40 @@ abstract class BaseTestCase extends \PHPUnit\Framework\TestCase
      * @param string $mockClassName
      * @param boolean $callOriginalConstructor
      * @param boolean $callOriginalClone
-     * @param boolean $callAutoload
+     * @param boolean $callAutoload no longer has an effect
      * @param array $mockedMethods
-     * @param boolean $cloneArguments
-     * @return T&\PHPUnit\Framework\MockObject\MockObject&AccessibleProxyInterface
+     * @param boolean $cloneArguments no longer has an effect
+     * @return T&MockObject&AccessibleProxyInterface
      * @deprecated please don't use this {@see AccessibleProxyInterface}
      */
     protected function getAccessibleMockForAbstractClass($originalClassName, array $arguments = [], $mockClassName = '', $callOriginalConstructor = true, $callOriginalClone = true, $callAutoload = true, $mockedMethods = [], $cloneArguments = false)
     {
-        return $this->getMockForAbstractClass($this->buildAccessibleProxy($originalClassName), $arguments, $mockClassName, $callOriginalConstructor, $callOriginalClone, $callAutoload, $mockedMethods, $cloneArguments);
+        $proxyClassName = $this->buildAccessibleProxy($originalClassName);
+        // The accessible proxy of an abstract class is abstract itself. PHPUnit only implements
+        // the methods passed to onlyMethods(), so the abstract ones have to be listed explicitly –
+        // otherwise the generated mock class is left with unimplemented abstract methods.
+        $abstractMethods = array_map(
+            static fn (\ReflectionMethod $method) => $method->getName(),
+            (new \ReflectionClass($proxyClassName))->getMethods(\ReflectionMethod::IS_ABSTRACT)
+        );
+
+        $mockBuilder = $this->getMockBuilder($proxyClassName);
+        $mockBuilder
+            ->onlyMethods(array_values(array_unique([...$mockedMethods, ...$abstractMethods])))
+            ->setConstructorArgs($arguments)
+            ->setMockClassName($mockClassName);
+        if ($callOriginalConstructor === false) {
+            $mockBuilder->disableOriginalConstructor();
+        }
+        if ($callOriginalClone === false) {
+            $mockBuilder->disableOriginalClone();
+        }
+
+        $mockObject = $mockBuilder->getMock();
+
+        $this->registerMockObject($mockObject);
+
+        return $mockObject;
     }
 
     /**
@@ -113,7 +125,7 @@ abstract class BaseTestCase extends \PHPUnit\Framework\TestCase
      */
     protected function buildAccessibleProxy($className)
     {
-        $accessibleClassName = 'AccessibleTestProxy' . md5(uniqid(mt_rand(), true));
+        $accessibleClassName = 'AccessibleTestProxy' . md5(uniqid((string)mt_rand(), true));
         $class = new \ReflectionClass($className);
         $abstractModifier = $class->isAbstract() ? 'abstract ' : '';
         eval('#[\AllowDynamicProperties]

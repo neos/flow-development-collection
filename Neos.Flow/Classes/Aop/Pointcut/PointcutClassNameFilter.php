@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Aop\Pointcut;
 
 /*
@@ -97,7 +98,7 @@ class PointcutClassNameFilter implements PointcutFilterInterface
     /**
      * Returns runtime evaluations for the pointcut.
      *
-     * @return array Runtime evaluations
+     * @return array<mixed> Runtime evaluations
      */
     public function getRuntimeEvaluationsDefinition(): array
     {

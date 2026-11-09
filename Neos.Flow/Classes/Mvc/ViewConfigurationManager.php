@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Mvc;
 
 /*
@@ -11,10 +12,10 @@ namespace Neos\Flow\Mvc;
  * source code.
  */
 
+use Neos\Cache\Frontend\VariableFrontend;
 use Neos\Eel\CompilingEvaluator;
 use Neos\Eel\Context;
 use Neos\Flow\Annotations as Flow;
-use Neos\Cache\Frontend\VariableFrontend;
 use Neos\Flow\Configuration\ConfigurationManager;
 
 /**
@@ -24,26 +25,21 @@ use Neos\Flow\Configuration\ConfigurationManager;
  * request out of the Views.yaml into one view configuration used
  * by the ActionController to setup up the view.
  *
+ * @phpstan-type ViewConfigurationShape array{
+ *     requestFilter?: string,
+ *     viewObjectName?: string,
+ *     options?: array<string,mixed>
+ * }
  * @Flow\Scope("singleton")
  */
 class ViewConfigurationManager
 {
-    /**
-     * @var VariableFrontend
-     */
-    protected $cache;
-
-    /**
-     * @Flow\Inject
-     * @var ConfigurationManager
-     */
-    protected $configurationManager;
-
-    /**
-     * @Flow\Inject
-     * @var CompilingEvaluator
-     */
-    protected $eelEvaluator;
+    public function __construct(
+        protected ConfigurationManager $configurationManager,
+        protected CompilingEvaluator $eelEvaluator,
+        protected VariableFrontend $cache
+    ) {
+    }
 
     /**
      * This method walks through the view configuration and applies
@@ -53,7 +49,7 @@ class ViewConfigurationManager
      * an array of options that will be set on the view object.
      *
      * @param ActionRequest $request
-     * @return array
+     * @return ViewConfigurationShape
      */
     public function getViewConfiguration(ActionRequest $request)
     {
@@ -61,6 +57,7 @@ class ViewConfigurationManager
 
         $viewConfiguration = $this->cache->get($cacheIdentifier);
         if ($viewConfiguration === false) {
+            /** @var ViewConfigurationShape $configurations */
             $configurations = $this->configurationManager->getConfiguration('Views');
 
             $requestMatcher = new RequestMatcher($request);
@@ -77,7 +74,7 @@ class ViewConfigurationManager
                     if ($result === false) {
                         continue;
                     }
-                    $weight = $requestMatcher->getWeight() + $order;
+                    $weight = $requestMatcher->getWeight() + (int)$order;
                 }
                 if ($weight > $highestWeight) {
                     $viewConfiguration = $configuration;

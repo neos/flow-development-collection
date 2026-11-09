@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Neos\Flow\Tests\Unit\Http;
 
 /*
@@ -10,20 +13,24 @@ namespace Neos\Flow\Tests\Unit\Http;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
 use GuzzleHttp\Psr7\Response;
 use GuzzleHttp\Psr7\Uri;
 use Neos\Flow\Http\Client;
+use Neos\Flow\Http\Client\Browser;
+use Neos\Flow\Http\Client\InfiniteRedirectionException;
+use Neos\Flow\Http\Client\RequestEngineInterface;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Http\Factories\ServerRequestFactory;
 use Neos\Http\Factories\UriFactory;
+use PHPUnit\Framework\Attributes\Depends;
+use PHPUnit\Framework\Attributes\Test;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
 /**
  * Test case for the Http Cookie class
  */
-class BrowserTest extends UnitTestCase
+final class BrowserTest extends UnitTestCase
 {
     /**
      * @var Client\Browser
@@ -36,33 +43,28 @@ class BrowserTest extends UnitTestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->browser = new Client\Browser();
+        $this->browser = new Browser();
         $this->inject($this->browser, 'serverRequestFactory', new ServerRequestFactory(new UriFactory()));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function requestingUriQueriesRequestEngine()
     {
-        $requestEngine = $this->createMock(Client\RequestEngineInterface::class);
+        $requestEngine = $this->createMock(RequestEngineInterface::class);
         $requestEngine
-            ->expects(self::once())
+            ->expects($this->once())
             ->method('sendRequest')
             ->with($this->isInstanceOf(RequestInterface::class))
-            ->will(self::returnValue(new Response()));
+            ->willReturn((new Response()));
         $this->browser->setRequestEngine($requestEngine);
         $this->browser->request('http://localhost/foo');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function automaticHeadersAreSetOnEachRequest()
     {
-        $requestEngine = $this->createMock(Client\RequestEngineInterface::class);
+        $requestEngine = $this->createMock(RequestEngineInterface::class);
         $requestEngine
-            ->expects(self::any())
             ->method('sendRequest')
             ->willReturn(new Response());
         $this->browser->setRequestEngine($requestEngine);
@@ -73,20 +75,18 @@ class BrowserTest extends UnitTestCase
 
         self::assertTrue($this->browser->getLastRequest()->hasHeader('X-Test-Header'));
         self::assertSame('Acme', $this->browser->getLastRequest()->getHeaderLine('X-Test-Header'));
-        self::assertStringContainsString('text/plain', $this->browser->getLastRequest()->getHeaderLine('Content-Type'));
+        self::assertStringContainsString('text/plain', (string) $this->browser->getLastRequest()->getHeaderLine('Content-Type'));
     }
 
-    /**
-     * @test
-     * @depends automaticHeadersAreSetOnEachRequest
-     */
+    #[Depends('automaticHeadersAreSetOnEachRequest')]
+    #[Test]
     public function automaticHeadersCanBeRemovedAgain()
     {
-        $requestEngine = $this->createMock(Client\RequestEngineInterface::class);
+        $requestEngine = $this->createMock(RequestEngineInterface::class);
         $requestEngine
-            ->expects(self::once())
+            ->expects($this->once())
             ->method('sendRequest')
-            ->will(self::returnValue(new Response()));
+            ->willReturn((new Response()));
         $this->browser->setRequestEngine($requestEngine);
 
         $this->browser->addAutomaticRequestHeader('X-Test-Header', 'Acme');
@@ -95,9 +95,7 @@ class BrowserTest extends UnitTestCase
         self::assertFalse($this->browser->getLastRequest()->hasHeader('X-Test-Header'));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function browserFollowsRedirectionIfResponseTellsSo()
     {
         $initialUri = new Uri('http://localhost/foo');
@@ -106,58 +104,57 @@ class BrowserTest extends UnitTestCase
         $firstResponse = new Response(301, ['Location' => (string)$redirectUri]);
         $secondResponse = new Response(202);
 
-        $requestEngine = $this->createMock(Client\RequestEngineInterface::class);
-        $requestEngine
-            ->method('sendRequest')
-            ->withConsecutive([
-                self::callback(function (ServerRequestInterface $request) use ($initialUri) {
-                    return (string)$request->getUri() === (string)$initialUri;
-                })
-            ], [
-                self::callback(function (ServerRequestInterface $request) use ($redirectUri) {
-                    return (string)$request->getUri() === (string)$redirectUri;
-                })
-            ])->willReturnOnConsecutiveCalls($firstResponse, $secondResponse);
+        $requestEngine = $this->createMock(RequestEngineInterface::class);
+        $matcher = $this->exactly(2);
+        $requestEngine->expects($matcher)
+            ->method('sendRequest')->willReturnCallback(function (...$parameters) use ($matcher, $initialUri, $redirectUri, $firstResponse, $secondResponse) {
+                if ($matcher->numberOfInvocations() === 1) {
+                    self::assertInstanceOf(ServerRequestInterface::class, $parameters[0]);
+                    self::assertSame((string)$initialUri, (string)$parameters[0]->getUri());
+                    return $firstResponse;
+                }
+                if ($matcher->numberOfInvocations() === 2) {
+                    self::assertInstanceOf(ServerRequestInterface::class, $parameters[0]);
+                    self::assertSame((string)$redirectUri, (string)$parameters[0]->getUri());
+                    return $secondResponse;
+                }
+            });
 
         $this->browser->setRequestEngine($requestEngine);
         $actual = $this->browser->request($initialUri);
         self::assertSame($secondResponse, $actual);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function browserDoesNotRedirectOnLocationHeaderButNot3xxResponseCode()
     {
         $twoZeroOneResponse = new Response(201, ['Location' => 'http://localhost/createdResource/isHere']);
 
-        $requestEngine = $this->createMock(Client\RequestEngineInterface::class);
+        $requestEngine = $this->createMock(RequestEngineInterface::class);
         $requestEngine
-            ->expects(self::once())
+            ->expects($this->once())
             ->method('sendRequest')
-            ->will(self::returnValue($twoZeroOneResponse));
+            ->willReturn(($twoZeroOneResponse));
 
         $this->browser->setRequestEngine($requestEngine);
         $actual = $this->browser->request('http://localhost/createSomeResource');
         self::assertSame($twoZeroOneResponse, $actual);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function browserHaltsOnAttemptedInfiniteRedirectionLoop()
     {
-        $this->expectException(Client\InfiniteRedirectionException::class);
+        $this->expectException(InfiniteRedirectionException::class);
         $wildResponses = [];
         $wildResponses[0] = new Response(301, ['Location' => 'http://localhost/pleaseGoThere']);
         $wildResponses[1] = new Response(301, ['Location' => 'http://localhost/ahNoPleaseRatherGoThere']);
         $wildResponses[2] = new Response(301, ['Location' => 'http://localhost/youNoWhatISendYouHere']);
         $wildResponses[3] = new Response(301, ['Location' => 'http://localhost/ahNoPleaseRatherGoThere']);
 
-        $requestEngine = $this->createMock(Client\RequestEngineInterface::class);
-        for ($i=0; $i<=3; $i++) {
+        $requestEngine = $this->createMock(RequestEngineInterface::class);
+        for ($i = 0; $i <= 3; $i++) {
             $requestEngine
-                ->expects(self::exactly(count($wildResponses)))
+                ->expects($this->exactly(count($wildResponses)))
                 ->method('sendRequest')
                 ->willReturnOnConsecutiveCalls(...$wildResponses);
         }
@@ -166,19 +163,17 @@ class BrowserTest extends UnitTestCase
         $this->browser->request('http://localhost/mayThePaperChaseBegin');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function browserHaltsOnExceedingMaximumRedirections()
     {
-        $this->expectException(Client\InfiniteRedirectionException::class);
-        $requestEngine = $this->createMock(Client\RequestEngineInterface::class);
+        $this->expectException(InfiniteRedirectionException::class);
+        $requestEngine = $this->createMock(RequestEngineInterface::class);
         $responses = [];
-        for ($i=0; $i<=10; $i++) {
+        for ($i = 0; $i <= 10; $i++) {
             $responses[] = new Response(301, ['Location' => 'http://localhost/this/willLead/you/knowhere/' . $i]);
         }
         $requestEngine
-            ->expects(self::exactly(count($responses)))
+            ->expects($this->exactly(count($responses)))
             ->method('sendRequest')
             ->willReturnOnConsecutiveCalls(...$responses);
 

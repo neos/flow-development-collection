@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Neos\Cache\Tests\Functional\Backend;
 
 include_once(__DIR__ . '/../../BaseTestCase.php');
@@ -18,8 +20,10 @@ use Exception;
 use Neos\Cache\Backend\RedisBackend;
 use Neos\Cache\EnvironmentConfiguration;
 use Neos\Cache\Tests\BaseTestCase;
-use RedisException;
+use PHPUnit\Framework\Attributes\RequiresPhpExtension;
+use PHPUnit\Framework\Attributes\Test;
 use Redis;
+use RedisException;
 
 /**
  * Testcase for the redis cache backend
@@ -36,10 +40,9 @@ use Redis;
  * The users can be added by:
  * acl setuser test_no_password on > ~* &* +@all
  * acl setuser test_password on >secret_password ~* &* +@all
- *
- * @requires extension redis
  */
-class RedisBackendAuthenticationTest extends BaseTestCase
+#[RequiresPhpExtension('redis')]
+final class RedisBackendAuthenticationTest extends BaseTestCase
 {
     /**
      * @var Redis|null
@@ -104,9 +107,7 @@ class RedisBackendAuthenticationTest extends BaseTestCase
         }
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function defaultUserNoPassword()
     {
         $backend = new RedisBackend(
@@ -116,9 +117,7 @@ class RedisBackendAuthenticationTest extends BaseTestCase
         $this->assertInstanceOf('Neos\Cache\Backend\RedisBackend', $backend);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function usernameNoPassword()
     {
         $backend = new RedisBackend(
@@ -128,9 +127,7 @@ class RedisBackendAuthenticationTest extends BaseTestCase
         $this->assertInstanceOf('Neos\Cache\Backend\RedisBackend', $backend);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function usernamePassword()
     {
         $backend = new RedisBackend(
@@ -140,9 +137,7 @@ class RedisBackendAuthenticationTest extends BaseTestCase
         $this->assertInstanceOf('Neos\Cache\Backend\RedisBackend', $backend);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function incorrectUsernamePassword()
     {
         $this->expectException(RedisException::class);

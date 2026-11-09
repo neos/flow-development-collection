@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Neos\Flow\Tests\Functional\Security\Authorization\Privilege\Entity\Doctrine;
 
 /*
@@ -10,20 +13,30 @@ namespace Neos\Flow\Tests\Functional\Security\Authorization\Privilege\Entity\Doc
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
 use Doctrine\Common\Collections\ArrayCollection;
 use Neos\Flow\Cache\CacheManager;
 use Neos\Flow\Persistence\Doctrine\PersistenceManager;
-use Neos\Flow\Tests\Functional\Security\Fixtures;
-use Neos\Flow\Tests\FunctionalTestCase;
-use Neos\Flow\Tests\Functional\Aop;
 use Neos\Flow\Security;
+use Neos\Flow\Security\Account;
+use Neos\Flow\Tests\Functional\Aop\Fixtures\TestContext;
+use Neos\Flow\Tests\Functional\Security\Fixtures;
+use Neos\Flow\Tests\Functional\Security\Fixtures\RestrictableEntity;
+use Neos\Flow\Tests\Functional\Security\Fixtures\RestrictableEntityDoctrineRepository;
+use Neos\Flow\Tests\Functional\Security\Fixtures\TestEntityA;
+use Neos\Flow\Tests\Functional\Security\Fixtures\TestEntityADoctrineRepository;
+use Neos\Flow\Tests\Functional\Security\Fixtures\TestEntityB;
+use Neos\Flow\Tests\Functional\Security\Fixtures\TestEntityC;
+use Neos\Flow\Tests\Functional\Security\Fixtures\TestEntityCDoctrineRepository;
+use Neos\Flow\Tests\Functional\Security\Fixtures\TestEntityD;
+use Neos\Flow\Tests\Functional\Security\Fixtures\TestEntityDDoctrineRepository;
+use Neos\Flow\Tests\FunctionalTestCase;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Testcase for content security using doctrine persistence
  *
  */
-class ContentSecurityTest extends FunctionalTestCase
+final class ContentSecurityTest extends FunctionalTestCase
 {
     /**
      * @var boolean
@@ -56,7 +69,7 @@ class ContentSecurityTest extends FunctionalTestCase
     protected $testEntityDDoctrineRepository;
 
     /**
-     * @var Aop\Fixtures\TestContext
+     * @var TestContext
      */
     protected $globalObjectTestContext;
 
@@ -69,22 +82,20 @@ class ContentSecurityTest extends FunctionalTestCase
         if (!$this->persistenceManager instanceof PersistenceManager) {
             $this->markTestSkipped('Doctrine persistence is not enabled');
         }
-        $this->restrictableEntityDoctrineRepository = new Fixtures\RestrictableEntityDoctrineRepository();
-        $this->testEntityADoctrineRepository = new Fixtures\TestEntityADoctrineRepository();
-        $this->testEntityCDoctrineRepository = new Fixtures\TestEntityCDoctrineRepository();
-        $this->testEntityDDoctrineRepository = new Fixtures\TestEntityDDoctrineRepository();
-        $this->globalObjectTestContext = $this->objectManager->get(Aop\Fixtures\TestContext::class);
+        $this->restrictableEntityDoctrineRepository = $this->objectManager->get(RestrictableEntityDoctrineRepository::class);
+        $this->testEntityADoctrineRepository = $this->objectManager->get(TestEntityADoctrineRepository::class);
+        $this->testEntityCDoctrineRepository = $this->objectManager->get(TestEntityCDoctrineRepository::class);
+        $this->testEntityDDoctrineRepository = $this->objectManager->get(TestEntityDDoctrineRepository::class);
+        $this->globalObjectTestContext = $this->objectManager->get(TestContext::class);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function administratorsAreAllowedToSeeHiddenRestrictableEntities()
     {
         $this->authenticateRoles(['Neos.Flow:Administrator']);
 
-        $defaultEntity = new Fixtures\RestrictableEntity('default');
-        $hiddenEntity = new Fixtures\RestrictableEntity('hiddenEntity');
+        $defaultEntity = new RestrictableEntity('default');
+        $hiddenEntity = new RestrictableEntity('hiddenEntity');
         $hiddenEntity->setHidden(true);
 
         $this->restrictableEntityDoctrineRepository->add($defaultEntity);
@@ -96,25 +107,23 @@ class ContentSecurityTest extends FunctionalTestCase
         $this->persistenceManager->clearState();
 
         $result = $this->restrictableEntityDoctrineRepository->findAllWithDql();
-        self::assertTrue(count($result) === 2);
+        self::assertCount(2, $result);
 
-        self::assertNotNull($this->persistenceManager->getObjectByIdentifier($defaultEntityIdentifier, Fixtures\RestrictableEntity::class));
-        self::assertNotNull($this->persistenceManager->getObjectByIdentifier($hiddenEntityIdentifier, Fixtures\RestrictableEntity::class));
+        self::assertNotNull($this->persistenceManager->getObjectByIdentifier($defaultEntityIdentifier, RestrictableEntity::class));
+        self::assertNotNull($this->persistenceManager->getObjectByIdentifier($hiddenEntityIdentifier, RestrictableEntity::class));
 
         $this->restrictableEntityDoctrineRepository->removeAll();
         $this->persistenceManager->persistAll();
         $this->persistenceManager->clearState();
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function customersAreNotAllowedToSeeHiddenRestrictableEntities()
     {
         $this->authenticateRoles(['Neos.Flow:Customer']);
 
-        $defaultEntity = new Fixtures\RestrictableEntity('default');
-        $hiddenEntity = new Fixtures\RestrictableEntity('hiddenEntity');
+        $defaultEntity = new RestrictableEntity('default');
+        $hiddenEntity = new RestrictableEntity('hiddenEntity');
         $hiddenEntity->setHidden(true);
 
         $this->restrictableEntityDoctrineRepository->add($defaultEntity);
@@ -126,25 +135,23 @@ class ContentSecurityTest extends FunctionalTestCase
         $this->persistenceManager->clearState();
 
         $result = $this->restrictableEntityDoctrineRepository->findAllWithDql();
-        self::assertTrue(count($result) === 1);
+        self::assertCount(1, $result);
 
-        self::assertNotNull($this->persistenceManager->getObjectByIdentifier($defaultEntityIdentifier, Fixtures\RestrictableEntity::class));
-        self::assertNull($this->persistenceManager->getObjectByIdentifier($hiddenEntityIdentifier, Fixtures\RestrictableEntity::class));
+        self::assertNotNull($this->persistenceManager->getObjectByIdentifier($defaultEntityIdentifier, RestrictableEntity::class));
+        self::assertNull($this->persistenceManager->getObjectByIdentifier($hiddenEntityIdentifier, RestrictableEntity::class));
 
         $this->restrictableEntityDoctrineRepository->removeAll();
         $this->persistenceManager->persistAll();
         $this->persistenceManager->clearState();
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function customersAreNotAllowedToSeeDeletedRestrictableEntities()
     {
         $this->authenticateRoles(['Neos.Flow:Customer']);
 
-        $defaultEntity = new Fixtures\RestrictableEntity('default');
-        $deletedEntity = new Fixtures\RestrictableEntity('deletedEntry');
+        $defaultEntity = new RestrictableEntity('default');
+        $deletedEntity = new RestrictableEntity('deletedEntry');
         $deletedEntity->delete();
 
         $this->restrictableEntityDoctrineRepository->add($defaultEntity);
@@ -156,25 +163,23 @@ class ContentSecurityTest extends FunctionalTestCase
         $this->persistenceManager->clearState();
 
         $result = $this->restrictableEntityDoctrineRepository->findAllWithDql();
-        self::assertTrue(count($result) === 1);
+        self::assertCount(1, $result);
 
-        self::assertNotNull($this->persistenceManager->getObjectByIdentifier($defaultEntityIdentifier, Fixtures\RestrictableEntity::class));
-        self::assertNull($this->persistenceManager->getObjectByIdentifier($deletedEntityIdentifier, Fixtures\RestrictableEntity::class));
+        self::assertNotNull($this->persistenceManager->getObjectByIdentifier($defaultEntityIdentifier, RestrictableEntity::class));
+        self::assertNull($this->persistenceManager->getObjectByIdentifier($deletedEntityIdentifier, RestrictableEntity::class));
 
         $this->restrictableEntityDoctrineRepository->removeAll();
         $this->persistenceManager->persistAll();
         $this->persistenceManager->clearState();
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function administratorsCanSeeDeletedRestrictableEntities()
     {
         $this->authenticateRoles(['Neos.Flow:Administrator']);
 
-        $defaultEntity = new Fixtures\RestrictableEntity('default');
-        $deletedEntity = new Fixtures\RestrictableEntity('hiddenEntity');
+        $defaultEntity = new RestrictableEntity('default');
+        $deletedEntity = new RestrictableEntity('hiddenEntity');
         $deletedEntity->delete();
 
         $this->restrictableEntityDoctrineRepository->add($defaultEntity);
@@ -186,23 +191,21 @@ class ContentSecurityTest extends FunctionalTestCase
         $this->persistenceManager->clearState();
 
         $result = $this->restrictableEntityDoctrineRepository->findAllWithDql();
-        self::assertEquals(2, count($result));
+        self::assertCount(2, $result);
 
-        self::assertNotNull($this->persistenceManager->getObjectByIdentifier($defaultEntityIdentifier, Fixtures\RestrictableEntity::class));
-        self::assertNotNull($this->persistenceManager->getObjectByIdentifier($deletedEntityIdentifier, Fixtures\RestrictableEntity::class));
+        self::assertNotNull($this->persistenceManager->getObjectByIdentifier($defaultEntityIdentifier, RestrictableEntity::class));
+        self::assertNotNull($this->persistenceManager->getObjectByIdentifier($deletedEntityIdentifier, RestrictableEntity::class));
 
         $this->restrictableEntityDoctrineRepository->removeAll();
         $this->persistenceManager->persistAll();
         $this->persistenceManager->clearState();
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function anonymousUsersAreNotAllowedToSeeRestrictableEntitiesAtAll()
     {
-        $defaultEntity = new Fixtures\RestrictableEntity('default');
-        $hiddenEntity = new Fixtures\RestrictableEntity('hiddenEntity');
+        $defaultEntity = new RestrictableEntity('default');
+        $hiddenEntity = new RestrictableEntity('hiddenEntity');
         $hiddenEntity->setHidden(true);
 
         $this->restrictableEntityDoctrineRepository->add($defaultEntity);
@@ -214,33 +217,31 @@ class ContentSecurityTest extends FunctionalTestCase
         $this->persistenceManager->clearState();
 
         $result = $this->restrictableEntityDoctrineRepository->findAllWithDql();
-        self::assertTrue(count($result) === 0);
+        self::assertCount(0, $result);
 
-        self::assertNull($this->persistenceManager->getObjectByIdentifier($defaultEntityIdentifier, Fixtures\RestrictableEntity::class));
-        self::assertNull($this->persistenceManager->getObjectByIdentifier($hiddenEntityIdentifier, Fixtures\RestrictableEntity::class));
+        self::assertNull($this->persistenceManager->getObjectByIdentifier($defaultEntityIdentifier, RestrictableEntity::class));
+        self::assertNull($this->persistenceManager->getObjectByIdentifier($hiddenEntityIdentifier, RestrictableEntity::class));
 
         $this->restrictableEntityDoctrineRepository->removeAll();
         $this->persistenceManager->persistAll();
         $this->persistenceManager->clearState();
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function customersCannotSeeOthersRestrictableEntites()
     {
         $ownAccount = $this->authenticateRoles(['Neos.Flow:Customer']);
         $ownAccount->setAccountIdentifier('ownAccount');
         $ownAccount->setAuthenticationProviderName('SomeProvider');
-        $otherAccount = new Security\Account();
+        $otherAccount = new Account();
         $otherAccount->setAccountIdentifier('othersAccount');
         $otherAccount->setAuthenticationProviderName('SomeProvider');
         $this->persistenceManager->add($ownAccount);
         $this->persistenceManager->add($otherAccount);
 
-        $ownEntity = new Fixtures\RestrictableEntity('ownEntity');
+        $ownEntity = new RestrictableEntity('ownEntity');
         $ownEntity->setOwnerAccount($ownAccount);
-        $othersEntity = new Fixtures\RestrictableEntity('othersEntity');
+        $othersEntity = new RestrictableEntity('othersEntity');
         $othersEntity->setOwnerAccount($otherAccount);
 
         $this->restrictableEntityDoctrineRepository->add($ownEntity);
@@ -252,33 +253,31 @@ class ContentSecurityTest extends FunctionalTestCase
         $this->persistenceManager->clearState();
 
         $result = $this->restrictableEntityDoctrineRepository->findAllWithDql();
-        self::assertTrue(count($result) === 1);
+        self::assertCount(1, $result);
 
-        self::assertNotNull($this->persistenceManager->getObjectByIdentifier($ownEntityIdentifier, Fixtures\RestrictableEntity::class));
-        self::assertNull($this->persistenceManager->getObjectByIdentifier($othersEntityIdentifier, Fixtures\RestrictableEntity::class));
+        self::assertNotNull($this->persistenceManager->getObjectByIdentifier($ownEntityIdentifier, RestrictableEntity::class));
+        self::assertNull($this->persistenceManager->getObjectByIdentifier($othersEntityIdentifier, RestrictableEntity::class));
 
         $this->restrictableEntityDoctrineRepository->removeAll();
         $this->persistenceManager->persistAll();
         $this->persistenceManager->clearState();
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function administratorsCanSeeOthersRestrictableEntites()
     {
         $ownAccount = $this->authenticateRoles(['Neos.Flow:Administrator', 'Neos.Flow:Customer']);
         $ownAccount->setAccountIdentifier('ownAccount');
         $ownAccount->setAuthenticationProviderName('SomeProvider');
-        $otherAccount = new Security\Account();
+        $otherAccount = new Account();
         $otherAccount->setAccountIdentifier('othersAccount');
         $otherAccount->setAuthenticationProviderName('SomeProvider');
         $this->persistenceManager->add($ownAccount);
         $this->persistenceManager->add($otherAccount);
 
-        $ownEntity = new Fixtures\RestrictableEntity('ownEntity');
+        $ownEntity = new RestrictableEntity('ownEntity');
         $ownEntity->setOwnerAccount($ownAccount);
-        $othersEntity = new Fixtures\RestrictableEntity('othersEntity');
+        $othersEntity = new RestrictableEntity('othersEntity');
         $othersEntity->setOwnerAccount($otherAccount);
 
         $this->restrictableEntityDoctrineRepository->add($ownEntity);
@@ -290,33 +289,31 @@ class ContentSecurityTest extends FunctionalTestCase
         $this->persistenceManager->clearState();
 
         $result = $this->restrictableEntityDoctrineRepository->findAllWithDql();
-        self::assertTrue(count($result) === 2);
+        self::assertCount(2, $result);
 
-        self::assertNotNull($this->persistenceManager->getObjectByIdentifier($ownEntityIdentifier, Fixtures\RestrictableEntity::class));
-        self::assertNotNull($this->persistenceManager->getObjectByIdentifier($othersEntityIdentifier, Fixtures\RestrictableEntity::class));
+        self::assertNotNull($this->persistenceManager->getObjectByIdentifier($ownEntityIdentifier, RestrictableEntity::class));
+        self::assertNotNull($this->persistenceManager->getObjectByIdentifier($othersEntityIdentifier, RestrictableEntity::class));
 
         $this->restrictableEntityDoctrineRepository->removeAll();
         $this->persistenceManager->persistAll();
         $this->persistenceManager->clearState();
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function customersCannotSeeRestrictableEntitesWhichAreOwnedByAndi()
     {
         $account = $this->authenticateRoles(['Neos.Flow:Customer']);
         $account->setAccountIdentifier('MyAccount');
         $account->setAuthenticationProviderName('SomeProvider');
-        $andisAccount = new Security\Account();
+        $andisAccount = new Account();
         $andisAccount->setAccountIdentifier('Andi');
         $andisAccount->setAuthenticationProviderName('SomeProvider');
         $this->persistenceManager->add($account);
         $this->persistenceManager->add($andisAccount);
 
-        $ownEntity = new Fixtures\RestrictableEntity('MyEntity');
+        $ownEntity = new RestrictableEntity('MyEntity');
         $ownEntity->setOwnerAccount($account);
-        $andisEntity = new Fixtures\RestrictableEntity('AndisEntity');
+        $andisEntity = new RestrictableEntity('AndisEntity');
         $andisEntity->setOwnerAccount($andisAccount);
 
         $this->restrictableEntityDoctrineRepository->add($ownEntity);
@@ -328,33 +325,31 @@ class ContentSecurityTest extends FunctionalTestCase
         $this->persistenceManager->clearState();
 
         $result = $this->restrictableEntityDoctrineRepository->findAllWithDql();
-        self::assertTrue(count($result) === 1);
+        self::assertCount(1, $result);
 
-        self::assertNotNull($this->persistenceManager->getObjectByIdentifier($ownEntityIdentifier, Fixtures\RestrictableEntity::class));
-        self::assertNull($this->persistenceManager->getObjectByIdentifier($andisEntityIdentifier, Fixtures\RestrictableEntity::class));
+        self::assertNotNull($this->persistenceManager->getObjectByIdentifier($ownEntityIdentifier, RestrictableEntity::class));
+        self::assertNull($this->persistenceManager->getObjectByIdentifier($andisEntityIdentifier, RestrictableEntity::class));
 
         $this->restrictableEntityDoctrineRepository->removeAll();
         $this->persistenceManager->persistAll();
         $this->persistenceManager->clearState();
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function administratorsCanSeeRestrictableEntitesWhichAreOwnedByAndi()
     {
         $account = $this->authenticateRoles(['Neos.Flow:Administrator']);
         $account->setAccountIdentifier('MyAccount');
         $account->setAuthenticationProviderName('SomeProvider');
-        $andisAccount = new Security\Account();
+        $andisAccount = new Account();
         $andisAccount->setAccountIdentifier('Andi');
         $andisAccount->setAuthenticationProviderName('SomeProvider');
         $this->persistenceManager->add($account);
         $this->persistenceManager->add($andisAccount);
 
-        $ownEntity = new Fixtures\RestrictableEntity('MyEntity');
+        $ownEntity = new RestrictableEntity('MyEntity');
         $ownEntity->setOwnerAccount($account);
-        $andisEntity = new Fixtures\RestrictableEntity('AndisEntity');
+        $andisEntity = new RestrictableEntity('AndisEntity');
         $andisEntity->setOwnerAccount($andisAccount);
 
         $this->restrictableEntityDoctrineRepository->add($ownEntity);
@@ -366,28 +361,26 @@ class ContentSecurityTest extends FunctionalTestCase
         $this->persistenceManager->clearState();
 
         $result = $this->restrictableEntityDoctrineRepository->findAllWithDql();
-        self::assertTrue(count($result) === 2);
+        self::assertCount(2, $result);
 
-        self::assertNotNull($this->persistenceManager->getObjectByIdentifier($ownEntityIdentifier, Fixtures\RestrictableEntity::class));
-        self::assertNotNull($this->persistenceManager->getObjectByIdentifier($andisEntityIdentifier, Fixtures\RestrictableEntity::class));
+        self::assertNotNull($this->persistenceManager->getObjectByIdentifier($ownEntityIdentifier, RestrictableEntity::class));
+        self::assertNotNull($this->persistenceManager->getObjectByIdentifier($andisEntityIdentifier, RestrictableEntity::class));
 
         $this->restrictableEntityDoctrineRepository->removeAll();
         $this->persistenceManager->persistAll();
         $this->persistenceManager->clearState();
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function customersCannotSeeTestEntityAAssociatedToATestEntityBWithValueAdmin()
     {
         $this->authenticateRoles(['Neos.Flow:Customer']);
 
-        $testEntityB = new Fixtures\TestEntityB('Admin');
-        $testEntityA = new Fixtures\TestEntityA($testEntityB);
+        $testEntityB = new TestEntityB('Admin');
+        $testEntityA = new TestEntityA($testEntityB);
 
-        $testEntityB2 = new Fixtures\TestEntityB('NoAdmin');
-        $testEntityA2 = new Fixtures\TestEntityA($testEntityB2);
+        $testEntityB2 = new TestEntityB('NoAdmin');
+        $testEntityA2 = new TestEntityA($testEntityB2);
 
         $this->testEntityADoctrineRepository->add($testEntityA);
         $this->testEntityADoctrineRepository->add($testEntityA2);
@@ -398,28 +391,26 @@ class ContentSecurityTest extends FunctionalTestCase
         $this->persistenceManager->clearState();
 
         $result = $this->testEntityADoctrineRepository->findAllWithDql();
-        self::assertTrue(count($result) === 1);
+        self::assertCount(1, $result);
 
-        self::assertNull($this->persistenceManager->getObjectByIdentifier($testEntityAIdentifier, Fixtures\TestEntityA::class));
-        self::assertNotNull($this->persistenceManager->getObjectByIdentifier($testEntityA2Identifier, Fixtures\TestEntityA::class));
+        self::assertNull($this->persistenceManager->getObjectByIdentifier($testEntityAIdentifier, TestEntityA::class));
+        self::assertNotNull($this->persistenceManager->getObjectByIdentifier($testEntityA2Identifier, TestEntityA::class));
 
         $this->restrictableEntityDoctrineRepository->removeAll();
         $this->persistenceManager->persistAll();
         $this->persistenceManager->clearState();
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function administratorsCanSeeTestEntityAAssociatedToATestEntityBWithValueAdmin()
     {
         $this->authenticateRoles(['Neos.Flow:Administrator']);
 
-        $testEntityB = new Fixtures\TestEntityB('Admin');
-        $testEntityA = new Fixtures\TestEntityA($testEntityB);
+        $testEntityB = new TestEntityB('Admin');
+        $testEntityA = new TestEntityA($testEntityB);
 
-        $testEntityB2 = new Fixtures\TestEntityB('NoAdmin');
-        $testEntityA2 = new Fixtures\TestEntityA($testEntityB2);
+        $testEntityB2 = new TestEntityB('NoAdmin');
+        $testEntityA2 = new TestEntityA($testEntityB2);
 
         $this->testEntityADoctrineRepository->add($testEntityA);
         $this->testEntityADoctrineRepository->add($testEntityA2);
@@ -430,19 +421,17 @@ class ContentSecurityTest extends FunctionalTestCase
         $this->persistenceManager->clearState();
 
         $result = $this->testEntityADoctrineRepository->findAllWithDql();
-        self::assertTrue(count($result) === 2);
+        self::assertCount(2, $result);
 
-        self::assertNotNull($this->persistenceManager->getObjectByIdentifier($testEntityAIdentifier, Fixtures\TestEntityA::class));
-        self::assertNotNull($this->persistenceManager->getObjectByIdentifier($testEntityA2Identifier, Fixtures\TestEntityA::class));
+        self::assertNotNull($this->persistenceManager->getObjectByIdentifier($testEntityAIdentifier, TestEntityA::class));
+        self::assertNotNull($this->persistenceManager->getObjectByIdentifier($testEntityA2Identifier, TestEntityA::class));
 
         $this->restrictableEntityDoctrineRepository->removeAll();
         $this->persistenceManager->persistAll();
         $this->persistenceManager->clearState();
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function customersCannotSeeTestEntityAAssociatedToATestEntityBSomeoneElsesAccount()
     {
         $cacheManager = $this->objectManager->get(CacheManager::class);
@@ -450,19 +439,19 @@ class ContentSecurityTest extends FunctionalTestCase
         $myAccount = $this->authenticateRoles(['Neos.Flow:Customer']);
         $myAccount->setAccountIdentifier('MyAccount');
         $myAccount->setAuthenticationProviderName('SomeProvider');
-        $andisAccount = new Security\Account();
+        $andisAccount = new Account();
         $andisAccount->setAccountIdentifier('Andi');
         $andisAccount->setAuthenticationProviderName('SomeProvider');
         $this->persistenceManager->add($myAccount);
         $this->persistenceManager->add($andisAccount);
 
-        $testEntityB = new Fixtures\TestEntityB('testEntityB');
+        $testEntityB = new TestEntityB('testEntityB');
         $testEntityB->setOwnerAccount($myAccount);
-        $testEntityA = new Fixtures\TestEntityA($testEntityB);
+        $testEntityA = new TestEntityA($testEntityB);
 
-        $testEntityB2 = new Fixtures\TestEntityB('testEntityB2');
+        $testEntityB2 = new TestEntityB('testEntityB2');
         $testEntityB2->setOwnerAccount($andisAccount);
-        $testEntityA2 = new Fixtures\TestEntityA($testEntityB2);
+        $testEntityA2 = new TestEntityA($testEntityB2);
 
         $this->testEntityADoctrineRepository->add($testEntityA);
         $this->testEntityADoctrineRepository->add($testEntityA2);
@@ -473,37 +462,35 @@ class ContentSecurityTest extends FunctionalTestCase
         $this->persistenceManager->clearState();
 
         $result = $this->testEntityADoctrineRepository->findAllWithDql();
-        self::assertTrue(count($result) === 1);
+        self::assertCount(1, $result);
 
-        self::assertNotNull($this->persistenceManager->getObjectByIdentifier($testEntityAIdentifier, Fixtures\TestEntityA::class));
-        self::assertNull($this->persistenceManager->getObjectByIdentifier($testEntityA2Identifier, Fixtures\TestEntityA::class));
+        self::assertNotNull($this->persistenceManager->getObjectByIdentifier($testEntityAIdentifier, TestEntityA::class));
+        self::assertNull($this->persistenceManager->getObjectByIdentifier($testEntityA2Identifier, TestEntityA::class));
 
         $this->restrictableEntityDoctrineRepository->removeAll();
         $this->persistenceManager->persistAll();
         $this->persistenceManager->clearState();
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function administratorsCanSeeTestEntityAAssociatedToATestEntityBSomeoneElsesAccount()
     {
         $myAccount = $this->authenticateRoles(['Neos.Flow:Administrator']);
         $myAccount->setAccountIdentifier('MyAccount');
         $myAccount->setAuthenticationProviderName('SomeProvider');
-        $andisAccount = new Security\Account();
+        $andisAccount = new Account();
         $andisAccount->setAccountIdentifier('Andi');
         $andisAccount->setAuthenticationProviderName('SomeProvider');
         $this->persistenceManager->add($myAccount);
         $this->persistenceManager->add($andisAccount);
 
-        $testEntityB = new Fixtures\TestEntityB('testEntityB');
+        $testEntityB = new TestEntityB('testEntityB');
         $testEntityB->setOwnerAccount($myAccount);
-        $testEntityA = new Fixtures\TestEntityA($testEntityB);
+        $testEntityA = new TestEntityA($testEntityB);
 
-        $testEntityB2 = new Fixtures\TestEntityB('testEntityB2');
+        $testEntityB2 = new TestEntityB('testEntityB2');
         $testEntityB2->setOwnerAccount($andisAccount);
-        $testEntityA2 = new Fixtures\TestEntityA($testEntityB2);
+        $testEntityA2 = new TestEntityA($testEntityB2);
 
         $this->testEntityADoctrineRepository->add($testEntityA);
         $this->testEntityADoctrineRepository->add($testEntityA2);
@@ -514,31 +501,29 @@ class ContentSecurityTest extends FunctionalTestCase
         $this->persistenceManager->clearState();
 
         $result = $this->testEntityADoctrineRepository->findAllWithDql();
-        self::assertTrue(count($result) === 2);
+        self::assertCount(2, $result);
 
-        self::assertNotNull($this->persistenceManager->getObjectByIdentifier($testEntityAIdentifier, Fixtures\TestEntityA::class));
-        self::assertNotNull($this->persistenceManager->getObjectByIdentifier($testEntityA2Identifier, Fixtures\TestEntityA::class));
+        self::assertNotNull($this->persistenceManager->getObjectByIdentifier($testEntityAIdentifier, TestEntityA::class));
+        self::assertNotNull($this->persistenceManager->getObjectByIdentifier($testEntityA2Identifier, TestEntityA::class));
 
         $this->restrictableEntityDoctrineRepository->removeAll();
         $this->persistenceManager->persistAll();
         $this->persistenceManager->clearState();
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function inOperatorWorksWithSimpleArrays()
     {
         // These relations are needed to fulfill the policy that is tested in "inOperatorWorksWithGlobalObjectAccess" as the globalObject has an empty array in this test, the query will do a "(NOT) IS NULL" constraint for this relation.
-        $testEntityD = new Fixtures\TestEntityD();
-        $testEntityD2 = new Fixtures\TestEntityD();
+        $testEntityD = new TestEntityD();
+        $testEntityD2 = new TestEntityD();
         $this->testEntityDDoctrineRepository->add($testEntityD);
         $this->testEntityDDoctrineRepository->add($testEntityD2);
 
-        $testEntityC = new Fixtures\TestEntityC();
+        $testEntityC = new TestEntityC();
         $testEntityC->setSimpleStringProperty('Christopher');
         $testEntityC->setRelatedEntityD($testEntityD);
-        $testEntityC2 = new Fixtures\TestEntityC();
+        $testEntityC2 = new TestEntityC();
         $testEntityC2->setSimpleStringProperty('Andi');
         $testEntityC2->setRelatedEntityD($testEntityD2);
         $this->testEntityCDoctrineRepository->add($testEntityC);
@@ -551,23 +536,21 @@ class ContentSecurityTest extends FunctionalTestCase
         $this->persistenceManager->clearState();
 
         $result = $this->testEntityCDoctrineRepository->findAllWithDql();
-        self::assertTrue(count($result) === 1);
+        self::assertCount(1, $result);
 
-        self::assertNotNull($this->persistenceManager->getObjectByIdentifier($testEntityCIdentifier, Fixtures\TestEntityC::class));
-        self::assertNull($this->persistenceManager->getObjectByIdentifier($testEntityC2Identifier, Fixtures\TestEntityC::class));
+        self::assertNotNull($this->persistenceManager->getObjectByIdentifier($testEntityCIdentifier, TestEntityC::class));
+        self::assertNull($this->persistenceManager->getObjectByIdentifier($testEntityC2Identifier, TestEntityC::class));
         $this->restrictableEntityDoctrineRepository->removeAll();
         $this->persistenceManager->persistAll();
         $this->persistenceManager->clearState();
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function inOperatorWorksWithEmptyArray()
     {
-        $testEntityC = new Fixtures\TestEntityC();
+        $testEntityC = new TestEntityC();
         $testEntityC->setSimpleStringProperty('Christopher');
-        $testEntityC2 = new Fixtures\TestEntityC();
+        $testEntityC2 = new TestEntityC();
         $testEntityC2->setSimpleStringProperty('Andi');
         $this->testEntityCDoctrineRepository->add($testEntityC);
         $this->testEntityCDoctrineRepository->add($testEntityC2);
@@ -579,30 +562,28 @@ class ContentSecurityTest extends FunctionalTestCase
         $this->persistenceManager->clearState();
 
         $result = $this->testEntityCDoctrineRepository->findAllWithDql();
-        self::assertTrue(count($result) === 0);
+        self::assertCount(0, $result);
 
-        self::assertNull($this->persistenceManager->getObjectByIdentifier($testEntityCIdentifier, Fixtures\TestEntityC::class));
-        self::assertNull($this->persistenceManager->getObjectByIdentifier($testEntityC2Identifier, Fixtures\TestEntityC::class));
+        self::assertNull($this->persistenceManager->getObjectByIdentifier($testEntityCIdentifier, TestEntityC::class));
+        self::assertNull($this->persistenceManager->getObjectByIdentifier($testEntityC2Identifier, TestEntityC::class));
         $this->restrictableEntityDoctrineRepository->removeAll();
         $this->persistenceManager->persistAll();
         $this->persistenceManager->clearState();
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function inOperatorWorksWithGlobalObjectAccess()
     {
         $cacheManager = $this->objectManager->get(CacheManager::class);
         $cacheManager->getCache('Flow_Persistence_Doctrine')->flush();
-        $testEntityD1 = new Fixtures\TestEntityD();
-        $testEntityD2 = new Fixtures\TestEntityD();
+        $testEntityD1 = new TestEntityD();
+        $testEntityD2 = new TestEntityD();
         $this->testEntityDDoctrineRepository->add($testEntityD1);
         $this->testEntityDDoctrineRepository->add($testEntityD2);
 
         $this->globalObjectTestContext->setSecurityFixturesEntityDCollection([$testEntityD1, $testEntityD2]);
 
-        $testEntityC = new Fixtures\TestEntityC();
+        $testEntityC = new TestEntityC();
         $testEntityC->setSimpleStringProperty('Basti');
         $testEntityC->setRelatedEntityD($testEntityD2);
         $this->testEntityCDoctrineRepository->add($testEntityC);
@@ -613,26 +594,24 @@ class ContentSecurityTest extends FunctionalTestCase
         $this->persistenceManager->clearState();
 
         $result = $this->testEntityCDoctrineRepository->findAllWithDql();
-        self::assertTrue(count($result) === 0);
+        self::assertCount(0, $result);
 
-        self::assertNull($this->persistenceManager->getObjectByIdentifier($testEntityCIdentifier, Fixtures\TestEntityC::class));
+        self::assertNull($this->persistenceManager->getObjectByIdentifier($testEntityCIdentifier, TestEntityC::class));
 
         $this->restrictableEntityDoctrineRepository->removeAll();
         $this->persistenceManager->persistAll();
         $this->persistenceManager->clearState();
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function containsOperatorBlocksWithOneToMany()
     {
         $testEntityCIdentifier = $this->setupContainsRelationForOneToMany();
 
         $result = $this->testEntityCDoctrineRepository->findAllWithDql();
-        self::assertTrue(count($result) === 0);
+        self::assertCount(0, $result);
 
-        self::assertNull($this->persistenceManager->getObjectByIdentifier($testEntityCIdentifier, Fixtures\TestEntityC::class));
+        self::assertNull($this->persistenceManager->getObjectByIdentifier($testEntityCIdentifier, TestEntityC::class));
 
         $this->restrictableEntityDoctrineRepository->removeAll();
         $this->persistenceManager->persistAll();
@@ -640,9 +619,9 @@ class ContentSecurityTest extends FunctionalTestCase
     }
 
     /**
-     * @test
      * @throws \Neos\Flow\Persistence\Exception\IllegalObjectTypeException
      */
+    #[Test]
     public function containsOperatorGrantsWithOneToMany()
     {
         $testEntityCIdentifier = $this->setupContainsRelationForOneToMany();
@@ -650,26 +629,24 @@ class ContentSecurityTest extends FunctionalTestCase
         $this->authenticateRoles(['Neos.Flow:Customer']);
 
         $result = $this->testEntityCDoctrineRepository->findAllWithDql();
-        self::assertTrue(count($result) === 1);
+        self::assertCount(1, $result);
 
-        self::assertInstanceOf(Fixtures\TestEntityC::class, $this->persistenceManager->getObjectByIdentifier($testEntityCIdentifier, Fixtures\TestEntityC::class));
+        self::assertInstanceOf(TestEntityC::class, $this->persistenceManager->getObjectByIdentifier($testEntityCIdentifier, TestEntityC::class));
 
         $this->restrictableEntityDoctrineRepository->removeAll();
         $this->persistenceManager->persistAll();
         $this->persistenceManager->clearState();
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function containsOperatorBlocksWithManyToMany()
     {
         $testEntityCIdentifier = $this->setupContainsRelationForManyToMany();
 
         $result = $this->testEntityCDoctrineRepository->findAllWithDql();
-        self::assertTrue(count($result) === 0);
+        self::assertCount(0, $result);
 
-        self::assertNull($this->persistenceManager->getObjectByIdentifier($testEntityCIdentifier, Fixtures\TestEntityC::class));
+        self::assertNull($this->persistenceManager->getObjectByIdentifier($testEntityCIdentifier, TestEntityC::class));
 
         $this->restrictableEntityDoctrineRepository->removeAll();
         $this->persistenceManager->persistAll();
@@ -677,9 +654,9 @@ class ContentSecurityTest extends FunctionalTestCase
     }
 
     /**
-     * @test
      * @throws \Neos\Flow\Persistence\Exception\IllegalObjectTypeException
      */
+    #[Test]
     public function containsOperatorGrantsWithManyToMany()
     {
         $testEntityCIdentifier = $this->setupContainsRelationForManyToMany();
@@ -687,9 +664,9 @@ class ContentSecurityTest extends FunctionalTestCase
         $this->authenticateRoles(['Neos.Flow:Customer']);
 
         $result = $this->testEntityCDoctrineRepository->findAllWithDql();
-        self::assertTrue(count($result) === 1);
+        self::assertCount(1, $result);
 
-        self::assertInstanceOf(Fixtures\TestEntityC::class, $this->persistenceManager->getObjectByIdentifier($testEntityCIdentifier, Fixtures\TestEntityC::class));
+        self::assertInstanceOf(TestEntityC::class, $this->persistenceManager->getObjectByIdentifier($testEntityCIdentifier, TestEntityC::class));
 
         $this->restrictableEntityDoctrineRepository->removeAll();
         $this->persistenceManager->persistAll();
@@ -705,12 +682,12 @@ class ContentSecurityTest extends FunctionalTestCase
         $cacheManager = $this->objectManager->get(CacheManager::class);
         $cacheManager->getCache('Flow_Persistence_Doctrine')->flush();
 
-        $testEntityD1 = new Fixtures\TestEntityD();
-        $testEntityD2 = new Fixtures\TestEntityD();
+        $testEntityD1 = new TestEntityD();
+        $testEntityD2 = new TestEntityD();
 
         $this->globalObjectTestContext->setSecurityFixturesEntityD($testEntityD1);
 
-        $testEntityC = new Fixtures\TestEntityC();
+        $testEntityC = new TestEntityC();
         $testEntityCIdentifier = $this->persistenceManager->getIdentifierByObject($testEntityC);
 
         // the other test policy kicks in
@@ -739,12 +716,12 @@ class ContentSecurityTest extends FunctionalTestCase
         $cacheManager = $this->objectManager->get(CacheManager::class);
         $cacheManager->getCache('Flow_Persistence_Doctrine')->flush();
 
-        $testEntityD1 = new Fixtures\TestEntityD();
-        $testEntityD2 = new Fixtures\TestEntityD();
+        $testEntityD1 = new TestEntityD();
+        $testEntityD2 = new TestEntityD();
 
         $this->globalObjectTestContext->setSecurityFixturesEntityD($testEntityD1);
 
-        $testEntityC = new Fixtures\TestEntityC();
+        $testEntityC = new TestEntityC();
         $testEntityCIdentifier = $this->persistenceManager->getIdentifierByObject($testEntityC);
 
         // the other test policy kicks in

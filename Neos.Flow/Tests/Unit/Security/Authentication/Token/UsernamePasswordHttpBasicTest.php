@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Neos\Flow\Tests\Unit\Security\Authentication\Token;
 
 /*
@@ -10,7 +13,6 @@ namespace Neos\Flow\Tests\Unit\Security\Authentication\Token;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
 use GuzzleHttp\Psr7\ServerRequest;
 use GuzzleHttp\Psr7\Uri;
 use Neos\Flow\Mvc\ActionRequest;
@@ -19,12 +21,13 @@ use Neos\Flow\Security\Authentication\TokenInterface;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Http\Factories\ServerRequestFactory;
 use Neos\Http\Factories\UriFactory;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Testcase for username/password HTTP Basic Auth authentication token
  *
  */
-class UsernamePasswordHttpBasicTest extends UnitTestCase
+final class UsernamePasswordHttpBasicTest extends UnitTestCase
 {
     /**
      * @var UsernamePasswordHttpBasic
@@ -39,9 +42,7 @@ class UsernamePasswordHttpBasicTest extends UnitTestCase
         $this->token = new UsernamePasswordHttpBasic();
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function credentialsAreSetCorrectlyFromRequestHeadersArguments()
     {
         $serverEnvironment = [
@@ -50,8 +51,8 @@ class UsernamePasswordHttpBasicTest extends UnitTestCase
         ];
 
         $httpRequest = (new ServerRequestFactory(new UriFactory()))->createServerRequest('GET', new Uri('http://foo.com'), $serverEnvironment);
-        $mockActionRequest = $this->getMockBuilder(ActionRequest::class)->disableOriginalConstructor()->getMock();
-        $mockActionRequest->expects(self::atLeastOnce())->method('getHttpRequest')->will(self::returnValue($httpRequest));
+        $mockActionRequest = $this->createMock(ActionRequest::class);
+        $mockActionRequest->expects($this->atLeastOnce())->method('getHttpRequest')->willReturn(($httpRequest));
 
         $this->token->updateCredentials($mockActionRequest);
 
@@ -60,9 +61,7 @@ class UsernamePasswordHttpBasicTest extends UnitTestCase
         self::assertSame(TokenInterface::AUTHENTICATION_NEEDED, $this->token->getAuthenticationStatus());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function credentialsAreSetCorrectlyForCGI()
     {
         $expectedCredentials = ['username' => 'robert', 'password' => 'mysecretpassword, containing a : colon ;-)'];
@@ -72,22 +71,20 @@ class UsernamePasswordHttpBasicTest extends UnitTestCase
         ];
 
         $httpRequest = (new ServerRequestFactory(new UriFactory()))->createServerRequest('GET', new Uri('http://foo.com'), $serverEnvironment);
-        $mockActionRequest = $this->getMockBuilder(ActionRequest::class)->disableOriginalConstructor()->getMock();
-        $mockActionRequest->expects(self::atLeastOnce())->method('getHttpRequest')->will(self::returnValue($httpRequest));
+        $mockActionRequest = $this->createMock(ActionRequest::class);
+        $mockActionRequest->expects($this->atLeastOnce())->method('getHttpRequest')->willReturn(($httpRequest));
         $this->token->updateCredentials($mockActionRequest);
 
         self::assertEquals($expectedCredentials, $this->token->getCredentials());
         self::assertSame(TokenInterface::AUTHENTICATION_NEEDED, $this->token->getAuthenticationStatus());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function updateCredentialsSetsTheCorrectAuthenticationStatusIfNoCredentialsArrived()
     {
         $httpRequest = new ServerRequest('GET', new Uri('http://foo.com'));
-        $mockActionRequest = $this->getMockBuilder(ActionRequest::class)->disableOriginalConstructor()->getMock();
-        $mockActionRequest->expects(self::atLeastOnce())->method('getHttpRequest')->will(self::returnValue($httpRequest));
+        $mockActionRequest = $this->createMock(ActionRequest::class);
+        $mockActionRequest->expects($this->atLeastOnce())->method('getHttpRequest')->willReturn(($httpRequest));
         $this->token->updateCredentials($mockActionRequest);
 
         self::assertSame(TokenInterface::NO_CREDENTIALS_GIVEN, $this->token->getAuthenticationStatus());

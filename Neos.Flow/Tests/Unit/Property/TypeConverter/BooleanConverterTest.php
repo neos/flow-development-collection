@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Neos\Flow\Tests\Unit\Property\TypeConverter;
 
 /*
@@ -10,14 +13,15 @@ namespace Neos\Flow\Tests\Unit\Property\TypeConverter;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
 use Neos\Flow\Property\TypeConverter\BooleanConverter;
 use Neos\Flow\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Testcase for the Boolean converter
  */
-class BooleanConverterTest extends UnitTestCase
+final class BooleanConverterTest extends UnitTestCase
 {
     /**
      * @var BooleanConverter
@@ -29,9 +33,7 @@ class BooleanConverterTest extends UnitTestCase
         $this->converter = new BooleanConverter();
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function checkMetadata()
     {
         self::assertEquals(['boolean', 'string', 'integer', 'float'], $this->converter->getSupportedSourceTypes(), 'Source types do not match');
@@ -39,63 +41,55 @@ class BooleanConverterTest extends UnitTestCase
         self::assertEquals(1, $this->converter->getPriority(), 'Priority does not match');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function convertFromDoesNotModifyTheBooleanSource()
     {
         $source = true;
         self::assertSame($source, $this->converter->convertFrom($source, 'boolean'));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function convertFromCastsSourceStringToBoolean()
     {
         $source = 'true';
         self::assertTrue($this->converter->convertFrom($source, 'boolean'));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function convertFromCastsNumericSourceStringToBoolean()
     {
         $source = '1';
         self::assertTrue($this->converter->convertFrom($source, 'boolean'));
     }
 
-    public function convertFromDataProvider()
+    public static function convertFromDataProvider(): \Iterator
     {
-        return [
-            ['', false],
-            ['0', false],
-            ['1', true],
-            ['false', false],
-            ['true', true],
-            ['some string', true],
-            ['FaLsE', false],
-            ['tRuE', true],
-            ['tRuE', true],
-            ['off', false],
-            ['N', false],
-            ['no', false],
-            ['not no', true],
-            [true, true],
-            [false, false],
-            [1, true],
-            [0, false],
-            [1.0, true],
-        ];
+        yield ['', false];
+        yield ['0', false];
+        yield ['1', true];
+        yield ['false', false];
+        yield ['true', true];
+        yield ['some string', true];
+        yield ['FaLsE', false];
+        yield ['tRuE', true];
+        yield ['tRuE', true];
+        yield ['off', false];
+        yield ['N', false];
+        yield ['no', false];
+        yield ['not no', true];
+        yield [true, true];
+        yield [false, false];
+        yield [1, true];
+        yield [0, false];
+        yield [1.0, true];
     }
 
     /**
-     * @test
      * @param mixed $source
      * @param boolean $expected
-     * @dataProvider convertFromDataProvider
      */
+    #[DataProvider('convertFromDataProvider')]
+    #[Test]
     public function convertFromTests($source, $expected)
     {
         self::assertSame($expected, $this->converter->convertFrom($source, 'boolean'));

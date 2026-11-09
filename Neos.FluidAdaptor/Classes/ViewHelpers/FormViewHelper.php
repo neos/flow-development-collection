@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\FluidAdaptor\ViewHelpers;
 
 /*
@@ -40,7 +41,7 @@ use Neos\FluidAdaptor\ViewHelpers\Form\AbstractFormViewHelper;
  * <form method="GET" action="...">...</form>
  * </output>
  *
- * <code title="Form with a sepcified encoding type">
+ * <code title="Form with a specified encoding type">
  * <f:form action=".." controller="..." package="..." enctype="multipart/form-data">...</f:form>
  * </code>
  * <output>
@@ -313,6 +314,7 @@ class FormViewHelper extends AbstractFormViewHelper
                 $referrerValue = $referrerValue ? htmlspecialchars($referrerValue) : '';
                 $result .= '<input type="hidden" name="' . $argumentNamespace . '[__referrer][' . $referrerKey . ']" value="' . $referrerValue . '" />' . chr(10);
             }
+            /** @var ActionRequest $request */
             $request = $request->getParentRequest();
         }
 

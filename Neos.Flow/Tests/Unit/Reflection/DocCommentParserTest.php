@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Neos\Flow\Tests\Unit\Reflection;
 
 /*
@@ -10,18 +13,16 @@ namespace Neos\Flow\Tests\Unit\Reflection;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
 use Neos\Flow\Reflection\DocCommentParser;
 use Neos\Flow\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Testcase for DocCommentParser
  */
-class DocCommentParserTest extends UnitTestCase
+final class DocCommentParserTest extends UnitTestCase
 {
-    /**
-     * @test
-     */
+    #[Test]
     public function descriptionWithOneLineIsParsedCorrectly()
     {
         $parser = new DocCommentParser();
@@ -29,9 +30,7 @@ class DocCommentParserTest extends UnitTestCase
         self::assertEquals('Testcase for DocCommentParser', $parser->getDescription());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function eolCharacterCanBeNewlineOrCarriageReturn()
     {
         $parser = new DocCommentParser();
@@ -39,18 +38,14 @@ class DocCommentParserTest extends UnitTestCase
         self::assertEquals(['$foo integer', '$bar string'], $parser->getTagValues('var'));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function singleLineTagIsParsedCorrectly()
     {
         $parser = new DocCommentParser();
         $parser->parseDocComment('/** @return Foo[] */');
         $this->assertEquals([ 'Foo[]' ], $parser->getTagValues('return'));
     }
-    /**
-     * @test
-     */
+    #[Test]
     public function singleLineDescriptionIsParsedCorrectly()
     {
         $parser = new DocCommentParser();
@@ -59,9 +54,7 @@ class DocCommentParserTest extends UnitTestCase
         $this->assertEquals('Description goes here', $parser->getDescription());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function annotationAsTagValue()
     {
         $parser = new DocCommentParser();
@@ -71,9 +64,7 @@ class DocCommentParserTest extends UnitTestCase
         $this->assertEquals(['skipcsrfprotection' => []], $parser->getTagsValues());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function annotationAsTagValueOmitsNamespace()
     {
         $parser = new DocCommentParser();
@@ -83,9 +74,7 @@ class DocCommentParserTest extends UnitTestCase
         $this->assertEquals(['skipcsrfprotection' => []], $parser->getTagsValues());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function annotationAsTagValueWithComments()
     {
         $parser = new DocCommentParser();

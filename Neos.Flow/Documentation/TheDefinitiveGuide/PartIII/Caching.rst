@@ -89,7 +89,7 @@ If entry two is changed, a simple backend logic could be created, which drops al
 entries tagged with "news_2", in this case the first entry would be invalidated while the
 second entry still exists in the cache after the operation. While there is always exactly
 one identifier for each cache entry, an arbitrary number of tags can be assigned to an
-entry and one specific tag can be assigned to mulitple cache entries. All tags a cache
+entry and one specific tag can be assigned to multiple cache entries. All tags a cache
 entry has are given to the cache when the entry is stored (set).
 
 System Architecture
@@ -459,7 +459,7 @@ to clean up hard disk space or memory.
 	This backend is php-capable. Nevertheless it cannot be used to store the proxy-classes
 	from the ``Flow_Object_Classes`` Cache. It can be used for other code-caches like
 	``Fluid_TemplateCache``, ``Eel_Expression_Code`` or ``Flow_Aop_RuntimeExpressions``.
-	This can be usefull in certain situations to avoid file operations on production
+	This can be useful in certain situations to avoid file operations on production
 	environments. If you want to use this backend for code-caching make sure that
 	``allow_url_include`` is enabled in php.ini
 
@@ -539,7 +539,7 @@ system. It is recommended to build this from the git repository. Currently redis
 	This backend is php-capable. Nevertheless it cannot be used to store the proxy-classes
 	from the ``FLOW_Object_Classes`` Cache. It can be used for other code-caches like
 	``Fluid_TemplateCache``, ``Eel_Expression_Code`` or ``Flow_Aop_RuntimeExpressions``.
-	This can be usefull in certain situations to avoid file operations on production
+	This can be useful in certain situations to avoid file operations on production
 	environments. If you want to use this backend for code-caching make sure that
 	``allow_url_include`` is enabled in php.ini
 
@@ -618,7 +618,7 @@ Both cases lead to corrupted caches: If, for example, a tags-to-identifier entry
 which should be removed and they will not be deleted. This results in old data delivered
 by the cache. Additionally, there is currently no implementation of the garbage collection
 which can rebuild cache integrity. It is thus important to monitor a memcached system for
-evictions and server outages and to clear clear caches if that happens.
+evictions and server outages and to clear caches if that happens.
 
 Furthermore memcache has no sort of namespacing. To distinguish entries of multiple caches
 from each other, every entry is prefixed with the cache name. This can lead to very long
@@ -648,7 +648,7 @@ all.
 	This backend is php-capable. Nevertheless it cannot be used to store the proxy-classes
 	from the ``FLOW_Object_Classes`` Cache. It can be used for other code-caches like
 	``Fluid_TemplateCache``, ``Eel_Expression_Code`` or ``Flow_Aop_RuntimeExpressions``.
-	This can be usefull in certain situations to avoid file operations on production
+	This can be useful in certain situations to avoid file operations on production
 	environments. If you want to use this backend for code-caching make sure that
 	``allow_url_include`` is enabled in php.ini
 
@@ -773,7 +773,7 @@ The next operation (for example, a "get()" or "set()" call) will use the next he
 backend. If there is only one backend left and it causes an error, MultiBackend will
 still try to use it on the next operation.
 
-You can disable the the removal of unhealthy backends with a backend option.
+You can disable the removal of unhealthy backends with a backend option.
 
 Options
 ~~~~~~~
@@ -960,4 +960,4 @@ PSR-6 CacheItemPool PSR-16 SimpleCache implementations for a given cache identif
 	$this->cacheItemPool = $this->cacheManager->getCacheItemPool('MyPackage_CacheItemPool');
 
 .. warning::
-   While possible it is not advisible to access the same cache with different interfaces as the storage formats may differ!
+   While possible it is not advisable to access the same cache with different interfaces as the storage formats may differ!

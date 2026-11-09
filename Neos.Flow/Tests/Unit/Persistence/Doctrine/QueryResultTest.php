@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Neos\Flow\Tests\Unit\Persistence\Doctrine;
 
 /*
@@ -10,16 +13,17 @@ namespace Neos\Flow\Tests\Unit\Persistence\Doctrine;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
-use Neos\Flow\Persistence\Doctrine\QueryResult;
 use Neos\Flow\Persistence\Doctrine\Query;
+use Neos\Flow\Persistence\Doctrine\QueryResult;
 use Neos\Flow\Persistence\QueryInterface;
 use Neos\Flow\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\MockObject\MockObject;
 
 /**
  * Testcase for \Neos\Flow\Persistence\QueryResult
  */
-class QueryResultTest extends UnitTestCase
+final class QueryResultTest extends UnitTestCase
 {
     /**
      * @var QueryResult
@@ -27,7 +31,7 @@ class QueryResultTest extends UnitTestCase
     protected $queryResult;
 
     /**
-     * @var Query|\PHPUnit\Framework\MockObject\MockObject
+     * @var Query|MockObject
      */
     protected $query;
 
@@ -37,61 +41,49 @@ class QueryResultTest extends UnitTestCase
      */
     protected function setUp(): void
     {
-        $this->query = $this->getMockBuilder(Query::class)->disableOriginalConstructor()->disableOriginalClone()->getMock();
-        $this->query->expects(self::any())->method('getResult')->will(self::returnValue(['First result', 'second result', 'third result']));
+        $this->query = $this->createMock(Query::class);
+        $this->query->method('getResult')->willReturn((['First result', 'second result', 'third result']));
         $this->queryResult = new QueryResult($this->query);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getQueryReturnsQueryObject()
     {
         self::assertInstanceOf(QueryInterface::class, $this->queryResult->getQuery());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getQueryReturnsAClone()
     {
         self::assertNotSame($this->query, $this->queryResult->getQuery());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function offsetGetReturnsNullIfOffsetDoesNotExist()
     {
         self::assertNull($this->queryResult->offsetGet('foo'));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function countCallsCountOnTheQuery()
     {
-        $this->query->expects(self::once())->method('count')->will(self::returnValue(123));
-        self::assertEquals(123, $this->queryResult->count());
+        $this->query->expects($this->once())->method('count')->willReturn((123));
+        self::assertCount(123, $this->queryResult);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function countCountsQueryResultDirectlyIfAlreadyInitialized()
     {
-        $this->query->expects(self::never())->method('count');
+        $this->query->expects($this->never())->method('count');
         $this->queryResult->toArray();
-        self::assertEquals(3, $this->queryResult->count());
+        self::assertCount(3, $this->queryResult);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function countCallsCountOnTheQueryOnlyOnce()
     {
-        $this->query->expects(self::once())->method('count')->will(self::returnValue(321));
+        $this->query->expects($this->once())->method('count')->willReturn((321));
         $this->queryResult->count();
-        self::assertEquals(321, $this->queryResult->count());
+        self::assertCount(321, $this->queryResult);
     }
 }

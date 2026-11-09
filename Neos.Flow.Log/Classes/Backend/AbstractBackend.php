@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Neos\Flow\Log\Backend;
@@ -13,7 +14,6 @@ namespace Neos\Flow\Log\Backend;
  * source code.
  */
 
-use Neos\Flow\Log\PlainTextFormatter;
 
 /**
  * An abstract Log backend

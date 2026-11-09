@@ -312,7 +312,7 @@ certain validation groups are executed:
 Additionally, it is possible to specify a list of validation groups at each controller action
 via the ``@Flow\ValidationGroups`` annotation. This way, you can override the default
 validation groups that are invoked on this action call, for example when you need to
-validate uniqueness of a property like an e-mail adress only in your createAction.
+validate uniqueness of a property like an e-mail address only in your createAction.
 
 A validator is only executed if at least one validation group overlap.
 

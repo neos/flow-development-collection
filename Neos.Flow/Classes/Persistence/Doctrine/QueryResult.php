@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Persistence\Doctrine;
 
 /*
@@ -17,13 +18,14 @@ use Neos\Flow\Persistence\QueryResultInterface;
 
 /**
  * A lazy result list that is returned by Query::execute()
- *
+ * @template T of object
+ * @implements QueryResultInterface<T>
  * @api
  */
 class QueryResult implements QueryResultInterface
 {
     /**
-     * @var array
+     * @var ?array<mixed>
      * @Flow\Transient
      */
     protected $rows;
@@ -35,12 +37,12 @@ class QueryResult implements QueryResultInterface
     protected $numberOfRows;
 
     /**
-     * @var Query
+     * @var Query<T>
      */
     protected $query;
 
     /**
-     * @param Query $query
+     * @param Query<T> $query
      */
     public function __construct(Query $query)
     {
@@ -50,6 +52,7 @@ class QueryResult implements QueryResultInterface
     /**
      * Loads the objects this QueryResult is supposed to hold
      *
+     * @phpstan-assert array<mixed> $this->rows
      * @return void
      */
     protected function initialize()
@@ -62,7 +65,7 @@ class QueryResult implements QueryResultInterface
     /**
      * Returns a clone of the query object
      *
-     * @return Query
+     * @return Query<T>
      * @api
      */
     public function getQuery(): QueryInterface
@@ -110,7 +113,7 @@ class QueryResult implements QueryResultInterface
     /**
      * Returns an array with the objects in the result set
      *
-     * @return array
+     * @return array<mixed>
      * @api
      */
     public function toArray(): array
@@ -209,6 +212,6 @@ class QueryResult implements QueryResultInterface
     public function valid(): bool
     {
         $this->initialize();
-        return current($this->rows) !== false;
+        return current($this->rows ?: []) !== false;
     }
 }

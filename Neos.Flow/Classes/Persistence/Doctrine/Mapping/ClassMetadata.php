@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Persistence\Doctrine\Mapping;
 
 /*
@@ -17,6 +18,8 @@ use Neos\Flow\Reflection\ClassReflection;
 /**
  * A ClassMetadata instance holds all the object-relational mapping metadata
  * of an entity and it's associations.
+ *
+ * @extends \Doctrine\ORM\Mapping\ClassMetadata<object>
  */
 class ClassMetadata extends \Doctrine\ORM\Mapping\ClassMetadata
 {

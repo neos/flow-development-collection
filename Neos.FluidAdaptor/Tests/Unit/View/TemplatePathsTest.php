@@ -1,19 +1,24 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Neos\FluidAdaptor\Tests\Unit\View;
 
 use GuzzleHttp\Psr7\ServerRequest;
 use GuzzleHttp\Psr7\Uri;
-use Neos\FluidAdaptor\View\Exception\InvalidTemplateResourceException;
-use org\bovigo\vfs\vfsStreamWrapper;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\Controller\ControllerContext;
 use Neos\Flow\Tests\UnitTestCase;
+use Neos\FluidAdaptor\View\Exception\InvalidTemplateResourceException;
 use Neos\FluidAdaptor\View\TemplatePaths;
+use org\bovigo\vfs\vfsStreamWrapper;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  *
  */
-class TemplatePathsTest extends UnitTestCase
+final class TemplatePathsTest extends UnitTestCase
 {
     /**
      * Helper to build mock controller context needed to test expandGenericPathPattern.
@@ -30,412 +35,408 @@ class TemplatePathsTest extends UnitTestCase
 
         $httpRequest = new ServerRequest('GET', new Uri('http://robertlemke.com/blog'));
         $mockRequest = $this->createMock(ActionRequest::class, [], [$httpRequest]);
-        $mockRequest->expects(self::any())->method('getControllerPackageKey')->will(self::returnValue($packageKey));
-        $mockRequest->expects(self::any())->method('getControllerSubPackageKey')->will(self::returnValue($subPackageKey));
-        $mockRequest->expects(self::any())->method('getControllerName')->will(self::returnValue($controllerName));
-        $mockRequest->expects(self::any())->method('getControllerObjectName')->will(self::returnValue($controllerObjectName));
-        $mockRequest->expects(self::any())->method('getFormat')->will(self::returnValue($format));
+        $mockRequest->method('getControllerPackageKey')->willReturn(($packageKey));
+        $mockRequest->method('getControllerSubPackageKey')->willReturn(($subPackageKey));
+        $mockRequest->method('getControllerName')->willReturn(($controllerName));
+        $mockRequest->method('getControllerObjectName')->willReturn(($controllerObjectName));
+        $mockRequest->method('getFormat')->willReturn(($format));
 
         /** @var $mockControllerContext ControllerContext */
         $mockControllerContext = $this->createMock(ControllerContext::class, ['getRequest'], [], '', false);
-        $mockControllerContext->expects(self::any())->method('getRequest')->will(self::returnValue($mockRequest));
+        $mockControllerContext->method('getRequest')->willReturn(($mockRequest));
 
         return $mockControllerContext;
     }
 
-    public function expandGenericPathPatternDataProvider()
+    public static function expandGenericPathPatternDataProvider(): \Iterator
     {
-        return [
-            // bubbling controller & subpackage parts and optional format
-            [
-                'package' => 'Some.Package',
-                'subPackage' => 'Some\\Sub\\Package',
-                'controller' => 'SomeController',
-                'format' => 'html',
-                'templateRootPath' => 'Resources/Private/Templates',
-                'templateRootPaths' => null,
-                'partialRootPath' => 'Resources/Private/Partials',
-                'partialRootPaths' => null,
-                'layoutRootPath' => 'Resources/Private/Layouts',
-                'layoutRootPaths' => null,
-                'bubbleControllerAndSubpackage' => true,
-                'formatIsOptional' => true,
-                'pattern' => '@templateRoot/@subpackage/@controller/@action.@format',
-                'expectedResult' => [
-                    'Resources/Private/Templates/Some/Sub/Package/SomeController/@action.html',
-                    'Resources/Private/Templates/Some/Sub/Package/SomeController/@action',
-                    'Resources/Private/Templates/Some/Sub/Package/@action.html',
-                    'Resources/Private/Templates/Some/Sub/Package/@action',
-                    'Resources/Private/Templates/Sub/Package/@action.html',
-                    'Resources/Private/Templates/Sub/Package/@action',
-                    'Resources/Private/Templates/Package/@action.html',
-                    'Resources/Private/Templates/Package/@action',
-                    'Resources/Private/Templates/@action.html',
-                    'Resources/Private/Templates/@action',
-                ]
-            ],
-            // just optional format
-            [
-                'package' => 'Some.Package',
-                'subPackage' => 'Some\\Sub\\Package',
-                'controller' => 'SomeController',
-                'format' => 'html',
-                'templateRootPath' => 'Resources/Private/Templates/',
-                'templateRootPaths' => null,
-                'partialRootPath' => 'Resources/Private/Partials',
-                'partialRootPaths' => null,
-                'layoutRootPath' => 'Resources/Private/Layouts',
-                'layoutRootPaths' => null,
-                'bubbleControllerAndSubpackage' => false,
-                'formatIsOptional' => true,
-                'pattern' => '@templateRoot/@subpackage/@controller/@action.@format',
-                'expectedResult' => [
-                    'Resources/Private/Templates/Some/Sub/Package/SomeController/@action.html',
-                    'Resources/Private/Templates/Some/Sub/Package/SomeController/@action',
-                ]
-            ],
-            // just bubbling controller & subpackage parts
-            [
-                'package' => 'Some.Package',
-                'subPackage' => 'Some\\Sub\\Package',
-                'controller' => 'SomeController',
-                'format' => 'json',
-                'templateRootPath' => 'Resources/Private/Templates',
-                'templateRootPaths' => null,
-                'partialRootPath' => 'Resources/Private/Partials',
-                'partialRootPaths' => null,
-                'layoutRootPath' => 'Resources/Private/Layouts',
-                'layoutRootPaths' => null,
-                'bubbleControllerAndSubpackage' => true,
-                'formatIsOptional' => false,
-                'pattern' => '@partialRoot/@subpackage/@controller/@action.@format',
-                'expectedResult' => [
-                    'Resources/Private/Partials/Some/Sub/Package/SomeController/@action.json',
-                    'Resources/Private/Partials/Some/Sub/Package/@action.json',
-                    'Resources/Private/Partials/Sub/Package/@action.json',
-                    'Resources/Private/Partials/Package/@action.json',
-                    'Resources/Private/Partials/@action.json',
-                ]
-            ],
-            // layoutRootPath
-            [
-                'package' => 'Some.Package',
-                'subPackage' => null,
-                'controller' => null,
-                'format' => 'xml',
-                'templateRootPath' => 'Resources/Private/Templates',
-                'templateRootPaths' => null,
-                'partialRootPath' => 'Resources/Private/Partials',
-                'partialRootPaths' => null,
-                'layoutRootPath' => 'Resources/Private/Layouts',
-                'layoutRootPaths' => null,
-                'bubbleControllerAndSubpackage' => true,
-                'formatIsOptional' => true,
-                'pattern' => '@layoutRoot/@subpackage/@controller/@action.@format',
-                'expectedResult' => [
-                    'Resources/Private/Layouts/@action.xml',
-                    'Resources/Private/Layouts/@action',
-                ]
-            ],
-            // partialRootPath
-            [
-                'package' => 'Some.Package',
-                'subPackage' => 'Some\\Sub\\Package',
-                'controller' => null,
-                'format' => 'html',
-                'templateRootPath' => 'Resources/Private/Templates',
-                'templateRootPaths' => null,
-                'partialRootPath' => 'Resources/Private/Partials',
-                'partialRootPaths' => null,
-                'layoutRootPath' => 'Resources/Private/Layouts',
-                'layoutRootPaths' => null,
-                'bubbleControllerAndSubpackage' => true,
-                'formatIsOptional' => true,
-                'pattern' => '@templateRoot/@subpackage/@controller/@action.@format',
-                'expectedResult' => [
-                    'Resources/Private/Templates/Some/Sub/Package/@action.html',
-                    'Resources/Private/Templates/Some/Sub/Package/@action',
-                    'Resources/Private/Templates/Sub/Package/@action.html',
-                    'Resources/Private/Templates/Sub/Package/@action',
-                    'Resources/Private/Templates/Package/@action.html',
-                    'Resources/Private/Templates/Package/@action',
-                    'Resources/Private/Templates/@action.html',
-                    'Resources/Private/Templates/@action',
-                ]
-            ],
-            // optional format as directory name
-            [
-                'package' => 'Some.Package',
-                'subPackage' => 'Some\\Sub\\Package',
-                'controller' => 'SomeController',
-                'format' => 'xml',
-                'templateRootPath' => 'Resources/Private/Templates_@format',
-                'templateRootPaths' => null,
-                'partialRootPath' => 'Resources/Private/Partials',
-                'partialRootPaths' => null,
-                'layoutRootPath' => 'Resources/Private/Layouts',
-                'layoutRootPaths' => null,
-                'bubbleControllerAndSubpackage' => false,
-                'formatIsOptional' => true,
-                'pattern' => '@templateRoot/@subpackage/@controller/@action',
-                'expectedResult' => [
-                    'Resources/Private/Templates_xml/Some/Sub/Package/SomeController/@action',
-                    'Resources/Private/Templates_/Some/Sub/Package/SomeController/@action',
-                ]
-            ],
-            // mandatory format as directory name
-            [
-                'package' => 'Some.Package',
-                'subPackage' => 'Some\\Sub\\Package',
-                'controller' => 'SomeController',
-                'format' => 'json',
-                'templateRootPath' => 'Resources/Private/Templates_@format',
-                'templateRootPaths' => null,
-                'partialRootPath' => 'Resources/Private/Partials',
-                'partialRootPaths' => null,
-                'layoutRootPath' => 'Resources/Private/Layouts',
-                'layoutRootPaths' => null,
-                'bubbleControllerAndSubpackage' => false,
-                'formatIsOptional' => false,
-                'pattern' => '@templateRoot/@subpackage/@controller/@action',
-                'expectedResult' => [
-                    'Resources/Private/Templates_json/Some/Sub/Package/SomeController/@action',
-                ]
-            ],
-            // paths must not contain double slashes
-            [
-                'package' => 'Some.Package',
-                'subPackage' => null,
-                'controller' => 'SomeController',
-                'format' => 'html',
-                'templateRootPath' => 'Resources/Private/Templates',
-                'templateRootPaths' => null,
-                'partialRootPath' => 'Resources/Private/Partials',
-                'partialRootPaths' => null,
-                'layoutRootPath' => 'Some/Root/Path/',
-                'layoutRootPaths' => null,
-                'bubbleControllerAndSubpackage' => true,
-                'formatIsOptional' => true,
-                'pattern' => '@layoutRoot/@subpackage/@controller/@action.@format',
-                'expectedResult' => [
-                    'Some/Root/Path/SomeController/@action.html',
-                    'Some/Root/Path/SomeController/@action',
-                    'Some/Root/Path/@action.html',
-                    'Some/Root/Path/@action',
-                ]
-            ],
-            // paths must be unique
-            [
-                'package' => 'Some.Package',
-                'subPackage' => 'Some\\Sub\\Package',
-                'controller' => 'SomeController',
-                'format' => 'json',
-                'templateRootPath' => 'Resources/Private/Templates',
-                'templateRootPaths' => null,
-                'partialRootPath' => 'Resources/Private/Partials',
-                'partialRootPaths' => null,
-                'layoutRootPath' => 'Resources/Private/Layouts',
-                'layoutRootPaths' => null,
-                'bubbleControllerAndSubpackage' => true,
-                'formatIsOptional' => false,
-                'pattern' => 'foo',
-                'expectedResult' => [
-                    'foo',
-                ]
-            ],
-            // template fallback paths
-            [
-                'package' => 'Some.Package',
-                'subPackage' => 'Some\\Sub\\Package',
-                'controller' => 'SomeController',
-                'format' => 'html',
-                'templateRootPath' => 'Resources/Private/Templates',
-                'templateRootPaths' => ['Resources/Private/Templates', 'Some/Fallback/Path'],
-                'partialRootPath' => 'Resources/Private/Partials',
-                'partialRootPaths' => null,
-                'layoutRootPath' => 'Resources/Private/Layouts',
-                'layoutRootPaths' => null,
-                'bubbleControllerAndSubpackage' => false,
-                'formatIsOptional' => true,
-                'pattern' => '@templateRoot/@subpackage/@controller/@action.@format',
-                'expectedResult' => [
-                    'Resources/Private/Templates/Some/Sub/Package/SomeController/@action.html',
-                    'Resources/Private/Templates/Some/Sub/Package/SomeController/@action',
-                    'Some/Fallback/Path/Some/Sub/Package/SomeController/@action.html',
-                    'Some/Fallback/Path/Some/Sub/Package/SomeController/@action',
-                ]
-            ],
-            // template fallback paths with bubbleControllerAndSubpackage
-            [
-                'package' => 'Some.Package',
-                'subPackage' => 'Some\\Sub\\Package',
-                'controller' => 'SomeController',
-                'format' => 'html',
-                'templateRootPath' => 'Resources/Private/Templates',
-                'templateRootPaths' => ['Resources/Private/Templates', 'Some/Fallback/Path'],
-                'partialRootPath' => 'Resources/Private/Partials',
-                'partialRootPaths' => null,
-                'layoutRootPath' => 'Resources/Private/Layouts',
-                'layoutRootPaths' => null,
-                'bubbleControllerAndSubpackage' => true,
-                'formatIsOptional' => false,
-                'pattern' => '@templateRoot/@subpackage/@controller/@action.@format',
-                'expectedResult' => [
-                    'Resources/Private/Templates/Some/Sub/Package/SomeController/@action.html',
-                    'Resources/Private/Templates/Some/Sub/Package/@action.html',
-                    'Resources/Private/Templates/Sub/Package/@action.html',
-                    'Resources/Private/Templates/Package/@action.html',
-                    'Resources/Private/Templates/@action.html',
-                    'Some/Fallback/Path/Some/Sub/Package/SomeController/@action.html',
-                    'Some/Fallback/Path/Some/Sub/Package/@action.html',
-                    'Some/Fallback/Path/Sub/Package/@action.html',
-                    'Some/Fallback/Path/Package/@action.html',
-                    'Some/Fallback/Path/@action.html',
-                ]
-            ],
-            // partial fallback paths
-            [
-                'package' => 'Some.Package',
-                'subPackage' => 'Some\\Sub\\Package',
-                'controller' => 'SomeController',
-                'format' => 'html',
-                'templateRootPath' => 'Resources/Private/Templates',
-                'templateRootPaths' => null,
-                'partialRootPath' => 'Resources/Private/Partials',
-                'partialRootPaths' => ['Default/Resources/Path', 'Fallback/'],
-                'layoutRootPath' => 'Resources/Private/Layouts',
-                'layoutRootPaths' => null,
-                'bubbleControllerAndSubpackage' => false,
-                'formatIsOptional' => true,
-                'pattern' => '@partialRoot/@subpackage/@controller/@partial.@format',
-                'expectedResult' => [
-                    'Default/Resources/Path/Some/Sub/Package/SomeController/@partial.html',
-                    'Default/Resources/Path/Some/Sub/Package/SomeController/@partial',
-                    'Fallback/Some/Sub/Package/SomeController/@partial.html',
-                    'Fallback/Some/Sub/Package/SomeController/@partial',
-                ]
-            ],
-            // partial fallback paths with bubbleControllerAndSubpackage
-            [
-                'package' => 'Some.Package',
-                'subPackage' => 'Some\\Sub\\Package',
-                'controller' => 'SomeController',
-                'format' => 'html',
-                'templateRootPath' => 'Resources/Private/Templates',
-                'templateRootPaths' => ['Resources/Private/Templates', 'Some/Fallback/Path'],
-                'partialRootPath' => 'Resources/Private/Partials',
-                'partialRootPaths' => ['Default/Resources/Path', 'Fallback1/', 'Fallback2'],
-                'layoutRootPath' => 'Resources/Private/Layouts',
-                'layoutRootPaths' => null,
-                'bubbleControllerAndSubpackage' => true,
-                'formatIsOptional' => true,
-                'pattern' => '@partialRoot/@controller/@subpackage/@partial',
-                'expectedResult' => [
-                    'Default/Resources/Path/SomeController/Some/Sub/Package/@partial',
-                    'Default/Resources/Path/Some/Sub/Package/@partial',
-                    'Default/Resources/Path/Sub/Package/@partial',
-                    'Default/Resources/Path/Package/@partial',
-                    'Default/Resources/Path/@partial',
-                    'Fallback1/SomeController/Some/Sub/Package/@partial',
-                    'Fallback1/Some/Sub/Package/@partial',
-                    'Fallback1/Sub/Package/@partial',
-                    'Fallback1/Package/@partial',
-                    'Fallback1/@partial',
-                    'Fallback2/SomeController/Some/Sub/Package/@partial',
-                    'Fallback2/Some/Sub/Package/@partial',
-                    'Fallback2/Sub/Package/@partial',
-                    'Fallback2/Package/@partial',
-                    'Fallback2/@partial',
-                ]
-            ],
-            // layout fallback paths
-            [
-                'package' => 'Some.Package',
-                'subPackage' => 'Some\\Sub\\Package',
-                'controller' => 'SomeController',
-                'format' => 'html',
-                'templateRootPath' => 'Resources/Private/Templates',
-                'templateRootPaths' => ['Resources/Private/Templates', 'Some/Fallback/Path'],
-                'partialRootPath' => 'Resources/Private/Partials',
-                'partialRootPaths' => ['foo', 'bar'],
-                'layoutRootPath' => 'Resources/Private/Layouts',
-                'layoutRootPaths' => ['Default/Layout/Path', 'Fallback/Path'],
-                'bubbleControllerAndSubpackage' => false,
-                'formatIsOptional' => false,
-                'pattern' => '@layoutRoot/@subpackage/@controller/@layout.@format',
-                'expectedResult' => [
-                    'Default/Layout/Path/Some/Sub/Package/SomeController/@layout.html',
-                    'Fallback/Path/Some/Sub/Package/SomeController/@layout.html',
-                ]
-            ],
-            // layout fallback paths with bubbleControllerAndSubpackage
-            [
-                'package' => 'Some.Package',
-                'subPackage' => 'Some\\Sub\\Package',
-                'controller' => 'SomeController',
-                'format' => 'html',
-                'templateRootPath' => 'Resources/Private/Templates',
-                'templateRootPaths' => null,
-                'partialRootPath' => 'Resources/Private/Partials',
-                'partialRootPaths' => null,
-                'layoutRootPath' => 'Resources/Private/Layouts',
-                'layoutRootPaths' => ['Resources/Layouts', 'Some/Fallback/Path'],
-                'bubbleControllerAndSubpackage' => true,
-                'formatIsOptional' => true,
-                'pattern' => 'Static/@layoutRoot/@subpackage/@controller/@layout.@format',
-                'expectedResult' => [
-                    'Static/Resources/Layouts/Some/Sub/Package/SomeController/@layout.html',
-                    'Static/Resources/Layouts/Some/Sub/Package/SomeController/@layout',
-                    'Static/Resources/Layouts/Some/Sub/Package/@layout.html',
-                    'Static/Resources/Layouts/Some/Sub/Package/@layout',
-                    'Static/Resources/Layouts/Sub/Package/@layout.html',
-                    'Static/Resources/Layouts/Sub/Package/@layout',
-                    'Static/Resources/Layouts/Package/@layout.html',
-                    'Static/Resources/Layouts/Package/@layout',
-                    'Static/Resources/Layouts/@layout.html',
-                    'Static/Resources/Layouts/@layout',
-                    'Static/Some/Fallback/Path/Some/Sub/Package/SomeController/@layout.html',
-                    'Static/Some/Fallback/Path/Some/Sub/Package/SomeController/@layout',
-                    'Static/Some/Fallback/Path/Some/Sub/Package/@layout.html',
-                    'Static/Some/Fallback/Path/Some/Sub/Package/@layout',
-                    'Static/Some/Fallback/Path/Sub/Package/@layout.html',
-                    'Static/Some/Fallback/Path/Sub/Package/@layout',
-                    'Static/Some/Fallback/Path/Package/@layout.html',
-                    'Static/Some/Fallback/Path/Package/@layout',
-                    'Static/Some/Fallback/Path/@layout.html',
-                    'Static/Some/Fallback/Path/@layout',
-                ]
-            ],
-            // combined fallback paths
-            [
-                'package' => 'Some.Package',
-                'subPackage' => 'Some\\Sub\\Package',
-                'controller' => 'SomeController',
-                'format' => 'html',
-                'templateRootPath' => 'Resources/Private/Templates',
-                'templateRootPaths' => ['Resources/Templates', 'Templates/Fallback1', 'Templates/Fallback2'],
-                'partialRootPath' => 'Resources/Private/Partials',
-                'partialRootPaths' => ['Resources/Partials'],
-                'layoutRootPath' => 'Resources/Private/Layouts',
-                'layoutRootPaths' => ['Resources/Layouts', 'Layouts/Fallback1'],
-                'bubbleControllerAndSubpackage' => false,
-                'formatIsOptional' => true,
-                'pattern' => '@layoutRoot/@templateRoot/@partialRoot/@subpackage/@controller/foo',
-                'expectedResult' => [
-                    'Resources/Layouts/Resources/Templates/Resources/Partials/Some/Sub/Package/SomeController/foo',
-                    'Layouts/Fallback1/Resources/Templates/Resources/Partials/Some/Sub/Package/SomeController/foo',
-                    'Resources/Layouts/Templates/Fallback1/Resources/Partials/Some/Sub/Package/SomeController/foo',
-                    'Layouts/Fallback1/Templates/Fallback1/Resources/Partials/Some/Sub/Package/SomeController/foo',
-                    'Resources/Layouts/Templates/Fallback2/Resources/Partials/Some/Sub/Package/SomeController/foo',
-                    'Layouts/Fallback1/Templates/Fallback2/Resources/Partials/Some/Sub/Package/SomeController/foo',
-                ]
-            ],
+        // bubbling controller & subpackage parts and optional format
+        yield [
+            'package' => 'Some.Package',
+            'subPackage' => 'Some\\Sub\\Package',
+            'controller' => 'SomeController',
+            'format' => 'html',
+            'templateRootPath' => 'Resources/Private/Templates',
+            'templateRootPaths' => null,
+            'partialRootPath' => 'Resources/Private/Partials',
+            'partialRootPaths' => null,
+            'layoutRootPath' => 'Resources/Private/Layouts',
+            'layoutRootPaths' => null,
+            'bubbleControllerAndSubpackage' => true,
+            'formatIsOptional' => true,
+            'pattern' => '@templateRoot/@subpackage/@controller/@action.@format',
+            'expectedResult' => [
+                'Resources/Private/Templates/Some/Sub/Package/SomeController/@action.html',
+                'Resources/Private/Templates/Some/Sub/Package/SomeController/@action',
+                'Resources/Private/Templates/Some/Sub/Package/@action.html',
+                'Resources/Private/Templates/Some/Sub/Package/@action',
+                'Resources/Private/Templates/Sub/Package/@action.html',
+                'Resources/Private/Templates/Sub/Package/@action',
+                'Resources/Private/Templates/Package/@action.html',
+                'Resources/Private/Templates/Package/@action',
+                'Resources/Private/Templates/@action.html',
+                'Resources/Private/Templates/@action',
+            ]
+        ];
+        // just optional format
+        yield [
+            'package' => 'Some.Package',
+            'subPackage' => 'Some\\Sub\\Package',
+            'controller' => 'SomeController',
+            'format' => 'html',
+            'templateRootPath' => 'Resources/Private/Templates/',
+            'templateRootPaths' => null,
+            'partialRootPath' => 'Resources/Private/Partials',
+            'partialRootPaths' => null,
+            'layoutRootPath' => 'Resources/Private/Layouts',
+            'layoutRootPaths' => null,
+            'bubbleControllerAndSubpackage' => false,
+            'formatIsOptional' => true,
+            'pattern' => '@templateRoot/@subpackage/@controller/@action.@format',
+            'expectedResult' => [
+                'Resources/Private/Templates/Some/Sub/Package/SomeController/@action.html',
+                'Resources/Private/Templates/Some/Sub/Package/SomeController/@action',
+            ]
+        ];
+        // just bubbling controller & subpackage parts
+        yield [
+            'package' => 'Some.Package',
+            'subPackage' => 'Some\\Sub\\Package',
+            'controller' => 'SomeController',
+            'format' => 'json',
+            'templateRootPath' => 'Resources/Private/Templates',
+            'templateRootPaths' => null,
+            'partialRootPath' => 'Resources/Private/Partials',
+            'partialRootPaths' => null,
+            'layoutRootPath' => 'Resources/Private/Layouts',
+            'layoutRootPaths' => null,
+            'bubbleControllerAndSubpackage' => true,
+            'formatIsOptional' => false,
+            'pattern' => '@partialRoot/@subpackage/@controller/@action.@format',
+            'expectedResult' => [
+                'Resources/Private/Partials/Some/Sub/Package/SomeController/@action.json',
+                'Resources/Private/Partials/Some/Sub/Package/@action.json',
+                'Resources/Private/Partials/Sub/Package/@action.json',
+                'Resources/Private/Partials/Package/@action.json',
+                'Resources/Private/Partials/@action.json',
+            ]
+        ];
+        // layoutRootPath
+        yield [
+            'package' => 'Some.Package',
+            'subPackage' => null,
+            'controller' => null,
+            'format' => 'xml',
+            'templateRootPath' => 'Resources/Private/Templates',
+            'templateRootPaths' => null,
+            'partialRootPath' => 'Resources/Private/Partials',
+            'partialRootPaths' => null,
+            'layoutRootPath' => 'Resources/Private/Layouts',
+            'layoutRootPaths' => null,
+            'bubbleControllerAndSubpackage' => true,
+            'formatIsOptional' => true,
+            'pattern' => '@layoutRoot/@subpackage/@controller/@action.@format',
+            'expectedResult' => [
+                'Resources/Private/Layouts/@action.xml',
+                'Resources/Private/Layouts/@action',
+            ]
+        ];
+        // partialRootPath
+        yield [
+            'package' => 'Some.Package',
+            'subPackage' => 'Some\\Sub\\Package',
+            'controller' => null,
+            'format' => 'html',
+            'templateRootPath' => 'Resources/Private/Templates',
+            'templateRootPaths' => null,
+            'partialRootPath' => 'Resources/Private/Partials',
+            'partialRootPaths' => null,
+            'layoutRootPath' => 'Resources/Private/Layouts',
+            'layoutRootPaths' => null,
+            'bubbleControllerAndSubpackage' => true,
+            'formatIsOptional' => true,
+            'pattern' => '@templateRoot/@subpackage/@controller/@action.@format',
+            'expectedResult' => [
+                'Resources/Private/Templates/Some/Sub/Package/@action.html',
+                'Resources/Private/Templates/Some/Sub/Package/@action',
+                'Resources/Private/Templates/Sub/Package/@action.html',
+                'Resources/Private/Templates/Sub/Package/@action',
+                'Resources/Private/Templates/Package/@action.html',
+                'Resources/Private/Templates/Package/@action',
+                'Resources/Private/Templates/@action.html',
+                'Resources/Private/Templates/@action',
+            ]
+        ];
+        // optional format as directory name
+        yield [
+            'package' => 'Some.Package',
+            'subPackage' => 'Some\\Sub\\Package',
+            'controller' => 'SomeController',
+            'format' => 'xml',
+            'templateRootPath' => 'Resources/Private/Templates_@format',
+            'templateRootPaths' => null,
+            'partialRootPath' => 'Resources/Private/Partials',
+            'partialRootPaths' => null,
+            'layoutRootPath' => 'Resources/Private/Layouts',
+            'layoutRootPaths' => null,
+            'bubbleControllerAndSubpackage' => false,
+            'formatIsOptional' => true,
+            'pattern' => '@templateRoot/@subpackage/@controller/@action',
+            'expectedResult' => [
+                'Resources/Private/Templates_xml/Some/Sub/Package/SomeController/@action',
+                'Resources/Private/Templates_/Some/Sub/Package/SomeController/@action',
+            ]
+        ];
+        // mandatory format as directory name
+        yield [
+            'package' => 'Some.Package',
+            'subPackage' => 'Some\\Sub\\Package',
+            'controller' => 'SomeController',
+            'format' => 'json',
+            'templateRootPath' => 'Resources/Private/Templates_@format',
+            'templateRootPaths' => null,
+            'partialRootPath' => 'Resources/Private/Partials',
+            'partialRootPaths' => null,
+            'layoutRootPath' => 'Resources/Private/Layouts',
+            'layoutRootPaths' => null,
+            'bubbleControllerAndSubpackage' => false,
+            'formatIsOptional' => false,
+            'pattern' => '@templateRoot/@subpackage/@controller/@action',
+            'expectedResult' => [
+                'Resources/Private/Templates_json/Some/Sub/Package/SomeController/@action',
+            ]
+        ];
+        // paths must not contain double slashes
+        yield [
+            'package' => 'Some.Package',
+            'subPackage' => null,
+            'controller' => 'SomeController',
+            'format' => 'html',
+            'templateRootPath' => 'Resources/Private/Templates',
+            'templateRootPaths' => null,
+            'partialRootPath' => 'Resources/Private/Partials',
+            'partialRootPaths' => null,
+            'layoutRootPath' => 'Some/Root/Path/',
+            'layoutRootPaths' => null,
+            'bubbleControllerAndSubpackage' => true,
+            'formatIsOptional' => true,
+            'pattern' => '@layoutRoot/@subpackage/@controller/@action.@format',
+            'expectedResult' => [
+                'Some/Root/Path/SomeController/@action.html',
+                'Some/Root/Path/SomeController/@action',
+                'Some/Root/Path/@action.html',
+                'Some/Root/Path/@action',
+            ]
+        ];
+        // paths must be unique
+        yield [
+            'package' => 'Some.Package',
+            'subPackage' => 'Some\\Sub\\Package',
+            'controller' => 'SomeController',
+            'format' => 'json',
+            'templateRootPath' => 'Resources/Private/Templates',
+            'templateRootPaths' => null,
+            'partialRootPath' => 'Resources/Private/Partials',
+            'partialRootPaths' => null,
+            'layoutRootPath' => 'Resources/Private/Layouts',
+            'layoutRootPaths' => null,
+            'bubbleControllerAndSubpackage' => true,
+            'formatIsOptional' => false,
+            'pattern' => 'foo',
+            'expectedResult' => [
+                'foo',
+            ]
+        ];
+        // template fallback paths
+        yield [
+            'package' => 'Some.Package',
+            'subPackage' => 'Some\\Sub\\Package',
+            'controller' => 'SomeController',
+            'format' => 'html',
+            'templateRootPath' => 'Resources/Private/Templates',
+            'templateRootPaths' => ['Resources/Private/Templates', 'Some/Fallback/Path'],
+            'partialRootPath' => 'Resources/Private/Partials',
+            'partialRootPaths' => null,
+            'layoutRootPath' => 'Resources/Private/Layouts',
+            'layoutRootPaths' => null,
+            'bubbleControllerAndSubpackage' => false,
+            'formatIsOptional' => true,
+            'pattern' => '@templateRoot/@subpackage/@controller/@action.@format',
+            'expectedResult' => [
+                'Resources/Private/Templates/Some/Sub/Package/SomeController/@action.html',
+                'Resources/Private/Templates/Some/Sub/Package/SomeController/@action',
+                'Some/Fallback/Path/Some/Sub/Package/SomeController/@action.html',
+                'Some/Fallback/Path/Some/Sub/Package/SomeController/@action',
+            ]
+        ];
+        // template fallback paths with bubbleControllerAndSubpackage
+        yield [
+            'package' => 'Some.Package',
+            'subPackage' => 'Some\\Sub\\Package',
+            'controller' => 'SomeController',
+            'format' => 'html',
+            'templateRootPath' => 'Resources/Private/Templates',
+            'templateRootPaths' => ['Resources/Private/Templates', 'Some/Fallback/Path'],
+            'partialRootPath' => 'Resources/Private/Partials',
+            'partialRootPaths' => null,
+            'layoutRootPath' => 'Resources/Private/Layouts',
+            'layoutRootPaths' => null,
+            'bubbleControllerAndSubpackage' => true,
+            'formatIsOptional' => false,
+            'pattern' => '@templateRoot/@subpackage/@controller/@action.@format',
+            'expectedResult' => [
+                'Resources/Private/Templates/Some/Sub/Package/SomeController/@action.html',
+                'Resources/Private/Templates/Some/Sub/Package/@action.html',
+                'Resources/Private/Templates/Sub/Package/@action.html',
+                'Resources/Private/Templates/Package/@action.html',
+                'Resources/Private/Templates/@action.html',
+                'Some/Fallback/Path/Some/Sub/Package/SomeController/@action.html',
+                'Some/Fallback/Path/Some/Sub/Package/@action.html',
+                'Some/Fallback/Path/Sub/Package/@action.html',
+                'Some/Fallback/Path/Package/@action.html',
+                'Some/Fallback/Path/@action.html',
+            ]
+        ];
+        // partial fallback paths
+        yield [
+            'package' => 'Some.Package',
+            'subPackage' => 'Some\\Sub\\Package',
+            'controller' => 'SomeController',
+            'format' => 'html',
+            'templateRootPath' => 'Resources/Private/Templates',
+            'templateRootPaths' => null,
+            'partialRootPath' => 'Resources/Private/Partials',
+            'partialRootPaths' => ['Default/Resources/Path', 'Fallback/'],
+            'layoutRootPath' => 'Resources/Private/Layouts',
+            'layoutRootPaths' => null,
+            'bubbleControllerAndSubpackage' => false,
+            'formatIsOptional' => true,
+            'pattern' => '@partialRoot/@subpackage/@controller/@partial.@format',
+            'expectedResult' => [
+                'Default/Resources/Path/Some/Sub/Package/SomeController/@partial.html',
+                'Default/Resources/Path/Some/Sub/Package/SomeController/@partial',
+                'Fallback/Some/Sub/Package/SomeController/@partial.html',
+                'Fallback/Some/Sub/Package/SomeController/@partial',
+            ]
+        ];
+        // partial fallback paths with bubbleControllerAndSubpackage
+        yield [
+            'package' => 'Some.Package',
+            'subPackage' => 'Some\\Sub\\Package',
+            'controller' => 'SomeController',
+            'format' => 'html',
+            'templateRootPath' => 'Resources/Private/Templates',
+            'templateRootPaths' => ['Resources/Private/Templates', 'Some/Fallback/Path'],
+            'partialRootPath' => 'Resources/Private/Partials',
+            'partialRootPaths' => ['Default/Resources/Path', 'Fallback1/', 'Fallback2'],
+            'layoutRootPath' => 'Resources/Private/Layouts',
+            'layoutRootPaths' => null,
+            'bubbleControllerAndSubpackage' => true,
+            'formatIsOptional' => true,
+            'pattern' => '@partialRoot/@controller/@subpackage/@partial',
+            'expectedResult' => [
+                'Default/Resources/Path/SomeController/Some/Sub/Package/@partial',
+                'Default/Resources/Path/Some/Sub/Package/@partial',
+                'Default/Resources/Path/Sub/Package/@partial',
+                'Default/Resources/Path/Package/@partial',
+                'Default/Resources/Path/@partial',
+                'Fallback1/SomeController/Some/Sub/Package/@partial',
+                'Fallback1/Some/Sub/Package/@partial',
+                'Fallback1/Sub/Package/@partial',
+                'Fallback1/Package/@partial',
+                'Fallback1/@partial',
+                'Fallback2/SomeController/Some/Sub/Package/@partial',
+                'Fallback2/Some/Sub/Package/@partial',
+                'Fallback2/Sub/Package/@partial',
+                'Fallback2/Package/@partial',
+                'Fallback2/@partial',
+            ]
+        ];
+        // layout fallback paths
+        yield [
+            'package' => 'Some.Package',
+            'subPackage' => 'Some\\Sub\\Package',
+            'controller' => 'SomeController',
+            'format' => 'html',
+            'templateRootPath' => 'Resources/Private/Templates',
+            'templateRootPaths' => ['Resources/Private/Templates', 'Some/Fallback/Path'],
+            'partialRootPath' => 'Resources/Private/Partials',
+            'partialRootPaths' => ['foo', 'bar'],
+            'layoutRootPath' => 'Resources/Private/Layouts',
+            'layoutRootPaths' => ['Default/Layout/Path', 'Fallback/Path'],
+            'bubbleControllerAndSubpackage' => false,
+            'formatIsOptional' => false,
+            'pattern' => '@layoutRoot/@subpackage/@controller/@layout.@format',
+            'expectedResult' => [
+                'Default/Layout/Path/Some/Sub/Package/SomeController/@layout.html',
+                'Fallback/Path/Some/Sub/Package/SomeController/@layout.html',
+            ]
+        ];
+        // layout fallback paths with bubbleControllerAndSubpackage
+        yield [
+            'package' => 'Some.Package',
+            'subPackage' => 'Some\\Sub\\Package',
+            'controller' => 'SomeController',
+            'format' => 'html',
+            'templateRootPath' => 'Resources/Private/Templates',
+            'templateRootPaths' => null,
+            'partialRootPath' => 'Resources/Private/Partials',
+            'partialRootPaths' => null,
+            'layoutRootPath' => 'Resources/Private/Layouts',
+            'layoutRootPaths' => ['Resources/Layouts', 'Some/Fallback/Path'],
+            'bubbleControllerAndSubpackage' => true,
+            'formatIsOptional' => true,
+            'pattern' => 'Static/@layoutRoot/@subpackage/@controller/@layout.@format',
+            'expectedResult' => [
+                'Static/Resources/Layouts/Some/Sub/Package/SomeController/@layout.html',
+                'Static/Resources/Layouts/Some/Sub/Package/SomeController/@layout',
+                'Static/Resources/Layouts/Some/Sub/Package/@layout.html',
+                'Static/Resources/Layouts/Some/Sub/Package/@layout',
+                'Static/Resources/Layouts/Sub/Package/@layout.html',
+                'Static/Resources/Layouts/Sub/Package/@layout',
+                'Static/Resources/Layouts/Package/@layout.html',
+                'Static/Resources/Layouts/Package/@layout',
+                'Static/Resources/Layouts/@layout.html',
+                'Static/Resources/Layouts/@layout',
+                'Static/Some/Fallback/Path/Some/Sub/Package/SomeController/@layout.html',
+                'Static/Some/Fallback/Path/Some/Sub/Package/SomeController/@layout',
+                'Static/Some/Fallback/Path/Some/Sub/Package/@layout.html',
+                'Static/Some/Fallback/Path/Some/Sub/Package/@layout',
+                'Static/Some/Fallback/Path/Sub/Package/@layout.html',
+                'Static/Some/Fallback/Path/Sub/Package/@layout',
+                'Static/Some/Fallback/Path/Package/@layout.html',
+                'Static/Some/Fallback/Path/Package/@layout',
+                'Static/Some/Fallback/Path/@layout.html',
+                'Static/Some/Fallback/Path/@layout',
+            ]
+        ];
+        // combined fallback paths
+        yield [
+            'package' => 'Some.Package',
+            'subPackage' => 'Some\\Sub\\Package',
+            'controller' => 'SomeController',
+            'format' => 'html',
+            'templateRootPath' => 'Resources/Private/Templates',
+            'templateRootPaths' => ['Resources/Templates', 'Templates/Fallback1', 'Templates/Fallback2'],
+            'partialRootPath' => 'Resources/Private/Partials',
+            'partialRootPaths' => ['Resources/Partials'],
+            'layoutRootPath' => 'Resources/Private/Layouts',
+            'layoutRootPaths' => ['Resources/Layouts', 'Layouts/Fallback1'],
+            'bubbleControllerAndSubpackage' => false,
+            'formatIsOptional' => true,
+            'pattern' => '@layoutRoot/@templateRoot/@partialRoot/@subpackage/@controller/foo',
+            'expectedResult' => [
+                'Resources/Layouts/Resources/Templates/Resources/Partials/Some/Sub/Package/SomeController/foo',
+                'Layouts/Fallback1/Resources/Templates/Resources/Partials/Some/Sub/Package/SomeController/foo',
+                'Resources/Layouts/Templates/Fallback1/Resources/Partials/Some/Sub/Package/SomeController/foo',
+                'Layouts/Fallback1/Templates/Fallback1/Resources/Partials/Some/Sub/Package/SomeController/foo',
+                'Resources/Layouts/Templates/Fallback2/Resources/Partials/Some/Sub/Package/SomeController/foo',
+                'Layouts/Fallback1/Templates/Fallback2/Resources/Partials/Some/Sub/Package/SomeController/foo',
+            ]
         ];
     }
 
     /**
-     * @test
-     * @dataProvider expandGenericPathPatternDataProvider()
      *
      * @param string $package
      * @param string $subPackage
@@ -452,6 +453,8 @@ class TemplatePathsTest extends UnitTestCase
      * @param string $pattern
      * @param string $expectedResult
      */
+    #[DataProvider('expandGenericPathPatternDataProvider')]
+    #[Test]
     public function expandGenericPathPatternTests($package, $subPackage, $controller, $format, $templateRootPath, ?array $templateRootPaths, $partialRootPath, ?array $partialRootPaths, $layoutRootPath, ?array $layoutRootPaths, $bubbleControllerAndSubpackage, $formatIsOptional, $pattern, $expectedResult)
     {
         $options = [];
@@ -477,7 +480,7 @@ class TemplatePathsTest extends UnitTestCase
         }
 
         /** @var TemplatePaths $templatePaths */
-        $templatePaths = $this->getAccessibleMock(TemplatePaths::class, ['dummy'], [$options], '', true);
+        $templatePaths = $this->getAccessibleMock(TemplatePaths::class, [], [$options], '', true);
         $patternReplacementVariables = [
             'packageKey' => $package,
             'subPackageKey' => $subPackage,
@@ -489,9 +492,7 @@ class TemplatePathsTest extends UnitTestCase
         self::assertEquals($expectedResult, $actualResult);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function expandGenericPathPatternWorksWithBubblingDisabledAndFormatNotOptional()
     {
         $options = [
@@ -499,7 +500,7 @@ class TemplatePathsTest extends UnitTestCase
         ];
 
         /** @var TemplatePaths $templatePaths */
-        $templatePaths = $this->getAccessibleMock(TemplatePaths::class, null, [$options], '', true);
+        $templatePaths = $this->getAccessibleMock(TemplatePaths::class, [], [$options], '', true);
 
         $expected = ['Resources/Private/Templates/My/@action.html'];
         $actual = $templatePaths->_call('expandGenericPathPattern', '@templateRoot/Templates/@subpackage/@controller/@action.@format', [
@@ -510,9 +511,7 @@ class TemplatePathsTest extends UnitTestCase
         self::assertEquals($expected, $actual);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function expandGenericPathPatternWorksWithSubpackageAndBubblingDisabledAndFormatNotOptional()
     {
         $options = [
@@ -520,7 +519,7 @@ class TemplatePathsTest extends UnitTestCase
         ];
 
         /** @var TemplatePaths $templatePaths */
-        $templatePaths = $this->getAccessibleMock(TemplatePaths::class, null, [$options], '', true);
+        $templatePaths = $this->getAccessibleMock(TemplatePaths::class, [], [$options], '', true);
 
         $actual = $templatePaths->_call('expandGenericPathPattern', '@templateRoot/Templates/@subpackage/@controller/@action.@format', [
             'subPackageKey' => 'MySubPackage',
@@ -534,9 +533,7 @@ class TemplatePathsTest extends UnitTestCase
         self::assertEquals($expected, $actual);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function expandGenericPathPatternWorksWithSubpackageAndBubblingDisabledAndFormatOptional()
     {
         $options = [
@@ -544,7 +541,7 @@ class TemplatePathsTest extends UnitTestCase
         ];
 
         /** @var TemplatePaths $templatePaths */
-        $templatePaths = $this->getAccessibleMock(TemplatePaths::class, null, [$options], '', true);
+        $templatePaths = $this->getAccessibleMock(TemplatePaths::class, [], [$options], '', true);
 
         $actual = $templatePaths->_call('expandGenericPathPattern', '@templateRoot/Templates/@subpackage/@controller/@action.@format', [
             'subPackageKey' => 'MySubPackage',
@@ -559,9 +556,7 @@ class TemplatePathsTest extends UnitTestCase
         self::assertEquals($expected, $actual);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function expandGenericPathPatternWorksWithSubpackageAndBubblingEnabledAndFormatOptional()
     {
         $options = [
@@ -569,7 +564,7 @@ class TemplatePathsTest extends UnitTestCase
         ];
 
         /** @var TemplatePaths $templatePaths */
-        $templatePaths = $this->getAccessibleMock(TemplatePaths::class, null, [$options], '', true);
+        $templatePaths = $this->getAccessibleMock(TemplatePaths::class, [], [$options], '', true);
 
         $actual = $templatePaths->_call('expandGenericPathPattern', '@templateRoot/Templates/@subpackage/@controller/@action.@format', [
             'subPackageKey' => 'MySubPackage',
@@ -588,9 +583,7 @@ class TemplatePathsTest extends UnitTestCase
         self::assertEquals($expected, $actual);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function pathToPartialIsResolvedCorrectly()
     {
         vfsStreamWrapper::register();
@@ -606,14 +599,12 @@ class TemplatePathsTest extends UnitTestCase
         $templatePaths = $this->getAccessibleMock(TemplatePaths::class, ['expandGenericPathPattern'], [[
             'partialPathAndFilenamePattern' => '@partialRoot/@subpackage/@partial.@format'
         ]], '', true);
-        $templatePaths->expects(self::once())->method('expandGenericPathPattern')->with('@partialRoot/@subpackage/@partial.@format', ['partial' => 'SomePartial', 'format' => 'html'], true, true)->will(self::returnValue($paths));
+        $templatePaths->expects($this->once())->method('expandGenericPathPattern')->with('@partialRoot/@subpackage/@partial.@format', ['partial' => 'SomePartial', 'format' => 'html'], true, true)->willReturn(($paths));
 
         self::assertSame('contentsOfSomePartial', $templatePaths->getPartialSource('SomePartial'));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getTemplateSourceChecksDifferentPathPatternsAndReturnsTheFirstPathWhichExists()
     {
         vfsStreamWrapper::register();
@@ -632,18 +623,16 @@ class TemplatePathsTest extends UnitTestCase
             ]
         ], '', true);
 
-        $templatePaths->expects(self::once())->method('expandGenericPathPattern')->with('@templateRoot/@subpackage/@controller/@action.@format', [
+        $templatePaths->expects($this->once())->method('expandGenericPathPattern')->with('@templateRoot/@subpackage/@controller/@action.@format', [
             'controllerName' => '',
             'action' => 'MyCoolAction',
             'format' => 'html'
-        ], false, false)->will(self::returnValue($paths));
+        ], false, false)->willReturn(($paths));
 
         self::assertSame('contentsOfMyCoolAction', $templatePaths->getTemplateSource('', 'myCoolAction'));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getTemplatePathAndFilenameThrowsExceptionIfNoPathCanBeResolved()
     {
         $this->expectException(InvalidTemplateResourceException::class);
@@ -659,18 +648,16 @@ class TemplatePathsTest extends UnitTestCase
             ]
         ], '', true);
 
-        $templatePaths->expects(self::once())->method('expandGenericPathPattern')->with('@templateRoot/@subpackage/@controller/@action.@format', [
+        $templatePaths->expects($this->once())->method('expandGenericPathPattern')->with('@templateRoot/@subpackage/@controller/@action.@format', [
             'controllerName' => '',
             'action' => 'MyCoolAction',
             'format' => 'html'
-        ], false, false)->will(self::returnValue($paths));
+        ], false, false)->willReturn(($paths));
 
         $templatePaths->getTemplateSource('', 'myCoolAction');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getTemplatePathAndFilenameThrowsExceptionIfResolvedPathPointsToADirectory()
     {
         $this->expectException(InvalidTemplateResourceException::class);
@@ -687,32 +674,28 @@ class TemplatePathsTest extends UnitTestCase
             ]
         ], '', true);
 
-        $templatePaths->expects(self::once())->method('expandGenericPathPattern')->with('@templateRoot/@subpackage/@controller/@action.@format', [
+        $templatePaths->expects($this->once())->method('expandGenericPathPattern')->with('@templateRoot/@subpackage/@controller/@action.@format', [
             'controllerName' => '',
             'action' => 'MyCoolAction',
             'format' => 'html'
-        ], false, false)->will(self::returnValue($paths));
+        ], false, false)->willReturn(($paths));
 
         $templatePaths->getTemplateSource('', 'myCoolAction');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function resolveTemplatePathAndFilenameReturnsTheExplicitlyConfiguredTemplatePathAndFilename()
     {
         vfsStreamWrapper::register();
         mkdir('vfs://MyTemplates');
         file_put_contents('vfs://MyTemplates/MyCoolAction.html', 'contentsOfMyCoolAction');
 
-        $templatePaths = $this->getAccessibleMock(TemplatePaths::class, ['dummy'], [['templatePathAndFilename' => 'vfs://MyTemplates/MyCoolAction.html']]);
+        $templatePaths = $this->getAccessibleMock(TemplatePaths::class, [], [['templatePathAndFilename' => 'vfs://MyTemplates/MyCoolAction.html']]);
 
         self::assertSame('contentsOfMyCoolAction', $templatePaths->_call('getTemplateSource'));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getLayoutPathAndFilenameThrowsExceptionIfNoPathCanBeResolved()
     {
         $this->expectException(InvalidTemplateResourceException::class);
@@ -729,17 +712,15 @@ class TemplatePathsTest extends UnitTestCase
             ]
         ], '', true);
 
-        $templatePaths->expects(self::once())->method('expandGenericPathPattern')->with('@layoutRoot/@layout.@format', [
+        $templatePaths->expects($this->once())->method('expandGenericPathPattern')->with('@layoutRoot/@layout.@format', [
             'layout' => 'Default',
             'format' => 'html'
-        ], true, true)->will(self::returnValue($paths));
+        ], true, true)->willReturn(($paths));
 
         $templatePaths->getLayoutSource();
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getLayoutPathAndFilenameThrowsExceptionIfResolvedPathPointsToADirectory()
     {
         $this->expectException(InvalidTemplateResourceException::class);
@@ -757,17 +738,15 @@ class TemplatePathsTest extends UnitTestCase
             ]
         ], '', true);
 
-        $templatePaths->expects(self::once())->method('expandGenericPathPattern')->with('@layoutRoot/@layout.@format', [
+        $templatePaths->expects($this->once())->method('expandGenericPathPattern')->with('@layoutRoot/@layout.@format', [
             'layout' => 'SomeLayout',
             'format' => 'html'
-        ], true, true)->will(self::returnValue($paths));
+        ], true, true)->willReturn(($paths));
 
         $templatePaths->getLayoutSource('SomeLayout');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getPartialPathAndFilenameThrowsExceptionIfNoPathCanBeResolved()
     {
         $this->expectException(InvalidTemplateResourceException::class);
@@ -784,17 +763,15 @@ class TemplatePathsTest extends UnitTestCase
             ]
         ], '', true);
 
-        $templatePaths->expects(self::once())->method('expandGenericPathPattern')->with('@partialRoot/@subpackage/@partial.@format', [
+        $templatePaths->expects($this->once())->method('expandGenericPathPattern')->with('@partialRoot/@subpackage/@partial.@format', [
             'partial' => 'SomePartial',
             'format' => 'html'
-        ], true, true)->will(self::returnValue($paths));
+        ], true, true)->willReturn(($paths));
 
         $templatePaths->getPartialSource('SomePartial');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getPartialPathAndFilenameThrowsExceptionIfResolvedPathPointsToADirectory()
     {
         $this->expectException(InvalidTemplateResourceException::class);
@@ -812,10 +789,10 @@ class TemplatePathsTest extends UnitTestCase
             ]
         ], '', true);
 
-        $templatePaths->expects(self::once())->method('expandGenericPathPattern')->with('@partialRoot/@subpackage/@partial.@format', [
+        $templatePaths->expects($this->once())->method('expandGenericPathPattern')->with('@partialRoot/@subpackage/@partial.@format', [
             'partial' => 'SomePartial',
             'format' => 'html'
-        ], true, true)->will(self::returnValue($paths));
+        ], true, true)->willReturn(($paths));
 
         $templatePaths->getPartialSource('SomePartial');
     }

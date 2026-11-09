@@ -181,7 +181,7 @@ Configure AllowOverride and MultiViews
 --------------------------------------
 
 Because Flow provides an ``.htaccess`` file with ``mod_rewrite`` rules in it,
-you need to make sure that the directory grants the neccessary rights:
+you need to make sure that the directory grants the necessary rights:
 
 *httpd.conf*:
 

@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Neos\Flow\Tests\Unit\Mvc\Routing;
 
 /*
@@ -10,25 +13,23 @@ namespace Neos\Flow\Tests\Unit\Mvc\Routing;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
-use Neos\Flow\Tests\UnitTestCase;
 use Neos\Flow\Mvc;
+use Neos\Flow\Mvc\Routing\StaticRoutePart;
+use Neos\Flow\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Testcase for the MVC Web Routing StaticRoutePart Class
  */
-class StaticRoutePartTest extends UnitTestCase
+final class StaticRoutePartTest extends UnitTestCase
 {
     /*                                                                        *
      * URI matching                                                           *
      *                                                                        */
-
-    /**
-     * @test
-     */
+    #[Test]
     public function staticRoutePartDoesNotMatchIfRequestPathIsNullOrEmpty()
     {
-        $routePart = new Mvc\Routing\StaticRoutePart();
+        $routePart = new StaticRoutePart();
         $routePart->setName('foo');
 
         $routePath = null;
@@ -38,12 +39,10 @@ class StaticRoutePartTest extends UnitTestCase
         self::assertFalse($routePart->match($routePath), 'Static Route Part should never match if $routePath is empty.');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function staticRoutePartDoesNotMatchIfRequestPathIsEmptyEvenIfDefaultValueIsSet()
     {
-        $routePart = new Mvc\Routing\StaticRoutePart();
+        $routePart = new StaticRoutePart();
         $routePart->setName('foo');
         $routePart->setDefaultValue('bar');
 
@@ -51,58 +50,48 @@ class StaticRoutePartTest extends UnitTestCase
         self::assertFalse($routePart->match($routePath), 'Static Route Part should never match if $routePath is empty.');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function staticRoutePartDoesNotMatchIfUnnamed()
     {
-        $routePart = new Mvc\Routing\StaticRoutePart();
+        $routePart = new StaticRoutePart();
         $routePath = 'foo/bar';
         self::assertFalse($routePart->match($routePath), 'Static Route Part should not match if name is not set.');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function staticRoutePartDoesNotMatchIfNameIsNotEqualToBeginningOfRequestPath()
     {
-        $routePart = new Mvc\Routing\StaticRoutePart();
+        $routePart = new StaticRoutePart();
         $routePart->setName('foo');
         $routePath = 'bar/foo';
 
         self::assertFalse($routePart->match($routePath), 'Static Route Part should not match if name is not equal to beginning of request path.');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function staticRoutePartMatchesIfNameIsEqualToBeginningOfRequestPath()
     {
-        $routePart = new Mvc\Routing\StaticRoutePart();
+        $routePart = new StaticRoutePart();
         $routePart->setName('foo');
         $routePath = 'foo/bar';
 
         self::assertTrue($routePart->match($routePath), 'Static Route Part should match if name equals beginning of request path.');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function staticRoutePartDoesNotMatchIfCaseOfRequestPathIsNotEqualToTheName()
     {
-        $routePart = new Mvc\Routing\StaticRoutePart();
+        $routePart = new StaticRoutePart();
         $routePart->setName('SomeName');
         $routePath = 'somename';
 
         self::assertFalse($routePart->match($routePath), 'Static Route Part should not match if case of name is not equal to case of request path.');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function valueIsNullAfterUnsuccessfulMatch()
     {
-        $routePart = new Mvc\Routing\StaticRoutePart();
+        $routePart = new StaticRoutePart();
         $routePart->setName('foo');
 
         $routePath = 'foo/bar';
@@ -113,12 +102,10 @@ class StaticRoutePartTest extends UnitTestCase
         self::assertNull($routePart->getValue(), 'Static Route Part value should be NULL after unsuccessful match.');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function routePathIsNotModifiedAfterUnsuccessfulMatch()
     {
-        $routePart = new Mvc\Routing\StaticRoutePart();
+        $routePart = new StaticRoutePart();
         $routePart->setName('bar');
 
         $routePath = 'foo/bar';
@@ -126,12 +113,10 @@ class StaticRoutePartTest extends UnitTestCase
         self::assertSame('foo/bar', $routePath, 'Static Route Part should not change $routePath on unsuccessful match.');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function routePathIsShortenedByMatchingPartOnSuccessfulMatch()
     {
-        $routePart = new Mvc\Routing\StaticRoutePart();
+        $routePart = new StaticRoutePart();
         $routePart->setName('bar/');
         $routePath = 'bar/foo/test';
 
@@ -139,12 +124,10 @@ class StaticRoutePartTest extends UnitTestCase
         self::assertSame('foo/test', $routePath, 'Static Route Part should shorten $routePath by matching substring on successful match.');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function matchResetsValueBeforeProcessingTheRoutePath()
     {
-        $routePart = new Mvc\Routing\StaticRoutePart();
+        $routePart = new StaticRoutePart();
         $routePart->setName('foo');
         $routeValues = [];
         $routePart->resolve($routeValues);
@@ -158,13 +141,10 @@ class StaticRoutePartTest extends UnitTestCase
     /*                                                                        *
      * URI resolving                                                          *
      *                                                                        */
-
-    /**
-     * @test
-     */
+    #[Test]
     public function staticRoutePartCanResolveEmptyArray()
     {
-        $routePart = new Mvc\Routing\StaticRoutePart();
+        $routePart = new StaticRoutePart();
         $routePart->setName('foo');
         $routeValues = [];
 
@@ -172,12 +152,10 @@ class StaticRoutePartTest extends UnitTestCase
         self::assertEquals('foo', $routePart->getValue(), 'Static Route Part should resolve empty routeValues-array');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function staticRoutePartCanResolveNonEmptyArray()
     {
-        $routePart = new Mvc\Routing\StaticRoutePart();
+        $routePart = new StaticRoutePart();
         $routePart->setName('foo');
         $routeValues = ['@controller' => 'foo', '@action' => 'bar'];
 
@@ -185,35 +163,29 @@ class StaticRoutePartTest extends UnitTestCase
         self::assertEquals('foo', $routePart->getValue(), 'Static Route Part should resolve non-empty routeValues-array');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function staticRoutePartDoesNotResolveIfUnnamed()
     {
-        $routePart = new Mvc\Routing\StaticRoutePart();
+        $routePart = new StaticRoutePart();
         $routeValues = [];
         self::assertFalse($routePart->resolve($routeValues), 'Static Route Part should not resolve if name is not set');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function staticRoutePartDoesNotAlterRouteValuesWhenCallingResolve()
     {
-        $routePart = new Mvc\Routing\StaticRoutePart();
+        $routePart = new StaticRoutePart();
         $routePart->setName('foo');
         $routeValues = ['@controller' => 'foo', '@action' => 'bar'];
 
         self::assertTrue($routePart->resolve($routeValues));
-        self::assertEquals(['@controller' => 'foo', '@action' => 'bar'], $routeValues, 'when resolve() is called on Static Route Part, specified routeValues-array should never be changed');
+        self::assertSame(['@controller' => 'foo', '@action' => 'bar'], $routeValues, 'when resolve() is called on Static Route Part, specified routeValues-array should never be changed');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function staticRoutePartLowerCasesValueByDefault()
     {
-        $routePart = new Mvc\Routing\StaticRoutePart();
+        $routePart = new StaticRoutePart();
         $routePart->setName('SomeName');
         $routeValues = [];
 
@@ -221,12 +193,10 @@ class StaticRoutePartTest extends UnitTestCase
         self::assertEquals('somename', $routePart->getValue(), 'Static Route Part should lowercase the value if lowerCase is true');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function staticRoutePartDoesNotAlterCaseIfLowerCaseIsFalse()
     {
-        $routePart = new Mvc\Routing\StaticRoutePart();
+        $routePart = new StaticRoutePart();
         $routePart->setName('SomeName');
         $routePart->setLowerCase(false);
         $routeValues = [];

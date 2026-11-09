@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Neos\Flow\Tests\Functional\Persistence\Doctrine;
@@ -12,20 +13,23 @@ namespace Neos\Flow\Tests\Functional\Persistence\Doctrine;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
 use Neos\Flow\Persistence\Doctrine\PersistenceManager;
 use Neos\Flow\Persistence\Doctrine\Query;
 use Neos\Flow\Tests\Functional\Persistence\Fixtures;
+use Neos\Flow\Tests\Functional\Persistence\Fixtures\Comment;
+use Neos\Flow\Tests\Functional\Persistence\Fixtures\Post;
 use Neos\Flow\Tests\Functional\Persistence\Fixtures\SubEntity;
+use Neos\Flow\Tests\Functional\Persistence\Fixtures\TestEmbeddedValueObject;
 use Neos\Flow\Tests\Functional\Persistence\Fixtures\TestEntity;
 use Neos\Flow\Tests\Functional\Persistence\Fixtures\TestEntityRepository;
 use Neos\Flow\Tests\FunctionalTestCase;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Testcase for query
  *
  */
-class QueryTest extends FunctionalTestCase
+final class QueryTest extends FunctionalTestCase
 {
     /**
      * @var bool
@@ -43,9 +47,7 @@ class QueryTest extends FunctionalTestCase
         }
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function simpleQueryCanBeSerializedAndDeserialized(): void
     {
         $query = new Query(TestEntity::class);
@@ -55,9 +57,7 @@ class QueryTest extends FunctionalTestCase
         $this->assertQueryEquals($query, $unserializedQuery);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function simpleQueryCanBeExecutedAfterDeserialization(): void
     {
         $testEntityRepository = new TestEntityRepository();
@@ -77,9 +77,7 @@ class QueryTest extends FunctionalTestCase
         self::assertEquals([$testEntity1], $unserializedQuery->execute()->toArray());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function moreComplexQueryCanBeSerializedAndDeserialized(): void
     {
         $query = new Query(TestEntity::class);
@@ -91,9 +89,7 @@ class QueryTest extends FunctionalTestCase
         $this->assertQueryEquals($query, $unserializedQuery);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function moreComplexQueryCanBeExecutedAfterDeserialization(): void
     {
         $testEntityRepository = new TestEntityRepository();
@@ -118,9 +114,7 @@ class QueryTest extends FunctionalTestCase
         self::assertEquals([$testEntity1], $unserializedQuery->execute()->toArray());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function countIncludesAllResultsByDefault(): void
     {
         $testEntityRepository = new TestEntityRepository();
@@ -142,12 +136,10 @@ class QueryTest extends FunctionalTestCase
 
         $query = new Query(TestEntity::class);
 
-        self::assertEquals(3, $query->execute()->count());
+        self::assertCount(3, $query->execute());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function countRespectsLimitConstraint(): void
     {
         $testEntityRepository = new TestEntityRepository();
@@ -169,12 +161,10 @@ class QueryTest extends FunctionalTestCase
 
         $query = new Query(TestEntity::class);
 
-        self::assertEquals(2, $query->setLimit(2)->execute()->count());
+        self::assertCount(2, $query->setLimit(2)->execute());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function countRespectsOffsetConstraint(): void
     {
         $testEntityRepository = new TestEntityRepository();
@@ -196,12 +186,10 @@ class QueryTest extends FunctionalTestCase
 
         $query = new Query(TestEntity::class);
 
-        self::assertEquals(1, $query->setOffset(2)->execute()->count());
+        self::assertCount(1, $query->setOffset(2)->execute());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function distinctQueryOnlyReturnsDistinctEntities(): void
     {
         $testEntityRepository = new TestEntityRepository();
@@ -243,9 +231,7 @@ class QueryTest extends FunctionalTestCase
         self::assertCount(2, $entities);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function subpropertyQueriesReuseJoinAlias(): void
     {
         $testEntityRepository = new TestEntityRepository();
@@ -293,9 +279,7 @@ class QueryTest extends FunctionalTestCase
         self::assertCount(1, $entities);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function embeddedValueObjectQueryingWorks(): void
     {
         $testEntityRepository = new TestEntityRepository();
@@ -304,14 +288,14 @@ class QueryTest extends FunctionalTestCase
         $testEntity = new TestEntity();
         $testEntity->setName('Flow1');
 
-        $valueObject1 = new Fixtures\TestEmbeddedValueObject('vo');
+        $valueObject1 = new TestEmbeddedValueObject('vo');
         $testEntity->setEmbeddedValueObject($valueObject1);
         $testEntityRepository->add($testEntity);
 
         $testEntity2 = new TestEntity();
         $testEntity2->setName('Flow2');
 
-        $valueObject2 = new Fixtures\TestEmbeddedValueObject('vo');
+        $valueObject2 = new TestEmbeddedValueObject('vo');
         $testEntity2->setEmbeddedValueObject($valueObject2);
 
         $testEntityRepository->add($testEntity2);
@@ -324,25 +308,22 @@ class QueryTest extends FunctionalTestCase
         static::assertCount(2, $entities);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function comlexQueryWithJoinsCanBeExecutedAfterDeserialization(): void
     {
-        /** @noinspection PhpParamsInspection */
-        $postEntityRepository = new Fixtures\PostRepository();
+        $postEntityRepository = $this->objectManager->get(Fixtures\PostRepository::class);
         $postEntityRepository->removeAll();
 
-        $commentRepository = new Fixtures\CommentRepository();
+        $commentRepository = $this->objectManager->get(Fixtures\CommentRepository::class);
         $commentRepository->removeAll();
 
-        $testEntity1 = new Fixtures\Post();
+        $testEntity1 = new Post();
         $testEntity1->setTitle('Flow');
         $postEntityRepository->add($testEntity1);
 
-        $testEntity2 = new Fixtures\Post();
+        $testEntity2 = new Post();
         $testEntity2->setTitle('Flow with comment');
-        $comment = new Fixtures\Comment();
+        $comment = new Comment();
         $comment->setContent('Flow');
         $testEntity2->setComment($comment);
         $postEntityRepository->add($testEntity2);
@@ -350,7 +331,7 @@ class QueryTest extends FunctionalTestCase
 
         $this->persistenceManager->persistAll();
 
-        $query = new Query(Fixtures\Post::class);
+        $query = new Query(Post::class);
         $query->matching($query->equals('comment.content', 'Flow'));
 
         $serializedQuery = serialize($query);
@@ -359,9 +340,7 @@ class QueryTest extends FunctionalTestCase
         self::assertEquals([$testEntity2], $unserializedQuery->execute()->toArray());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function countReturnsCorrectNumberOfEntities(): void
     {
         $testEntityRepository = new TestEntityRepository();

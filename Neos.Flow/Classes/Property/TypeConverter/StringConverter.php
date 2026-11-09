@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Property\TypeConverter;
 
 /*
@@ -33,7 +34,7 @@ class StringConverter extends AbstractTypeConverter
     /**
      * @var string
      */
-    const CONFIGURATION_DATE_FORMAT = 'dateFormat';
+    public const CONFIGURATION_DATE_FORMAT = 'dateFormat';
 
     /**
      * The default date format is "YYYY-MM-DDT##:##:##+##:##", for example "2005-08-15T15:52:01+00:00"
@@ -41,37 +42,37 @@ class StringConverter extends AbstractTypeConverter
      *
      * @var string
      */
-    const DEFAULT_DATE_FORMAT = \DateTime::W3C;
+    public const DEFAULT_DATE_FORMAT = \DateTime::W3C;
 
     /**
      * @var string
      */
-    const CONFIGURATION_ARRAY_FORMAT = 'arrayFormat';
+    public const CONFIGURATION_ARRAY_FORMAT = 'arrayFormat';
 
     /**
      * @var string
      */
-    const DEFAULT_ARRAY_FORMAT = self::ARRAY_FORMAT_CSV;
+    public const DEFAULT_ARRAY_FORMAT = self::ARRAY_FORMAT_CSV;
 
     /**
      * @var string
      */
-    const ARRAY_FORMAT_CSV = 'csv';
+    public const ARRAY_FORMAT_CSV = 'csv';
 
     /**
      * @var string
      */
-    const ARRAY_FORMAT_JSON = 'json';
+    public const ARRAY_FORMAT_JSON = 'json';
 
     /**
      * @var string
      */
-    const CONFIGURATION_CSV_DELIMITER = 'csvDelimiter';
+    public const CONFIGURATION_CSV_DELIMITER = 'csvDelimiter';
 
     /**
      * @var string
      */
-    const DEFAULT_CSV_DELIMITER = ',';
+    public const DEFAULT_CSV_DELIMITER = ',';
 
     /**
      * @var array<string>
@@ -94,7 +95,7 @@ class StringConverter extends AbstractTypeConverter
      *
      * @param mixed $source
      * @param string $targetType
-     * @param array $convertedChildProperties
+     * @param array<string,mixed> $convertedChildProperties
      * @param PropertyMappingConfigurationInterface|null $configuration
      * @return string
      * @throws InvalidPropertyMappingConfigurationException
@@ -113,7 +114,7 @@ class StringConverter extends AbstractTypeConverter
                 case self::ARRAY_FORMAT_CSV:
                     return implode($this->getCsvDelimiter($configuration), $source);
                 case self::ARRAY_FORMAT_JSON:
-                    return json_encode($source);
+                    return json_encode($source, JSON_THROW_ON_ERROR);
                 default:
                     throw new InvalidPropertyMappingConfigurationException(sprintf('Invalid array export format "%s" given', $this->getArrayFormat($configuration)), 1404317220);
             }

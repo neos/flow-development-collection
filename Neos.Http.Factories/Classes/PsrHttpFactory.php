@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Neos\Http\Factories;
@@ -15,8 +16,13 @@ use Psr\Http\Message\UriFactoryInterface;
  *
  * This factory can be used to simply create Requests, Uris and Streams without having to inject the traits yourself.
  */
-class PsrHttpFactory implements ServerRequestFactoryInterface, RequestFactoryInterface, ResponseFactoryInterface,
-                                UriFactoryInterface, StreamFactoryInterface, UploadedFileFactoryInterface
+class PsrHttpFactory implements
+    ServerRequestFactoryInterface,
+    RequestFactoryInterface,
+    ResponseFactoryInterface,
+    UriFactoryInterface,
+    StreamFactoryInterface,
+    UploadedFileFactoryInterface
 {
     use ServerRequestFactoryTrait;
     use RequestFactoryTrait;

@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Neos\Flow\Tests\Functional\I18n\Cldr\Reader;
@@ -12,17 +13,15 @@ namespace Neos\Flow\Tests\Functional\I18n\Cldr\Reader;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
 use Neos\Flow\I18n\Cldr\Reader\PluralsReader;
+use Neos\Flow\I18n\Locale;
 use Neos\Flow\Tests\FunctionalTestCase;
-use Neos\Flow\I18n;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 
-class PluralsReaderTest extends FunctionalTestCase
+final class PluralsReaderTest extends FunctionalTestCase
 {
-    /**
-     * @var PluralsReader
-     */
-    protected $pluralsReader;
+    protected PluralsReader $pluralsReader;
 
     protected function setUp(): void
     {
@@ -34,47 +33,39 @@ class PluralsReaderTest extends FunctionalTestCase
     /**
      * Data provider for returnsCorrectPluralForm
      *
-     * @return array
+     * @return \Iterator<(int | string), mixed>
      */
-    public function quantities(): array
+    public static function quantities(): \Iterator
     {
-        return [
+        yield [
+            'mo',
             [
-                'mo',
-                [
-                    [1, PluralsReader::RULE_ONE],
-                    [2, PluralsReader::RULE_FEW],
-                    [100, PluralsReader::RULE_OTHER],
-                    [101, PluralsReader::RULE_FEW],
-                    [101.1, PluralsReader::RULE_OTHER]
-                ]
-            ],
+                [1, PluralsReader::RULE_ONE],
+                [2, PluralsReader::RULE_FEW],
+                [100, PluralsReader::RULE_OTHER],
+                [101, PluralsReader::RULE_FEW],
+                [101.1, PluralsReader::RULE_OTHER]
+            ]
+        ];
+        yield [
+            'ru',
             [
-                'ru',
-                [
-                    [1, PluralsReader::RULE_ONE],
-                    [2, PluralsReader::RULE_FEW],
-                    [11, PluralsReader::RULE_MANY],
-                    [100, PluralsReader::RULE_MANY],
-                    [101, PluralsReader::RULE_ONE],
-                    [101.1, PluralsReader::RULE_OTHER]
-                ]
+                [1, PluralsReader::RULE_ONE],
+                [2, PluralsReader::RULE_FEW],
+                [11, PluralsReader::RULE_MANY],
+                [100, PluralsReader::RULE_MANY],
+                [101, PluralsReader::RULE_ONE],
+                [101.1, PluralsReader::RULE_OTHER]
             ]
         ];
     }
 
-    /**
-     * @test
-     * @dataProvider quantities
-     * @param string $localeName
-     * @param array $quantities
-     * @throws I18n\Exception\InvalidLocaleIdentifierException
-     */
+    #[DataProvider('quantities')]
+    #[Test]
     public function returnsCorrectPluralForm(string $localeName, array $quantities): void
     {
-        $locale = new I18n\Locale($localeName);
-        foreach ($quantities as $value) {
-            list($quantity, $pluralForm) = $value;
+        $locale = new Locale($localeName);
+        foreach ($quantities as [$quantity, $pluralForm]) {
             $result = $this->pluralsReader->getPluralForm($quantity, $locale);
             self::assertEquals($pluralForm, $result);
         }

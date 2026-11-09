@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Neos\Flow\Tests\Functional\Http\Client;
 
 /*
@@ -10,13 +13,13 @@ namespace Neos\Flow\Tests\Functional\Http\Client;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
 use Neos\Flow\Tests\FunctionalTestCase;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Functional tests for the HTTP browser
  */
-class BrowserTest extends FunctionalTestCase
+final class BrowserTest extends FunctionalTestCase
 {
     /**
      * @var boolean
@@ -53,9 +56,7 @@ class BrowserTest extends FunctionalTestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function argumentsAreSentAsRequestBodyEvenInGetRequest()
     {
         $response = $this->browser->request('http://localhost/test/http/request/body', 'GET', ['foo' => 'bar']);
@@ -64,9 +65,8 @@ class BrowserTest extends FunctionalTestCase
 
     /**
      * Check if the browser can handle redirects
-     *
-     * @test
      */
+    #[Test]
     public function redirectsAreFollowed()
     {
         $response = $this->browser->request('http://localhost/test/http/redirecting');
@@ -75,23 +75,21 @@ class BrowserTest extends FunctionalTestCase
 
     /**
      * Check if the browser doesn't follow redirects if told so
-     *
-     * @test
      */
+    #[Test]
     public function redirectsAreNotFollowedIfSwitchedOff()
     {
         $this->browser->setFollowRedirects(false);
         $response = $this->browser->request('http://localhost/test/http/redirecting');
-        self::assertStringNotContainsString('arrived.', $response->getBody()->getContents());
+        self::assertStringNotContainsString('arrived.', (string) $response->getBody()->getContents());
         self::assertEquals(303, $response->getStatusCode());
         self::assertEquals('http://localhost/test/http/redirecting/tohere', $response->getHeaderLine('Location'));
     }
 
     /**
      * Check if request method can be overridden (@see https://github.com/neos/flow-development-collection/issues/2856)
-     *
-     * @test
      */
+    #[Test]
     public function methodCanBeOverriddenInPostRequests(): void
     {
         $response = $this->browser->request('http://localhost/test/http/request/method', 'POST', ['__method' => 'DELETE']);

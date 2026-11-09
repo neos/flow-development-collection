@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Neos\Cache\Tests\Unit\Frontend;
 
 include_once(__DIR__ . '/../../BaseTestCase.php');
@@ -13,74 +16,67 @@ include_once(__DIR__ . '/../../BaseTestCase.php');
  * source code.
  */
 
-use Neos\Cache\Exception\InvalidDataException;
-use Neos\Cache\Tests\BaseTestCase;
 use Neos\Cache\Backend\PhpCapableBackendInterface;
+use Neos\Cache\Exception\InvalidDataException;
 use Neos\Cache\Frontend\PhpFrontend;
 use Neos\Cache\Frontend\StringFrontend;
+use Neos\Cache\Tests\BaseTestCase;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Testcase for the PHP source code cache frontend
  *
  */
-class PhpFrontendTest extends BaseTestCase
+final class PhpFrontendTest extends BaseTestCase
 {
-    /**
-     * @test
-     */
+    #[Test]
     public function setChecksIfTheIdentifierIsValid()
     {
         $this->expectException(\InvalidArgumentException::class);
         $cache = $this->getMockBuilder(StringFrontend::class)
-            ->setMethods(['isValidEntryIdentifier'])
+            ->onlyMethods(['isValidEntryIdentifier'])
             ->disableOriginalConstructor()
             ->getMock();
-        $cache->expects(self::once())->method('isValidEntryIdentifier')->with('foo')->will(self::returnValue(false));
+        $cache->expects($this->once())->method('isValidEntryIdentifier')->with('foo')->willReturn(false);
         $cache->set('foo', 'bar');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function setPassesPhpSourceCodeTagsAndLifetimeToBackend()
     {
         $originalSourceCode = 'return "hello world!";';
         $modifiedSourceCode = '<?php ' . $originalSourceCode . chr(10) . '#';
 
         $mockBackend = $this->createMock(PhpCapableBackendInterface::class);
-        $mockBackend->expects(self::once())->method('set')->with('Foo-Bar', $modifiedSourceCode, ['tags'], 1234);
+        $mockBackend->expects($this->once())->method('set')->with('Foo-Bar', $modifiedSourceCode, ['tags'], 1234);
 
         $cache = $this->getMockBuilder(PhpFrontend::class)
-            ->setMethods(null)
+            ->onlyMethods([])
             ->disableOriginalConstructor()
             ->getMock();
         $this->inject($cache, 'backend', $mockBackend);
         $cache->set('Foo-Bar', $originalSourceCode, ['tags'], 1234);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function setThrowsInvalidDataExceptionOnNonStringValues()
     {
         $this->expectException(InvalidDataException::class);
         $cache = $this->getMockBuilder(PhpFrontend::class)
-            ->setMethods(null)
+            ->onlyMethods([])
             ->disableOriginalConstructor()
             ->getMock();
         $cache->set('Foo-Bar', []);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function requireOnceCallsTheBackendsRequireOnceMethod()
     {
         $mockBackend = $this->createMock(PhpCapableBackendInterface::class);
-        $mockBackend->expects(self::once())->method('requireOnce')->with('Foo-Bar')->will(self::returnValue('hello world!'));
+        $mockBackend->expects($this->once())->method('requireOnce')->with('Foo-Bar')->willReturn(('hello world!'));
 
         $cache = $this->getMockBuilder(PhpFrontend::class)
-            ->setMethods(null)
+            ->onlyMethods([])
             ->disableOriginalConstructor()
             ->getMock();
         $this->inject($cache, 'backend', $mockBackend);

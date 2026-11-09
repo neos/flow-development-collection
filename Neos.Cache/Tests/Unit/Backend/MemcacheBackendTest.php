@@ -1,5 +1,10 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Neos\Cache\Tests\Unit\Backend;
+
+use PHPUnit\Framework\Attributes\RequiresPhpExtension;
 
 include_once('MemcachedBackendTest.php');
 
@@ -12,12 +17,10 @@ include_once('MemcachedBackendTest.php');
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
 /**
  * Testcase for the cache to memcache backend
- *
- * @requires extension memcache
  */
-class MemcacheBackendTest extends MemcachedBackendTest
+#[RequiresPhpExtension('memcache')]
+final class MemcacheBackendTest extends MemcachedBackendTest
 {
 }

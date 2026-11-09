@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Neos\Flow\Tests\Unit\Reflection;
 
 /*
@@ -10,10 +13,12 @@ namespace Neos\Flow\Tests\Unit\Reflection;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
 use Neos\Flow\Reflection\ClassSchema;
 use Neos\Flow\Reflection\Exception\ClassSchemaConstraintViolationException;
 use Neos\Flow\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\DoesNotPerformAssertions;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Testcase for the Class Schema.
@@ -21,11 +26,9 @@ use Neos\Flow\Tests\UnitTestCase;
  * Note that many parts of the class schema functionality are already tested by the class
  * schema builder testcase.
  */
-class ClassSchemaTest extends UnitTestCase
+final class ClassSchemaTest extends UnitTestCase
 {
-    /**
-     * @test
-     */
+    #[Test]
     public function hasPropertyReturnsTrueOnlyForExistingProperties()
     {
         $classSchema = new ClassSchema('SomeClass');
@@ -37,9 +40,7 @@ class ClassSchemaTest extends UnitTestCase
         self::assertFalse($classSchema->hasProperty('c'));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getPropertiesReturnsAddedProperties()
     {
         $expectedProperties = [
@@ -56,9 +57,7 @@ class ClassSchemaTest extends UnitTestCase
         self::assertSame($expectedProperties, $classSchema->getProperties());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function isPropertyLazyReturnsAttributeForAddedProperties()
     {
         $classSchema = new ClassSchema('SomeClass');
@@ -69,9 +68,7 @@ class ClassSchemaTest extends UnitTestCase
         self::assertTrue($classSchema->isPropertyLazy('b'));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function isPropertyTransientReturnsAttributeForAddedProperties()
     {
         $classSchema = new ClassSchema('SomeClass');
@@ -82,9 +79,7 @@ class ClassSchemaTest extends UnitTestCase
         self::assertTrue($classSchema->isPropertyTransient('b'));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function markAsIdentityPropertyRejectsUnknownProperties()
     {
         $this->expectException(\InvalidArgumentException::class);
@@ -93,9 +88,7 @@ class ClassSchemaTest extends UnitTestCase
         $classSchema->markAsIdentityProperty('unknownProperty');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function markAsIdentityPropertyRejectsLazyLoadedProperties()
     {
         $this->expectException(\InvalidArgumentException::class);
@@ -105,9 +98,7 @@ class ClassSchemaTest extends UnitTestCase
         $classSchema->markAsIdentityProperty('lazyProperty');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getIdentityPropertiesReturnsNamesAndTypes()
     {
         $classSchema = new ClassSchema('SomeClass');
@@ -122,40 +113,36 @@ class ClassSchemaTest extends UnitTestCase
     /**
      * data provider for addPropertyAcceptsValidPropertyTypes
      */
-    public function validPropertyTypes()
+    public static function validPropertyTypes(): \Iterator
     {
-        return [
-            ['integer'],
-            ['int'],
-            ['float'],
-            ['boolean'],
-            ['bool'],
-            ['string'],
-            ['DateTime'],
-            ['array'],
-            ['ArrayObject'],
-            ['SplObjectStorage'],
-            ['Neos\Flow\Foo'],
-            ['\Neos\Flow\Bar'],
-            ['\Some\Object'],
-            ['SomeObject'],
-            ['array<string>'],
-            ['array<Neos\Flow\Baz>'],
-            ['?string'],
-            ['null|string'],
-            ['string|null'],
-            ['?\Some\Object'],
-            ['\Some\Object|null'],
-            ['?array<Neos\Flow\Baz>'],
-            ['null|array<Neos\Flow\Baz>']
-        ];
+        yield ['integer'];
+        yield ['int'];
+        yield ['float'];
+        yield ['boolean'];
+        yield ['bool'];
+        yield ['string'];
+        yield ['DateTime'];
+        yield ['array'];
+        yield ['ArrayObject'];
+        yield ['SplObjectStorage'];
+        yield ['Neos\Flow\Foo'];
+        yield ['\Neos\Flow\Bar'];
+        yield ['\Some\Object'];
+        yield ['SomeObject'];
+        yield ['array<string>'];
+        yield ['array<Neos\Flow\Baz>'];
+        yield ['?string'];
+        yield ['null|string'];
+        yield ['string|null'];
+        yield ['?\Some\Object'];
+        yield ['\Some\Object|null'];
+        yield ['?array<Neos\Flow\Baz>'];
+        yield ['null|array<Neos\Flow\Baz>'];
     }
 
-    /**
-     * @dataProvider validPropertyTypes()
-     * @test
-     * @doesNotPerformAssertions
-     */
+    #[DataProvider('validPropertyTypes')]
+    #[Test]
+    #[DoesNotPerformAssertions]
     public function addPropertyAcceptsValidPropertyTypes($propertyType)
     {
         $classSchema = new ClassSchema('SomeClass');
@@ -165,18 +152,14 @@ class ClassSchemaTest extends UnitTestCase
     /**
      * data provider for addPropertyRejectsInvalidPropertyTypes
      */
-    public function invalidPropertyTypes()
+    public static function invalidPropertyTypes(): \Iterator
     {
-        return [
-            ['string<string>'],
-            ['int<Neos\Flow\Baz>']
-        ];
+        yield ['string<string>'];
+        yield ['int<Neos\Flow\Baz>'];
     }
 
-    /**
-     * @dataProvider invalidPropertyTypes()
-     * @test
-     */
+    #[DataProvider('invalidPropertyTypes')]
+    #[Test]
     public function addPropertyRejectsInvalidPropertyTypes($propertyType)
     {
         $this->expectException(\InvalidArgumentException::class);
@@ -186,9 +169,8 @@ class ClassSchemaTest extends UnitTestCase
 
     /**
      * Collections are arrays, ArrayObject and SplObjectStorage
-     *
-     * @test
      */
+    #[Test]
     public function addPropertyStoresElementTypesForCollectionProperties()
     {
         $classSchema = new ClassSchema('SomeClass');
@@ -199,9 +181,7 @@ class ClassSchemaTest extends UnitTestCase
         self::assertEquals('Neos\Flow\Foo', $properties['a']['elementType']);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function markAsIdentityPropertyThrowsExceptionForValueObjects()
     {
         $this->expectException(ClassSchemaConstraintViolationException::class);
@@ -210,9 +190,7 @@ class ClassSchemaTest extends UnitTestCase
         $classSchema->markAsIdentityProperty('foo');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function setModelTypeResetsIdentityPropertiesAndAggregateRootForValueObjects()
     {
         $classSchema = new ClassSchema('SomeClass');
@@ -230,23 +208,21 @@ class ClassSchemaTest extends UnitTestCase
     }
 
     /**
-     * @return array
+     * @return \Iterator<(int | string), mixed>
      */
-    public function collectionTypes()
+    public static function collectionTypes(): \Iterator
     {
-        return [
-            ['array'],
-            ['SplObjectStorage'],
-            ['Doctrine\Common\Collections\Collection'],
-            ['Doctrine\Common\Collections\ArrayCollection']
-        ];
+        yield ['array'];
+        yield ['SplObjectStorage'];
+        yield ['Doctrine\Common\Collections\Collection'];
+        yield ['Doctrine\Common\Collections\ArrayCollection'];
     }
 
     /**
-     * @test
-     * @dataProvider collectionTypes
      * @param string $type
      */
+    #[DataProvider('collectionTypes')]
+    #[Test]
     public function isMultiValuedPropertyReturnsTrueForCollectionTypes($type)
     {
         $classSchema = new ClassSchema('SomeClass');
@@ -255,23 +231,21 @@ class ClassSchemaTest extends UnitTestCase
     }
 
     /**
-     * @return array
+     * @return \Iterator<(int | string), mixed>
      */
-    public function nullableTypes()
+    public static function nullableTypes(): \Iterator
     {
-        return [
-            ['?string'],
-            ['integer|null'],
-            ['null|array'],
-            ['Doctrine\Common\Collections\ArrayCollection|null']
-        ];
+        yield ['?string'];
+        yield ['integer|null'];
+        yield ['null|array'];
+        yield ['Doctrine\Common\Collections\ArrayCollection|null'];
     }
 
     /**
-     * @test
-     * @dataProvider nullableTypes
      * @param string $type
      */
+    #[DataProvider('nullableTypes')]
+    #[Test]
     public function correctlyReturnsNullabilityForProperties($type)
     {
         $classSchema = new ClassSchema('SomeClass');

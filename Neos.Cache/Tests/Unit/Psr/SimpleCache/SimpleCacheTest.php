@@ -1,19 +1,25 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Neos\Cache\Tests\Unit\Psr\SimpleCache;
 
 use Neos\Cache\Backend\BackendInterface;
 use Neos\Cache\Exception;
+use Neos\Cache\Exception\InvalidDataException;
 use Neos\Cache\Psr\InvalidArgumentException;
 use Neos\Cache\Psr\SimpleCache\SimpleCache;
 use Neos\Cache\Tests\BaseTestCase;
+use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\MockObject\MockObject;
 
 /**
  * Tests the PSR-16 simple cache (frontend)
  */
-class SimpleCacheTest extends BaseTestCase
+final class SimpleCacheTest extends BaseTestCase
 {
     /**
-     * @var BackendInterface|\PHPUnit\Framework\MockObject\MockObject
+     * @var BackendInterface|MockObject
      */
     protected $mockBackend;
 
@@ -22,7 +28,7 @@ class SimpleCacheTest extends BaseTestCase
      */
     protected function setUp(): void
     {
-        $this->mockBackend = $this->getMockBuilder(BackendInterface::class)->getMock();
+        $this->mockBackend = $this->createMock(BackendInterface::class);
     }
 
     /**
@@ -34,18 +40,14 @@ class SimpleCacheTest extends BaseTestCase
         return new SimpleCache($identifier, $this->mockBackend);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function constructingWithInvalidIdentifierThrowsPsrInvalidArgumentException()
     {
         $this->expectException(InvalidArgumentException::class);
         $this->createSimpleCache('Invalid #*<>/()=?!');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function setThrowsInvalidArgumentExceptionOnInvalidIdentifier()
     {
         $this->expectException(InvalidArgumentException::class);
@@ -53,31 +55,25 @@ class SimpleCacheTest extends BaseTestCase
         $simpleCache->set('Invalid #*<>/()=?!', 'does not matter');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function setThrowsExceptionOnBackendError()
     {
         $this->expectException(Exception::class);
-        $this->mockBackend->expects(self::any())->method('set')->willThrowException(new Exception\InvalidDataException('Some other exception', 1234));
+        $this->mockBackend->method('set')->willThrowException(new InvalidDataException('Some other exception', 1234));
         $simpleCache = $this->createSimpleCache();
         $simpleCache->set('validkey', 'valid data');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function setWillSetInBackendAndReturnBackendResponse()
     {
-        $this->mockBackend->expects(self::any())->method('set');
+        $this->mockBackend->method('set');
         $simpleCache = $this->createSimpleCache();
         $result = $simpleCache->set('validkey', 'valid data');
         self::assertEquals(true, $result);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getThrowsInvalidArgumentExceptionOnInvalidIdentifier()
     {
         $this->expectException(InvalidArgumentException::class);
@@ -85,24 +81,20 @@ class SimpleCacheTest extends BaseTestCase
         $simpleCache->get('Invalid #*<>/()=?!', false);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getThrowsExceptionOnBackendError()
     {
         $this->expectException(Exception::class);
-        $this->mockBackend->expects(self::any())->method('get')->willThrowException(new Exception\InvalidDataException('Some other exception', 1234));
+        $this->mockBackend->method('get')->willThrowException(new InvalidDataException('Some other exception', 1234));
         $simpleCache = $this->createSimpleCache();
         $simpleCache->get('validkey', false);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getReturnsDefaultValueIfBackendFoundNoEntry()
     {
         $defaultValue = 'fallback';
-        $this->mockBackend->expects(self::any())->method('get')->willReturn(false);
+        $this->mockBackend->method('get')->willReturn(false);
         $simpleCache = $this->createSimpleCache();
         $result = $simpleCache->get('validkey', $defaultValue);
         self::assertEquals($defaultValue, $result);
@@ -110,20 +102,18 @@ class SimpleCacheTest extends BaseTestCase
 
     /**
      * Somewhat brittle test as we know that the cache serializes. Might want to extract that to a separate Serializer?
-     * @test
      */
+    #[Test]
     public function getReturnsBackendResponseAfterUnserialising()
     {
         $cachedValue = [1, 2, 3];
-        $this->mockBackend->expects(self::any())->method('get')->willReturn(serialize($cachedValue));
+        $this->mockBackend->method('get')->willReturn(serialize($cachedValue));
         $simpleCache = $this->createSimpleCache();
         $result = $simpleCache->get('validkey');
         self::assertEquals($cachedValue, $result);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function deleteThrowsInvalidArgumentExceptionOnInvalidIdentifier()
     {
         $this->expectException(InvalidArgumentException::class);
@@ -131,20 +121,16 @@ class SimpleCacheTest extends BaseTestCase
         $simpleCache->delete('Invalid #*<>/()=?!');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function deleteThrowsExceptionOnBackendError()
     {
         $this->expectException(Exception::class);
-        $this->mockBackend->expects(self::any())->method('remove')->willThrowException(new Exception\InvalidDataException('Some other exception', 1234));
+        $this->mockBackend->method('remove')->willThrowException(new InvalidDataException('Some other exception', 1234));
         $simpleCache = $this->createSimpleCache();
         $simpleCache->delete('validkey');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getMultipleThrowsInvalidArgumentExceptionOnInvalidIdentifier()
     {
         $this->expectException(InvalidArgumentException::class);
@@ -152,12 +138,10 @@ class SimpleCacheTest extends BaseTestCase
         $simpleCache->getMultiple(['validKey', 'Invalid #*<>/()=?!']);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getMultipleGetsMultipleValues()
     {
-        $this->mockBackend->expects(self::any())->method('get')->willReturnMap([
+        $this->mockBackend->method('get')->willReturnMap([
             ['validKey', serialize('entry1')],
             ['another', serialize('entry2')]
         ]);
@@ -166,12 +150,10 @@ class SimpleCacheTest extends BaseTestCase
         self::assertEquals(['validKey' => 'entry1', 'another' => 'entry2'], $result);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getMultipleFillsWithDefault()
     {
-        $this->mockBackend->expects(self::any())->method('get')->willReturnMap([
+        $this->mockBackend->method('get')->willReturnMap([
             ['validKey', serialize('entry1')],
             ['notExistingEntry', false]
         ]);
@@ -180,9 +162,7 @@ class SimpleCacheTest extends BaseTestCase
         self::assertEquals(['validKey' => 'entry1', 'notExistingEntry' => 'FALLBACK'], $result);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function setMultipleThrowsInvalidArgumentExceptionOnInvalidIdentifier()
     {
         $this->expectException(InvalidArgumentException::class);
@@ -192,12 +172,11 @@ class SimpleCacheTest extends BaseTestCase
 
     /**
      * Moot test at the momment, as our backends never return so this is always true.
-     *
-     * @test
      */
+    #[Test]
     public function setMultipleReturnsResult()
     {
-        $this->mockBackend->expects(self::any())->method('set')->willReturnMap([
+        $this->mockBackend->method('set')->willReturnMap([
             ['validKey', 'value', true],
             ['another', 'value', true]
         ]);
@@ -207,9 +186,7 @@ class SimpleCacheTest extends BaseTestCase
         self::assertEquals(true, $result);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function deleteMultipleThrowsInvalidArgumentExceptionOnInvalidIdentifier()
     {
         $this->expectException(InvalidArgumentException::class);
@@ -217,9 +194,7 @@ class SimpleCacheTest extends BaseTestCase
         $simpleCache->deleteMultiple(['validKey', 'Invalid #*<>/()=?!']);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function hasThrowsInvalidArgumentExceptionOnInvalidIdentifier()
     {
         $this->expectException(InvalidArgumentException::class);
@@ -227,12 +202,10 @@ class SimpleCacheTest extends BaseTestCase
         $simpleCache->has('Invalid #*<>/()=?!');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function hasReturnsWhatTheBackendSays()
     {
-        $this->mockBackend->expects(self::any())->method('has')->willReturnMap([
+        $this->mockBackend->method('has')->willReturnMap([
             ['existing', true],
             ['notExisting', false]
         ]);

@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Neos\Flow\Tests\Functional\Utility;
 
 /*
@@ -10,22 +13,20 @@ namespace Neos\Flow\Tests\Functional\Utility;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
 use Neos\Flow\Tests\FunctionalTestCase;
-use Neos\Flow\Utility;
+use Neos\Flow\Utility\Now;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Functional test for the Now class
  */
-class NowTest extends FunctionalTestCase
+final class NowTest extends FunctionalTestCase
 {
-    /**
-     * @test
-     */
+    #[Test]
     public function nowReturnsAUniqueTimestamp()
     {
-        $now = $this->objectManager->get(Utility\Now::class);
-        $alsoNow = $this->objectManager->get(Utility\Now::class);
+        $now = $this->objectManager->get(Now::class);
+        $alsoNow = $this->objectManager->get(Now::class);
         self::assertSame($now->getTimeStamp(), $alsoNow->getTimeStamp());
     }
 }

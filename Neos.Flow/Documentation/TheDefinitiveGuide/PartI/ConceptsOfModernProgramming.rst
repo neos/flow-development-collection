@@ -375,7 +375,7 @@ sure that each entity is only once in memory.
 Despite the object being created and retrieved multiple times
 during its lifecycle, it logically continues to exist, even when it is
 stored in the database. It is only because of performance and safety
-reasons that is is not stored in main memory, but in a database. Thus,
+reasons that it is not stored in main memory, but in a database. Thus,
 Domain-Driven Design distinguishes *creation* of an
 object from *reconstitution* from database: In the
 first case, the constructor is called, in the second case the

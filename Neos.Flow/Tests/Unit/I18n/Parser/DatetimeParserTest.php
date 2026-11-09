@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Neos\Flow\Tests\Unit\I18n\Parser;
 
 /*
@@ -10,20 +13,18 @@ namespace Neos\Flow\Tests\Unit\I18n\Parser;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
+use Neos\Flow\I18n\Cldr\Reader\DatesReader;
+use Neos\Flow\I18n\Locale;
+use Neos\Flow\I18n\Parser\DatetimeParser;
 use Neos\Flow\Tests\UnitTestCase;
-use Neos\Flow\I18n;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Testcase for the DatetimeParser
  */
-class DatetimeParserTest extends UnitTestCase
+final class DatetimeParserTest extends UnitTestCase
 {
-    /**
-     * @var I18n\Locale
-     */
-    protected $sampleLocale;
-
     /**
      * @var array
      */
@@ -35,7 +36,7 @@ class DatetimeParserTest extends UnitTestCase
      *
      * @var array
      */
-    protected $datetimeAttributesTemplate = [
+    protected static $datetimeAttributesTemplate = [
         'year' => null,
         'month' => null,
         'day' => null,
@@ -50,7 +51,7 @@ class DatetimeParserTest extends UnitTestCase
      */
     protected function setUp(): void
     {
-        $this->sampleLocale = new I18n\Locale('en_GB');
+        $sampleLocale = new Locale('en_GB');
         $this->sampleLocalizedLiterals = require(__DIR__ . '/../Fixtures/MockLocalizedLiteralsArray.php');
     }
 
@@ -61,15 +62,13 @@ class DatetimeParserTest extends UnitTestCase
      * Note that this data provider has everything needed by any test method, so
      * not every element is used by every method.
      *
-     * @return array
+     * @return \Iterator<(int | string), mixed>
      */
-    public function sampleDatetimesEasyToParse()
+    public static function sampleDatetimesEasyToParse(): \Iterator
     {
-        return [
-            [I18n\Cldr\Reader\DatesReader::FORMAT_TYPE_DATE, '1988.11.19 AD', 'yyyy.MM.dd G', array_merge($this->datetimeAttributesTemplate, ['year' => 1988, 'month' => 11, 'day' => 19]), ['yyyy', ['.'], 'MM', ['.'], 'dd', [' '], 'G']],
-            [I18n\Cldr\Reader\DatesReader::FORMAT_TYPE_TIME, '10:00:59', 'HH:mm:ss', array_merge($this->datetimeAttributesTemplate, ['hour' => 10, 'minute' => 0, 'second' => 59]), ['HH', [':'], 'mm', [':'], 'ss']],
-            [I18n\Cldr\Reader\DatesReader::FORMAT_TYPE_TIME, '3 p.m. Europe/Berlin', 'h a zzzz', array_merge($this->datetimeAttributesTemplate, ['hour' => 15, 'timezone' => 'Europe/Berlin']), ['h', [' '], 'a', [' '],'zzzz']],
-        ];
+        yield [DatesReader::FORMAT_TYPE_DATE, '1988.11.19 AD', 'yyyy.MM.dd G', array_merge(self::$datetimeAttributesTemplate, ['year' => 1988, 'month' => 11, 'day' => 19]), ['yyyy', ['.'], 'MM', ['.'], 'dd', [' '], 'G']];
+        yield [DatesReader::FORMAT_TYPE_TIME, '10:00:59', 'HH:mm:ss', array_merge(self::$datetimeAttributesTemplate, ['hour' => 10, 'minute' => 0, 'second' => 59]), ['HH', [':'], 'mm', [':'], 'ss']];
+        yield [DatesReader::FORMAT_TYPE_TIME, '3 p.m. Europe/Berlin', 'h a zzzz', array_merge(self::$datetimeAttributesTemplate, ['hour' => 15, 'timezone' => 'Europe/Berlin']), ['h', [' '], 'a', [' '],'zzzz']];
     }
 
     /**
@@ -77,57 +76,47 @@ class DatetimeParserTest extends UnitTestCase
      * examples harder to parse - only lenient parsing mode should be able to
      * parse them.
      *
-     * @return array
+     * @return \Iterator<(int | string), mixed>
      */
-    public function sampleDatetimesHardToParse()
+    public static function sampleDatetimesHardToParse(): \Iterator
     {
-        return [
-            [I18n\Cldr\Reader\DatesReader::FORMAT_TYPE_DATE, 'foo 2010/07 /30th', 'y.M.d', array_merge($this->datetimeAttributesTemplate, ['year' => 2010, 'month' => 7, 'day' => 30]), ['y', ['.'], 'M', ['.'], 'd']],
-            [I18n\Cldr\Reader\DatesReader::FORMAT_TYPE_DATE, 'Jun foo 99 Europe/Berlin', 'MMMyyz', array_merge($this->datetimeAttributesTemplate, ['year' => 99, 'month' => 6, 'timezone' => 'Europe/Berlin']), ['MMM', 'yy', 'z']],
-            [I18n\Cldr\Reader\DatesReader::FORMAT_TYPE_TIME, '24:11 CEST', 'K:m zzzz', array_merge($this->datetimeAttributesTemplate, ['hour' => 0, 'minute' => 11, 'timezone' => 'CEST']), ['K', [':'], 'm', [' '], 'zzzz']],
-        ];
+        yield [DatesReader::FORMAT_TYPE_DATE, 'foo 2010/07 /30th', 'y.M.d', array_merge(self::$datetimeAttributesTemplate, ['year' => 2010, 'month' => 7, 'day' => 30]), ['y', ['.'], 'M', ['.'], 'd']];
+        yield [DatesReader::FORMAT_TYPE_DATE, 'Jun foo 99 Europe/Berlin', 'MMMyyz', array_merge(self::$datetimeAttributesTemplate, ['year' => 99, 'month' => 6, 'timezone' => 'Europe/Berlin']), ['MMM', 'yy', 'z']];
+        yield [DatesReader::FORMAT_TYPE_TIME, '24:11 CEST', 'K:m zzzz', array_merge(self::$datetimeAttributesTemplate, ['hour' => 0, 'minute' => 11, 'timezone' => 'CEST']), ['K', [':'], 'm', [' '], 'zzzz']];
     }
 
-    /**
-     * @test
-     * @dataProvider sampleDatetimesEasyToParse
-     */
+    #[DataProvider('sampleDatetimesEasyToParse')]
+    #[Test]
     public function strictParsingWorksCorrectlyForEasyDatetimes($formatType, $datetimeToParse, $stringFormat, $expectedParsedDatetime, array $parsedFormat)
     {
-        $parser = $this->getAccessibleMock(I18n\Parser\DatetimeParser::class, ['dummy']);
+        $parser = $this->getAccessibleMock(DatetimeParser::class, []);
         $result = $parser->_call('doParsingInStrictMode', $datetimeToParse, $parsedFormat, $this->sampleLocalizedLiterals);
         self::assertEquals($expectedParsedDatetime, $result);
     }
 
-    /**
-     * @test
-     * @dataProvider sampleDatetimesHardToParse
-     */
+    #[DataProvider('sampleDatetimesHardToParse')]
+    #[Test]
     public function strictParsingReturnsFalseForHardDatetimes($formatType, $datetimeToParse, $stringFormat, $expectedParsedDatetime, array $parsedFormat)
     {
-        $parser = $this->getAccessibleMock(I18n\Parser\DatetimeParser::class, ['dummy']);
+        $parser = $this->getAccessibleMock(DatetimeParser::class, []);
         $result = $parser->_call('doParsingInStrictMode', $datetimeToParse, $parsedFormat, $this->sampleLocalizedLiterals);
         self::assertEquals(false, $result);
     }
 
-    /**
-     * @test
-     * @dataProvider sampleDatetimesEasyToParse
-     */
+    #[DataProvider('sampleDatetimesEasyToParse')]
+    #[Test]
     public function lenientParsingWorksCorrectlyForEasyDatetimes($formatType, $datetimeToParse, $stringFormat, $expectedParsedDatetime, array $parsedFormat)
     {
-        $parser = $this->getAccessibleMock(I18n\Parser\DatetimeParser::class, ['dummy']);
+        $parser = $this->getAccessibleMock(DatetimeParser::class, []);
         $result = $parser->_call('doParsingInLenientMode', $datetimeToParse, $parsedFormat, $this->sampleLocalizedLiterals);
         self::assertEquals($expectedParsedDatetime, $result);
     }
 
-    /**
-     * @test
-     * @dataProvider sampleDatetimesHardToParse
-     */
+    #[DataProvider('sampleDatetimesHardToParse')]
+    #[Test]
     public function lenientParsingWorksCorrectlyForHardDatetimes($formatType, $datetimeToParse, $stringFormat, $expectedParsedDatetime, array $parsedFormat)
     {
-        $parser = $this->getAccessibleMock(I18n\Parser\DatetimeParser::class, ['dummy']);
+        $parser = $this->getAccessibleMock(DatetimeParser::class, []);
         $result = $parser->_call('doParsingInLenientMode', $datetimeToParse, $parsedFormat, $this->sampleLocalizedLiterals);
         self::assertEquals($expectedParsedDatetime, $result);
     }

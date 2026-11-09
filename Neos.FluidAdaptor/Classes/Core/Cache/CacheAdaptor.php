@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\FluidAdaptor\Core\Cache;
 
 /*
@@ -11,8 +12,8 @@ namespace Neos\FluidAdaptor\Core\Cache;
  * source code.
  */
 
-use Neos\Flow\Annotations as Flow;
 use Neos\Cache\Frontend\PhpFrontend;
+use Neos\Flow\Annotations as Flow;
 use TYPO3Fluid\Fluid\Core\Cache\FluidCacheInterface;
 use TYPO3Fluid\Fluid\Core\Cache\FluidCacheWarmerInterface;
 use TYPO3Fluid\Fluid\Core\Cache\StandardCacheWarmer;

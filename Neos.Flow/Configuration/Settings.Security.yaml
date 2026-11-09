@@ -98,6 +98,10 @@ Neos:
 
       cryptography:
 
+        # A private, unique key used for encryption tasks. Normally 40 characters long and received from a persistent
+        # filesystem cache. If set to a non-empty string, the cache is not involved anymore.
+        encryptionKey: ''
+
         hashingStrategies:
 
           # The default strategy will be used to hash or validate passwords if no specific strategy is given

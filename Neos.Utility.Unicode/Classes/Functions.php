@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Utility\Unicode;
 
 /*
@@ -143,33 +144,28 @@ abstract class Functions
 
     /**
      * Unicode variant of pathinfo()
-     * pathinfo() function is not unicode-friendly
-     * if setlocale is not set. It's sufficient to set it
-     * to any UTF-8 locale to correctly handle unicode strings.
-     * This wrapper function temporarily sets locale to 'en_US.UTF-8'
-     * and then restores original locale.
-     * It's not necessary to use this function in cases,
-     * where only file extension is determined, as it's
-     * hard to imagine a unicode file extension.
-     * @see http://www.php.net/manual/en/function.pathinfo.php
+     *
+     * Kept for backwards compatibility only — it delegates to the native function.
+     * pathinfo() is UTF-8 safe on its own: the only characters it splits on, '/' and '.',
+     * cannot occur inside a multi-byte UTF-8 sequence, and PHP no longer classifies path
+     * bytes through LC_CTYPE. Verified identical output under the C, ISO8859-1, SJIS and
+     * UTF-8 locales.
+     *
+     * This used to switch LC_CTYPE to 'en_US.UTF-8' for the duration of the call. That was
+     * both unnecessary and harmful: restoring the locale *string* afterwards does not
+     * restore PCRE's character tables, so from the first call onwards every regex without
+     * the /u modifier changed meaning process-wide — \w started matching bytes >= 0x80.
+     *
+     * @see https://www.php.net/manual/en/function.pathinfo.php
      *
      * @param string $path
      * @param integer|null $options Optional, one of PATHINFO_DIRNAME, PATHINFO_BASENAME, PATHINFO_EXTENSION or PATHINFO_FILENAME.
-     * @return string|array{dirname: string, basename: string, extension: string, filename: string}
+     * @return ($options is null ? array{dirname?: string, basename: string, extension?: string, filename: string} : string)
      * @api
      */
     public static function pathinfo(string $path, ?int $options = null): string|array
     {
-        /** @var string $currentLocale we assume the current locale to be properly set */
-        /** @phpstan-ignore argument.type (int is allowed for locales) */
-        $currentLocale = setlocale(LC_CTYPE, 0);
-        // Before we have a setting for setlocale, his should suffice for pathinfo
-        // to work correctly on Unicode strings
-        setlocale(LC_CTYPE, 'en_US.UTF-8');
-        /** @var string|array{dirname: string, basename: string, extension: string, filename: string} $pathinfo */
-        $pathinfo = $options == null ? pathinfo($path) : pathinfo($path, $options);
-        setlocale(LC_CTYPE, $currentLocale);
-        return $pathinfo;
+        return $options == null ? pathinfo($path) : pathinfo($path, $options);
     }
 
     /**
@@ -209,7 +205,7 @@ abstract class Functions
             $components['host'] = $componentsFromUrl['host'];
         }
         if (array_key_exists('port', $componentsFromUrl)) {
-            $components['port'] = (integer)$componentsFromUrl['port'];
+            $components['port'] = (int)$componentsFromUrl['port'];
         } else {
             unset($components['port']);
         }

@@ -12,8 +12,8 @@ namespace Neos\Eel\Helper;
  * source code.
  */
 
-use Neos\Flow\Annotations as Flow;
 use Neos\Eel\ProtectedContextAwareInterface;
+use Neos\Flow\Annotations as Flow;
 use Neos\Flow\I18n\Cldr\Reader\DatesReader;
 use Neos\Flow\I18n\Formatter\DatetimeFormatter;
 use Neos\Flow\I18n\Locale;
@@ -66,7 +66,7 @@ class DateHelper implements ProtectedContextAwareInterface
         } elseif ($date === 'now') {
             return date($format);
         } else {
-            $timestamp = (integer)$date;
+            $timestamp = (int)$date;
             return date($format, $timestamp);
         }
     }
@@ -231,7 +231,7 @@ class DateHelper implements ProtectedContextAwareInterface
      */
     public function dayOfMonth(\DateTimeInterface $dateTime)
     {
-        return (integer)$dateTime->format('d');
+        return (int)$dateTime->format('d');
     }
 
     /**
@@ -242,7 +242,7 @@ class DateHelper implements ProtectedContextAwareInterface
      */
     public function month(\DateTimeInterface $dateTime)
     {
-        return (integer)$dateTime->format('m');
+        return (int)$dateTime->format('m');
     }
 
     /**
@@ -253,7 +253,7 @@ class DateHelper implements ProtectedContextAwareInterface
      */
     public function year(\DateTimeInterface $dateTime)
     {
-        return (integer)$dateTime->format('Y');
+        return (int)$dateTime->format('Y');
     }
 
     /**
@@ -264,7 +264,7 @@ class DateHelper implements ProtectedContextAwareInterface
      */
     public function hour(\DateTimeInterface $dateTime)
     {
-        return (integer)$dateTime->format('H');
+        return (int)$dateTime->format('H');
     }
 
     /**
@@ -275,7 +275,7 @@ class DateHelper implements ProtectedContextAwareInterface
      */
     public function minute(\DateTimeInterface $dateTime)
     {
-        return (integer)$dateTime->format('i');
+        return (int)$dateTime->format('i');
     }
 
     /**
@@ -286,7 +286,7 @@ class DateHelper implements ProtectedContextAwareInterface
      */
     public function second(\DateTimeInterface $dateTime)
     {
-        return (integer)$dateTime->format('s');
+        return (int)$dateTime->format('s');
     }
 
     private function getLocaleOrDefault(?string $locale): Locale

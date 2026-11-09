@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Neos\FluidAdaptor\Tests\Unit\View;
 
 /*
@@ -15,14 +18,16 @@ include_once(__DIR__ . '/Fixtures/TemplateViewFixture.php');
 
 use GuzzleHttp\Psr7\ServerRequest;
 use GuzzleHttp\Psr7\Uri;
+use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\Controller\ControllerContext;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\FluidAdaptor\View\TemplateView;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Testcase for the TemplateView
  */
-class TemplateViewTest extends UnitTestCase
+final class TemplateViewTest extends UnitTestCase
 {
     /**
      * Helper to build mock controller context needed to test expandGenericPathPattern.
@@ -35,26 +40,24 @@ class TemplateViewTest extends UnitTestCase
      */
     protected function setupMockControllerContextForPathResolving($packageKey, $subPackageKey, $controllerName, $format)
     {
-        $controllerObjectName = 'Neos\\' . $packageKey . '\\' . ($subPackageKey != $subPackageKey . '\\' ? : '') . 'Controller\\' . $controllerName . 'Controller';
+        $controllerObjectName = 'Neos\\' . $packageKey . '\\' . ($subPackageKey != $subPackageKey . '\\' ?: '') . 'Controller\\' . $controllerName . 'Controller';
 
         $httpRequest = new ServerRequest('GET', new Uri('http://robertlemke.com/blog'));
-        $mockRequest = $this->createMock(\Neos\Flow\Mvc\ActionRequest::class, [], [$httpRequest]);
-        $mockRequest->expects(self::any())->method('getControllerPackageKey')->will(self::returnValue($packageKey));
-        $mockRequest->expects(self::any())->method('getControllerSubPackageKey')->will(self::returnValue($subPackageKey));
-        $mockRequest->expects(self::any())->method('getControllerName')->will(self::returnValue($controllerName));
-        $mockRequest->expects(self::any())->method('getControllerObjectName')->will(self::returnValue($controllerObjectName));
-        $mockRequest->expects(self::any())->method('getFormat')->will(self::returnValue($format));
+        $mockRequest = $this->createMock(ActionRequest::class, [], [$httpRequest]);
+        $mockRequest->method('getControllerPackageKey')->willReturn(($packageKey));
+        $mockRequest->method('getControllerSubPackageKey')->willReturn(($subPackageKey));
+        $mockRequest->method('getControllerName')->willReturn(($controllerName));
+        $mockRequest->method('getControllerObjectName')->willReturn(($controllerObjectName));
+        $mockRequest->method('getFormat')->willReturn(($format));
 
         /** @var $mockControllerContext ControllerContext */
-        $mockControllerContext = $this->createMock(\Neos\Flow\Mvc\Controller\ControllerContext::class, ['getRequest'], [], '', false);
-        $mockControllerContext->expects(self::any())->method('getRequest')->will(self::returnValue($mockRequest));
+        $mockControllerContext = $this->createMock(ControllerContext::class, ['getRequest'], [], '', false);
+        $mockControllerContext->method('getRequest')->willReturn(($mockRequest));
 
         return $mockControllerContext;
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getTemplateRootPathsReturnsUserSpecifiedTemplatePaths()
     {
         $templateView = new TemplateView();
@@ -66,9 +69,7 @@ class TemplateViewTest extends UnitTestCase
         self::assertEquals($templateRootPaths, $actual, 'A set template root path was not returned correctly.');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getPartialRootPathsReturnsUserSpecifiedPartialPath()
     {
         $templateView = new TemplateView();
@@ -80,9 +81,7 @@ class TemplateViewTest extends UnitTestCase
         self::assertEquals($partialRootPaths, $actual, 'A set partial root path was not returned correctly.');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getLayoutRootPathsReturnsUserSpecifiedPartialPaths()
     {
         $templateView = new TemplateView();

@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Neos\Flow\Tests\Unit\Core;
 
 /*
@@ -10,39 +13,35 @@ namespace Neos\Flow\Tests\Unit\Core;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
 use Neos\Flow\Core\ApplicationContext;
 use Neos\Flow\Exception;
 use Neos\Flow\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Testcase for the ApplicationContext class
  */
-class ApplicationContextTest extends UnitTestCase
+final class ApplicationContextTest extends UnitTestCase
 {
     /**
      * Data provider with allowed contexts.
      *
-     * @return array
+     * @return \Iterator<(int | string), mixed>
      */
-    public function allowedContexts()
+    public static function allowedContexts(): \Iterator
     {
-        return [
-            ['Production'],
-            ['Testing'],
-            ['Development'],
-
-            ['Development/MyLocalComputer'],
-            ['Development/MyLocalComputer/Foo'],
-            ['Production/SpecialDeployment/LiveSystem'],
-        ];
+        yield ['Production'];
+        yield ['Testing'];
+        yield ['Development'];
+        yield ['Development/MyLocalComputer'];
+        yield ['Development/MyLocalComputer/Foo'];
+        yield ['Production/SpecialDeployment/LiveSystem'];
     }
 
-    /**
-     * @test
-     * @dataProvider allowedContexts
-     */
-    public function contextStringCanBeSetInConstructorAndReadByCallingToString($allowedContext)
+    #[DataProvider('allowedContexts')]
+    #[Test]
+    public function contextStringCanBeSetInConstructorAndReadByCallingToString($allowedContext): void
     {
         $context = new ApplicationContext($allowedContext);
         self::assertSame($allowedContext, (string)$context);
@@ -51,23 +50,19 @@ class ApplicationContextTest extends UnitTestCase
     /**
      * Data provider with forbidden contexts.
      *
-     * @return array
+     * @return \Iterator<(int | string), mixed>
      */
-    public function forbiddenContexts()
+    public static function forbiddenContexts(): \Iterator
     {
-        return [
-            ['MySpecialContexz'],
-            ['Testing123'],
-            ['DevelopmentStuff'],
-            ['DevelopmentStuff/FooBar'],
-        ];
+        yield ['MySpecialContexz'];
+        yield ['Testing123'];
+        yield ['DevelopmentStuff'];
+        yield ['DevelopmentStuff/FooBar'];
     }
 
-    /**
-     * @test
-     * @dataProvider forbiddenContexts
-     */
-    public function constructorThrowsExceptionIfMainContextIsForbidden($forbiddenContext)
+    #[DataProvider('forbiddenContexts')]
+    #[Test]
+    public function constructorThrowsExceptionIfMainContextIsForbidden($forbiddenContext): void
     {
         $this->expectException(Exception::class);
         new ApplicationContext($forbiddenContext);
@@ -76,63 +71,57 @@ class ApplicationContextTest extends UnitTestCase
     /**
      * Data provider with expected is*() values for various contexts.
      *
-     * @return array
+     * @return \Iterator<(int | string), mixed>
      */
-    public function isMethods()
+    public static function isMethods(): \Iterator
     {
-        return [
-            'Development' => [
-                'contextName' => 'Development',
-                'isDevelopment' => true,
-                'isProduction' => false,
-                'isTesting' => false,
-                'parentContext' => null
-            ],
-            'Development/YourSpecialContext' => [
-                'contextName' => 'Development/YourSpecialContext',
-                'isDevelopment' => true,
-                'isProduction' => false,
-                'isTesting' => false,
-                'parentContext' => 'Development'
-            ],
-
-            'Production' => [
-                'contextName' => 'Production',
-                'isDevelopment' => false,
-                'isProduction' => true,
-                'isTesting' => false,
-                'parentContext' => null
-            ],
-            'Production/MySpecialContext' => [
-                'contextName' => 'Production/MySpecialContext',
-                'isDevelopment' => false,
-                'isProduction' => true,
-                'isTesting' => false,
-                'parentContext' => 'Production'
-            ],
-
-            'Testing' => [
-                'contextName' => 'Testing',
-                'isDevelopment' => false,
-                'isProduction' => false,
-                'isTesting' => true,
-                'parentContext' => null
-            ],
-            'Testing/MySpecialContext' => [
-                'contextName' => 'Testing/MySpecialContext',
-                'isDevelopment' => false,
-                'isProduction' => false,
-                'isTesting' => true,
-                'parentContext' => 'Testing'
-            ]
+        yield 'Development' => [
+            'contextName' => 'Development',
+            'isDevelopment' => true,
+            'isProduction' => false,
+            'isTesting' => false,
+            'parentContext' => null
+        ];
+        yield 'Development/YourSpecialContext' => [
+            'contextName' => 'Development/YourSpecialContext',
+            'isDevelopment' => true,
+            'isProduction' => false,
+            'isTesting' => false,
+            'parentContext' => 'Development'
+        ];
+        yield 'Production' => [
+            'contextName' => 'Production',
+            'isDevelopment' => false,
+            'isProduction' => true,
+            'isTesting' => false,
+            'parentContext' => null
+        ];
+        yield 'Production/MySpecialContext' => [
+            'contextName' => 'Production/MySpecialContext',
+            'isDevelopment' => false,
+            'isProduction' => true,
+            'isTesting' => false,
+            'parentContext' => 'Production'
+        ];
+        yield 'Testing' => [
+            'contextName' => 'Testing',
+            'isDevelopment' => false,
+            'isProduction' => false,
+            'isTesting' => true,
+            'parentContext' => null
+        ];
+        yield 'Testing/MySpecialContext' => [
+            'contextName' => 'Testing/MySpecialContext',
+            'isDevelopment' => false,
+            'isProduction' => false,
+            'isTesting' => true,
+            'parentContext' => 'Testing'
         ];
     }
 
-    /**
-     * @test
-     * @dataProvider isMethods
-     */
-    public function contextMethodsReturnTheCorrectValues($contextName, $isDevelopment, $isProduction, $isTesting, $parentContext)
+    #[DataProvider('isMethods')]
+    #[Test]
+    public function contextMethodsReturnTheCorrectValues($contextName, $isDevelopment, $isProduction, $isTesting, $parentContext): void
     {
         $context = new ApplicationContext($contextName);
         self::assertSame($isDevelopment, $context->isDevelopment());
@@ -141,10 +130,8 @@ class ApplicationContextTest extends UnitTestCase
         self::assertSame((string)$parentContext, (string)$context->getParent());
     }
 
-    /**
-     * @test
-     */
-    public function parentContextIsConnectedRecursively()
+    #[Test]
+    public function parentContextIsConnectedRecursively(): void
     {
         $context = new ApplicationContext('Production/Foo/Bar');
         $parentContext = $context->getParent();
@@ -154,21 +141,19 @@ class ApplicationContextTest extends UnitTestCase
         self::assertSame('Production', (string) $rootContext);
     }
 
-    public function getHierarchyDataProvider(): array
+    public static function getHierarchyDataProvider(): \Iterator
     {
-        return [
-            ['contextString' => 'Development', 'expectedResult' => ['Development']],
-            ['contextString' => 'Testing/Staging', 'expectedResult' => ['Testing', 'Testing/Staging']],
-            ['contextString' => 'Production/Staging/Stage1', 'expectedResult' => ['Production', 'Production/Staging', 'Production/Staging/Stage1']],
-        ];
+        yield ['contextString' => 'Development', 'expectedResult' => ['Development']];
+        yield ['contextString' => 'Testing/Staging', 'expectedResult' => ['Testing', 'Testing/Staging']];
+        yield ['contextString' => 'Production/Staging/Stage1', 'expectedResult' => ['Production', 'Production/Staging', 'Production/Staging/Stage1']];
     }
 
     /**
-     * @dataProvider getHierarchyDataProvider
-     * @test
      * @param string $contextString
      * @param array $expectedResult
      */
+    #[DataProvider('getHierarchyDataProvider')]
+    #[Test]
     public function getHierarchyTest(string $contextString, array $expectedResult): void
     {
         $context = new ApplicationContext($contextString);

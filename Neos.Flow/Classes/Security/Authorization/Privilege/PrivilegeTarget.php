@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Security\Authorization\Privilege;
 
 /*
@@ -121,7 +122,7 @@ class PrivilegeTarget
 
     /**
      * @param string $permission one of "GRANT", "DENY" or "ABSTAIN"
-     * @param array $parameters Optional key/value array with parameter names and -values
+     * @param array<string,mixed> $parameters Optional key/value array with parameter names and -values
      * @return PrivilegeInterface
      * @throws SecurityException
      */
@@ -151,7 +152,7 @@ class PrivilegeTarget
     }
 
     /**
-     * @param array $parameters
+     * @param array<string,mixed> $parameters
      * @return \Closure
      */
     protected function createParameterMapper(array $parameters): \Closure
@@ -163,7 +164,7 @@ class PrivilegeTarget
 
     /**
      * @param PrivilegeParameterDefinition $parameterDefinition
-     * @param array $parameters
+     * @param array<string,mixed> $parameters
      * @return PrivilegeParameterInterface
      * @throws SecurityException
      */

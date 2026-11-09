@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Validation\Validator;
 
 /*
@@ -20,7 +21,7 @@ namespace Neos\Flow\Validation\Validator;
 class NumberRangeValidator extends AbstractValidator
 {
     /**
-     * @var array
+     * @var array<string,mixed>
      */
     protected $supportedOptions = [
         'minimum' => [0, 'The minimum value to accept', 'integer'],

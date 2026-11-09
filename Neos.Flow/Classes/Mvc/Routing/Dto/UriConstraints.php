@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Mvc\Routing\Dto;
 
 /*
@@ -11,8 +12,8 @@ namespace Neos\Flow\Mvc\Routing\Dto;
  * source code.
  */
 
-use Neos\Flow\Annotations as Flow;
 use GuzzleHttp\Psr7\Uri;
+use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Http\Helper\UriHelper;
 use Psr\Http\Message\UriInterface;
 
@@ -34,26 +35,26 @@ use Psr\Http\Message\UriInterface;
  */
 final class UriConstraints
 {
-    const CONSTRAINT_SCHEME = 'scheme';
-    const CONSTRAINT_HOST = 'host';
-    const CONSTRAINT_HOST_PREFIX = 'hostPrefix';
-    const CONSTRAINT_HOST_SUFFIX = 'hostSuffix';
-    const CONSTRAINT_PORT = 'port';
-    const CONSTRAINT_PATH = 'path';
-    const CONSTRAINT_PATH_PREFIX = 'pathPrefix';
-    const CONSTRAINT_PATH_SUFFIX = 'pathSuffix';
-    const CONSTRAINT_QUERY_STRING = 'queryString';
-    const CONSTRAINT_FRAGMENT = 'fragment';
+    public const CONSTRAINT_SCHEME = 'scheme';
+    public const CONSTRAINT_HOST = 'host';
+    public const CONSTRAINT_HOST_PREFIX = 'hostPrefix';
+    public const CONSTRAINT_HOST_SUFFIX = 'hostSuffix';
+    public const CONSTRAINT_PORT = 'port';
+    public const CONSTRAINT_PATH = 'path';
+    public const CONSTRAINT_PATH_PREFIX = 'pathPrefix';
+    public const CONSTRAINT_PATH_SUFFIX = 'pathSuffix';
+    public const CONSTRAINT_QUERY_STRING = 'queryString';
+    public const CONSTRAINT_FRAGMENT = 'fragment';
 
-    const HTTP_DEFAULT_HOST = 'localhost';
+    public const HTTP_DEFAULT_HOST = 'localhost';
 
     /**
-     * @var array
+     * @var array<mixed>
      */
     private $constraints;
 
     /**
-     * @param array $constraints array of constraints with one of the CONSTRAINT_* constants as keys and corresponding values
+     * @param array<mixed> $constraints array of constraints with one of the CONSTRAINT_* constants as keys and corresponding values
      */
     private function __construct(array $constraints)
     {
@@ -212,7 +213,7 @@ final class UriConstraints
     /**
      * Create a new instance with a query string corresponding to the given $values merged with any existing query string constraint
      *
-     * @param array $values
+     * @param array<mixed> $values
      * @return UriConstraints
      */
     public function withAddedQueryValues(array $values): self
@@ -313,6 +314,11 @@ final class UriConstraints
     {
         $uri = new Uri('');
         $uriPath = '';
+        // Track whether the host was explicitly set by a constraint. This is needed because
+        // Guzzle's Uri::validateState() auto-assigns 'localhost' as the host whenever withScheme()
+        // is called with 'http' or 'https' and the host is empty. Without this flag we cannot
+        // distinguish between a Guzzle-default 'localhost' and an intentionally set host.
+        $hostSetByConstraint = false;
         if (isset($this->constraints[self::CONSTRAINT_SCHEME]) && $this->constraints[self::CONSTRAINT_SCHEME] !== $baseUri->getScheme()) {
             $forceAbsoluteUri = true;
             $uri = $uri->withScheme($this->constraints[self::CONSTRAINT_SCHEME]);
@@ -320,9 +326,10 @@ final class UriConstraints
         if (isset($this->constraints[self::CONSTRAINT_HOST]) && $this->constraints[self::CONSTRAINT_HOST] !== $baseUri->getHost()) {
             $forceAbsoluteUri = true;
             $uri = $uri->withHost($this->constraints[self::CONSTRAINT_HOST]);
+            $hostSetByConstraint = true;
         }
         if (isset($this->constraints[self::CONSTRAINT_HOST_PREFIX])) {
-            $host = !empty($uri->getHost()) ? $uri->getHost() : $baseUri->getHost();
+            $host = $hostSetByConstraint ? $uri->getHost() : $baseUri->getHost();
             $originalHost = $host;
             $prefix = $this->constraints[self::CONSTRAINT_HOST_PREFIX]['prefix'];
             $replacePrefixes = $this->constraints[self::CONSTRAINT_HOST_PREFIX]['replacePrefixes'];
@@ -336,10 +343,11 @@ final class UriConstraints
             if ($host !== $originalHost) {
                 $forceAbsoluteUri = true;
                 $uri = $uri->withHost($host);
+                $hostSetByConstraint = true;
             }
         }
         if (isset($this->constraints[self::CONSTRAINT_HOST_SUFFIX])) {
-            $host = !empty($uri->getHost()) ? $uri->getHost() : $baseUri->getHost();
+            $host = $hostSetByConstraint ? $uri->getHost() : $baseUri->getHost();
             $originalHost = $host;
             $suffix = $this->constraints[self::CONSTRAINT_HOST_SUFFIX]['suffix'];
             $replaceSuffixes = $this->constraints[self::CONSTRAINT_HOST_SUFFIX]['replaceSuffixes'];
@@ -358,6 +366,7 @@ final class UriConstraints
             if ($host !== $originalHost) {
                 $forceAbsoluteUri = true;
                 $uri = $uri->withHost($host);
+                $hostSetByConstraint = true;
             }
         }
         if (isset($this->constraints[self::CONSTRAINT_PORT]) && ($forceAbsoluteUri || $this->constraints[self::CONSTRAINT_PORT] !== $baseUri->getPort()) && ($baseUri->getPort() !== null || $this->constraints[self::CONSTRAINT_PORT] !== UriHelper::getDefaultPortForScheme($this->constraints[self::CONSTRAINT_SCHEME] ?? $baseUri->getScheme()))) {
@@ -397,11 +406,15 @@ final class UriConstraints
         $uri = $uri->withPath('/' . ltrim($uriPath, '/'));
 
         if ($forceAbsoluteUri) {
+            if (!$hostSetByConstraint) {
+                // No host constraint was applied: use the explicit CONSTRAINT_HOST value if one was
+                // set (it matched the baseUri host so the block above was skipped) or fall back to
+                // the baseUri host. This also corrects Guzzle's validateState() auto-assigning
+                // 'localhost' when withScheme('http'/'https') was called on a host-less URI.
+                $uri = $uri->withHost($this->constraints[self::CONSTRAINT_HOST] ?? $baseUri->getHost());
+            }
             if (empty($uri->getScheme())) {
                 $uri = $uri->withScheme($baseUri->getScheme());
-            }
-            if (empty($uri->getHost()) || $uri->getHost() === self::HTTP_DEFAULT_HOST) {
-                $uri = $uri->withHost($baseUri->getHost());
             }
             if (!isset($this->constraints[self::CONSTRAINT_PORT]) && $uri->getPort() === null) {
                 $port = $baseUri->getPort() ?? UriHelper::getDefaultPortForScheme($uri->getScheme());

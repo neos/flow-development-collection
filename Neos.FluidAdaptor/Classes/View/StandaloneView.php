@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\FluidAdaptor\View;
 
 /*
@@ -20,8 +21,8 @@ use Neos\Flow\Mvc\ActionResponse;
 use Neos\Flow\Mvc\Controller\Arguments;
 use Neos\Flow\Mvc\Controller\ControllerContext;
 use Neos\Flow\Mvc\Routing\UriBuilder;
-use Neos\Utility\Files;
 use Neos\FluidAdaptor\View\Exception\InvalidTemplateResourceException;
+use Neos\Utility\Files;
 
 /**
  * A standalone template view.

@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Neos\Flow\Log\Tests\Unit\Backend;
 
 /*
@@ -10,17 +13,17 @@ namespace Neos\Flow\Log\Tests\Unit\Backend;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
+use Neos\Flow\Log\Backend\FileBackend;
 use Neos\Flow\Log\Exception\CouldNotOpenResourceException;
+use Neos\Flow\Tests\UnitTestCase;
 use org\bovigo\vfs\vfsStream;
 use org\bovigo\vfs\vfsStreamWrapper;
-use Neos\Flow\Log\Backend\FileBackend;
-use Neos\Flow\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Testcase for the File Backend
  */
-class FileBackendTest extends UnitTestCase
+final class FileBackendTest extends UnitTestCase
 {
     /**
      */
@@ -29,9 +32,7 @@ class FileBackendTest extends UnitTestCase
         vfsStream::setup('testDirectory');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function theLogFileIsOpenedWithOpen()
     {
         $logFileUrl = vfsStream::url('testDirectory') . '/test.log';
@@ -40,9 +41,7 @@ class FileBackendTest extends UnitTestCase
         self::assertTrue(vfsStreamWrapper::getRoot()->hasChild('test.log'));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function openDoesNotCreateParentDirectoriesByDefault()
     {
         $this->expectException(CouldNotOpenResourceException::class);
@@ -51,9 +50,7 @@ class FileBackendTest extends UnitTestCase
         $backend->open();
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function openCreatesParentDirectoriesIfTheOptionSaysSo()
     {
         $logFileUrl = vfsStream::url('testDirectory') . '/foo/test.log';
@@ -62,9 +59,7 @@ class FileBackendTest extends UnitTestCase
         self::assertTrue(vfsStreamWrapper::getRoot()->hasChild('foo'));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function appendRendersALogEntryAndAppendsItToTheLogfile()
     {
         $logFileUrl = vfsStream::url('testDirectory') . '/test.log';
@@ -77,9 +72,7 @@ class FileBackendTest extends UnitTestCase
         self::assertSame(53 + $pidOffset + strlen(PHP_EOL), vfsStreamWrapper::getRoot()->getChild('test.log')->size());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function appendRendersALogEntryWithRemoteIpAddressAndAppendsItToTheLogfile()
     {
         $logFileUrl = vfsStream::url('testDirectory') . '/test.log';
@@ -93,9 +86,7 @@ class FileBackendTest extends UnitTestCase
         self::assertSame(69 + $pidOffset + strlen(PHP_EOL), vfsStreamWrapper::getRoot()->getChild('test.log')->size());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function appendIgnoresMessagesAboveTheSeverityThreshold()
     {
         $logFileUrl = vfsStream::url('testDirectory') . '/test.log';
@@ -108,16 +99,14 @@ class FileBackendTest extends UnitTestCase
         self::assertSame(0, vfsStreamWrapper::getRoot()->getChild('test.log')->size());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function logFileIsRotatedIfMaximumSizeIsExceeded()
     {
         $logFileUrl = vfsStream::url('testDirectory') . '/test.log';
         file_put_contents($logFileUrl, 'twentybytesofcontent');
 
         /** @var FileBackend $backend */
-        $backend = $this->getAccessibleMock(FileBackend::class, ['dummy'], [['logFileUrl' => $logFileUrl]]);
+        $backend = $this->getAccessibleMock(FileBackend::class, [], [['logFileUrl' => $logFileUrl]]);
         $backend->_set('maximumLogFileSize', 10);
         $backend->setLogFilesToKeep(1);
         $backend->open();

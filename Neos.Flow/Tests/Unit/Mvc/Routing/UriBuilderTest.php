@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Neos\Flow\Tests\Unit\Mvc\Routing;
 
 /*
@@ -10,20 +13,25 @@ namespace Neos\Flow\Tests\Unit\Mvc\Routing;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
-use Neos\Flow\Http;
+use Neos\Flow\Http\BaseUriProvider;
+use Neos\Flow\Mvc;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\Routing\Dto\ResolveContext;
+use Neos\Flow\Mvc\Routing\Exception\MissingActionNameException;
+use Neos\Flow\Mvc\Routing\RouterInterface;
+use Neos\Flow\Mvc\Routing\UriBuilder;
 use Neos\Flow\Tests\UnitTestCase;
-use Neos\Flow\Mvc;
-use Neos\Flow\Utility;
+use Neos\Flow\Utility\Environment;
+use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\Stub;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\UriInterface;
 
 /**
  * Testcase for the URI Helper
  */
-class UriBuilderTest extends UnitTestCase
+final class UriBuilderTest extends UnitTestCase
 {
     /**
      * @var Mvc\Routing\UriBuilder
@@ -31,39 +39,34 @@ class UriBuilderTest extends UnitTestCase
     protected $uriBuilder;
 
     /**
-     * @var Mvc\Routing\RouterInterface|\PHPUnit\Framework\MockObject\MockObject
+     * @var Mvc\Routing\RouterInterface|MockObject
      */
     protected $mockRouter;
 
     /**
-     * @var ServerRequestInterface|\PHPUnit\Framework\MockObject\MockObject
+     * @var ServerRequestInterface|MockObject
      */
     protected $mockHttpRequest;
 
     /**
-     * @var UriInterface|\PHPUnit\Framework\MockObject\MockObject
+     * @var UriInterface|MockObject
      */
-    protected $mockBaseUri;
+    protected Stub $mockBaseUri;
 
     /**
-     * @var Mvc\ActionRequest|\PHPUnit\Framework\MockObject\MockObject
+     * @var Mvc\ActionRequest|MockObject
      */
     protected $mockMainRequest;
 
     /**
-     * @var Mvc\ActionRequest|\PHPUnit\Framework\MockObject\MockObject
+     * @var Mvc\ActionRequest|MockObject
      */
     protected $mockSubRequest;
 
     /**
-     * @var Mvc\ActionRequest|\PHPUnit\Framework\MockObject\MockObject
+     * @var Mvc\ActionRequest|MockObject
      */
     protected $mockSubSubRequest;
-
-    /**
-     * @var Http\BaseUriProvider|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $mockBaseUriProvider;
 
     /**
      * Sets up the test case
@@ -71,47 +74,45 @@ class UriBuilderTest extends UnitTestCase
      */
     protected function setUp(): void
     {
-        $this->mockHttpRequest = $this->getMockBuilder(ServerRequestInterface::class)->disableOriginalConstructor()->getMock();
+        $this->mockHttpRequest = $this->createMock(ServerRequestInterface::class);
 
-        $this->mockBaseUri = $this->getMockBuilder(UriInterface::class)->getMock();
-        $this->mockBaseUriProvider = $this->createMock(Http\BaseUriProvider::class);
-        $this->mockBaseUriProvider->expects(self::any())->method('getConfiguredBaseUriOrFallbackToCurrentRequest')->willReturn($this->mockBaseUri);
+        $this->mockBaseUri = $this->createStub(UriInterface::class);
+        $mockBaseUriProvider = $this->createMock(BaseUriProvider::class);
+        $mockBaseUriProvider->method('getConfiguredBaseUriOrFallbackToCurrentRequest')->willReturn($this->mockBaseUri);
 
-        $this->mockRouter = $this->createMock(Mvc\Routing\RouterInterface::class);
+        $this->mockRouter = $this->createMock(RouterInterface::class);
 
-        $this->mockMainRequest = $this->createMock(Mvc\ActionRequest::class);
-        $this->mockMainRequest->expects(self::any())->method('getHttpRequest')->willReturn($this->mockHttpRequest);
-        $this->mockMainRequest->expects(self::any())->method('getParentRequest')->willReturn(null);
-        $this->mockMainRequest->expects(self::any())->method('getMainRequest')->willReturn($this->mockMainRequest);
-        $this->mockMainRequest->expects(self::any())->method('isMainRequest')->willReturn(true);
-        $this->mockMainRequest->expects(self::any())->method('getArgumentNamespace')->willReturn('');
+        $this->mockMainRequest = $this->createMock(ActionRequest::class);
+        $this->mockMainRequest->method('getHttpRequest')->willReturn($this->mockHttpRequest);
+        $this->mockMainRequest->method('getParentRequest')->willReturn(null);
+        $this->mockMainRequest->method('getMainRequest')->willReturn($this->mockMainRequest);
+        $this->mockMainRequest->method('isMainRequest')->willReturn(true);
+        $this->mockMainRequest->method('getArgumentNamespace')->willReturn('');
 
-        $this->mockSubRequest = $this->createMock(Mvc\ActionRequest::class);
-        $this->mockSubRequest->expects(self::any())->method('getHttpRequest')->willReturn($this->mockHttpRequest);
-        $this->mockSubRequest->expects(self::any())->method('getMainRequest')->willReturn($this->mockMainRequest);
-        $this->mockSubRequest->expects(self::any())->method('isMainRequest')->willReturn(false);
-        $this->mockSubRequest->expects(self::any())->method('getParentRequest')->willReturn($this->mockMainRequest);
-        $this->mockSubRequest->expects(self::any())->method('getArgumentNamespace')->willReturn('SubNamespace');
+        $this->mockSubRequest = $this->createMock(ActionRequest::class);
+        $this->mockSubRequest->method('getHttpRequest')->willReturn($this->mockHttpRequest);
+        $this->mockSubRequest->method('getMainRequest')->willReturn($this->mockMainRequest);
+        $this->mockSubRequest->method('isMainRequest')->willReturn(false);
+        $this->mockSubRequest->method('getParentRequest')->willReturn($this->mockMainRequest);
+        $this->mockSubRequest->method('getArgumentNamespace')->willReturn('SubNamespace');
 
-        $this->mockSubSubRequest = $this->createMock(Mvc\ActionRequest::class);
-        $this->mockSubSubRequest->expects(self::any())->method('getHttpRequest')->willReturn($this->mockHttpRequest);
-        $this->mockSubSubRequest->expects(self::any())->method('getMainRequest')->willReturn($this->mockMainRequest);
-        $this->mockSubSubRequest->expects(self::any())->method('isMainRequest')->willReturn(false);
-        $this->mockSubSubRequest->expects(self::any())->method('getParentRequest')->willReturn($this->mockSubRequest);
+        $this->mockSubSubRequest = $this->createMock(ActionRequest::class);
+        $this->mockSubSubRequest->method('getHttpRequest')->willReturn($this->mockHttpRequest);
+        $this->mockSubSubRequest->method('getMainRequest')->willReturn($this->mockMainRequest);
+        $this->mockSubSubRequest->method('isMainRequest')->willReturn(false);
+        $this->mockSubSubRequest->method('getParentRequest')->willReturn($this->mockSubRequest);
 
-        $environment = $this->getMockBuilder(Utility\Environment::class)->disableOriginalConstructor()->setMethods(['isRewriteEnabled'])->getMock();
-        $environment->expects(self::any())->method('isRewriteEnabled')->will(self::returnValue(true));
+        $environment = $this->getMockBuilder(Environment::class)->disableOriginalConstructor()->onlyMethods(['isRewriteEnabled'])->getMock();
+        $environment->method('isRewriteEnabled')->willReturn((true));
 
-        $this->uriBuilder = new Mvc\Routing\UriBuilder();
+        $this->uriBuilder = new UriBuilder();
         $this->inject($this->uriBuilder, 'router', $this->mockRouter);
         $this->inject($this->uriBuilder, 'environment', $environment);
-        $this->inject($this->uriBuilder, 'baseUriProvider', $this->mockBaseUriProvider);
+        $this->inject($this->uriBuilder, 'baseUriProvider', $mockBaseUriProvider);
         $this->uriBuilder->setRequest($this->mockMainRequest);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function settersAndGettersWorkAsExpected()
     {
         $this->uriBuilder
@@ -131,9 +132,7 @@ class UriBuilderTest extends UnitTestCase
         self::assertEquals(['test' => 'addQueryStringExcludeArguments'], $this->uriBuilder->getArgumentsToBeExcludedFromQueryString());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function uriForRecursivelyMergesAndOverrulesControllerArgumentsWithArguments()
     {
         $arguments = ['foo' => 'bar', 'additionalParam' => 'additionalValue'];
@@ -145,21 +144,17 @@ class UriBuilderTest extends UnitTestCase
         self::assertEquals($expectedArguments, $this->uriBuilder->getLastArguments());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function uriForThrowsExceptionIfActionNameIsNotSpecified()
     {
-        $this->expectException(Mvc\Routing\Exception\MissingActionNameException::class);
+        $this->expectException(MissingActionNameException::class);
         $this->uriBuilder->uriFor('', [], 'SomeController', 'SomePackage');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function uriForSetsControllerFromRequestIfControllerIsNotSet()
     {
-        $this->mockMainRequest->expects(self::once())->method('getControllerName')->will(self::returnValue('SomeControllerFromRequest'));
+        $this->mockMainRequest->expects($this->once())->method('getControllerName')->willReturn(('SomeControllerFromRequest'));
 
         $expectedArguments = ['@action' => 'index', '@controller' => 'somecontrollerfromrequest', '@package' => 'somepackage'];
 
@@ -167,12 +162,10 @@ class UriBuilderTest extends UnitTestCase
         self::assertEquals($expectedArguments, $this->uriBuilder->getLastArguments());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function uriForSetsPackageKeyFromRequestIfPackageKeyIsNotSet()
     {
-        $this->mockMainRequest->expects(self::once())->method('getControllerPackageKey')->will(self::returnValue('SomePackageKeyFromRequest'));
+        $this->mockMainRequest->expects($this->once())->method('getControllerPackageKey')->willReturn(('SomePackageKeyFromRequest'));
 
         $expectedArguments = ['@action' => 'index', '@controller' => 'somecontroller', '@package' => 'somepackagekeyfromrequest'];
 
@@ -180,13 +173,11 @@ class UriBuilderTest extends UnitTestCase
         self::assertEquals($expectedArguments, $this->uriBuilder->getLastArguments());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function uriForSetsSubpackageKeyFromRequestIfPackageKeyAndSubpackageKeyAreNotSet()
     {
-        $this->mockMainRequest->expects(self::once())->method('getControllerPackageKey')->will(self::returnValue('SomePackage'));
-        $this->mockMainRequest->expects(self::once())->method('getControllerSubpackageKey')->will(self::returnValue('SomeSubpackageKeyFromRequest'));
+        $this->mockMainRequest->expects($this->once())->method('getControllerPackageKey')->willReturn(('SomePackage'));
+        $this->mockMainRequest->expects($this->once())->method('getControllerSubpackageKey')->willReturn(('SomeSubpackageKeyFromRequest'));
 
         $expectedArguments = ['@action' => 'index', '@controller' => 'somecontroller', '@package' => 'somepackage', '@subpackage' => 'somesubpackagekeyfromrequest'];
 
@@ -194,9 +185,7 @@ class UriBuilderTest extends UnitTestCase
         self::assertEquals($expectedArguments, $this->uriBuilder->getLastArguments());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function uriForDoesNotUseSubpackageKeyFromRequestIfOnlyThePackageIsSet()
     {
         $expectedArguments = ['@action' => 'index', '@controller' => 'somecontroller', '@package' => 'somepackage'];
@@ -205,19 +194,17 @@ class UriBuilderTest extends UnitTestCase
         self::assertEquals($expectedArguments, $this->uriBuilder->getLastArguments());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function uriForInSubRequestWithExplicitEmptySubpackageKeyDoesNotUseRequestSubpackageKey()
     {
-        /** @var ActionRequest|\PHPUnit\Framework\MockObject\MockObject $mockSubRequest */
-        $mockSubRequest = $this->getMockBuilder(Mvc\ActionRequest::class)->setMethods([])->disableOriginalConstructor()->getMock();
-        $mockSubRequest->expects(self::any())->method('getHttpRequest')->will(self::returnValue($this->mockHttpRequest));
-        $mockSubRequest->expects(self::any())->method('getMainRequest')->will(self::returnValue($this->mockMainRequest));
-        $mockSubRequest->expects(self::any())->method('isMainRequest')->will(self::returnValue(false));
-        $mockSubRequest->expects(self::any())->method('getParentRequest')->will(self::returnValue($this->mockMainRequest));
-        $mockSubRequest->expects(self::any())->method('getArgumentNamespace')->will(self::returnValue(''));
-        $mockSubRequest->expects(self::any())->method('getControllerSubpackageKey')->will(self::returnValue('SomeSubpackageKeyFromRequest'));
+        /** @var ActionRequest|MockObject $mockSubRequest */
+        $mockSubRequest = $this->createMock(ActionRequest::class);
+        $mockSubRequest->method('getHttpRequest')->willReturn(($this->mockHttpRequest));
+        $mockSubRequest->method('getMainRequest')->willReturn(($this->mockMainRequest));
+        $mockSubRequest->method('isMainRequest')->willReturn((false));
+        $mockSubRequest->method('getParentRequest')->willReturn(($this->mockMainRequest));
+        $mockSubRequest->method('getArgumentNamespace')->willReturn((''));
+        $mockSubRequest->method('getControllerSubpackageKey')->willReturn(('SomeSubpackageKeyFromRequest'));
 
         $this->uriBuilder->setRequest($mockSubRequest);
 
@@ -227,9 +214,7 @@ class UriBuilderTest extends UnitTestCase
         self::assertEquals($expectedArguments, $this->uriBuilder->getLastArguments());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function uriForSetsFormatArgumentIfSpecified()
     {
         $expectedArguments = ['@action' => 'index', '@controller' => 'somecontroller', '@package' => 'somepackage', '@format' => 'someformat'];
@@ -239,24 +224,20 @@ class UriBuilderTest extends UnitTestCase
         self::assertEquals($expectedArguments, $this->uriBuilder->getLastArguments());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function uriForPrefixesControllerArgumentsWithSubRequestArgumentNamespaceIfNotEmpty()
     {
         $expectedArguments = [
             'SubNamespace' => ['arg1' => 'val1', '@action' => 'someaction', '@controller' => 'somecontroller', '@package' => 'somepackage']
         ];
-        $this->mockMainRequest->expects(self::any())->method('getArguments')->will(self::returnValue([]));
+        $this->mockMainRequest->method('getArguments')->willReturn(([]));
 
         $this->uriBuilder->setRequest($this->mockSubRequest);
         $this->uriBuilder->uriFor('SomeAction', ['arg1' => 'val1'], 'SomeController', 'SomePackage');
         self::assertEquals($expectedArguments, $this->uriBuilder->getLastArguments());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function uriForPrefixesControllerArgumentsForMultipleNamespacedSubRequest()
     {
         $expectedArguments = [
@@ -273,31 +254,29 @@ class UriBuilderTest extends UnitTestCase
                 ]
             ]
         ];
-        $this->mockMainRequest->expects(self::any())->method('getArguments')->will(self::returnValue([]));
-        $this->mockSubRequest->expects(self::any())->method('getArguments')->will(self::returnValue([
+        $this->mockMainRequest->method('getArguments')->willReturn(([]));
+        $this->mockSubRequest->method('getArguments')->willReturn(([
             'arg1' => 'val1',
             '@action' => 'someaction',
             '@controller' => 'somecontroller',
             '@package' => 'somepackage'
         ]));
-        $this->mockSubSubRequest->expects(self::any())->method('getArgumentNamespace')->will(self::returnValue('SubSubNamespace'));
+        $this->mockSubSubRequest->method('getArgumentNamespace')->willReturn(('SubSubNamespace'));
 
         $this->uriBuilder->setRequest($this->mockSubSubRequest);
         $this->uriBuilder->uriFor('SomeAction', ['arg1' => 'val1'], 'SomeController', 'SomePackage');
         self::assertEquals($expectedArguments, $this->uriBuilder->getLastArguments());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function uriForPrefixesControllerArgumentsWithSubRequestArgumentNamespaceOfParentRequestIfCurrentRequestHasNoNamespace()
     {
         $expectedArguments = [
             'SubNamespace' => ['arg1' => 'val1', '@action' => 'someaction', '@controller' => 'somecontroller', '@package' => 'somepackage']
         ];
-        $this->mockMainRequest->expects(self::any())->method('getArguments')->will(self::returnValue([]));
+        $this->mockMainRequest->method('getArguments')->willReturn(([]));
 
-        $this->mockSubSubRequest->expects(self::any())->method('getArgumentNamespace')->will(self::returnValue(''));
+        $this->mockSubSubRequest->method('getArgumentNamespace')->willReturn((''));
 
         $this->uriBuilder->setRequest($this->mockSubSubRequest);
         $this->uriBuilder->uriFor('SomeAction', ['arg1' => 'val1'], 'SomeController', 'SomePackage');
@@ -305,13 +284,11 @@ class UriBuilderTest extends UnitTestCase
         self::assertEquals($expectedArguments, $this->uriBuilder->getLastArguments());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function buildDoesNotMergeArgumentsWithRequestArgumentsByDefault()
     {
         $expectedArguments = ['Foo' => 'Bar'];
-        $this->mockMainRequest->expects(self::never())->method('getArguments');
+        $this->mockMainRequest->expects($this->never())->method('getArguments');
 
         $this->uriBuilder->setArguments(['Foo' => 'Bar']);
         $this->uriBuilder->build();
@@ -319,17 +296,15 @@ class UriBuilderTest extends UnitTestCase
         self::assertEquals($expectedArguments, $this->uriBuilder->getLastArguments());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function buildMergesArgumentsWithRequestArgumentsIfAddQueryStringIsSet()
     {
         $expectedArguments = ['Some' => ['Arguments' => 'From Request'], 'Foo' => 'Overruled'];
-        $this->mockMainRequest->expects(self::once())->method('getArguments')->will(self::returnValue(['Some' => ['Arguments' => 'From Request'], 'Foo' => 'Bar']));
+        $this->mockMainRequest->expects($this->once())->method('getArguments')->willReturn((['Some' => ['Arguments' => 'From Request'], 'Foo' => 'Bar']));
 
-        $this->mockRouter->expects(self::once())->method('resolve')->willReturnCallback(function (ResolveContext $resolveContext) use ($expectedArguments) {
+        $this->mockRouter->expects($this->once())->method('resolve')->willReturnCallback(function (ResolveContext $resolveContext) use ($expectedArguments) {
             self::assertSame($expectedArguments, $resolveContext->getRouteValues());
-            return $this->getMockBuilder(UriInterface::class)->getMock();
+            return $this->createMock(UriInterface::class);
         });
 
         $this->uriBuilder->setAddQueryString(true);
@@ -339,17 +314,15 @@ class UriBuilderTest extends UnitTestCase
         self::assertEquals($expectedArguments, $this->uriBuilder->getLastArguments());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function buildMergesArgumentsWithRequestArgumentsOfCurrentRequestIfAddQueryStringIsSetAndRequestIsOfTypeSubRequest()
     {
         $expectedArguments = ['SubNamespace' => ['Some' => ['Arguments' => 'From Request'], 'Foo' => 'Overruled']];
-        $this->mockMainRequest->expects(self::once())->method('getArguments')->will(self::returnValue(['SubNamespace' => ['Some' => ['Arguments' => 'From Request'], 'Foo' => 'Bar']]));
+        $this->mockMainRequest->expects($this->once())->method('getArguments')->willReturn((['SubNamespace' => ['Some' => ['Arguments' => 'From Request'], 'Foo' => 'Bar']]));
 
-        $this->mockRouter->expects(self::once())->method('resolve')->willReturnCallback(function (ResolveContext $resolveContext) use ($expectedArguments) {
+        $this->mockRouter->expects($this->once())->method('resolve')->willReturnCallback(function (ResolveContext $resolveContext) use ($expectedArguments) {
             self::assertSame($expectedArguments, $resolveContext->getRouteValues());
-            return $this->getMockBuilder(UriInterface::class)->getMock();
+            return $this->createMock(UriInterface::class);
         });
 
         $this->uriBuilder->setRequest($this->mockSubRequest);
@@ -361,17 +334,15 @@ class UriBuilderTest extends UnitTestCase
         self::assertEquals($expectedArguments, $this->uriBuilder->getLastArguments());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function buildRemovesSpecifiedQueryParametersIfArgumentsToBeExcludedFromQueryStringIsSet()
     {
         $expectedArguments = ['Foo' => 'Overruled'];
-        $this->mockMainRequest->expects(self::once())->method('getArguments')->will(self::returnValue(['Some' => ['Arguments' => 'From Request'], 'Foo' => 'Bar']));
+        $this->mockMainRequest->expects($this->once())->method('getArguments')->willReturn((['Some' => ['Arguments' => 'From Request'], 'Foo' => 'Bar']));
 
-        $this->mockRouter->expects(self::once())->method('resolve')->willReturnCallback(function (ResolveContext $resolveContext) use ($expectedArguments) {
+        $this->mockRouter->expects($this->once())->method('resolve')->willReturnCallback(function (ResolveContext $resolveContext) use ($expectedArguments) {
             self::assertSame($expectedArguments, $resolveContext->getRouteValues());
-            return $this->getMockBuilder(UriInterface::class)->getMock();
+            return $this->createMock(UriInterface::class);
         });
 
         $this->uriBuilder->setAddQueryString(true);
@@ -381,27 +352,25 @@ class UriBuilderTest extends UnitTestCase
         $this->uriBuilder->build();
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function buildRemovesSpecifiedQueryParametersInCurrentNamespaceIfArgumentsToBeExcludedFromQueryStringIsSetAndRequestIsOfTypeSubRequest()
     {
         $expectedArguments = ['Some' => 'Retained Arguments From Request', 'SubNamespace' => ['Foo' => 'Overruled']];
-        $this->mockMainRequest->expects(self::once())
+        $this->mockMainRequest->expects($this->once())
             ->method('getArguments')
-            ->will(self::returnValue(['Some' => 'Retained Arguments From Request']));
+            ->willReturn((['Some' => 'Retained Arguments From Request']));
 
-        $this->mockSubRequest->expects(self::any())
+        $this->mockSubRequest
             ->method('getArgumentNamespace')
-            ->will(self::returnValue('SubNamespace'));
+            ->willReturn(('SubNamespace'));
 
-        $this->mockSubRequest->expects(self::any())
+        $this->mockSubRequest
             ->method('getArguments')
-            ->will(self::returnValue(['Some' => ['Arguments' => 'From Request']]));
+            ->willReturn((['Some' => ['Arguments' => 'From Request']]));
 
-        $this->mockRouter->expects(self::once())->method('resolve')->willReturnCallback(function (ResolveContext $resolveContext) use ($expectedArguments) {
+        $this->mockRouter->expects($this->once())->method('resolve')->willReturnCallback(function (ResolveContext $resolveContext) use ($expectedArguments) {
             self::assertSame($expectedArguments, $resolveContext->getRouteValues());
-            return $this->getMockBuilder(UriInterface::class)->getMock();
+            return $this->createMock(UriInterface::class);
         });
 
         $this->uriBuilder->setRequest($this->mockSubRequest);
@@ -412,9 +381,7 @@ class UriBuilderTest extends UnitTestCase
         $this->uriBuilder->build();
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function buildMergesArgumentsWithRootRequestArgumentsIfRequestIsOfTypeSubRequest()
     {
         $rootRequestArguments = [
@@ -422,7 +389,7 @@ class UriBuilderTest extends UnitTestCase
             'Foo' => 'Bar',
             'Some' => 'Other Argument From Request'
         ];
-        $this->mockMainRequest->expects(self::once())->method('getArguments')->will(self::returnValue($rootRequestArguments));
+        $this->mockMainRequest->expects($this->once())->method('getArguments')->willReturn(($rootRequestArguments));
 
         $this->uriBuilder->setRequest($this->mockSubRequest);
         $this->uriBuilder->setArguments(['Foo' => 'Overruled']);
@@ -436,16 +403,14 @@ class UriBuilderTest extends UnitTestCase
         self::assertEquals($expectedArguments, $this->uriBuilder->getLastArguments());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function buildRemovesArgumentsBelongingToNamespacedSubRequests()
     {
         $rootRequestArguments = [
             'SubNamespace' => ['Sub' => 'Argument'],
             'Foo' => 'Bar'
         ];
-        $this->mockMainRequest->expects(self::once())->method('getArguments')->will(self::returnValue($rootRequestArguments));
+        $this->mockMainRequest->expects($this->once())->method('getArguments')->willReturn(($rootRequestArguments));
 
         $this->uriBuilder->setRequest($this->mockSubRequest);
         $this->uriBuilder->build();
@@ -456,16 +421,14 @@ class UriBuilderTest extends UnitTestCase
         self::assertEquals($expectedArguments, $this->uriBuilder->getLastArguments());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function buildKeepsArgumentsBelongingToNamespacedSubRequestsIfAddQueryStringIsSet()
     {
         $rootRequestArguments = [
             'SubNamespace' => ['Sub' => 'Argument'],
             'Foo' => 'Bar'
         ];
-        $this->mockMainRequest->expects(self::once())->method('getArguments')->will(self::returnValue($rootRequestArguments));
+        $this->mockMainRequest->expects($this->once())->method('getArguments')->willReturn(($rootRequestArguments));
 
         $this->uriBuilder->setRequest($this->mockSubRequest);
         $this->uriBuilder->setAddQueryString(true)->build();
@@ -477,9 +440,7 @@ class UriBuilderTest extends UnitTestCase
         self::assertEquals($expectedArguments, $this->uriBuilder->getLastArguments());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function buildRemovesArgumentsBelongingToNamespacedSubSubRequests()
     {
         $rootRequestArguments = [
@@ -491,8 +452,8 @@ class UriBuilderTest extends UnitTestCase
             ],
             'Foo' => 'Bar'
         ];
-        $this->mockMainRequest->expects(self::once())->method('getArguments')->will(self::returnValue($rootRequestArguments));
-        $this->mockSubSubRequest->expects(self::any())->method('getArgumentNamespace')->will(self::returnValue('SubSubNamespace'));
+        $this->mockMainRequest->expects($this->once())->method('getArguments')->willReturn(($rootRequestArguments));
+        $this->mockSubSubRequest->method('getArgumentNamespace')->willReturn(('SubSubNamespace'));
 
         $this->uriBuilder->setRequest($this->mockSubSubRequest);
         $this->uriBuilder->build();
@@ -506,9 +467,7 @@ class UriBuilderTest extends UnitTestCase
         self::assertEquals($expectedArguments, $this->uriBuilder->getLastArguments());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function buildKeepsArgumentsBelongingToNamespacedSubSubRequestsIfAddQueryStringIsSet()
     {
         $rootRequestArguments = [
@@ -520,8 +479,8 @@ class UriBuilderTest extends UnitTestCase
             ],
             'Foo' => 'Bar'
         ];
-        $this->mockMainRequest->expects(self::once())->method('getArguments')->will(self::returnValue($rootRequestArguments));
-        $this->mockSubSubRequest->expects(self::any())->method('getArgumentNamespace')->will(self::returnValue('SubSubNamespace'));
+        $this->mockMainRequest->expects($this->once())->method('getArguments')->willReturn(($rootRequestArguments));
+        $this->mockSubSubRequest->method('getArgumentNamespace')->willReturn(('SubSubNamespace'));
 
         $this->uriBuilder->setRequest($this->mockSubSubRequest);
         $this->uriBuilder->setAddQueryString(true)->build();
@@ -538,24 +497,22 @@ class UriBuilderTest extends UnitTestCase
         self::assertEquals($expectedArguments, $this->uriBuilder->getLastArguments());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function buildDoesNotMergeRootRequestArgumentsWithTheCurrentArgumentNamespaceIfRequestIsOfTypeSubRequest()
     {
         $expectedArguments = ['SubNamespace' => ['Foo' => 'Overruled'], 'Some' => 'Other Argument From Request'];
 
-        $this->mockMainRequest->expects(self::once())
+        $this->mockMainRequest->expects($this->once())
             ->method('getArguments')
-            ->will(self::returnValue(['Some' => 'Other Argument From Request']));
+            ->willReturn((['Some' => 'Other Argument From Request']));
 
-        $this->mockSubRequest->expects(self::any())
+        $this->mockSubRequest
             ->method('getArgumentNamespace')
-            ->will(self::returnValue('SubNamespace'));
+            ->willReturn(('SubNamespace'));
 
-        $this->mockSubRequest->expects(self::once())
+        $this->mockSubRequest->expects($this->once())
             ->method('getArguments')
-            ->will(self::returnValue(['Foo' => 'Should be overridden', 'Bar' => 'Should be removed']));
+            ->willReturn((['Foo' => 'Should be overridden', 'Bar' => 'Should be removed']));
 
         $this->uriBuilder->setRequest($this->mockSubRequest);
         $this->uriBuilder->setArguments(['SubNamespace' => ['Foo' => 'Overruled']]);
@@ -564,28 +521,26 @@ class UriBuilderTest extends UnitTestCase
         self::assertEquals($expectedArguments, $this->uriBuilder->getLastArguments());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function buildDoesNotMergeRootRequestArgumentsWithTheCurrentArgumentNamespaceIfRequestIsOfTypeSubRequestAndHasAParentSubRequest()
     {
         $expectedArguments = ['SubNamespace' => ['SubSubNamespace' => ['Foo' => 'Overruled']], 'Some' => 'Other Argument From Request'];
 
-        $this->mockMainRequest->expects(self::once())
+        $this->mockMainRequest->expects($this->once())
             ->method('getArguments')
-            ->will(self::returnValue(['Some' => 'Other Argument From Request']));
+            ->willReturn((['Some' => 'Other Argument From Request']));
 
-        $this->mockSubRequest->expects(self::any())
+        $this->mockSubRequest
             ->method('getArgumentNamespace')
-            ->will(self::returnValue('SubNamespace'));
+            ->willReturn(('SubNamespace'));
 
-        $this->mockSubSubRequest->expects(self::any())
+        $this->mockSubSubRequest
             ->method('getArgumentNamespace')
-            ->will(self::returnValue('SubSubNamespace'));
+            ->willReturn(('SubSubNamespace'));
 
-        $this->mockSubSubRequest->expects(self::once())
+        $this->mockSubSubRequest->expects($this->once())
             ->method('getArguments')
-            ->will(self::returnValue(['Foo' => 'Should be overridden', 'Bar' => 'Should be removed']));
+            ->willReturn((['Foo' => 'Should be overridden', 'Bar' => 'Should be removed']));
 
         $this->uriBuilder->setRequest($this->mockSubSubRequest);
         $this->uriBuilder->setArguments(['SubNamespace' => ['SubSubNamespace' => ['Foo' => 'Overruled']]]);
@@ -594,31 +549,29 @@ class UriBuilderTest extends UnitTestCase
         self::assertEquals($expectedArguments, $this->uriBuilder->getLastArguments());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function buildMergesArgumentsOfTheParentRequestIfRequestIsOfTypeSubRequestAndHasAParentSubRequest()
     {
         $expectedArguments = ['SubNamespace' => ['SubSubNamespace' => ['Foo' => 'Overruled'], 'Some' => 'Retained Argument From Parent Request'], 'Some' => 'Other Argument From Request'];
-        $this->mockMainRequest->expects(self::once())
+        $this->mockMainRequest->expects($this->once())
             ->method('getArguments')
-            ->will(self::returnValue(['Some' => 'Other Argument From Request']));
+            ->willReturn((['Some' => 'Other Argument From Request']));
 
-        $this->mockSubRequest->expects(self::any())
+        $this->mockSubRequest
             ->method('getArgumentNamespace')
-            ->will(self::returnValue('SubNamespace'));
+            ->willReturn(('SubNamespace'));
 
-        $this->mockSubRequest->expects(self::once())
+        $this->mockSubRequest->expects($this->once())
             ->method('getArguments')
-            ->will(self::returnValue(['Some' => 'Retained Argument From Parent Request']));
+            ->willReturn((['Some' => 'Retained Argument From Parent Request']));
 
-        $this->mockSubSubRequest->expects(self::any())
+        $this->mockSubSubRequest
             ->method('getArgumentNamespace')
-            ->will(self::returnValue('SubSubNamespace'));
+            ->willReturn(('SubSubNamespace'));
 
-        $this->mockSubSubRequest->expects(self::once())
+        $this->mockSubSubRequest->expects($this->once())
             ->method('getArguments')
-            ->will(self::returnValue(['Foo' => 'Should be overridden', 'Bar' => 'Should be removed']));
+            ->willReturn((['Foo' => 'Should be overridden', 'Bar' => 'Should be removed']));
 
         $this->uriBuilder->setRequest($this->mockSubSubRequest);
         $this->uriBuilder->setArguments(['SubNamespace' => ['SubSubNamespace' => ['Foo' => 'Overruled']]]);
@@ -627,31 +580,29 @@ class UriBuilderTest extends UnitTestCase
         self::assertEquals($expectedArguments, $this->uriBuilder->getLastArguments());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function buildWithAddQueryStringMergesAllArgumentsAndKeepsRequestBoundariesIntact()
     {
         $expectedArguments = ['SubNamespace' => ['SubSubNamespace' => ['Foo' => 'Overruled'], 'Some' => 'Retained Argument From Parent Request'], 'Some' => 'Other Argument From Request'];
-        $this->mockMainRequest->expects(self::any())
+        $this->mockMainRequest
             ->method('getArguments')
-            ->will(self::returnValue(['Some' => 'Other Argument From Request']));
+            ->willReturn((['Some' => 'Other Argument From Request']));
 
-        $this->mockSubRequest->expects(self::any())
+        $this->mockSubRequest
             ->method('getArgumentNamespace')
-            ->will(self::returnValue('SubNamespace'));
+            ->willReturn(('SubNamespace'));
 
-        $this->mockSubRequest->expects(self::once())
+        $this->mockSubRequest->expects($this->once())
             ->method('getArguments')
-            ->will(self::returnValue(['Some' => 'Retained Argument From Parent Request']));
+            ->willReturn((['Some' => 'Retained Argument From Parent Request']));
 
-        $this->mockSubSubRequest->expects(self::any())
+        $this->mockSubSubRequest
             ->method('getArgumentNamespace')
-            ->will(self::returnValue('SubSubNamespace'));
+            ->willReturn(('SubSubNamespace'));
 
-        $this->mockSubSubRequest->expects(self::any())
+        $this->mockSubSubRequest
             ->method('getArguments')
-            ->will(self::returnValue(['Foo' => 'SomeArgument']));
+            ->willReturn((['Foo' => 'SomeArgument']));
 
         $this->uriBuilder->setRequest($this->mockSubSubRequest);
         $this->uriBuilder->setArguments(['SubNamespace' => ['SubSubNamespace' => ['Foo' => 'Overruled']]]);
@@ -661,15 +612,12 @@ class UriBuilderTest extends UnitTestCase
         self::assertEquals($expectedArguments, $this->uriBuilder->getLastArguments());
     }
 
-
-    /**
-     * @test
-     */
+    #[Test]
     public function buildAddsPackageKeyFromRootRequestIfRequestIsOfTypeSubRequest()
     {
         $expectedArguments = ['@package' => 'RootRequestPackageKey'];
-        $this->mockMainRequest->expects(self::once())->method('getControllerPackageKey')->will(self::returnValue('RootRequestPackageKey'));
-        $this->mockMainRequest->expects(self::any())->method('getArguments')->will(self::returnValue([]));
+        $this->mockMainRequest->expects($this->once())->method('getControllerPackageKey')->willReturn(('RootRequestPackageKey'));
+        $this->mockMainRequest->method('getArguments')->willReturn(([]));
 
         $this->uriBuilder->setRequest($this->mockSubRequest);
         $this->uriBuilder->build();
@@ -677,14 +625,12 @@ class UriBuilderTest extends UnitTestCase
         self::assertEquals($expectedArguments, $this->uriBuilder->getLastArguments());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function buildAddsSubpackageKeyFromRootRequestIfRequestIsOfTypeSubRequest()
     {
         $expectedArguments = ['@subpackage' => 'RootRequestSubpackageKey'];
-        $this->mockMainRequest->expects(self::once())->method('getControllerSubpackageKey')->will(self::returnValue('RootRequestSubpackageKey'));
-        $this->mockMainRequest->expects(self::any())->method('getArguments')->will(self::returnValue([]));
+        $this->mockMainRequest->expects($this->once())->method('getControllerSubpackageKey')->willReturn(('RootRequestSubpackageKey'));
+        $this->mockMainRequest->method('getArguments')->willReturn(([]));
 
         $this->uriBuilder->setRequest($this->mockSubRequest);
         $this->uriBuilder->build();
@@ -692,14 +638,12 @@ class UriBuilderTest extends UnitTestCase
         self::assertEquals($expectedArguments, $this->uriBuilder->getLastArguments());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function buildAddsControllerNameFromRootRequestIfRequestIsOfTypeSubRequest()
     {
         $expectedArguments = ['@controller' => 'RootRequestControllerName'];
-        $this->mockMainRequest->expects(self::once())->method('getControllerName')->will(self::returnValue('RootRequestControllerName'));
-        $this->mockMainRequest->expects(self::any())->method('getArguments')->will(self::returnValue([]));
+        $this->mockMainRequest->expects($this->once())->method('getControllerName')->willReturn(('RootRequestControllerName'));
+        $this->mockMainRequest->method('getArguments')->willReturn(([]));
 
         $this->uriBuilder->setRequest($this->mockSubRequest);
         $this->uriBuilder->build();
@@ -707,14 +651,12 @@ class UriBuilderTest extends UnitTestCase
         self::assertEquals($expectedArguments, $this->uriBuilder->getLastArguments());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function buildAddsActionNameFromRootRequestIfRequestIsOfTypeSubRequest()
     {
         $expectedArguments = ['@action' => 'RootRequestActionName'];
-        $this->mockMainRequest->expects(self::once())->method('getControllerActionName')->will(self::returnValue('RootRequestActionName'));
-        $this->mockMainRequest->expects(self::any())->method('getArguments')->will(self::returnValue([]));
+        $this->mockMainRequest->expects($this->once())->method('getControllerActionName')->willReturn(('RootRequestActionName'));
+        $this->mockMainRequest->method('getArguments')->willReturn(([]));
 
         $this->uriBuilder->setRequest($this->mockSubRequest);
         $this->uriBuilder->build();
@@ -722,54 +664,46 @@ class UriBuilderTest extends UnitTestCase
         self::assertEquals($expectedArguments, $this->uriBuilder->getLastArguments());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function buildPassesBaseUriToRouter()
     {
-        $this->mockRouter->expects(self::once())->method('resolve')->willReturnCallback(function (ResolveContext $resolveContext) {
+        $this->mockRouter->expects($this->once())->method('resolve')->willReturnCallback(function (ResolveContext $resolveContext) {
             self::assertSame($this->mockBaseUri, $resolveContext->getBaseUri());
-            return $this->getMockBuilder(UriInterface::class)->getMock();
+            return $this->createMock(UriInterface::class);
         });
 
         $this->uriBuilder->build();
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function buildAppendsSectionIfSectionIsSpecified()
     {
-        $mockResolvedUri = $this->getMockBuilder(UriInterface::class)->getMock();
-        $mockResolvedUri->expects(self::once())->method('withFragment')->with('SomeSection')->will(self::returnValue($mockResolvedUri));
+        $mockResolvedUri = $this->createMock(UriInterface::class);
+        $mockResolvedUri->expects($this->once())->method('withFragment')->with('SomeSection')->willReturn(($mockResolvedUri));
 
-        $this->mockRouter->expects(self::once())->method('resolve')->will(self::returnValue($mockResolvedUri));
+        $this->mockRouter->expects($this->once())->method('resolve')->willReturn(($mockResolvedUri));
 
         $this->uriBuilder->setSection('SomeSection');
         $this->uriBuilder->build();
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function buildDoesNotSetAbsoluteUriFlagByDefault()
     {
-        $this->mockRouter->expects(self::once())->method('resolve')->willReturnCallback(function (ResolveContext $resolveContext) {
+        $this->mockRouter->expects($this->once())->method('resolve')->willReturnCallback(function (ResolveContext $resolveContext) {
             self::assertFalse($resolveContext->isForceAbsoluteUri());
-            return $this->getMockBuilder(UriInterface::class)->getMock();
+            return $this->createMock(UriInterface::class);
         });
 
         $this->uriBuilder->build();
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function buildForwardsForceAbsoluteUriFlagToRouter()
     {
-        $this->mockRouter->expects(self::once())->method('resolve')->willReturnCallback(function (ResolveContext $resolveContext) {
+        $this->mockRouter->expects($this->once())->method('resolve')->willReturnCallback(function (ResolveContext $resolveContext) {
             self::assertTrue($resolveContext->isForceAbsoluteUri());
-            return $this->getMockBuilder(UriInterface::class)->getMock();
+            return $this->createMock(UriInterface::class);
         });
 
         $this->uriBuilder->setCreateAbsoluteUri(true);
@@ -777,15 +711,13 @@ class UriBuilderTest extends UnitTestCase
         $this->uriBuilder->build();
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function buildPrependsScriptRequestPathByDefaultIfCreateAbsoluteUriIsFalse()
     {
-        $this->mockHttpRequest->expects(self::atLeastOnce())->method('getServerParams')->willReturn(['SCRIPT_NAME' => '/document-root/index.php']);
-        $this->mockRouter->expects(self::once())->method('resolve')->willReturnCallback(function (ResolveContext $resolveContext) {
+        $this->mockHttpRequest->expects($this->atLeastOnce())->method('getServerParams')->willReturn(['SCRIPT_NAME' => '/document-root/index.php']);
+        $this->mockRouter->expects($this->once())->method('resolve')->willReturnCallback(function (ResolveContext $resolveContext) {
             self::assertSame('document-root/', $resolveContext->getUriPathPrefix());
-            return $this->getMockBuilder(UriInterface::class)->getMock();
+            return $this->createMock(UriInterface::class);
         });
 
         $this->uriBuilder->setCreateAbsoluteUri(false);
@@ -793,17 +725,15 @@ class UriBuilderTest extends UnitTestCase
         $this->uriBuilder->build();
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function buildPrependsIndexFileIfRewriteUrlsIsOff()
     {
-        $mockEnvironment = $this->getMockBuilder(Utility\Environment::class)->disableOriginalConstructor()->setMethods(['isRewriteEnabled'])->getMock();
+        $mockEnvironment = $this->getMockBuilder(Environment::class)->disableOriginalConstructor()->onlyMethods(['isRewriteEnabled'])->getMock();
         $this->inject($this->uriBuilder, 'environment', $mockEnvironment);
 
-        $this->mockRouter->expects(self::once())->method('resolve')->willReturnCallback(function (ResolveContext $resolveContext) {
+        $this->mockRouter->expects($this->once())->method('resolve')->willReturnCallback(function (ResolveContext $resolveContext) {
             self::assertSame('index.php/', $resolveContext->getUriPathPrefix());
-            return $this->getMockBuilder(UriInterface::class)->getMock();
+            return $this->createMock(UriInterface::class);
         });
 
         $this->uriBuilder->setCreateAbsoluteUri(false);
@@ -811,9 +741,7 @@ class UriBuilderTest extends UnitTestCase
         $this->uriBuilder->build();
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function resetSetsAllOptionsToTheirDefaultValue()
     {
         $this->uriBuilder
@@ -834,20 +762,16 @@ class UriBuilderTest extends UnitTestCase
         self::assertEquals([], $this->uriBuilder->getArgumentsToBeExcludedFromQueryString());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function setRequestResetsUriBuilder()
     {
-        /** @var Mvc\Routing\UriBuilder|\PHPUnit\Framework\MockObject\MockObject $uriBuilder */
-        $uriBuilder = $this->getAccessibleMock(Mvc\Routing\UriBuilder::class, ['reset']);
-        $uriBuilder->expects(self::once())->method('reset');
+        /** @var Mvc\Routing\UriBuilder|MockObject $uriBuilder */
+        $uriBuilder = $this->getAccessibleMock(UriBuilder::class, ['reset']);
+        $uriBuilder->expects($this->once())->method('reset');
         $uriBuilder->setRequest($this->mockMainRequest);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function setArgumentsSetsNonPrefixedArgumentsByDefault()
     {
         $arguments = [
@@ -861,16 +785,14 @@ class UriBuilderTest extends UnitTestCase
         self::assertEquals($expectedResult, $this->uriBuilder->getArguments());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function uriForInSubRequestWillKeepFormatOfMainRequest()
     {
         $expectedArguments = [
             '@format' => 'custom',
             'SubNamespace' => ['@action' => 'someaction', '@controller' => 'somecontroller', '@package' => 'somepackage']
         ];
-        $this->mockMainRequest->expects(self::any())->method('getFormat')->will(self::returnValue('custom'));
+        $this->mockMainRequest->method('getFormat')->willReturn(('custom'));
 
         $this->uriBuilder->setRequest($this->mockSubRequest);
         $this->uriBuilder->uriFor('SomeAction', [], 'SomeController', 'SomePackage');
@@ -878,16 +800,14 @@ class UriBuilderTest extends UnitTestCase
         self::assertEquals($expectedArguments, $this->uriBuilder->getLastArguments());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function uriForInSubRequestWithFormatWillNotOverrideFormatOfMainRequest()
     {
         $expectedArguments = [
             '@format' => 'custom',
             'SubNamespace' => ['@action' => 'someaction', '@controller' => 'somecontroller', '@package' => 'somepackage', '@format' => 'inner']
         ];
-        $this->mockMainRequest->expects(self::any())->method('getFormat')->will(self::returnValue('custom'));
+        $this->mockMainRequest->method('getFormat')->willReturn(('custom'));
 
         $this->uriBuilder->setRequest($this->mockSubRequest);
         $this->uriBuilder->setFormat('inner');

@@ -327,7 +327,7 @@ conventions need to be followed:
 * Domain models should reside in a *Domain/Model* directory
 * Repositories should reside in a *Domain/Repository* directory and be named
   ``<ModelName>Repository``
-* Aside from ``Model`` versus ``Repository`` the qualified class class names should be the
+* Aside from ``Model`` versus ``Repository`` the qualified class names should be the
   same for corresponding classes
 * Repositories must implement ``\Neos\Flow\Persistence\RepositoryInterface`` (which is
   already the case when extending ``\Neos\Flow\Persistence\Repository`` or
@@ -469,7 +469,7 @@ Inside a single aggregate `OneToMany` relations are normally best modeled unidir
 Bidirectional relations always are harder to manage correctly and can easily lead to
 unintentional traversal of entity hierarchies with all the drawbacks.
 
-Since Doctrines `OneToMany` annotation is always bidrectional and also dictates the owning
+Since Doctrines `OneToMany` annotation is always bidirectional and also dictates the owning
 side of the relation (at the unexpected side from a modeling PoV), it is not straightforward
 to model this correctly.
 
@@ -730,7 +730,7 @@ doctrine configuration and EventManager classes, that you can change before the 
 EntityManager is instantiated.
 
 The `afterDoctrineEntityManagerCreation` signal provides the doctrine configuration and
-EntityManager instance, in order to to further set options.
+EntityManager instance, in order to further set options.
 
 .. note:: All above configuration options through the settings are actually implemented as slots to the
   before mentioned signals. If you want to take some look how this works, check the
@@ -1081,7 +1081,7 @@ This will result in output that looks similar to the following:
 
 As you can see you need to specify the migration ``--version`` you want to execute. If you
 want to revert a migration, you need to give the ``--direction`` as shown above, the
-default is to migrate "up". The ``--dry-run`` and and ``--output`` options work as with
+default is to migrate "up". The ``--dry-run`` and ``--output`` options work as with
 ``flow:doctrine:migrate``.
 
 Creating migrations

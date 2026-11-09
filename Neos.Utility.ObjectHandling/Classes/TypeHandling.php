@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Utility;
 
 /*
@@ -23,12 +24,12 @@ abstract class TypeHandling
     /**
      * A property type parse pattern.
      */
-    const PARSE_TYPE_PATTERN = '/^\??(?:null\|)?\\\\?(?P<type>[a-zA-Z0-9\\\\_]+)(?:<\\\\?(?P<elementType>[a-zA-Z0-9\\\\_]+)>)?(?:\|null)?(?:\s|$)/';
+    public const PARSE_TYPE_PATTERN = '/^\??(?:null\|)?\\\\?(?P<type>[a-zA-Z0-9\\\\_]+)(?:<\\\\?(?P<elementType>[a-zA-Z0-9\\\\_]+)>)?(?:\|null)?(?:\s|$)/';
 
     /**
      * A type pattern to detect literal types.
      */
-    const LITERAL_TYPE_PATTERN = '/^(?:integer|int|float|double|boolean|bool|string)$/';
+    public const LITERAL_TYPE_PATTERN = '/^(?:integer|int|float|double|boolean|bool|string)$/';
 
     /**
      * @var array<int,string|class-string<\Traversable<mixed>>>
@@ -195,7 +196,7 @@ abstract class TypeHandling
      * Return simple type or class for object
      *
      * @param mixed $value
-     * @return string
+     * @return ($value is object ? class-string : string)
      */
     public static function getTypeForValue($value): string
     {

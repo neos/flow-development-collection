@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Security\Authentication;
 
 /*
@@ -23,22 +24,22 @@ interface TokenInterface
     /**
      * This is the default state. The token is not authenticated and holds no credentials, that could be used for authentication.
      */
-    const NO_CREDENTIALS_GIVEN = 1;
+    public const NO_CREDENTIALS_GIVEN = 1;
 
     /**
      * It was tried to authenticate the token, but the credentials were wrong.
      */
-    const WRONG_CREDENTIALS = 2;
+    public const WRONG_CREDENTIALS = 2;
 
     /**
      * The token has been successfully authenticated.
      */
-    const AUTHENTICATION_SUCCESSFUL = 3;
+    public const AUTHENTICATION_SUCCESSFUL = 3;
 
     /**
      * This indicates, that the token received credentials, but has not been authenticated yet.
      */
-    const AUTHENTICATION_NEEDED = 4;
+    public const AUTHENTICATION_NEEDED = 4;
 
     /**
      * Returns the name of the authentication provider responsible for this token
@@ -58,7 +59,7 @@ interface TokenInterface
     /**
      * Returns true if this token is currently authenticated
      *
-     * @return boolean true if this this token is currently authenticated
+     * @return boolean true if this token is currently authenticated
      */
     public function isAuthenticated();
 
@@ -88,7 +89,7 @@ interface TokenInterface
     /**
      * Returns the configured authentication entry point, NULL if none is available
      *
-     * @return EntryPointInterface The configured authentication entry point, NULL if none is available
+     * @return ?EntryPointInterface The configured authentication entry point, NULL if none is available
      */
     public function getAuthenticationEntryPoint();
 
@@ -102,7 +103,7 @@ interface TokenInterface
     /**
      * Sets request patterns
      *
-     * @param array $requestPatterns Array of \Neos\Flow\Security\RequestPatternInterface to be set
+     * @param array<RequestPatternInterface> $requestPatterns Array of \Neos\Flow\Security\RequestPatternInterface to be set
      * @return void
      * @see hasRequestPattern()
      */
@@ -139,14 +140,14 @@ interface TokenInterface
     /**
      * Returns the account if one is authenticated, NULL otherwise.
      *
-     * @return Account An account object
+     * @return ?Account An account object
      */
     public function getAccount();
 
     /**
      * Set the (authenticated) account
      *
-     * @param Account $account An account object
+     * @param ?Account $account An account object
      * @return void
      */
     public function setAccount(?Account $account = null);

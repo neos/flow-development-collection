@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Tests\Functional\ObjectManagement\Fixtures;
 
 use Neos\Flow\Annotations as Flow;

@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Neos\Flow\Tests\Unit\Security\Cryptography;
 
 /*
@@ -10,7 +13,6 @@ namespace Neos\Flow\Tests\Unit\Security\Cryptography;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
 use Neos\Cache\Backend\TransientMemoryBackend;
 use Neos\Cache\EnvironmentConfiguration;
 use Neos\Cache\Frontend\StringFrontend;
@@ -22,11 +24,13 @@ use Neos\Flow\Security\Exception\InvalidHashException;
 use Neos\Flow\Security\Exception\MissingConfigurationException;
 use Neos\Flow\Tests\Unit\Cryptography\Fixture\TestHashingStrategy;
 use Neos\Flow\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\MockObject\MockObject;
 
 /**
  * Test case for the Hash Service
  */
-class HashServiceTest extends UnitTestCase
+final class HashServiceTest extends UnitTestCase
 {
     /**
      * @var HashService
@@ -34,12 +38,7 @@ class HashServiceTest extends UnitTestCase
     protected $hashService;
 
     /**
-     * @var StringFrontend
-     */
-    protected $cache;
-
-    /**
-     * @var ObjectManagerInterface|\PHPUnit\Framework\MockObject\MockObject
+     * @var ObjectManagerInterface|MockObject
      */
     protected $mockObjectManager;
 
@@ -64,38 +63,32 @@ class HashServiceTest extends UnitTestCase
      */
     protected function setUp(): void
     {
-        $this->cache = new StringFrontend('TestCache', new TransientMemoryBackend(new EnvironmentConfiguration('Hash Testing', '/some/path', PHP_MAXPATHLEN)));
-        $this->cache->initializeObject();
+        $cache = new StringFrontend('TestCache', new TransientMemoryBackend(new EnvironmentConfiguration('Hash Testing', '/some/path', PHP_MAXPATHLEN)));
+        $cache->initializeObject();
 
-        $this->mockObjectManager = $this->getMockBuilder(ObjectManagerInterface::class)->getMock();
+        $this->mockObjectManager = $this->createMock(ObjectManagerInterface::class);
 
         $this->hashService = new HashService();
-        $this->inject($this->hashService, 'cache', $this->cache);
+        $this->inject($this->hashService, 'cache', $cache);
         $this->inject($this->hashService, 'objectManager', $this->mockObjectManager);
         $this->hashService->injectSettings($this->mockSettings);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function generateHmacReturnsHashStringIfStringIsGiven()
     {
         $hash = $this->hashService->generateHmac('asdf');
         self::assertTrue(is_string($hash));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function generateHmacReturnsHashStringWhichContainsSomeSalt()
     {
         $hash = $this->hashService->generateHmac('asdf');
         self::assertNotEquals(sha1('asdf'), $hash);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function generateHmacReturnsDifferentHashStringsForDifferentInputStrings()
     {
         $hash1 = $this->hashService->generateHmac('asdf');
@@ -103,18 +96,14 @@ class HashServiceTest extends UnitTestCase
         self::assertNotEquals($hash1, $hash2);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function generateHmacThrowsExceptionIfNoStringGiven()
     {
         $this->expectException(InvalidArgumentForHashGenerationException::class);
         $this->hashService->generateHmac(null);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function generatedHashCanBeValidatedAgain()
     {
         $string = 'asdf';
@@ -122,9 +111,7 @@ class HashServiceTest extends UnitTestCase
         self::assertTrue($this->hashService->validateHmac($string, $hash));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function generatedHashWillNotBeValidatedIfHashHasBeenChanged()
     {
         $string = 'asdf';
@@ -132,15 +119,13 @@ class HashServiceTest extends UnitTestCase
         self::assertFalse($this->hashService->validateHmac($string, $hash));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function hashPasswordWithoutStrategyIdentifierUsesConfiguredDefaultStrategy()
     {
         $mockStrategy = $this->createMock(PasswordHashingStrategyInterface::class);
 
-        $this->mockObjectManager->expects(self::atLeastOnce())->method('get')->with(TestHashingStrategy::class)->will(self::returnValue($mockStrategy));
-        $mockStrategy->expects(self::atLeastOnce())->method('hashPassword')->will(self::returnValue('---hashed-password---'));
+        $this->mockObjectManager->expects($this->atLeastOnce())->method('get')->with(TestHashingStrategy::class)->willReturn(($mockStrategy));
+        $mockStrategy->expects($this->atLeastOnce())->method('hashPassword')->willReturn(('---hashed-password---'));
 
         $this->hashService->hashPassword('myTestPassword');
     }
@@ -152,38 +137,31 @@ class HashServiceTest extends UnitTestCase
     {
         $mockStrategy = $this->createMock(PasswordHashingStrategyInterface::class);
 
-        $this->mockObjectManager->expects(self::atLeastOnce())->method('get')->with(TestHashingStrategy::class)->will(self::returnValue($mockStrategy));
-        $mockStrategy->expects(self::atLeastOnce())->method('validatePassword')->will(self::returnValue(true));
+        $this->mockObjectManager->expects($this->atLeastOnce())->method('get')->with(TestHashingStrategy::class)->willReturn(($mockStrategy));
+        $mockStrategy->expects($this->atLeastOnce())->method('validatePassword')->willReturn((true));
 
         $this->hashService->validatePassword('myTestPassword', '---hashed-password---');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function hashPasswordWillIncludeStrategyIdentifierInHashedPassword()
     {
         $mockStrategy = $this->createMock(PasswordHashingStrategyInterface::class);
-        $mockStrategy->expects(self::any())->method('hashPassword')->will(self::returnValue('---hashed-password---'));
-        $this->mockObjectManager->expects(self::any())->method('get')->will(self::returnValue($mockStrategy));
+        $mockStrategy->method('hashPassword')->willReturn(('---hashed-password---'));
+        $this->mockObjectManager->method('get')->willReturn(($mockStrategy));
 
         $result = $this->hashService->hashPassword('myTestPassword', 'TestStrategy');
         self::assertEquals('TestStrategy=>---hashed-password---', $result);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function hashPasswordThrowsExceptionIfTheGivenHashingStrategyIsNotConfigured()
     {
         $this->expectException(MissingConfigurationException::class);
         $this->hashService->hashPassword('myTestPassword', 'nonExistingHashingStrategy');
     }
 
-
-    /**
-     * @test
-     */
+    #[Test]
     public function hashPasswordThrowsExceptionIfNoDefaultHashingStrategyIsConfigured()
     {
         $this->expectException(MissingConfigurationException::class);
@@ -200,41 +178,33 @@ class HashServiceTest extends UnitTestCase
         $this->hashService->hashPassword('myTestPassword');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function validatePasswordWillUseStrategyIdentifierFromHashedPassword()
     {
         $mockStrategy = $this->createMock(PasswordHashingStrategyInterface::class);
-        $this->mockObjectManager->expects(self::any())->method('get')->will(self::returnValue($mockStrategy));
+        $this->mockObjectManager->method('get')->willReturn(($mockStrategy));
 
-        $mockStrategy->expects(self::atLeastOnce())->method('validatePassword')->with('myTestPassword', '---hashed-password---')->will(self::returnValue(true));
+        $mockStrategy->expects($this->atLeastOnce())->method('validatePassword')->with('myTestPassword', '---hashed-password---')->willReturn((true));
 
         $result = $this->hashService->validatePassword('myTestPassword', 'TestStrategy=>---hashed-password---');
         self::assertEquals(true, $result);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function generatedHashReturnsAHashOf40Characters()
     {
         $hash = $this->hashService->generateHmac('asdf');
         self::assertSame(40, strlen($hash));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function appendHmacThrowsExceptionIfNoStringGiven()
     {
         $this->expectException(InvalidArgumentForHashGenerationException::class);
         $this->hashService->appendHmac(null);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function appendHmacAppendsHmacToGivenString()
     {
         $string = 'This is some arbitrary string ';
@@ -242,45 +212,35 @@ class HashServiceTest extends UnitTestCase
         self::assertSame($string, substr($hashedString, 0, -40));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function validateAndStripHmacThrowsExceptionIfNoStringGiven()
     {
         $this->expectException(InvalidArgumentForHashGenerationException::class);
         $this->hashService->validateAndStripHmac(null);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function validateAndStripHmacThrowsExceptionIfGivenStringIsTooShort()
     {
         $this->expectException(InvalidArgumentForHashGenerationException::class);
         $this->hashService->validateAndStripHmac('string with less than 40 characters');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function validateAndStripHmacThrowsExceptionIfGivenStringHasNoHashAppended()
     {
         $this->expectException(InvalidHashException::class);
         $this->hashService->validateAndStripHmac('string with exactly a length 40 of chars');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function validateAndStripHmacThrowsExceptionIfTheAppendedHashIsInvalid()
     {
         $this->expectException(InvalidHashException::class);
         $this->hashService->validateAndStripHmac('some Stringac43682075d36592d4cb320e69ff0aa515886eab');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function validateAndStripHmacReturnsTheStringWithoutHmac()
     {
         $string = ' Some arbitrary string with special characters: öäüß!"§$ ';

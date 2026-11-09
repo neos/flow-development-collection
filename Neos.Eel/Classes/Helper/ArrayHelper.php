@@ -12,13 +12,13 @@ namespace Neos\Eel\Helper;
  * source code.
  */
 
-use Neos\Flow\Annotations as Flow;
 use Neos\Eel\ProtectedContextAwareInterface;
+use Neos\Flow\Annotations as Flow;
 
 /**
  * Array helpers for Eel contexts
  *
- * The implementation uses the JavaScript specificiation where applicable, including EcmaScript 6 proposals.
+ * The implementation uses the JavaScript specification where applicable, including EcmaScript 6 proposals.
  *
  * See https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array for a documentation and
  * specification of the JavaScript implementation.
@@ -483,7 +483,7 @@ class ArrayHelper implements ProtectedContextAwareInterface
     }
 
     /**
-     * Set the specified key in the the array
+     * Set the specified key in the array
      *
      * @param iterable $array
      * @param string|integer $key the key that should be set
@@ -575,7 +575,7 @@ class ArrayHelper implements ProtectedContextAwareInterface
     }
 
     /**
-     * Check if at least one element in an array passes a test given by the calback,
+     * Check if at least one element in an array passes a test given by the callback,
      * passing each element and key as arguments
      *
      * Example::
@@ -598,7 +598,7 @@ class ArrayHelper implements ProtectedContextAwareInterface
     }
 
     /**
-     * Check if all elements in an array pass a test given by the calback,
+     * Check if all elements in an array pass a test given by the callback,
      * passing each element and key as arguments
      *
      * Example::

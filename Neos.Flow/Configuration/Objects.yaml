@@ -278,8 +278,8 @@ Neos\Flow\Mvc\Routing\RouterCachingService:
             value: Flow_Mvc_Routing_Resolve
 
 Neos\Flow\Mvc\ViewConfigurationManager:
-  properties:
-    cache:
+  arguments:
+    3:
       object:
         factoryObjectName: Neos\Flow\Cache\CacheManager
         factoryMethodName: getCache
@@ -301,12 +301,23 @@ Neos\Flow\ObjectManagement\ObjectManager:
 Neos\Flow\ObjectManagement\CompileTimeObjectManager:
   autowiring: off
 
+Neos\Flow\ObjectManagement\Proxy\Compiler:
+  arguments:
+    1:
+      object:
+        factoryObjectName: Neos\Flow\Cache\CacheManager
+        factoryMethodName: getCache
+        arguments:
+          1:
+            value: Flow_Object_Classes
 #                                                                          #
 # Persistence                                                              #
 #                                                                          #
 
 Doctrine\ORM\EntityManagerInterface:
   scope: singleton
+  # knowing the returned class name allows the object manager to make this lazy
+  className: Doctrine\ORM\EntityManager
   factoryObjectName: Neos\Flow\Persistence\Doctrine\EntityManagerFactory
 
 Doctrine\DBAL\Connection:
@@ -350,20 +361,6 @@ Neos\Flow\Reflection\ReflectionService:
 #  scope: singleton
 
 #                                                                          #
-# ResourceManagement                                                       #
-#                                                                          #
-
-Neos\Flow\ResourceManagement\ResourceManager:
-  properties:
-    statusCache:
-      object:
-        factoryObjectName: Neos\Flow\Cache\CacheManager
-        factoryMethodName: getCache
-        arguments:
-          1:
-            value: Flow_Resource_Status
-
-#                                                                          #
 # Security                                                                 #
 #                                                                          #
 
@@ -374,14 +371,6 @@ Neos\Flow\Security\Authentication\AuthenticationManagerInterface:
 Neos\Flow\Security\Cryptography\RsaWalletServiceInterface:
   className: Neos\Flow\Security\Cryptography\RsaWalletServicePhp
   scope: singleton
-  properties:
-    keystoreCache:
-      object:
-        factoryObjectName: Neos\Flow\Cache\CacheManager
-        factoryMethodName: getCache
-        arguments:
-          1:
-            value: Flow_Security_Cryptography_RSAWallet
 
 Neos\Flow\Security\Authorization\PrivilegeManagerInterface:
   className: Neos\Flow\Security\Authorization\PrivilegeManager
@@ -467,6 +456,7 @@ Neos\Flow\Session\SessionInterface:
   factoryMethodName: getCurrentSession
 
 Neos\Flow\Session\Data\SessionKeyValueStore:
+  scope: singleton
   properties:
     cache:
       object:
@@ -477,6 +467,7 @@ Neos\Flow\Session\Data\SessionKeyValueStore:
             value: Flow_Session_Storage
 
 Neos\Flow\Session\Data\SessionMetaDataStore:
+  scope: singleton
   properties:
     cache:
       object:

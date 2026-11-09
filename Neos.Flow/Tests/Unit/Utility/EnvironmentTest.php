@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Tests\Unit\Utility;
 
 /*
@@ -15,15 +16,14 @@ use Neos\Flow\Core\ApplicationContext;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Flow\Utility\Environment;
 use Neos\Utility\Files;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Testcase for the Utility Environment class
  */
 class EnvironmentTest extends UnitTestCase
 {
-    /**
-     * @test
-     */
+    #[Test]
     public function getPathToTemporaryDirectoryReturnsPathWithTrailingSlash()
     {
         $environment = new Environment(new ApplicationContext('Testing'));
@@ -32,9 +32,7 @@ class EnvironmentTest extends UnitTestCase
         self::assertEquals('/', substr($path, -1, 1), 'The temporary path did not end with slash.');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getPathToTemporaryDirectoryReturnsAnExistingPath()
     {
         $environment = new Environment(new ApplicationContext('Testing'));
@@ -44,14 +42,12 @@ class EnvironmentTest extends UnitTestCase
         self::assertTrue(file_exists($path), 'The temporary path does not exist.');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getMaximumPathLengthReturnsCorrectValue()
     {
         $environment = new Environment(new ApplicationContext('Testing'));
         $expectedValue = PHP_MAXPATHLEN;
-        if ((integer)$expectedValue <= 0) {
+        if ((int)$expectedValue <= 0) {
             $this->fail('The PHP Constant PHP_MAXPATHLEN is not available on your system! Please file a PHP bug report.');
         }
         self::assertEquals($expectedValue, $environment->getMaximumPathLength());

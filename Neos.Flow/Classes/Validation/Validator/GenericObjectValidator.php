@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Validation\Validator;
 
 /*
@@ -12,8 +13,8 @@ namespace Neos\Flow\Validation\Validator;
  */
 
 use Doctrine\Persistence\Proxy as DoctrineProxy;
-use Neos\Utility\ObjectAccess;
 use Neos\Error\Messages\Result as ErrorResult;
+use Neos\Utility\ObjectAccess;
 
 /**
  * A generic object validator which allows for specifying property validators.
@@ -23,26 +24,26 @@ use Neos\Error\Messages\Result as ErrorResult;
 class GenericObjectValidator extends AbstractValidator implements ObjectValidatorInterface
 {
     /**
-     * @var array
+     * @var array<string,mixed>
      */
     protected $supportedOptions = [
         'skipUnInitializedProxies' => [false, 'Whether proxies not yet initialized should be skipped during validation', 'boolean']
     ];
 
     /**
-     * @var array
+     * @var array<string,\SplObjectStorage<ValidatorInterface,mixed>>
      */
     protected $propertyValidators = [];
 
     /**
-     * @var \SplObjectStorage
+     * @var \SplObjectStorage<object,mixed>
      */
     protected $validatedInstancesContainer;
 
     /**
      * Allows to set a container to keep track of validated instances.
      *
-     * @param \SplObjectStorage $validatedInstancesContainer A container to keep track of validated instances
+     * @param \SplObjectStorage<object,mixed> $validatedInstancesContainer A container to keep track of validated instances
      * @return void
      * @api
      */
@@ -77,13 +78,15 @@ class GenericObjectValidator extends AbstractValidator implements ObjectValidato
             $propertyValue = $this->getPropertyValue($object, $propertyName);
             $result = $this->checkProperty($propertyValue, $validators);
             if ($result !== null) {
-                $this->getResult()->forProperty($propertyName)->merge($result);
+                if ($this->getResult()) {
+                    $this->getResult()->forProperty($propertyName)->merge($result);
+                }
             }
         }
     }
 
     /**
-     * @param $object
+     * @param object $object
      * @return boolean
      */
     protected function isUninitializedProxy($object)
@@ -132,7 +135,7 @@ class GenericObjectValidator extends AbstractValidator implements ObjectValidato
      * found errors to the $messages object.
      *
      * @param mixed $value The value to be validated
-     * @param array $validators The validators to be called on the value
+     * @param array<ValidatorInterface>|\SplObjectStorage<ValidatorInterface,mixed> $validators The validators to be called on the value
      * @return NULL|ErrorResult
      */
     protected function checkProperty($value, $validators)
@@ -165,7 +168,9 @@ class GenericObjectValidator extends AbstractValidator implements ObjectValidato
     public function addPropertyValidator($propertyName, ValidatorInterface $validator)
     {
         if (!isset($this->propertyValidators[$propertyName])) {
-            $this->propertyValidators[$propertyName] = new \SplObjectStorage();
+            /** @var \SplObjectStorage<ValidatorInterface,mixed> $storage */
+            $storage = new \SplObjectStorage();
+            $this->propertyValidators[$propertyName] = $storage;
         }
         $this->propertyValidators[$propertyName]->attach($validator);
     }
@@ -173,14 +178,22 @@ class GenericObjectValidator extends AbstractValidator implements ObjectValidato
     /**
      * Returns all property validators - or only validators of the specified property
      *
-     * @param string $propertyName Name of the property to return validators for
-     * @return array An array of validators
+     * @param ?string $propertyName Name of the property to return validators for
+     * @return ($propertyName is null ? array<string,\SplObjectStorage<ValidatorInterface,mixed>> : \SplObjectStorage<ValidatorInterface,mixed>)
      */
     public function getPropertyValidators($propertyName = null)
     {
-        if ($propertyName !== null) {
-            return $this->propertyValidators[$propertyName] ?? [];
+        if ($propertyName === null) {
+            return $this->propertyValidators;
         }
-        return $this->propertyValidators;
+        if (is_string($propertyName)) {
+            $propertyValidators = $this->propertyValidators[$propertyName] ?? null;
+            if ($propertyValidators instanceof \SplObjectStorage) {
+                return $propertyValidators;
+            }
+        }
+        /** @var \SplObjectStorage<ValidatorInterface,mixed> $propertyValidators */
+        $propertyValidators = new \SplObjectStorage();
+        return $propertyValidators;
     }
 }

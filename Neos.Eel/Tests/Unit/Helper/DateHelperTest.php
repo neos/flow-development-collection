@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Neos\Eel\Tests\Unit;
 
 /*
@@ -10,32 +13,33 @@ namespace Neos\Eel\Tests\Unit;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
 use Neos\Eel\Helper\DateHelper;
+use Neos\Flow\I18n\Configuration;
+use Neos\Flow\I18n\Formatter\DatetimeFormatter;
 use Neos\Flow\I18n\Locale;
+use Neos\Flow\I18n\Service;
+use Neos\Flow\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Tests for DateHelper
  */
-class DateHelperTest extends \Neos\Flow\Tests\UnitTestCase
+final class DateHelperTest extends UnitTestCase
 {
     /**
-     * @return array
+     * @return \Iterator<(int | string), mixed>
      */
-    public function parseExamples()
+    public static function parseExamples(): \Iterator
     {
         $date = \DateTime::createFromFormat('Y-m-d', '2013-07-03');
         $dateTime = \DateTime::createFromFormat('Y-m-d H:i:s', '2013-07-03 12:34:56');
-        return [
-            'basic date' => ['2013-07-03', 'Y-m-d', $date],
-            'date with time' => ['2013-07-03 12:34:56', 'Y-m-d H:i:s', $dateTime]
-        ];
+        yield 'basic date' => ['2013-07-03', 'Y-m-d', $date];
+        yield 'date with time' => ['2013-07-03 12:34:56', 'Y-m-d H:i:s', $dateTime];
     }
 
-    /**
-     * @test
-     * @dataProvider parseExamples
-     */
+    #[DataProvider('parseExamples')]
+    #[Test]
     public function parseWorks($string, $format, $expected)
     {
         $helper = new DateHelper();
@@ -45,23 +49,19 @@ class DateHelperTest extends \Neos\Flow\Tests\UnitTestCase
     }
 
     /**
-     * @return array
+     * @return \Iterator<(int | string), mixed>
      */
-    public function formatExamples()
+    public static function formatExamples(): \Iterator
     {
         $dateTime = \DateTime::createFromFormat('Y-m-d H:i:s', '2013-07-03 12:34:56');
-        return [
-            'DateTime object' => [$dateTime, 'Y-m-d H:i:s', '2013-07-03 12:34:56'],
-            'timestamp as integer' => [1372856513, 'Y-m-d', '2013-07-03'],
-            'now' => ['now', 'Y-m-d', date('Y-m-d')],
-            'interval' => [new \DateInterval('P1D'), '%d days', '1 days']
-        ];
+        yield 'DateTime object' => [$dateTime, 'Y-m-d H:i:s', '2013-07-03 12:34:56'];
+        yield 'timestamp as integer' => [1372856513, 'Y-m-d', '2013-07-03'];
+        yield 'now' => ['now', 'Y-m-d', date('Y-m-d')];
+        yield 'interval' => [new \DateInterval('P1D'), '%d days', '1 days'];
     }
 
-    /**
-     * @test
-     * @dataProvider formatExamples
-     */
+    #[DataProvider('formatExamples')]
+    #[Test]
     public function formatWorks($dateOrString, $format, $expected)
     {
         $helper = new DateHelper();
@@ -69,9 +69,7 @@ class DateHelperTest extends \Neos\Flow\Tests\UnitTestCase
         self::assertSame($expected, $result);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function formatCldrThrowsOnEmptyArguments()
     {
         $this->expectException(\InvalidArgumentException::class);
@@ -79,22 +77,20 @@ class DateHelperTest extends \Neos\Flow\Tests\UnitTestCase
         $helper->formatCldr(null, null);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function formatCldrWorksWithEmptyLocale()
     {
         $locale = new Locale('en');
         $expected = 'whatever-value';
 
-        $configurationMock = $this->createMock(\Neos\Flow\I18n\Configuration::class);
-        $configurationMock->expects(self::atLeastOnce())->method('getCurrentLocale')->willReturn($locale);
+        $configurationMock = $this->createMock(Configuration::class);
+        $configurationMock->expects($this->atLeastOnce())->method('getCurrentLocale')->willReturn($locale);
 
-        $localizationServiceMock = $this->createMock(\Neos\Flow\I18n\Service::class);
-        $localizationServiceMock->expects(self::atLeastOnce())->method('getConfiguration')->willReturn($configurationMock);
+        $localizationServiceMock = $this->createMock(Service::class);
+        $localizationServiceMock->expects($this->atLeastOnce())->method('getConfiguration')->willReturn($configurationMock);
 
-        $formatMock = $this->createMock(\Neos\Flow\I18n\Formatter\DatetimeFormatter::class);
-        $formatMock->expects(self::atLeastOnce())->method('formatDateTimeWithCustomPattern')->willReturn($expected);
+        $formatMock = $this->createMock(DatetimeFormatter::class);
+        $formatMock->expects($this->atLeastOnce())->method('formatDateTimeWithCustomPattern')->willReturn($expected);
 
         $helper = new DateHelper();
         $this->inject($helper, 'datetimeFormatter', $formatMock);
@@ -105,9 +101,7 @@ class DateHelperTest extends \Neos\Flow\Tests\UnitTestCase
         $helper->formatCldr($date, $format);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function formatCldrCallsFormatService()
     {
         $date = \DateTime::createFromFormat('Y-m-d H:i:s', '2013-07-03 12:34:56');
@@ -115,8 +109,8 @@ class DateHelperTest extends \Neos\Flow\Tests\UnitTestCase
         $locale = 'en';
         $expected = '2013-07-03 12:34:56';
 
-        $formatMock = $this->createMock(\Neos\Flow\I18n\Formatter\DatetimeFormatter::class);
-        $formatMock->expects(self::atLeastOnce())->method('formatDateTimeWithCustomPattern');
+        $formatMock = $this->createMock(DatetimeFormatter::class);
+        $formatMock->expects($this->atLeastOnce())->method('formatDateTimeWithCustomPattern');
 
         $helper = new DateHelper();
         $this->inject($helper, 'datetimeFormatter', $formatMock);
@@ -124,9 +118,7 @@ class DateHelperTest extends \Neos\Flow\Tests\UnitTestCase
         $helper->formatCldr($date, $format, $locale);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function formatCldrDate()
     {
         $date = \DateTime::createFromFormat('Y-m-d H:i:s', '2013-07-03 12:34:56');
@@ -136,19 +128,17 @@ class DateHelperTest extends \Neos\Flow\Tests\UnitTestCase
         $locale = new Locale('en');
         $expectedString = '2013-07-03 12:34:56';
 
-        $formatMock = $this->createMock(\Neos\Flow\I18n\Formatter\DatetimeFormatter::class);
+        $formatMock = $this->createMock(DatetimeFormatter::class);
         $formatMock->expects(self::atLeastOnce())->method('formatDate')->with($date, $locale, $formatLength)->willReturn($expectedString);
 
         $helper = new DateHelper();
         $this->inject($helper, 'datetimeFormatter', $formatMock);
 
         $result = $helper->formatCldrDate($date, $formatLength, $localeString);
-        $this->assertEquals($expectedString, $result);
+        $this->assertSame($expectedString, $result);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function formatCldrTime()
     {
         $date = \DateTime::createFromFormat('Y-m-d H:i:s', '2013-07-03 12:34:56');
@@ -158,19 +148,17 @@ class DateHelperTest extends \Neos\Flow\Tests\UnitTestCase
         $locale = new Locale('en');
         $expectedString = '2013-07-03 12:34:56';
 
-        $formatMock = $this->createMock(\Neos\Flow\I18n\Formatter\DatetimeFormatter::class);
+        $formatMock = $this->createMock(DatetimeFormatter::class);
         $formatMock->expects(self::atLeastOnce())->method('formatTime')->with($date, $locale, $formatLength)->willReturn($expectedString);
 
         $helper = new DateHelper();
         $this->inject($helper, 'datetimeFormatter', $formatMock);
 
         $result = $helper->formatCldrTime($date, $formatLength, $localeString);
-        $this->assertEquals($expectedString, $result);
+        $this->assertSame($expectedString, $result);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function formatCldrDateTime()
     {
         $date = \DateTime::createFromFormat('Y-m-d H:i:s', '2013-07-03 12:34:56');
@@ -180,30 +168,26 @@ class DateHelperTest extends \Neos\Flow\Tests\UnitTestCase
         $locale = new Locale('en');
         $expectedString = '2013-07-03 12:34:56';
 
-        $formatMock = $this->createMock(\Neos\Flow\I18n\Formatter\DatetimeFormatter::class);
+        $formatMock = $this->createMock(DatetimeFormatter::class);
         $formatMock->expects(self::atLeastOnce())->method('formatDateTime')->with($date, $locale, $formatLength)->willReturn($expectedString);
 
         $helper = new DateHelper();
         $this->inject($helper, 'datetimeFormatter', $formatMock);
 
         $result = $helper->formatCldrDateTime($date, $formatLength, $localeString);
-        $this->assertEquals($expectedString, $result);
+        $this->assertSame($expectedString, $result);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function nowWorks()
     {
         $helper = new DateHelper();
         $result = $helper->now();
         self::assertInstanceOf(\DateTime::class, $result);
-        self::assertEqualsWithDelta(time(), (integer)$result->format('U'), 1, 'Now should be now');
+        self::assertEqualsWithDelta(time(), (int)$result->format('U'), 1, 'Now should be now');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function createWorks()
     {
         $helper = new DateHelper();
@@ -213,9 +197,7 @@ class DateHelperTest extends \Neos\Flow\Tests\UnitTestCase
         self::assertEqualsWithDelta($expected->getTimestamp(), $result->getTimestamp(), 1, 'Created DateTime object should match expected');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function todayWorks()
     {
         $helper = new DateHelper();
@@ -226,23 +208,19 @@ class DateHelperTest extends \Neos\Flow\Tests\UnitTestCase
     }
 
     /**
-     * @return array
+     * @return \Iterator<(int | string), mixed>
      */
-    public function calculationExamples()
+    public static function calculationExamples(): \Iterator
     {
         $dateTime = \DateTime::createFromFormat('Y-m-d H:i:s', '2013-07-03 12:34:56');
-        return [
-            'add DateTime with DateInterval' => ['add', $dateTime, new \DateInterval('P1D'), '2013-07-04 12:34:56'],
-            'add DateTime with string' => ['add', $dateTime, 'P1D', '2013-07-04 12:34:56'],
-            'subtract DateTime with DateInterval' => ['subtract', $dateTime, new \DateInterval('P1D'), '2013-07-02 12:34:56'],
-            'subtract DateTime with string' => ['subtract', $dateTime, 'P1D', '2013-07-02 12:34:56'],
-        ];
+        yield 'add DateTime with DateInterval' => ['add', $dateTime, new \DateInterval('P1D'), '2013-07-04 12:34:56'];
+        yield 'add DateTime with string' => ['add', $dateTime, 'P1D', '2013-07-04 12:34:56'];
+        yield 'subtract DateTime with DateInterval' => ['subtract', $dateTime, new \DateInterval('P1D'), '2013-07-02 12:34:56'];
+        yield 'subtract DateTime with string' => ['subtract', $dateTime, 'P1D', '2013-07-02 12:34:56'];
     }
 
-    /**
-     * @test
-     * @dataProvider calculationExamples
-     */
+    #[DataProvider('calculationExamples')]
+    #[Test]
     public function calculationWorks($method, $dateTime, $interval, $expected)
     {
         $timestamp = $dateTime->getTimestamp();
@@ -254,9 +232,7 @@ class DateHelperTest extends \Neos\Flow\Tests\UnitTestCase
         self::assertEquals($expected, $result->format('Y-m-d H:i:s'));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function diffWorks()
     {
         $earlierTime = \DateTime::createFromFormat('Y-m-d H:i:s', '2013-07-03 12:34:56');
@@ -269,9 +245,7 @@ class DateHelperTest extends \Neos\Flow\Tests\UnitTestCase
         self::assertEquals(59, $result->i);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function dateAccessorsWork()
     {
         $helper = new DateHelper();

@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Neos\Cache\Backend;
@@ -406,7 +407,7 @@ class PdoBackend extends IndependentAbstractBackend implements TaggableBackendIn
                 $statementHandle = $this->databaseHandle->prepare('SELECT "identifier" FROM "' . $this->tagsTableName . '" WHERE "context"=? AND "cache"=? AND "tag" IN (' . $tagPlaceholders . ')');
                 $statementHandle->execute(array_merge([$this->context(), $this->cacheIdentifier], $tagList));
                 $result = $statementHandle->fetchAll();
-                $identifiers[]= array_column($result, 'identifier');
+                $identifiers[] = array_column($result, 'identifier');
             }
             $identifiers = array_merge([], ...$identifiers);
 

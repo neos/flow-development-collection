@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Eel;
 
 /*
@@ -39,7 +40,7 @@ class InterpretedEelParser extends EelParser
         if (isset($self['dec'])) {
             $self['val'] = (float)($self['text']);
         } else {
-            $self['val'] = (integer)$self['text'];
+            $self['val'] = (int)$self['text'];
         }
     }
 
@@ -108,7 +109,7 @@ class InterpretedEelParser extends EelParser
 
     public function NotExpression_exp(&$result, $sub)
     {
-        $result['val'] = !(boolean)$sub['val'];
+        $result['val'] = !(bool)$sub['val'];
     }
 
     public function ArrayLiteral_Expression(&$result, $sub)
@@ -283,7 +284,7 @@ class InterpretedEelParser extends EelParser
 
     public function ConditionalExpression_else(&$result, $sub)
     {
-        if ((boolean)$this->unwrap($result['val'])) {
+        if ((bool)$this->unwrap($result['val'])) {
             $result['val'] = $result['then'];
         } else {
             $result['val'] = $sub['val'];

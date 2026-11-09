@@ -1,10 +1,13 @@
 <?php
+
 namespace Neos\Flow\Tests\Reflection\Fixture\Model;
+
+use Doctrine\ORM\Proxy\Proxy;
 
 /**
  * A class that is a Doctrine proxy
  */
-class EntityWithDoctrineProxy extends Entity implements \Doctrine\ORM\Proxy\Proxy
+class EntityWithDoctrineProxy extends Entity implements Proxy
 {
     /**
      * @var \Closure the callback responsible for loading properties in the proxy object. This callback is called with

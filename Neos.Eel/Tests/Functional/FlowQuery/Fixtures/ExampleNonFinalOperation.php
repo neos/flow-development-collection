@@ -1,5 +1,9 @@
 <?php
+
 namespace Neos\Eel\Tests\Functional\FlowQuery\Fixtures;
+
+use Neos\Eel\FlowQuery\FlowQuery;
+use Neos\Eel\FlowQuery\Operations\AbstractOperation;
 
 /*
  * This file is part of the Neos.Eel package.
@@ -10,14 +14,12 @@ namespace Neos\Eel\Tests\Functional\FlowQuery\Fixtures;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
-
-class ExampleNonFinalOperation extends \Neos\Eel\FlowQuery\Operations\AbstractOperation
+class ExampleNonFinalOperation extends AbstractOperation
 {
     protected static $shortName = 'exampleNonFinalOperation';
     protected static $final = false;
 
-    public function evaluate(\Neos\Eel\FlowQuery\FlowQuery $query, array $arguments)
+    public function evaluate(FlowQuery $query, array $arguments)
     {
     }
 }

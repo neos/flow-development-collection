@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Neos\Flow\Tests\Unit\I18n\Cldr;
 
 /*
@@ -10,15 +13,17 @@ namespace Neos\Flow\Tests\Unit\I18n\Cldr;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
 use Neos\Cache\Frontend\VariableFrontend;
-use Neos\Flow\Tests\UnitTestCase;
 use Neos\Flow\I18n;
+use Neos\Flow\I18n\Cldr\CldrModel;
+use Neos\Flow\I18n\Cldr\CldrParser;
+use Neos\Flow\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Testcase for the CldrModel
  */
-class CldrModelTest extends UnitTestCase
+final class CldrModelTest extends UnitTestCase
 {
     /**
      * @var I18n\Cldr\CldrModel
@@ -35,21 +40,33 @@ class CldrModelTest extends UnitTestCase
         $sampleParsedFile2 = require(__DIR__ . '/../Fixtures/MockParsedCldrFile2.php');
         $sampleParsedFile3 = require(__DIR__ . '/../Fixtures/MockParsedCldrFile3.php');
 
-        $mockCache = $this->getMockBuilder(VariableFrontend::class)->disableOriginalConstructor()->getMock();
-        $mockCache->expects(self::once())->method('has')->with(md5('foo;bar;baz'))->will(self::returnValue(false));
+        $mockCache = $this->createMock(VariableFrontend::class);
+        $mockCache->expects($this->once())->method('has')->with(md5('foo;bar;baz'))->willReturn((false));
 
-        $mockCldrParser = $this->createMock(I18n\Cldr\CldrParser::class);
-        $mockCldrParser->expects(self::exactly(3))->method('getParsedData')->withConsecutive(['foo'], ['bar'], ['baz'])->willReturnOnConsecutiveCalls($sampleParsedFile1, $sampleParsedFile2, $sampleParsedFile3);
+        $mockCldrParser = $this->createMock(CldrParser::class);
+        $matcher = self::exactly(3);
+        $mockCldrParser->expects($matcher)->method('getParsedData')->willReturnCallback(function (...$parameters) use ($matcher, $sampleParsedFile1, $sampleParsedFile2, $sampleParsedFile3) {
+            if ($matcher->numberOfInvocations() === 1) {
+                $this->assertSame('foo', $parameters[0]);
+                return $sampleParsedFile1;
+            }
+            if ($matcher->numberOfInvocations() === 2) {
+                $this->assertSame('bar', $parameters[0]);
+                return $sampleParsedFile2;
+            }
+            if ($matcher->numberOfInvocations() === 3) {
+                $this->assertSame('baz', $parameters[0]);
+                return $sampleParsedFile3;
+            }
+        });
 
-        $this->model = new I18n\Cldr\CldrModel($samplePaths);
+        $this->model = new CldrModel($samplePaths);
         $this->model->injectCache($mockCache);
         $this->model->injectParser($mockCldrParser);
         $this->model->initializeObject();
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function mergesMultipleFilesAndResolvesAliasesCorrectly()
     {
         $sampleParsedFilesMerged = require(__DIR__ . '/../Fixtures/MockParsedCldrFilesMerged.php');
@@ -57,19 +74,15 @@ class CldrModelTest extends UnitTestCase
         self::assertEquals($sampleParsedFilesMerged, $this->model->getRawData('/'));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function returnsRawArrayCorrectly()
     {
         $result = $this->model->getRawArray('dates/calendars/calendar[@type="gregorian"]/months/monthContext[@type="format"]/monthWidth[@type="abbreviated"]');
-        self::assertEquals(2, count($result));
+        self::assertCount(2, $result);
         self::assertEquals('jan', $result['month[@type="1"]']);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function returnsElementCorrectly()
     {
         $result = $this->model->getElement('localeDisplayNames/localeDisplayPattern/localePattern');
@@ -81,18 +94,15 @@ class CldrModelTest extends UnitTestCase
 
     /**
      * When the path points to a leaf, getRawArray() should return false.
-     *
-     * @test
      */
+    #[Test]
     public function getRawArrayAlwaysReturnsArrayOrFalse()
     {
         $result = $this->model->getRawArray('localeDisplayNames/localeDisplayPattern/localePattern');
         self::assertEquals(false, $result);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function returnsNodeNameCorrectly()
     {
         $sampleNodeString1 = 'calendar';
@@ -102,9 +112,7 @@ class CldrModelTest extends UnitTestCase
         self::assertEquals('calendar', $this->model->getNodeName($sampleNodeString2));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function returnsAttributeValueCorrectly()
     {
         $sampleNodeString = 'dateFormatLength[@type="medium"][@alt="proposed"]';

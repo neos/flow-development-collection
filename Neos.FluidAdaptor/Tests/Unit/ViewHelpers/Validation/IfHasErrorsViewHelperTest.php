@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Neos\FluidAdaptor\Tests\Unit\ViewHelpers\Security;
 
 /*
@@ -10,20 +13,21 @@ namespace Neos\FluidAdaptor\Tests\Unit\ViewHelpers\Security;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
 use Neos\Error\Messages\Error;
 use Neos\Error\Messages\Result;
-use Neos\FluidAdaptor\ViewHelpers\Validation\IfHasErrorsViewHelper;
 use Neos\FluidAdaptor\Tests\Unit\ViewHelpers\ViewHelperBaseTestcase;
+use Neos\FluidAdaptor\ViewHelpers\Validation\IfHasErrorsViewHelper;
+use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\MockObject\MockObject;
 
 require_once(__DIR__ . '/../ViewHelperBaseTestcase.php');
 
 /**
  */
-class IfHasErrorsViewHelperTest extends ViewHelperBaseTestcase
+final class IfHasErrorsViewHelperTest extends ViewHelperBaseTestcase
 {
     /**
-     * @var IfHasErrorsViewHelper|\PHPUnit\Framework\MockObject\MockObject
+     * @var IfHasErrorsViewHelper|MockObject
      */
     protected $viewHelper;
 
@@ -32,41 +36,35 @@ class IfHasErrorsViewHelperTest extends ViewHelperBaseTestcase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->viewHelper = $this->getAccessibleMock(\Neos\FluidAdaptor\ViewHelpers\Validation\IfHasErrorsViewHelper::class, ['renderThenChild', 'renderElseChild']);
+        $this->viewHelper = $this->getAccessibleMock(IfHasErrorsViewHelper::class, ['renderThenChild', 'renderElseChild']);
         $this->injectDependenciesIntoViewHelper($this->viewHelper);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function returnsAndRendersThenChildIfResultsHaveErrors()
     {
-        $result = new Result;
+        $result = new Result();
         $result->addError(new Error('I am an error', 1386163707));
 
-        $this->request->expects(self::once())->method('getInternalArgument')->with('__submittedArgumentValidationResults')->will(self::returnValue($result));
-        $this->viewHelper->expects(self::once())->method('renderThenChild')->will(self::returnValue('ThenChild'));
+        $this->request->expects($this->once())->method('getInternalArgument')->with('__submittedArgumentValidationResults')->willReturn(($result));
+        $this->viewHelper->expects($this->once())->method('renderThenChild')->willReturn(('ThenChild'));
         self::assertEquals('ThenChild', $this->viewHelper->render());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function returnsAndRendersElseChildIfNoValidationResultsArePresentAtAll()
     {
-        $this->viewHelper->expects(self::once())->method('renderElseChild')->will(self::returnValue('ElseChild'));
+        $this->viewHelper->expects($this->once())->method('renderElseChild')->willReturn(('ElseChild'));
         self::assertEquals('ElseChild', $this->viewHelper->render());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function queriesResultForPropertyIfPropertyPathIsGiven()
     {
-        $resultMock = $this->createMock(\Neos\Error\Messages\Result::class);
-        $resultMock->expects(self::once())->method('forProperty')->with('foo.bar.baz')->will(self::returnValue(new Result()));
+        $resultMock = $this->createMock(Result::class);
+        $resultMock->expects($this->once())->method('forProperty')->with('foo.bar.baz')->willReturn((new Result()));
 
-        $this->request->expects(self::once())->method('getInternalArgument')->with('__submittedArgumentValidationResults')->will(self::returnValue($resultMock));
+        $this->request->expects($this->once())->method('getInternalArgument')->with('__submittedArgumentValidationResults')->willReturn(($resultMock));
 
         $this->viewHelper->setArguments(['for' => 'foo.bar.baz']);
         $this->viewHelper->render();

@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Neos\Flow\Tests\Unit\Http;
 
 /*
@@ -10,19 +13,19 @@ namespace Neos\Flow\Tests\Unit\Http;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
-use Neos\Flow\Http\Headers;
 use Neos\Flow\Http\Cookie;
+use Neos\Flow\Http\Headers;
 use Neos\Flow\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\DoesNotPerformAssertions;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Test case for the Http Headers class
  */
-class HeadersTest extends UnitTestCase
+final class HeadersTest extends UnitTestCase
 {
-    /**
-     * @test
-     */
+    #[Test]
     public function headerFieldsCanBeSpecifiedToTheConstructor()
     {
         $headers = new Headers(['User-Agent' => 'Espresso Machine', 'Server' => ['Foo', 'Bar']]);
@@ -31,9 +34,7 @@ class HeadersTest extends UnitTestCase
         self::assertTrue($headers->has('Server'));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function headerFieldsCanBeReplaced()
     {
         $headers = new Headers();
@@ -42,9 +43,7 @@ class HeadersTest extends UnitTestCase
         self::assertSame('yourhost.com', $headers->get('Host'));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function headerFieldsCanExistMultipleTimes()
     {
         $headers = new Headers();
@@ -53,9 +52,7 @@ class HeadersTest extends UnitTestCase
         self::assertSame(['Flow', 'Neos'], $headers->get('X-Powered-By'));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getReturnsNullForNonExistingHeader()
     {
         $headers = new Headers();
@@ -64,21 +61,17 @@ class HeadersTest extends UnitTestCase
         self::assertNull($headers->get('X-Empowered-By'));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getAllReturnsAllHeaderFields()
     {
-        $specifiedFields = ['X-Coffee' => 'Arabica', 'Host' =>'myhost.com'];
+        $specifiedFields = ['X-Coffee' => 'Arabica', 'Host' => 'myhost.com'];
         $headers = new Headers($specifiedFields);
 
         $expectedFields = ['X-Coffee' => ['Arabica'], 'Host' => ['myhost.com']];
         self::assertEquals($expectedFields, $headers->getAll());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getAllAddsCacheControlHeaderIfCacheDirectivesHaveBeenSet()
     {
         $expectedFields = ['Last-Modified' => ['Tue, 24 May 2012 12:00:00 +0000']];
@@ -99,9 +92,8 @@ class HeadersTest extends UnitTestCase
      * time string and vice versa. Note that the date / time passed to set() is
      * normalized to GMT internally, so that get() will return the same point in time,
      * but not in the same timezone, if it was not GMT previously.
-     *
-     * @test
      */
+    #[Test]
     public function setGetAndGetAllConvertDatesFromDateObjectsToStringAndViceVersa()
     {
         $now = \DateTime::createFromFormat(DATE_RFC2822, 'Tue, 22 May 2012 12:00:00 +0200');
@@ -116,12 +108,10 @@ class HeadersTest extends UnitTestCase
         self::assertEquals($nowInGmt->format(DATE_RFC2822), $headers->get('X-Test-Run-At')->format(DATE_RFC2822));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function removeRemovesTheSpecifiedHeader()
     {
-        $specifiedFields = ['X-Coffee' => 'Arabica', 'Host' =>'myhost.com'];
+        $specifiedFields = ['X-Coffee' => 'Arabica', 'Host' => 'myhost.com'];
         $headers = new Headers($specifiedFields);
 
         $headers->remove('X-Coffee');
@@ -130,9 +120,7 @@ class HeadersTest extends UnitTestCase
         self::assertEquals(['Host' => ['myhost.com']], $headers->getAll());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function singleCookieCanBeSetAndRetrieved()
     {
         $headers = new Headers();
@@ -141,9 +129,7 @@ class HeadersTest extends UnitTestCase
         self::assertEquals($cookie, $headers->getCookie('Dark-Chocolate-Chip'));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function cookiesCanBeRemoved()
     {
         $headers = new Headers();
@@ -154,9 +140,7 @@ class HeadersTest extends UnitTestCase
         self::assertFalse($headers->hasCookie('Dark-Chocolate-Chip'));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getCookiesReturnsAllCookies()
     {
         $cookies = [
@@ -173,12 +157,10 @@ class HeadersTest extends UnitTestCase
         $headers->eatCookie('Coffee-Fudge-Mess');
         unset($cookies['Coffee-Fudge-Mess']);
 
-        self::assertEquals(array_keys($cookies), array_keys($headers->getCookies()));
+        self::assertSame(array_keys($cookies), array_keys($headers->getCookies()));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function cookiesCanBeSetThroughTheCookieHeader()
     {
         $headers = new Headers();
@@ -195,9 +177,8 @@ class HeadersTest extends UnitTestCase
 
     /**
      * See FLOW-12
-     *
-     * @test
      */
+    #[Test]
     public function cookiesWithEmptyNameAreIgnored()
     {
         $headers = new Headers();
@@ -207,9 +188,7 @@ class HeadersTest extends UnitTestCase
         self::assertEquals('the value number 1', $headers->getCookie('cookie1')->getValue());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function cookiesWithInvalidNameAreIgnored()
     {
         $headers = new Headers();
@@ -222,24 +201,20 @@ class HeadersTest extends UnitTestCase
     /**
      * Data provider with valid cache control headers
      */
-    public function cacheControlHeaders()
+    public static function cacheControlHeaders(): \Iterator
     {
-        return [
-            ['public', 'public'],
-            ['private', 'private'],
-            ['no-cache', 'no-cache'],
-            ['private="X-Flow-Powered"', 'private="X-Flow-Powered"'],
-            ['no-cache= "X-Flow-Powered" ', 'no-cache="X-Flow-Powered"'],
-            ['max-age = 3600, must-revalidate', 'max-age=3600, must-revalidate'],
-            ['private, max-age=0, must-revalidate', 'private, max-age=0, must-revalidate'],
-            ['max-age=60, private,  proxy-revalidate', 'private, max-age=60, proxy-revalidate']
-        ];
+        yield ['public', 'public'];
+        yield ['private', 'private'];
+        yield ['no-cache', 'no-cache'];
+        yield ['private="X-Flow-Powered"', 'private="X-Flow-Powered"'];
+        yield ['no-cache= "X-Flow-Powered" ', 'no-cache="X-Flow-Powered"'];
+        yield ['max-age = 3600, must-revalidate', 'max-age=3600, must-revalidate'];
+        yield ['private, max-age=0, must-revalidate', 'private, max-age=0, must-revalidate'];
+        yield ['max-age=60, private,  proxy-revalidate', 'private, max-age=60, proxy-revalidate'];
     }
 
-    /**
-     * @dataProvider cacheControlHeaders
-     * @test
-     */
+    #[DataProvider('cacheControlHeaders')]
+    #[Test]
     public function cacheControlHeaderPassedToSetIsParsedCorrectly($rawFieldValue, $renderedFieldValue)
     {
         $headers = new Headers();
@@ -250,9 +225,7 @@ class HeadersTest extends UnitTestCase
         self::assertEquals($renderedFieldValue, $headers->get('Cache-Control'));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function setOverridesAnyPreviouslyDefinedCacheControlDirectives()
     {
         $headers = new Headers();
@@ -264,9 +237,8 @@ class HeadersTest extends UnitTestCase
 
     /**
      * (RFC 2616 / 14.9.1)
-     *
-     * @test
      */
+    #[Test]
     public function setCacheControlDirectiveSetsVisibilityCorrectly()
     {
         $headers = new Headers();
@@ -288,11 +260,10 @@ class HeadersTest extends UnitTestCase
     }
 
     /**
-     * @test
-     * @doesNotPerformAssertions
-     *
      * Note: This is a fix for https://jira.neos.io/browse/FLOW-324 (see https://code.google.com/p/chromium/issues/detail?id=501095)
      */
+    #[Test]
+    #[DoesNotPerformAssertions]
     public function setExceptsHttpsHeaders()
     {
         $headers = new Headers();
@@ -301,9 +272,8 @@ class HeadersTest extends UnitTestCase
 
     /**
      * (RFC 2616 / 14.9.1)
-     *
-     * @test
      */
+    #[Test]
     public function removeCacheControlDirectiveRemovesVisibilityCorrectly()
     {
         $headers = new Headers();
@@ -324,9 +294,8 @@ class HeadersTest extends UnitTestCase
 
     /**
      * (RFC 2616 / 14.9.2)
-     *
-     * @test
      */
+    #[Test]
     public function noStoreCacheDirectiveCanBeSetAndRemoved()
     {
         $headers = new Headers();
@@ -343,9 +312,8 @@ class HeadersTest extends UnitTestCase
 
     /**
      * (RFC 2616 / 14.9.3)
-     *
-     * @test
      */
+    #[Test]
     public function maxAgeAndSMaxAgeIsRenderedCorrectly()
     {
         $headers = new Headers();
@@ -365,9 +333,8 @@ class HeadersTest extends UnitTestCase
 
     /**
      * (RFC 2616 / 14.9.5)
-     *
-     * @test
      */
+    #[Test]
     public function noTransformCacheDirectiveIsRenderedCorrectly()
     {
         $headers = new Headers();
@@ -384,9 +351,8 @@ class HeadersTest extends UnitTestCase
 
     /**
      * (RFC 2616 / 14.9.4)
-     *
-     * @test
      */
+    #[Test]
     public function mustRevalidateAndProxyRevalidateAreRenderedCorrectly()
     {
         $headers = new Headers();
@@ -402,29 +368,25 @@ class HeadersTest extends UnitTestCase
     /**
      * Data provider for the test below
      */
-    public function cacheDirectivesAndExampleValues()
+    public static function cacheDirectivesAndExampleValues(): \Iterator
     {
-        return [
-            ['public', true],
-            ['private', true],
-            ['private', 'X-Flow'],
-            ['no-cache', true],
-            ['no-cache', 'X-Flow'],
-            ['max-age', 60],
-            ['s-maxage', 120],
-            ['must-revalidate', true],
-            ['proxy-revalidate', true],
-            ['no-store', true],
-            ['no-transform', true],
-            ['must-revalidate', true],
-            ['proxy-revalidate', true]
-        ];
+        yield ['public', true];
+        yield ['private', true];
+        yield ['private', 'X-Flow'];
+        yield ['no-cache', true];
+        yield ['no-cache', 'X-Flow'];
+        yield ['max-age', 60];
+        yield ['s-maxage', 120];
+        yield ['must-revalidate', true];
+        yield ['proxy-revalidate', true];
+        yield ['no-store', true];
+        yield ['no-transform', true];
+        yield ['must-revalidate', true];
+        yield ['proxy-revalidate', true];
     }
 
-    /**
-     * @dataProvider cacheDirectivesAndExampleValues
-     * @test
-     */
+    #[DataProvider('cacheDirectivesAndExampleValues')]
+    #[Test]
     public function getCacheControlDirectiveReturnsTheSpecifiedDirectiveValueIfPresent($name, $value)
     {
         $headers = new Headers();

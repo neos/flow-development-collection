@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Aop\Builder;
 
 /*
@@ -54,8 +55,8 @@ abstract class AbstractMethodInterceptorBuilder
      * Builds method interception PHP code
      *
      * @param string $methodName Name of the method to build an interceptor for
-     * @param array $methodMetaInformation An array of method names and their meta information, including advices for the method (if any)
-     * @param string $targetClassName Name of the target class to build the interceptor for
+     * @param array<mixed> $methodMetaInformation An array of method names and their meta information, including advices for the method (if any)
+     * @param class-string $targetClassName Name of the target class to build the interceptor for
      * @return void
      */
     abstract public function build(string $methodName, array $methodMetaInformation, string $targetClassName): void;
@@ -63,7 +64,7 @@ abstract class AbstractMethodInterceptorBuilder
     /**
      * Builds a string containing PHP code to build the array given as input.
      *
-     * @param array $array
+     * @param array<mixed> $array
      * @return string e.g. 'array()' or 'array(1 => 'bar')
      */
     protected function buildArraySetupCode(array $array): string
@@ -91,7 +92,7 @@ abstract class AbstractMethodInterceptorBuilder
      * the constructor of a new join point. Used in the method interceptor
      * functions.
      *
-     * @param string|null $className Name of the declaring class of the method
+     * @param class-string|null $className Name of the declaring class of the method
      * @param string|null $methodName Name of the method to create arguments array code for
      * @param bool $useArgumentsArray If set, the $methodArguments array will be built from $arguments instead of using the actual parameter variables.
      * @return string The generated code to be used in an "array()" definition
@@ -116,7 +117,7 @@ abstract class AbstractMethodInterceptorBuilder
                     $argumentsArrayCode .= $methodParameterInfo['byReference'] ? '&' : '';
                     $argumentsArrayCode .= '$' . $methodParameterName . ";\n";
                 }
-                $argumentIndex ++;
+                $argumentIndex++;
             }
             $argumentsArrayCode .= "            ";
         }
@@ -126,8 +127,9 @@ abstract class AbstractMethodInterceptorBuilder
     /**
      * Generates the parameters code needed to call the constructor with the saved parameters.
      *
-     * @param string|null $className Name of the class the method is declared in
+     * @param class-string|null $className Name of the class the method is declared in
      * @return string The generated parameters code
+     * @todo can this be removed?
      */
     protected function buildSavedConstructorParametersCode(?string $className = null): string
     {
@@ -150,15 +152,15 @@ abstract class AbstractMethodInterceptorBuilder
     /**
      * Builds the advice interception code, to be used in a method interceptor.
      *
-     * @param array $groupedAdvices The advices grouped by advice type
+     * @param array<string,mixed> $groupedAdvices The advices grouped by advice type
      * @param string|null $methodName Name of the method the advice applies to
-     * @param string|null $targetClassName Name of the target class
-     * @param string|null $declaringClassName Name of the declaring class. This is usually the same as the $targetClassName. However, it is the introduction interface for introduced methods.
+     * @param class-string|null $targetClassName Name of the target class
+     * @param class-string|null $declaringClassName Name of the declaring class. This is usually the same as the $targetClassName. However, it is the introduction interface for introduced methods.
      * @return string PHP code to be used in the method interceptor
      */
-    protected function buildAdvicesCode(array $groupedAdvices, ?string $methodName = null, ?string $targetClassName = null, ?string $declaringClassName = null): string
+    protected function buildAdvicesCode(array $groupedAdvices, ?string $methodName, ?string $targetClassName, ?string $declaringClassName, ?string $declaredReturnType): string
     {
-        $advicesCode = $this->buildMethodArgumentsArrayCode($declaringClassName, $methodName, ($methodName === '__construct'));
+        $advicesCode = $this->buildMethodArgumentsArrayCode($declaringClassName, $methodName);
 
         if (isset($groupedAdvices[\Neos\Flow\Aop\Advice\AfterThrowingAdvice::class]) || isset($groupedAdvices[\Neos\Flow\Aop\Advice\AfterAdvice::class])) {
             $advicesCode .= "\n        \$result = NULL;\n        \$afterAdviceInvoked = false;\n        try {\n";
@@ -184,9 +186,18 @@ abstract class AbstractMethodInterceptorBuilder
                 $adviceChain = $adviceChains[\'Neos\Flow\Aop\Advice\AroundAdvice\'];
                 $adviceChain->rewind();
                 $joinPoint = new \Neos\Flow\Aop\JoinPoint($this, \'' . $targetClassName . '\', \'' . $methodName . '\', $methodArguments, $adviceChain);
+';
+            if ($declaredReturnType === 'never') {
+                $advicesCode .= '
+                $adviceChain->proceed($joinPoint);
+                $methodArguments = $joinPoint->getMethodArguments();
+';
+            } else {
+                $advicesCode .= '
                 $result = $adviceChain->proceed($joinPoint);
                 $methodArguments = $joinPoint->getMethodArguments();
 ';
+            }
         } else {
             $advicesCode .= '
                 $joinPoint = new \Neos\Flow\Aop\JoinPoint($this, \'' . $targetClassName . '\', \'' . $methodName . '\', $methodArguments);
@@ -195,7 +206,7 @@ abstract class AbstractMethodInterceptorBuilder
 ';
         }
 
-        if (isset($groupedAdvices[\Neos\Flow\Aop\Advice\AfterReturningAdvice::class])) {
+        if (isset($groupedAdvices[\Neos\Flow\Aop\Advice\AfterReturningAdvice::class]) && $declaredReturnType !== 'never') {
             $advicesCode .= '
                 if (isset($this->Flow_Aop_Proxy_targetMethodsAndGroupedAdvices[\'' . $methodName . '\'][\'Neos\Flow\Aop\Advice\AfterReturningAdvice\'])) {
                     $advices = $this->Flow_Aop_Proxy_targetMethodsAndGroupedAdvices[\'' . $methodName . '\'][\'Neos\Flow\Aop\Advice\AfterReturningAdvice\'];

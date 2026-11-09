@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Core;
 
 /*
@@ -11,8 +12,8 @@ namespace Neos\Flow\Core;
  * source code.
  */
 
-use Neos\Flow\Annotations as Flow;
 use Neos\Cache\Frontend\PhpFrontend;
+use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Utility\Environment;
 
 /**
@@ -25,7 +26,7 @@ use Neos\Flow\Utility\Environment;
 class ProxyClassLoader
 {
     /**
-     * @var array
+     * @var array<string,true>
      */
     protected $ignoredClassNames = [
         'integer' => true,
@@ -52,7 +53,7 @@ class ProxyClassLoader
     protected $classesCache;
 
     /**
-     * @var array
+     * @var ?array<mixed>
      */
     protected $availableProxyClasses;
 

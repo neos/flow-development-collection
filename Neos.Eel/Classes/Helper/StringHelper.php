@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Eel\Helper;
 
 /*
@@ -185,7 +186,7 @@ class StringHelper implements ProtectedContextAwareInterface
         if ($index === false) {
             return -1;
         }
-        return (integer)$index;
+        return (int)$index;
     }
 
     /**
@@ -217,7 +218,7 @@ class StringHelper implements ProtectedContextAwareInterface
         if ($index === false) {
             return -1;
         }
-        return (integer)$index;
+        return (int)$index;
     }
 
     /**
@@ -533,7 +534,7 @@ class StringHelper implements ProtectedContextAwareInterface
      */
     public function toInteger($string)
     {
-        return (integer)$string;
+        return (int)$string;
     }
 
     /**
@@ -557,7 +558,7 @@ class StringHelper implements ProtectedContextAwareInterface
      */
     public function toBoolean($string)
     {
-        return strtolower((string)$string) === 'true' || (integer)$string === 1;
+        return strtolower((string)$string) === 'true' || (int)$string === 1;
     }
 
     /**

@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Neos\Flow\Tests\Functional\Http\Client;
 
 /*
@@ -10,17 +13,17 @@ namespace Neos\Flow\Tests\Functional\Http\Client;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
 use Neos\Flow\Http\Client\CurlEngine;
 use Neos\Flow\Http\InvalidArgumentException;
 use Neos\Flow\Tests\FunctionalTestCase;
+use PHPUnit\Framework\Attributes\RequiresPhpExtension;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Functional tests for the HTTP client internal request engine
- *
- * @requires extension curl
  */
-class CurlEngineTest extends FunctionalTestCase
+#[RequiresPhpExtension('curl')]
+final class CurlEngineTest extends FunctionalTestCase
 {
     /**
      * @var boolean
@@ -39,9 +42,8 @@ class CurlEngineTest extends FunctionalTestCase
 
     /**
      * Check if the curl engine can handle redirects
-     *
-     * @test
      */
+    #[Test]
     public function redirectsAreFollowed()
     {
         $this->browser->getRequestEngine()->setOption(CURLOPT_FOLLOWLOCATION, true);
@@ -53,20 +55,18 @@ class CurlEngineTest extends FunctionalTestCase
 
     /**
      * Check if the Curl Engine can send a GET request to www.neos.io
-     *
-     * @test
      */
+    #[Test]
     public function getRequestReturnsResponse()
     {
         $response = $this->browser->request('http://www.neos.io');
-        self::assertStringContainsString('This website is powered by Neos', $response->getBody()->getContents());
+        self::assertStringContainsString('This website is powered by Neos', (string) $response->getBody()->getContents());
     }
 
     /**
      * Check if setting Http Headers directly in Curl throws Exception
-     *
-     * @test
      */
+    #[Test]
     public function setRequestHeadersViaOptionThrowsException()
     {
         self::expectException(InvalidArgumentException::class);

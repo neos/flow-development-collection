@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Core;
 
 /*
@@ -24,7 +25,7 @@ class LockManager
     /**
      * @var integer
      */
-    const LOCKFILE_MAXIMUM_AGE = 90;
+    public const LOCKFILE_MAXIMUM_AGE = 90;
 
     /**
      * This file contains the actual lock, set via \flock() in lockSiteOrExit()
@@ -47,7 +48,7 @@ class LockManager
     protected $lockHoldingPage;
 
     /**
-     * @var resource
+     * @var resource|null
      */
     protected $lockResource;
 
@@ -128,8 +129,8 @@ class LockManager
     public function lockSiteOrExit()
     {
         touch($this->lockFlagPathAndFilename);
-        $this->lockResource = fopen($this->lockPathAndFilename, 'w+');
-        if (!flock($this->lockResource, LOCK_EX | LOCK_NB)) {
+        $this->lockResource = fopen($this->lockPathAndFilename, 'w+') ?: null;
+        if ($this->lockResource && !flock($this->lockResource, LOCK_EX | LOCK_NB)) {
             fclose($this->lockResource);
             $this->doExit();
         }
@@ -168,6 +169,7 @@ class LockManager
      */
     protected function doExit()
     {
+        /** @phpstan-ignore identical.alwaysFalse (can also be "Web") */
         if (FLOW_SAPITYPE === 'Web') {
             header('HTTP/1.1 503 Service Temporarily Unavailable');
             readfile($this->lockHoldingPage);

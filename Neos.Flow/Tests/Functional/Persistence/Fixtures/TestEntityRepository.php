@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Neos\Flow\Tests\Functional\Persistence\Fixtures;
@@ -13,9 +14,9 @@ namespace Neos\Flow\Tests\Functional\Persistence\Fixtures;
  * source code.
  */
 
+use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Persistence\QueryInterface;
 use Neos\Flow\Persistence\Repository;
-use Neos\Flow\Annotations as Flow;
 
 /**
  * A repository for the test entities

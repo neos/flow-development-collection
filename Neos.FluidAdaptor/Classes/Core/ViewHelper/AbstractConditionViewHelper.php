@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\FluidAdaptor\Core\ViewHelper;
 
 /*
@@ -75,7 +76,7 @@ abstract class AbstractConditionViewHelper extends AbstractViewHelper
     protected static function evaluateCondition($arguments, RenderingContextInterface $renderingContext)
     {
         // fallback value derived from registerArgument default value
-        return (boolean)($arguments['condition'] ?? false);
+        return (bool)($arguments['condition'] ?? false);
     }
 
     /**

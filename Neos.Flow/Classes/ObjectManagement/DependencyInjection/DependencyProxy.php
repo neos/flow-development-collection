@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\ObjectManagement\DependencyInjection;
 
 /*
@@ -17,44 +18,35 @@ use Neos\Flow\Annotations as Flow;
  * A Proxy Class Builder which integrates Dependency Injection.
  *
  * @Flow\Proxy(false)
- * @api
+ * @deprecated since Flow 9.2, not used in the Framework anymore. Flow now uses PHP 8.4 lazy objects
+ * @template T of object
  */
-class DependencyProxy
+final class DependencyProxy
 {
     /**
-     * @var string
+     * @var array<mixed>
      */
-    protected $className;
-
-    /**
-     * @var \Closure
-     */
-    protected $builder;
-
-    /**
-     * @var array
-     */
-    protected $propertyVariables = [];
+    protected array $propertyVariables = [];
 
     /**
      * Constructs this proxy
      *
-     * @param string $className Implementation class name of the dependency to proxy
+     * @param class-string<T> $className Implementation class name of the dependency to proxy
      * @param \Closure $builder The closure which eventually builds the dependency
      */
-    public function __construct($className, \Closure $builder)
-    {
-        $this->className = $className;
-        $this->builder = $builder;
+    public function __construct(
+        protected string $className,
+        protected \Closure $builder
+    ) {
     }
 
     /**
      * Activate the dependency and set it in the object.
      *
-     * @return object The real dependency object
+     * @return T The real dependency object
      * @api
      */
-    public function _activateDependency()
+    public function _activateDependency(): object
     {
         $realDependency = $this->builder->__invoke();
         foreach ($this->propertyVariables as &$propertyVariable) {
@@ -66,10 +58,10 @@ class DependencyProxy
     /**
      * Returns the class name of the proxied dependency
      *
-     * @return string Fully qualified class name of the proxied object
+     * @return class-string Fully qualified class name of the proxied object
      * @api
      */
-    public function _getClassName()
+    public function _getClassName(): string
     {
         return $this->className;
     }
@@ -81,7 +73,7 @@ class DependencyProxy
      * @param mixed &$propertyVariable The variable to replace
      * @return void
      */
-    public function _addPropertyVariable(&$propertyVariable)
+    public function _addPropertyVariable(&$propertyVariable): void
     {
         $this->propertyVariables[] = &$propertyVariable;
     }
@@ -91,10 +83,10 @@ class DependencyProxy
      * and returns the result of a call to the original method in the dependency
      *
      * @param string $methodName Name of the method to be called
-     * @param array $arguments An array of arguments to be passed to the method
+     * @param array<mixed> $arguments An array of arguments to be passed to the method
      * @return mixed
      */
-    public function __call($methodName, array $arguments)
+    public function __call(string $methodName, array $arguments): mixed
     {
         return $this->_activateDependency()->$methodName(...$arguments);
     }

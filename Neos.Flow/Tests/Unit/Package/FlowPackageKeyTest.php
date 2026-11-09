@@ -6,6 +6,8 @@ namespace Neos\Flow\Tests\Unit\Package;
 
 use Neos\Flow\Package\Exception\InvalidPackageKeyException;
 use Neos\Flow\Package\FlowPackageKey;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 class FlowPackageKeyTest extends TestCase
@@ -33,19 +35,15 @@ class FlowPackageKeyTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider validPackageKeys
-     * @test
-     */
+    #[DataProvider('validPackageKeys')]
+    #[Test]
     public function validPackageKeysAreAccepted(string $packageKey)
     {
         self::assertSame($packageKey, FlowPackageKey::fromString($packageKey)->value);
     }
 
-    /**
-     * @dataProvider invalidPackageKeys
-     * @test
-     */
+    #[DataProvider('invalidPackageKeys')]
+    #[Test]
     public function invalidPackageKeysAreRejected(string $packageKey)
     {
         $this->expectException(InvalidPackageKeyException::class);
@@ -147,19 +145,15 @@ class FlowPackageKeyTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider deriveFromManifestOrPathExamples
-     * @test
-     */
+    #[DataProvider('deriveFromManifestOrPathExamples')]
+    #[Test]
     public function deriveFromManifestOrPath(array $manifest, string $packagePath, string $expected)
     {
         $actual = FlowPackageKey::deriveFromManifestOrPath($manifest, $packagePath);
         self::assertSame($expected, $actual->value);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function deriveComposerPackageName()
     {
         self::assertSame(

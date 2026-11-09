@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\I18n;
 
 /*
@@ -12,10 +13,10 @@ namespace Neos\Flow\I18n;
  */
 
 use Neos\Flow\Annotations as Flow;
+use Neos\Flow\I18n;
+use Neos\Flow\I18n\Formatter\FormatterInterface;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Reflection\ReflectionService;
-use Neos\Flow\I18n\Formatter\FormatterInterface;
-use Neos\Flow\I18n;
 
 /**
  * A class for replacing placeholders in strings with formatted values.
@@ -58,7 +59,7 @@ class FormatResolver
     /**
      * Array of concrete formatters used by this class.
      *
-     * @var array<FormatterInterface>
+     * @var array<string,FormatterInterface>
      */
     protected $formatters;
 
@@ -91,7 +92,7 @@ class FormatResolver
      * specific and they are directly passed to the formatter class.
      *
      * @param string $textWithPlaceholders String message with placeholder(s)
-     * @param array $arguments An array of values to replace placeholders with
+     * @param array<string,mixed> $arguments An array of values to replace placeholders with
      * @param Locale $locale Locale to use (NULL for default one)
      * @return string The $text with placeholders resolved
      * @throws Exception\InvalidFormatPlaceholderException When encountered incorrectly formatted placeholder
@@ -179,6 +180,9 @@ class FormatResolver
                 throw new Exception\InvalidFormatterException(sprintf('The resolved internationalization formatter class name "%s" does not implement "%s" as required.', $possibleClassName, FormatterInterface::class), 1358162557);
             }
             $foundFormatter = $this->objectManager->get($possibleClassName);
+        }
+        if (!$foundFormatter instanceof FormatterInterface) {
+            throw new \Exception('No valid formatter found, got ' . get_class($foundFormatter), 1744412948);
         }
 
         $this->formatters[$formatterType] = $foundFormatter;

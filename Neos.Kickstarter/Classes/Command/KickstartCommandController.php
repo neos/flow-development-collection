@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Kickstarter\Command;
 
 /*
@@ -11,13 +12,13 @@ namespace Neos\Kickstarter\Command;
  * source code.
  */
 
+use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Cli\CommandController;
 use Neos\Flow\Composer\ComposerUtility;
 use Neos\Flow\Package\PackageInterface;
 use Neos\Flow\Package\PackageManager;
-use Neos\Utility\Arrays;
-use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Cli\CommandController;
 use Neos\Kickstarter\Utility\Validation;
+use Neos\Utility\Arrays;
 
 /**
  * Command controller for the Kickstart generator

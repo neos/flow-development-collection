@@ -1,5 +1,12 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Neos\Kickstarter\Tests\Unit\Utility;
+
+use Neos\Flow\Tests\UnitTestCase;
+use Neos\Kickstarter\Utility\Inflector;
+use PHPUnit\Framework\Attributes\Test;
 
 /*
  * This file is part of the Neos.Kickstarter package.
@@ -17,24 +24,20 @@ require_once(__DIR__ . '/../../../Resources/Private/PHP/Sho_Inflect.php');
  * Testcase for the Inflector
  *
  */
-class InflectorTest extends \Neos\Flow\Tests\UnitTestCase
+final class InflectorTest extends UnitTestCase
 {
-    /**
-     * @test
-     */
+    #[Test]
     public function humanizeCamelCaseConvertsCamelCaseToSpacesAndUppercasesFirstWord()
     {
-        $inflector = new \Neos\Kickstarter\Utility\Inflector();
+        $inflector = new Inflector();
         $humanized = $inflector->humanizeCamelCase('BlogAuthor');
         self::assertEquals('Blog author', $humanized);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function pluralizePluralizesWords()
     {
-        $inflector = new \Neos\Kickstarter\Utility\Inflector();
+        $inflector = new Inflector();
         self::assertEquals('boxes', $inflector->pluralize('box'));
         self::assertEquals('foos', $inflector->pluralize('foo'));
     }

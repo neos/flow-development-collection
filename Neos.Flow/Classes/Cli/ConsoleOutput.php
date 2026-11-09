@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Cli;
 
 /*
@@ -13,14 +14,14 @@ namespace Neos\Flow\Cli;
 
 use Neos\Flow\Annotations as Flow;
 use Symfony\Component\Console\Formatter\OutputFormatterStyle;
-use Symfony\Component\Console\Helper\ProgressBar;
-use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Helper\FormatterHelper;
 use Symfony\Component\Console\Helper\HelperSet;
+use Symfony\Component\Console\Helper\ProgressBar;
+use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Output\ConsoleOutput as SymfonyConsoleOutput;
 use Symfony\Component\Console\Input\StringInput as SymfonyStringInput;
+use Symfony\Component\Console\Output\ConsoleOutput as SymfonyConsoleOutput;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ChoiceQuestion;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
@@ -89,7 +90,7 @@ class ConsoleOutput
      * @see http://www.php.net/sprintf
      *
      * @param string $text Text to output
-     * @param array $arguments Optional arguments to use for sprintf
+     * @param array<mixed> $arguments Optional arguments to use for sprintf
      * @return void
      */
     public function output(string $text, array $arguments = []): void
@@ -104,7 +105,7 @@ class ConsoleOutput
      * Outputs specified text to the console window and appends a line break
      *
      * @param string $text Text to output
-     * @param array $arguments Optional arguments to use for sprintf
+     * @param array<mixed> $arguments Optional arguments to use for sprintf
      * @return void
      * @see output()
      * @see outputLines()
@@ -119,7 +120,7 @@ class ConsoleOutput
      * console window
      *
      * @param string $text Text to output
-     * @param array $arguments Optional arguments to use for sprintf
+     * @param array<mixed> $arguments Optional arguments to use for sprintf
      * @param integer $leftPadding The number of spaces to use for indentation
      * @return void
      * @see outputLine()
@@ -136,9 +137,9 @@ class ConsoleOutput
     /**
      * Renders a table like output of the given $rows
      *
-     * @param array $rows
-     * @param array $headers
-     * @param string $headerTitle
+     * @param array<mixed> $rows
+     * @param ?array<mixed> $headers
+     * @param ?string $headerTitle
      */
     public function outputTable(array $rows, ?array $headers = null, ?string $headerTitle = null): void
     {
@@ -156,12 +157,12 @@ class ConsoleOutput
     /**
      * Asks the user to select a value
      *
-     * @param string|array $question The question to ask. If an array each array item is turned into one line of a multi-line question
-     * @param array $choices List of choices to pick from
+     * @param string|array<string> $question The question to ask. If an array each array item is turned into one line of a multi-line question
+     * @param array<string> $choices List of choices to pick from
      * @param string|bool|int|float|null $default The default answer if the user enters nothing
      * @param boolean $multiSelect If true the result will be an array with the selected options. Multiple options can be given separated by commas
      * @param integer|null $attempts Max number of times to ask before giving up (null by default, which means infinite)
-     * @return integer|string|array Either the value for indexed arrays, the key for associative arrays or an array for multiple selections
+     * @return integer|string|array<mixed> Either the value for indexed arrays, the key for associative arrays or an array for multiple selections
      * @throws \InvalidArgumentException
      */
     public function select($question, array $choices, $default = null, bool $multiSelect = false, ?int $attempts = null)
@@ -178,8 +179,8 @@ class ConsoleOutput
     /**
      * Asks a question to the user
      *
-     * @param string|array $question The question to ask. If an array each array item is turned into one line of a multi-line question
-     * @param string $default The default answer if none is given by the user
+     * @param string|array<string> $question The question to ask. If an array each array item is turned into one line of a multi-line question
+     * @param ?string $default The default answer if none is given by the user
      * @return mixed The user answer
      * @throws \RuntimeException If there is no data to read in the input stream
      */
@@ -207,7 +208,7 @@ class ConsoleOutput
      *
      * The question will be asked until the user answers by nothing, yes, or no.
      *
-     * @param string|array $question The question to ask. If an array each array item is turned into one line of a multi-line question
+     * @param string|array<string> $question The question to ask. If an array each array item is turned into one line of a multi-line question
      * @param boolean $default The default answer if the user enters nothing
      * @return boolean true if the user has confirmed, false otherwise
      */
@@ -221,7 +222,7 @@ class ConsoleOutput
     /**
      * Asks a question to the user, the response is hidden
      *
-     * @param string|array $question The question. If an array each array item is turned into one line of a multi-line question
+     * @param string|array<string> $question The question. If an array each array item is turned into one line of a multi-line question
      * @param Boolean $fallback In case the response can not be hidden, whether to fallback on non-hidden question or not
      * @return mixed The answer
      * @throws \RuntimeException In case the fallback is deactivated and the response can not be hidden
@@ -244,7 +245,7 @@ class ConsoleOutput
      * otherwise.
      *
      * @see https://symfony.com/doc/current/components/console/helpers/questionhelper.html#validating-the-answer
-     * @param string|array $question The question to ask. If an array each array item is turned into one line of a multi-line question
+     * @param string|array<string> $question The question to ask. If an array each array item is turned into one line of a multi-line question
      * @param callable $validator A PHP callback that gets a value and is expected to return the (transformed) value or throw an exception if it wasn't valid
      * @param integer|null $attempts Max number of times to ask before giving up (null by default, which means infinite)
      * @param string $default The default answer if none is given by the user
@@ -268,7 +269,7 @@ class ConsoleOutput
      * validated data when the data is valid and throw an exception
      * otherwise.
      *
-     * @param string|array $question The question to ask. If an array each array item is turned into one line of a multi-line question
+     * @param string|array<string> $question The question to ask. If an array each array item is turned into one line of a multi-line question
      * @param callable $validator A PHP callback that gets a value and is expected to return the (transformed) value or throw an exception if it wasn't valid
      * @param integer|null $attempts Max number of times to ask before giving up (null by default, which means infinite)
      * @param boolean $fallback In case the response can not be hidden, whether to fallback on non-hidden question or not
@@ -361,7 +362,7 @@ class ConsoleOutput
     /**
      * @return InputInterface
      */
-    public function getInput():InputInterface
+    public function getInput(): InputInterface
     {
         return $this->input;
     }
@@ -384,7 +385,7 @@ class ConsoleOutput
     /**
      * If question is an array, split it into multi-line string
      *
-     * @param string|array $question
+     * @param string|array<mixed> $question
      * @return string
      */
     protected function combineQuestion($question): string
@@ -405,12 +406,8 @@ class ConsoleOutput
     {
         if ($this->progressBar === null) {
             $this->progressBar = new ProgressBar($this->output);
-            if (is_callable([$this->progressBar, 'minSecondsBetweenRedraws'])) {
-                $this->progressBar->minSecondsBetweenRedraws(0);
-            }
-            if (is_callable([$this->progressBar, 'maxSecondsBetweenRedraws'])) {
-                $this->progressBar->maxSecondsBetweenRedraws(0);
-            }
+            $this->progressBar->minSecondsBetweenRedraws(0);
+            $this->progressBar->maxSecondsBetweenRedraws(0);
         }
         return $this->progressBar;
     }

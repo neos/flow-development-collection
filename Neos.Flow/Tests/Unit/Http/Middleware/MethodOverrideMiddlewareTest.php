@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Neos\Flow\Tests\Unit\Http\Component;
 
 /*
@@ -10,15 +13,17 @@ namespace Neos\Flow\Tests\Unit\Http\Component;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
 use Neos\Flow\Http\Middleware\MethodOverrideMiddleware;
 use Neos\Flow\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\Stub;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 
-class MethodOverrideMiddlewareTest extends UnitTestCase
+final class MethodOverrideMiddlewareTest extends UnitTestCase
 {
     /**
      * @var MethodOverrideMiddleware
@@ -33,17 +38,17 @@ class MethodOverrideMiddlewareTest extends UnitTestCase
     /**
      * @var ResponseInterface|MockObject
      */
-    private $mockResponse;
+    private Stub $mockResponse;
 
     public function setUp(): void
     {
         $this->middleware = new MethodOverrideMiddleware();
 
-        $this->mockRequestHandler = $this->getMockBuilder(RequestHandlerInterface::class)->getMock();
-        $this->mockResponse = $this->getMockBuilder(ResponseInterface::class)->getMock();
+        $this->mockRequestHandler = $this->createMock(RequestHandlerInterface::class);
+        $this->mockResponse = $this->createStub(ResponseInterface::class);
     }
 
-    public function matchingRequests_dataProvider(): \Traversable
+    public static function matchingRequests_dataProvider(): \Traversable
     {
         yield 'parsedBody (__method)' => ['method' => 'POST', 'headers' => [], 'parsedBody' => ['__method' => 'PUT'], 'expectedMethod' => 'PUT'];
         yield 'header (X-Http-Method-Override)' => ['method' => 'POST', 'headers' => ['X-Http-Method-Override' => 'PATCH'], 'parsedBody' => [], 'expectedMethod' => 'PATCH'];
@@ -53,16 +58,14 @@ class MethodOverrideMiddlewareTest extends UnitTestCase
         yield 'parsedBody and both headers' => ['method' => 'POST', 'headers' => ['X-Http-Method-Override' => 'PATCH', 'X-Http-Method' => 'DELETE'], 'parsedBody' => ['__method' => 'PUT'], 'expectedMethod' => 'PUT'];
     }
 
-    /**
-     * @test
-     * @dataProvider matchingRequests_dataProvider
-     */
+    #[DataProvider('matchingRequests_dataProvider')]
+    #[Test]
     public function process_matchingRequests(string $method, array $headers, array $parsedBody, string $expectedMethod): void
     {
         $mockRequest = $this->prepareMockRequest($method, $headers, $parsedBody);
-        $mockAlteredRequest = $this->getMockBuilder(ServerRequestInterface::class)->disableOriginalConstructor()->getMock();
-        $mockRequest->expects(self::once())->method('withMethod')->with($expectedMethod)->willReturn($mockAlteredRequest);
-        $this->mockRequestHandler->expects(self::once())->method('handle')->willReturnCallback(function ($request) use ($mockAlteredRequest) {
+        $mockAlteredRequest = $this->createStub(ServerRequestInterface::class);
+        $mockRequest->expects($this->once())->method('withMethod')->with($expectedMethod)->willReturn($mockAlteredRequest);
+        $this->mockRequestHandler->expects($this->once())->method('handle')->willReturnCallback(function ($request) use ($mockAlteredRequest) {
             self::assertSame($request, $mockAlteredRequest);
             return $this->mockResponse;
         });
@@ -70,22 +73,20 @@ class MethodOverrideMiddlewareTest extends UnitTestCase
         $this->middleware->process($mockRequest, $this->mockRequestHandler);
     }
 
-    public function nonMatchingRequests_dataProvider(): \Traversable
+    public static function nonMatchingRequests_dataProvider(): \Traversable
     {
         yield 'POST request' => ['method' => 'POST', 'headers' => [], 'parsedBody' => ['foo' => 'bar']];
         yield 'GET request with X-Http-Method-Override and X-Http-Method header' => ['method' => 'GET', 'headers' => ['X-Http-Method-Override' => 'PATCH', 'X-Http-Method' => 'DELETE'], 'parsedBody' => []];
         yield 'DELETE request with parsedBody' => ['method' => 'DELETE', 'headers' => [], 'parsedBody' => ['__method' => 'PUT']];
     }
 
-    /**
-     * @test
-     * @dataProvider nonMatchingRequests_dataProvider
-     */
+    #[DataProvider('nonMatchingRequests_dataProvider')]
+    #[Test]
     public function process_nonMatchingRequests(string $method, array $headers, array $parsedBody): void
     {
         $mockRequest = $this->prepareMockRequest($method, $headers, $parsedBody);
-        $mockRequest->expects(self::never())->method('withMethod');
-        $this->mockRequestHandler->expects(self::once())->method('handle')->willReturnCallback(function ($request) use ($mockRequest) {
+        $mockRequest->expects($this->never())->method('withMethod');
+        $this->mockRequestHandler->expects($this->once())->method('handle')->willReturnCallback(function ($request) use ($mockRequest) {
             self::assertSame($request, $mockRequest);
             return $this->mockResponse;
         });
@@ -104,7 +105,7 @@ class MethodOverrideMiddlewareTest extends UnitTestCase
      */
     private function prepareMockRequest(string $method, array $headers, array $parsedBody)
     {
-        $mockRequest = $this->getMockBuilder(ServerRequestInterface::class)->getMock();
+        $mockRequest = $this->createMock(ServerRequestInterface::class);
         $mockRequest->method('getMethod')->willReturn($method);
         $mockRequest->method('getParsedBody')->willReturn($parsedBody);
         $mockRequest->method('hasHeader')->willReturnCallback(function ($header) use ($headers) {

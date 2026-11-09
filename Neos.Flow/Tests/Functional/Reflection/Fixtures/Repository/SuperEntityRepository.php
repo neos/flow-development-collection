@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Tests\Functional\Reflection\Fixtures\Repository;
 
 /*
@@ -10,13 +11,12 @@ namespace Neos\Flow\Tests\Functional\Reflection\Fixtures\Repository;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Persistence;
+use Neos\Flow\Persistence\Repository;
 
 /**
  * @Flow\Scope("singleton")
  */
-class SuperEntityRepository extends Persistence\Repository
+class SuperEntityRepository extends Repository
 {
 }

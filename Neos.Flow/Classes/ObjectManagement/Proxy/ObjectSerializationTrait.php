@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\ObjectManagement\Proxy;
 
 /*
@@ -15,32 +16,25 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\Persistence\Proxy as DoctrineProxy;
 use Neos\Flow\Core\Bootstrap;
 use Neos\Flow\ObjectManagement\Configuration\Configuration;
-use Neos\Flow\ObjectManagement\DependencyInjection\DependencyProxy;
 use Neos\Flow\Persistence\Aspect\PersistenceMagicInterface;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Utility\Arrays;
-use Neos\Utility\Exception\PropertyNotAccessibleException;
-use Neos\Utility\ObjectAccess;
 
 /**
  * Methods used to serialize objects used by proxy classes.
  */
 trait ObjectSerializationTrait
 {
-    protected array $Flow_Object_PropertiesToSerialize = [];
-
-    protected ?array $Flow_Persistence_RelatedEntities = null;
-
     /**
      * Code to find and serialize entities on sleep
      *
      * @param array $transientProperties
      * @param array $propertyVarTags
      * @return array
-     * @throws PropertyNotAccessibleException
      */
     private function Flow_serializeRelatedEntities(array $transientProperties, array $propertyVarTags): array
     {
+        $propertiesToSerialize = [];
         $reflectedClass = new \ReflectionClass(__CLASS__);
         $allReflectedProperties = $reflectedClass->getProperties();
         foreach ($allReflectedProperties as $reflectionProperty) {
@@ -49,8 +43,6 @@ trait ObjectSerializationTrait
                 'Flow_Aop_Proxy_targetMethodsAndGroupedAdvices',
                 'Flow_Aop_Proxy_groupedAdviceChains',
                 'Flow_Aop_Proxy_methodIsInAdviceMode',
-                'Flow_Persistence_RelatedEntities',
-                'Flow_Object_PropertiesToSerialize',
                 'Flow_Injected_Properties',
             ])) {
                 continue;
@@ -68,6 +60,7 @@ trait ObjectSerializationTrait
                     }
                 }
             }
+
             if (is_object($this->$propertyName) && !$this->$propertyName instanceof Collection) {
                 if ($this->$propertyName instanceof DoctrineProxy) {
                     $className = get_parent_class($this->$propertyName);
@@ -82,29 +75,21 @@ trait ObjectSerializationTrait
                     }
                 }
                 if ($this->$propertyName instanceof DoctrineProxy || ($this->$propertyName instanceof PersistenceMagicInterface && !Bootstrap::$staticObjectManager->get(PersistenceManagerInterface::class)->isNewObject($this->$propertyName))) {
-                    if (!isset($this->Flow_Persistence_RelatedEntities) || !is_array($this->Flow_Persistence_RelatedEntities)) {
-                        $this->Flow_Persistence_RelatedEntities = [];
-                        $this->Flow_Object_PropertiesToSerialize[] = 'Flow_Persistence_RelatedEntities';
-                    }
-                    $identifier = Bootstrap::$staticObjectManager->get(PersistenceManagerInterface::class)->getIdentifierByObject($this->$propertyName);
-                    if (!$identifier && $this->$propertyName instanceof DoctrineProxy) {
-                        $identifier = current(ObjectAccess::getProperty($this->$propertyName, '_identifier', true));
-                    }
-                    $this->Flow_Persistence_RelatedEntities[$propertyName] = [
-                        'propertyName' => $propertyName,
-                        'entityType' => $className,
-                        'identifier' => $identifier
-                    ];
+                    $this->Flow_searchForEntitiesAndStoreIdentifierArray('', $this->$propertyName, $propertyName);
                     continue;
                 }
-                if ($className !== false && (Bootstrap::$staticObjectManager->getScope($className) === Configuration::SCOPE_SINGLETON || $className === DependencyProxy::class)) {
+                if ($className !== false &&
+                    (
+                        Bootstrap::$staticObjectManager->getScope($className) === Configuration::SCOPE_SINGLETON
+                        || Bootstrap::$staticObjectManager->getScope($className) === Configuration::SCOPE_SESSION
+                    )) {
                     continue;
                 }
             }
-            $this->Flow_Object_PropertiesToSerialize[] = $propertyName;
+            $propertiesToSerialize[] = $propertyName;
         }
 
-        return $this->Flow_Object_PropertiesToSerialize;
+        return $propertiesToSerialize;
     }
 
     /**
@@ -113,36 +98,36 @@ trait ObjectSerializationTrait
      * @param string $path
      * @param mixed $propertyValue
      * @param string $originalPropertyName
-     * @return void
+     * @return bool if an entity was found
      */
-    private function Flow_searchForEntitiesAndStoreIdentifierArray(string $path, mixed $propertyValue, string $originalPropertyName): void
+    private function Flow_searchForEntitiesAndStoreIdentifierArray(string $path, mixed $propertyValue, string $originalPropertyName): bool
     {
+        $foundEntity = false;
         if (is_array($propertyValue) || ($propertyValue instanceof \ArrayObject || $propertyValue instanceof \SplObjectStorage)) {
             foreach ($propertyValue as $key => $value) {
-                $this->Flow_searchForEntitiesAndStoreIdentifierArray($path . '.' . $key, $value, $originalPropertyName);
+                $foundEntity = $foundEntity || $this->Flow_searchForEntitiesAndStoreIdentifierArray($path . '.' . $key, $value, $originalPropertyName);
             }
         } elseif ($propertyValue instanceof DoctrineProxy || ($propertyValue instanceof PersistenceMagicInterface && !Bootstrap::$staticObjectManager->get(PersistenceManagerInterface::class)->isNewObject($propertyValue))) {
-            if (!isset($this->Flow_Persistence_RelatedEntities) || !is_array($this->Flow_Persistence_RelatedEntities)) {
-                $this->Flow_Persistence_RelatedEntities = [];
-                $this->Flow_Object_PropertiesToSerialize[] = 'Flow_Persistence_RelatedEntities';
+            if (!isset($this->Flow_Persistence_RelatedEntitiesContainer)) {
+                throw new \RuntimeException(sprintf('The class "%s" has an entity reference Flow could not detect in property "%s" and path "%s", please add a Flow\\Proxy annotation with "forceSerializationCode" set to "true".', $this::class, $originalPropertyName, $path), 1756936954);
             }
-            if ($propertyValue instanceof DoctrineProxy) {
-                $className = get_parent_class($propertyValue);
-            } else {
-                $className = Bootstrap::$staticObjectManager->getObjectNameByClassName(get_class($propertyValue));
+            $this->Flow_Persistence_RelatedEntitiesContainer->appendRelatedEntity($originalPropertyName, $path, $propertyValue);
+            /**
+             * The idea of setting to null here is to prevent serialization after we found an entity, BUT this logic
+             * is heavily flawed in today's PHP world. Type hinting might make null an invalid value. Also
+             * Arrays::setValueByPath() only works on "Array-like" not on objects, therefore
+             * we don't handle direct properties of $this (path empty string) at all here.
+             * They are skipped for serialization in Flow_serializeRelatedEntities so we don't need to unset.
+             * This still leaves the option of types going awry somewhere, but at the moment there
+             * isn't really a better solution at hand and the case should be super rare.
+             */
+            if ($path !== '') {
+                $this->$originalPropertyName = Arrays::setValueByPath($this->$originalPropertyName, $path, null);
             }
-            $identifier = Bootstrap::$staticObjectManager->get(PersistenceManagerInterface::class)->getIdentifierByObject($propertyValue);
-            if (!$identifier && $propertyValue instanceof DoctrineProxy) {
-                $identifier = current(ObjectAccess::getProperty($propertyValue, '_identifier', true));
-            }
-            $this->Flow_Persistence_RelatedEntities[$originalPropertyName . '.' . $path] = [
-                'propertyName' => $originalPropertyName,
-                'entityType' => $className,
-                'identifier' => $identifier,
-                'entityPath' => $path
-            ];
-            $this->$originalPropertyName = Arrays::setValueByPath($this->$originalPropertyName, $path, null);
+            $foundEntity = true;
         }
+
+        return $foundEntity;
     }
 
     /**
@@ -153,17 +138,18 @@ trait ObjectSerializationTrait
      */
     private function Flow_setRelatedEntities(): void
     {
-        if (isset($this->Flow_Persistence_RelatedEntities)) {
+        if (isset($this->Flow_Persistence_RelatedEntitiesContainer)) {
             $persistenceManager = Bootstrap::$staticObjectManager->get(PersistenceManagerInterface::class);
-            foreach ($this->Flow_Persistence_RelatedEntities as $entityInformation) {
-                $entity = $persistenceManager->getObjectByIdentifier($entityInformation['identifier'], $entityInformation['entityType'], true);
-                if (isset($entityInformation['entityPath'])) {
-                    $this->{$entityInformation['propertyName']} = Arrays::setValueByPath($this->{$entityInformation['propertyName']}, $entityInformation['entityPath'], $entity);
+            foreach ($this->Flow_Persistence_RelatedEntitiesContainer as $entityInformation) {
+                $entity = $persistenceManager->getObjectByIdentifier($entityInformation['i'], $entityInformation['c'], true);
+                if ($entityInformation['p'] !== '') {
+                    $this->{$entityInformation['n']} = Arrays::setValueByPath($this->{$entityInformation['n']}, $entityInformation['p'], $entity);
                 } else {
-                    $this->{$entityInformation['propertyName']} = $entity;
+                    $this->{$entityInformation['n']} = $entity;
                 }
             }
-            unset($this->Flow_Persistence_RelatedEntities);
+
+            isset($this->Flow_Persistence_RelatedEntitiesContainer) && $this->Flow_Persistence_RelatedEntitiesContainer->reset();
         }
     }
 }

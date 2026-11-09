@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Neos\Flow\Tests\Unit\I18n\Xliff;
 
 /*
@@ -10,15 +13,16 @@ namespace Neos\Flow\Tests\Unit\I18n\Xliff;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
+use Neos\Flow\I18n\Locale;
+use Neos\Flow\I18n\Xliff\Model\FileAdapter;
 use Neos\Flow\Tests\UnitTestCase;
-use Neos\Flow\I18n;
+use PHPUnit\Framework\Attributes\Test;
 use Psr\Log\LoggerInterface;
 
 /**
  * Testcase for the FileAdapter
  */
-class FileAdapterTest extends UnitTestCase
+final class FileAdapterTest extends UnitTestCase
 {
     /**
      * @var array
@@ -35,12 +39,10 @@ class FileAdapterTest extends UnitTestCase
         $this->mockParsedXliffFile['fileIdentifier'] = 'Neos.Flow:Foo';
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function targetIsReturnedCorrectlyWhenSourceProvided()
     {
-        $fileAdapter = new I18n\Xliff\Model\FileAdapter($this->mockParsedXliffFile, new I18n\Locale('de'));
+        $fileAdapter = new FileAdapter($this->mockParsedXliffFile, new Locale('de'));
 
         $result = $fileAdapter->getTargetBySource('Source string');
         self::assertEquals('Übersetzte Zeichenkette', $result);
@@ -55,12 +57,10 @@ class FileAdapterTest extends UnitTestCase
         self::assertFalse($result);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function targetIsReturnedCorrectlyWhenIdProvided()
     {
-        $fileAdapter = new I18n\Xliff\Model\FileAdapter($this->mockParsedXliffFile, new I18n\Locale('de'));
+        $fileAdapter = new FileAdapter($this->mockParsedXliffFile, new Locale('de'));
 
         $result = $fileAdapter->getTargetByTransUnitId('key1');
         self::assertEquals('Übersetzte Zeichenkette', $result);
@@ -68,39 +68,31 @@ class FileAdapterTest extends UnitTestCase
         $result = $fileAdapter->getTargetByTransUnitId('key2', 1);
         self::assertEquals('Übersetzte Mehrzahl 1', $result);
 
-        $mockLogger = $this->getMockBuilder(LoggerInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $mockLogger = $this->createStub(LoggerInterface::class);
         $this->inject($fileAdapter, 'i18nLogger', $mockLogger);
 
         $result = $fileAdapter->getTargetByTransUnitId('not.existing');
         self::assertFalse($result);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function sourceIsReturnedWhenIdProvidedAndSourceEqualsTargetLanguage()
     {
-        $fileAdapter = new I18n\Xliff\Model\FileAdapter($this->mockParsedXliffFile, new I18n\Locale('en_US'));
+        $fileAdapter = new FileAdapter($this->mockParsedXliffFile, new Locale('en_US'));
 
         $result = $fileAdapter->getTargetByTransUnitId('key3');
         self::assertEquals('No target', $result);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getTargetBySourceLogsSilentlyIfNoTransUnitsArePresent()
     {
-        $fileAdapter = new I18n\Xliff\Model\FileAdapter([
+        $fileAdapter = new FileAdapter([
             'fileIdentifier' => 'Neos.Flow:Foo'
-        ], new I18n\Locale('de'));
+        ], new Locale('de'));
 
-        $mockLogger = $this->getMockBuilder(LoggerInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $mockLogger->expects(self::once())
+        $mockLogger = $this->createMock(LoggerInterface::class);
+        $mockLogger->expects($this->once())
             ->method('debug')
             ->with($this->stringStartsWith('No trans-unit elements were found'));
         $this->inject($fileAdapter, 'i18nLogger', $mockLogger);

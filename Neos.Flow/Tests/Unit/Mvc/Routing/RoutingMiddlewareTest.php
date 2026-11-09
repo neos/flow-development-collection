@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Neos\Flow\Tests\Unit\Mvc\Routing;
 
 /*
@@ -10,16 +13,17 @@ namespace Neos\Flow\Tests\Unit\Mvc\Routing;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
 use GuzzleHttp\Psr7\Response;
 use Neos\Flow\Http\ServerRequestAttributes;
-use Neos\Flow\Mvc\Routing\Dto\RouteParameters;
 use Neos\Flow\Mvc\Routing\Dto\RouteContext;
+use Neos\Flow\Mvc\Routing\Dto\RouteParameters;
 use Neos\Flow\Mvc\Routing\Router;
 use Neos\Flow\Mvc\Routing\Routes;
 use Neos\Flow\Mvc\Routing\RoutesProviderInterface;
 use Neos\Flow\Mvc\Routing\RoutingMiddleware;
 use Neos\Flow\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\MockObject\MockObject;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\UriInterface;
 use Psr\Http\Server\RequestHandlerInterface;
@@ -27,7 +31,7 @@ use Psr\Http\Server\RequestHandlerInterface;
 /**
  * Testcase for the MVC RoutingMiddleware
  */
-class RoutingMiddlewareTest extends UnitTestCase
+final class RoutingMiddlewareTest extends UnitTestCase
 {
     /**
      * @var RoutingMiddleware
@@ -35,24 +39,19 @@ class RoutingMiddlewareTest extends UnitTestCase
     protected $routingMiddleware;
 
     /**
-     * @var Router|\PHPUnit\Framework\MockObject\MockObject
+     * @var Router|MockObject
      */
     protected $mockRouter;
 
     /**
-     * @var RequestHandlerInterface|\PHPUnit\Framework\MockObject\MockObject
+     * @var RequestHandlerInterface|MockObject
      */
     protected $mockRequestHandler;
 
     /**
-     * @var ServerRequestInterface|\PHPUnit\Framework\MockObject\MockObject
+     * @var ServerRequestInterface|MockObject
      */
     protected $mockHttpRequest;
-
-    /**
-     * @var UriInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $mockRequestUri;
 
     /**
      * Sets up this test case
@@ -69,27 +68,25 @@ class RoutingMiddlewareTest extends UnitTestCase
 
         $this->inject($this->routingMiddleware, 'router', $this->mockRouter);
 
-        $this->mockRequestHandler = $this->getMockBuilder(RequestHandlerInterface::class)->disableOriginalConstructor()->getMock();
+        $this->mockRequestHandler = $this->createMock(RequestHandlerInterface::class);
         $httpResponse = new Response();
         $this->mockRequestHandler->method('handle')->willReturn($httpResponse);
 
-        $this->mockHttpRequest = $this->getMockBuilder(ServerRequestInterface::class)->disableOriginalConstructor()->getMock();
+        $this->mockHttpRequest = $this->createMock(ServerRequestInterface::class);
         $this->mockHttpRequest->method('withAttribute')->with(ServerRequestAttributes::ROUTING_RESULTS)->willReturn($this->mockHttpRequest);
 
-        $this->mockRequestUri = $this->getMockBuilder(UriInterface::class)->getMock();
-        $this->mockHttpRequest->method('getUri')->willReturn($this->mockRequestUri);
+        $mockRequestUri = $this->createMock(UriInterface::class);
+        $this->mockHttpRequest->method('getUri')->willReturn($mockRequestUri);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function handleStoresRouterMatchResultsInTheRequestAttributes()
     {
         $mockMatchResults = ['someRouterMatchResults'];
         $routeContext = new RouteContext($this->mockHttpRequest, RouteParameters::createEmpty());
 
-        $this->mockRouter->expects(self::atLeastOnce())->method('route')->with($routeContext)->willReturn($mockMatchResults);
-        $this->mockHttpRequest->expects(self::atLeastOnce())->method('withAttribute')->with(ServerRequestAttributes::ROUTING_RESULTS, $mockMatchResults);
+        $this->mockRouter->expects($this->atLeastOnce())->method('route')->with($routeContext)->willReturn($mockMatchResults);
+        $this->mockHttpRequest->expects($this->atLeastOnce())->method('withAttribute')->with(ServerRequestAttributes::ROUTING_RESULTS, $mockMatchResults);
 
         $this->routingMiddleware->process($this->mockHttpRequest, $this->mockRequestHandler);
     }

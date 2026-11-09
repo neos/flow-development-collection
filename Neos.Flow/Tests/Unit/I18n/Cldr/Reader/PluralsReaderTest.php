@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Neos\Flow\Tests\Unit\I18n\Cldr\Reader;
 
 /*
@@ -10,16 +13,19 @@ namespace Neos\Flow\Tests\Unit\I18n\Cldr\Reader;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
 use Neos\Cache\Frontend\VariableFrontend;
+use Neos\Flow\I18n\Cldr\CldrModel;
+use Neos\Flow\I18n\Cldr\CldrRepository;
 use Neos\Flow\I18n\Cldr\Reader\PluralsReader;
+use Neos\Flow\I18n\Locale;
 use Neos\Flow\Tests\UnitTestCase;
-use Neos\Flow\I18n;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Testcase for the PluralsReader
  */
-class PluralsReaderTest extends UnitTestCase
+final class PluralsReaderTest extends UnitTestCase
 {
     /**
      * @var PluralsReader
@@ -43,15 +49,23 @@ class PluralsReaderTest extends UnitTestCase
             ]
         ];
 
-        $mockModel = $this->getAccessibleMock(I18n\Cldr\CldrModel::class, ['getRawArray'], [['fake/path']]);
-        $mockModel->expects(self::once())->method('getRawArray')->with('plurals')->will(self::returnValue($samplePluralRulesData));
+        $mockModel = $this->getAccessibleMock(CldrModel::class, ['getRawArray'], [['fake/path']]);
+        $mockModel->expects($this->once())->method('getRawArray')->with('plurals')->willReturn(($samplePluralRulesData));
 
-        $mockRepository = $this->createMock(I18n\Cldr\CldrRepository::class);
-        $mockRepository->expects(self::once())->method('getModel')->with('supplemental/plurals')->will(self::returnValue($mockModel));
+        $mockRepository = $this->createMock(CldrRepository::class);
+        $mockRepository->expects($this->once())->method('getModel')->with('supplemental/plurals')->willReturn(($mockModel));
 
-        $mockCache = $this->getMockBuilder(VariableFrontend::class)->disableOriginalConstructor()->getMock();
-        $mockCache->expects(self::once())->method('has')->with('rulesets')->willReturn(false);
-        $mockCache->expects(self::exactly(2))->method('set')->withConsecutive(['rulesets'], ['rulesetsIndices']);
+        $mockCache = $this->createMock(VariableFrontend::class);
+        $mockCache->expects($this->once())->method('has')->with('rulesets')->willReturn(false);
+        $matcher = self::exactly(2);
+        $mockCache->expects($matcher)->method('set')->willReturnCallback(function (...$parameters) use ($matcher) {
+            if ($matcher->numberOfInvocations() === 1) {
+                $this->assertSame('rulesets', $parameters[0]);
+            }
+            if ($matcher->numberOfInvocations() === 2) {
+                $this->assertSame('rulesetsIndices', $parameters[0]);
+            }
+        });
 
         $this->reader = new PluralsReader();
         $this->reader->injectCldrRepository($mockRepository);
@@ -62,42 +76,38 @@ class PluralsReaderTest extends UnitTestCase
     /**
      * Data provider for returnsCorrectPluralForm
      *
-     * @return array
+     * @return \Iterator<(int | string), mixed>
      */
-    public function quantities()
+    public static function quantities(): \Iterator
     {
-        return [
+        yield [
+            'mo',
             [
-                'mo',
-                [
-                    [1, PluralsReader::RULE_ONE],
-                    [2, PluralsReader::RULE_FEW],
-                    [100, PluralsReader::RULE_OTHER],
-                    [101, PluralsReader::RULE_FEW],
-                    [101.1, PluralsReader::RULE_OTHER]
-                ]
-            ],
+                [1, PluralsReader::RULE_ONE],
+                [2, PluralsReader::RULE_FEW],
+                [100, PluralsReader::RULE_OTHER],
+                [101, PluralsReader::RULE_FEW],
+                [101.1, PluralsReader::RULE_OTHER]
+            ]
+        ];
+        yield [
+            'ru',
             [
-                'ru',
-                [
-                    [1, PluralsReader::RULE_ONE],
-                    [2, PluralsReader::RULE_FEW],
-                    [11, PluralsReader::RULE_MANY],
-                    [100, PluralsReader::RULE_MANY],
-                    [101, PluralsReader::RULE_ONE],
-                    [101.1, PluralsReader::RULE_OTHER]
-                ]
+                [1, PluralsReader::RULE_ONE],
+                [2, PluralsReader::RULE_FEW],
+                [11, PluralsReader::RULE_MANY],
+                [100, PluralsReader::RULE_MANY],
+                [101, PluralsReader::RULE_ONE],
+                [101.1, PluralsReader::RULE_OTHER]
             ]
         ];
     }
 
-    /**
-     * @test
-     * @dataProvider quantities
-     */
+    #[DataProvider('quantities')]
+    #[Test]
     public function returnsCorrectPluralForm($localeName, $quantities)
     {
-        $locale = new I18n\Locale($localeName);
+        $locale = new Locale($localeName);
         foreach ($quantities as $value) {
             list($quantity, $pluralForm) = $value;
             $result = $this->reader->getPluralForm($quantity, $locale);

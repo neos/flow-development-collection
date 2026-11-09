@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Neos\Cache\Backend;
@@ -26,19 +27,19 @@ use Neos\Utility\OpcodeCacheHelper;
  */
 class FileBackend extends SimpleFileBackend implements PhpCapableBackendInterface, FreezableBackendInterface, TaggableBackendInterface
 {
-    const SEPARATOR = '^';
+    public const SEPARATOR = '^';
 
-    const EXPIRYTIME_FORMAT = 'YmdHis';
-
-    /**
-     * @deprecated will be removed in Neos 9.0
-     */
-    const EXPIRYTIME_LENGTH = 14;
+    public const EXPIRYTIME_FORMAT = 'YmdHis';
 
     /**
      * @deprecated will be removed in Neos 9.0
      */
-    const DATASIZE_DIGITS = 10;
+    public const EXPIRYTIME_LENGTH = 14;
+
+    /**
+     * @deprecated will be removed in Neos 9.0
+     */
+    public const DATASIZE_DIGITS = 10;
 
     /**
      * A file extension to use for each cache entry.

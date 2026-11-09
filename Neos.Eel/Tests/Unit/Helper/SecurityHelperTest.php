@@ -1,46 +1,49 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Neos\Eel\Tests\Unit;
 
 /*                                                                        *
  * This script belongs to the Flow package "Neos.Eel".                   *
  *                                                                        */
-
 use Neos\Eel\Helper\SecurityHelper;
+use Neos\Flow\Security\Authentication\TokenInterface;
+use Neos\Flow\Security\Authorization\PrivilegeManagerInterface;
+use Neos\Flow\Security\Context;
+use Neos\Flow\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Eel SecurityHelper test
  */
-class SecurityHelperTest extends \Neos\Flow\Tests\UnitTestCase
+final class SecurityHelperTest extends UnitTestCase
 {
-    /**
-     * @test
-     */
+    #[Test]
     public function csrfTokenIsReturnedFromTheSecurityContext()
     {
-        $mockSecurityContext = $this->createMock(\Neos\Flow\Security\Context::class);
-        $mockSecurityContext->expects(self::any())->method('getCsrfProtectionToken')->willReturn('TheCsrfToken');
+        $mockSecurityContext = $this->createMock(Context::class);
+        $mockSecurityContext->method('getCsrfProtectionToken')->willReturn('TheCsrfToken');
 
         $helper = new SecurityHelper();
         $this->inject($helper, 'securityContext', $mockSecurityContext);
 
-        self::assertEquals('TheCsrfToken', $helper->csrfToken());
+        self::assertSame('TheCsrfToken', $helper->csrfToken());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function isAuthenticatedReturnsTrueIfAnAuthenticatedTokenIsPresent()
     {
-        $mockUnautenticatedAuthenticationToken = $this->createMock(\Neos\Flow\Security\Authentication\TokenInterface::class);
-        $mockUnautenticatedAuthenticationToken->expects(self::once())->method('isAuthenticated')->will(self::returnValue(false));
+        $mockUnautenticatedAuthenticationToken = $this->createMock(TokenInterface::class);
+        $mockUnautenticatedAuthenticationToken->expects($this->once())->method('isAuthenticated')->willReturn((false));
 
-        $mockAutenticatedAuthenticationToken = $this->createMock(\Neos\Flow\Security\Authentication\TokenInterface::class);
-        $mockAutenticatedAuthenticationToken->expects(self::once())->method('isAuthenticated')->will(self::returnValue(true));
+        $mockAutenticatedAuthenticationToken = $this->createMock(TokenInterface::class);
+        $mockAutenticatedAuthenticationToken->expects($this->once())->method('isAuthenticated')->willReturn((true));
 
-        $mockSecurityContext = $this->createMock(\Neos\Flow\Security\Context::class);
+        $mockSecurityContext = $this->createMock(Context::class);
 
-        $mockSecurityContext->expects(self::once())->method('canBeInitialized')->will(self::returnValue(true));
-        $mockSecurityContext->expects(self::once())->method('getAuthenticationTokens')->will(self::returnValue([
+        $mockSecurityContext->expects($this->once())->method('canBeInitialized')->willReturn((true));
+        $mockSecurityContext->expects($this->once())->method('getAuthenticationTokens')->willReturn(([
             $mockUnautenticatedAuthenticationToken,
             $mockAutenticatedAuthenticationToken
         ]));
@@ -51,18 +54,16 @@ class SecurityHelperTest extends \Neos\Flow\Tests\UnitTestCase
         self::assertTrue($helper->isAuthenticated());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function isAuthenticatedReturnsFalseIfNoAuthenticatedTokenIsPresent()
     {
-        $mockUnautenticatedAuthenticationToken = $this->createMock(\Neos\Flow\Security\Authentication\TokenInterface::class);
-        $mockUnautenticatedAuthenticationToken->expects(self::once())->method('isAuthenticated')->will(self::returnValue(false));
+        $mockUnautenticatedAuthenticationToken = $this->createMock(TokenInterface::class);
+        $mockUnautenticatedAuthenticationToken->expects($this->once())->method('isAuthenticated')->willReturn((false));
 
-        $mockSecurityContext = $this->createMock(\Neos\Flow\Security\Context::class);
+        $mockSecurityContext = $this->createMock(Context::class);
 
-        $mockSecurityContext->expects(self::once())->method('canBeInitialized')->will(self::returnValue(true));
-        $mockSecurityContext->expects(self::once())->method('getAuthenticationTokens')->will(self::returnValue([
+        $mockSecurityContext->expects($this->once())->method('canBeInitialized')->willReturn((true));
+        $mockSecurityContext->expects($this->once())->method('getAuthenticationTokens')->willReturn(([
             $mockUnautenticatedAuthenticationToken
         ]));
 
@@ -72,15 +73,13 @@ class SecurityHelperTest extends \Neos\Flow\Tests\UnitTestCase
         self::assertFalse($helper->isAuthenticated());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function isAuthenticatedReturnsFalseIfNoAuthenticatedTokensAre()
     {
-        $mockSecurityContext = $this->createMock(\Neos\Flow\Security\Context::class);
+        $mockSecurityContext = $this->createMock(Context::class);
 
-        $mockSecurityContext->expects(self::once())->method('canBeInitialized')->will(self::returnValue(true));
-        $mockSecurityContext->expects(self::once())->method('getAuthenticationTokens')->will(self::returnValue([]));
+        $mockSecurityContext->expects($this->once())->method('canBeInitialized')->willReturn((true));
+        $mockSecurityContext->expects($this->once())->method('getAuthenticationTokens')->willReturn(([]));
 
         $helper = new SecurityHelper();
         $this->inject($helper, 'securityContext', $mockSecurityContext);
@@ -88,14 +87,12 @@ class SecurityHelperTest extends \Neos\Flow\Tests\UnitTestCase
         self::assertFalse($helper->isAuthenticated());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function isAuthenticatedReturnsFalseIfSecurityContextCannotBeInitialized()
     {
-        $mockSecurityContext = $this->createMock(\Neos\Flow\Security\Context::class);
+        $mockSecurityContext = $this->createMock(Context::class);
 
-        $mockSecurityContext->expects(self::once())->method('canBeInitialized')->will(self::returnValue(false));
+        $mockSecurityContext->expects($this->once())->method('canBeInitialized')->willReturn((false));
 
         $helper = new SecurityHelper();
         $this->inject($helper, 'securityContext', $mockSecurityContext);
@@ -103,16 +100,14 @@ class SecurityHelperTest extends \Neos\Flow\Tests\UnitTestCase
         self::assertFalse($helper->isAuthenticated());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function hasAccessToPrivilegeTargetReturnsTrueIfAccessIsAllowed()
     {
-        $mockSecurityContext = $this->createMock(\Neos\Flow\Security\Context::class);
-        $mockPrivilegeManager = $this->createMock(\Neos\Flow\Security\Authorization\PrivilegeManagerInterface::class);
+        $mockSecurityContext = $this->createMock(Context::class);
+        $mockPrivilegeManager = $this->createMock(PrivilegeManagerInterface::class);
 
-        $mockSecurityContext->expects(self::once())->method('canBeInitialized')->will(self::returnValue(true));
-        $mockPrivilegeManager->expects(self::once())->method('isPrivilegeTargetGranted')->with('somePrivilegeTarget')->will(self::returnValue(true));
+        $mockSecurityContext->expects($this->once())->method('canBeInitialized')->willReturn((true));
+        $mockPrivilegeManager->expects($this->once())->method('isPrivilegeTargetGranted')->with('somePrivilegeTarget')->willReturn((true));
 
         $helper = new SecurityHelper();
         $this->inject($helper, 'securityContext', $mockSecurityContext);
@@ -121,16 +116,14 @@ class SecurityHelperTest extends \Neos\Flow\Tests\UnitTestCase
         self::assertTrue($helper->hasAccess('somePrivilegeTarget', []));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function hasAccessToPrivilegeTargetReturnsFalseIfAccessIsForbidden()
     {
-        $mockSecurityContext = $this->createMock(\Neos\Flow\Security\Context::class);
-        $mockPrivilegeManager = $this->createMock(\Neos\Flow\Security\Authorization\PrivilegeManagerInterface::class);
+        $mockSecurityContext = $this->createMock(Context::class);
+        $mockPrivilegeManager = $this->createMock(PrivilegeManagerInterface::class);
 
-        $mockSecurityContext->expects(self::once())->method('canBeInitialized')->will(self::returnValue(true));
-        $mockPrivilegeManager->expects(self::once())->method('isPrivilegeTargetGranted')->with('somePrivilegeTarget')->will(self::returnValue(false));
+        $mockSecurityContext->expects($this->once())->method('canBeInitialized')->willReturn((true));
+        $mockPrivilegeManager->expects($this->once())->method('isPrivilegeTargetGranted')->with('somePrivilegeTarget')->willReturn((false));
 
         $helper = new SecurityHelper();
         $this->inject($helper, 'securityContext', $mockSecurityContext);
@@ -139,15 +132,13 @@ class SecurityHelperTest extends \Neos\Flow\Tests\UnitTestCase
         self::assertFalse($helper->hasAccess('somePrivilegeTarget', []));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function hasAccessToPrivilegeTargetReturnsFalseIfSecurityContextCannotBeInitialized()
     {
-        $mockSecurityContext = $this->createMock(\Neos\Flow\Security\Context::class);
-        $mockPrivilegeManager = $this->createMock(\Neos\Flow\Security\Authorization\PrivilegeManagerInterface::class);
+        $mockSecurityContext = $this->createMock(Context::class);
+        $mockPrivilegeManager = $this->createStub(PrivilegeManagerInterface::class);
 
-        $mockSecurityContext->expects(self::once())->method('canBeInitialized')->will(self::returnValue(false));
+        $mockSecurityContext->expects($this->once())->method('canBeInitialized')->willReturn((false));
 
         $helper = new SecurityHelper();
         $this->inject($helper, 'securityContext', $mockSecurityContext);
@@ -156,13 +147,11 @@ class SecurityHelperTest extends \Neos\Flow\Tests\UnitTestCase
         self::assertFalse($helper->hasAccess('somePrivilegeTarget', []));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getAccountReturnsNullIfSecurityContextCannotBeInitialized()
     {
-        $mockSecurityContext = $this->createMock(\Neos\Flow\Security\Context::class);
-        $mockSecurityContext->expects(self::any())->method('canBeInitialized')->willReturn(false);
+        $mockSecurityContext = $this->createMock(Context::class);
+        $mockSecurityContext->method('canBeInitialized')->willReturn(false);
 
         $helper = new SecurityHelper();
         $this->inject($helper, 'securityContext', $mockSecurityContext);
@@ -170,14 +159,12 @@ class SecurityHelperTest extends \Neos\Flow\Tests\UnitTestCase
         self::assertNull($helper->getAccount());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getAccountDelegatesToSecurityContextIfSecurityContextCanBeInitialized()
     {
-        $mockSecurityContext = $this->createMock(\Neos\Flow\Security\Context::class);
-        $mockSecurityContext->expects(self::any())->method('canBeInitialized')->willReturn(true);
-        $mockSecurityContext->expects(self::atLeastOnce())->method('getAccount')->willReturn('this would be an account instance');
+        $mockSecurityContext = $this->createMock(Context::class);
+        $mockSecurityContext->method('canBeInitialized')->willReturn(true);
+        $mockSecurityContext->expects($this->atLeastOnce())->method('getAccount')->willReturn('this would be an account instance');
 
         $helper = new SecurityHelper();
         $this->inject($helper, 'securityContext', $mockSecurityContext);
@@ -185,22 +172,18 @@ class SecurityHelperTest extends \Neos\Flow\Tests\UnitTestCase
         self::assertSame('this would be an account instance', $helper->getAccount());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function hasRoleReturnsTrueForEverybodyRole()
     {
         $helper = new SecurityHelper();
         self::assertTrue($helper->hasRole('Neos.Flow:Everybody'));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function hasRoleReturnsFalseIfSecurityContextCannotBeInitialized()
     {
-        $mockSecurityContext = $this->createMock(\Neos\Flow\Security\Context::class);
-        $mockSecurityContext->expects(self::any())->method('canBeInitialized')->willReturn(false);
+        $mockSecurityContext = $this->createMock(Context::class);
+        $mockSecurityContext->method('canBeInitialized')->willReturn(false);
 
         $helper = new SecurityHelper();
         $this->inject($helper, 'securityContext', $mockSecurityContext);
@@ -208,14 +191,12 @@ class SecurityHelperTest extends \Neos\Flow\Tests\UnitTestCase
         self::assertFalse($helper->hasRole('Acme.Com:DummyRole'));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function hasRoleDelegatesToSecurityContextIfSecurityContextCanBeInitialized()
     {
-        $mockSecurityContext = $this->createMock(\Neos\Flow\Security\Context::class);
-        $mockSecurityContext->expects(self::any())->method('canBeInitialized')->willReturn(true);
-        $mockSecurityContext->expects(self::atLeastOnce())->method('hasRole')->with('Acme.Com:GrantsAccess')->willReturn(true);
+        $mockSecurityContext = $this->createMock(Context::class);
+        $mockSecurityContext->method('canBeInitialized')->willReturn(true);
+        $mockSecurityContext->expects($this->atLeastOnce())->method('hasRole')->with('Acme.Com:GrantsAccess')->willReturn(true);
 
         $helper = new SecurityHelper();
         $this->inject($helper, 'securityContext', $mockSecurityContext);

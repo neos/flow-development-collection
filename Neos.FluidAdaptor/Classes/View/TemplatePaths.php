@@ -13,10 +13,10 @@ namespace Neos\FluidAdaptor\View;
  */
 
 use Neos\Flow\Package\FlowPackageInterface;
-use Neos\FluidAdaptor\View\Exception\InvalidTemplateResourceException;
 use Neos\Flow\Package\PackageManager;
-use Neos\Utility\ObjectAccess;
+use Neos\FluidAdaptor\View\Exception\InvalidTemplateResourceException;
 use Neos\Utility\Files;
+use Neos\Utility\ObjectAccess;
 
 /**
  * Class TemplatePaths

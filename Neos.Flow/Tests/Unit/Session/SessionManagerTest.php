@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Neos\Flow\Tests\Unit\Session;
 
 /*
@@ -10,7 +13,6 @@ namespace Neos\Flow\Tests\Unit\Session;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
 use GuzzleHttp\Psr7\Uri;
 use Neos\Cache\Backend\FileBackend;
 use Neos\Cache\EnvironmentConfiguration;
@@ -30,32 +32,25 @@ use Neos\Flow\Tests\UnitTestCase;
 use Neos\Http\Factories\ServerRequestFactory;
 use Neos\Http\Factories\UriFactory;
 use org\bovigo\vfs\vfsStream;
+use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\MockObject\MockObject;
 use Psr\Http\Message\ServerRequestInterface;
 
 /**
  * Unit tests for the Flow Session implementation
  */
-class SessionManagerTest extends UnitTestCase
+final class SessionManagerTest extends UnitTestCase
 {
-    /**
-     * @var ServerRequestInterface
-     */
-    protected $httpRequest;
-
-    /**
-     * @var Context|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $mockSecurityContext;
-
-    /**
-     * @var Bootstrap
-     */
-    protected $mockBootstrap;
-
     /**
      * @var ObjectManagerInterface
      */
     protected $mockObjectManager;
+
+    protected ServerRequestInterface $httpRequest;
+
+    protected Bootstrap|MockObject $mockBootstrap;
+
+    protected Context|MockObject $mockSecurityContext;
 
     /**
      * @var array
@@ -92,21 +87,22 @@ class SessionManagerTest extends UnitTestCase
         $this->httpRequest = $serverRequestFactory->createServerRequest('GET', new Uri('http://localhost'));
 
         $mockRequestHandler = $this->createMock(RequestHandler::class);
-        $mockRequestHandler->expects(self::any())->method('getHttpRequest')->will(self::returnValue($this->httpRequest));
+        $mockRequestHandler->method('getHttpRequest')->willReturn($this->httpRequest);
 
         $this->mockBootstrap = $this->createMock(Bootstrap::class);
-        $this->mockBootstrap->expects(self::any())->method('getActiveRequestHandler')->will(self::returnValue($mockRequestHandler));
+        $this->mockBootstrap->method('getActiveRequestHandler')->willReturn($mockRequestHandler);
 
         $this->mockSecurityContext = $this->createMock(Context::class);
 
         $this->mockObjectManager = $this->createMock(ObjectManagerInterface::class);
-        $this->mockObjectManager->expects(self::any())->method('get')->with(Context::class)->will(self::returnValue($this->mockSecurityContext));
+        $this->mockObjectManager->method('get')->with(Context::class)->willReturn($this->mockSecurityContext);
     }
 
     /**
-     * @test for #1674
+     * test for #1674
      * @throws
      */
+    #[Test]
     public function garbageCollectionWorksCorrectlyWithInvalidMetadataEntry(): void
     {
         $cache = $this->createCache('Meta');
@@ -128,9 +124,9 @@ class SessionManagerTest extends UnitTestCase
     }
 
     /**
-     * @test
      * @throws
      */
+    #[Test]
     public function garbageCollectionIsOmittedIfInactivityTimeoutIsSetToZero(): void
     {
         $sessionMetaDataStore = $this->createSessionMetaDataStore();
@@ -148,9 +144,9 @@ class SessionManagerTest extends UnitTestCase
     }
 
     /**
-     * @test
      * @throws
      */
+    #[Test]
     public function garbageCollectionIsOmittedIfAnotherProcessIsAlreadyRunning(): void
     {
         $sessionMetaDataStore = $this->createSessionMetaDataStore();
@@ -174,9 +170,9 @@ class SessionManagerTest extends UnitTestCase
     }
 
     /**
-     * @test
      * @throws
      */
+    #[Test]
     public function garbageCollectionOnlyRemovesTheDefinedMaximumNumberOfSessions(): void
     {
         $sessionMetaDataStore = $this->createSessionMetaDataStore();

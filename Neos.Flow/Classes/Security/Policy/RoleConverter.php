@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Neos\Flow\Security\Policy;
@@ -52,7 +53,7 @@ class RoleConverter extends AbstractTypeConverter
      *
      * @param mixed $source
      * @param string $targetType
-     * @param array $convertedChildProperties
+     * @param array<mixed> $convertedChildProperties
      * @param PropertyMappingConfigurationInterface|null $configuration
      * @return object the target type
      */

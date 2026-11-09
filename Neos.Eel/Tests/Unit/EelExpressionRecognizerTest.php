@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Neos\Eel\Tests\Unit;
 
 /*
@@ -11,13 +13,15 @@ namespace Neos\Eel\Tests\Unit;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
 use Neos\Eel\Package;
 use Neos\Eel\Utility;
+use Neos\Flow\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 
-class EelExpressionRecognizerTest extends \Neos\Flow\Tests\UnitTestCase
+final class EelExpressionRecognizerTest extends UnitTestCase
 {
-    public function wrappedEelExpressionProvider()
+    public static function wrappedEelExpressionProvider(): \Generator
     {
         yield "simple" => [
             "wrapped" => '${foo + bar}',
@@ -48,11 +52,9 @@ class EelExpressionRecognizerTest extends \Neos\Flow\Tests\UnitTestCase
         ];
     }
 
-    /**
-     * @test
-     * @dataProvider wrappedEelExpressionProvider
-     */
-    public function unwrapEelExpression(string $wrapped, string $unwrapped)
+    #[DataProvider('wrappedEelExpressionProvider')]
+    #[Test]
+    public function unwrapEelExpression(string $wrapped, string $unwrapped): void
     {
         self::assertEquals(
             Utility::parseEelExpression($wrapped),
@@ -60,7 +62,7 @@ class EelExpressionRecognizerTest extends \Neos\Flow\Tests\UnitTestCase
         );
     }
 
-    public function notAnExpressionProvider()
+    public static function notAnExpressionProvider(): \Generator
     {
         yield "missing object brace" => [
             '${{foo: {}}',
@@ -83,23 +85,21 @@ class EelExpressionRecognizerTest extends \Neos\Flow\Tests\UnitTestCase
         ];
     }
 
-    /**
-     * @test
-     * @dataProvider notAnExpressionProvider
-     */
-    public function notAnExpression(string $expression)
+    #[DataProvider('notAnExpressionProvider')]
+    #[Test]
+    public function notAnExpression(string $expression): void
     {
         self::assertNull(
             Utility::parseEelExpression($expression)
         );
     }
 
-    /** @test */
-    public function leftOpenEelDoesntResultInCatastrophicBacktracking()
+    #[Test]
+    public function leftOpenEelDoesntResultInCatastrophicBacktracking(): void
     {
         $malformedExpression = '${abc abc abc abc abc abc abc abc abc abc abc ...';
         $return = preg_match(Package::EelExpressionRecognizer, $malformedExpression);
-        self::assertNotSame(false, $return, "Regex not efficient");
-        self::assertEquals($return, 0, "Regex should not match");
+        self::assertNotFalse($return, "Regex not efficient");
+        self::assertSame(0, $return, "Regex should not match");
     }
 }

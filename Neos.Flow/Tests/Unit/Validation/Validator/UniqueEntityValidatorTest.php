@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Neos\Flow\Tests\Unit\Validation\Validator;
 
 /*
@@ -10,27 +13,28 @@ namespace Neos\Flow\Tests\Unit\Validation\Validator;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
 use Neos\Flow\Reflection\ClassSchema;
 use Neos\Flow\Reflection\ReflectionService;
 use Neos\Flow\Validation\Exception\InvalidValidationOptionsException;
 use Neos\Flow\Validation\Validator\UniqueEntityValidator;
+use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\MockObject\MockObject;
 
 /**
  * Testcase for the unique entity validator
  */
-class UniqueEntityValidatorTest extends AbstractValidatorTestcase
+final class UniqueEntityValidatorTest extends AbstractValidatorTestcase
 {
     protected $validatorClassName = UniqueEntityValidator::class;
 
     /**
-     * @var \PHPUnit\Framework\MockObject\MockObject
+     * @var MockObject
      * @see \Neos\Flow\Reflection\ClassSchema
      */
     protected $classSchema;
 
     /**
-     * @var \PHPUnit\Framework\MockObject\MockObject
+     * @var MockObject
      * @see \Neos\Flow\Reflection\ReflectionService
      */
     protected $reflectionService;
@@ -40,16 +44,14 @@ class UniqueEntityValidatorTest extends AbstractValidatorTestcase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->classSchema = $this->getMockBuilder(ClassSchema::class)->disableOriginalConstructor()->getMock();
+        $this->classSchema = $this->createMock(ClassSchema::class);
 
         $this->reflectionService = $this->createMock(ReflectionService::class);
-        $this->reflectionService->expects(self::any())->method('getClassSchema')->will(self::returnValue($this->classSchema));
+        $this->reflectionService->method('getClassSchema')->willReturn(($this->classSchema));
         $this->inject($this->validator, 'reflectionService', $this->reflectionService);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function validatorThrowsExceptionIfValueIsNotAnObject()
     {
         $this->expectException(InvalidValidationOptionsException::class);
@@ -57,33 +59,27 @@ class UniqueEntityValidatorTest extends AbstractValidatorTestcase
         $this->validator->validate('a string');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function validatorThrowsExceptionIfValueIsNotReflectedAtAll()
     {
         $this->expectException(InvalidValidationOptionsException::class);
         $this->expectExceptionCode(1358454284);
-        $this->classSchema->expects(self::once())->method('getModelType')->will(self::returnValue(null));
+        $this->classSchema->expects($this->once())->method('getModelType')->willReturn((null));
 
         $this->validator->validate(new \stdClass());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function validatorThrowsExceptionIfValueIsNotAFlowEntity()
     {
         $this->expectException(InvalidValidationOptionsException::class);
         $this->expectExceptionCode(1358454284);
-        $this->classSchema->expects(self::once())->method('getModelType')->will(self::returnValue(ClassSchema::MODELTYPE_VALUEOBJECT));
+        $this->classSchema->expects($this->once())->method('getModelType')->willReturn((ClassSchema::MODELTYPE_VALUEOBJECT));
 
         $this->validator->validate(new \stdClass());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function validatorThrowsExceptionIfSetupPropertiesAreNotPresentInActualClass()
     {
         $this->expectException(InvalidValidationOptionsException::class);
@@ -91,47 +87,43 @@ class UniqueEntityValidatorTest extends AbstractValidatorTestcase
         $this->prepareMockExpectations();
         $this->inject($this->validator, 'options', ['identityProperties' => ['propertyWhichDoesntExist']]);
         $this->classSchema
-            ->expects(self::once())
+            ->expects($this->once())
             ->method('hasProperty')
             ->with('propertyWhichDoesntExist')
-            ->will(self::returnValue(false));
+            ->willReturn((false));
 
         $this->validator->validate(new \StdClass());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function validatorThrowsExceptionIfThereIsNoIdentityProperty()
     {
         $this->expectException(InvalidValidationOptionsException::class);
         $this->expectExceptionCode(1358459831);
         $this->prepareMockExpectations();
         $this->classSchema
-            ->expects(self::once())
+            ->expects($this->once())
             ->method('getIdentityProperties')
-            ->will(self::returnValue([]));
+            ->willReturn(([]));
 
         $this->validator->validate(new \StdClass());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function validatorThrowsExceptionOnMultipleOrmIdAnnotations()
     {
         $this->expectException(InvalidValidationOptionsException::class);
         $this->expectExceptionCode(1358501745);
         $this->prepareMockExpectations();
         $this->classSchema
-            ->expects(self::once())
+            ->expects($this->once())
             ->method('getIdentityProperties')
-            ->will(self::returnValue(['foo']));
+            ->willReturn((['foo']));
         $this->reflectionService
-            ->expects(self::once())
+            ->expects($this->once())
             ->method('getPropertyNamesByAnnotation')
             ->with('FooClass', 'Doctrine\ORM\Mapping\Id')
-            ->will(self::returnValue(['dummy array', 'with more than', 'one count']));
+            ->willReturn((['dummy array', 'with more than', 'one count']));
 
         $this->validator->validate(new \StdClass());
     }
@@ -140,10 +132,9 @@ class UniqueEntityValidatorTest extends AbstractValidatorTestcase
      */
     protected function prepareMockExpectations()
     {
-        $this->classSchema->expects(self::once())->method('getModelType')->will(self::returnValue(ClassSchema::MODELTYPE_ENTITY));
+        $this->classSchema->expects($this->once())->method('getModelType')->willReturn((ClassSchema::MODELTYPE_ENTITY));
         $this->classSchema
-            ->expects(self::any())
             ->method('getClassName')
-            ->will(self::returnValue('FooClass'));
+            ->willReturn(('FooClass'));
     }
 }

@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Neos\Flow\Tests\Functional\Property;
 
 /*
@@ -10,7 +13,6 @@ namespace Neos\Flow\Tests\Functional\Property;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
 use Neos\Flow\Property\Exception;
 use Neos\Flow\Property\PropertyMapper;
 use Neos\Flow\Property\PropertyMappingConfiguration;
@@ -18,13 +20,22 @@ use Neos\Flow\Property\PropertyMappingConfigurationInterface;
 use Neos\Flow\Property\TypeConverter\ObjectConverter;
 use Neos\Flow\Property\TypeConverter\PersistentObjectConverter;
 use Neos\Flow\Security\Account;
+use Neos\Flow\Tests\Functional\Property\Fixtures\TestClass;
 use Neos\Flow\Tests\Functional\Property\Fixtures\TestClassWithMissingCollectionElementType;
+use Neos\Flow\Tests\Functional\Property\Fixtures\TestEmbeddedValueobject;
+use Neos\Flow\Tests\Functional\Property\Fixtures\TestEntity;
+use Neos\Flow\Tests\Functional\Property\Fixtures\TestEntitySubclass;
+use Neos\Flow\Tests\Functional\Property\Fixtures\TestEntitySubclassWithNewField;
+use Neos\Flow\Tests\Functional\Property\Fixtures\TestSubclass;
+use Neos\Flow\Tests\Functional\Property\Fixtures\TestValueobject;
 use Neos\Flow\Tests\FunctionalTestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Test case for Property Mapper
  */
-class PropertyMapperTest extends FunctionalTestCase
+final class PropertyMapperTest extends FunctionalTestCase
 {
     /**
      *
@@ -43,10 +54,8 @@ class PropertyMapperTest extends FunctionalTestCase
         $this->propertyMapper = $this->objectManager->get(PropertyMapper::class);
     }
 
-    /**
-     * @test
-     */
-    public function domainObjectWithSimplePropertiesCanBeCreated()
+    #[Test]
+    public function domainObjectWithSimplePropertiesCanBeCreated(): void
     {
         $source = [
             'name' => 'Robert Skaarhoj',
@@ -54,16 +63,14 @@ class PropertyMapperTest extends FunctionalTestCase
             'averageNumberOfKids' => '1.5'
         ];
 
-        $result = $this->propertyMapper->convert($source, Fixtures\TestEntity::class);
+        $result = $this->propertyMapper->convert($source, TestEntity::class);
         self::assertSame('Robert Skaarhoj', $result->getName());
         self::assertSame(25, $result->getAge());
         self::assertSame(1.5, $result->getAverageNumberOfKids());
     }
 
-    /**
-     * @test
-     */
-    public function domainObjectWithVirtualPropertiesCanBeCreated()
+    #[Test]
+    public function domainObjectWithVirtualPropertiesCanBeCreated(): void
     {
         $source = [
             'name' => 'Robert Skaarhoj',
@@ -71,16 +78,14 @@ class PropertyMapperTest extends FunctionalTestCase
             'averageNumberOfKids' => '1.5'
         ];
 
-        $result = $this->propertyMapper->convert($source, Fixtures\TestEntity::class);
+        $result = $this->propertyMapper->convert($source, TestEntity::class);
         self::assertSame('Robert Skaarhoj', $result->getName());
         self::assertSame(25, $result->getAge());
         self::assertSame(1.5, $result->getAverageNumberOfKids());
     }
 
-    /**
-     * @test
-     */
-    public function simpleObjectWithSimplePropertiesCanBeCreated()
+    #[Test]
+    public function simpleObjectWithSimplePropertiesCanBeCreated(): void
     {
         $source = [
             'name' => 'Christopher',
@@ -89,16 +94,14 @@ class PropertyMapperTest extends FunctionalTestCase
             'signedClaBool' => true
         ];
 
-        $result = $this->propertyMapper->convert($source, Fixtures\TestClass::class);
+        $result = $this->propertyMapper->convert($source, TestClass::class);
         self::assertSame('Christopher', $result->getName());
         self::assertSame(187, $result->getSize());
         self::assertTrue($result->getSignedCla());
     }
 
-    /**
-     * @test
-     */
-    public function valueobjectCanBeMapped()
+    #[Test]
+    public function valueobjectCanBeMapped(): void
     {
         $source = [
             '__identity' => 'abcdefghijkl',
@@ -106,48 +109,42 @@ class PropertyMapperTest extends FunctionalTestCase
             'age' => '28'
         ];
 
-        $result = $this->propertyMapper->convert($source, Fixtures\TestValueobject::class);
+        $result = $this->propertyMapper->convert($source, TestValueobject::class);
         self::assertSame('Christopher', $result->getName());
         self::assertSame(28, $result->getAge());
     }
 
-    /**
-     * @test
-     */
-    public function embeddedValueobjectCanBeMapped()
+    #[Test]
+    public function embeddedValueobjectCanBeMapped(): void
     {
         $source = [
             'name' => 'Christopher',
             'age' => '28'
         ];
 
-        $result = $this->propertyMapper->convert($source, \Neos\Flow\Tests\Functional\Property\Fixtures\TestEmbeddedValueobject::class);
+        $result = $this->propertyMapper->convert($source, TestEmbeddedValueobject::class);
         self::assertSame('Christopher', $result->getName());
         self::assertSame(28, $result->getAge());
     }
 
-    /**
-     * @test
-     */
-    public function integerCanBeMappedToString()
+    #[Test]
+    public function integerCanBeMappedToString(): void
     {
         $source = [
             'name' => 42,
             'size' => 23
         ];
 
-        $result = $this->propertyMapper->convert($source, Fixtures\TestClass::class);
+        $result = $this->propertyMapper->convert($source, TestClass::class);
         self::assertSame('42', $result->getName());
         self::assertSame(23, $result->getSize());
     }
 
-    /**
-     * @test
-     */
-    public function targetTypeForEntityCanBeOverriddenIfConfigured()
+    #[Test]
+    public function targetTypeForEntityCanBeOverriddenIfConfigured(): void
     {
         $source = [
-            '__type' => Fixtures\TestEntitySubclass::class,
+            '__type' => TestEntitySubclass::class,
             'name' => 'Arthur',
             'age' => '42'
         ];
@@ -155,65 +152,57 @@ class PropertyMapperTest extends FunctionalTestCase
         $configuration = $this->propertyMapper->buildPropertyMappingConfiguration();
         $configuration->setTypeConverterOption(PersistentObjectConverter::class, PersistentObjectConverter::CONFIGURATION_OVERRIDE_TARGET_TYPE_ALLOWED, true);
 
-        $result = $this->propertyMapper->convert($source, Fixtures\TestEntity::class, $configuration);
-        self::assertInstanceOf(Fixtures\TestEntitySubclass::class, $result);
+        $result = $this->propertyMapper->convert($source, TestEntity::class, $configuration);
+        self::assertInstanceOf(TestEntitySubclass::class, $result);
     }
 
-    /**
-     * @test
-     */
-    public function overriddenTargetTypeForEntityMustBeASubclass()
+    #[Test]
+    public function overriddenTargetTypeForEntityMustBeASubclass(): void
     {
         $this->expectException(Exception::class);
         $source = [
-            '__type' => Fixtures\TestClass::class,
+            '__type' => TestClass::class,
             'name' => 'A horse'
         ];
 
         $configuration = $this->propertyMapper->buildPropertyMappingConfiguration();
         $configuration->setTypeConverterOption(PersistentObjectConverter::class, PersistentObjectConverter::CONFIGURATION_OVERRIDE_TARGET_TYPE_ALLOWED, true);
 
-        $this->propertyMapper->convert($source, Fixtures\TestEntity::class, $configuration);
+        $this->propertyMapper->convert($source, TestEntity::class, $configuration);
     }
 
-    /**
-     * @test
-     */
-    public function targetTypeForSimpleObjectCanBeOverriddenIfConfigured()
+    #[Test]
+    public function targetTypeForSimpleObjectCanBeOverriddenIfConfigured(): void
     {
         $source = [
-            '__type' => Fixtures\TestSubclass::class,
+            '__type' => TestSubclass::class,
             'name' => 'Tower of Pisa'
         ];
 
         $configuration = $this->propertyMapper->buildPropertyMappingConfiguration();
         $configuration->setTypeConverterOption(ObjectConverter::class, ObjectConverter::CONFIGURATION_OVERRIDE_TARGET_TYPE_ALLOWED, true);
 
-        $result = $this->propertyMapper->convert($source, Fixtures\TestClass::class, $configuration);
-        self::assertInstanceOf(Fixtures\TestSubclass::class, $result);
+        $result = $this->propertyMapper->convert($source, TestClass::class, $configuration);
+        self::assertInstanceOf(TestSubclass::class, $result);
     }
 
-    /**
-     * @test
-     */
-    public function overriddenTargetTypeForSimpleObjectMustBeASubclass()
+    #[Test]
+    public function overriddenTargetTypeForSimpleObjectMustBeASubclass(): void
     {
         $this->expectException(Exception::class);
         $source = [
-            '__type' => Fixtures\TestEntity::class,
+            '__type' => TestEntity::class,
             'name' => 'A horse'
         ];
 
         $configuration = $this->propertyMapper->buildPropertyMappingConfiguration();
         $configuration->setTypeConverterOption(ObjectConverter::class, ObjectConverter::CONFIGURATION_OVERRIDE_TARGET_TYPE_ALLOWED, true);
 
-        $this->propertyMapper->convert($source, Fixtures\TestClass::class, $configuration);
+        $this->propertyMapper->convert($source, TestClass::class, $configuration);
     }
 
-    /**
-     * @test
-     */
-    public function mappingPersistentEntityOnlyChangesModifiedProperties()
+    #[Test]
+    public function mappingPersistentEntityOnlyChangesModifiedProperties(): void
     {
         $entityIdentity = $this->createTestEntity();
 
@@ -222,16 +211,14 @@ class PropertyMapperTest extends FunctionalTestCase
             'averageNumberOfKids' => '5.5'
         ];
 
-        $result = $this->propertyMapper->convert($source, Fixtures\TestEntity::class);
+        $result = $this->propertyMapper->convert($source, TestEntity::class);
         self::assertSame('Egon Olsen', $result->getName());
         self::assertSame(42, $result->getAge());
         self::assertSame(5.5, $result->getAverageNumberOfKids());
     }
 
-    /**
-     * @test
-     */
-    public function mappingPersistentEntityAllowsToSetValueToNull()
+    #[Test]
+    public function mappingPersistentEntityAllowsToSetValueToNull(): void
     {
         $entityIdentity = $this->createTestEntity();
 
@@ -240,49 +227,45 @@ class PropertyMapperTest extends FunctionalTestCase
             'averageNumberOfKids' => ''
         ];
 
-        $result = $this->propertyMapper->convert($source, Fixtures\TestEntity::class);
+        $result = $this->propertyMapper->convert($source, TestEntity::class);
         self::assertSame('Egon Olsen', $result->getName());
         self::assertSame(42, $result->getAge());
         self::assertNull($result->getAverageNumberOfKids());
     }
 
-    /**
-     * @test
-     */
-    public function mappingOfPropertiesWithUnqualifiedInterfaceName()
+    #[Test]
+    public function mappingOfPropertiesWithUnqualifiedInterfaceName(): void
     {
-        $relatedEntity = new Fixtures\TestEntity();
+        $relatedEntity = new TestEntity();
 
         $source = [
             'relatedEntity' => $relatedEntity,
         ];
-        $result = $this->propertyMapper->convert($source, Fixtures\TestEntity::class);
+        $result = $this->propertyMapper->convert($source, TestEntity::class);
         self::assertSame($relatedEntity, $result->getRelatedEntity());
     }
 
     /**
      * Test case for http://forge.typo3.org/issues/36988 - needed for Neos
      * editing
-     *
-     * @test
      */
-    public function ifTargetObjectTypeIsPassedAsArgumentDoNotConvertIt()
+    #[Test]
+    public function ifTargetObjectTypeIsPassedAsArgumentDoNotConvertIt(): void
     {
-        $entity = new Fixtures\TestEntity();
+        $entity = new TestEntity();
         $entity->setName('Egon Olsen');
 
-        $result = $this->propertyMapper->convert($entity, Fixtures\TestEntity::class);
+        $result = $this->propertyMapper->convert($entity, TestEntity::class);
         self::assertSame($entity, $result);
     }
 
     /**
      * Test case for http://forge.typo3.org/issues/39445
-     *
-     * @test
      */
-    public function ifTargetObjectTypeIsPassedRecursivelyDoNotConvertIt()
+    #[Test]
+    public function ifTargetObjectTypeIsPassedRecursivelyDoNotConvertIt(): void
     {
-        $entity = new Fixtures\TestEntity();
+        $entity = new TestEntity();
         $entity->setName('Egon Olsen');
 
         $result = $this->propertyMapper->convert([$entity], 'array<Neos\Flow\Tests\Functional\Property\Fixtures\TestEntity>');
@@ -292,10 +275,9 @@ class PropertyMapperTest extends FunctionalTestCase
     /**
      * ObjectConverter->getTypeOfChildProperty will return null if the given property is unknown and skipUnknownPropertiers()
      * is set. This test makes sure that doMapping() will skip such a property.
-     *
-     * @test
      */
-    public function skipPropertyIfTypeConverterReturnsNullForChildPropertyType()
+    #[Test]
+    public function skipPropertyIfTypeConverterReturnsNullForChildPropertyType(): void
     {
         $source = [
             'name' => 'Smilla',
@@ -305,8 +287,8 @@ class PropertyMapperTest extends FunctionalTestCase
         $configuration = $this->propertyMapper->buildPropertyMappingConfiguration();
         $configuration->skipUnknownProperties();
 
-        $mappingResult = $this->propertyMapper->convert($source, Fixtures\TestClass::class, $configuration);
-        self::assertInstanceOf(Fixtures\TestClass::class, $mappingResult);
+        $mappingResult = $this->propertyMapper->convert($source, TestClass::class, $configuration);
+        self::assertInstanceOf(TestClass::class, $mappingResult);
     }
 
     /**
@@ -315,9 +297,9 @@ class PropertyMapperTest extends FunctionalTestCase
      *
      * @return string identifier of newly created entity
      */
-    protected function createTestEntity()
+    protected function createTestEntity(): string
     {
-        $entity = new Fixtures\TestEntity();
+        $entity = new TestEntity();
         $entity->setName('Egon Olsen');
         $entity->setAge(42);
         $entity->setAverageNumberOfKids(3.5);
@@ -332,36 +314,33 @@ class PropertyMapperTest extends FunctionalTestCase
 
     /**
      * Test case for #32829
-     *
-     * @test
      */
-    public function mappingToFieldsFromSubclassWorksIfTargetTypeIsOverridden()
+    #[Test]
+    public function mappingToFieldsFromSubclassWorksIfTargetTypeIsOverridden(): void
     {
         $source = [
-            '__type' => Fixtures\TestEntitySubclassWithNewField::class,
+            '__type' => TestEntitySubclassWithNewField::class,
             'testField' => 'A horse'
         ];
 
         $configuration = $this->propertyMapper->buildPropertyMappingConfiguration();
         $configuration->setTypeConverterOption(PersistentObjectConverter::class, ObjectConverter::CONFIGURATION_OVERRIDE_TARGET_TYPE_ALLOWED, true);
 
-        $theHorse = $this->propertyMapper->convert($source, Fixtures\TestEntity::class, $configuration);
-        self::assertInstanceOf(Fixtures\TestEntitySubclassWithNewField::class, $theHorse);
+        $theHorse = $this->propertyMapper->convert($source, TestEntity::class, $configuration);
+        self::assertInstanceOf(TestEntitySubclassWithNewField::class, $theHorse);
     }
 
-    /**
-     * @test
-     * @dataProvider invalidTypeConverterConfigurationsForOverridingTargetTypes
-     */
-    public function mappingToFieldsFromSubclassThrowsExceptionIfTypeConverterOptionIsInvalidOrNotSet(?PropertyMappingConfigurationInterface $configuration = null)
+    #[DataProvider('invalidTypeConverterConfigurationsForOverridingTargetTypes')]
+    #[Test]
+    public function mappingToFieldsFromSubclassThrowsExceptionIfTypeConverterOptionIsInvalidOrNotSet(PropertyMappingConfigurationInterface $configuration = null): void
     {
         $this->expectException(Exception::class);
         $source = [
-            '__type' => Fixtures\TestEntitySubclassWithNewField::class,
+            '__type' => TestEntitySubclassWithNewField::class,
             'testField' => 'A horse'
         ];
 
-        $this->propertyMapper->convert($source, Fixtures\TestEntity::class, $configuration);
+        $this->propertyMapper->convert($source, TestEntity::class, $configuration);
     }
 
     /**
@@ -369,7 +348,7 @@ class PropertyMapperTest extends FunctionalTestCase
      *
      * @return array
      */
-    public function invalidTypeConverterConfigurationsForOverridingTargetTypes()
+    public static function invalidTypeConverterConfigurationsForOverridingTargetTypes(): array
     {
         $configurationWithNoSetting = new PropertyMappingConfiguration();
 
@@ -383,29 +362,26 @@ class PropertyMapperTest extends FunctionalTestCase
         ];
     }
 
-    /**
-     * @test
-     */
-    public function convertFromShouldThrowExceptionIfGivenSourceTypeIsNotATargetType()
+    #[Test]
+    public function convertFromShouldThrowExceptionIfGivenSourceTypeIsNotATargetType(): void
     {
         $this->expectException(Exception::class);
         $source = [
-            '__type' => Fixtures\TestClass::class,
+            '__type' => TestClass::class,
             'testField' => 'A horse'
         ];
 
         $configuration = $this->propertyMapper->buildPropertyMappingConfiguration();
         $configuration->setTypeConverterOption(PersistentObjectConverter::class, ObjectConverter::CONFIGURATION_OVERRIDE_TARGET_TYPE_ALLOWED, true);
 
-        $this->propertyMapper->convert($source, Fixtures\TestEntity::class, $configuration);
+        $this->propertyMapper->convert($source, TestEntity::class, $configuration);
     }
 
     /**
      * Test case for #47232
-     *
-     * @test
      */
-    public function convertedAccountRolesCanBeSet()
+    #[Test]
+    public function convertedAccountRolesCanBeSet(): void
     {
         $source = [
             'accountIdentifier' => 'someAccountIdentifier',
@@ -423,15 +399,13 @@ class PropertyMapperTest extends FunctionalTestCase
 
         self::assertInstanceOf(Account::class, $account);
         self::assertCount(2, $account->getRoles());
-        self::assertEquals($expectedRoleIdentifiers, array_keys($account->getRoles()));
+        self::assertSame($expectedRoleIdentifiers, array_keys($account->getRoles()));
     }
 
-    /**
-     * @test
-     */
-    public function persistentEntityCanBeSerializedToIdentifierUsingObjectSource()
+    #[Test]
+    public function persistentEntityCanBeSerializedToIdentifierUsingObjectSource(): void
     {
-        $entity = new Fixtures\TestEntity();
+        $entity = new TestEntity();
         $entity->setName('Egon Olsen');
         $entity->setAge(42);
         $entity->setAverageNumberOfKids(3.5);
@@ -449,32 +423,26 @@ class PropertyMapperTest extends FunctionalTestCase
         self::assertSame($entityIdentifier, $result);
     }
 
-    /**
-     * @test
-     */
-    public function getTargetPropertyNameShouldReturnTheUnmodifiedPropertyNameWithoutConfiguration()
+    #[Test]
+    public function getTargetPropertyNameShouldReturnTheUnmodifiedPropertyNameWithoutConfiguration(): void
     {
         $defaultConfiguration = $this->propertyMapper->buildPropertyMappingConfiguration();
-        self::assertTrue($defaultConfiguration->getConfigurationValue(\Neos\Flow\Property\TypeConverter\PersistentObjectConverter::class, \Neos\Flow\Property\TypeConverter\PersistentObjectConverter::CONFIGURATION_CREATION_ALLOWED));
-        self::assertTrue($defaultConfiguration->getConfigurationValue(\Neos\Flow\Property\TypeConverter\PersistentObjectConverter::class, \Neos\Flow\Property\TypeConverter\PersistentObjectConverter::CONFIGURATION_MODIFICATION_ALLOWED));
+        self::assertTrue($defaultConfiguration->getConfigurationValue(PersistentObjectConverter::class, PersistentObjectConverter::CONFIGURATION_CREATION_ALLOWED));
+        self::assertTrue($defaultConfiguration->getConfigurationValue(PersistentObjectConverter::class, PersistentObjectConverter::CONFIGURATION_MODIFICATION_ALLOWED));
 
-        self::assertNull($defaultConfiguration->getConfigurationFor('foo')->getConfigurationValue(\Neos\Flow\Property\TypeConverter\PersistentObjectConverter::class, \Neos\Flow\Property\TypeConverter\PersistentObjectConverter::CONFIGURATION_CREATION_ALLOWED));
-        self::assertNull($defaultConfiguration->getConfigurationFor('foo')->getConfigurationValue(\Neos\Flow\Property\TypeConverter\PersistentObjectConverter::class, \Neos\Flow\Property\TypeConverter\PersistentObjectConverter::CONFIGURATION_MODIFICATION_ALLOWED));
+        self::assertNull($defaultConfiguration->getConfigurationFor('foo')->getConfigurationValue(PersistentObjectConverter::class, PersistentObjectConverter::CONFIGURATION_CREATION_ALLOWED));
+        self::assertNull($defaultConfiguration->getConfigurationFor('foo')->getConfigurationValue(PersistentObjectConverter::class, PersistentObjectConverter::CONFIGURATION_MODIFICATION_ALLOWED));
     }
 
-    /**
-     * @test
-     */
-    public function foo()
+    #[Test]
+    public function foo(): void
     {
         $actualResult = $this->propertyMapper->convert(true, 'int');
         self::assertSame(42, $actualResult);
     }
 
-    /**
-     * @test
-     */
-    public function collectionPropertyWithMissingElementTypeThrowsHelpfulException()
+    #[Test]
+    public function collectionPropertyWithMissingElementTypeThrowsHelpfulException(): void
     {
         $this->expectException(Exception::class);
         $this->expectExceptionMessageMatches('/The annotated collection property "0" is missing an element type/');

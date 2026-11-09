@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Mvc\FlashMessage;
 
 /*
@@ -11,8 +12,8 @@ namespace Neos\Flow\Mvc\FlashMessage;
  * source code.
  */
 
-use Psr\Http\Message\ServerRequestInterface as HttpRequestInterface;
 use Psr\Http\Message\ResponseInterface as HttpResponseInterface;
+use Psr\Http\Message\ServerRequestInterface as HttpRequestInterface;
 
 /**
  * Contract for FlashMessage storages

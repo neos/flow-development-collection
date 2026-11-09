@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Tests\Unit\Persistence\Doctrine;
 
 /*
@@ -15,12 +16,11 @@ use Doctrine\Common\EventManager;
 use Doctrine\DBAL\Connection;
 use Neos\Flow\Persistence\Doctrine\EntityManagerConfiguration;
 use Neos\Flow\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\Test;
 
 class EntityManagerConfigurationTest extends UnitTestCase
 {
-    /**
-     * @test
-     */
+    #[Test]
     public function dqlCustomStringFunctionCanCorrectlyBeAppliedToConfiguration()
     {
         $configuration = $this->buildAndPrepareDqlCustomStringConfiguration();
@@ -29,9 +29,7 @@ class EntityManagerConfigurationTest extends UnitTestCase
         self::assertEquals('Some\Bar\StringClass', $configuration->getCustomStringFunction('BARSTRING'));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function dqlCustomNumericFunctionCanCorrectlyBeAppliedToConfiguration()
     {
         $configuration = $this->buildAndPrepareDqlCustomStringConfiguration();
@@ -40,9 +38,7 @@ class EntityManagerConfigurationTest extends UnitTestCase
         self::assertEquals('Some\Bar\NumericClass', $configuration->getCustomNumericFunction('BARNUMERIC'));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function dqlCustomDateTimeFunctionCanCorrectlyBeAppliedToConfiguration()
     {
         $configuration = $this->buildAndPrepareDqlCustomStringConfiguration();
@@ -62,7 +58,7 @@ class EntityManagerConfigurationTest extends UnitTestCase
         $connection = $this->getMockBuilder(Connection::class)->disableOriginalConstructor()->getMock();
         /** @var EventManager $eventManager */
         $eventManager = $this->getMockBuilder(EventManager::class)->disableOriginalConstructor()->getMock();
-        $configuration = new \Doctrine\ORM\Configuration;
+        $configuration = new \Doctrine\ORM\Configuration();
 
         $settingsArray = [
             'persistence' => [

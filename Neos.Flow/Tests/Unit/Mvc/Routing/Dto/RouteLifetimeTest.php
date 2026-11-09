@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Neos\Flow\Tests\Unit\Mvc\Routing\Dto;
 
 /*
@@ -10,27 +13,24 @@ namespace Neos\Flow\Tests\Unit\Mvc\Routing\Dto;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
 use Neos\Flow\Mvc\Routing\Dto\RouteLifetime;
 use Neos\Flow\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Testcase for the RouteLifetime DTO
  */
-class RouteLifetimeTest extends UnitTestCase
+final class RouteLifetimeTest extends UnitTestCase
 {
-    /**
-     * @test
-     */
+    #[Test]
     public function createFromNegativeIntegerThrowsInvalidArgumentException()
     {
         $this->expectException(\InvalidArgumentException::class);
         RouteLifetime::fromInt(-1);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function createFromIntCreatesANewInstanceWithTheGivenValue()
     {
         $lifetime = RouteLifetime::fromInt(123);
@@ -39,20 +39,16 @@ class RouteLifetimeTest extends UnitTestCase
         self::assertFalse($lifetime->isInfinite());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function createUndefinedCreatesANewInstanceWithNullValue()
     {
         $lifetime = RouteLifetime::createUndefined();
-        self::assertSame(null, $lifetime->getValue());
+        self::assertNull($lifetime->getValue());
         self::assertTrue($lifetime->isUndefined());
         self::assertFalse($lifetime->isInfinite());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function createInfiniteCreatesANewInstanceWithZeroValue()
     {
         $lifetime = RouteLifetime::createInfinite();
@@ -61,26 +57,22 @@ class RouteLifetimeTest extends UnitTestCase
         self::assertTrue($lifetime->isInfinite());
     }
 
-    public function mergeReturnsLowerLifetimeOfNonNullValuesDataProvider(): array
+    public static function mergeReturnsLowerLifetimeOfNonNullValuesDataProvider(): \Iterator
     {
-        return [
-            [100, 200, 100],
-            [100, 100, 100],
-            [200, 100, 100],
-            [null, 200, 200],
-            [200, null, 200],
-            [null, null, null],
-            [100, 0, 100],
-            [0, 100, 100],
-            [0, null, 0],
-            [null, 0, 0]
-        ];
+        yield [100, 200, 100];
+        yield [100, 100, 100];
+        yield [200, 100, 100];
+        yield [null, 200, 200];
+        yield [200, null, 200];
+        yield [null, null, null];
+        yield [100, 0, 100];
+        yield [0, 100, 100];
+        yield [0, null, 0];
+        yield [null, 0, 0];
     }
 
-    /**
-     * @test
-     * @dataProvider mergeReturnsLowerLifetimeOfNonNullValuesDataProvider
-     */
+    #[DataProvider('mergeReturnsLowerLifetimeOfNonNullValuesDataProvider')]
+    #[Test]
     public function mergeReturnsLowerLifetimeOfNonNullValues($valueOne, $valueTwo, $expectation)
     {
         $lifetimeOne = is_int($valueOne) ? RouteLifetime::fromInt($valueOne) : RouteLifetime::createUndefined();

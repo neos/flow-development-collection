@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Annotations;
 
 /*
@@ -20,7 +21,7 @@ namespace Neos\Flow\Annotations;
  * @Annotation
  * @Target({"CLASS", "PROPERTY"})
  */
-#[\Attribute(\Attribute::TARGET_CLASS|\Attribute::TARGET_PROPERTY)]
+#[\Attribute(\Attribute::TARGET_CLASS | \Attribute::TARGET_PROPERTY)]
 final class Lazy
 {
 }

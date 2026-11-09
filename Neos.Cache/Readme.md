@@ -2,7 +2,7 @@
 
 This is a generic cache package for use in projects.
 It implements [PSR-6](https://github.com/php-fig/cache) and [PSR-16](https://github.com/php-fig/simple-cache) but 
-also brings own interfaces used in Flow and Neos which support additional featuers.
+also brings own interfaces used in Flow and Neos which support additional features.
 
 #### Note
 

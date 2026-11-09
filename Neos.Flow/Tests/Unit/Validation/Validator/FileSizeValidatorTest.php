@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Neos\Flow\Tests\Unit\Validation\Validator;
 
 /*
@@ -10,16 +13,17 @@ namespace Neos\Flow\Tests\Unit\Validation\Validator;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
 use Neos\Flow\ResourceManagement\ResourceMetaDataInterface;
 use Neos\Flow\Validation\Validator\FileSizeValidator;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use Psr\Http\Message\UploadedFileInterface;
 
 /**
  * Testcase for the file size validator
  *
  */
-class FileSizeValidatorTest extends AbstractValidatorTestcase
+final class FileSizeValidatorTest extends AbstractValidatorTestcase
 {
     protected $validatorClassName = FileSizeValidator::class;
 
@@ -31,91 +35,141 @@ class FileSizeValidatorTest extends AbstractValidatorTestcase
         ]);
     }
 
-    protected function createResourceMetaDataInterfaceMock(int $filesize): ResourceMetaDataInterface
+    protected static function createResourceMetaDataInterfaceMock(int $filesize): ResourceMetaDataInterface
     {
-        $mock = $this->createMock(ResourceMetaDataInterface::class);
-        $mock->expects($this->once())->method('getFileSize')->willReturn($filesize);
-        return $mock;
+        return new class ($filesize) implements ResourceMetaDataInterface {
+            public function __construct(protected int $filesize)
+            {
+            }
+            public function setFilename($filename)
+            {
+            }
+
+            public function getFilename()
+            {
+            }
+
+            public function getFileSize()
+            {
+                return $this->filesize;
+            }
+
+            public function setFileSize($fileSize)
+            {
+            }
+
+            public function setRelativePublicationPath($path)
+            {
+            }
+
+            public function getRelativePublicationPath()
+            {
+            }
+
+            public function getMediaType()
+            {
+            }
+
+            public function getSha1()
+            {
+            }
+
+            public function setSha1($sha1)
+            {
+            }
+
+        };
     }
 
-    protected function createUploadedFileInterfaceMock(string $filesize): UploadedFileInterface
+    protected static function createUploadedFileInterfaceMock(int $filesize): UploadedFileInterface
     {
-        $mock = $this->createMock(UploadedFileInterface::class);
-        $mock->expects($this->once())->method('getSize')->willReturn($filesize);
-        return $mock;
+        return new class ($filesize) implements UploadedFileInterface {
+            public function __construct(protected int $filesize)
+            {
+            }
+
+            public function getStream()
+            {
+            }
+
+            public function moveTo(string $targetPath)
+            {
+            }
+
+            public function getSize()
+            {
+                return $this->filesize;
+            }
+
+            public function getError()
+            {
+            }
+
+            public function getClientFilename()
+            {
+            }
+
+            public function getClientMediaType()
+            {
+            }
+        };
     }
 
-    public function emptyItems(): array
+    public static function emptyItems(): \Iterator
     {
-        return [
-            [null],
-            ['']
-        ];
+        yield [null];
+        yield [''];
     }
 
-    /**
-     * @test
-     * @dataProvider emptyItems
-     */
+    #[DataProvider('emptyItems')]
+    #[Test]
     public function validateAcceptsEmptyValue($item)
     {
         self::assertFalse($this->validator->validate($item)->hasErrors());
     }
 
-    public function itemsWithAllowedSize(): array
+    public static function itemsWithAllowedSize(): \Iterator
     {
-        return [
-            [$this->createResourceMetaDataInterfaceMock(200)],
-            [$this->createResourceMetaDataInterfaceMock(800)],
-            [$this->createResourceMetaDataInterfaceMock(1000)],
-            [$this->createUploadedFileInterfaceMock(200)],
-            [$this->createUploadedFileInterfaceMock(800)],
-            [$this->createUploadedFileInterfaceMock(1000)]
-        ];
+        yield [self::createResourceMetaDataInterfaceMock(200)];
+        yield [self::createResourceMetaDataInterfaceMock(800)];
+        yield [self::createResourceMetaDataInterfaceMock(1000)];
+        yield [self::createUploadedFileInterfaceMock(200)];
+        yield [self::createUploadedFileInterfaceMock(800)];
+        yield [self::createUploadedFileInterfaceMock(1000)];
     }
 
-    /**
-     * @test
-     * @dataProvider itemsWithAllowedSize
-     */
+    #[DataProvider('itemsWithAllowedSize')]
+    #[Test]
     public function validateAcceptsItemsWithAllowedSize($item)
     {
         self::assertFalse($this->validator->validate($item)->hasErrors());
     }
 
-    public function itemsWithLargerThanAllowedSize(): array
+    public static function itemsWithLargerThanAllowedSize(): \Iterator
     {
-        return [
-            [$this->createResourceMetaDataInterfaceMock(1001)],
-            [$this->createResourceMetaDataInterfaceMock(PHP_INT_MAX)],
-            [$this->createUploadedFileInterfaceMock(1001)],
-            [$this->createUploadedFileInterfaceMock(PHP_INT_MAX)]
-        ];
+        yield [self::createResourceMetaDataInterfaceMock(1001)];
+        yield [self::createResourceMetaDataInterfaceMock(PHP_INT_MAX)];
+        yield [self::createUploadedFileInterfaceMock(1001)];
+        yield [self::createUploadedFileInterfaceMock(PHP_INT_MAX)];
     }
 
-    /**
-     * @test
-     * @dataProvider itemsWithLargerThanAllowedSize
-     */
+    #[DataProvider('itemsWithLargerThanAllowedSize')]
+    #[Test]
     public function validateRejectsItemsWithLargerThanAllowedSize($item)
     {
         self::assertTrue($this->validator->validate($item)->hasErrors());
     }
 
-    public function itemsWithSmallerThanAllowedSize(): array
+    public static function itemsWithSmallerThanAllowedSize(): \Iterator
     {
-        return [
-            [$this->createResourceMetaDataInterfaceMock(199)],
-            [$this->createResourceMetaDataInterfaceMock(0)],
-            [$this->createUploadedFileInterfaceMock(199)],
-            [$this->createUploadedFileInterfaceMock(0)]
-        ];
+        yield [self::createResourceMetaDataInterfaceMock(199)];
+        yield [self::createResourceMetaDataInterfaceMock(0)];
+        yield [self::createUploadedFileInterfaceMock(199)];
+        yield [self::createUploadedFileInterfaceMock(0)];
     }
 
-    /**
-     * @test
-     * @dataProvider itemsWithSmallerThanAllowedSize
-     */
+    #[DataProvider('itemsWithSmallerThanAllowedSize')]
+    #[Test]
     public function validateRejectsItemsWithSmallerThanAllowedSize($item)
     {
         self::assertTrue($this->validator->validate($item)->hasErrors());

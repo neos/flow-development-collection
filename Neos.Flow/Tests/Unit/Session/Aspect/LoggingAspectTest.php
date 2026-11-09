@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Neos\Flow\Tests\Unit\Session\Aspect;
 
 /*
@@ -10,22 +13,22 @@ namespace Neos\Flow\Tests\Unit\Session\Aspect;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
 use Neos\Flow\Aop\JoinPoint;
-use Neos\Flow\Session\TransientSession;
 use Neos\Flow\Session\Aspect\LoggingAspect;
+use Neos\Flow\Session\TransientSession;
 use Neos\Flow\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\Test;
 use Psr\Log\LoggerInterface;
 
 /**
  * Testcase for the Logging Aspect implementation
  */
-class LoggingAspectTest extends UnitTestCase
+final class LoggingAspectTest extends UnitTestCase
 {
     /**
      * Proofs correct logging behaviour
-     * @test
      */
+    #[Test]
     public function logDestroyLogsSessionIdAndArgumentReason()
     {
         $testSession = new TransientSession();
@@ -35,7 +38,7 @@ class LoggingAspectTest extends UnitTestCase
         $mockJoinPoint = new JoinPoint($testSession, TransientSession::class, 'destroy', ['reason' => 'session timed out']);
         $mockLogger = $this->createMock(LoggerInterface::class);
         $mockLogger
-            ->expects(self::once())
+            ->expects($this->once())
             ->method('debug')
             ->with(self::equalTo('TransientSession: Destroyed session with id ' . $testSessionId . ': session timed out'));
 
@@ -46,9 +49,8 @@ class LoggingAspectTest extends UnitTestCase
 
     /**
      * Proofs correct logging behaviour without argument reason given
-     *
-     * @test
      */
+    #[Test]
     public function logDestroyDoesNotRequireArgumentReason()
     {
         $testSession = new TransientSession();
@@ -58,7 +60,7 @@ class LoggingAspectTest extends UnitTestCase
         $mockJoinPoint = new JoinPoint($testSession, TransientSession::class, 'destroy', []);
         $mockLogger = $this->createMock(LoggerInterface::class);
         $mockLogger
-            ->expects(self::once())
+            ->expects($this->once())
             ->method('debug')
             ->with(self::equalTo('TransientSession: Destroyed session with id ' . $testSessionId . ': no reason given'));
 

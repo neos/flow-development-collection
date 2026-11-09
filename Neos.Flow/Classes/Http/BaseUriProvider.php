@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Http;
 
 use GuzzleHttp\Psr7\Uri;

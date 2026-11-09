@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Neos\Flow\Tests\Functional\I18n\Cldr\Reader;
@@ -12,12 +13,12 @@ namespace Neos\Flow\Tests\Functional\I18n\Cldr\Reader;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
 use Neos\Flow\I18n\Cldr\Reader\DatesReader;
 use Neos\Flow\I18n\Locale;
 use Neos\Flow\Tests\FunctionalTestCase;
+use PHPUnit\Framework\Attributes\Test;
 
-class DatesReaderTest extends FunctionalTestCase
+final class DatesReaderTest extends FunctionalTestCase
 {
     /**
      * @var DatesReader
@@ -30,9 +31,7 @@ class DatesReaderTest extends FunctionalTestCase
         $this->datesReader = $this->objectManager->get(DatesReader::class);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function parseFormatFromCldrCachesDateTimePatternsForEachLanguageIndependently(): void
     {
         $convertFormatToString = function (array $formatArray) {
@@ -49,9 +48,9 @@ class DatesReaderTest extends FunctionalTestCase
 
         // Reads two different cache entries
         $enUSFormat = $this->datesReader->parseFormatFromCldr(new Locale('en_US'), DatesReader::FORMAT_TYPE_DATETIME, DatesReader::FORMAT_LENGTH_SHORT);
-        self::assertEquals('M/d/yy, h:mm a', $convertFormatToString($enUSFormat));
+        self::assertSame('M/d/yy, h:mm a', $convertFormatToString($enUSFormat));
 
         $deFormat = $this->datesReader->parseFormatFromCldr(new Locale('de'), DatesReader::FORMAT_TYPE_DATETIME, DatesReader::FORMAT_LENGTH_SHORT);
-        self::assertEquals('dd.MM.yy, HH:mm', $convertFormatToString($deFormat));
+        self::assertSame('dd.MM.yy, HH:mm', $convertFormatToString($deFormat));
     }
 }

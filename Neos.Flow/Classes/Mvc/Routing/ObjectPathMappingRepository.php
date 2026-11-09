@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Mvc\Routing;
 
 /*
@@ -19,7 +20,7 @@ use Neos\Flow\Persistence\Repository;
 /**
  * Repository for object path mapping objects
  * @see \Neos\Flow\Mvc\Routing\ObjectPathMapping
- *
+ * @extends Repository<ObjectPathMapping>
  * @Flow\Scope("singleton")
  */
 class ObjectPathMappingRepository extends Repository
@@ -27,7 +28,7 @@ class ObjectPathMappingRepository extends Repository
     /**
      * @var string
      */
-    const ENTITY_CLASSNAME = ObjectPathMapping::class;
+    public const ENTITY_CLASSNAME = ObjectPathMapping::class;
 
     /**
      * Doctrine's Entity Manager.
@@ -38,7 +39,7 @@ class ObjectPathMappingRepository extends Repository
     protected $entityManager;
 
     /**
-     * @var array
+     * @var array<string,QueryInterface::ORDER_ASCENDING|QueryInterface::ORDER_DESCENDING>
      */
     protected $defaultOrderings = [
         'objectType' => QueryInterface::ORDER_ASCENDING,
@@ -55,7 +56,7 @@ class ObjectPathMappingRepository extends Repository
     public function findOneByObjectTypeUriPatternAndPathSegment($objectType, $uriPattern, $pathSegment, $caseSensitive = false)
     {
         $query = $this->createQuery();
-        return $query->matching(
+        $result = $query->matching(
             $query->logicalAnd(
                 $query->equals('objectType', $objectType),
                 $query->equals('uriPattern', $uriPattern),
@@ -64,6 +65,8 @@ class ObjectPathMappingRepository extends Repository
         )
         ->execute()
         ->getFirst();
+
+        return $result instanceof ObjectPathMapping ? $result : null;
     }
 
     /**
@@ -76,7 +79,7 @@ class ObjectPathMappingRepository extends Repository
     public function findOneByObjectTypeUriPatternAndIdentifier($objectType, $uriPattern, $identifier)
     {
         $query = $this->createQuery();
-        return $query->matching(
+        $result = $query->matching(
             $query->logicalAnd(
                 $query->equals('objectType', $objectType),
                 $query->equals('uriPattern', $uriPattern),
@@ -85,6 +88,8 @@ class ObjectPathMappingRepository extends Repository
         )
         ->execute()
         ->getFirst();
+
+        return $result instanceof ObjectPathMapping ? $result : null;
     }
 
     /**

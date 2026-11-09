@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Persistence\Doctrine;
 
 /*
@@ -31,13 +32,14 @@ use Psr\Log\LoggerInterface;
 
 /**
  * A Query class for Doctrine 2
- *
+ * @template T of object
+ * @implements QueryInterface<T>
  * @api
  */
 class Query implements QueryInterface
 {
     /**
-     * @var string
+     * @var class-string<T>
      */
     protected $entityClassName;
 
@@ -64,7 +66,7 @@ class Query implements QueryInterface
     protected $entityManager;
 
     /**
-     * @var array
+     * @var array<mixed>
      */
     protected $settings;
 
@@ -74,7 +76,7 @@ class Query implements QueryInterface
     protected $constraint;
 
     /**
-     * @var array
+     * @var array<string,QueryInterface::ORDER_ASCENDING|QueryInterface::ORDER_DESCENDING>
      */
     protected $orderings = [];
 
@@ -104,7 +106,7 @@ class Query implements QueryInterface
     protected $parameters;
 
     /**
-     * @var array
+     * @var ?array<string,string>
      */
     protected $joins;
 
@@ -119,7 +121,7 @@ class Query implements QueryInterface
     protected $cacheResult = false;
 
     /**
-     * @param string $entityClassName
+     * @param class-string<T> $entityClassName
      */
     public function __construct($entityClassName)
     {
@@ -140,10 +142,10 @@ class Query implements QueryInterface
      * Injects the Flow settings, the persistence part is kept
      * for further use.
      *
-     * @param array $settings
+     * @param array<string,mixed> $settings
      * @return void
      */
-    public function injectSettings(array $settings)
+    public function injectSettings(array $settings): void
     {
         $this->settings = $settings['persistence'];
     }
@@ -151,7 +153,7 @@ class Query implements QueryInterface
     /**
      * @param LoggerInterface $logger
      */
-    public function injectLogger(LoggerInterface $logger)
+    public function injectLogger(LoggerInterface $logger): void
     {
         $this->logger = $logger;
     }
@@ -159,7 +161,7 @@ class Query implements QueryInterface
     /**
      * Returns the type this query cares for.
      *
-     * @return string
+     * @return class-string<T>
      * @api
      */
     public function getType(): string
@@ -171,7 +173,7 @@ class Query implements QueryInterface
      * Executes the query and returns the result.
      *
      * @param bool $cacheResult If the Doctrine result cache should be used
-     * @return QueryResultInterface The query result
+     * @return QueryResultInterface<T> The query result
      * @api
      */
     public function execute(bool $cacheResult = false): QueryResultInterface
@@ -186,7 +188,7 @@ class Query implements QueryInterface
      * Really executes the query on the database.
      * This should only ever be executed from the QueryResult class.
      *
-     * @return array result set
+     * @return mixed result set
      * @throws DatabaseException
      * @throws DatabaseConnectionException
      * @throws DatabaseStructureException
@@ -209,13 +211,13 @@ class Query implements QueryInterface
 
             if (stripos($dbalException->getMessage(), 'no database selected') !== false) {
                 $message = 'No database name was specified in the configuration.';
-                $exception = new DatabaseConnectionException($message, $dbalException->getCode());
+                $exception = new DatabaseConnectionException($message, $dbalException->getCode(), $dbalException);
             } elseif (stripos($dbalException->getMessage(), 'table') !== false && stripos($dbalException->getMessage(), 'not') !== false && stripos($dbalException->getMessage(), 'exist') !== false) {
                 $message = 'A table or view seems to be missing from the database.';
-                $exception = new DatabaseStructureException($message, $dbalException->getCode());
+                $exception = new DatabaseStructureException($message, $dbalException->getCode(), $dbalException);
             } else {
                 $message = 'An error occurred in the Database Abstraction Layer.';
-                $exception = new DatabaseException($message, $dbalException->getCode());
+                $exception = new DatabaseException($message, $dbalException->getCode(), $dbalException);
             }
 
             throw $exception;
@@ -226,14 +228,14 @@ class Query implements QueryInterface
             if (stripos($pdoException->getMessage(), 'unknown database') !== false
                 || (stripos($pdoException->getMessage(), 'database') !== false && strpos($pdoException->getMessage(), 'not') !== false && strpos($pdoException->getMessage(), 'exist') !== false)) {
                 $message = 'The database which was specified in the configuration does not exist.';
-                $exception = new DatabaseConnectionException($message, $pdoException->getCode());
+                $exception = new DatabaseConnectionException($message, $pdoException->getCode(), $pdoException);
             } elseif (stripos($pdoException->getMessage(), 'access denied') !== false
                 || stripos($pdoException->getMessage(), 'connection refused') !== false) {
                 $message = 'The database username / password specified in the configuration seem to be wrong.';
-                $exception = new DatabaseConnectionException($message, $pdoException->getCode());
+                $exception = new DatabaseConnectionException($message, $pdoException->getCode(), $pdoException);
             } else {
                 $message = 'An error occurred while using the PDO Driver: ' . $pdoException->getMessage();
-                $exception = new DatabaseException($message, $pdoException->getCode());
+                $exception = new DatabaseException($message, $pdoException->getCode(), $pdoException);
             }
 
             throw $exception;
@@ -272,7 +274,7 @@ class Query implements QueryInterface
             $this->logger->error($message, LogEnvironment::fromMethodName(__METHOD__));
             return 0;
         } catch (\PDOException $pdoException) {
-            throw new DatabaseConnectionException($pdoException->getMessage(), (int)$pdoException->getCode());
+            throw new DatabaseConnectionException($pdoException->getMessage(), (int)$pdoException->getCode(), $pdoException);
         }
     }
 
@@ -283,8 +285,8 @@ class Query implements QueryInterface
      *  'bar' => \Neos\Flow\Persistence\QueryInterface::ORDER_DESCENDING
      * )
      *
-     * @param array $orderings The property names to order by
-     * @return QueryInterface
+     * @param array<string,QueryInterface::ORDER_ASCENDING|QueryInterface::ORDER_DESCENDING> $orderings The property names to order by
+     * @return QueryInterface<T>
      * @api
      */
     public function setOrderings(array $orderings): QueryInterface
@@ -304,7 +306,7 @@ class Query implements QueryInterface
      *  'bar' => \Neos\Flow\Persistence\QueryInterface::ORDER_DESCENDING
      * )
      *
-     * @return array
+     * @return array<string,QueryInterface::ORDER_ASCENDING|QueryInterface::ORDER_DESCENDING>
      * @api
      */
     public function getOrderings(): array
@@ -317,7 +319,7 @@ class Query implements QueryInterface
      * for chaining (fluid interface)
      *
      * @param integer|null $limit
-     * @return QueryInterface
+     * @return QueryInterface<T>
      * @api
      */
     public function setLimit(?int $limit): QueryInterface
@@ -342,7 +344,7 @@ class Query implements QueryInterface
      * Sets the DISTINCT flag for this query.
      *
      * @param boolean $distinct
-     * @return QueryInterface
+     * @return QueryInterface<T>
      * @api
      */
     public function setDistinct(bool $distinct = true): QueryInterface
@@ -368,7 +370,7 @@ class Query implements QueryInterface
      * allow for chaining (fluid interface)
      *
      * @param integer|null $offset
-     * @return QueryInterface
+     * @return QueryInterface<T>
      * @api
      */
     public function setOffset(?int $offset): QueryInterface
@@ -393,8 +395,8 @@ class Query implements QueryInterface
      * The constraint used to limit the result set. Returns $this to allow
      * for chaining (fluid interface)
      *
-     * @param object $constraint Some constraint, depending on the backend
-     * @return QueryInterface
+     * @param object|string $constraint Some constraint, depending on the backend
+     * @return QueryInterface<T>
      * @api
      */
     public function matching($constraint): QueryInterface
@@ -456,7 +458,7 @@ class Query implements QueryInterface
     /**
      * Performs a logical negation of the given constraint
      *
-     * @param object $constraint Constraint to negate
+     * @param object|string $constraint Constraint to negate
      * @return object
      * @api
      */
@@ -618,7 +620,7 @@ class Query implements QueryInterface
     /**
      * Add parameters to the query
      *
-     * @param array $parameters
+     * @param array<mixed> $parameters
      * @return void
      */
     public function addParameters($parameters)
@@ -632,7 +634,7 @@ class Query implements QueryInterface
     /**
      * Gets all defined query parameters for the query being constructed.
      *
-     * @return ArrayCollection
+     * @return ArrayCollection<int,Parameter>
      */
     public function getParameters()
     {
@@ -717,7 +719,7 @@ class Query implements QueryInterface
             $this->queryBuilder->where($this->constraint);
         }
 
-        if (is_array($this->orderings)) {
+        if ($this->orderings !== []) {
             $aliases = $this->queryBuilder->getRootAliases();
             foreach ($this->orderings as $propertyName => $order) {
                 $this->queryBuilder->addOrderBy($aliases[0] . '.' . $propertyName, $order);
@@ -732,7 +734,7 @@ class Query implements QueryInterface
         $this->queryBuilder->setMaxResults($this->limit);
         $this->queryBuilder->distinct($this->distinct);
         $this->queryBuilder->setParameters($this->parameters);
-        unset($this->parameters);
+        $this->parameters = new ArrayCollection();
     }
 
     /**

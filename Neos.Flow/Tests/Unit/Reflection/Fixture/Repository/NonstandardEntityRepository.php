@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Tests\Reflection\Fixture\Repository;
 
 /*
@@ -26,5 +27,5 @@ class NonstandardEntityRepository extends Repository
     /**
      * @var string
      */
-    const ENTITY_CLASSNAME = Entity::class;
+    public const ENTITY_CLASSNAME = Entity::class;
 }

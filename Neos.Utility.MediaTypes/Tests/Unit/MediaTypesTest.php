@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Neos\Utility\MediaTypes\Tests\Unit;
 
 /*
@@ -10,37 +13,35 @@ namespace Neos\Utility\MediaTypes\Tests\Unit;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
 use Neos\Utility\MediaTypes;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Testcase for the Utility Media Types class
  */
-class MediaTypesTest extends \PHPUnit\Framework\TestCase
+final class MediaTypesTest extends TestCase
 {
     /**
      * Data Provider
      */
-    public function filenamesAndMediaTypes()
+    public static function filenamesAndMediaTypes(): \Iterator
     {
-        return [
-            ['', 'application/octet-stream'],
-            ['foo', 'application/octet-stream'],
-            ['foo.bar', 'application/octet-stream'],
-            ['index.html', 'text/html'],
-            ['video.mov', 'video/quicktime'],
-            ['image.jpeg', 'image/jpeg'],
-            ['image.jpg', 'image/jpeg'],
-            ['image.JPG', 'image/jpeg'],
-            ['image.JPEG', 'image/jpeg'],
-        ];
+        yield ['', 'application/octet-stream'];
+        yield ['foo', 'application/octet-stream'];
+        yield ['foo.bar', 'application/octet-stream'];
+        yield ['index.html', 'text/html'];
+        yield ['video.mov', 'video/quicktime'];
+        yield ['image.jpeg', 'image/jpeg'];
+        yield ['image.jpg', 'image/jpeg'];
+        yield ['image.JPG', 'image/jpeg'];
+        yield ['image.JPEG', 'image/jpeg'];
     }
 
-    /**
-     * @test
-     * @dataProvider filenamesAndMediaTypes
-     */
-    public function getMediaTypeFromFilenameMapsFilenameOrExtensionToMediaType(string $filename, string $expectedMediaType)
+    #[DataProvider('filenamesAndMediaTypes')]
+    #[Test]
+    public function getMediaTypeFromFilenameMapsFilenameOrExtensionToMediaType(string $filename, string $expectedMediaType): void
     {
         self::assertSame($expectedMediaType, MediaTypes::getMediaTypeFromFilename($filename));
     }
@@ -48,20 +49,16 @@ class MediaTypesTest extends \PHPUnit\Framework\TestCase
     /**
      * Data Provider
      */
-    public function filesAndMediaTypes()
+    public static function filesAndMediaTypes(): \Iterator
     {
-        return [
-            ['', 'application/octet-stream'],
-            ['Text.txt', 'text/plain'],
-            ['Neos.png', 'image/png'],
-        ];
+        yield ['', 'application/octet-stream'];
+        yield ['Text.txt', 'text/plain'];
+        yield ['Neos.png', 'image/png'];
     }
 
-    /**
-     * @test
-     * @dataProvider filesAndMediaTypes
-     */
-    public function getMediaTypeFromFileContent(string $filename, string $expectedMediaType)
+    #[DataProvider('filesAndMediaTypes')]
+    #[Test]
+    public function getMediaTypeFromFileContent(string $filename, string $expectedMediaType): void
     {
         $filePath = __DIR__ . '/Fixtures/' . $filename;
         $fileContent = is_file($filePath) ? file_get_contents($filePath) : '';
@@ -71,30 +68,24 @@ class MediaTypesTest extends \PHPUnit\Framework\TestCase
     /**
      * Data Provider
      */
-    public function mediaTypesAndFilenames()
+    public static function mediaTypesAndFilenames(): \Iterator
     {
-        return [
-            ['foo/bar', []],
-            ['application/octet-stream', ['bin', 'dms', 'lrf', 'mar', 'so', 'dist', 'distz', 'pkg', 'bpk', 'dump', 'elc', 'deploy']],
-            ['text/html', ['html', 'htm']],
-            ['text/csv', ['csv']],
-        ];
+        yield ['foo/bar', []];
+        yield ['application/octet-stream', ['bin', 'dms', 'lrf', 'mar', 'so', 'dist', 'distz', 'pkg', 'bpk', 'dump', 'elc', 'deploy']];
+        yield ['text/html', ['html', 'htm']];
+        yield ['text/csv', ['csv']];
     }
 
-    /**
-     * @test
-     * @dataProvider mediaTypesAndFilenames
-     */
-    public function getFilenameExtensionFromMediaTypeReturnsFirstFileExtensionFoundForThatMediaType(string $mediaType, array $filenameExtensions)
+    #[DataProvider('mediaTypesAndFilenames')]
+    #[Test]
+    public function getFilenameExtensionFromMediaTypeReturnsFirstFileExtensionFoundForThatMediaType(string $mediaType, array $filenameExtensions): void
     {
         self::assertSame(($filenameExtensions === [] ? '' : $filenameExtensions[0]), MediaTypes::getFilenameExtensionFromMediaType($mediaType));
     }
 
-    /**
-     * @test
-     * @dataProvider mediaTypesAndFilenames
-     */
-    public function getFilenameExtensionsFromMediaTypeReturnsAllFileExtensionForThatMediaType(string $mediaType, array $filenameExtensions)
+    #[DataProvider('mediaTypesAndFilenames')]
+    #[Test]
+    public function getFilenameExtensionsFromMediaTypeReturnsAllFileExtensionForThatMediaType(string $mediaType, array $filenameExtensions): void
     {
         self::assertSame($filenameExtensions, MediaTypes::getFilenameExtensionsFromMediaType($mediaType));
     }
@@ -103,20 +94,16 @@ class MediaTypesTest extends \PHPUnit\Framework\TestCase
     /**
      * Data provider with media types and their parsed counterparts
      */
-    public function mediaTypesAndParsedPieces()
+    public static function mediaTypesAndParsedPieces(): \Iterator
     {
-        return [
-            ['text/html', ['type' => 'text', 'subtype' => 'html', 'parameters' => []]],
-            ['application/json; charset=UTF-8', ['type' => 'application', 'subtype' => 'json', 'parameters' => ['charset' => 'UTF-8']]],
-            ['application/vnd.org.flow.coffee+json; kind =Arabica;weight= 15g;  sugar =none', ['type' => 'application', 'subtype' => 'vnd.org.flow.coffee+json', 'parameters' => ['kind' => 'Arabica', 'weight' => '15g', 'sugar' => 'none']]],
-        ];
+        yield ['text/html', ['type' => 'text', 'subtype' => 'html', 'parameters' => []]];
+        yield ['application/json; charset=UTF-8', ['type' => 'application', 'subtype' => 'json', 'parameters' => ['charset' => 'UTF-8']]];
+        yield ['application/vnd.org.flow.coffee+json; kind =Arabica;weight= 15g;  sugar =none', ['type' => 'application', 'subtype' => 'vnd.org.flow.coffee+json', 'parameters' => ['kind' => 'Arabica', 'weight' => '15g', 'sugar' => 'none']]];
     }
 
-    /**
-     * @test
-     * @dataProvider mediaTypesAndParsedPieces
-     */
-    public function parseMediaTypeReturnsAssociativeArrayWithIndividualPartsOfTheMediaType(string $mediaType, array $expectedPieces)
+    #[DataProvider('mediaTypesAndParsedPieces')]
+    #[Test]
+    public function parseMediaTypeReturnsAssociativeArrayWithIndividualPartsOfTheMediaType(string $mediaType, array $expectedPieces): void
     {
         $actualPieces = MediaTypes::parseMediaType($mediaType);
         self::assertSame($expectedPieces, $actualPieces);
@@ -125,28 +112,24 @@ class MediaTypesTest extends \PHPUnit\Framework\TestCase
     /**
      * Data provider
      */
-    public function mediaRangesAndMatchingOrNonMatchingMediaTypes()
+    public static function mediaRangesAndMatchingOrNonMatchingMediaTypes(): \Iterator
     {
-        return [
-            ['invalid', 'text/html', false],
-            ['text/html', 'text/html', true],
-            ['text/html', 'text/plain', false],
-            ['*/*', 'text/html', true],
-            ['*/*', 'application/json', true],
-            ['text/*', 'text/html', true],
-            ['text/*', 'text/plain', true],
-            ['text/*', 'application/xml', false],
-            ['application/*', 'application/xml', true],
-            ['text/x-dvi', 'text/x-dvi', true],
-            ['-Foo.+/~Bar199', '-Foo.+/~Bar199', true],
-        ];
+        yield ['invalid', 'text/html', false];
+        yield ['text/html', 'text/html', true];
+        yield ['text/html', 'text/plain', false];
+        yield ['*/*', 'text/html', true];
+        yield ['*/*', 'application/json', true];
+        yield ['text/*', 'text/html', true];
+        yield ['text/*', 'text/plain', true];
+        yield ['text/*', 'application/xml', false];
+        yield ['application/*', 'application/xml', true];
+        yield ['text/x-dvi', 'text/x-dvi', true];
+        yield ['-Foo.+/~Bar199', '-Foo.+/~Bar199', true];
     }
 
-    /**
-     * @test
-     * @dataProvider mediaRangesAndMatchingOrNonMatchingMediaTypes
-     */
-    public function mediaRangeMatchesChecksIfTheGivenMediaRangeMatchesTheGivenMediaType(string $mediaRange, string $mediaType, bool $expectedResult)
+    #[DataProvider('mediaRangesAndMatchingOrNonMatchingMediaTypes')]
+    #[Test]
+    public function mediaRangeMatchesChecksIfTheGivenMediaRangeMatchesTheGivenMediaType(string $mediaRange, string $mediaType, bool $expectedResult): void
     {
         $actualResult = MediaTypes::mediaRangeMatches($mediaRange, $mediaType);
         self::assertSame($expectedResult, $actualResult);
@@ -155,22 +138,18 @@ class MediaTypesTest extends \PHPUnit\Framework\TestCase
     /**
      * Data provider with media types and their trimmed versions
      */
-    public function mediaTypesWithAndWithoutParameters()
+    public static function mediaTypesWithAndWithoutParameters(): \Iterator
     {
-        return [
-            ['text/html', 'text/html'],
-            ['application/json; charset=UTF-8', 'application/json'],
-            ['application/vnd.org.flow.coffee+json; kind =Arabica;weight= 15g;  sugar =none', 'application/vnd.org.flow.coffee+json'],
-            ['invalid', null],
-            ['invalid/', null],
-        ];
+        yield ['text/html', 'text/html'];
+        yield ['application/json; charset=UTF-8', 'application/json'];
+        yield ['application/vnd.org.flow.coffee+json; kind =Arabica;weight= 15g;  sugar =none', 'application/vnd.org.flow.coffee+json'];
+        yield ['invalid', null];
+        yield ['invalid/', null];
     }
 
-    /**
-     * @test
-     * @dataProvider mediaTypesWithAndWithoutParameters
-     */
-    public function trimMediaTypeReturnsJustTheTypeAndSubTypeWithoutParameters(string $mediaType, ?string $expectedResult = null)
+    #[DataProvider('mediaTypesWithAndWithoutParameters')]
+    #[Test]
+    public function trimMediaTypeReturnsJustTheTypeAndSubTypeWithoutParameters(string $mediaType, ?string $expectedResult = null): void
     {
         $actualResult = MediaTypes::trimMediaType($mediaType);
         self::assertSame($expectedResult, $actualResult);

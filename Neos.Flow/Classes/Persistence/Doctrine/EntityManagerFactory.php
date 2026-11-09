@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Persistence\Doctrine;
 
 /*
@@ -12,15 +13,14 @@ namespace Neos\Flow\Persistence\Doctrine;
  */
 
 use Doctrine\Common\EventManager;
-use Doctrine\DBAL\DriverManager;
 use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\DriverManager;
 use Doctrine\DBAL\Exception\ConnectionException;
 use Doctrine\DBAL\Logging\Middleware;
 use Doctrine\ORM\Configuration;
 use Doctrine\ORM\EntityManager;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Configuration\Exception\InvalidConfigurationException;
-use Neos\Flow\ObjectManagement\DependencyInjection\DependencyProxy;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Persistence\Doctrine\Logging\SqlLogger;
 use Neos\Flow\Persistence\Doctrine\Mapping\Driver\FlowAnnotationDriver;
@@ -55,7 +55,7 @@ class EntityManagerFactory
     protected $environment;
 
     /**
-     * @var array
+     * @var array<string,mixed>
      */
     protected $settings = [];
 
@@ -63,7 +63,7 @@ class EntityManagerFactory
      * Injects the Flow settings, the persistence part is kept
      * for further use.
      *
-     * @param array $settings
+     * @param array<string,array<string,mixed>> $settings
      * @return void
      * @throws InvalidConfigurationException
      */
@@ -138,7 +138,7 @@ class EntityManagerFactory
      * @param EventManager $eventManager
      * @Flow\Signal
      */
-    public function emitBeforeDoctrineEntityManagerCreation(Connection $connection, Configuration $config, EventManager $eventManager)
+    public function emitBeforeDoctrineEntityManagerCreation(Connection $connection, Configuration $config, EventManager $eventManager): void
     {
     }
 
@@ -147,7 +147,7 @@ class EntityManagerFactory
      * @param EntityManager $entityManager
      * @Flow\Signal
      */
-    public function emitAfterDoctrineEntityManagerCreation(Configuration $config, EntityManager $entityManager)
+    public function emitAfterDoctrineEntityManagerCreation(Configuration $config, EntityManager $entityManager): void
     {
     }
 
@@ -167,9 +167,6 @@ class EntityManagerFactory
         }
 
         $logger = $sqlLoggerInstance->logger;
-        if ($logger instanceof DependencyProxy) {
-            $logger = $logger->_activateDependency();
-        }
         if (!$logger instanceof LoggerInterface) {
             throw new InvalidConfigurationException(sprintf('The SqlLogger needs to get a Psr LoggerInterface injected, got "%s"', get_class($logger)), 1720548075);
         }

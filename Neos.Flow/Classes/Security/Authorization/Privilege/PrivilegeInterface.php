@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Security\Authorization\Privilege;
 
 /*
@@ -11,8 +12,8 @@ namespace Neos\Flow\Security\Authorization\Privilege;
  * source code.
  */
 
-use Neos\Flow\Annotations as Flow;
 use Neos\Cache\CacheAwareInterface;
+use Neos\Flow\Annotations as Flow;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Security\Authorization\Privilege\Parameter\PrivilegeParameterInterface;
 use Neos\Flow\Security\Exception\InvalidPrivilegeTypeException;
@@ -22,9 +23,9 @@ use Neos\Flow\Security\Exception\InvalidPrivilegeTypeException;
  */
 interface PrivilegeInterface extends CacheAwareInterface
 {
-    const ABSTAIN = 'abstain';
-    const GRANT = 'grant';
-    const DENY = 'deny';
+    public const ABSTAIN = 'abstain';
+    public const GRANT = 'grant';
+    public const DENY = 'deny';
 
     /**
      * Note: We can't define constructors in interfaces, but this is assumed to exist in the concrete implementation!

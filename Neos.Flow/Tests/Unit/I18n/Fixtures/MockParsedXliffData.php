@@ -1,7 +1,10 @@
 <?php
+
+use Neos\Flow\I18n\Locale;
+
 return [
     [
-        'sourceLocale' => new \Neos\Flow\I18n\Locale('en_US'),
+        'sourceLocale' => new Locale('en_US'),
         'translationUnits' => [
             'key1' => [
                 0 => [

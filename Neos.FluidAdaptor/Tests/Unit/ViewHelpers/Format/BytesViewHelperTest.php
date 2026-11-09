@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Neos\FluidAdaptor\Tests\Unit\ViewHelpers\Format;
 
 /*
@@ -19,11 +22,14 @@ use Neos\Flow\I18n\Formatter\NumberFormatter;
 use Neos\Flow\I18n\Service;
 use Neos\FluidAdaptor\Core\ViewHelper\Exception as ViewHelperException;
 use Neos\FluidAdaptor\Tests\Unit\ViewHelpers\ViewHelperBaseTestcase;
+use Neos\FluidAdaptor\ViewHelpers\Format\BytesViewHelper;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Test for \Neos\FluidAdaptor\ViewHelpers\Format\BytesViewHelper
  */
-class BytesViewHelperTest extends ViewHelperBaseTestcase
+final class BytesViewHelperTest extends ViewHelperBaseTestcase
 {
     /**
      * @var \Neos\FluidAdaptor\ViewHelpers\Format\NumberViewHelper
@@ -33,91 +39,87 @@ class BytesViewHelperTest extends ViewHelperBaseTestcase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->viewHelper = $this->getMockBuilder(\Neos\FluidAdaptor\ViewHelpers\Format\BytesViewHelper::class)->setMethods(['renderChildren'])->getMock();
+        $this->viewHelper = $this->getMockBuilder(BytesViewHelper::class)->onlyMethods(['renderChildren'])->getMock();
 
         $this->injectDependenciesIntoViewHelper($this->viewHelper);
     }
 
     /**
-     * @return array
+     * @return \Iterator<(int | string), mixed>
      */
-    public function valueDataProvider()
+    public static function valueDataProvider(): \Iterator
     {
-        return [
-
-            // invalid values
-            [
-                'value' => 'invalid',
-                'decimals' => null,
-                'decimalSeparator' => null,
-                'thousandsSeparator' => null,
-                'expected' => '0 B'
-            ],
-            [
-                'value' => '',
-                'decimals' => 2,
-                'decimalSeparator' => null,
-                'thousandsSeparator' => null,
-                'expected' => '0.00 B'
-            ],
-            [
-                'value' => [],
-                'decimals' => 2,
-                'decimalSeparator' => ',',
-                'thousandsSeparator' => null,
-                'expected' => '0,00 B'
-            ],
-
-            // valid values
-            [
-                'value' => 123,
-                'decimals' => null,
-                'decimalSeparator' => null,
-                'thousandsSeparator' => null,
-                'expected' => '123 B'
-            ],
-            [
-                'value' => '43008',
-                'decimals' => 1,
-                'decimalSeparator' => null,
-                'thousandsSeparator' => null,
-                'expected' => '42.0 KB'
-            ],
-            [
-                'value' => 1024,
-                'decimals' => 1,
-                'decimalSeparator' => null,
-                'thousandsSeparator' => null,
-                'expected' => '1.0 KB'
-            ],
-            [
-                'value' => 1023,
-                'decimals' => 2,
-                'decimalSeparator' => null,
-                'thousandsSeparator' => null,
-                'expected' => '1,023.00 B'
-            ],
-            [
-                'value' => 1073741823,
-                'decimals' => 1,
-                'decimalSeparator' => null,
-                'thousandsSeparator' => '.',
-                'expected' => '1.024.0 MB'
-            ],
-            [
-                'value' => pow(1024, 5),
-                'decimals' => 1,
-                'decimalSeparator' => null,
-                'thousandsSeparator' => null,
-                'expected' => '1.0 PB'
-            ],
-            [
-                'value' => pow(1024, 8),
-                'decimals' => 1,
-                'decimalSeparator' => null,
-                'thousandsSeparator' => null,
-                'expected' => '1.0 YB'
-            ]
+        // invalid values
+        yield [
+            'value' => 'invalid',
+            'decimals' => null,
+            'decimalSeparator' => null,
+            'thousandsSeparator' => null,
+            'expected' => '0 B'
+        ];
+        yield [
+            'value' => '',
+            'decimals' => 2,
+            'decimalSeparator' => null,
+            'thousandsSeparator' => null,
+            'expected' => '0.00 B'
+        ];
+        yield [
+            'value' => [],
+            'decimals' => 2,
+            'decimalSeparator' => ',',
+            'thousandsSeparator' => null,
+            'expected' => '0,00 B'
+        ];
+        // valid values
+        yield [
+            'value' => 123,
+            'decimals' => null,
+            'decimalSeparator' => null,
+            'thousandsSeparator' => null,
+            'expected' => '123 B'
+        ];
+        yield [
+            'value' => '43008',
+            'decimals' => 1,
+            'decimalSeparator' => null,
+            'thousandsSeparator' => null,
+            'expected' => '42.0 KB'
+        ];
+        yield [
+            'value' => 1024,
+            'decimals' => 1,
+            'decimalSeparator' => null,
+            'thousandsSeparator' => null,
+            'expected' => '1.0 KB'
+        ];
+        yield [
+            'value' => 1023,
+            'decimals' => 2,
+            'decimalSeparator' => null,
+            'thousandsSeparator' => null,
+            'expected' => '1,023.00 B'
+        ];
+        yield [
+            'value' => 1073741823,
+            'decimals' => 1,
+            'decimalSeparator' => null,
+            'thousandsSeparator' => '.',
+            'expected' => '1.024.0 MB'
+        ];
+        yield [
+            'value' => pow(1024, 5),
+            'decimals' => 1,
+            'decimalSeparator' => null,
+            'thousandsSeparator' => null,
+            'expected' => '1.0 PB'
+        ];
+        yield [
+            'value' => pow(1024, 8),
+            'decimals' => 1,
+            'decimalSeparator' => null,
+            'thousandsSeparator' => null,
+            'expected' => '1.0 YB'
         ];
     }
 
@@ -127,9 +129,9 @@ class BytesViewHelperTest extends ViewHelperBaseTestcase
      * @param $decimalSeparator
      * @param $thousandsSeparator
      * @param $expected
-     * @test
-     * @dataProvider valueDataProvider
      */
+    #[DataProvider('valueDataProvider')]
+    #[Test]
     public function renderCorrectlyConvertsAValue($value, $decimals, $decimalSeparator, $thousandsSeparator, $expected)
     {
         $this->viewHelper = $this->prepareArguments($this->viewHelper, ['value' => $value, 'decimals' => $decimals, 'decimalSeparator' => $decimalSeparator, 'thousandsSeparator' => $thousandsSeparator]);
@@ -137,9 +139,7 @@ class BytesViewHelperTest extends ViewHelperBaseTestcase
         static::assertEquals($expected, $actualResult);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function renderUsesChildNodesIfValueArgumentIsOmitted()
     {
         $this->viewHelper->expects(static::once())->method('renderChildren')->willReturn(12345);
@@ -150,14 +150,12 @@ class BytesViewHelperTest extends ViewHelperBaseTestcase
         static::assertEquals('12 KB', $actualResult);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function viewHelperUsesNumberFormatterOnGivenLocale()
     {
         $mockNumberFormatter = $this
             ->getMockBuilder(NumberFormatter::class)
-            ->setMethods(['formatDecimalNumber'])
+            ->onlyMethods(['formatDecimalNumber'])
             ->getMock()
         ;
         $mockNumberFormatter->expects(static::once())->method('formatDecimalNumber');
@@ -168,14 +166,12 @@ class BytesViewHelperTest extends ViewHelperBaseTestcase
         $this->viewHelper->render();
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function viewHelperAppendsUnitToLocalizedNumber()
     {
         $mockNumberFormatter = $this
             ->getMockBuilder(NumberFormatter::class)
-            ->setMethods(['formatDecimalNumber'])
+            ->onlyMethods(['formatDecimalNumber'])
             ->getMock()
         ;
         $mockNumberFormatter
@@ -192,16 +188,14 @@ class BytesViewHelperTest extends ViewHelperBaseTestcase
         static::assertEquals('123,45 KB', $actualResult);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function viewHelperFetchesCurrentLocaleViaI18nService()
     {
         $localizationConfiguration = new Configuration('de_DE');
 
         $mockLocalizationService = $this
             ->getMockBuilder(Service::class)
-            ->setMethods(['getConfiguration'])
+            ->onlyMethods(['getConfiguration'])
             ->getMock()
         ;
         $mockLocalizationService
@@ -213,7 +207,7 @@ class BytesViewHelperTest extends ViewHelperBaseTestcase
 
         $mockNumberFormatter = $this
             ->getMockBuilder(NumberFormatter::class)
-            ->setMethods(['formatDecimalNumber'])
+            ->onlyMethods(['formatDecimalNumber'])
             ->getMock()
         ;
         $mockNumberFormatter->expects(static::once())->method('formatDecimalNumber');
@@ -225,16 +219,14 @@ class BytesViewHelperTest extends ViewHelperBaseTestcase
         $this->viewHelper->render();
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function viewHelperConvertsI18nExceptionsIntoViewHelperExceptions()
     {
         $localizationConfiguration = new Configuration('de_DE');
 
         $mockLocalizationService = $this
             ->getMockBuilder(Service::class)
-            ->setMethods(['getConfiguration'])
+            ->onlyMethods(['getConfiguration'])
             ->getMock()
         ;
         $mockLocalizationService
@@ -246,13 +238,13 @@ class BytesViewHelperTest extends ViewHelperBaseTestcase
 
         $mockNumberFormatter = $this
             ->getMockBuilder(NumberFormatter::class)
-            ->setMethods(['formatDecimalNumber'])
+            ->onlyMethods(['formatDecimalNumber'])
             ->getMock()
         ;
         $mockNumberFormatter
             ->expects(static::once())
             ->method('formatDecimalNumber')
-            ->will(static::throwException(new I18nException()))
+            ->willThrowException(new I18nException())
         ;
         $this->inject($this->viewHelper, 'numberFormatter', $mockNumberFormatter);
 

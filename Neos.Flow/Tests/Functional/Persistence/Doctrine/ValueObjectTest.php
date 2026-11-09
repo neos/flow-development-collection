@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Neos\Flow\Tests\Functional\Persistence\Doctrine;
@@ -8,8 +9,9 @@ use Neos\Flow\Persistence\Doctrine\Query;
 use Neos\Flow\Tests\Functional\Persistence\Fixtures\TestEntity;
 use Neos\Flow\Tests\Functional\Persistence\Fixtures\TestValueObject;
 use Neos\Flow\Tests\FunctionalTestCase;
+use PHPUnit\Framework\Attributes\Test;
 
-class ValueObjectTest extends FunctionalTestCase
+final class ValueObjectTest extends FunctionalTestCase
 {
     /**
      * @var bool
@@ -35,9 +37,8 @@ class ValueObjectTest extends FunctionalTestCase
      *
      * The exception thrown is an ORMInvalidArgumentException with message:
      * "A managed+dirty entity test can not be scheduled for insertion."
-     *
-     * @test
      */
+    #[Test]
     public function valueObjectsGetDeduplicatedAndCanBePersisted(): void
     {
         for ($i = 0; $i < 2; $i++) {
@@ -49,6 +50,6 @@ class ValueObjectTest extends FunctionalTestCase
             $this->persistenceManager->persistAll();
         }
         $query = new Query(TestEntity::class);
-        self::assertEquals(2, $query->count(), 'It should be exactly two TestEntities');
+        self::assertSame(2, $query->count(), 'It should be exactly two TestEntities');
     }
 }

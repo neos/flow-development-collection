@@ -1,6 +1,7 @@
 parameters:
     level: 8
     paths:
+        - Neos.Flow/Classes
         - Neos.Flow.Log/Classes
         - Neos.FluidAdaptor/Classes
         - Neos.Http.Factories/Classes

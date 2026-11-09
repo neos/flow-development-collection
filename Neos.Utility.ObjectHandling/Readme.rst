@@ -19,4 +19,4 @@ Dependencies
 ------------
 
 The tests depend on Doctrine/ORM which is therefore
-a dev requirement requirement.
+a dev requirement.

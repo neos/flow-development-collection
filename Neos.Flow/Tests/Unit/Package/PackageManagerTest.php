@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Neos\Flow\Tests\Unit\Package;
 
 /*
@@ -10,7 +13,6 @@ namespace Neos\Flow\Tests\Unit\Package;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
 use Neos\Flow\Composer\ComposerUtility;
 use Neos\Flow\Core\ApplicationContext;
 use Neos\Flow\Core\Bootstrap;
@@ -22,18 +24,21 @@ use Neos\Flow\Package\FlowPackageInterface;
 use Neos\Flow\Package\FlowPackageKey;
 use Neos\Flow\Package\PackageFactory;
 use Neos\Flow\Package\PackageInterface;
-use org\bovigo\vfs\vfsStream;
 use Neos\Flow\Package\PackageManager;
 use Neos\Flow\Reflection\ReflectionService;
 use Neos\Flow\SignalSlot\Dispatcher;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Utility\Files;
+use org\bovigo\vfs\vfsStream;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\MockObject\MockObject;
 
 /**
  * Testcase for the default package manager
  *
  */
-class PackageManagerTest extends UnitTestCase
+final class PackageManagerTest extends UnitTestCase
 {
     /**
      * @var PackageManager
@@ -41,17 +46,7 @@ class PackageManagerTest extends UnitTestCase
     protected $packageManager;
 
     /**
-     * @var Bootstrap|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $mockBootstrap;
-
-    /**
-     * @var ApplicationContext|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $mockApplicationContext;
-
-    /**
-     * @var Dispatcher|\PHPUnit\Framework\MockObject\MockObject
+     * @var Dispatcher|MockObject
      */
     protected $mockDispatcher;
 
@@ -63,16 +58,13 @@ class PackageManagerTest extends UnitTestCase
     {
         ComposerUtility::flushCaches();
         vfsStream::setup('Test');
-        $this->mockBootstrap = $this->getMockBuilder(Bootstrap::class)->disableOriginalConstructor()->getMock();
-        $this->mockBootstrap->expects(self::any())->method('getSignalSlotDispatcher')->will(self::returnValue($this->createMock(Dispatcher::class)));
-
-        $this->mockApplicationContext = $this->getMockBuilder(ApplicationContext::class)->disableOriginalConstructor()->getMock();
-        $this->mockBootstrap->expects(self::any())->method('getContext')->will(self::returnValue($this->mockApplicationContext));
+        $mockBootstrap = $this->createMock(Bootstrap::class);
+        $mockBootstrap->method('getSignalSlotDispatcher')->willReturn(($this->createMock(Dispatcher::class)));
+        $mockBootstrap->method('getContext')->willReturn(($this->createMock(ApplicationContext::class)));
 
         $mockObjectManager = $this->createMock(ObjectManagerInterface::class);
-        $this->mockBootstrap->expects(self::any())->method('getObjectManager')->will(self::returnValue($mockObjectManager));
-        $mockReflectionService = $this->createMock(ReflectionService::class);
-        $mockObjectManager->expects(self::any())->method('get')->with(ReflectionService::class)->will(self::returnValue($mockReflectionService));
+        $mockBootstrap->method('getObjectManager')->willReturn(($mockObjectManager));
+        $mockObjectManager->method('get')->with(ReflectionService::class)->willReturn(($this->createMock(ReflectionService::class)));
 
         mkdir('vfs://Test/Packages/Application', 0700, true);
         mkdir('vfs://Test/Configuration');
@@ -85,15 +77,13 @@ class PackageManagerTest extends UnitTestCase
 
         $this->inject($this->packageManager, 'composerNameToPackageKeyMap', $composerNameToPackageKeyMap);
 
-        $this->mockDispatcher = $this->getMockBuilder(Dispatcher::class)->disableOriginalConstructor()->getMock();
+        $this->mockDispatcher = $this->createMock(Dispatcher::class);
         $this->inject($this->packageManager, 'dispatcher', $this->mockDispatcher);
 
-        $this->packageManager->initialize($this->mockBootstrap);
+        $this->packageManager->initialize($mockBootstrap);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getPackageReturnsTheSpecifiedPackage()
     {
         $this->packageManager->createPackage('Some.Test.Package', [], 'vfs://Test/Packages/Application');
@@ -102,9 +92,7 @@ class PackageManagerTest extends UnitTestCase
         self::assertInstanceOf(PackageInterface::class, $package, 'The result of getPackage() was no valid package object.');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getPackageThrowsExceptionOnUnknownPackage()
     {
         $this->expectException(UnknownPackageException::class);
@@ -121,7 +109,7 @@ class PackageManagerTest extends UnitTestCase
     protected function createDummyObjectForPackage(PackageInterface $package)
     {
         $namespaces = $package->getNamespaces();
-        $dummyClassName = 'Someclass' . md5(uniqid(mt_rand(), true));
+        $dummyClassName = 'Someclass' . md5(uniqid((string)mt_rand(), true));
 
         $fullyQualifiedClassName = '\\' . reset($namespaces) . '\\' . $dummyClassName;
 
@@ -135,26 +123,22 @@ class PackageManagerTest extends UnitTestCase
         return new $fullyQualifiedClassName();
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getCaseSensitivePackageKeyReturnsTheUpperCamelCaseVersionOfAGivenPackageKeyIfThePackageIsRegistered()
     {
-        $packageManager = $this->getAccessibleMock(PackageManager::class, ['dummy'], ['', '']);
+        $packageManager = $this->getAccessibleMock(PackageManager::class, [], ['', '']);
         $packageManager->_set('packageKeys', ['acme.testpackage' => 'Acme.TestPackage']);
         self::assertEquals('Acme.TestPackage', $packageManager->getCaseSensitivePackageKey('acme.testpackage'));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function scanAvailablePackagesTraversesThePackagesDirectoryAndRegistersPackagesItFinds()
     {
         $expectedPackageKeys = [
-            'Neos.Flow' . md5(uniqid(mt_rand(), true)),
-            'Neos.Flow.Test' . md5(uniqid(mt_rand(), true)),
-            'Neos.YetAnotherTestPackage' . md5(uniqid(mt_rand(), true)),
-            'RobertLemke.Flow.NothingElse' . md5(uniqid(mt_rand(), true))
+            'Neos.Flow' . md5(uniqid((string)mt_rand(), true)),
+            'Neos.Flow.Test' . md5(uniqid((string)mt_rand(), true)),
+            'Neos.YetAnotherTestPackage' . md5(uniqid((string)mt_rand(), true)),
+            'RobertLemke.Flow.NothingElse' . md5(uniqid((string)mt_rand(), true))
         ];
 
         foreach ($expectedPackageKeys as $packageKey) {
@@ -181,9 +165,7 @@ class PackageManagerTest extends UnitTestCase
         self::assertSame($expectedPackageKeys, $actualPackageKeys);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function scanAvailablePackagesTraversesThePackagesDirectoryAndRespectsPackageCollectionsAndRegistersPackagesItFinds()
     {
         $expectedPackageKeys = [
@@ -230,16 +212,14 @@ class PackageManagerTest extends UnitTestCase
         self::assertSame($expectedPackageKeys, $actualPackageKeys);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function packageStatesConfigurationContainsRelativePaths()
     {
         /** @var list<FlowPackageKey> $packageKeys */
         $packageKeys = [
-            FlowPackageKey::fromString('RobertLemke.Flow.NothingElse' . md5(uniqid(mt_rand(), true))),
-            FlowPackageKey::fromString('Neos.Flow' . md5(uniqid(mt_rand(), true))),
-            FlowPackageKey::fromString('Neos.YetAnotherTestPackage' . md5(uniqid(mt_rand(), true))),
+            FlowPackageKey::fromString('RobertLemke.Flow.NothingElse' . md5(uniqid((string)mt_rand(), true))),
+            FlowPackageKey::fromString('Neos.Flow' . md5(uniqid((string)mt_rand(), true))),
+            FlowPackageKey::fromString('Neos.YetAnotherTestPackage' . md5(uniqid((string)mt_rand(), true))),
         ];
 
         foreach ($packageKeys as $packageKey) {
@@ -250,7 +230,7 @@ class PackageManagerTest extends UnitTestCase
             ComposerUtility::writeComposerManifest($packagePath, $packageKey, ['type' => 'flow-test', 'autoload' => []]);
         }
 
-        $packageManager = $this->getAccessibleMock(PackageManager::class, ['updateShortcuts', 'emitPackageStatesUpdated'], [], '', false);
+        $packageManager = $this->getAccessibleMock(PackageManager::class, [], [], '', false);
         $packageManager->_set('packagesBasePath', 'vfs://Test/Packages/');
         $packageManager->_set('packageInformationCacheFilePath', 'vfs://Test/Configuration/PackageStates.php');
 
@@ -278,34 +258,28 @@ class PackageManagerTest extends UnitTestCase
     /**
      * Data Provider returning valid package keys and the corresponding path
      *
-     * @return array
+     * @return \Iterator<(int | string), mixed>
      */
-    public function packageKeysAndPaths()
+    public static function packageKeysAndPaths(): \Iterator
     {
-        return [
-            ['Neos.YetAnotherTestPackage', 'vfs://Test/Packages/Application/Neos.YetAnotherTestPackage/'],
-            ['RobertLemke.Flow.NothingElse', 'vfs://Test/Packages/Application/RobertLemke.Flow.NothingElse/']
-        ];
+        yield ['Neos.YetAnotherTestPackage', 'vfs://Test/Packages/Application/Neos.YetAnotherTestPackage/'];
+        yield ['RobertLemke.Flow.NothingElse', 'vfs://Test/Packages/Application/RobertLemke.Flow.NothingElse/'];
     }
 
-    /**
-     * @test
-     * @dataProvider packageKeysAndPaths
-     */
+    #[DataProvider('packageKeysAndPaths')]
+    #[Test]
     public function createPackageCreatesPackageFolderAndReturnsPackage($packageKey, $expectedPackagePath)
     {
         $actualPackage = $this->packageManager->createPackage($packageKey, [], 'vfs://Test/Packages/Application');
         $actualPackagePath = $actualPackage->getPackagePath();
 
         self::assertEquals($expectedPackagePath, $actualPackagePath);
-        self::assertTrue(is_dir($actualPackagePath), 'Package path should exist after createPackage()');
+        self::assertDirectoryExists($actualPackagePath, 'Package path should exist after createPackage()');
         self::assertEquals($packageKey, $actualPackage->getPackageKey());
         self::assertTrue($this->packageManager->isPackageAvailable($packageKey));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function createPackageWritesAComposerManifestUsingTheGivenMetaObject()
     {
         $package = $this->packageManager->createPackage('Acme.YetAnotherTestPackage', [
@@ -326,9 +300,7 @@ class PackageManagerTest extends UnitTestCase
         self::assertEquals('Yet Another Test Package', $composerManifest->description);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function createPackageCanChangePackageTypeInComposerManifest()
     {
         $metaData = [
@@ -350,10 +322,7 @@ class PackageManagerTest extends UnitTestCase
         self::assertEquals('flow-custom-package', $composerManifest->type);
     }
 
-
-    /**
-     * @test
-     */
+    #[Test]
     public function createPackageAlwaysSetsThePackageType()
     {
         $package = $this->packageManager->createPackage('Acme.YetAnotherTestPackage2', [], 'vfs://Test/Packages/Application');
@@ -366,40 +335,37 @@ class PackageManagerTest extends UnitTestCase
 
     /**
      * Checks if createPackage() creates the folders for classes, configuration, documentation, resources and tests.
-     *
-     * @test
      */
+    #[Test]
     public function createPackageCreatesCommonFolders()
     {
         $package = $this->packageManager->createPackage('Acme.YetAnotherTestPackage', [], 'vfs://Test/Packages/Application');
         $packagePath = $package->getPackagePath();
 
-        self::assertTrue(is_dir($packagePath . FlowPackageInterface::DIRECTORY_CLASSES), 'Classes directory was not created');
-        self::assertTrue(is_dir($packagePath . FlowPackageInterface::DIRECTORY_CONFIGURATION), 'Configuration directory was not created');
-        self::assertTrue(is_dir($packagePath . FlowPackageInterface::DIRECTORY_RESOURCES), 'Resources directory was not created');
-        self::assertTrue(is_dir($packagePath . FlowPackageInterface::DIRECTORY_TESTS_UNIT), 'Tests/Unit directory was not created');
-        self::assertTrue(is_dir($packagePath . FlowPackageInterface::DIRECTORY_TESTS_FUNCTIONAL), 'Tests/Functional directory was not created');
+        self::assertDirectoryExists($packagePath . FlowPackageInterface::DIRECTORY_CLASSES, 'Classes directory was not created');
+        self::assertDirectoryExists($packagePath . FlowPackageInterface::DIRECTORY_CONFIGURATION, 'Configuration directory was not created');
+        self::assertDirectoryExists($packagePath . FlowPackageInterface::DIRECTORY_RESOURCES, 'Resources directory was not created');
+        self::assertDirectoryExists($packagePath . FlowPackageInterface::DIRECTORY_TESTS_UNIT, 'Tests/Unit directory was not created');
+        self::assertDirectoryExists($packagePath . FlowPackageInterface::DIRECTORY_TESTS_FUNCTIONAL, 'Tests/Functional directory was not created');
     }
 
     /**
      * Makes sure that an exception is thrown and no directory is created on passing invalid package keys.
-     *
-     * @test
      */
+    #[Test]
     public function createPackageThrowsExceptionOnInvalidPackageKey()
     {
         try {
             $this->packageManager->createPackage('Invalid_PackageKey', [], 'vfs://Test/Packages/Application');
         } catch (InvalidPackageKeyException $exception) {
         }
-        self::assertFalse(is_dir('vfs://Test/Packages/Application/Invalid_PackageKey'), 'Package folder with invalid package key was created');
+        self::assertDirectoryDoesNotExist('vfs://Test/Packages/Application/Invalid_PackageKey', 'Package folder with invalid package key was created');
     }
 
     /**
      * Makes sure that duplicate package keys are detected.
-     *
-     * @test
      */
+    #[Test]
     public function createPackageThrowsExceptionForExistingPackageKey()
     {
         $this->expectException(PackageKeyAlreadyExistsException::class);
@@ -407,9 +373,7 @@ class PackageManagerTest extends UnitTestCase
         $this->packageManager->createPackage('Acme.YetAnotherTestPackage', [], 'vfs://Test/Packages/Application');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function createPackageMakesTheNewlyCreatedPackageAvailable()
     {
         $this->packageManager->createPackage('Acme.YetAnotherTestPackage', [], 'vfs://Test/Packages/Application');
@@ -417,22 +381,18 @@ class PackageManagerTest extends UnitTestCase
     }
 
     /**
-     * @return array
+     * @return \Iterator<(int | string), mixed>
      */
-    public function composerNamesAndPackageKeys()
+    public static function composerNamesAndPackageKeys(): \Iterator
     {
-        return [
-            ['imagine/Imagine', 'imagine.Imagine'],
-            ['imagine/imagine', 'imagine.Imagine'],
-            ['neos/flow', 'Neos.Flow'],
-            ['Neos/Flow', 'Neos.Flow']
-        ];
+        yield ['imagine/Imagine', 'imagine.Imagine'];
+        yield ['imagine/imagine', 'imagine.Imagine'];
+        yield ['neos/flow', 'Neos.Flow'];
+        yield ['Neos/Flow', 'Neos.Flow'];
     }
 
-    /**
-     * @test
-     * @dataProvider composerNamesAndPackageKeys
-     */
+    #[DataProvider('composerNamesAndPackageKeys')]
+    #[Test]
     public function getPackageKeyFromComposerNameIgnoresCaseDifferences($composerName, $packageKey)
     {
         $packageStatesConfiguration = [
@@ -448,15 +408,13 @@ class PackageManagerTest extends UnitTestCase
             ]
         ];
 
-        $packageManager = $this->getAccessibleMock(PackageManager::class, ['resolvePackageDependencies'], ['', '']);
+        $packageManager = $this->getAccessibleMock(PackageManager::class, [], ['', '']);
         $packageManager->_set('packageStatesConfiguration', $packageStatesConfiguration);
 
         self::assertEquals($packageKey, $packageManager->_call('getPackageKeyFromComposerName', $composerName));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function registeringTheSamePackageKeyWithDifferentCaseShouldThrowException()
     {
         $this->expectException(PackageKeyAlreadyExistsException::class);
@@ -464,12 +422,10 @@ class PackageManagerTest extends UnitTestCase
         $this->packageManager->createPackage('doctrine.Instantiator', [], 'vfs://Test/Packages/Application');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function createPackageEmitsPackageStatesUpdatedSignal()
     {
-        $this->mockDispatcher->expects(self::once())->method('dispatch')->with(PackageManager::class, 'packageStatesUpdated');
+        $this->mockDispatcher->expects($this->once())->method('dispatch')->with(PackageManager::class, 'packageStatesUpdated');
         $this->packageManager->createPackage('Some.Package', [], 'vfs://Test/Packages/Application');
     }
 }

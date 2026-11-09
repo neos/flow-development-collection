@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Neos\Flow\Tests\Unit\Persistence\Doctrine\DataTypes;
 
 /*
@@ -10,7 +13,7 @@ namespace Neos\Flow\Tests\Unit\Persistence\Doctrine\DataTypes;
 * information, please view the LICENSE file which was distributed with this
 * source code.
 */
-
+use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Neos\Flow\Persistence\Doctrine\DataTypes\JsonArrayType;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Flow\Tests\Unit\Property\TypeConverter\Fixture\ArrayBasedValueObject;
@@ -19,18 +22,15 @@ use Neos\Flow\Tests\Unit\Property\TypeConverter\Fixture\FloatBasedValueObject;
 use Neos\Flow\Tests\Unit\Property\TypeConverter\Fixture\IntegerBasedValueObject;
 use Neos\Flow\Tests\Unit\Property\TypeConverter\Fixture\StringBasedValueObject;
 use Neos\Flow\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\MockObject\MockObject;
 
-class JsonArrayTypeTest extends UnitTestCase
+final class JsonArrayTypeTest extends UnitTestCase
 {
     /**
-     * @var JsonArrayType|\PHPUnit\Framework\MockObject\MockObject
+     * @var JsonArrayType|MockObject
      */
     protected $jsonArrayTypeMock;
-
-    /**
-     * @var \Doctrine\DBAL\Platforms\AbstractPlatform|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $abstractPlatformMock;
 
     /**
      * @return void
@@ -41,36 +41,30 @@ class JsonArrayTypeTest extends UnitTestCase
             ->onlyMethods(['initializeDependencies'])
             ->disableOriginalConstructor()
             ->getMock();
-
-        $this->abstractPlatformMock = $this->getMockBuilder('Doctrine\DBAL\Platforms\AbstractPlatform')->getMock();
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function jsonConversionReturnsNullIfArrayIsNull()
     {
-        $json = $this->jsonArrayTypeMock->convertToDatabaseValue(null, $this->abstractPlatformMock);
+        $json = $this->jsonArrayTypeMock->convertToDatabaseValue(null, $this->createStub(AbstractPlatform::class));
         self::assertEquals(null, $json);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function passSimpleArrayAndConvertToJson(): void
     {
-        $this->inject($this->jsonArrayTypeMock, 'persistenceManager', $this->createMock(PersistenceManagerInterface::class));
-        $json = $this->jsonArrayTypeMock->convertToDatabaseValue(['simplestring',1,['nestedArray']], $this->abstractPlatformMock);
+        $this->inject($this->jsonArrayTypeMock, 'persistenceManager', $this->createStub(PersistenceManagerInterface::class));
+        $json = $this->jsonArrayTypeMock->convertToDatabaseValue(['simplestring',1,['nestedArray']], $this->createStub(AbstractPlatform::class));
         self::assertEquals("{\n    \"0\": \"simplestring\",\n    \"1\": 1,\n    \"2\": {\n        \"0\": \"nestedArray\"\n    }\n}", $json);
     }
 
     /**
-     * @test
      * @return void
      */
+    #[Test]
     public function convertsValueObjectsToSerializableArrayStructures(): void
     {
-        $this->assertEquals(
+        $this->assertSame(
             [
                 '__value_object_type' => ArrayBasedValueObject::class,
                 '__value_object_value' => [
@@ -84,7 +78,7 @@ class JsonArrayTypeTest extends UnitTestCase
             )
         );
 
-        $this->assertEquals(
+        $this->assertSame(
             [
                 '__value_object_type' => StringBasedValueObject::class,
                 '__value_object_value' => 'Hello World'
@@ -104,7 +98,7 @@ class JsonArrayTypeTest extends UnitTestCase
             )
         );
 
-        $this->assertEquals(
+        $this->assertSame(
             [
                 '__value_object_type' => IntegerBasedValueObject::class,
                 '__value_object_value' => 12
@@ -114,7 +108,7 @@ class JsonArrayTypeTest extends UnitTestCase
             )
         );
 
-        $this->assertEquals(
+        $this->assertSame(
             [
                 '__value_object_type' => FloatBasedValueObject::class,
                 '__value_object_value' => 55.55
@@ -152,9 +146,9 @@ class JsonArrayTypeTest extends UnitTestCase
     }
 
     /**
-     * @test
      * @return void
      */
+    #[Test]
     public function deserializesValueObjectsFromSerializableArrayStructures(): void
     {
         //
@@ -217,6 +211,6 @@ class JsonArrayTypeTest extends UnitTestCase
 
         $this->assertInstanceOf(FloatBasedValueObject::class, $valueObject);
         /** @var FloatBasedValueObject $valueObject */
-        $this->assertEquals(17.777, $valueObject->getValue());
+        $this->assertEqualsWithDelta(17.777, $valueObject->getValue(), PHP_FLOAT_EPSILON);
     }
 }

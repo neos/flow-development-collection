@@ -438,7 +438,7 @@ That's why two parts need to be configured for enabling the recursive behavior: 
 to specify the allowed properties using one of the ``allowProperties(), allowAllProperties()``
 or ``allowAllPropertiesExcept()`` methods.
 
-Second, you need to configure the the PersistentObjectConverter using the two options
+Second, you need to configure the PersistentObjectConverter using the two options
 ``CONFIGURATION_MODIFICATION_ALLOWED`` and ``CONFIGURATION_CREATION_ALLOWED``. They
 must be used to explicitly activate the modification or creation of objects. By
 default, the ``PersistentObjectConverter`` does only fetch objects from the persistence,

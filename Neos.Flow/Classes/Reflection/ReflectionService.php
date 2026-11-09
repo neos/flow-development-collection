@@ -1,5 +1,7 @@
 <?php
+
 declare(strict_types=1);
+
 namespace Neos\Flow\Reflection;
 
 /*
@@ -92,6 +94,9 @@ class ReflectionService
     protected const DATA_PARAMETER_ANNOTATIONS = 25;
 
     protected Reader $annotationReader;
+    /**
+     * @var array<string,array<class-string>> class names per package (key)
+     */
     protected array $availableClassNames = [];
     protected VariableFrontend $reflectionDataRuntimeCache;
     protected VariableFrontend $classSchemataRuntimeCache;
@@ -107,40 +112,87 @@ class ReflectionService
     /**
      * a cache which stores the use statements reflected for a particular class
      * (only relevant for un-expanded "var" and "param" annotations)
+     *
+     * @var array<class-string,array<string>>
      */
     protected array $useStatementsForClassCache;
 
+    /**
+     * @var array<string,mixed>
+     */
     protected array $settings = [];
 
     /**
      * Array of annotation classnames and the names of classes which are annotated with them
+     *
+     * @var array<class-string,array<class-string, bool>>
      */
     protected array $annotatedClasses = [];
 
     /**
      * Array of method annotations and the classes and methods which are annotated with them
+     *
+     * @var array<class-string,array<class-string,array<string,string>>>
      */
     protected array $classesByMethodAnnotations = [];
 
     /**
      * Schemata of all classes which can be persisted
      *
-     * @var array<string, ClassSchema|false>
+     * @var array<class-string,ClassSchema>
      */
     protected array $classSchemata = [];
 
     /**
      * An array of class names which are currently being forgotten by forgetClass(). Acts as a safeguard against infinite loops.
+     *
+     * @var array<class-string,true>
      */
     protected array $classesCurrentlyBeingForgotten = [];
 
     /**
      * Array with reflection information indexed by class name
+     *
+     * @var array<class-string,array{
+     *     1?: array<class-string,bool>,
+     *     3?: array<class-string,bool>,
+     *     5?: array<int,object>,
+     *     6?: true,
+     *     7?: true,
+     *     8?: array<string,array{
+     *         10?: true,
+     *         11?: true,
+     *         12: int,
+     *         13: array<string,array{
+     *             16: int,
+     *             17?: true,
+     *             18?: string,
+     *             19?: true,
+     *             20?: string,
+     *             21?: true,
+     *             22?: mixed,
+     *             23?: true,
+     *             24?: true,
+     *             25?: array<string,array<int,object>>
+     *         }>,
+     *         25: ?string
+     *     }>,
+     *     9?: array<string,array{
+     *         14?: array<int|string,array<mixed>>,
+     *         15?: array<string,array<int,object>>,
+     *         24?: int,
+     *         26?: string,
+     *         28?: true,
+     *     }>,
+     *     27?: true,
+     * }>
      */
     protected array $classReflectionData = [];
 
     /**
      * Array with updated reflection information (e.g. in Development context after classes have changed)
+     *
+     * @var array<class-string,true>
      */
     protected array $updatedReflectionData = [];
 
@@ -148,6 +200,8 @@ class ReflectionService
 
     /**
      * A runtime cache for reflected method annotations to speed up repeating checks.
+     *
+     * @var array<class-string,array<string,array<object>>>
      */
     protected array $methodAnnotationsRuntimeCache = [];
 
@@ -162,6 +216,9 @@ class ReflectionService
         $this->classSchemataRuntimeCache = $cache;
     }
 
+    /**
+     * @param array<string,mixed> $settings
+     */
     public function injectSettings(array $settings): void
     {
         $this->settings = $settings['reflection'];
@@ -211,7 +268,7 @@ class ReflectionService
      * This method is called by the Compile Time Object Manager which also determines
      * the list of classes to consider for reflection.
      *
-     * @param array $availableClassNames
+     * @param array<string,array<class-string>> $availableClassNames
      * @throws ClassLoadingForReflectionFailedException
      * @throws ClassSchemaConstraintViolationException
      * @throws Exception
@@ -234,7 +291,7 @@ class ReflectionService
      * Tells if the specified class is known to this reflection service and
      * reflection information is available.
      *
-     * @param class-string $className
+     * @param string $className
      *
      * @api
      */
@@ -243,14 +300,15 @@ class ReflectionService
         if (!$this->initialized) {
             $this->initialize();
         }
-        $className = $this->cleanClassName($className);
-
+        $className = $this->cleanTypeName($className);
+        /** @phpstan-ignore booleanAnd.rightAlwaysTrue (not exactly sure why this is needed) */
         return isset($this->classReflectionData[$className]) && is_array($this->classReflectionData[$className]);
     }
 
     /**
      * Returns the names of all classes known to this reflection service.
      *
+     * @return array<int,class-string>
      * @api
      */
     public function getAllClassNames(): array
@@ -318,6 +376,7 @@ class ReflectionService
         }
         $interfaceName = $this->prepareClassReflectionForUsage($interfaceName);
 
+        /** @phpstan-ignore return.type (classic subtype dilemma; don't know how to solve it yet) */
         return array_keys($this->classReflectionData[$interfaceName][self::DATA_INTERFACE_IMPLEMENTATIONS] ?? []);
     }
 
@@ -327,7 +386,7 @@ class ReflectionService
      *
      * @template T of object
      * @param class-string<T> $className
-     * @return list<class-string<T>>
+     * @return array<class-string<T>>
      * @throws ClassLoadingForReflectionFailedException
      * @throws InvalidClassException
      * @throws \ReflectionException
@@ -339,19 +398,22 @@ class ReflectionService
             throw new \InvalidArgumentException('"' . $className . '" does not exist or is not the name of a class.', 1257168042);
         }
         $className = $this->prepareClassReflectionForUsage($className);
+        /** @phpstan-ignore return.type (classic subtype dilemma; don't know how to solve it yet) */
         return array_keys($this->classReflectionData[$className][self::DATA_CLASS_SUBCLASSES] ?? []);
     }
 
     /**
      * Searches for and returns all names of classes which are tagged by the specified
      * annotation. If no classes were found, an empty array is returned.
+     *
+     * @return array<int,class-string>
      */
     public function getClassNamesByAnnotation(string $annotationClassName): array
     {
         if (!$this->initialized) {
             $this->initialize();
         }
-        $annotationClassName = $this->cleanClassName($annotationClassName);
+        $annotationClassName = $this->cleanTypeName($annotationClassName);
 
         return array_keys($this->annotatedClasses[$annotationClassName] ?? []);
     }
@@ -366,9 +428,9 @@ class ReflectionService
         if (!$this->initialized) {
             $this->initialize();
         }
-        $className = $this->cleanClassName($className);
+        $className = $this->cleanTypeName($className);
 
-        $annotationClassName = $this->cleanClassName($annotationClassName);
+        $annotationClassName = $this->cleanTypeName($annotationClassName);
 
         return isset($this->annotatedClasses[$annotationClassName][$className]);
     }
@@ -376,9 +438,10 @@ class ReflectionService
     /**
      * Returns the specified class annotations or an empty array
      *
+     * @template T
      * @param class-string $className
-     * @param null|class-string $annotationClassName
-     * @return array<object>
+     * @param null|class-string<T> $annotationClassName
+     * @return ($annotationClassName is null ? array<int,object> : array<int,T>)
      * @throws ClassLoadingForReflectionFailedException
      * @throws InvalidClassException
      * @throws \ReflectionException
@@ -387,7 +450,7 @@ class ReflectionService
     {
         $className = $this->prepareClassReflectionForUsage($className);
 
-        $annotationClassName = $annotationClassName === null ? null : $this->cleanClassName($annotationClassName);
+        $annotationClassName = $annotationClassName === null ? null : $this->cleanTypeName($annotationClassName);
         if (!isset($this->classReflectionData[$className][self::DATA_CLASS_ANNOTATIONS])) {
             return [];
         }
@@ -411,9 +474,10 @@ class ReflectionService
      * If multiple annotations are set on the target you will
      * get the first instance of them.
      *
+     * @template T of object
      * @param class-string $className
-     * @param class-string $annotationClassName
-     * @return object|null
+     * @param class-string<T> $annotationClassName
+     * @return T|null
      * @throws ClassLoadingForReflectionFailedException
      * @throws InvalidClassException
      * @throws \ReflectionException
@@ -425,12 +489,13 @@ class ReflectionService
         }
         $annotations = $this->getClassAnnotations($className, $annotationClassName);
 
-        return $annotations === [] ? null : reset($annotations);
+        return $annotations[0] ?? null;
     }
 
     /**
      * Tells if the specified class implements the given interface
      *
+     * @todo can't this be replaces with is_subclass_of() ?
      * @throws ClassLoadingForReflectionFailedException
      * @throws InvalidClassException
      * @throws \ReflectionException
@@ -497,7 +562,7 @@ class ReflectionService
      */
     public function isClassUnconfigurable(string $className): bool
     {
-        $className = $this->cleanClassName($className);
+        $className = $this->cleanTypeName($className);
 
         return $this->classReflectionData[$className] === [];
     }
@@ -506,6 +571,7 @@ class ReflectionService
      * Returns all class names of classes containing at least one method annotated
      * with the given annotation class
      *
+     * @return array<int,class-string>
      * @api
      */
     public function getClassesContainingMethodsAnnotatedWith(string $annotationClassName): array
@@ -520,6 +586,7 @@ class ReflectionService
     /**
      * Returns all names of methods of the given class that are annotated with the given annotation class
      *
+     * @return array<string,string>
      * @api
      */
     public function getMethodsAnnotatedWith(string $className, string $annotationClassName): array
@@ -550,7 +617,7 @@ class ReflectionService
     /**
      * Tells if the specified method is declared as static or not
      *
-     * @param class-string $className
+     * @param string $className
      * @throws ClassLoadingForReflectionFailedException
      * @throws InvalidClassException
      * @throws \ReflectionException
@@ -589,7 +656,6 @@ class ReflectionService
     }
 
     /**
-     * @param class-string $className
      * @throws ClassLoadingForReflectionFailedException
      * @throws InvalidClassException
      * @throws \ReflectionException
@@ -644,9 +710,10 @@ class ReflectionService
     /**
      * Returns the specified method annotations or an empty array
      *
+     * @template T
      * @param class-string $className
-     * @param class-string|null $annotationClassName
-     * @return array<object>
+     * @param class-string<T>|null $annotationClassName
+     * @return ($annotationClassName is null ? array<object> : array<T>)
      *
      * @throws \ReflectionException
      * @api
@@ -655,7 +722,7 @@ class ReflectionService
     public function getMethodAnnotations(string $className, string $methodName, string|null $annotationClassName = null): array
     {
         $className = $this->cleanClassName($className);
-        $annotationClassName = $annotationClassName === null ? null : $this->cleanClassName($annotationClassName);
+        $annotationClassName = $annotationClassName === null ? null : $this->cleanTypeName($annotationClassName);
 
         $methodAnnotations = $this->methodAnnotationsRuntimeCache[$className][$methodName] ?? null;
         $annotations = [];
@@ -692,6 +759,10 @@ class ReflectionService
      *
      * If multiple annotations are set on the target you will
      * get the first instance of them.
+     *
+     * @template T of object
+     * @param class-string $className
+     * @param class-string<T> $annotationClassName
      *
      * @throws \ReflectionException
      */
@@ -741,6 +812,7 @@ class ReflectionService
      *
      * @throws \ReflectionException
      * @deprecated since 8.4
+     * @return array<string,array<int,string>>
      */
     public function getMethodTagsValues(string $className, string $methodName): array
     {
@@ -757,7 +829,18 @@ class ReflectionService
      * additional information about the parameter position, type hint etc.
      *
      * @param class-string $className
-     * @return array An array of parameter names and additional information or an empty array of no parameters were found
+     * @return array<string,array{
+     *      position: int,
+     *      optional: bool,
+     *      type: ?string,
+     *      class: ?string,
+     *      array: bool,
+     *      byReference: bool,
+     *      allowsNull: bool,
+     *      defaultValue: mixed,
+     *      scalarDeclaration: bool,
+     *      annotations: array<string,array<int,object>>,
+     * }> An array of parameter names and additional information or an empty array of no parameters were found
      * @throws ClassLoadingForReflectionFailedException
      * @throws InvalidClassException
      * @throws \ReflectionException
@@ -820,7 +903,7 @@ class ReflectionService
      *
      * @param class-string $className
      * @param string $propertyName
-     * @return array
+     * @return array<int|string,array<mixed>>
      * @throws ClassLoadingForReflectionFailedException
      * @throws InvalidClassException
      * @throws \ReflectionException
@@ -838,7 +921,7 @@ class ReflectionService
      * @param class-string $className
      * @param string $propertyName
      * @param string $tag
-     * @return array
+     * @return array<mixed>
      * @throws ClassLoadingForReflectionFailedException
      * @throws InvalidClassException
      * @throws \ReflectionException
@@ -959,10 +1042,11 @@ class ReflectionService
     /**
      * Returns the specified property annotations or an empty array
      *
+     * @template Annotation of object
      * @param class-string $className
      * @param string $propertyName
-     * @param class-string|null $annotationClassName
-     * @return array<object>
+     * @param class-string<Annotation>|null $annotationClassName
+     * @return ($annotationClassName is null ? array<class-string,array<object>> : array<Annotation>)
      * @throws ClassLoadingForReflectionFailedException
      * @throws InvalidClassException
      * @throws \ReflectionException
@@ -979,6 +1063,9 @@ class ReflectionService
             return $this->classReflectionData[$className][self::DATA_CLASS_PROPERTIES][$propertyName][self::DATA_PROPERTY_ANNOTATIONS];
         }
 
+        /** @phpstan-ignore return.type
+         * (in case of an annotation class name, this is really the annotation instance; The array is just mixed with arbitrary-string-indexed other objects)
+         */
         return $this->classReflectionData[$className][self::DATA_CLASS_PROPERTIES][$propertyName][self::DATA_PROPERTY_ANNOTATIONS][$annotationClassName] ?? [];
     }
 
@@ -988,10 +1075,11 @@ class ReflectionService
      * If multiple annotations are set on the target you will
      * get the first instance of them.
      *
-     * @param string $className
+     * @template Annotation of object
+     * @param class-string $className
      * @param string $propertyName
-     * @param string $annotationClassName
-     * @return object|null
+     * @param class-string<Annotation> $annotationClassName
+     * @return Annotation|null
      * @throws ClassLoadingForReflectionFailedException
      * @throws InvalidClassException
      * @throws \ReflectionException
@@ -1002,13 +1090,13 @@ class ReflectionService
             $this->initialize();
         }
         $annotations = $this->getPropertyAnnotations($className, $propertyName, $annotationClassName);
-        return $annotations === [] ? null : reset($annotations);
+        return reset($annotations) ?: null;
     }
 
     /**
      * Returns the class schema for the given class
      *
-     * @param class-string|object $classNameOrObject
+     * @param string|object $classNameOrObject
      * @return ClassSchema|null
      */
     public function getClassSchema(string|object $classNameOrObject): ?ClassSchema
@@ -1018,8 +1106,8 @@ class ReflectionService
         }
 
         $className = $classNameOrObject;
-        if (is_object($classNameOrObject)) {
-            $className = TypeHandling::getTypeForValue($classNameOrObject);
+        if (is_object($className)) {
+            $className = TypeHandling::getTypeForValue($className);
         }
         $className = $this->cleanClassName($className);
 
@@ -1034,8 +1122,8 @@ class ReflectionService
     /**
      * Initializes the ReflectionService, cleans the given class name and finally reflects the class if necessary.
      *
-     * @param class-string $className
-     * @return string
+     * @param string $className
+     * @return class-string
      * @throws ClassLoadingForReflectionFailedException
      * @throws InvalidClassException
      * @throws \ReflectionException
@@ -1124,7 +1212,7 @@ class ReflectionService
     /**
      * Reflects the given class and stores the results in this service's properties.
      *
-     * @param class-string $className
+     * @param string $className
      * @throws ClassLoadingForReflectionFailedException
      * @throws InvalidClassException
      * @throws \ReflectionException
@@ -1139,7 +1227,7 @@ class ReflectionService
         }
 
         $class = new ClassReflection($className);
-        if (!isset($this->classReflectionData[$className]) || !is_array($this->classReflectionData[$className])) {
+        if (!array_key_exists($className, $this->classReflectionData)) {
             $this->classReflectionData[$className] = [];
         }
 
@@ -1195,6 +1283,7 @@ class ReflectionService
     }
 
     /**
+     * @param class-string $className
      * @return int visibility
      */
     public function reflectClassProperty(string $className, PropertyReflection $property): int
@@ -1243,6 +1332,10 @@ class ReflectionService
         return $visibility;
     }
 
+    /**
+     * @param array<mixed> $tagValues
+     * @return array<mixed>|null
+     */
     protected function reflectPropertyTag(string $className, PropertyReflection $property, string $tagName, array $tagValues): ?array
     {
         if ($this->isTagIgnored($tagName)) {
@@ -1264,12 +1357,14 @@ class ReflectionService
     }
 
     /**
+     * @param class-string $className
      * @throws InvalidClassException
      * @throws ClassLoadingForReflectionFailedException
      * @throws \ReflectionException
      */
     protected function addParentClass(string $className, ClassReflection $parentClass): void
     {
+        /** @var class-string $parentClassName */
         $parentClassName = $parentClass->getName();
         if (!$this->isClassReflected($parentClassName)) {
             $this->loadOrReflectClassIfNecessary($parentClassName);
@@ -1278,6 +1373,7 @@ class ReflectionService
     }
 
     /**
+     * @param class-string $className
      * @throws ClassLoadingForReflectionFailedException
      * @throws InvalidClassException
      * @throws \ReflectionException
@@ -1383,7 +1479,7 @@ class ReflectionService
 
         if (
             isset($this->classReflectionData[$className][self::DATA_CLASS_METHODS][$methodName][self::DATA_METHOD_PARAMETERS][$parameter->getName()][self::DATA_PARAMETER_TYPE]) &&
-            $this->classReflectionData[$className][self::DATA_CLASS_METHODS][$methodName][self::DATA_METHOD_PARAMETERS][$parameter->getName()][self::DATA_PARAMETER_TYPE] !== $this->cleanClassName($parameterAnnotation[0])
+            $this->classReflectionData[$className][self::DATA_CLASS_METHODS][$methodName][self::DATA_METHOD_PARAMETERS][$parameter->getName()][self::DATA_PARAMETER_TYPE] !== $this->cleanTypeName($parameterAnnotation[0])
         ) {
             $this->log('  Wrong type in @param for "' . $method->getName() . '::' . $parameter->getName() . '": "' . $parameterAnnotation[0] . '"', LogLevel::DEBUG);
         }
@@ -1448,6 +1544,7 @@ class ReflectionService
     /**
      * Finds all parent classes of the given class
      *
+     * @param array<int,ClassReflection> $parentClasses
      * @return array<ClassReflection>
      */
     protected function getParentClasses(ClassReflection $class, array $parentClasses = []): array
@@ -1515,7 +1612,11 @@ class ReflectionService
         }
 
         $possibleRepositoryClassName = str_replace('\\Model\\', '\\Repository\\', $className) . 'Repository';
-        if ($this->isClassReflected($possibleRepositoryClassName) === true) {
+        if (
+            class_exists($possibleRepositoryClassName)
+            && is_subclass_of($possibleRepositoryClassName, RepositoryInterface::class)
+            && $this->isClassReflected($possibleRepositoryClassName) === true
+        ) {
             $classSchema->setRepositoryClassName($possibleRepositoryClassName);
         }
 
@@ -1541,7 +1642,6 @@ class ReflectionService
         $className = $classSchema->getClassName();
         $skipArtificialIdentity = false;
 
-        /* @var $valueObjectAnnotation Flow\ValueObject */
         $valueObjectAnnotation = $this->getClassAnnotation($className, Flow\ValueObject::class);
         if ($valueObjectAnnotation !== null && $valueObjectAnnotation->embedded === true) {
             $skipArtificialIdentity = true;
@@ -1650,7 +1750,7 @@ class ReflectionService
         }
 
         foreach ($this->classSchemata as $classSchema) {
-            if ($classSchema instanceof ClassSchema && class_exists($classSchema->getClassName()) && $classSchema->isAggregateRoot()) {
+            if (class_exists($classSchema->getClassName()) && $classSchema->isAggregateRoot()) {
                 $this->makeChildClassesAggregateRoot($classSchema);
             }
         }
@@ -1690,7 +1790,7 @@ class ReflectionService
     protected function ensureAggregateRootInheritanceChainConsistency(): void
     {
         foreach ($this->classSchemata as $className => $classSchema) {
-            if (!class_exists($className) || ($classSchema instanceof ClassSchema && $classSchema->isAggregateRoot() === false)) {
+            if (!class_exists($className) || ($classSchema->isAggregateRoot() === false)) {
                 continue;
             }
 
@@ -1732,8 +1832,30 @@ class ReflectionService
      * Converts the internal, optimized data structure of parameter information into
      * a human-friendly array with speaking indexes.
      *
-     * @param array $parametersInformation Raw, internal parameter information
-     * @return array Developer friendly version
+     * @param array<string,array{
+     *     16: int,
+     *     17?: true,
+     *     18?: string,
+     *     19?: true,
+     *     20?: string,
+     *     21?: true,
+     *     22?: mixed,
+     *     23?: true,
+     *     24?: true,
+     *     25?: array<string,array<int,object>>,
+     * }> $parametersInformation Raw, internal parameter information
+     * @return array<string,array{
+     *     position: int,
+     *     optional: bool,
+     *     type: ?string,
+     *     class: ?string,
+     *     array: bool,
+     *     byReference: bool,
+     *     allowsNull: bool,
+     *     defaultValue: mixed,
+     *     scalarDeclaration: bool,
+     *     annotations: array<string,array<int,object>>,
+     * }> Developer friendly version
      */
     protected function convertParameterDataToArray(array $parametersInformation): array
     {
@@ -1742,7 +1864,7 @@ class ReflectionService
             $parameters[$parameterName] = [
                 'position' => $parameterData[self::DATA_PARAMETER_POSITION],
                 'optional' => isset($parameterData[self::DATA_PARAMETER_OPTIONAL]),
-                'type' => $parameterData[self::DATA_PARAMETER_TYPE],
+                'type' => $parameterData[self::DATA_PARAMETER_TYPE] ?? null,
                 'class' => $parameterData[self::DATA_PARAMETER_CLASS] ?? null,
                 'array' => isset($parameterData[self::DATA_PARAMETER_ARRAY]),
                 'byReference' => isset($parameterData[self::DATA_PARAMETER_BY_REFERENCE]),
@@ -1759,7 +1881,18 @@ class ReflectionService
     /**
      * Converts the given parameter reflection into an information array
      *
-     * @return array Parameter information array
+     * @return array{
+     *     16: int,
+     *     17?: true,
+     *     18?: string,
+     *     19?: true,
+     *     20?: string,
+     *     21?: true,
+     *     22?: mixed,
+     *     23?: true,
+     *     24?: true,
+     *     25?: array<string,array<int,object>>
+     * } Parameter information array
      */
     protected function convertParameterReflectionToArray(ParameterReflection $parameter, MethodReflection $method): array
     {
@@ -1801,7 +1934,7 @@ class ReflectionService
             }
         }
         if (!isset($parameterInformation[self::DATA_PARAMETER_TYPE]) && $parameterType !== null) {
-            $parameterInformation[self::DATA_PARAMETER_TYPE] = $this->cleanClassName($parameterType);
+            $parameterInformation[self::DATA_PARAMETER_TYPE] = $this->cleanTypeName($parameterType);
         } elseif (!isset($parameterInformation[self::DATA_PARAMETER_TYPE])) {
             $parameterInformation[self::DATA_PARAMETER_TYPE] = 'mixed';
         }
@@ -1826,7 +1959,7 @@ class ReflectionService
     protected function forgetChangedClasses(): void
     {
         foreach ($this->classReflectionData as $className => $_) {
-            if (is_string($className) && !$this->reflectionDataRuntimeCache->has($this->produceCacheIdentifierFromClassName($className))) {
+            if (!$this->reflectionDataRuntimeCache->has($this->produceCacheIdentifierFromClassName($className))) {
                 $this->forgetClass($className);
             }
         }
@@ -1958,11 +2091,25 @@ class ReflectionService
     }
 
     /**
+     * Clean a given type from possibly prefixed backslash
+     * @return string
+     */
+    protected function cleanTypeName(string $typeName): string
+    {
+        return ltrim($typeName, '\\');
+    }
+
+    /**
      * Clean a given class name from possibly prefixed backslash
+     * @return class-string
      */
     protected function cleanClassName(string $className): string
     {
-        return ltrim($className, '\\');
+        $className = $this->cleanTypeName($className);
+        if (!class_exists($className) && !interface_exists($className) && !trait_exists($className) && !enum_exists($className)) {
+            throw ClassLoadingForReflectionFailedException::forClassName($className, $className);
+        }
+        return $className;
     }
 
     /**
@@ -1975,6 +2122,7 @@ class ReflectionService
 
     /**
      * Writes the given message along with the additional information into the log.
+     * @param array<string,mixed> $additionalData
      */
     protected function log(string $message, string $severity = LogLevel::INFO, array $additionalData = []): void
     {
@@ -1998,7 +2146,7 @@ class ReflectionService
                 $parameterType->getTypes()
             )),
             $parameterType instanceof \ReflectionIntersectionType => implode('&', array_map(
-                function (\ReflectionNamedType $type) {
+                function (\ReflectionType $type) {
                     return $this->renderParameterType($type);
                 },
                 $parameterType->getTypes()

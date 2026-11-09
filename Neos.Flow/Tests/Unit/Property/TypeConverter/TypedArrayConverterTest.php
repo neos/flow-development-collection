@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Neos\Flow\Tests\Unit\Property\TypeConverter;
 
 /*
@@ -10,15 +13,16 @@ namespace Neos\Flow\Tests\Unit\Property\TypeConverter;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
 use Neos\Flow\Property\TypeConverter\TypedArrayConverter;
 use Neos\Flow\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Testcase for the TypedArrayConverter
  *
  */
-class TypedArrayConverterTest extends UnitTestCase
+final class TypedArrayConverterTest extends UnitTestCase
 {
     /**
      * @var TypedArrayConverter
@@ -30,9 +34,7 @@ class TypedArrayConverterTest extends UnitTestCase
         $this->converter = new TypedArrayConverter();
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function checkMetadata()
     {
         self::assertEquals(['array'], $this->converter->getSupportedSourceTypes(), 'Source types do not match');
@@ -41,24 +43,19 @@ class TypedArrayConverterTest extends UnitTestCase
     }
 
     /**
-     * @return array
+     * @return \Iterator<(int | string), mixed>
      */
-    public function canConvertFromDataProvider()
+    public static function canConvertFromDataProvider(): \Iterator
     {
-        return [
-            ['targetType' => 'SomeTargetType', 'expectedResult' => false],
-            ['targetType' => 'array', 'expectedResult' => false],
-
-            ['targetType' => 'array<string>', 'expectedResult' => true],
-            ['targetType' => 'array<Some\Element\Type>', 'expectedResult' => true],
-            ['targetType' => '\array<\int>', 'expectedResult' => true],
-        ];
+        yield ['targetType' => 'SomeTargetType', 'expectedResult' => false];
+        yield ['targetType' => 'array', 'expectedResult' => false];
+        yield ['targetType' => 'array<string>', 'expectedResult' => true];
+        yield ['targetType' => 'array<Some\Element\Type>', 'expectedResult' => true];
+        yield ['targetType' => '\array<\int>', 'expectedResult' => true];
     }
 
-    /**
-     * @test
-     * @dataProvider canConvertFromDataProvider
-     */
+    #[DataProvider('canConvertFromDataProvider')]
+    #[Test]
     public function canConvertFromTests($targetType, $expectedResult)
     {
         $actualResult = $this->converter->canConvertFrom([], $targetType);
@@ -69,9 +66,7 @@ class TypedArrayConverterTest extends UnitTestCase
         }
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getSourceChildPropertiesToBeConvertedShouldReturnEmptyArray()
     {
         self::assertEquals([], $this->converter->getSourceChildPropertiesToBeConverted(''));

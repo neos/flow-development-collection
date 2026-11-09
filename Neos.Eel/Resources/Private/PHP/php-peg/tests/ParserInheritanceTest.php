@@ -1,9 +1,12 @@
 <?php
+
+declare(strict_types=1);
+
 namespace PhpPeg;
 
 require_once "ParserTestBase.php";
 
-class ParserInheritanceTest extends ParserTestBase {
+final class ParserInheritanceTest extends ParserTestBase {
 
 	public function testBasicInheritance() {
 
@@ -32,10 +35,10 @@ class ParserInheritanceTest extends ParserTestBase {
 		');
 
 		$res = $parser->match('Foo', 'a');
-		self::assertEquals($res['test'], 'test');
+		self::assertEquals('test', $res['test']);
 
 		$res = $parser->match('Bar', 'a');
-		self::assertEquals($res['test'], 'test');
+		self::assertEquals('test', $res['test']);
 
 		$parser = $this->buildParser('
 			/*!* BasicInheritanceConstructFallbackParser2
@@ -48,12 +51,12 @@ class ParserInheritanceTest extends ParserTestBase {
 
 		$res = $parser->match('Foo', 'a');
 		self::assertArrayHasKey('testa', $res);
-		self::assertEquals($res['testa'], 'testa');
+		self::assertEquals('testa', $res['testa']);
 		self::assertArrayNotHasKey('testb', $res);
 
 		$res = $parser->match('Bar', 'a');
 		self::assertArrayHasKey('testb', $res);
-		self::assertEquals($res['testb'], 'testb');
+		self::assertEquals('testb', $res['testb']);
 		self::assertArrayNotHasKey('testa', $res);
 
 	}
@@ -69,10 +72,10 @@ class ParserInheritanceTest extends ParserTestBase {
 		');
 
 		$res = $parser->match('Foo', 'a');
-		self::assertEquals($res['test'], 'test');
+		self::assertEquals('test', $res['test']);
 
 		$res = $parser->match('Bar', 'a');
-		self::assertEquals($res['test'], 'test');
+		self::assertEquals('test', $res['test']);
 
 		$parser = $this->buildParser('
 			/*!* BasicInheritanceStoreFallbackParser2
@@ -87,19 +90,19 @@ class ParserInheritanceTest extends ParserTestBase {
 
 		$res = $parser->match('Foo', 'ab');
 		self::assertArrayHasKey('testa', $res);
-		self::assertEquals($res['testa'], 'testa');
+		self::assertEquals('testa', $res['testa']);
 		self::assertArrayNotHasKey('testb', $res);
 
 		$res = $parser->match('Bar', 'ab');
 		self::assertArrayHasKey('testb', $res);
-		self::assertEquals($res['testb'], 'testb');
+		self::assertEquals('testb', $res['testb']);
 		self::assertArrayNotHasKey('testa', $res);
 
 		$res = $parser->match('Baz', 'ab');
 		self::assertArrayHasKey('testa', $res);
-		self::assertEquals($res['testa'], 'testa');
+		self::assertEquals('testa', $res['testa']);
 		self::assertArrayHasKey('testc', $res);
-		self::assertEquals($res['testc'], 'testc');
+		self::assertEquals('testc', $res['testc']);
 		self::assertArrayNotHasKey('testb', $res);
 	}
 

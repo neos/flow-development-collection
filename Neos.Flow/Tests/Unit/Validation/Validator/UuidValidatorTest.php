@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Neos\Flow\Tests\Unit\Validation\Validator;
 
 /*
@@ -10,9 +13,9 @@ namespace Neos\Flow\Tests\Unit\Validation\Validator;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
+use Neos\Flow\Validation\Error;
 use Neos\Flow\Validation\Validator\UuidValidator;
-use Neos\Flow\Validation;
+use PHPUnit\Framework\Attributes\Test;
 
 require_once('AbstractValidatorTestcase.php');
 
@@ -20,50 +23,40 @@ require_once('AbstractValidatorTestcase.php');
  * Testcase for the UUID validator
  *
  */
-class UuidValidatorTest extends AbstractValidatorTestcase
+final class UuidValidatorTest extends AbstractValidatorTestcase
 {
     protected $validatorClassName = UuidValidator::class;
 
-    /**
-     * @test
-     */
+    #[Test]
     public function validatorAcceptsCorrectUUIDs()
     {
         self::assertFalse($this->validator->validate('e104e469-9030-4b98-babf-3990f07dd3f1')->hasErrors());
         self::assertFalse($this->validator->validate('533548ca-8914-4a19-9404-ef390a6ce387')->hasErrors());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function tooShortUUIDIsRejected()
     {
         self::assertTrue($this->validator->validate('e104e469-9030-4b98-babf-3990f07')->hasErrors());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function tooLongButValidUUIDIsRejected()
     {
         self::assertTrue($this->validator->validate('e104e469-9030-4b98-babf-3990f07dd3f1-3990f07dd3f1')->hasErrors());
         self::assertTrue($this->validator->validate('abcde-533548ca-8914-4a19-9404-ef390a6ce387-xyz')->hasErrors());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function UUIDWithOtherThanHexValuesIsRejected()
     {
         self::assertTrue($this->validator->validate('e104e469-9030-4g98-babf-3990f07dd3f1')->hasErrors());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function UUIDValidatorCreatesTheCorrectErrorIfTheSubjectIsInvalid()
     {
-        $expected = [new Validation\Error('The given subject was not a valid UUID.', 1221565853)];
+        $expected = [new Error('The given subject was not a valid UUID.', 1221565853)];
         self::assertEquals($expected, $this->validator->validate('e104e469-9030-4b98-babf-3990f07')->getErrors());
     }
 }

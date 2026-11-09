@@ -1,5 +1,9 @@
 <?php
+
 namespace Neos\FluidAdaptor\Core\Parser\Fixtures;
+
+use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
+use Neos\FluidAdaptor\Core\ViewHelper\Facets\ChildNodeAccessInterface;
 
 /*
  * This file is part of the Neos.FluidAdaptor package.
@@ -10,10 +14,9 @@ namespace Neos\FluidAdaptor\Core\Parser\Fixtures;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
 /**
  * Test fixture for the child node access facet.
  */
-abstract class ChildNodeAccessFacetViewHelper extends \Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper implements \Neos\FluidAdaptor\Core\ViewHelper\Facets\ChildNodeAccessInterface
+abstract class ChildNodeAccessFacetViewHelper extends AbstractViewHelper implements ChildNodeAccessInterface
 {
 }

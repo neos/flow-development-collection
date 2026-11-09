@@ -1,7 +1,10 @@
 <?php
+
 namespace Neos\FluidAdaptor\Core\Fixtures;
 
-class TestViewHelper extends \Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper
+use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
+
+class TestViewHelper extends AbstractViewHelper
 {
     /**
      * Initialize the arguments.

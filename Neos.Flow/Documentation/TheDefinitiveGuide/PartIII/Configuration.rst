@@ -155,7 +155,7 @@ Some examples:
 
 **Type of environment variables**
 
-Evnironment variables are replaced via PHPs ``getenv()`` function. Thus, they always evaluate to *strings*.
+Environment variables are replaced via PHPs ``getenv()`` function. Thus, they always evaluate to *strings*.
 Unless a mentioned environment variable does not exist, in which case it evaluates to ``false``.
 With version 8.1 Flow allows to cast the type of an environment variable to an *Integer*, *Float*, *Boolean*
 or *String* explicitly, specifying the *type* in the replacement string:
@@ -439,7 +439,7 @@ with the following deviations from the specification:
 * The "format" constraint for string type has additional class-name and
   instance-name options.
 * The "dependencies" constraint of the spec is not implemented.
-* Similar to "patternProperties" "formatProperties" can be specified specified
+* Similar to "patternProperties" "formatProperties" can be specified
   for dictionaries
 
 .. warning::
@@ -474,7 +474,7 @@ Here is an example of a schema, from *Neos.Flow.core.schema.yaml*:
 It declares the constraints for the *Neos.Flow.core* setting:
 
 * the setting is a dictionary (an associative array in PHP nomenclature)
-* properties not defined in the schema are not not allowed
+* properties not defined in the schema are not allowed
 * the properties ``context`` and ``phpBinaryPathAndFilename`` are both required
   and of type string
 

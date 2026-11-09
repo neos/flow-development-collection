@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Neos\Flow\Tests\Unit\Security\Policy;
 
 /*
@@ -10,7 +13,6 @@ namespace Neos\Flow\Tests\Unit\Security\Policy;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
 use Neos\Flow\Configuration\ConfigurationManager;
 use Neos\Flow\ObjectManagement\ObjectManager;
 use Neos\Flow\Security\Authorization\Privilege\AbstractPrivilege;
@@ -19,11 +21,13 @@ use Neos\Flow\Security\Exception\NoSuchRoleException;
 use Neos\Flow\Security\Policy\PolicyService;
 use Neos\Flow\Security\Policy\Role;
 use Neos\Flow\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\MockObject\MockObject;
 
 /**
- * Testcase for for the PolicyService
+ * Testcase for the PolicyService
  */
-class PolicyServiceTest extends UnitTestCase
+final class PolicyServiceTest extends UnitTestCase
 {
     /**
      * @var PolicyService
@@ -36,17 +40,7 @@ class PolicyServiceTest extends UnitTestCase
     protected $mockPolicyConfiguration = [];
 
     /**
-     * @var ConfigurationManager|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $mockConfigurationManager;
-
-    /**
-     * @var ObjectManager|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $mockObjectManager;
-
-    /**
-     * @var AbstractPrivilege|\PHPUnit\Framework\MockObject\MockObject
+     * @var AbstractPrivilege|MockObject
      */
     protected $mockPrivilege;
 
@@ -54,29 +48,23 @@ class PolicyServiceTest extends UnitTestCase
     {
         $this->policyService = new PolicyService();
 
-        $this->mockConfigurationManager = $this->getMockBuilder(ConfigurationManager::class)->disableOriginalConstructor()->getMock();
-        $this->mockConfigurationManager->expects(self::any())->method('getConfiguration')->with(ConfigurationManager::CONFIGURATION_TYPE_POLICY)->will(self::returnCallBack(function () {
+        $mockConfigurationManager = $this->createMock(ConfigurationManager::class);
+        $mockConfigurationManager->method('getConfiguration')->with(ConfigurationManager::CONFIGURATION_TYPE_POLICY)->willReturnCallback(function () {
             return $this->mockPolicyConfiguration;
-        }));
-        $this->inject($this->policyService, 'configurationManager', $this->mockConfigurationManager);
-
-        $this->mockObjectManager = $this->getMockBuilder(ObjectManager::class)->disableOriginalConstructor()->getMock();
-        $this->inject($this->policyService, 'objectManager', $this->mockObjectManager);
+        });
+        $this->inject($this->policyService, 'configurationManager', $mockConfigurationManager);
+        $this->inject($this->policyService, 'objectManager', $this->createStub(ObjectManager::class));
 
         $this->mockPrivilege = $this->getAccessibleMock(AbstractPrivilege::class, ['matchesSubject'], [], '', false);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function hasRoleReturnsFalseIfTheSpecifiedRoleIsNotConfigured()
     {
         self::assertFalse($this->policyService->hasRole('Non.Existing:Role'));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function hasRoleReturnsTrueIfTheSpecifiedRoleIsConfigured()
     {
         $this->mockPolicyConfiguration = [
@@ -87,18 +75,14 @@ class PolicyServiceTest extends UnitTestCase
         self::assertTrue($this->policyService->hasRole('Some.Package:SomeRole'));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getRoleThrowsExceptionIfTheSpecifiedRoleIsNotConfigured()
     {
         $this->expectException(NoSuchRoleException::class);
         $this->policyService->getRole('Non.Existing:Role');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getRoleReturnsTheSpecifiedRole()
     {
         $this->mockPolicyConfiguration = [
@@ -117,9 +101,7 @@ class PolicyServiceTest extends UnitTestCase
         self::assertSame('Some.Package:SomeRole', $role->getParentRoles()['Some.Package:SomeRole']->getIdentifier());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getRolesExcludesAbstractRolesByDefault()
     {
         $this->mockPolicyConfiguration = [
@@ -136,9 +118,7 @@ class PolicyServiceTest extends UnitTestCase
         self::assertSame(['Some.Package:SomeOtherRole'], array_keys($roles));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getRolesIncludesAbstractRolesIfRequested()
     {
         $this->mockPolicyConfiguration = [
@@ -155,17 +135,13 @@ class PolicyServiceTest extends UnitTestCase
         self::assertSame(['Some.Package:SomeRole', 'Some.Package:SomeOtherRole', 'Neos.Flow:Everybody'], array_keys($roles));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getAllPrivilegesByTypeReturnsAnEmptyArrayIfNoMatchingPrivilegesAreConfigured()
     {
         self::assertSame([], $this->policyService->getAllPrivilegesByType('SomeNonExistingPrivilegeType'));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getAllPrivilegesByTypeReturnsAllConfiguredPrivilegesOfThatType()
     {
         $mockPrivilegeClassName = get_class($this->mockPrivilege);
@@ -183,17 +159,13 @@ class PolicyServiceTest extends UnitTestCase
         self::assertInstanceOf($mockPrivilegeClassName, $this->mockPrivilege, get_class($returnedPrivilege));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getPrivilegeTargetsReturnsAnEmptyArrayIfNoPrivilegeTargetsAreConfigured()
     {
         self::assertSame([], $this->policyService->getPrivilegeTargets());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getPrivilegeTargetsReturnsAllConfiguredPrivilegeTargets()
     {
         $mockPrivilegeClassName = get_class($this->mockPrivilege);
@@ -210,17 +182,13 @@ class PolicyServiceTest extends UnitTestCase
         self::assertSame('Some.PrivilegeTarget:Identifier', $this->policyService->getPrivilegeTargets()['Some.PrivilegeTarget:Identifier']->getIdentifier());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getPrivilegeTargetByIdentifierReturnsAnNullIfNoPrivilegeTargetIsConfigured()
     {
         self::assertNull($this->policyService->getPrivilegeTargetByIdentifier('SomeNonExistingPrivilegeTarget'));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getPrivilegeTargetByIdentifierReturnsTheConfiguredPrivilegeTarget()
     {
         $mockPrivilegeClassName = get_class($this->mockPrivilege);
@@ -236,12 +204,11 @@ class PolicyServiceTest extends UnitTestCase
 
         $privilegeTarget = $this->policyService->getPrivilegeTargetByIdentifier('Some.PrivilegeTarget:Identifier');
         self::assertInstanceOf(PrivilegeTarget::class, $privilegeTarget);
+        $this->assertInstanceOf(PrivilegeTarget::class, $privilegeTarget);
         self::assertSame('Some.PrivilegeTarget:Identifier', $privilegeTarget->getIdentifier());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function everybodyRoleGetsAnAbstainPrivilegeForAllConfiguredPrivilegeTargets()
     {
         $mockPrivilegeClassName = get_class($this->mockPrivilege);
@@ -264,9 +231,7 @@ class PolicyServiceTest extends UnitTestCase
         self::assertTrue($everybodyRole->getPrivilegeForTarget('Some.OtherPrivilegeTarget:Identifier')->isAbstained());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function everybodyRoleCanHaveExplicitGrants()
     {
         $mockPrivilegeClassName = get_class($this->mockPrivilege);
@@ -305,9 +270,7 @@ class PolicyServiceTest extends UnitTestCase
         self::assertTrue($everybodyRole->getPrivilegeForTarget('Some.PrivilegeTarget:Identifier')->isGranted());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function everybodyRoleCanHaveExplicitDenies()
     {
         $mockPrivilegeClassName = get_class($this->mockPrivilege);

@@ -1,6 +1,8 @@
 <?php
+
 /** @noinspection PhpUndefinedClassInspection */
 /** @noinspection PhpUndefinedNamespaceInspection */
+
 namespace Neos\Flow\Tests\Unit\ObjectManagement\Fixture;
 
 /*

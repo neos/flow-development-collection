@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Neos\Flow\Tests\Unit\Property\TypeConverter;
 
 /*
@@ -10,17 +13,18 @@ namespace Neos\Flow\Tests\Unit\Property\TypeConverter;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
 use Neos\Flow\Property\PropertyMappingConfiguration;
 use Neos\Flow\Property\TypeConverter\StringConverter;
 use Neos\Flow\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Testcase for the String converter
- *
- * @covers \Neos\Flow\Property\TypeConverter\StringConverter<extended>
  */
-class StringConverterTest extends UnitTestCase
+#[CoversClass('\Neos\Flow\Property\TypeConverter\StringConverter<extended>::class')]
+final class StringConverterTest extends UnitTestCase
 {
     /**
      * @var \Neos\Flow\Property\TypeConverterInterface
@@ -32,9 +36,7 @@ class StringConverterTest extends UnitTestCase
         $this->converter = new StringConverter();
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function checkMetadata()
     {
         self::assertEquals(['string', 'integer', 'float', 'boolean', 'array', \DateTimeInterface::class], $this->converter->getSupportedSourceTypes(), 'Source types do not match');
@@ -42,17 +44,13 @@ class StringConverterTest extends UnitTestCase
         self::assertEquals(1, $this->converter->getPriority(), 'Priority does not match');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function convertFromShouldReturnSourceString()
     {
         self::assertEquals('myString', $this->converter->convertFrom('myString', 'string'));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function convertFromConvertsDateTimeObjects()
     {
         $date = new \DateTime('1980-12-13');
@@ -61,9 +59,7 @@ class StringConverterTest extends UnitTestCase
         self::assertEquals('13.12.1980', $this->converter->convertFrom($date, 'string', [], $propertyMappingConfiguration));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function convertFromConvertsDateTimeImmutableObjects()
     {
         $date = new \DateTimeImmutable('1980-12-13');
@@ -72,38 +68,28 @@ class StringConverterTest extends UnitTestCase
         self::assertEquals('13.12.1980', $this->converter->convertFrom($date, 'string', [], $propertyMappingConfiguration));
     }
 
-
-    /**
-     * @test
-     */
+    #[Test]
     public function canConvertFromShouldReturnTrue()
     {
         self::assertTrue($this->converter->canConvertFrom('myString', 'string'));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getSourceChildPropertiesToBeConvertedShouldReturnEmptyArray()
     {
         self::assertEquals([], $this->converter->getSourceChildPropertiesToBeConverted('myString'));
     }
 
-
-    public function arrayToStringDataProvider()
+    public static function arrayToStringDataProvider(): \Iterator
     {
-        return [
-            [['Foo', 'Bar', 'Baz'], 'Foo,Bar,Baz', []],
-            [['Foo', 'Bar', 'Baz'], 'Foo, Bar, Baz', [StringConverter::CONFIGURATION_CSV_DELIMITER => ', ']],
-            [[], '', []],
-            [[1,2, 'foo'], '[1,2,"foo"]', [StringConverter::CONFIGURATION_ARRAY_FORMAT => StringConverter::ARRAY_FORMAT_JSON]]
-        ];
+        yield [['Foo', 'Bar', 'Baz'], 'Foo,Bar,Baz', []];
+        yield [['Foo', 'Bar', 'Baz'], 'Foo, Bar, Baz', [StringConverter::CONFIGURATION_CSV_DELIMITER => ', ']];
+        yield [[], '', []];
+        yield [[1,2, 'foo'], '[1,2,"foo"]', [StringConverter::CONFIGURATION_ARRAY_FORMAT => StringConverter::ARRAY_FORMAT_JSON]];
     }
 
-    /**
-     * @test
-     * @dataProvider arrayToStringDataProvider
-     */
+    #[DataProvider('arrayToStringDataProvider')]
+    #[Test]
     public function canConvertFromStringToArray($source, $expectedResult, $mappingConfiguration)
     {
         // Create a map of arguments to return values.
@@ -114,9 +100,8 @@ class StringConverterTest extends UnitTestCase
 
         $propertyMappingConfiguration = $this->createMock(PropertyMappingConfiguration::class);
         $propertyMappingConfiguration
-            ->expects(self::any())
             ->method('getConfigurationValue')
-            ->will($this->returnValueMap($configurationValueMap));
+            ->willReturnMap($configurationValueMap);
 
         self::assertEquals($expectedResult, $this->converter->convertFrom($source, 'array', [], $propertyMappingConfiguration));
     }

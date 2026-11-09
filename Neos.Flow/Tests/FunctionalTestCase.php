@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Neos\Flow\Tests;
 
 /*
@@ -10,21 +13,35 @@ namespace Neos\Flow\Tests;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
+use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Configuration\ConfigurationManager;
 use Neos\Flow\Core\Bootstrap;
-use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Http\Client\Browser;
+use Neos\Flow\Http\Client\InternalRequestEngine;
+use Neos\Flow\Mvc\ActionRequest;
+use Neos\Flow\Mvc\Routing\Dto\RouteContext;
+use Neos\Flow\Mvc\Routing\Dto\RouteParameters;
+use Neos\Flow\Mvc\Routing\Route;
 use Neos\Flow\Mvc\Routing\TestingRoutesProvider;
+use Neos\Flow\Persistence\Aspect\PersistenceMagicAspect;
+use Neos\Flow\Persistence\PersistenceManagerInterface;
+use Neos\Flow\ResourceManagement\ResourceManager;
+use Neos\Flow\ResourceManagement\ResourceRepository;
+use Neos\Flow\ResourceManagement\ResourceTypeConverter;
+use Neos\Flow\Security\Account;
+use Neos\Flow\Security\Authentication\AuthenticationProviderManager;
 use Neos\Flow\Security\Authentication\TokenAndProviderFactory;
+use Neos\Flow\Security\Authentication\TokenInterface;
+use Neos\Flow\Security\Authorization\TestingPrivilegeManager;
+use Neos\Flow\Security\Context;
+use Neos\Flow\Security\Policy\PolicyService;
+use Neos\Flow\Session\SessionInterface;
 use Neos\Http\Factories\ServerRequestFactory;
 use Neos\Http\Factories\UriFactory;
-use Psr\Http\Message\ServerRequestInterface as HttpRequest;
-use Neos\Flow\Mvc\ActionRequest;
-use Neos\Flow\Mvc\Routing\Dto\RouteParameters;
-use Neos\Flow\Mvc\Routing\Dto\RouteContext;
-use Neos\Flow\Mvc\Routing\Route;
 use Neos\Utility\Arrays;
 use Neos\Utility\Files;
+use Neos\Utility\ObjectAccess;
+use Psr\Http\Message\ServerRequestInterface as HttpRequest;
 
 /**
  * A base test case for functional tests
@@ -34,7 +51,7 @@ use Neos\Utility\Files;
  *
  * @api
  */
-abstract class FunctionalTestCase extends \Neos\Flow\Tests\BaseTestCase
+abstract class FunctionalTestCase extends BaseTestCase
 {
     /**
      * A functional instance of the Object Manager, for use in concrete test cases.
@@ -129,7 +146,7 @@ abstract class FunctionalTestCase extends \Neos\Flow\Tests\BaseTestCase
      */
     public static function setUpBeforeClass(): void
     {
-        self::$bootstrap = \Neos\Flow\Core\Bootstrap::$staticObjectManager->get(\Neos\Flow\Core\Bootstrap::class);
+        self::$bootstrap = Bootstrap::$staticObjectManager->get(Bootstrap::class);
         self::setupSuperGlobals();
     }
 
@@ -146,23 +163,23 @@ abstract class FunctionalTestCase extends \Neos\Flow\Tests\BaseTestCase
         $this->objectManager = self::$bootstrap->getObjectManager();
 
         $this->cleanupPersistentResourcesDirectory();
-        self::$bootstrap->getObjectManager()->forgetInstance(\Neos\Flow\ResourceManagement\ResourceManager::class);
-        $session = $this->objectManager->get(\Neos\Flow\Session\SessionInterface::class);
+        self::$bootstrap->getObjectManager()->forgetInstance(ResourceManager::class);
+        $session = $this->objectManager->get(SessionInterface::class);
         if ($session->isStarted()) {
-            $session->destroy(sprintf('assure that session is fresh, in setUp() method of functional test %s.', get_class($this) . '::' . $this->getName()));
+            $session->destroy(sprintf('assure that session is fresh, in setUp() method of functional test %s.', get_class($this) . '::' . $this->name()));
         }
 
-        $privilegeManager = $this->objectManager->get(\Neos\Flow\Security\Authorization\TestingPrivilegeManager::class);
+        $privilegeManager = $this->objectManager->get(TestingPrivilegeManager::class);
         $privilegeManager->reset();
 
         if ($this->testableSecurityEnabled === true || static::$testablePersistenceEnabled === true) {
-            if (is_callable([self::$bootstrap->getObjectManager()->get(\Neos\Flow\Persistence\PersistenceManagerInterface::class), 'compile'])) {
-                $result = self::$bootstrap->getObjectManager()->get(\Neos\Flow\Persistence\PersistenceManagerInterface::class)->compile();
+            if (is_callable([self::$bootstrap->getObjectManager()->get(PersistenceManagerInterface::class), 'compile'])) {
+                $result = self::$bootstrap->getObjectManager()->get(PersistenceManagerInterface::class)->compile();
                 if ($result === false) {
                     self::markTestSkipped('Test skipped because setting up the persistence failed.');
                 }
             }
-            $this->persistenceManager = $this->objectManager->get(\Neos\Flow\Persistence\PersistenceManagerInterface::class);
+            $this->persistenceManager = $this->objectManager->get(PersistenceManagerInterface::class);
         } else {
             $privilegeManager->setOverrideDecision(true);
         }
@@ -171,9 +188,9 @@ abstract class FunctionalTestCase extends \Neos\Flow\Tests\BaseTestCase
         // on an HTTP request being available via the request handler:
         $this->setupHttp();
 
-        $session = $this->objectManager->get(\Neos\Flow\Session\SessionInterface::class);
+        $session = $this->objectManager->get(SessionInterface::class);
         if ($session->isStarted()) {
-            $session->destroy(sprintf('assure that session is fresh, in setUp() method of functional test %s.', get_class($this) . '::' . $this->getName()));
+            $session->destroy(sprintf('assure that session is fresh, in setUp() method of functional test %s.', get_class($this) . '::' . $this->name()));
         }
 
         $this->setupSecurity();
@@ -188,14 +205,14 @@ abstract class FunctionalTestCase extends \Neos\Flow\Tests\BaseTestCase
      */
     protected function setupSecurity()
     {
-        $this->securityContext = $this->objectManager->get(\Neos\Flow\Security\Context::class);
+        $this->securityContext = $this->objectManager->get(Context::class);
         if ($this->testableSecurityEnabled) {
-            $this->privilegeManager = $this->objectManager->get(\Neos\Flow\Security\Authorization\TestingPrivilegeManager::class);
+            $this->privilegeManager = $this->objectManager->get(TestingPrivilegeManager::class);
             $this->privilegeManager->setOverrideDecision(null);
 
-            $this->policyService = $this->objectManager->get(\Neos\Flow\Security\Policy\PolicyService::class);
+            $this->policyService = $this->objectManager->get(PolicyService::class);
 
-            $this->authenticationManager = $this->objectManager->get(\Neos\Flow\Security\Authentication\AuthenticationProviderManager::class);
+            $this->authenticationManager = $this->objectManager->get(AuthenticationProviderManager::class);
 
             $this->tokenAndProviderFactory = $this->objectManager->get(TokenAndProviderFactory::class);
             $this->testingProvider = $this->tokenAndProviderFactory->getProviders()['TestingProvider'];
@@ -214,7 +231,7 @@ abstract class FunctionalTestCase extends \Neos\Flow\Tests\BaseTestCase
             $this->securityContext->clearContext();
             $this->securityContext->setRequest($actionRequest);
         } else {
-            \Neos\Utility\ObjectAccess::setProperty($this->securityContext, 'authorizationChecksDisabled', true, true);
+            ObjectAccess::setProperty($this->securityContext, 'authorizationChecksDisabled', true, true);
         }
     }
 
@@ -248,7 +265,7 @@ abstract class FunctionalTestCase extends \Neos\Flow\Tests\BaseTestCase
     {
         $this->tearDownSecurity();
 
-        $persistenceManager = self::$bootstrap->getObjectManager()->get(\Neos\Flow\Persistence\PersistenceManagerInterface::class);
+        $persistenceManager = self::$bootstrap->getObjectManager()->get(PersistenceManagerInterface::class);
 
         // Explicitly call persistAll() so that the "allObjectsPersisted" signal is sent even if persistAll()
         // has not been called during a test. This makes sure that for example certain repositories can clear
@@ -263,12 +280,12 @@ abstract class FunctionalTestCase extends \Neos\Flow\Tests\BaseTestCase
             $persistenceManager->tearDown();
         }
 
-        self::$bootstrap->getObjectManager()->forgetInstance(\Neos\Flow\Http\Client\InternalRequestEngine::class);
+        self::$bootstrap->getObjectManager()->forgetInstance(InternalRequestEngine::class);
         self::$bootstrap->getObjectManager()->get(TestingRoutesProvider::class)->reset();
-        self::$bootstrap->getObjectManager()->forgetInstance(\Neos\Flow\Persistence\Aspect\PersistenceMagicAspect::class);
-        $this->inject(self::$bootstrap->getObjectManager()->get(\Neos\Flow\ResourceManagement\ResourceRepository::class), 'addedResources', new \SplObjectStorage());
-        $this->inject(self::$bootstrap->getObjectManager()->get(\Neos\Flow\ResourceManagement\ResourceRepository::class), 'removedResources', new \SplObjectStorage());
-        $this->inject(self::$bootstrap->getObjectManager()->get(\Neos\Flow\ResourceManagement\ResourceTypeConverter::class), 'convertedResources', []);
+        self::$bootstrap->getObjectManager()->forgetInstance(PersistenceMagicAspect::class);
+        $this->inject(self::$bootstrap->getObjectManager()->get(ResourceRepository::class), 'addedResources', new \SplObjectStorage());
+        $this->inject(self::$bootstrap->getObjectManager()->get(ResourceRepository::class), 'removedResources', new \SplObjectStorage());
+        $this->inject(self::$bootstrap->getObjectManager()->get(ResourceTypeConverter::class), 'convertedResources', []);
 
         $this->cleanupPersistentResourcesDirectory();
         $this->emitFunctionalTestTearDown();
@@ -294,7 +311,7 @@ abstract class FunctionalTestCase extends \Neos\Flow\Tests\BaseTestCase
             $this->securityContext->clearContext();
         }
         if ($this->authenticationManager !== null) {
-            \Neos\Utility\ObjectAccess::setProperty($this->authenticationManager, 'isAuthenticated', null, true);
+            ObjectAccess::setProperty($this->authenticationManager, 'isAuthenticated', null, true);
         }
     }
 
@@ -308,7 +325,7 @@ abstract class FunctionalTestCase extends \Neos\Flow\Tests\BaseTestCase
      */
     protected function authenticateRoles(array $roleNames)
     {
-        $account = new \Neos\Flow\Security\Account();
+        $account = new Account();
         $roles = [];
         foreach ($roleNames as $roleName) {
             $roles[] = $this->policyService->getRole($roleName);
@@ -326,9 +343,9 @@ abstract class FunctionalTestCase extends \Neos\Flow\Tests\BaseTestCase
      * @return void
      * @api
      */
-    protected function authenticateAccount(\Neos\Flow\Security\Account $account)
+    protected function authenticateAccount(Account $account)
     {
-        $this->testingProvider->setAuthenticationStatus(\Neos\Flow\Security\Authentication\TokenInterface::AUTHENTICATION_SUCCESSFUL);
+        $this->testingProvider->setAuthenticationStatus(TokenInterface::AUTHENTICATION_SUCCESSFUL);
         $this->testingProvider->setAccount($account);
 
         $this->securityContext->clearContext();
@@ -432,8 +449,8 @@ abstract class FunctionalTestCase extends \Neos\Flow\Tests\BaseTestCase
      */
     protected function setupHttp()
     {
-        $this->browser = new \Neos\Flow\Http\Client\Browser();
-        $this->browser->setRequestEngine(new \Neos\Flow\Http\Client\InternalRequestEngine());
+        $this->browser = new Browser();
+        $this->browser->setRequestEngine(new InternalRequestEngine());
         $this->router = $this->browser->getRequestEngine()->getRouter();
 
         $serverRequestFactory = new ServerRequestFactory(new UriFactory());

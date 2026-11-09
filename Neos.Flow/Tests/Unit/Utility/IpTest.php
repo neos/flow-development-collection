@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Neos\Flow\Tests\Unit\Utility;
 
 /*
@@ -10,40 +13,38 @@ namespace Neos\Flow\Tests\Unit\Utility;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
+use Neos\Flow\Tests\UnitTestCase;
 use Neos\Flow\Utility\Ip;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Testcase for the Utility Ip class
  *
  */
-class IpTest extends \Neos\Flow\Tests\UnitTestCase
+final class IpTest extends UnitTestCase
 {
     /**
      * Data provider with valid and invalid IP ranges
      */
-    public function validAndInvalidIpPatterns()
+    public static function validAndInvalidIpPatterns(): \Iterator
     {
-        return [
-            ['127.0.0.1', '127.0.0.1', true],
-            ['127.0.0.0/24', '127.0.0.1', true],
-            ['255.255.255.255/0', '127.0.0.1', true],
-            ['127.0.255.255/16', '127.0.0.1', true],
-            ['127.0.0.1/32', '127.0.0.1', true],
-            ['1:2::3:4', '1:2:0:0:0:0:3:4', true],
-            ['127.0.0.2/32', '127.0.0.1', false],
-            ['127.0.1.0/24', '127.0.0.1', false],
-            ['127.0.0.255/31', '127.0.0.1', false],
-            ['::1', '127.0.0.1', false],
-            ['::127.0.0.1', '127.0.0.1', true],
-            ['127.0.0.1', '::127.0.0.1', true],
-        ];
+        yield ['127.0.0.1', '127.0.0.1', true];
+        yield ['127.0.0.0/24', '127.0.0.1', true];
+        yield ['255.255.255.255/0', '127.0.0.1', true];
+        yield ['127.0.255.255/16', '127.0.0.1', true];
+        yield ['127.0.0.1/32', '127.0.0.1', true];
+        yield ['1:2::3:4', '1:2:0:0:0:0:3:4', true];
+        yield ['127.0.0.2/32', '127.0.0.1', false];
+        yield ['127.0.1.0/24', '127.0.0.1', false];
+        yield ['127.0.0.255/31', '127.0.0.1', false];
+        yield ['::1', '127.0.0.1', false];
+        yield ['::127.0.0.1', '127.0.0.1', true];
+        yield ['127.0.0.1', '::127.0.0.1', true];
     }
 
-    /**
-     * @dataProvider validAndInvalidIpPatterns
-     * @test
-     */
+    #[DataProvider('validAndInvalidIpPatterns')]
+    #[Test]
     public function cidrMatchCorrectlyMatchesIpRanges($range, $ip, $expected)
     {
         self::assertEquals($expected, Ip::cidrMatch($ip, $range));

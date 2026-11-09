@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Neos\Flow\Mvc\Routing;
@@ -34,6 +35,7 @@ final class TestingRoutesProvider implements RoutesProviderInterface
     /**
      * Prepends a route additionally to the routes form the Testing context configuration
      *
+     * @return void
      * @internal Please use {@see FunctionalTestCase::registerRoute} instead.
      */
     public function addRoute(Route $route)

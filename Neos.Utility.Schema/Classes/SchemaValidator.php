@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Utility;
 
 /*
@@ -28,7 +29,7 @@ use Neos\Error\Messages\Result as ErrorResult;
  *   -> see list of possible constraints below.
  * - The "format" constraint for string type has additional class-name and instance-name options.
  * - The "dependencies" constraint of the spec is not implemented.
- * - Similar to "patternProperties" "formatProperties" can be specified specified for dictionaries
+ * - Similar to "patternProperties" "formatProperties" can be specified for dictionaries
  * - Definition and referencing of local-types with the '@'-sign is added.
  *
  * General constraints for all types (for implementation see validate Method):
@@ -51,10 +52,10 @@ use Neos\Error\Messages\Result as ErrorResult;
  *
  * Local type-definitions:
  * If a schema contains properties that start with an '@'-sign on the root level those schemas are added to the local
- * type definitions and are passed down the validation chain to be refereced with the full identifier and can be used
+ * type definitions and are passed down the validation chain to be referenced with the full identifier and can be used
  * in the same way as simple type definition.
  *
- * Local Types can not be overwitten but they can extend a list of superTypes.
+ * Local Types can not be overwritten but they can extend a list of superTypes.
  *
  */
 class SchemaValidator

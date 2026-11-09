@@ -596,7 +596,7 @@ Lazy Dependency Injection
 Using Property Injection is, in its current implementation, the most performant way
 to inject a dependency. As an important additional benefit you also get Lazy
 Dependency Injection: instead of loading the class of the dependency, instantiating
-and intializing it, a ``proxy`` is injected instead. This object waits until it
+and initializing it, a ``proxy`` is injected instead. This object waits until it
 will be accessed the first time. Once you start using the dependency, the proxy
 will build or retrieve the real dependency, call the requested method and return
 the result. On all following method calls, the real object will be used.
@@ -972,7 +972,7 @@ should be active and are done:
 	MyCompany\MyPackage\GreeterInterface:
 	  className: 'Neos\OtherPackage\GreeterWithCompliments'
 
-The the same code as above will get the improved ``GreeterWithCompliments``
+The same code as above will get the improved ``GreeterWithCompliments``
 instead of the simple ``Greeter`` now.
 
 

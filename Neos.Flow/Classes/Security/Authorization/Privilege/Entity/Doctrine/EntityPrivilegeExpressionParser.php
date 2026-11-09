@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Security\Authorization\Privilege\Entity\Doctrine;
 
 /*
@@ -23,8 +24,9 @@ use Neos\Eel\ParserException;
 class EntityPrivilegeExpressionParser extends CompilingEelParser
 {
     /**
-     * @param array $result
-     * @param array $sub
+     * @param array<string,mixed> $result
+     * @param array<string,mixed> $sub
+     * @return void
      */
     public function NotExpression_exp(&$result, $sub)
     {
@@ -35,8 +37,9 @@ class EntityPrivilegeExpressionParser extends CompilingEelParser
     }
 
     /**
-     * @param array $result
-     * @param array $sub
+     * @param array<string,mixed> $result
+     * @param array<string,mixed> $sub
+     * @return void
      */
     public function Disjunction_rgt(&$result, $sub)
     {
@@ -44,8 +47,9 @@ class EntityPrivilegeExpressionParser extends CompilingEelParser
     }
 
     /**
-     * @param array $result
-     * @param array $sub
+     * @param array<string,mixed> $result
+     * @param array<string,mixed> $sub
+     * @return void
      */
     public function Conjunction_rgt(&$result, $sub)
     {
@@ -53,8 +57,9 @@ class EntityPrivilegeExpressionParser extends CompilingEelParser
     }
 
     /**
-     * @param array $result
-     * @param array $sub
+     * @param array<string,mixed> $result
+     * @param array<string,mixed> $sub
+     * @return void
      * @throws ParserException
      */
     public function Comparison_rgt(&$result, $sub)

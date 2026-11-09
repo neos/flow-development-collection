@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\FluidAdaptor\ViewHelpers\Form;
 
 /*
@@ -107,7 +108,7 @@ use Neos\Utility\ObjectAccess;
  * translations for those ids in the current package's "Main" XLIFF file.)
  * </output>
  *
- * <code title="Label translation usign a prefix">
+ * <code title="Label translation using a prefix">
  * <f:form.select name="paymentOption" options="{payPal: 'PayPal International Services', visa: 'VISA Card'}" translate="{by: 'id', prefix: 'shop.paymentOptions.'}" />
  * </code>
  * <output>

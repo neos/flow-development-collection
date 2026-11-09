@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Aop\Pointcut;
 
 /*
@@ -25,7 +26,7 @@ use Psr\Log\LoggerInterface;
  */
 class PointcutMethodNameFilter implements PointcutFilterInterface
 {
-    const PATTERN_MATCHVISIBILITYMODIFIER = '/^(|public|protected)$/';
+    public const PATTERN_MATCHVISIBILITYMODIFIER = '/^(|public|protected)$/';
 
     /**
      * @var ReflectionService
@@ -48,7 +49,7 @@ class PointcutMethodNameFilter implements PointcutFilterInterface
     protected $logger;
 
     /**
-     * @var array Array with constraints for method arguments
+     * @var array<mixed> Array with constraints for method arguments
      */
     protected $methodArgumentConstraints = [];
 
@@ -57,7 +58,7 @@ class PointcutMethodNameFilter implements PointcutFilterInterface
      *
      * @param string $methodNameFilterExpression A regular expression which filters method names
      * @param string|null $methodVisibility The method visibility modifier (public, protected or private). Specify NULL if you don't care.
-     * @param array $methodArgumentConstraints array of method constraints
+     * @param array<mixed> $methodArgumentConstraints array of method constraints
      * @throws InvalidPointcutExpressionException
      */
     public function __construct(string $methodNameFilterExpression, ?string $methodVisibility = null, array $methodArgumentConstraints = [])
@@ -98,15 +99,19 @@ class PointcutMethodNameFilter implements PointcutFilterInterface
      *
      * Returns true if method name, visibility and arguments constraints match.
      *
-     * @param string $className Ignored in this pointcut filter
-     * @param string $methodName Name of the method to match against
-     * @param string $methodDeclaringClassName Name of the class the method was originally declared in
+     * @param class-string $className Ignored in this pointcut filter
+     * @param ?string $methodName Name of the method to match against
+     * @param ?class-string $methodDeclaringClassName Name of the class the method was originally declared in
      * @param mixed $pointcutQueryIdentifier Some identifier for this query - must at least differ from a previous identifier. Used for circular reference detection.
      * @return boolean true if the class matches, otherwise false
      * @throws Exception
      */
     public function matches($className, $methodName, $methodDeclaringClassName, $pointcutQueryIdentifier): bool
     {
+        if ($methodName === null) {
+            return false;
+        }
+
         $matchResult = preg_match('/^' . $this->methodNameFilterExpression . '$/', $methodName);
 
         if ($matchResult === false) {
@@ -153,7 +158,7 @@ class PointcutMethodNameFilter implements PointcutFilterInterface
     /**
      * Returns runtime evaluations for a previously matched pointcut
      *
-     * @return array Runtime evaluations
+     * @return array{methodArgumentConstraints: array<mixed>} Runtime evaluations
      */
     public function getRuntimeEvaluationsDefinition(): array
     {
@@ -185,7 +190,7 @@ class PointcutMethodNameFilter implements PointcutFilterInterface
     /**
      * Returns the method argument constraints
      *
-     * @return array
+     * @return array<mixed>
      */
     public function getMethodArgumentConstraints(): array
     {

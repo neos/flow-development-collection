@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Neos\Flow\Tests\Unit\ResourceManagement;
 
 /*
@@ -10,18 +13,17 @@ namespace Neos\Flow\Tests\Unit\ResourceManagement;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
 use Neos\Flow\ResourceManagement\PersistentResource;
 use Neos\Flow\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Test case for the PersistentResource class
  */
-class PersistentResourceTest extends UnitTestCase
+final class PersistentResourceTest extends UnitTestCase
 {
-    /**
-     * @test
-     */
+    #[Test]
     public function setFilenameStoresTheFileExtensionInLowerCase()
     {
         $resource = new PersistentResource();
@@ -30,9 +32,7 @@ class PersistentResourceTest extends UnitTestCase
         self::assertSame('Something.jpeg', $resource->getFilename());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function setFilenameSetsTheMediaType()
     {
         $resource = new PersistentResource();
@@ -47,9 +47,7 @@ class PersistentResourceTest extends UnitTestCase
         self::assertSame('image/jpeg', $resource->getMediaType());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function setFilenameDoesNotAppendFileExtensionIfItIsEmpty()
     {
         $resource = new PersistentResource();
@@ -58,9 +56,7 @@ class PersistentResourceTest extends UnitTestCase
         self::assertSame('FileWithoutExtension', $resource->getFilename());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getMediaTypeReturnsMediaTypeBasedOnFileExtension()
     {
         $resource = new PersistentResource();
@@ -77,23 +73,19 @@ class PersistentResourceTest extends UnitTestCase
     }
 
     /**
-     * @return array
+     * @return \Iterator<(int | string), mixed>
      */
-    public function invalidSha1Values()
+    public static function invalidSha1Values(): \Iterator
     {
-        return [
-          [''],
-          [null],
-          ['XYZE2DC421BE4fCD0172E5AFCEEA3970E2f3d940'],
-          [new \stdClass()],
-          [false],
-        ];
+        yield [''];
+        yield [null];
+        yield ['XYZE2DC421BE4fCD0172E5AFCEEA3970E2f3d940'];
+        yield [new \stdClass()];
+        yield [false];
     }
 
-    /**
-     * @test
-     * @dataProvider invalidSha1Values
-     */
+    #[DataProvider('invalidSha1Values')]
+    #[Test]
     public function setSha1RejectsInvalidValues($invalidValue)
     {
         $this->expectException(\InvalidArgumentException::class);
@@ -102,9 +94,7 @@ class PersistentResourceTest extends UnitTestCase
         self::assertSame('d0be2dc421be4fcd0172e5afceea3970e2f3d940', $resource->getSha1());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function setSha1AcceptsUppercaseHashesAndNormalizesThemToLowercase()
     {
         $resource = new PersistentResource();

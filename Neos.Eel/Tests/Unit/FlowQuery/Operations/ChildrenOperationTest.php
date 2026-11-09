@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Neos\Eel\Tests\Unit\FlowQuery\Operations;
 
 /*
@@ -10,15 +13,18 @@ namespace Neos\Eel\Tests\Unit\FlowQuery\Operations;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
+use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Eel\FlowQuery\Operations\Object\ChildrenOperation;
+use Neos\Flow\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * ChildrenOperation test
  */
-class ChildrenOperationTest extends \Neos\Flow\Tests\UnitTestCase
+final class ChildrenOperationTest extends UnitTestCase
 {
-    public function childrenExamples()
+    public static function childrenExamples(): \Iterator
     {
         $object1 = (object) ['a' => 'b'];
         $object2 = (object) ['c' => 'd'];
@@ -28,21 +34,16 @@ class ChildrenOperationTest extends \Neos\Flow\Tests\UnitTestCase
             'keyTowardsArray' => [$object1, $object2],
             'keyTowardsTraversable' => new \ArrayIterator([$object1, $object2])
         ];
-
-        return [
-            'traversal of objects' => [[$exampleArray], ['keyTowardsObject'], [$exampleArray['keyTowardsObject']]],
-            'traversal of arrays unrolls them' => [[$exampleArray], ['keyTowardsArray'], [$object1, $object2]],
-            'traversal of traversables unrolls them' => [[$exampleArray], ['keyTowardsTraversable'], [$object1, $object2]],
-        ];
+        yield 'traversal of objects' => [[$exampleArray], ['keyTowardsObject'], [$exampleArray['keyTowardsObject']]];
+        yield 'traversal of arrays unrolls them' => [[$exampleArray], ['keyTowardsArray'], [$object1, $object2]];
+        yield 'traversal of traversables unrolls them' => [[$exampleArray], ['keyTowardsTraversable'], [$object1, $object2]];
     }
 
-    /**
-     * @test
-     * @dataProvider childrenExamples
-     */
+    #[DataProvider('childrenExamples')]
+    #[Test]
     public function evaluateSetsTheCorrectPartOfTheContextArray($value, $arguments, $expected)
     {
-        $flowQuery = new \Neos\Eel\FlowQuery\FlowQuery($value);
+        $flowQuery = new FlowQuery($value);
 
         $operation = new ChildrenOperation();
         $operation->evaluate($flowQuery, $arguments);

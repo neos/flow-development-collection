@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Neos\Flow\Tests\Functional\Persistence\Doctrine;
@@ -12,16 +13,22 @@ namespace Neos\Flow\Tests\Functional\Persistence\Doctrine;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
 use Neos\Flow\Core\Bootstrap;
 use Neos\Flow\Persistence\Doctrine\PersistenceManager;
 use Neos\Flow\Tests\Functional\Persistence\Fixtures;
+use Neos\Flow\Tests\Functional\Persistence\Fixtures\CleanupObject;
+use Neos\Flow\Tests\Functional\Persistence\Fixtures\Image;
+use Neos\Flow\Tests\Functional\Persistence\Fixtures\Post;
+use Neos\Flow\Tests\Functional\Persistence\Fixtures\PostRepository;
+use Neos\Flow\Tests\Functional\Persistence\Fixtures\TestEntity;
+use Neos\Flow\Tests\Functional\Persistence\Fixtures\TestEntityRepository;
 use Neos\Flow\Tests\FunctionalTestCase;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Testcase for proxy initialization within doctrine lazy loading
  */
-class LazyLoadingTest extends FunctionalTestCase
+final class LazyLoadingTest extends FunctionalTestCase
 {
     /**
      * @var bool
@@ -47,18 +54,16 @@ class LazyLoadingTest extends FunctionalTestCase
         if (!$this->persistenceManager instanceof PersistenceManager) {
             static::markTestSkipped('Doctrine persistence is not enabled');
         }
-        $this->postRepository = $this->objectManager->get(Fixtures\PostRepository::class);
-        $this->testEntityRepository = $this->objectManager->get(Fixtures\TestEntityRepository::class);
+        $this->postRepository = $this->objectManager->get(PostRepository::class);
+        $this->testEntityRepository = $this->objectManager->get(TestEntityRepository::class);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function dependencyInjectionIsCorrectlyInitializedEvenIfADoctrineProxyGetsInitializedOnTheFlyFromTheOutside(): void
     {
-        $entity = new Fixtures\TestEntity();
+        $entity = new TestEntity();
         $entity->setName('Andi');
-        $relatedEntity = new Fixtures\TestEntity();
+        $relatedEntity = new TestEntity();
         $relatedEntity->setName('Robert');
         $entity->setRelatedEntity($relatedEntity);
 
@@ -77,14 +82,12 @@ class LazyLoadingTest extends FunctionalTestCase
         self::assertNotNull($loadedRelatedEntity->getObjectManager());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function aopIsCorrectlyInitializedEvenIfADoctrineProxyGetsInitializedOnTheFlyFromTheOutside(): void
     {
-        $entity = new Fixtures\TestEntity();
+        $entity = new TestEntity();
         $entity->setName('Andi');
-        $relatedEntity = new Fixtures\TestEntity();
+        $relatedEntity = new TestEntity();
         $relatedEntity->setName('Robert');
         $entity->setRelatedEntity($relatedEntity);
 
@@ -103,13 +106,11 @@ class LazyLoadingTest extends FunctionalTestCase
         self::assertEquals('Hello Andi!', $loadedRelatedEntity->sayHello());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shutdownObjectMethodIsRegisteredForDoctrineProxy(): void
     {
-        $image = new Fixtures\Image();
-        $post = new Fixtures\Post();
+        $image = new Image();
+        $post = new Post();
         $post->setImage($image);
 
         $this->postRepository->add($post);
@@ -125,12 +126,12 @@ class LazyLoadingTest extends FunctionalTestCase
          * On this proxy __wakeup() is called and the shutdownObject lifecycle method
          * needs to be registered in the ObjectManager
          */
-        $post = $this->persistenceManager->getObjectByIdentifier($postIdentifier, Fixtures\Post::class);
+        $post = $this->persistenceManager->getObjectByIdentifier($postIdentifier, Post::class);
 
         /*
          * The CleanupObject is just a helper object to test that shutdownObject() on the Fixtures\Image is called
          */
-        $cleanupObject = new Fixtures\CleanupObject();
+        $cleanupObject = new CleanupObject();
         self::assertFalse($cleanupObject->getState());
         $post->getImage()->setRelatedObject($cleanupObject);
 

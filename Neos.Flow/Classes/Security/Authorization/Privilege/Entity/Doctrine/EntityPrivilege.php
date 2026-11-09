@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Security\Authorization\Privilege\Entity\Doctrine;
 
 /*
@@ -11,7 +12,6 @@ namespace Neos\Flow\Security\Authorization\Privilege\Entity\Doctrine;
  * source code.
  */
 
-use Doctrine\Persistence\Mapping\ClassMetadata;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Neos\Eel\Context as EelContext;
@@ -60,11 +60,11 @@ class EntityPrivilege extends AbstractPrivilege implements EntityPrivilegeInterf
     /**
      * Note: The result of this method cannot be cached, as the target table alias might change for different query scenarios
      *
-     * @param ClassMetadata $targetEntity
+     * @param \Doctrine\ORM\Mapping\ClassMetadata<object> $targetEntity
      * @param string $targetTableAlias
      * @return string|null
      */
-    public function getSqlConstraint(ClassMetadata $targetEntity, $targetTableAlias)
+    public function getSqlConstraint(\Doctrine\ORM\Mapping\ClassMetadata $targetEntity, $targetTableAlias)
     {
         $this->evaluateMatcher();
 

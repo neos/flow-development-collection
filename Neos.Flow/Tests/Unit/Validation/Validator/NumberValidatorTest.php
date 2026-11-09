@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Neos\Flow\Tests\Unit\Validation\Validator;
 
 /*
@@ -10,18 +13,19 @@ namespace Neos\Flow\Tests\Unit\Validation\Validator;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
 use Neos\Flow\I18n\Cldr\Reader\NumbersReader;
 use Neos\Flow\I18n\Locale;
 use Neos\Flow\I18n\Parser\NumberParser;
 use Neos\Flow\Validation\Validator\NumberValidator;
+use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\MockObject\MockObject;
 
 require_once('AbstractValidatorTestcase.php');
 
 /**
  * Testcase for the number validator
  */
-class NumberValidatorTest extends AbstractValidatorTestcase
+final class NumberValidatorTest extends AbstractValidatorTestcase
 {
     protected $validatorClassName = NumberValidator::class;
 
@@ -30,7 +34,7 @@ class NumberValidatorTest extends AbstractValidatorTestcase
      */
     protected $sampleLocale;
 
-    protected $mockNumberParser;
+    protected NumberParser|MockObject $mockNumberParser;
 
     /**
      * @return void
@@ -43,49 +47,41 @@ class NumberValidatorTest extends AbstractValidatorTestcase
         $this->mockNumberParser = $this->createMock(NumberParser::class);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function validateReturnsNoErrorIfTheGivenValueIsNull()
     {
         self::assertFalse($this->validator->validate(null)->hasErrors());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function validateReturnsNoErrorIfTheGivenValueIsAnEmptyString()
     {
         self::assertFalse($this->validator->validate('')->hasErrors());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function numberValidatorCreatesTheCorrectErrorForAnInvalidSubject()
     {
         $sampleInvalidNumber = 'this is not a number';
 
-        $this->mockNumberParser->expects(self::once())->method('parseDecimalNumber', $sampleInvalidNumber)->will(self::returnValue(false));
+        $this->mockNumberParser->expects($this->once())->method('parseDecimalNumber', $sampleInvalidNumber)->willReturn((false));
 
         $this->validatorOptions(['locale' => $this->sampleLocale]);
         $this->inject($this->validator, 'numberParser', $this->mockNumberParser);
 
-        self::assertEquals(1, count($this->validator->validate($sampleInvalidNumber)->getErrors()));
+        self::assertCount(1, $this->validator->validate($sampleInvalidNumber)->getErrors());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function returnsFalseForIncorrectValues()
     {
         $sampleInvalidNumber = 'this is not a number';
 
-        $this->mockNumberParser->expects(self::once())->method('parsePercentNumber', $sampleInvalidNumber)->will(self::returnValue(false));
+        $this->mockNumberParser->expects($this->once())->method('parsePercentNumber', $sampleInvalidNumber)->willReturn((false));
 
         $this->validatorOptions(['locale' => 'en_GB', 'formatLength' => NumbersReader::FORMAT_LENGTH_DEFAULT, 'formatType' => NumbersReader::FORMAT_TYPE_PERCENT]);
         $this->inject($this->validator, 'numberParser', $this->mockNumberParser);
 
-        self::assertEquals(1, count($this->validator->validate($sampleInvalidNumber)->getErrors()));
+        self::assertCount(1, $this->validator->validate($sampleInvalidNumber)->getErrors());
     }
 }

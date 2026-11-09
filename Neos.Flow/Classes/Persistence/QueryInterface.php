@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Persistence;
 
 /*
@@ -20,7 +21,7 @@ namespace Neos\Flow\Persistence;
  *
  * This allows for code like
  * $query->matching($query->equals('foo', 'bar'))->setLimit(10)->execute();
- *
+ * @template T of object
  * @api
  */
 interface QueryInterface
@@ -109,7 +110,7 @@ interface QueryInterface
      * Executes the query and returns the result.
      *
      * @param bool $cacheResult If the result cache should be used
-     * @return QueryResultInterface The query result
+     * @return QueryResultInterface<T> The query result
      * @api
      */
     public function execute(bool $cacheResult = false): QueryResultInterface;
@@ -129,8 +130,8 @@ interface QueryInterface
      *  'bar' => \Neos\Flow\Persistence\QueryInterface::ORDER_DESCENDING
      * )
      *
-     * @param array $orderings The property names to order by
-     * @return QueryInterface
+     * @param array<string,QueryInterface::ORDER_ASCENDING|QueryInterface::ORDER_DESCENDING> $orderings The property names to order by
+     * @return QueryInterface<T>
      * @api
      */
     public function setOrderings(array $orderings): QueryInterface;
@@ -142,7 +143,7 @@ interface QueryInterface
      *  'bar' => \Neos\Flow\Persistence\QueryInterface::ORDER_DESCENDING
      * )
      *
-     * @return array
+     * @return array<string,QueryInterface::ORDER_ASCENDING|QueryInterface::ORDER_DESCENDING>
      * @api
      */
     public function getOrderings(): array;
@@ -152,7 +153,7 @@ interface QueryInterface
      * for chaining (fluid interface).
      *
      * @param integer|null $limit
-     * @return QueryInterface
+     * @return QueryInterface<T>
      * @api
      */
     public function setLimit(?int $limit): QueryInterface;
@@ -169,7 +170,7 @@ interface QueryInterface
      * Sets the DISTINCT flag for this query.
      *
      * @param boolean $distinct
-     * @return QueryInterface
+     * @return QueryInterface<T>
      * @api
      */
     public function setDistinct(bool $distinct = true): QueryInterface;
@@ -187,7 +188,7 @@ interface QueryInterface
      * allow for chaining (fluid interface).
      *
      * @param integer|null $offset
-     * @return QueryInterface
+     * @return QueryInterface<T>
      * @api
      */
     public function setOffset(?int $offset): QueryInterface;
@@ -205,7 +206,7 @@ interface QueryInterface
      * for chaining (fluid interface).
      *
      * @param object $constraint Some constraint, depending on the backend
-     * @return QueryInterface
+     * @return QueryInterface<T>
      * @api
      */
     public function matching($constraint): QueryInterface;

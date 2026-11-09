@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Neos\Flow\Tests\Functional\Property\TypeConverter;
 
 /*
@@ -11,18 +14,19 @@ namespace Neos\Flow\Tests\Functional\Property\TypeConverter;
  * source code.
  */
 
+use Neos\Error\Messages\Error as FlowError;
 use Neos\Flow\I18n\Exception\InvalidLocaleIdentifierException;
-use Neos\Flow\I18n\Locale;
 use Neos\Flow\Property\PropertyMappingConfiguration;
 use Neos\Flow\Property\TypeConverter\FloatConverter;
 use Neos\Flow\Tests\FunctionalTestCase;
-use Neos\Error\Messages\Error as FlowError;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Testcase for the Float converter
  *
  */
-class FloatConverterTest extends FunctionalTestCase
+final class FloatConverterTest extends FunctionalTestCase
 {
     /**
      * @var FloatConverter
@@ -32,34 +36,25 @@ class FloatConverterTest extends FunctionalTestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->converter = $this->objectManager->get(\Neos\Flow\Property\TypeConverter\FloatConverter::class);
+        $this->converter = $this->objectManager->get(FloatConverter::class);
     }
 
     /**
-     * @return array Signature: string $locale, string $source, float $expectedResult
+     * @return \Iterator<(int | string), mixed> Signature: string $locale, string $source, float $expectedResult
      */
-    public function localeParsingDataProvider()
+    public static function localeParsingDataProvider(): \Iterator
     {
-        return [
-            ['de', '13,20', 13.2],
-            ['de', '112,777', 112.777],
-            ['de', '10.423,58', 10423.58],
-
-            ['en', '14.42', 14.42],
-            ['en', '10,423.58', 10423.58],
-            ['en', '10,42358', 1042358],
-        ];
+        yield ['de', '13,20', 13.2];
+        yield ['de', '112,777', 112.777];
+        yield ['de', '10.423,58', 10423.58];
+        yield ['en', '14.42', 14.42];
+        yield ['en', '10,423.58', 10423.58];
+        yield ['en', '10,42358', (float)1042358];
     }
 
-    /**
-     * @test
-     * @dataProvider localeParsingDataProvider
-     *
-     * @param Locale|string $locale
-     * @param $source
-     * @param $expectedResult
-     */
-    public function convertFromUsingVariousLocalesParsesFloatCorrectly($locale, $source, $expectedResult)
+    #[DataProvider('localeParsingDataProvider')]
+    #[Test]
+    public function convertFromUsingVariousLocalesParsesFloatCorrectly(string $locale, string $source, float $expectedResult): void
     {
         $configuration = new PropertyMappingConfiguration();
         $configuration->setTypeConverterOption(FloatConverter::class, 'locale', $locale);
@@ -68,10 +63,8 @@ class FloatConverterTest extends FunctionalTestCase
         self::assertEquals($expectedResult, $actualResult);
     }
 
-    /**
-     * @test
-     */
-    public function convertFromReturnsErrorIfFormatIsInvalid()
+    #[Test]
+    public function convertFromReturnsErrorIfFormatIsInvalid(): void
     {
         $configuration = new PropertyMappingConfiguration();
         $configuration->setTypeConverterOption(FloatConverter::class, 'locale', 'de');
@@ -82,10 +75,8 @@ class FloatConverterTest extends FunctionalTestCase
         self::assertInstanceOf(FlowError::class, $this->converter->convertFrom('84,00', 'float'));
     }
 
-    /**
-     * @test
-     */
-    public function convertFromThrowsExceptionIfLocaleIsInvalid()
+    #[Test]
+    public function convertFromThrowsExceptionIfLocaleIsInvalid(): void
     {
         $this->expectException(InvalidLocaleIdentifierException::class);
         $configuration = new PropertyMappingConfiguration();
@@ -94,10 +85,8 @@ class FloatConverterTest extends FunctionalTestCase
         $this->converter->convertFrom('84,42', 'float', [], $configuration);
     }
 
-    /**
-     * @test
-     */
-    public function convertFromDoesntUseLocaleParserIfNoConfigurationGiven()
+    #[Test]
+    public function convertFromDoesntUseLocaleParserIfNoConfigurationGiven(): void
     {
         self::assertEquals(84, $this->converter->convertFrom('84.000', 'float'));
         self::assertEquals(84.42, $this->converter->convertFrom('84.42', 'float'));

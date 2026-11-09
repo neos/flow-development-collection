@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Persistence\Doctrine;
 
 /*
@@ -11,9 +12,9 @@ namespace Neos\Flow\Persistence\Doctrine;
  * source code.
  */
 
-use Neos\Flow\Annotations as Flow;
 use Doctrine\DBAL\Connection;
 use Doctrine\ORM\EntityManagerInterface;
+use Neos\Flow\Annotations as Flow;
 
 /**
  * Connection factory for Doctrine connection class

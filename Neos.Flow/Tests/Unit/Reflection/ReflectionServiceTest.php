@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Neos\Flow\Tests\Unit\Reflection;
 
 /*
@@ -10,79 +13,67 @@ namespace Neos\Flow\Tests\Unit\Reflection;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
-use Doctrine\Common\Annotations\Reader;
 use Neos\Flow\Reflection\Exception\ClassLoadingForReflectionFailedException;
 use Neos\Flow\Reflection\ReflectionService;
+use Neos\Flow\Tests\Unit\Reflection\Fixture\AliasedClass;
+use Neos\Flow\Tests\Unit\Reflection\Fixture\ClassWithAliasDependency;
+use Neos\Flow\Tests\Unit\Reflection\Fixture\ClassWithDifferentNameDifferent;
+use Neos\Flow\Tests\Unit\Reflection\Fixture\FileWithNoClass;
 use Neos\Flow\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Testcase for the ReflectionService
  *
  */
-class ReflectionServiceTest extends UnitTestCase
+final class ReflectionServiceTest extends UnitTestCase
 {
     /**
      * @var ReflectionService
      */
     protected $reflectionService;
 
-    /**
-     * @var Reader|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $mockAnnotationReader;
-
     protected function setUp(): void
     {
-        $this->reflectionService = $this->getAccessibleMock(ReflectionService::class, null);
+        $this->reflectionService = $this->getAccessibleMock(ReflectionService::class);
 
-        $this->mockAnnotationReader = $this->getMockBuilder('Doctrine\Common\Annotations\Reader')->disableOriginalConstructor()->getMock();
-        $this->mockAnnotationReader->method('getClassAnnotations')->willReturn([]);
-        $this->mockAnnotationReader->method('getMethodAnnotations')->willReturn([]);
-        $this->inject($this->reflectionService, 'annotationReader', $this->mockAnnotationReader);
+        $mockAnnotationReader = $this->createMock('Doctrine\Common\Annotations\Reader');
+        $mockAnnotationReader->method('getClassAnnotations')->willReturn([]);
+        $mockAnnotationReader->method('getMethodAnnotations')->willReturn([]);
+        $this->inject($this->reflectionService, 'annotationReader', $mockAnnotationReader);
         $this->reflectionService->_set('initialized', true);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function reflectClassThrowsExceptionForNonExistingClasses()
     {
         $this->expectException(ClassLoadingForReflectionFailedException::class);
         $this->reflectionService->_call('reflectClass', 'Non\Existing\Class');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function reflectClassThrowsExceptionForFilesWithNoClass()
     {
         $this->expectException(ClassLoadingForReflectionFailedException::class);
-        $this->reflectionService->_call('reflectClass', Fixture\FileWithNoClass::class);
+        $this->reflectionService->_call('reflectClass', FileWithNoClass::class);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function reflectClassThrowsExceptionForClassesWithNoMatchingFilename()
     {
         $this->expectException(ClassLoadingForReflectionFailedException::class);
-        $this->reflectionService->_call('reflectClass', Fixture\ClassWithDifferentNameDifferent::class);
+        $this->reflectionService->_call('reflectClass', ClassWithDifferentNameDifferent::class);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getMethodParametersReturnsCorrectTypeForAliasedClass()
     {
-        $this->reflectionService->_call('reflectClass', Fixture\ClassWithAliasDependency::class);
-        $parameters = $this->reflectionService->getMethodParameters(Fixture\ClassWithAliasDependency::class, 'injectDependency');
-        $this->assertEquals(Fixture\AliasedClass::class, array_pop($parameters)['class']);
+        $this->reflectionService->_call('reflectClass', ClassWithAliasDependency::class);
+        $parameters = $this->reflectionService->getMethodParameters(ClassWithAliasDependency::class, 'injectDependency');
+        $this->assertEquals(AliasedClass::class, array_pop($parameters)['class']);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function isTagIgnoredReturnsTrueForIgnoredTags()
     {
         $settings = ['reflection' => ['ignoredTags' => ['ignored' => true]]];
@@ -91,9 +82,7 @@ class ReflectionServiceTest extends UnitTestCase
         self::assertTrue($this->reflectionService->_call('isTagIgnored', 'ignored'));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function isTagIgnoredReturnsFalseForTagsThatAreNotIgnored()
     {
         $settings = ['reflection' => ['ignoredTags' => ['notignored' => false]]];
@@ -102,9 +91,7 @@ class ReflectionServiceTest extends UnitTestCase
         self::assertFalse($this->reflectionService->_call('isTagIgnored', 'notignored'));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function isTagIgnoredReturnsFalseForTagsThatAreNotConfigured()
     {
         $settings = ['reflection' => ['ignoredTags' => ['ignored' => true, 'notignored' => false]]];
@@ -113,9 +100,7 @@ class ReflectionServiceTest extends UnitTestCase
         self::assertFalse($this->reflectionService->_call('isTagIgnored', 'notconfigured'));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function isTagIgnoredWorksWithOldConfiguration()
     {
         $settings = ['reflection' => ['ignoredTags' => ['ignored']]];

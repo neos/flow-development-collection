@@ -1,97 +1,77 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Neos\Cache\Tests\Unit\Backend;
 
 include_once(__DIR__ . '/../../BaseTestCase.php');
 
 use Neos\Cache\Backend\FileBackendEntryDto;
 use Neos\Cache\Tests\BaseTestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Test case for the FileBackendEntryDto
  */
-class FileBackendEntryDtoTest extends BaseTestCase
+final class FileBackendEntryDtoTest extends BaseTestCase
 {
     /**
      */
-    public function validEntryConstructorParameters()
+    public static function validEntryConstructorParameters(): \Iterator
     {
-        return [
-            ['data', [], 0],
-            ['data', [], time() + 100],
-            ['data', [], time() - 100],
-            ['data', [], time()],
-            ['', ['tag1'], time()],
-            ['data', ['tag1'], time()],
-            ['data', ['tag1', 'tag2'], time()],
-        ];
+        yield ['data', [], 0];
+        yield ['data', [], time() + 100];
+        yield ['data', [], time() - 100];
+        yield ['data', [], time()];
+        yield ['', ['tag1'], time()];
+        yield ['data', ['tag1'], time()];
+        yield ['data', ['tag1', 'tag2'], time()];
     }
 
-    /**
-     * @dataProvider validEntryConstructorParameters
-     * @test
-     *
-     * @param string $data
-     * @param array $tags
-     * @param int $expiryTime
-     * @return void
-     */
-    public function canBeCreatedWithConstructor($data, $tags, $expiryTime)
+    #[DataProvider('validEntryConstructorParameters')]
+    #[Test]
+    public function canBeCreatedWithConstructor(string $data, array $tags, int $expiryTime): void
     {
         $entryDto = new FileBackendEntryDto($data, $tags, $expiryTime);
         self::assertInstanceOf(FileBackendEntryDto::class, $entryDto);
     }
 
-    /**
-     * @dataProvider validEntryConstructorParameters
-     * @test
-     *
-     * @param $data
-     * @param $tags
-     * @param $expiryTime
-     * @return void
-     */
-    public function gettersReturnDataProvidedToConstructor($data, $tags, $expiryTime)
+    #[DataProvider('validEntryConstructorParameters')]
+    #[Test]
+    public function gettersReturnDataProvidedToConstructor(string $data, array $tags, int $expiryTime): void
     {
         $entryDto = new FileBackendEntryDto($data, $tags, $expiryTime);
-        self::assertEquals($data, $entryDto->getData());
+        self::assertSame($data, $entryDto->getData());
         self::assertEquals($tags, $entryDto->getTags());
-        self::assertEquals($expiryTime, $entryDto->getExpiryTime());
+        self::assertSame($expiryTime, $entryDto->getExpiryTime());
     }
 
-    /**
-     * @test
-     * @return void
-     */
-    public function isExpiredReturnsFalseIfExpiryTimeIsInFuture()
+    #[Test]
+    public function isExpiredReturnsFalseIfExpiryTimeIsInFuture(): void
     {
         $entryDto = new FileBackendEntryDto('data', [], time() + 10);
         self::assertFalse($entryDto->isExpired());
     }
 
-    /**
-     * @test
-     * @return void
-     */
-    public function isExpiredReturnsTrueIfExpiryTimeIsInPast()
+    #[Test]
+    public function isExpiredReturnsTrueIfExpiryTimeIsInPast(): void
     {
         $entryDto = new FileBackendEntryDto('data', [], time() - 10);
         self::assertTrue($entryDto->isExpired());
     }
 
-    /**
-     * @dataProvider validEntryConstructorParameters
-     * @test
-     * @return void
-     */
-    public function isIdempotent($data, $tags, $expiryTime)
+    #[DataProvider('validEntryConstructorParameters')]
+    #[Test]
+    public function isIdempotent(string $data, array $tags, int $expiryTime): void
     {
         $entryDto = new FileBackendEntryDto($data, $tags, $expiryTime);
         $entryString = (string)$entryDto;
         $entryDtoReconstituted = FileBackendEntryDto::fromString($entryString);
         $entryStringFromReconstituted = (string)$entryDtoReconstituted;
-        self::assertEquals($entryString, $entryStringFromReconstituted);
-        self::assertEquals($data, $entryDtoReconstituted->getData());
+        self::assertSame($entryString, $entryStringFromReconstituted);
+        self::assertSame($data, $entryDtoReconstituted->getData());
         self::assertEquals($tags, $entryDtoReconstituted->getTags());
-        self::assertEquals($expiryTime, $entryDtoReconstituted->getExpiryTime());
+        self::assertSame($expiryTime, $entryDtoReconstituted->getExpiryTime());
     }
 }

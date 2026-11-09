@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Neos\Flow\Tests\Unit\Validation\Validator;
 
 /*
@@ -10,11 +13,12 @@ namespace Neos\Flow\Tests\Unit\Validation\Validator;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
-use Neos\Flow\Validation\Validator\GenericObjectValidator;
 use Neos\Error\Messages as Error;
+use Neos\Flow\Validation\Validator\GenericObjectValidator;
 use Neos\Flow\Validation\Validator\IntegerValidator;
 use Neos\Flow\Validation\Validator\ValidatorInterface;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 
 require_once('AbstractValidatorTestcase.php');
 
@@ -22,29 +26,23 @@ require_once('AbstractValidatorTestcase.php');
  * Testcase for the Generic Object Validator
  *
  */
-class GenericObjectValidatorTest extends AbstractValidatorTestcase
+final class GenericObjectValidatorTest extends AbstractValidatorTestcase
 {
     protected $validatorClassName = GenericObjectValidator::class;
 
-    /**
-     * @test
-     */
+    #[Test]
     public function validateReturnsNoErrorIfTheGivenValueIsAnEmptyString()
     {
         self::assertFalse($this->validator->validate('')->hasErrors());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function validatorShouldReturnErrorsIfTheValueIsNoObjectAndNotNull()
     {
         self::assertTrue($this->validator->validate('foo')->hasErrors());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function validatorShouldReturnNoErrorsIfTheValueIsNull()
     {
         self::assertFalse($this->validator->validate(null)->hasErrors());
@@ -53,7 +51,7 @@ class GenericObjectValidatorTest extends AbstractValidatorTestcase
     /**
      * @return array
      */
-    public function dataProviderForValidator()
+    public static function dataProviderForValidator()
     {
         $error1 = new Error\Error('error1', 1);
         $error2 = new Error\Error('error2', 2);
@@ -67,7 +65,7 @@ class GenericObjectValidatorTest extends AbstractValidatorTestcase
         $resultWithError2 = new Error\Result();
         $resultWithError2->addError($error2);
 
-        $classNameForObjectWithPrivateProperties = 'B' . md5(uniqid(mt_rand(), true));
+        $classNameForObjectWithPrivateProperties = 'B' . md5(uniqid((string)mt_rand(), true));
         eval('class ' . $classNameForObjectWithPrivateProperties . '{ protected $foo = \'foovalue\'; protected $bar = \'barvalue\'; }');
         $objectWithPrivateProperties = new $classNameForObjectWithPrivateProperties();
 
@@ -80,31 +78,27 @@ class GenericObjectValidatorTest extends AbstractValidatorTestcase
         ];
     }
 
-    /**
-     * @test
-     * @dataProvider dataProviderForValidator
-     */
+    #[DataProvider('dataProviderForValidator')]
+    #[Test]
     public function validateChecksAllPropertiesForWhichAPropertyValidatorExists($mockObject, $validationResultForFoo, $validationResultForBar, $errors)
     {
         $validatorForFoo = $this->createMock(ValidatorInterface::class);
-        $validatorForFoo->expects(self::once())->method('validate')->with('foovalue')->will(self::returnValue($validationResultForFoo));
+        $validatorForFoo->expects($this->once())->method('validate')->with('foovalue')->willReturn(($validationResultForFoo));
 
         $validatorForBar = $this->createMock(ValidatorInterface::class);
-        $validatorForBar->expects(self::once())->method('validate')->with('barvalue')->will(self::returnValue($validationResultForBar));
+        $validatorForBar->expects($this->once())->method('validate')->with('barvalue')->willReturn(($validationResultForBar));
 
         $this->validator->addPropertyValidator('foo', $validatorForFoo);
         $this->validator->addPropertyValidator('bar', $validatorForBar);
         self::assertEquals($errors, $this->validator->validate($mockObject)->getFlattenedErrors());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function validateCanHandleRecursiveTargetsWithoutEndlessLooping()
     {
-        $classNameA = 'B' . md5(uniqid(mt_rand(), true));
+        $classNameA = 'B' . md5(uniqid((string)mt_rand(), true));
         eval('class ' . $classNameA . '{ public $b; }');
-        $classNameB = 'B' . md5(uniqid(mt_rand(), true));
+        $classNameB = 'B' . md5(uniqid((string)mt_rand(), true));
         eval('class ' . $classNameB . '{ public $a; }');
         $A = new $classNameA();
         $B = new $classNameB();
@@ -119,14 +113,12 @@ class GenericObjectValidatorTest extends AbstractValidatorTestcase
         self::assertFalse($aValidator->validate($A)->hasErrors());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function validateDetectsFailuresInRecursiveTargetsI()
     {
-        $classNameA = 'A' . md5(uniqid(mt_rand(), true));
+        $classNameA = 'A' . md5(uniqid((string)mt_rand(), true));
         eval('class ' . $classNameA . '{ public $b; }');
-        $classNameB = 'B' . md5(uniqid(mt_rand(), true));
+        $classNameB = 'B' . md5(uniqid((string)mt_rand(), true));
         eval('class ' . $classNameB . '{ public $a; public $uuid = 0xF; }');
         $A = new $classNameA();
         $B = new $classNameB();
@@ -143,20 +135,18 @@ class GenericObjectValidatorTest extends AbstractValidatorTestcase
         $result = new Error\Result();
         $result->addError($error);
         $mockUuidValidator = $this->createMock(ValidatorInterface::class);
-        $mockUuidValidator->expects(self::any())->method('validate')->with(0xF)->will(self::returnValue($result));
+        $mockUuidValidator->method('validate')->with(0xF)->willReturn(($result));
         $bValidator->addPropertyValidator('uuid', $mockUuidValidator);
 
         self::assertSame(['b.uuid' => [$error]], $aValidator->validate($A)->getFlattenedErrors());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function validateDetectsFailuresInRecursiveTargetsII()
     {
-        $classNameA = 'A' . md5(uniqid(mt_rand(), true));
+        $classNameA = 'A' . md5(uniqid((string)mt_rand(), true));
         eval('class ' . $classNameA . '{ public $b; public $uuid = 0xF; }');
-        $classNameB = 'B' . md5(uniqid(mt_rand(), true));
+        $classNameB = 'B' . md5(uniqid((string)mt_rand(), true));
         eval('class ' . $classNameB . '{ public $a; public $uuid = 0xF; }');
         $A = new $classNameA();
         $B = new $classNameB();
@@ -173,25 +163,23 @@ class GenericObjectValidatorTest extends AbstractValidatorTestcase
         $result1 = new Error\Result();
         $result1->addError($error1);
         $mockUuidValidator = $this->createMock(ValidatorInterface::class);
-        $mockUuidValidator->expects(self::any())->method('validate')->with(0xF)->will(self::returnValue($result1));
+        $mockUuidValidator->method('validate')->with(0xF)->willReturn(($result1));
         $aValidator->addPropertyValidator('uuid', $mockUuidValidator);
         $bValidator->addPropertyValidator('uuid', $mockUuidValidator);
 
         self::assertSame(['b.uuid' => [$error1], 'uuid' => [$error1]], $aValidator->validate($A)->getFlattenedErrors());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function objectsAreValidatedOnlyOnce()
     {
-        $className = 'A' . md5(uniqid(mt_rand(), true));
+        $className = 'A' . md5(uniqid((string)mt_rand(), true));
         eval('class ' . $className . '{ public $integer = 1; }');
         $object = new $className();
 
-        $integerValidator = $this->getAccessibleMock(IntegerValidator::class);
-        $matcher = self::any();
-        $integerValidator->expects($matcher)->method('validate')->with(1)->will(self::returnValue(new Error\Result()));
+        $integerValidator = $this->getAccessibleMock(IntegerValidator::class, ['validate']);
+        $matcher = $this->any();
+        $integerValidator->expects($matcher)->method('validate')->with(1)->willReturn((new Error\Result()));
 
         $validator = $this->getValidator();
         $validator->addPropertyValidator('integer', $integerValidator);
@@ -200,6 +188,6 @@ class GenericObjectValidatorTest extends AbstractValidatorTestcase
         $validator->validate($object);
         $validator->validate($object);
 
-        self::assertEquals(1, $matcher->getInvocationCount());
+        self::assertEquals(1, $matcher->numberOfInvocations());
     }
 }

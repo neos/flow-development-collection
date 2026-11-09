@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Utility;
 
 /*
@@ -519,7 +520,7 @@ abstract class Files
      * Will create relative symlinks by given absolute paths, falling back to Windows' mklink command because PHP's symlink() does not support relative paths there.
      * If the file exists already, it will be deleted regardless of its attributes.
      *
-     * @param string $target The absolute target where the the symlink should point to relativiely
+     * @param string $target The absolute target where the symlink should point to relatively
      * @param string $link The absolute path to the link where the symlink will be created
      * @return boolean
      * @throws FilesException

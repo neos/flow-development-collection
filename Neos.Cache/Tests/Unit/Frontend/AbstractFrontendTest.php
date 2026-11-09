@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Neos\Cache\Tests\Unit\Frontend;
 
 include_once(__DIR__ . '/../../BaseTestCase.php');
@@ -13,15 +16,16 @@ include_once(__DIR__ . '/../../BaseTestCase.php');
  * source code.
  */
 use Neos\Cache\Backend\AbstractBackend;
-use Neos\Cache\Tests\BaseTestCase;
 use Neos\Cache\Backend\TaggableBackendInterface;
 use Neos\Cache\Frontend\StringFrontend;
+use Neos\Cache\Tests\BaseTestCase;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Testcase for the abstract cache frontend
  *
  */
-class AbstractFrontendTest extends BaseTestCase
+final class AbstractFrontendTest extends BaseTestCase
 {
     /** @var  AbstractBackend */
     protected $mockBackend;
@@ -29,12 +33,10 @@ class AbstractFrontendTest extends BaseTestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->mockBackend = $this->getMockBuilder(AbstractBackend::class)->setMethods(['get', 'set', 'has', 'remove', 'findIdentifiersByTag', 'flush', 'flushByTag', 'collectGarbage'])->disableOriginalConstructor()->getMock();
+        $this->mockBackend = $this->getMockBuilder(AbstractBackend::class)->onlyMethods(['get', 'set', 'has', 'remove', 'flush', 'collectGarbage'])->disableOriginalConstructor()->getMock();
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function theConstructorAcceptsValidIdentifiers()
     {
         foreach (['x', 'someValue', '123fivesixseveneight', 'some&', 'ab_cd%', rawurlencode('resource://some/äöü$&% sadf'), str_repeat('x', 250)] as $identifier) {
@@ -43,9 +45,7 @@ class AbstractFrontendTest extends BaseTestCase
         }
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function theConstructorRejectsInvalidIdentifiers()
     {
         foreach (['', 'abc def', 'foo!', 'bar:', 'some/', 'bla*', 'one+', 'äöü', str_repeat('x', 251), 'x$', '\\a', 'b#'] as $identifier) {
@@ -58,86 +58,76 @@ class AbstractFrontendTest extends BaseTestCase
         }
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function flushCallsBackend()
     {
         $identifier = 'someCacheIdentifier';
         $backend = $this->getMockBuilder(AbstractBackend::class)
-            ->setMethods(['get', 'set', 'has', 'remove', 'findIdentifiersByTag', 'flush', 'flushByTag', 'collectGarbage'])->disableOriginalConstructor()->getMock();
-        $backend->expects(self::once())->method('flush');
+            ->onlyMethods(['get', 'set', 'has', 'remove', 'flush', 'collectGarbage'])->disableOriginalConstructor()->getMock();
+        $backend->expects($this->once())->method('flush');
 
         $cache = $this->getMockBuilder(StringFrontend::class)
-            ->setMethods(['__construct', 'get', 'set', 'has', 'remove', 'getByTag'])
+            ->onlyMethods(['__construct', 'get', 'set', 'has', 'remove', 'getByTag'])
             ->setConstructorArgs([$identifier, $backend])
             ->getMock();
         $cache->flush();
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function flushByTagRejectsInvalidTags()
     {
         $this->expectException(\InvalidArgumentException::class);
         $identifier = 'someCacheIdentifier';
         $backend = $this->createMock(TaggableBackendInterface::class);
-        $backend->expects(self::never())->method('flushByTag');
+        $backend->expects($this->never())->method('flushByTag');
 
         $cache = $this->getMockBuilder(StringFrontend::class)
-            ->setMethods(['__construct', 'get', 'set', 'has', 'remove', 'getByTag'])
+            ->onlyMethods(['__construct', 'get', 'set', 'has', 'remove', 'getByTag'])
             ->setConstructorArgs([$identifier, $backend])
             ->getMock();
         $cache->flushByTag('SomeInvalid\Tag');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function flushByTagCallsBackendIfItIsATaggableBackend()
     {
         $tag = 'sometag';
         $identifier = 'someCacheIdentifier';
         $backend = $this->createMock(TaggableBackendInterface::class);
-        $backend->expects(self::once())->method('flushByTag')->with($tag);
+        $backend->expects($this->once())->method('flushByTag')->with($tag);
 
         $cache = $this->getMockBuilder(StringFrontend::class)
-            ->setMethods(['__construct', 'get', 'set', 'has', 'remove', 'getByTag'])
+            ->onlyMethods(['__construct', 'get', 'set', 'has', 'remove', 'getByTag'])
             ->setConstructorArgs([$identifier, $backend])
             ->getMock();
         $cache->flushByTag($tag);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function collectGarbageCallsBackend()
     {
         $identifier = 'someCacheIdentifier';
         $backend = $this->getMockBuilder(AbstractBackend::class)
-            ->setMethods(['get', 'set', 'has', 'remove', 'findIdentifiersByTag', 'flush', 'flushByTag', 'collectGarbage'])
+            ->onlyMethods(['get', 'set', 'has', 'remove', 'flush', 'collectGarbage'])
             ->disableOriginalConstructor()
             ->getMock();
-        $backend->expects(self::once())->method('collectGarbage');
+        $backend->expects($this->once())->method('collectGarbage');
 
         $cache = $this->getMockBuilder(StringFrontend::class)
-            ->setMethods(['__construct', 'get', 'set', 'has', 'remove', 'getByTag'])
+            ->onlyMethods(['__construct', 'get', 'set', 'has', 'remove', 'getByTag'])
             ->setConstructorArgs([$identifier, $backend])
             ->getMock();
         $cache->collectGarbage();
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function invalidEntryIdentifiersAreRecognizedAsInvalid()
     {
         $identifier = 'someCacheIdentifier';
-        $backend = $this->createMock(AbstractBackend::class);
+        $backend = $this->createStub(AbstractBackend::class);
 
         $cache = $this->getMockBuilder(StringFrontend::class)
-            ->setMethods(['__construct', 'get', 'set', 'has', 'remove', 'getByTag'])
+            ->onlyMethods(['__construct', 'get', 'set', 'has', 'remove', 'getByTag'])
             ->setConstructorArgs([$identifier, $backend])
             ->getMock();
 
@@ -146,15 +136,13 @@ class AbstractFrontendTest extends BaseTestCase
         }
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function validEntryIdentifiersAreRecognizedAsValid()
     {
         $identifier = 'someCacheIdentifier';
-        $backend = $this->createMock(AbstractBackend::class);
+        $backend = $this->createStub(AbstractBackend::class);
         $cache = $this->getMockBuilder(StringFrontend::class)
-            ->setMethods(['__construct', 'get', 'set', 'has', 'remove', 'getByTag'])
+            ->onlyMethods(['__construct', 'get', 'set', 'has', 'remove', 'getByTag'])
             ->setConstructorArgs([$identifier, $backend])
             ->getMock();
 
@@ -163,15 +151,13 @@ class AbstractFrontendTest extends BaseTestCase
         }
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function invalidTagsAreRecognizedAsInvalid()
     {
         $identifier = 'someCacheIdentifier';
-        $backend = $this->createMock(AbstractBackend::class);
+        $backend = $this->createStub(AbstractBackend::class);
         $cache = $this->getMockBuilder(StringFrontend::class)
-            ->setMethods(['__construct', 'get', 'set', 'has', 'remove', 'getByTag'])
+            ->onlyMethods(['__construct', 'get', 'set', 'has', 'remove', 'getByTag'])
             ->setConstructorArgs([$identifier, $backend])
             ->getMock();
 
@@ -180,15 +166,13 @@ class AbstractFrontendTest extends BaseTestCase
         }
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function validTagsAreRecognizedAsValid()
     {
         $identifier = 'someCacheIdentifier';
-        $backend = $this->createMock(AbstractBackend::class);
+        $backend = $this->createStub(AbstractBackend::class);
         $cache = $this->getMockBuilder(StringFrontend::class)
-            ->setMethods(['__construct', 'get', 'set', 'has', 'remove', 'getByTag'])
+            ->onlyMethods(['__construct', 'get', 'set', 'has', 'remove', 'getByTag'])
             ->setConstructorArgs([$identifier, $backend])
             ->getMock();
 

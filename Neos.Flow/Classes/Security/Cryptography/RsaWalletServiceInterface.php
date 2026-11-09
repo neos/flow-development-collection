@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Security\Cryptography;
 
 /*
@@ -114,7 +115,7 @@ interface RsaWalletServiceInterface
     /**
      * Destroys the keypair identified by the given fingerprint
      *
-     * @param string $fingerprint The fingerprint
+     * @param string $fingerprint
      * @return void
      * @throws InvalidKeyPairIdException If the given fingerprint identifies no valid key pair
      */

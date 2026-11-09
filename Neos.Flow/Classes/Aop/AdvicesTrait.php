@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Aop;
 
 /*
@@ -14,6 +15,7 @@ namespace Neos\Flow\Aop;
 /**
  * Contains boilerplate code for AOP execution and is added to AOP proxy classes.
  *
+ * @phpstan-ignore trait.unused (probably API)
  */
 trait AdvicesTrait
 {
@@ -54,8 +56,41 @@ trait AdvicesTrait
         }
         $methodName = $joinPoint->getMethodName();
         if (isset($this->Flow_Aop_Proxy_methodIsInAdviceMode[$methodName])) {
-            $arguments = array_values($joinPoint->getMethodArguments());
+            $arguments = $this->Flow_Aop_Proxy_unpackMethodArguments($methodName, $joinPoint->getMethodArguments());
             return self::$methodName(...$arguments);
         }
+    }
+
+    /**
+     * Converts the method arguments of a join point into a list of arguments which can be
+     * unpacked into a call of the respective method.
+     *
+     * A join point stores the arguments passed to a variadic parameter as one single array,
+     * mapped to the name of that parameter. That array therefore needs to be unpacked again
+     * before the method can be called with the arguments taken from the join point.
+     *
+     * @param string $methodName Name of the method the given arguments belong to
+     * @param array $methodArguments The method arguments of the join point
+     * @return array The arguments, ready to be unpacked into a call of the given method
+     */
+    private function Flow_Aop_Proxy_unpackMethodArguments(string $methodName, array $methodArguments): array
+    {
+        static $variadicParameterNames = [];
+
+        $cacheKey = $this::class . '::' . $methodName;
+        if (!array_key_exists($cacheKey, $variadicParameterNames)) {
+            $parameters = (new \ReflectionMethod($this, $methodName))->getParameters();
+            $lastParameter = end($parameters);
+            $variadicParameterNames[$cacheKey] = ($lastParameter !== false && $lastParameter->isVariadic()) ? $lastParameter->getName() : null;
+        }
+
+        $variadicParameterName = $variadicParameterNames[$cacheKey];
+        if ($variadicParameterName === null || !array_key_exists($variadicParameterName, $methodArguments)) {
+            return array_values($methodArguments);
+        }
+
+        $variadicArguments = $methodArguments[$variadicParameterName];
+        unset($methodArguments[$variadicParameterName]);
+        return array_merge(array_values($methodArguments), is_array($variadicArguments) ? array_values($variadicArguments) : [$variadicArguments]);
     }
 }
