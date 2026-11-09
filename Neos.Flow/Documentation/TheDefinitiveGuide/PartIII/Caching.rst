@@ -589,6 +589,19 @@ Options
 |                  | calls to Redis to be processed  |           |           |           |
 |                  | between each batch.             |           |           |           |
 +------------------+---------------------------------+-----------+-----------+-----------+
+| retryOnError     | Whether to retry reading        | No        | bool      | true      |
+|                  | (``get()`` and ``has()``) if    |           |           |           |
+|                  | Redis is not available, e.g.    |           |           |           |
+|                  | while it is still loading its   |           |           |           |
+|                  | dataset after a restart.        |           |           |           |
+|                  |                                 |           |           |           |
+|                  | The n-th retry waits            |           |           |           |
+|                  | n² * 100ms.                     |           |           |           |
++------------------+---------------------------------+-----------+-----------+-----------+
+| maximumRetries   | How often to retry before       | No        | integer   | 8         |
+|                  | giving up. 8 retries wait about |           |           |           |
+|                  | 20 seconds in total.            |           |           |           |
++------------------+---------------------------------+-----------+-----------+-----------+
 
 Neos\\Cache\\Backend\\MemcachedBackend
 --------------------------------------
