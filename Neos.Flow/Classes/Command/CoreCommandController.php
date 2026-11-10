@@ -272,6 +272,6 @@ class CoreCommandController extends CommandController
      */
     protected function emitFinishedCompilationRun(int $classCount)
     {
-        $this->signalSlotDispatcher->dispatch(__CLASS__, 'finishedCompilationRun', [$classCount]);
+        $this->signalSlotDispatcher->dispatch(self::class, 'finishedCompilationRun', [$classCount]);
     }
 }

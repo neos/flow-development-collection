@@ -36,7 +36,7 @@ class AdvisedMethodInterceptorBuilder extends AbstractMethodInterceptorBuilder
     public function build(string $methodName, array $methodMetaInformation, string $targetClassName): void
     {
         if ($methodName === '__construct') {
-            throw new Exception(sprintf('The %s cannot build constructor interceptor code.', __CLASS__), 1173107446);
+            throw new Exception(sprintf('The %s cannot build constructor interceptor code.', self::class), 1173107446);
         }
 
         $declaringClassName = $methodMetaInformation[$methodName]['declaringClassName'];
@@ -47,7 +47,7 @@ class AdvisedMethodInterceptorBuilder extends AbstractMethodInterceptorBuilder
         }
         $proxyMethod = $proxyClass->getMethod($methodName);
         if ($proxyMethod->getVisibility() === ProxyMethodGenerator::VISIBILITY_PRIVATE) {
-            throw new Exception(sprintf('The %s cannot build interceptor code for private method %s::%s(). Please change the scope to at least protected or adjust the pointcut expression in the corresponding aspect.', __CLASS__, $targetClassName, $methodName), 1593070574);
+            throw new Exception(sprintf('The %s cannot build interceptor code for private method %s::%s(). Please change the scope to at least protected or adjust the pointcut expression in the corresponding aspect.', self::class, $targetClassName, $methodName), 1593070574);
         }
         if ($declaringClassName !== $targetClassName) {
             $originalMethod = MethodGenerator::copyMethodSignature(new \Laminas\Code\Reflection\MethodReflection($declaringClassName, $methodName));
@@ -57,7 +57,7 @@ class AdvisedMethodInterceptorBuilder extends AbstractMethodInterceptorBuilder
             $methodReturnsReference = $proxyMethod->returnsReference();
         }
         if ($methodReturnsReference) {
-            throw new Exception(sprintf('The %s cannot build interceptor code for method %s::%s() because it returns by reference: references cannot be preserved through an advice chain, so the advised method would silently return a copy instead of the original reference. Please remove the advice for this method, or exclude the class from proxying by adding a #[Flow\Proxy(false)] attribute.', __CLASS__, $targetClassName, $methodName), 1785837971);
+            throw new Exception(sprintf('The %s cannot build interceptor code for method %s::%s() because it returns by reference: references cannot be preserved through an advice chain, so the advised method would silently return a copy instead of the original reference. Please remove the advice for this method, or exclude the class from proxying by adding a #[Flow\Proxy(false)] attribute.', self::class, $targetClassName, $methodName), 1785837971);
         }
 
         $groupedAdvices = $methodMetaInformation[$methodName]['groupedAdvices'];

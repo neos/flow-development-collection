@@ -84,7 +84,7 @@ class Bootstrap
         $composerAutoloader = $composerAutoloader ?? require(__DIR__ . '/../../../../Libraries/autoload.php');
 
         $this->context = new ApplicationContext($context);
-        $this->earlyInstances[__CLASS__] = $this;
+        $this->earlyInstances[self::class] = $this;
         $this->earlyInstances[\Composer\Autoload\ClassLoader::class] = $composerAutoloader;
 
         $this->defineConstants();
@@ -437,7 +437,7 @@ class Bootstrap
      */
     protected function emitFinishedCompiletimeRun()
     {
-        $this->getSignalSlotDispatcher()->dispatch(__CLASS__, 'finishedCompiletimeRun', []);
+        $this->getSignalSlotDispatcher()->dispatch(self::class, 'finishedCompiletimeRun', []);
     }
 
     /**
@@ -448,7 +448,7 @@ class Bootstrap
      */
     protected function emitFinishedRuntimeRun()
     {
-        $this->getSignalSlotDispatcher()->dispatch(__CLASS__, 'finishedRuntimeRun', []);
+        $this->getSignalSlotDispatcher()->dispatch(self::class, 'finishedRuntimeRun', []);
     }
 
     /**
@@ -460,7 +460,7 @@ class Bootstrap
      */
     protected function emitBootstrapShuttingDown(string $runLevel)
     {
-        $this->getSignalSlotDispatcher()->dispatch(__CLASS__, 'bootstrapShuttingDown', [$runLevel]);
+        $this->getSignalSlotDispatcher()->dispatch(self::class, 'bootstrapShuttingDown', [$runLevel]);
     }
 
     /**
@@ -583,7 +583,7 @@ class Bootstrap
             http_response_code(500);
             exit(1);
         }
-        $method = new \ReflectionMethod(__CLASS__, __FUNCTION__);
+        $method = new \ReflectionMethod(self::class, __FUNCTION__);
         if ($method->getDocComment() === false || $method->getDocComment() === '') {
             echo('Reflection of doc comments is not supported by your PHP setup. Please check if you have installed an accelerator which removes doc comments.' . PHP_EOL);
             http_response_code(500);

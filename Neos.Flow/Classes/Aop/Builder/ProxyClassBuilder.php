@@ -482,9 +482,9 @@ class ProxyClassBuilder
     protected function buildReadonlyClassException(string $targetClassName): Exception
     {
         if ($this->isClassSessionScoped($targetClassName)) {
-            return new Exception(sprintf('The %s cannot build an AOP proxy for the readonly class %s because readonly classes cannot be session-scoped: the session scope pulls in Flow\'s lazy loading aspect and the woven advice code requires mutable state which readonly classes do not allow. Please remove the #[Flow\Scope("session")] attribute from this class, or drop the readonly modifier.', __CLASS__, $targetClassName), 1787734303);
+            return new Exception(sprintf('The %s cannot build an AOP proxy for the readonly class %s because readonly classes cannot be session-scoped: the session scope pulls in Flow\'s lazy loading aspect and the woven advice code requires mutable state which readonly classes do not allow. Please remove the #[Flow\Scope("session")] attribute from this class, or drop the readonly modifier.', self::class, $targetClassName), 1787734303);
         }
-        return new Exception(sprintf('The %s cannot build an AOP proxy for the readonly class %s because the woven advice code requires mutable state which readonly classes do not allow. Please remove the advice for this class, do not use aspects targeting it, or drop the readonly modifier.', __CLASS__, $targetClassName), 1787734304);
+        return new Exception(sprintf('The %s cannot build an AOP proxy for the readonly class %s because the woven advice code requires mutable state which readonly classes do not allow. Please remove the advice for this class, do not use aspects targeting it, or drop the readonly modifier.', self::class, $targetClassName), 1787734304);
     }
 
     /**

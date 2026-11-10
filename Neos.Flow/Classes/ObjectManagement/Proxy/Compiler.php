@@ -183,7 +183,7 @@ class Compiler
      */
     public function emitAfterCompile(array $compiledClasses): void
     {
-        $this->signalSlotDispatcher->dispatch(__CLASS__, 'afterCompile', [$compiledClasses]);
+        $this->signalSlotDispatcher->dispatch(self::class, 'afterCompile', [$compiledClasses]);
     }
 
     /**

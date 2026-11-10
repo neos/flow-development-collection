@@ -342,7 +342,7 @@ class ActionController extends AbstractController
 
         $result = [];
 
-        $className = get_called_class();
+        $className = static::class;
         $methodNames = get_class_methods($className);
         foreach ($methodNames as $methodName) {
             if (strlen($methodName) > 6 && strpos($methodName, 'Action', strlen($methodName) - 6) !== false) {
@@ -448,7 +448,7 @@ class ActionController extends AbstractController
 
         $result = [];
 
-        $className = get_called_class();
+        $className = static::class;
         $methodNames = get_class_methods($className);
         foreach ($methodNames as $methodName) {
             if (strlen($methodName) > 6 && strpos($methodName, 'Action', strlen($methodName) - 6) !== false) {
@@ -476,7 +476,7 @@ class ActionController extends AbstractController
 
         $result = [];
 
-        $className = get_called_class();
+        $className = static::class;
         $methodNames = get_class_methods($className);
         foreach ($methodNames as $methodName) {
             if (strlen($methodName) > 6 && strpos($methodName, 'Action', strlen($methodName) - 6) !== false) {
@@ -596,7 +596,7 @@ class ActionController extends AbstractController
 
         $result = [];
 
-        $className = get_called_class();
+        $className = static::class;
         $methodNames = get_class_methods($className);
         foreach ($methodNames as $methodName) {
             if (strlen($methodName) > 6 && strpos($methodName, 'Action', strlen($methodName) - 6) !== false) {
@@ -628,7 +628,7 @@ class ActionController extends AbstractController
 
         $result = [];
 
-        $className = get_called_class();
+        $className = static::class;
         $methodNames = get_class_methods($className);
         foreach ($methodNames as $methodName) {
             if (strlen($methodName) > 6 && strpos($methodName, 'Action', strlen($methodName) - 6) !== false) {

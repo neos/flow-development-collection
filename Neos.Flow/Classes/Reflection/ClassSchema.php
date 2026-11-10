@@ -182,7 +182,7 @@ class ClassSchema
      */
     public function isMultiValuedProperty($propertyName)
     {
-        return ($this->properties[$propertyName]['type'] === 'array' || $this->properties[$propertyName]['type'] === 'SplObjectStorage' || $this->properties[$propertyName]['type'] === 'Doctrine\Common\Collections\Collection' || $this->properties[$propertyName]['type'] === 'Doctrine\Common\Collections\ArrayCollection');
+        return ($this->properties[$propertyName]['type'] === 'array' || $this->properties[$propertyName]['type'] === 'SplObjectStorage' || $this->properties[$propertyName]['type'] === \Doctrine\Common\Collections\Collection::class || $this->properties[$propertyName]['type'] === \Doctrine\Common\Collections\ArrayCollection::class);
     }
 
     /**
