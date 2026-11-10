@@ -23,8 +23,10 @@
             "@lint:php-cs-fixer",
             "@lint:phpstan"
         ],
+        "fix:rector": "../../bin/rector",
         "fix:php-cs-fixer": "../../bin/php-cs-fixer fix",
         "fix": [
+            "@fix:rector",
             "@fix:php-cs-fixer"
         ]
     },
@@ -150,7 +152,9 @@
     },
     "require-dev": {
         "mikey179/vfsstream": "^1.6.12",
-        "phpunit/phpunit": "~11.5"
+        "phpunit/phpunit": "~11.5",
+        "rector/rector": "^2.8.4",
+        "neos/rector": "dev-main"
     },
     "provide": {
         "psr/cache-implementation": "2.0.0 || 3.0.0",
