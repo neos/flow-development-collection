@@ -11,6 +11,7 @@ use Neos\Flow\Configuration\ConfigurationManager;
 use Neos\Flow\Core\Bootstrap;
 use Neos\Flow\Http\Client\InternalRequestEngine;
 use Neos\Flow\Mvc\Routing\Route;
+use Neos\Flow\Mvc\Routing\TestingRoutesProvider;
 use Neos\Flow\ResourceManagement\PersistentResource;
 use Neos\Flow\ResourceManagement\ResourceManager;
 use Neos\Flow\ResourceManagement\ResourceRepository;
@@ -212,6 +213,8 @@ trait ResourceOperationsTrait
 
         /** @var InternalRequestEngine $internalRequestEngine */
         $internalRequestEngine = $this->getObject(InternalRequestEngine::class);
+
+        $routesProvider = $this->getObject(TestingRoutesProvider::class);
         $route = new Route();
         $route->setName('resourceUploadWithParameter');
         $route->setUriPattern('test/security/resourceupload/{@action}/and/{additionalParameter}');
@@ -221,7 +224,7 @@ trait ResourceOperationsTrait
             '@controller' => $controllerName,
             '@format'     => 'html',
         ]);
-        $internalRequestEngine->getRouter()->addRoute($route);
+        $routesProvider->addRoute($route);
 
         $optionalRoute = new Route();
         $optionalRoute->setName('resourceUpload');
@@ -232,7 +235,7 @@ trait ResourceOperationsTrait
             '@controller' => $controllerName,
             '@format'     => 'html',
         ]);
-        $internalRequestEngine->getRouter()->addRoute($optionalRoute);
+        $routesProvider->addRoute($optionalRoute);
 
         /** @var Bootstrap $bootstrap */
         $bootstrap = $this->getObject(Bootstrap::class);
