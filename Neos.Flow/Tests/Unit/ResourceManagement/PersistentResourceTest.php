@@ -56,6 +56,27 @@ final class PersistentResourceTest extends UnitTestCase
         self::assertSame('FileWithoutExtension', $resource->getFilename());
     }
 
+    public static function filenamesWithTrailingDotsOrWhitespace(): array
+    {
+        return [
+            'trailing dot' => ['foo.php.', 'foo.php', 'php'],
+            'trailing dots' => ['foo.php...', 'foo.php', 'php'],
+            'trailing space' => ['foo.php ', 'foo.php', 'php'],
+            'trailing dots and whitespace' => ["foo.PHP. .\t\n", 'foo.php', 'php'],
+            'trailing null byte' => ["foo.php\0", 'foo.php', 'php'],
+        ];
+    }
+
+    #[Test]
+    #[DataProvider('filenamesWithTrailingDotsOrWhitespace')]
+    public function setFilenameRemovesTrailingDotsAndWhitespace(string $filename, string $expectedFilename, string $expectedExtension)
+    {
+        $resource = new PersistentResource();
+        $resource->setFilename($filename);
+        self::assertSame($expectedFilename, $resource->getFilename());
+        self::assertSame($expectedExtension, $resource->getFileExtension());
+    }
+
     #[Test]
     public function getMediaTypeReturnsMediaTypeBasedOnFileExtension()
     {

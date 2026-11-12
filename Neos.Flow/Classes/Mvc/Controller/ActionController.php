@@ -14,6 +14,7 @@ namespace Neos\Flow\Mvc\Controller;
 use Neos\Error\Messages\Result;
 use Neos\Flow\Annotations as Flow;
 use Neos\Error\Messages as Error;
+use Neos\Flow\Aop\JoinPoint;
 use Neos\Flow\Log\ThrowableStorageInterface;
 use Neos\Flow\Log\Utility\LogEnvironment;
 use Neos\Flow\Mvc\ActionRequest;
@@ -23,6 +24,7 @@ use Neos\Flow\Mvc\Exception\InvalidActionVisibilityException;
 use Neos\Flow\Mvc\Exception\InvalidArgumentTypeException;
 use Neos\Flow\Mvc\Exception\NoSuchActionException;
 use Neos\Flow\Mvc\Exception\RequiredArgumentMissingException;
+use Neos\Flow\Mvc\Exception\StopActionException;
 use Neos\Flow\Mvc\Exception\UnsupportedRequestTypeException;
 use Neos\Flow\Mvc\Exception\ViewNotFoundException;
 use Neos\Flow\Mvc\View\ViewInterface;
@@ -31,6 +33,11 @@ use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Property\Exception\TargetNotFoundException;
 use Neos\Flow\Property\TypeConverter\Error\TargetNotFoundError;
 use Neos\Flow\Reflection\ReflectionService;
+use Neos\Flow\ResourceManagement\PersistentResource;
+use Neos\Flow\ResourceManagement\ResourceManager;
+use Neos\Flow\ResourceManagement\ResourceRepository;
+use Neos\Flow\Security\Authorization\Interceptor\PolicyEnforcement;
+use Neos\Flow\Security\Context;
 use Neos\Utility\TypeHandling;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\StreamInterface;
@@ -226,32 +233,68 @@ class ActionController extends AbstractController
             call_user_func([$this, $actionInitializationMethodName]);
         }
 
-        $this->mvcPropertyMappingConfigurationService->initializePropertyMappingConfigurationFromRequest($this->request, $this->arguments);
+        try {
+            $this->mvcPropertyMappingConfigurationService->initializePropertyMappingConfigurationFromRequest($this->request, $this->arguments);
+
+            try {
+                $this->mapRequestArgumentsToControllerArguments();
+            } catch (RequiredArgumentMissingException $e) {
+                $message = $this->throwableStorage->logThrowable($e);
+                $this->logger->notice('Request argument mapping failed due to a missing required argument. ' . $message, LogEnvironment::fromMethodName(__METHOD__));
+                $this->throwStatus(400, null, 'Required argument is missing');
+            }
+            if ($this->enableDynamicTypeValidation === true) {
+                $this->initializeActionMethodValidators();
+            }
+
+            if ($this->view === null) {
+                $this->view = $this->resolveView();
+            }
+            if ($this->view !== null) {
+                $this->view->assign('settings', $this->settings);
+                $this->view->setControllerContext($this->controllerContext);
+                $this->initializeView($this->view);
+            }
+        } catch (\Throwable $throwable) {
+            $this->discardNewResources();
+            throw $throwable;
+        }
 
         try {
-            $this->mapRequestArgumentsToControllerArguments();
-        } catch (RequiredArgumentMissingException $e) {
-            $message = $this->throwableStorage->logThrowable($e);
-            $this->logger->notice('Request argument mapping failed due to a missing required argument. ' . $message, LogEnvironment::fromMethodName(__METHOD__));
-            $this->throwStatus(400, null, 'Required argument is missing');
+            $this->callActionMethod();
+        } catch (StopActionException $stopActionException) {
+            // a redirect, forward or status which was triggered on purpose
+            throw $stopActionException;
+        } catch (\Throwable $throwable) {
+            $this->discardNewResources();
+            throw $throwable;
         }
-        if ($this->enableDynamicTypeValidation === true) {
-            $this->initializeActionMethodValidators();
-        }
-
-        if ($this->view === null) {
-            $this->view = $this->resolveView();
-        }
-        if ($this->view !== null) {
-            $this->view->assign('settings', $this->settings);
-            $this->view->setControllerContext($this->controllerContext);
-            $this->initializeView($this->view);
-        }
-
-        $this->callActionMethod();
 
         if (!$this->response->hasContentType()) {
             $this->response->setContentType($this->negotiatedMediaType);
+        }
+    }
+
+    /**
+     * Removes resources which were added during this request (for example by uploads mapped to action arguments)
+     * and have not been persisted yet, including their data in the storage.
+     * Marked as private as we introduced this as a bugfix. We will provide an API alternative in the future.
+     */
+    private function discardNewResources(): void
+    {
+        $resourceRepository = $this->objectManager->get(ResourceRepository::class);
+        $addedResources = $resourceRepository->getAddedResources();
+        if (count($addedResources) === 0) {
+            return;
+        }
+        $resourceManager = $this->objectManager->get(ResourceManager::class);
+        /** @var PersistentResource $resource */
+        foreach ($addedResources as $resource) {
+            try {
+                $resourceManager->deleteResource($resource);
+            } catch (\Throwable $throwable) {
+                $this->logger->error(sprintf('Could not discard new resource "%s" (%s): %s', $resource->getFilename(), $resource->getSha1(), $this->throwableStorage->logThrowable($throwable)), LogEnvironment::fromMethodName(__METHOD__));
+            }
         }
     }
 
@@ -540,6 +583,7 @@ class ActionController extends AbstractController
             if ($shouldCallActionMethod) {
                 $actionResult = $this->{$this->actionMethodName}(...$preparedArguments);
             } else {
+                $this->enforcePolicyBeforeCallingErrorMethod();
                 $actionResult = $this->{$this->errorMethodName}();
             }
         }
@@ -549,6 +593,29 @@ class ActionController extends AbstractController
         } else {
             $this->response->setContent($actionResult);
         }
+    }
+
+    /**
+     * WORKAROUND: For the errorMethod, we still need to enforce the MethodPrivilege of the *original* action:
+     * If the original action is denied by Policy.yaml, we are also not allowed to call the error method.
+     *
+     * In the long run, we should migrate from Method Privileges to special "Controller Privileges" or the like;
+     * as this will move all security checks further to the beginning of the request.
+     */
+    private function enforcePolicyBeforeCallingErrorMethod(): void
+    {
+        if ($this->objectManager->get(Context::class)->areAuthorizationChecksDisabled()) {
+            return;
+        }
+
+        $namedArguments = [];
+        foreach ($this->arguments as $argument) {
+            $namedArguments[$argument->getName()] = $argument->getValue();
+        }
+
+        $policyEnforcement = $this->objectManager->get(PolicyEnforcement::class);
+        $policyEnforcement->setJoinPoint(new JoinPoint($this, get_class($this), $this->actionMethodName, $namedArguments));
+        $policyEnforcement->invoke();
     }
 
     /**
