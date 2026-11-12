@@ -52,4 +52,11 @@ class ResourceUploadController extends ActionController
     public function constrainedUploadAction(PersistentResource $resource, string $additionalParameter): void
     {
     }
+
+    /**
+     * @Flow\Validate(argumentName="$resource", type="FileSize", options={ "minimum"=1, "maximum"=50 })
+     */
+    public function validationConstrainedUploadAction(PersistentResource $resource, string $additionalParameter): void
+    {
+    }
 }
