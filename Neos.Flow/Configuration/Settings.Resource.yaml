@@ -8,13 +8,23 @@ Neos:
       # A list of filename extensions that must not be uploaded through the resource
       # management.
       extensionsBlockedFromUpload: &extensionsBlockedFromUpload
+        'asp': true
         'aspx': true
         'cgi': true
         'htaccess': true
+        'htpasswd': true
         'phar': true
         'php3': true
         'php4': true
         'php5': true
+        'php6': true
+        'php7': true
+        'php8': true
+        'php9': true
+        'php10': true
+        'phps': true
+        'pht': true
+        'phtm': true
         'phtml': true
         'php': true
         'pl': true
@@ -22,6 +32,9 @@ Neos:
         'pyc': true
         'pyo': true
         'rb': true
+        'shtm': true
+        'shtml': true
+        'stm': true
 
       # Definition of resource storages provided by the Flow core.
       # Storages are used for storing and retrieving resources.
