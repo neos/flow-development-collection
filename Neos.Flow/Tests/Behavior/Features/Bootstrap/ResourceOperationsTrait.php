@@ -198,7 +198,6 @@ trait ResourceOperationsTrait
 
     protected function uploadFixtureResourceUsingMethodOfClass(string $fixtureName, string $actionName, string $controllerName, string $additionalParameter): void
     {
-        file_put_contents(FLOW_PATH_ROOT . 'wat.txt', $additionalParameter);
         $fixturePathAndName = __DIR__ . '/../../../Fixtures/'. $fixtureName;
         Assert::assertTrue(file_exists($fixturePathAndName), 'Fixture file ' . $fixturePathAndName . ' is missing.');
 
@@ -208,7 +207,7 @@ trait ResourceOperationsTrait
         /** @var InternalRequestEngine $internalRequestEngine */
         $internalRequestEngine = $this->objectManager->get(InternalRequestEngine::class);
         $route = new Route();
-        $route->setName('resourceUpload');
+        $route->setName('resourceUploadWithParameter');
         $route->setUriPattern('test/security/resourceupload/{@action}/and/{additionalParameter}');
         $route->setDefaults([
             '@package'    => 'Neos.Flow',
@@ -218,6 +217,16 @@ trait ResourceOperationsTrait
         ]);
         $internalRequestEngine->getRouter()->addRoute($route);
 
+        $optionalRoute = new Route();
+        $optionalRoute->setName('resourceUpload');
+        $optionalRoute->setUriPattern('test/security/resourceupload/{@action}');
+        $optionalRoute->setDefaults([
+            '@package'    => 'Neos.Flow',
+            '@subpackage' => 'Tests\Functional\Security\Fixtures',
+            '@controller' => $controllerName,
+            '@format'     => 'html',
+        ]);
+        $internalRequestEngine->getRouter()->addRoute($optionalRoute);
         /** @var Bootstrap $bootstrap */
         $bootstrap = $this->objectManager->get(Bootstrap::class);
         $bootstrap->setActiveRequestHandler(new FunctionalTestRequestHandler($bootstrap));
