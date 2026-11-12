@@ -10,6 +10,8 @@ Neos:
       extensionsBlockedFromUpload: &extensionsBlockedFromUpload
         'aspx': true
         'cgi': true
+        'htaccess': true
+        'phar': true
         'php3': true
         'php4': true
         'php5': true
