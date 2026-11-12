@@ -10,6 +10,7 @@ use Neos\Flow\Utility\Environment;
 require_once(__DIR__ . '/../../../../../../Application/Neos.Behat/Tests/Behat/FlowContextTrait.php');
 require_once(__DIR__ . '/IsolatedBehatStepsTrait.php');
 require_once(__DIR__ . '/SecurityOperationsTrait.php');
+require_once(__DIR__ . '/../../../../../Neos.Http.Factories/Classes/StreamFactoryTrait.php');
 require_once(__DIR__ . '/ResourceOperationsTrait.php');
 
 /**
