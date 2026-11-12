@@ -54,9 +54,16 @@ class ResourceUploadController extends ActionController
     }
 
     /**
-     * @Flow\Validate(argumentName="$resource", type="FileSize", options={ "minimum"=1, "maximum"=50 })
+     * @Flow\Validate(argumentName="resource", type="FileSize", options={ "minimum"=1, "maximum"=50 })
      */
     public function validationConstrainedUploadAction(PersistentResource $resource, string $additionalParameter): void
+    {
+    }
+
+    /**
+     * @Flow\Validate(argumentName="resource", type="FileSize", options={ "minimum"=1, "maximum"=50 })
+     */
+    public function restrictedValidationConstrainedUploadAction(PersistentResource $resource, string $additionalParameter): void
     {
     }
 }

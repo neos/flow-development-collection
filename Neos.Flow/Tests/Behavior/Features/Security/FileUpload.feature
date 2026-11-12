@@ -24,6 +24,9 @@ Feature: Arbitrary file upload protection
           'Neos.Flow:Tests.ResourceUploadController.constrainedUploadAction':
             matcher: 'method(Neos\Flow\Tests\Functional\Security\Fixtures\Controller\ResourceUploadController->constrainedUploadAction())'
 
+          'Neos.Flow:Tests.ResourceUploadController.restrictedValidationConstrainedUpload':
+            matcher: 'method(Neos\Flow\Tests\Functional\Security\Fixtures\Controller\ResourceUploadController->restrictedValidationConstrainedUploadAction())'
+
       roles:
         'Neos.Flow:Everybody':
           privileges:
@@ -106,17 +109,33 @@ Feature: Arbitrary file upload protection
     Then I expect this resource not to be published
 
   @Isolated @fixtures
-  Scenario: annotated validation exceptions prevent persistence, storage and publication
+  Scenario: annotated validation exceptions do not by themselves prevent persistence, storage and publication because we want to keep the files for correction
     Given I am not authenticated
     And I upload fixture resource "bat.jpg" using action "validationConstrainedUpload" of controller "ResourceUpload" with additional parameter
-    Then I expect this resource not to be persisted
-    Then I expect this resource not to be stored
-    Then I expect this resource not to be published
+    Then I expect this resource to be persisted
+    Then I expect this resource to be stored
+    Then I expect this resource to be published
 
   @Isolated @fixtures
   Scenario: annotated validation exceptions and missing parameter prevent persistence, storage and publication
     Given I am not authenticated
     And I upload fixture resource "bat.jpg" using action "validationConstrainedUpload" of controller "ResourceUpload"
+    Then I expect this resource not to be persisted
+    Then I expect this resource not to be stored
+    Then I expect this resource not to be published
+
+  @Isolated @fixtures
+  Scenario: access denial prevents persistence, storage and publication while also validation fails
+    Given I am not authenticated
+    And I upload fixture resource "bat.jpg" using action "restrictedValidationConstrainedUpload" of controller "ResourceUpload" with additional parameter
+    Then I expect this resource not to be persisted
+    Then I expect this resource not to be stored
+    Then I expect this resource not to be published
+
+  @Isolated @fixtures
+  Scenario: access denial prevents persistence, storage and publication while also validation fails and a parameter is missing
+    Given I am not authenticated
+    And I upload fixture resource "bat.jpg" using action "restrictedValidationConstrainedUpload" of controller "ResourceUpload"
     Then I expect this resource not to be persisted
     Then I expect this resource not to be stored
     Then I expect this resource not to be published
