@@ -49,7 +49,7 @@ class PdoBackend extends IndependentAbstractBackend implements TaggableBackendIn
     protected $password;
 
     /**
-     * @var array
+     * @var array<mixed>
      */
     protected $driverOptions = [];
 
@@ -84,7 +84,7 @@ class PdoBackend extends IndependentAbstractBackend implements TaggableBackendIn
     protected $batchSize = 999;
 
     /**
-     * @var \ArrayIterator|null
+     * @var \ArrayIterator<string,mixed>|null
      */
     protected $cacheEntriesIterator;
 
@@ -127,7 +127,7 @@ class PdoBackend extends IndependentAbstractBackend implements TaggableBackendIn
     /**
      * Sets the driverOptions to use
      *
-     * @param array $driverOptions The options to use for connecting to the DB
+     * @param array<mixed> $driverOptions The options to use for connecting to the DB
      * @return void
      * @api
      */
@@ -175,7 +175,7 @@ class PdoBackend extends IndependentAbstractBackend implements TaggableBackendIn
      *
      * @param string $entryIdentifier An identifier for this specific cache entry
      * @param string $data The data to be stored
-     * @param array $tags Tags to associate with this cache entry
+     * @param array<string> $tags Tags to associate with this cache entry
      * @param int|null $lifetime Lifetime of this cache entry in seconds. If NULL is specified, the default lifetime is used. "0" means unlimited lifetime.
      * @return void
      * @throws Exception if no cache frontend has been set.
@@ -614,6 +614,7 @@ class PdoBackend extends IndependentAbstractBackend implements TaggableBackendIn
      *
      * @return void
      * @api
+     * @phpstan-assert \ArrayIterator<string,mixed> $this->cacheEntriesIterator
      */
     public function rewind(): void
     {
@@ -648,6 +649,9 @@ class PdoBackend extends IndependentAbstractBackend implements TaggableBackendIn
     protected function context(): string
     {
         if ($this->context === null) {
+            if ($this->environmentConfiguration === null) {
+                throw new \RuntimeException('Environment configuration not set', 1744534618);
+            }
             $this->context = md5($this->environmentConfiguration->getApplicationIdentifier());
         }
         return $this->context;

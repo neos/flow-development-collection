@@ -45,7 +45,7 @@ class CachePool implements CacheItemPoolInterface
     /**
      * A list of items still to be persisted.
      *
-     * @var array
+     * @var array<int,CacheItemInterface>
      */
     protected $deferredItems = [];
 
@@ -91,7 +91,7 @@ class CachePool implements CacheItemPoolInterface
      * Returns a traversable set of cache items.
      *
      * @param string[] $keys
-     * @return array
+     * @return array<CacheItemInterface>
      * @throws InvalidArgumentException
      */
     public function getItems(array $keys = []): iterable

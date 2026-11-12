@@ -15,6 +15,7 @@ namespace Neos\Cache\Backend;
 /**
  * A contract for a cache backend which provides Iterator functionality.
  *
+ * @extends \Iterator<int|string,mixed>
  * @api
  */
 interface IterableBackendInterface extends BackendInterface, \Iterator
