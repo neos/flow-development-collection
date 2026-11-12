@@ -143,7 +143,7 @@ class ResourceManager
      * newly imported persistent resource and automatically publishes it to the configured
      * publication target.
      *
-     * @param string|resource $source A URI (can therefore also be a path and filename) or a PHP resource stream(!) pointing to the PersistentResource to import
+     * @param string|resource $source A URI (can therefore also be a path and filename) or a PHP resource stream(!) pointing to the PersistentResource to import. In the latter case, use throwIfFileExtensionIsBlocked for validation of filenames.
      * @param string $collectionName Name of the collection this new resource should be added to. By default the standard collection for persistent resources is used.
      * @param string $forcedPersistenceObjectIdentifier INTERNAL: Force the object identifier for this resource to the given UUID
      * @return PersistentResource A resource object representing the imported resource
@@ -158,6 +158,12 @@ class ResourceManager
         }
 
         $collection = $this->collections[$collectionName];
+
+        // if $source is a resource, throwIfFileExtensionIsBlocked must be called manually if filenames are set
+        if (!is_resource($source)) {
+            /** @phpstan-ignore argument.type (must be string after preceding if) */
+            $this->throwIfFileExtensionIsBlocked(UnicodeFunctions::pathinfo($source)['basename']);
+        }
 
         try {
             $resource = $collection->importResource($source);
@@ -209,6 +215,8 @@ class ResourceManager
         }
 
         $collection = $this->collections[$collectionName];
+
+        $this->throwIfFileExtensionIsBlocked((string)$filename);
 
         try {
             $resource = $collection->importResourceFromContent($content);
@@ -637,9 +645,7 @@ class ResourceManager
             throw new Exception('The given upload file "' . strip_tags($pathInfo['basename']) . '" was not uploaded through PHP. As it could pose a security risk it cannot be imported.', 1422461503);
         }
 
-        if (array_key_exists('extension', $pathInfo) && array_key_exists(strtolower($pathInfo['extension']), $this->settings['extensionsBlockedFromUpload']) && $this->settings['extensionsBlockedFromUpload'][strtolower($pathInfo['extension'])] === true) {
-            throw new Exception('The extension of the given upload file "' . strip_tags($pathInfo['basename']) . '" is excluded. As it could pose a security risk it cannot be imported.', 1447148472);
-        }
+        $this->throwIfFileExtensionIsBlocked($pathInfo['basename']);
 
         if ($openBasedirEnabled === true) {
             // Move uploaded file to a readable folder before trying to read sha1 value of file
@@ -658,5 +664,29 @@ class ResourceManager
             'filepath' => $temporaryTargetPathAndFilename,
             'filename' => $pathInfo['basename'],
         ];
+    }
+
+    /**
+     * Throws an exception if the extension of the given filename is listed in the setting
+     * "extensionsBlockedFromUpload". Trailing dots and whitespace are ignored, like
+     * PersistentResource::setFilename() does.
+     *
+     * Code that imports a stream and sets a filename from outside afterwards (e.g. the client filename of an
+     * upload) must call this before importing, otherwise the content is stored before the name is checked.
+     *
+     * @param string $filename
+     * @return void
+     * @throws Exception
+     * @internal
+     */
+    public function throwIfFileExtensionIsBlocked(string $filename): void
+    {
+        $basename = UnicodeFunctions::pathinfo(rtrim($filename, ". \t\n\r\0\x0B"))['basename'];
+        // every part after the first dot: "php" and "png" in "foo.php.png", "htaccess" in ".htaccess"
+        foreach (array_slice(explode('.', $basename), 1) as $extension) {
+            if (($this->settings['extensionsBlockedFromUpload'][strtolower($extension)] ?? false) === true) {
+                throw new Exception('The given file "' . strip_tags($basename) . '" has the excluded extension "' . strip_tags($extension) . '". As it could pose a security risk it cannot be imported.', 1447148472);
+            }
+        }
     }
 }
