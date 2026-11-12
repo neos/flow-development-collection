@@ -103,6 +103,7 @@ class ResourceRepository extends Repository
         // the ResourceManager's deleteResource() method which also calls this remove() function:
         if (!$this->removedResources->contains($object)) {
             $this->removedResources->attach($object);
+            $this->addedResources->detach($object);
             parent::remove($object);
         }
     }

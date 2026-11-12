@@ -179,6 +179,11 @@ class PersistentResource implements ResourceMetaDataInterface, CacheAwareInterfa
     {
         $this->throwExceptionIfProtected();
 
+        // SECURITY IMPROVEMENT: .php. with a dot at end may still be served by some web servers (windows, as there the
+        // trailing dot is stripped at the file system level).
+        //
+        // Thus, to be sure, we trim for dot and various whitespaces...
+        $filename = rtrim($filename, ". \t\n\r\0\x0B");
         $pathInfo = UnicodeFunctions::pathinfo($filename);
         $extension = (isset($pathInfo['extension']) ? '.' . strtolower($pathInfo['extension']) : '');
         $this->filename = $pathInfo['filename'] . $extension;
