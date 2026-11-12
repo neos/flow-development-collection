@@ -412,7 +412,7 @@ class MathHelper implements ProtectedContextAwareInterface
             return NAN;
         }
         $subject = (float)$subject;
-        if (!is_int($precision)) {
+        if ($precision !== null && !is_int($precision)) {
             return NAN;
         }
         return round($subject, (int)$precision);

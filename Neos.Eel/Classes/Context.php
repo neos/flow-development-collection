@@ -59,7 +59,7 @@ class Context
             if (is_array($this->value)) {
                 return array_key_exists($path, $this->value) ? $this->value[$path] : null;
             } elseif (is_object($this->value)) {
-                $this->tracer?->recordPropertyAccess($this->value, (string)$path);
+                $this->tracer?->recordPropertyAccess($this->value, $path);
                 try {
                     return ObjectAccess::getProperty($this->value, $path);
                 } catch (PropertyNotAccessibleException $exception) {
@@ -79,7 +79,7 @@ class Context
      */
     public function getAndWrap($path = null)
     {
-        return $this->wrap($this->get($path ?: '') ?: '');
+        return $this->wrap($this->get($path));
     }
 
     /**
