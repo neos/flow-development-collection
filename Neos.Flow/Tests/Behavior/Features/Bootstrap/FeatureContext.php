@@ -2,14 +2,17 @@
 
 use Behat\Behat\Context\Context;
 use Neos\Behat\FlowBootstrapTrait;
+use Neos\Behat\FlowEntitiesTrait;
 use Neos\Flow\Tests\Behavior\Features\Bootstrap\IsolatedBehatStepsTrait;
 use Neos\Flow\Tests\Behavior\Features\Bootstrap\ResourceOperationsTrait;
 use Neos\Flow\Tests\Behavior\Features\Bootstrap\SecurityOperationsTrait;
 use Neos\Flow\Tests\Functional\Command\BehatTestHelper;
+use PHPUnit\TextUI\CliArguments\Builder as CliConfigurationBuilder;
+use PHPUnit\TextUI\Configuration\Registry as PhpUnitConfigurationRegistry;
+use PHPUnit\TextUI\XmlConfiguration\DefaultConfiguration;
 
 require_once(__DIR__ . '/IsolatedBehatStepsTrait.php');
 require_once(__DIR__ . '/SecurityOperationsTrait.php');
-require_once(__DIR__ . '/../../../../../Neos.Http.Factories/Classes/StreamFactoryTrait.php');
 require_once(__DIR__ . '/ResourceOperationsTrait.php');
 
 /**
@@ -21,6 +24,7 @@ require_once(__DIR__ . '/ResourceOperationsTrait.php');
 class FeatureContext implements Context
 {
     use FlowBootstrapTrait;
+    use FlowEntitiesTrait;
     use IsolatedBehatStepsTrait;
     use SecurityOperationsTrait;
     use ResourceOperationsTrait;
@@ -34,5 +38,9 @@ class FeatureContext implements Context
     {
         self::bootstrapFlow();
         $this->setupSecurity();
+        PhpUnitConfigurationRegistry::init(
+            (new CliConfigurationBuilder())->fromParameters([]),
+            DefaultConfiguration::create()
+        );
     }
 }

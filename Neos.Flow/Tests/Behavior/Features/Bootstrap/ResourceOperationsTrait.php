@@ -11,7 +11,6 @@ use Neos\Flow\Configuration\ConfigurationManager;
 use Neos\Flow\Core\Bootstrap;
 use Neos\Flow\Http\Client\InternalRequestEngine;
 use Neos\Flow\Mvc\Routing\Route;
-use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\ResourceManagement\PersistentResource;
 use Neos\Flow\ResourceManagement\ResourceManager;
 use Neos\Flow\ResourceManagement\ResourceRepository;
@@ -26,7 +25,6 @@ use PHPUnit\Framework\ExpectationFailedException;
  * A trait with shared step definitions for testing operations on (persistent) resources
  *
  * @property Environment environment
- * @property ObjectManagerInterface objectManager
  */
 trait ResourceOperationsTrait
 {
@@ -35,6 +33,14 @@ trait ResourceOperationsTrait
     protected ?string $currentContentHash = null;
 
     protected ?string $currentFixtureName = null;
+
+    /**
+     * @template T of object
+     * @param class-string<T> $className
+     *
+     * @return T
+     */
+    abstract private function getObject(string $className): object;
 
     /**
      * @BeforeScenario
@@ -107,7 +113,7 @@ trait ResourceOperationsTrait
      */
     public function iExpectThisResourceToBePersisted(): void
     {
-        $resourceRepository = $this->objectManager->get(ResourceRepository::class);
+        $resourceRepository = $this->getObject(ResourceRepository::class);
         Assert::assertInstanceOf(PersistentResource::class, $resourceRepository->findOneBySha1($this->currentContentHash));
     }
 
@@ -116,7 +122,7 @@ trait ResourceOperationsTrait
      */
     public function iExpectThisResourceNotToBePersisted(): void
     {
-        $resourceRepository = $this->objectManager->get(ResourceRepository::class);
+        $resourceRepository = $this->getObject(ResourceRepository::class);
         $actualResource = $resourceRepository->findOneBySha1($this->currentContentHash);
         Assert::assertTrue($actualResource === null, 'Resource found for hash ' . $this->currentContentHash . ' but was not expected');
     }
@@ -126,7 +132,7 @@ trait ResourceOperationsTrait
      */
     public function iExpectThisResourceToBeStored(): void
     {
-        $resourceManager = $this->objectManager->get(ResourceManager::class);
+        $resourceManager = $this->getObject(ResourceManager::class);
         $storedResourceObject = null;
         foreach (
             $resourceManager->getCollection(ResourceManager::DEFAULT_PERSISTENT_COLLECTION_NAME)
@@ -146,7 +152,7 @@ trait ResourceOperationsTrait
      */
     public function iExpectThisResourceNotToBeStored(): void
     {
-        $resourceManager = $this->objectManager->get(ResourceManager::class);
+        $resourceManager = $this->getObject(ResourceManager::class);
         foreach (
             $resourceManager->getCollection(ResourceManager::DEFAULT_PERSISTENT_COLLECTION_NAME)
                 ->getStorage()
@@ -178,7 +184,7 @@ trait ResourceOperationsTrait
 
     protected function resolvePublicationBasePath(): string
     {
-        $configurationManager = $this->objectManager->get(ConfigurationManager::class);
+        $configurationManager = $this->getObject(ConfigurationManager::class);
         $publicationTarget = $configurationManager->getConfiguration(
             ConfigurationManager::CONFIGURATION_TYPE_SETTINGS,
             'Neos.Flow.resource.collections.' . ResourceManager::DEFAULT_PERSISTENT_COLLECTION_NAME . '.target'
@@ -205,7 +211,7 @@ trait ResourceOperationsTrait
         $this->currentContentHash = \sha1($fileContent);
 
         /** @var InternalRequestEngine $internalRequestEngine */
-        $internalRequestEngine = $this->objectManager->get(InternalRequestEngine::class);
+        $internalRequestEngine = $this->getObject(InternalRequestEngine::class);
         $route = new Route();
         $route->setName('resourceUploadWithParameter');
         $route->setUriPattern('test/security/resourceupload/{@action}/and/{additionalParameter}');
@@ -227,8 +233,9 @@ trait ResourceOperationsTrait
             '@format'     => 'html',
         ]);
         $internalRequestEngine->getRouter()->addRoute($optionalRoute);
+
         /** @var Bootstrap $bootstrap */
-        $bootstrap = $this->objectManager->get(Bootstrap::class);
+        $bootstrap = $this->getObject(Bootstrap::class);
         $bootstrap->setActiveRequestHandler(new FunctionalTestRequestHandler($bootstrap));
 
         $httpRequest = (new ServerRequest(

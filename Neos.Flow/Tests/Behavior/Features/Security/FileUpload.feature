@@ -1,4 +1,5 @@
 @flowEntities
+@Isolated
 Feature: Arbitrary file upload protection
   During file upload, if any exception occurs, be it security or constraint validation, I expect the file to be neither
     - persisted in the resource repository
@@ -44,7 +45,6 @@ Feature: Arbitrary file upload protection
           privileges: []
       """
 
-  @Isolated @fixtures
   Scenario: Countercheck: unrestricted upload works if exposed
     Given I am not authenticated
     And I upload fixture resource "bat.jpg" using action "unrestrictedUpload" of controller "ResourceUpload" with additional parameter
@@ -52,7 +52,6 @@ Feature: Arbitrary file upload protection
     Then I expect this resource to be stored
     Then I expect this resource to be published
 
-  @Isolated @fixtures
   Scenario: missing parameter prevent persistence, storage and publication
     Given I am not authenticated
     And I upload fixture resource "bat.jpg" using action "unrestrictedUpload" of controller "ResourceUpload"
@@ -60,7 +59,6 @@ Feature: Arbitrary file upload protection
     Then I expect this resource not to be stored
     Then I expect this resource not to be published
 
-  @Isolated @fixtures
   Scenario: arbitrary exceptions prevent persistence, storage and publication
     Given I am not authenticated
     And I upload fixture resource "bat.jpg" using action "arbitraryFailingUpload" of controller "ResourceUpload" with additional parameter
@@ -68,7 +66,6 @@ Feature: Arbitrary file upload protection
     Then I expect this resource not to be stored
     Then I expect this resource not to be published
 
-  @Isolated @fixtures
   Scenario: arbitrary exceptions and missing parameter prevent persistence, storage and publication
     Given I am not authenticated
     And I upload fixture resource "bat.jpg" using action "arbitraryFailingUpload" of controller "ResourceUpload"
@@ -76,7 +73,6 @@ Feature: Arbitrary file upload protection
     Then I expect this resource not to be stored
     Then I expect this resource not to be published
 
-  @Isolated @fixtures
   Scenario: access denial prevents persistence, storage and publication
     Given I am not authenticated
     And I upload fixture resource "bat.jpg" using action "restrictedUpload" of controller "ResourceUpload" with additional parameter
@@ -84,7 +80,6 @@ Feature: Arbitrary file upload protection
     Then I expect this resource not to be stored
     Then I expect this resource not to be published
 
-  @Isolated @fixtures
   Scenario: access denial and missing parameter prevents persistence, storage and publication
     Given I am not authenticated
     And I upload fixture resource "bat.jpg" using action "restrictedUpload" of controller "ResourceUpload"
@@ -92,7 +87,6 @@ Feature: Arbitrary file upload protection
     Then I expect this resource not to be stored
     Then I expect this resource not to be published
 
-  @Isolated @fixtures
   Scenario: validation exceptions prevent persistence, storage and publication
     Given I am not authenticated
     And I upload fixture resource "bat.jpg" using action "constrainedUpload" of controller "ResourceUpload" with additional parameter
@@ -100,7 +94,6 @@ Feature: Arbitrary file upload protection
     Then I expect this resource not to be stored
     Then I expect this resource not to be published
 
-  @Isolated @fixtures
   Scenario: validation exceptions and missing parameter prevent persistence, storage and publication
     Given I am not authenticated
     And I upload fixture resource "bat.jpg" using action "constrainedUpload" of controller "ResourceUpload"
@@ -108,7 +101,6 @@ Feature: Arbitrary file upload protection
     Then I expect this resource not to be stored
     Then I expect this resource not to be published
 
-  @Isolated @fixtures
   Scenario: annotated validation exceptions do not by themselves prevent persistence, storage and publication because we want to keep the files for correction
     Given I am not authenticated
     And I upload fixture resource "bat.jpg" using action "validationConstrainedUpload" of controller "ResourceUpload" with additional parameter
@@ -116,7 +108,6 @@ Feature: Arbitrary file upload protection
     Then I expect this resource to be stored
     Then I expect this resource to be published
 
-  @Isolated @fixtures
   Scenario: annotated validation exceptions and missing parameter prevent persistence, storage and publication
     Given I am not authenticated
     And I upload fixture resource "bat.jpg" using action "validationConstrainedUpload" of controller "ResourceUpload"
@@ -124,7 +115,6 @@ Feature: Arbitrary file upload protection
     Then I expect this resource not to be stored
     Then I expect this resource not to be published
 
-  @Isolated @fixtures
   Scenario: access denial prevents persistence, storage and publication while also validation fails
     Given I am not authenticated
     And I upload fixture resource "bat.jpg" using action "restrictedValidationConstrainedUpload" of controller "ResourceUpload" with additional parameter
@@ -132,7 +122,6 @@ Feature: Arbitrary file upload protection
     Then I expect this resource not to be stored
     Then I expect this resource not to be published
 
-  @Isolated @fixtures
   Scenario: access denial prevents persistence, storage and publication while also validation fails and a parameter is missing
     Given I am not authenticated
     And I upload fixture resource "bat.jpg" using action "restrictedValidationConstrainedUpload" of controller "ResourceUpload"
