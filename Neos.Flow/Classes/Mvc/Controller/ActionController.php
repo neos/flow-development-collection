@@ -583,7 +583,7 @@ class ActionController extends AbstractController
             if ($shouldCallActionMethod) {
                 $actionResult = $this->{$this->actionMethodName}(...$preparedArguments);
             } else {
-                $this->enforcePolicyBeforeCallingErrorMethod($preparedArguments);
+                $this->enforcePolicyBeforeCallingErrorMethod();
                 $actionResult = $this->{$this->errorMethodName}();
             }
         }
