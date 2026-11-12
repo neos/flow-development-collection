@@ -256,6 +256,10 @@ class ResourceTypeConverter extends AbstractTypeConverter
             if (isset($source['data']) && isset($source['filename'])) {
                 $resource = $this->resourceManager->importResourceFromContent(base64_decode($source['data']), $source['filename'], $collectionName, $givenResourceIdentity);
             } elseif ($hash !== null) {
+                // We proactively block file extensions before importing.
+                if (is_array($source) && isset($source['filename'])) {
+                    $this->resourceManager->throwIfFileExtensionIsBlocked((string)$source['filename']);
+                }
                 $resource = $this->resourceManager->importResource($configuration->getConfigurationValue(ResourceTypeConverter::class, self::CONFIGURATION_RESOURCE_LOAD_PATH) . '/' . $hash, $collectionName, $givenResourceIdentity);
                 if (is_array($source) && isset($source['filename'])) {
                     $resource->setFilename($source['filename']);
@@ -307,6 +311,8 @@ class ResourceTypeConverter extends AbstractTypeConverter
         }
 
         try {
+            // We proactively block file extensions before importing.
+            $this->resourceManager->throwIfFileExtensionIsBlocked((string)$source->getClientFilename());
             $resource = $this->resourceManager->importResource($source->getStream()->detach(), $this->getCollectionName($source, $configuration));
             $resource->setFilename($source->getClientFilename());
             $this->convertedResources[spl_object_hash($source)] = $resource;
