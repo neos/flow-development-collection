@@ -13,8 +13,10 @@ namespace Neos\Flow\Tests\Functional\Command;
 
 require_once(FLOW_PATH_PACKAGES . '/Framework/Neos.Flow/Tests/Behavior/Features/Bootstrap/IsolatedBehatStepsTrait.php');
 require_once(FLOW_PATH_PACKAGES . '/Framework/Neos.Flow/Tests/Behavior/Features/Bootstrap/SecurityOperationsTrait.php');
+require_once(FLOW_PATH_PACKAGES . '/Framework/Neos.Flow/Tests/Behavior/Features/Bootstrap/ResourceOperationsTrait.php');
 
 use Neos\Flow\Tests\Behavior\Features\Bootstrap\IsolatedBehatStepsTrait;
+use Neos\Flow\Tests\Behavior\Features\Bootstrap\ResourceOperationsTrait;
 use Neos\Flow\Tests\Behavior\Features\Bootstrap\SecurityOperationsTrait;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Core\Bootstrap;
@@ -38,6 +40,8 @@ class BehatTestHelper
     use IsolatedBehatStepsTrait;
 
     use SecurityOperationsTrait;
+
+    use ResourceOperationsTrait;
 
     /**
      * @var Bootstrap
