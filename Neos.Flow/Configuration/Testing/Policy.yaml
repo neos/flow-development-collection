@@ -25,6 +25,9 @@ privilegeTargets:
     'Neos.Flow:Tests.ResourceUploadTestController.restrictedActions':
       matcher: 'method(Neos\Flow\Tests\Functional\Mvc\Fixtures\Controller\ResourceUploadTestController->restrictedAction())'
 
+    'Neos.Flow:Tests.ErrorActionPolicyTestController.restrictedAction':
+      matcher: 'method(Neos\Flow\Tests\Functional\Security\Fixtures\Controller\ErrorActionPolicyTestController->restrictedAction())'
+
 
   'Neos\Flow\Security\Authorization\Privilege\Entity\Doctrine\EntityPrivilege':
 
@@ -65,6 +68,9 @@ roles:
     privileges:
       -
         privilegeTarget: 'Neos.Flow:Tests.RestrictedController.customerAction'
+        permission: GRANT
+      -
+        privilegeTarget: 'Neos.Flow:Tests.ErrorActionPolicyTestController.restrictedAction'
         permission: GRANT
 
       -
