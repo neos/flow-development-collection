@@ -178,7 +178,7 @@ trait ResourceOperationsTrait
 
     protected function resolvePublicationBasePath(): string
     {
-        $configurationManager = $this->getObject(ConfigurationManager::class);
+        $configurationManager = $this->objectManager->get(ConfigurationManager::class);
         $publicationTarget = $configurationManager->getConfiguration(
             ConfigurationManager::CONFIGURATION_TYPE_SETTINGS,
             'Neos.Flow.resource.collections.' . ResourceManager::DEFAULT_PERSISTENT_COLLECTION_NAME . '.target'
@@ -206,7 +206,7 @@ trait ResourceOperationsTrait
         $this->currentContentHash = \sha1($fileContent);
 
         /** @var InternalRequestEngine $internalRequestEngine */
-        $internalRequestEngine = $this->getObject(InternalRequestEngine::class);
+        $internalRequestEngine = $this->objectManager->get(InternalRequestEngine::class);
         $route = new Route();
         $route->setName('resourceUpload');
         $route->setUriPattern('test/security/resourceupload/{@action}/and/{additionalParameter}');
@@ -219,7 +219,7 @@ trait ResourceOperationsTrait
         $internalRequestEngine->getRouter()->addRoute($route);
 
         /** @var Bootstrap $bootstrap */
-        $bootstrap = $this->getObject(Bootstrap::class);
+        $bootstrap = $this->objectManager->get(Bootstrap::class);
         $bootstrap->setActiveRequestHandler(new FunctionalTestRequestHandler($bootstrap));
 
         $httpRequest = (new ServerRequest(
