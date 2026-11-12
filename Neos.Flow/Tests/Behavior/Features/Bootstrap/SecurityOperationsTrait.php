@@ -79,6 +79,11 @@ trait SecurityOperationsTrait
     protected $securityContext;
 
     /**
+     * @var ActionRequest
+     */
+    protected $mockActionRequest;
+
+    /**
      * @var TestingProvider
      */
     protected $testingProvider;
