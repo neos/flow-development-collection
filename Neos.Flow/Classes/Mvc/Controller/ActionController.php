@@ -14,6 +14,7 @@ namespace Neos\Flow\Mvc\Controller;
 use Neos\Error\Messages\Result;
 use Neos\Flow\Annotations as Flow;
 use Neos\Error\Messages as Error;
+use Neos\Flow\Aop\JoinPoint;
 use Neos\Flow\Log\ThrowableStorageInterface;
 use Neos\Flow\Log\Utility\LogEnvironment;
 use Neos\Flow\Mvc\ActionRequest;
@@ -35,6 +36,8 @@ use Neos\Flow\Reflection\ReflectionService;
 use Neos\Flow\ResourceManagement\PersistentResource;
 use Neos\Flow\ResourceManagement\ResourceManager;
 use Neos\Flow\ResourceManagement\ResourceRepository;
+use Neos\Flow\Security\Authorization\Interceptor\PolicyEnforcement;
+use Neos\Flow\Security\Context;
 use Neos\Utility\TypeHandling;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\StreamInterface;
@@ -580,6 +583,7 @@ class ActionController extends AbstractController
             if ($shouldCallActionMethod) {
                 $actionResult = $this->{$this->actionMethodName}(...$preparedArguments);
             } else {
+                $this->enforcePolicyBeforeCallingErrorMethod($preparedArguments);
                 $actionResult = $this->{$this->errorMethodName}();
             }
         }
@@ -589,6 +593,29 @@ class ActionController extends AbstractController
         } else {
             $this->response->setContent($actionResult);
         }
+    }
+
+    /**
+     * WORKAROUND: For the errorMethod, we still need to enforce the MethodPrivilege of the *original* action:
+     * If the original action is denied by Policy.yaml, we are also not allowed to call the error method.
+     *
+     * In the long run, we should migrate from Method Privileges to special "Controller Privileges" or the like;
+     * as this will move all security checks further to the beginning of the request.
+     */
+    private function enforcePolicyBeforeCallingErrorMethod(): void
+    {
+        if ($this->objectManager->get(Context::class)->areAuthorizationChecksDisabled()) {
+            return;
+        }
+
+        $namedArguments = [];
+        foreach ($this->arguments as $argument) {
+            $namedArguments[$argument->getName()] = $argument->getValue();
+        }
+
+        $policyEnforcement = $this->objectManager->get(PolicyEnforcement::class);
+        $policyEnforcement->setJoinPoint(new JoinPoint($this, get_class($this), $this->actionMethodName, $namedArguments));
+        $policyEnforcement->invoke();
     }
 
     /**
