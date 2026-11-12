@@ -332,7 +332,7 @@ final class PropertyMapperTest extends FunctionalTestCase
 
     #[DataProvider('invalidTypeConverterConfigurationsForOverridingTargetTypes')]
     #[Test]
-    public function mappingToFieldsFromSubclassThrowsExceptionIfTypeConverterOptionIsInvalidOrNotSet(PropertyMappingConfigurationInterface $configuration = null): void
+    public function mappingToFieldsFromSubclassThrowsExceptionIfTypeConverterOptionIsInvalidOrNotSet(?PropertyMappingConfigurationInterface $configuration = null): void
     {
         $this->expectException(Exception::class);
         $source = [
