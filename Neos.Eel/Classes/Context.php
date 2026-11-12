@@ -44,7 +44,7 @@ class Context
      *
      * If a property or key did not exist this method will return NULL.
      *
-     * @param string|integer|Context $path The path as string or Context value, will be unwrapped for convenience
+     * @param string|integer|Context|null $path The path as string or Context value, will be unwrapped for convenience
      * @return mixed The value
      * @throws EvaluationException
      */
@@ -59,7 +59,7 @@ class Context
             if (is_array($this->value)) {
                 return array_key_exists($path, $this->value) ? $this->value[$path] : null;
             } elseif (is_object($this->value)) {
-                $this->tracer?->recordPropertyAccess($this->value, $path);
+                $this->tracer?->recordPropertyAccess($this->value, (string)$path);
                 try {
                     return ObjectAccess::getProperty($this->value, $path);
                 } catch (PropertyNotAccessibleException $exception) {

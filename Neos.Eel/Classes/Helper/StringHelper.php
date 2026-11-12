@@ -136,7 +136,7 @@ class StringHelper implements ProtectedContextAwareInterface
      * This is a wrapper for the chr() PHP function.
      * @see ord()
      *
-     * @param int $value An integer between 0 and 255
+     * @param int<0, 255> $value An integer between 0 and 255
      * @return string A single-character string containing the specified byte
      */
     public function chr($value)
@@ -283,8 +283,8 @@ class StringHelper implements ProtectedContextAwareInterface
      * @param string $string The input string
      * @param string $pattern A PREG pattern
      * @param string $replace A replacement string, can contain references to capture groups with "\\n" or "$n"
-     * @param integer $limit The maximum possible replacements for each pattern in each subject string. Defaults to -1 (no limit).
-     * @return string The string with all occurrences replaced
+     * @param ?integer $limit The maximum possible replacements for each pattern in each subject string. Defaults to -1 (no limit).
+     * @return string|null The string with all occurrences replaced
      */
     public function pregReplace($string, $pattern, $replace, $limit = -1)
     {

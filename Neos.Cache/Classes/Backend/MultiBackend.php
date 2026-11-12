@@ -52,6 +52,7 @@ class MultiBackend extends AbstractBackend
     {
         parent::__construct($environmentConfiguration, $options);
 
+        /** @phpstan-ignore instanceof.alwaysTrue (somethow those checks are needed during testing) */
         if ($this->logErrors && class_exists(Bootstrap::class) && Bootstrap::$staticObjectManager instanceof ObjectManagerInterface) {
             try {
                 $logger = Bootstrap::$staticObjectManager->get(LoggerInterface::class);
@@ -73,8 +74,10 @@ class MultiBackend extends AbstractBackend
             return;
         }
         foreach ($this->backendConfigurations as $backendConfiguration) {
+            /** @var class-string<BackendInterface> $backendClassName */
+            $backendClassName = $backendConfiguration['backend'];
             $backendOptions = $backendConfiguration['backendOptions'] ?? [];
-            $backend = $this->buildSubBackend($backendConfiguration['backend'], $backendOptions);
+            $backend = $this->buildSubBackend($backendClassName, $backendOptions);
             if ($backend !== null) {
                 $this->backends[] = $backend;
             }
@@ -83,19 +86,18 @@ class MultiBackend extends AbstractBackend
     }
 
     /**
+     * @template T of BackendInterface
+     * @param class-string<T> $backendClassName
      * @param array<mixed> $backendOptions
+     * @return T|null
      * @throws Throwable
      */
     protected function buildSubBackend(string $backendClassName, array $backendOptions): ?BackendInterface
     {
         try {
-            if ($this->cache === null) {
-                throw new \RuntimeException('Cache frontend is not yet initialized', 1744535490);
-            }
-            if ($this->environmentConfiguration === null) {
-                throw new \RuntimeException('Environment configuration is missing', 1744535532);
-            }
+            /** @phpstan-ignore argument.type (the possible type errors are handled below) */
             $backend = $this->instantiateBackend($backendClassName, $backendOptions, $this->environmentConfiguration);
+            /** @phpstan-ignore argument.type (the possible type errors are handled below) */
             $backend->setCache($this->cache);
         } catch (Throwable $throwable) {
             $this->logger?->error('Failed creating sub backend ' . $backendClassName . ' for ' . get_class($this) . ': ' . $this->throwableStorage?->logThrowable($throwable), LogEnvironment::fromMethodName(__METHOD__));

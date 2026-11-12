@@ -48,9 +48,9 @@ class CacheFactory implements CacheFactoryInterface
      * After creating the cache, it will be registered at the cache manager.
      *
      * @param string $cacheIdentifier The name / identifier of the cache to create
-     * @param class-string $cacheObjectName Object name of the cache frontend
-     * @param class-string $backendObjectName Object name of the cache backend
-     * @param array $backendOptions (optional) Array of backend options
+     * @param class-string<FrontendInterface> $cacheObjectName Object name of the cache frontend
+     * @param class-string<BackendInterface> $backendObjectName Object name of the cache backend
+     * @param array<string, mixed> $backendOptions (optional) Array of backend options
      * @return FrontendInterface The created cache frontend
      * @throws InvalidBackendException
      * @throws InvalidCacheException
@@ -63,6 +63,12 @@ class CacheFactory implements CacheFactoryInterface
         });
     }
 
+    /**
+     * @param class-string<FrontendInterface> $cacheObjectName
+     * @param class-string<BackendInterface> $backendObjectName
+     * @param array<string, mixed> $backendOptions
+     * @throws InvalidCacheException
+     */
     protected function buildInternal(string $cacheIdentifier, string $cacheObjectName, string $backendObjectName, array $backendOptions = []): FrontendInterface
     {
         try {

@@ -36,17 +36,17 @@ class Utility
      * Get variables from configuration that should be set in the context by default.
      * For example Eel helpers are made available by this.
      *
-     * @param array<mixed> $configuration An one dimensional associative array of context variable paths mapping to object names
+     * @param array<string, string> $configuration An one dimensional associative array of context variable paths mapping to object names
      * @return array<mixed> Array with default context variable objects.
      */
     public static function getDefaultContextVariables(array $configuration)
     {
         $defaultContextVariables = [];
         foreach ($configuration as $variableName => $objectType) {
-            $currentPathBase = & $defaultContextVariables;
             $variablePathNames = explode('.', $variableName);
+            $leafName = array_pop($variablePathNames);
+            $currentPathBase = & $defaultContextVariables;
             foreach ($variablePathNames as $pathName) {
-                /** @phpstan-ignore isset.offset (not so sure here) */
                 if (!isset($currentPathBase[$pathName])) {
                     $currentPathBase[$pathName] = [];
                 }
@@ -57,10 +57,11 @@ class Utility
                 if (strpos($variableName, '.') !== false) {
                     throw new Exception(sprintf('Function helpers are only allowed on root level, "%s" was given?', $variableName), 1557911015);
                 }
-                $currentPathBase = self::createClosureFromConfiguration($objectType);
+                $currentPathBase[$leafName] = self::createClosureFromConfiguration($objectType);
             } else {
-                $currentPathBase = new $objectType();
+                $currentPathBase[$leafName] = new $objectType();
             }
+            unset($currentPathBase);
         }
         return $defaultContextVariables;
     }

@@ -98,7 +98,10 @@ class RedisBackend extends IndependentAbstractBackend implements TaggableBackend
     public function __construct(EnvironmentConfiguration $environmentConfiguration, array $options)
     {
         parent::__construct($environmentConfiguration, $options);
-        $this->redis = $this->getRedisClient();
+        /** @phpstan-ignore instanceof.alwaysTrue (not sure why but without the unit-tests fail)*/
+        if (!$this->redis instanceof \Redis) {
+            $this->redis = $this->getRedisClient();
+        }
     }
 
     /**
@@ -512,18 +515,26 @@ class RedisBackend extends IndependentAbstractBackend implements TaggableBackend
         if (empty($value)) {
             return $value;
         }
-        return $this->useCompression() ? gzdecode((string)$value) : $value;
+        if (!$this->useCompression()) {
+            return $value;
+        }
+        $uncompressed = gzdecode((string)$value);
+        if ($uncompressed === false) {
+            throw new \RuntimeException('Could not uncompress data for the Redis cache backend.', 1794495517);
+        }
+        return $uncompressed;
     }
 
     private function compress(string $value): string
     {
-        if ($this->useCompression()) {
-            $value = gzencode($value, $this->compressionLevel);
-            if ($value === false) {
-                throw new \RuntimeException('Failed to compress value with gzencode', 1744534319);
-            }
+        if (!$this->useCompression()) {
+            return $value;
         }
-        return $value;
+        $compressed = gzencode($value, $this->compressionLevel);
+        if ($compressed === false) {
+            throw new \RuntimeException('Could not compress data for the Redis cache backend.', 1794495518);
+        }
+        return $compressed;
     }
 
     private function useCompression(): bool

@@ -24,7 +24,15 @@ use Throwable;
 class TaggableMultiBackend extends MultiBackend implements TaggableBackendInterface
 {
     /**
+     * @var array<int,TaggableBackendInterface>
+     */
+    protected array $backends = [];
+
+    /**
+     * @template T of TaggableBackendInterface
+     * @param class-string<T> $backendClassName
      * @param array<mixed> $backendOptions
+     * @return T|null
      * @throws Throwable
      */
     protected function buildSubBackend(string $backendClassName, array $backendOptions): ?BackendInterface
@@ -48,9 +56,6 @@ class TaggableMultiBackend extends MultiBackend implements TaggableBackendInterf
         $flushed = 0;
         foreach ($this->backends as $backend) {
             try {
-                if (!method_exists($backend, 'flushByTag')) {
-                    throw new \RuntimeException(get_class($backend) . ' does not implement flushByTag');
-                }
                 $flushed += $backend->flushByTag($tag);
             } catch (Throwable $throwable) {
                 $this->logger?->error('Failed flushing cache by tag using backend ' . get_class($backend) . ' in ' . get_class($this) . ': ' . $this->throwableStorage?->logThrowable($throwable), LogEnvironment::fromMethodName(__METHOD__));
@@ -85,9 +90,6 @@ class TaggableMultiBackend extends MultiBackend implements TaggableBackendInterf
         $identifiers = [];
         foreach ($this->backends as $backend) {
             try {
-                if (!method_exists($backend, 'findIdentifiersByTag')) {
-                    throw new \RuntimeException(get_class($backend) . ' does not implement findIdentifiersByTag');
-                }
                 $identifiers[] = $backend->findIdentifiersByTag($tag);
             } catch (Throwable $throwable) {
                 $this->logger?->error('Failed finding identifiers by tag using backend ' . get_class($backend) . ' in ' . get_class($this) . ': ' . $this->throwableStorage?->logThrowable($throwable), LogEnvironment::fromMethodName(__METHOD__));

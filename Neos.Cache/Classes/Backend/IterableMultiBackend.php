@@ -24,10 +24,20 @@ use Throwable;
 class IterableMultiBackend extends TaggableMultiBackend implements IterableBackendInterface
 {
     /**
+     * @var array<int,IterableBackendInterface&TaggableBackendInterface>
+     */
+    protected array $backends = [];
+
+    /**
+     * @template T of IterableBackendInterface&TaggableBackendInterface
+     * @param class-string<T> $backendClassName
+     * @param array<mixed> $backendOptions
+     * @return T|null
      * @throws Throwable
      */
     protected function buildSubBackend(string $backendClassName, array $backendOptions): ?BackendInterface
     {
+        /** @phpstan-ignore function.alreadyNarrowedType (Annotations can be wrong) */
         if (!is_subclass_of($backendClassName, IterableBackendInterface::class)) {
             $message = sprintf('Failed building sub backend %s for %s because it does not implement %s', $backendClassName, get_class($this), IterableBackendInterface::class);
             $throwable = new Exception($message);
@@ -38,6 +48,7 @@ class IterableMultiBackend extends TaggableMultiBackend implements IterableBacke
         return parent::buildSubBackend($backendClassName, $backendOptions);
     }
 
+
     /**
      * @throws Throwable
      */
@@ -46,9 +57,6 @@ class IterableMultiBackend extends TaggableMultiBackend implements IterableBacke
         $this->prepareBackends();
         foreach ($this->backends as $backend) {
             try {
-                if (!method_exists($backend, 'current')) {
-                    throw new \RuntimeException(get_class($backend) . ' does not implement rewind');
-                }
                 return $backend->current();
             } catch (Throwable $throwable) {
                 $this->logger?->error('Failed retrieving current cache entry using backend ' . get_class($backend) . ' in ' . get_class($this) . ': ' . $this->throwableStorage?->logThrowable($throwable), LogEnvironment::fromMethodName(__METHOD__));
@@ -67,9 +75,6 @@ class IterableMultiBackend extends TaggableMultiBackend implements IterableBacke
         $this->prepareBackends();
         foreach ($this->backends as $backend) {
             try {
-                if (!method_exists($backend, 'next')) {
-                    throw new \RuntimeException(get_class($backend) . ' does not implement rewind');
-                }
                 $backend->next();
             } catch (Throwable $throwable) {
                 $this->logger?->error('Failed retrieving next cache entry using backend ' . get_class($backend) . ' in ' . get_class($this) . ': ' . $this->throwableStorage?->logThrowable($throwable), LogEnvironment::fromMethodName(__METHOD__));
@@ -87,9 +92,6 @@ class IterableMultiBackend extends TaggableMultiBackend implements IterableBacke
         $this->prepareBackends();
         foreach ($this->backends as $backend) {
             try {
-                if (!method_exists($backend, 'key')) {
-                    throw new \RuntimeException(get_class($backend) . ' does not implement rewind');
-                }
                 return $backend->key();
             } catch (Throwable $throwable) {
                 $this->logger?->error('Failed retrieving cache entry key using backend ' . get_class($backend) . ' in ' . get_class($this) . ': ' . $this->throwableStorage?->logThrowable($throwable), LogEnvironment::fromMethodName(__METHOD__));
@@ -108,9 +110,6 @@ class IterableMultiBackend extends TaggableMultiBackend implements IterableBacke
         $this->prepareBackends();
         foreach ($this->backends as $backend) {
             try {
-                if (!method_exists($backend, 'valid')) {
-                    throw new \RuntimeException(get_class($backend) . ' does not implement rewind');
-                }
                 return $backend->valid();
             } catch (Throwable $throwable) {
                 $this->logger?->error('Failed checking if current cache entry is valid using backend ' . get_class($backend) . ' in ' . get_class($this) . ': ' . $this->throwableStorage?->logThrowable($throwable), LogEnvironment::fromMethodName(__METHOD__));
@@ -129,9 +128,6 @@ class IterableMultiBackend extends TaggableMultiBackend implements IterableBacke
         $this->prepareBackends();
         foreach ($this->backends as $backend) {
             try {
-                if (!method_exists($backend, 'rewind')) {
-                    throw new \RuntimeException(get_class($backend) . ' does not implement rewind');
-                }
                 $backend->rewind();
             } catch (Throwable $throwable) {
                 $this->logger?->error('Failed rewinding cache entries using backend ' . get_class($backend) . ' in ' . get_class($this) . ': ' . $this->throwableStorage?->logThrowable($throwable), LogEnvironment::fromMethodName(__METHOD__));
