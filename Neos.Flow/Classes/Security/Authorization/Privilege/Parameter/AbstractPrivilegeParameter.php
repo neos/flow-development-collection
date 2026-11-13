@@ -61,7 +61,6 @@ abstract class AbstractPrivilegeParameter implements PrivilegeParameterInterface
 
     /**
      * Returns the string representation of this parameter
-     * @return string
      */
     public function __toString(): string
     {

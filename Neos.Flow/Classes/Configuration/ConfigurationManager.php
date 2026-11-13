@@ -157,7 +157,7 @@ class ConfigurationManager
      *
      * @var string|null
      */
-    protected $temporaryDirectoryPath = null;
+    protected $temporaryDirectoryPath;
 
     /**
      * @var array<string,mixed>
@@ -184,8 +184,6 @@ class ConfigurationManager
      * Set an absolute file path to store configuration caches in.
      *
      * If never called no cache will be active.
-     *
-     * @param string $temporaryDirectoryPath
      */
     public function setTemporaryDirectoryPath(string $temporaryDirectoryPath): void
     {
@@ -202,7 +200,6 @@ class ConfigurationManager
      * Sets the active packages to load the configuration for
      *
      * @param FlowPackageInterface[] $packages
-     * @return void
      */
     public function setPackages(array $packages): void
     {
@@ -224,7 +221,6 @@ class ConfigurationManager
      *
      * @param string $configurationType The type to register, may be anything
      * @param LoaderInterface|string|null $configurationLoader This should be an instance of LoaderInterface. For backwards compatibility reasons it might also be a string representing one of the CONFIGURATION_PROCESSING_TYPE_* constants. If null, the default "MergeLoader" is used
-     * @return void
      * @throws \InvalidArgumentException on invalid configuration processing type
      */
     public function registerConfigurationType(string $configurationType, $configurationLoader = null): void
@@ -272,8 +268,6 @@ class ConfigurationManager
     /**
      * Emits a signal after The ConfigurationManager has been loaded
      *
-     * @param ConfigurationManager $configurationManager
-     * @return void
      * @Flow\Signal
      */
     protected function emitConfigurationManagerReady(ConfigurationManager $configurationManager): void
@@ -311,7 +305,6 @@ class ConfigurationManager
      * Shuts down the configuration manager.
      * This method writes the current configuration into a cache file if Flow was configured to do so.
      *
-     * @return void
      * @throws Exception\InvalidConfigurationException
      * @throws Exception\InvalidConfigurationTypeException
      * @throws FilesException
@@ -327,7 +320,6 @@ class ConfigurationManager
      * Warms up the complete configuration cache, i.e. fetching every configured configuration type
      * in order to be able to store it into the cache, if configured to do so.
      *
-     * @return void
      * @throws InvalidConfigurationException | InvalidConfigurationTypeException
      * @see \Neos\Flow\Configuration\ConfigurationManager::shutdown
      */
@@ -368,7 +360,6 @@ class ConfigurationManager
      *
      * @param string $configurationType The kind of configuration to fetch
      * @param string $cachePathAndFilename The cache file to load the configuration from
-     * @return void
      */
     protected function replaceConfigurationForConfigurationType(string $configurationType, string $cachePathAndFilename): void
     {
@@ -396,7 +387,6 @@ class ConfigurationManager
      * Internal: After this the configuration manager is left without any configuration,
      * use refreshConfiguration if you want to reread the configuration.
      *
-     * @return void
      * @throws Exception
      * @see refreshConfiguration
      */
@@ -445,7 +435,6 @@ class ConfigurationManager
      * Saves the current configuration into a cache file and creates a cache inclusion script
      * in the context's Configuration directory.
      *
-     * @return void
      * @throws InvalidConfigurationTypeException | FilesException
      */
     protected function saveConfigurationCache(): void
@@ -486,7 +475,6 @@ class ConfigurationManager
     }
 
     /**
-     * @return void
      * @throws InvalidConfigurationTypeException | FilesException | Exception
      */
     public function refreshConfiguration(): void
@@ -501,9 +489,6 @@ class ConfigurationManager
      * in the given php exported configuration string.
      *
      * This is applied before caching to allow runtime evaluation of constants and environment variables.
-     *
-     * @param string $phpString
-     * @return string
      */
     protected function replaceVariablesInPhpString(string $phpString): string
     {
@@ -559,8 +544,6 @@ class ConfigurationManager
     /**
      * Constructs a path to the configuration cache PHP file.
      * Derived from the temporary path and application context.
-     *
-     * @return string
      */
     protected function constructConfigurationCachePath(): string
     {

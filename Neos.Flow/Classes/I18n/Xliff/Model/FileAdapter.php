@@ -54,7 +54,6 @@ class FileAdapter
 
     /**
      * @param XliffRecord $fileData
-     * @param Locale $requestedLocale
      */
     public function __construct(array $fileData, Locale $requestedLocale)
     {

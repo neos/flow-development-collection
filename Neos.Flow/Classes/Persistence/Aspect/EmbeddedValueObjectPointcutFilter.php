@@ -75,7 +75,6 @@ class EmbeddedValueObjectPointcutFilter implements \Neos\Flow\Aop\Pointcut\Point
     /**
      * This method is used to optimize the matching process.
      *
-     * @param \Neos\Flow\Aop\Builder\ClassNameIndex $classNameIndex
      * @return \Neos\Flow\Aop\Builder\ClassNameIndex
      */
     public function reduceTargetClassNames(\Neos\Flow\Aop\Builder\ClassNameIndex $classNameIndex)

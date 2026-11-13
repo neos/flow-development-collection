@@ -95,8 +95,6 @@ EOD;
     /**
      * Returns the statically rendered exception message
      *
-     * @param integer $statusCode
-     * @param \Throwable $exception
      * @return void
      */
     protected function renderStatically(int $statusCode, \Throwable $exception)

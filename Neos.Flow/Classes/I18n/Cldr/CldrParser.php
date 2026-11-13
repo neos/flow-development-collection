@@ -92,7 +92,7 @@ class CldrParser extends AbstractXmlParser
             if ($childAttributes !== null && count($childAttributes) > 0) {
                 $parsedAttributes = '';
                 foreach ($childAttributes as $attributeName => $attributeValue) {
-                    if ($this->isDistinguishingAttribute((string)$attributeName)) {
+                    if ($this->isDistinguishingAttribute($attributeName)) {
                         $parsedAttributes .= '[@' . $attributeName . '="' . $attributeValue . '"]';
                     }
                 }

@@ -100,7 +100,7 @@ class ActionController extends AbstractController
      * @var ViewInterface|null
      * @api
      */
-    protected $view = null;
+    protected $view;
 
     /**
      * Pattern after which the view object name is built if no format-specific
@@ -129,7 +129,7 @@ class ActionController extends AbstractController
      * @var string
      * @api
      */
-    protected $defaultViewObjectName = null;
+    protected $defaultViewObjectName;
 
     /**
      * @Flow\InjectConfiguration(package="Neos.Flow", path="mvc.view.defaultImplementation")
@@ -187,7 +187,6 @@ class ActionController extends AbstractController
     /**
      * Injects the (system) logger based on PSR-3.
      *
-     * @param LoggerInterface $logger
      * @return void
      */
     public function injectLogger(LoggerInterface $logger)
@@ -198,7 +197,6 @@ class ActionController extends AbstractController
     /**
      * Injects the throwable storage.
      *
-     * @param ThrowableStorageInterface $throwableStorage
      * @return void
      */
     public function injectThrowableStorage(ThrowableStorageInterface $throwableStorage)
@@ -210,7 +208,6 @@ class ActionController extends AbstractController
      * Handles a request. The result output is returned by altering the given response.
      *
      * @param ActionRequest $request The request object
-     * @return ResponseInterface
      * @throws InvalidActionVisibilityException
      * @throws InvalidArgumentTypeException
      * @throws NoSuchActionException
@@ -312,7 +309,6 @@ class ActionController extends AbstractController
     /**
      * Resolves and checks the current action method name
      *
-     * @param ActionRequest $request
      * @return string Method name of the current action
      * @throws InvalidActionVisibilityException
      * @throws NoSuchActionException
@@ -552,8 +548,6 @@ class ActionController extends AbstractController
      * response object. If the action doesn't return anything and a valid
      * view exists, the view is rendered automatically.
      *
-     * @param ActionRequest $request
-     * @param Arguments $arguments
      * @param ActionResponse $response The most likely empty response, previously available as $this->response
      */
     protected function callActionMethod(ActionRequest $request, Arguments $arguments, ActionResponse $response): ResponseInterface
@@ -745,7 +739,6 @@ class ActionController extends AbstractController
      * gives the possibility to add variables to the view,
      * before passing it on to further rendering
      *
-     * @param ViewInterface $view
      * @return void
      * @Flow\Signal
      */

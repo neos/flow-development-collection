@@ -309,7 +309,7 @@ class ClassSchema
         if (!array_key_exists($propertyName, $this->properties)) {
             throw new \InvalidArgumentException('Property "' . $propertyName . '" must be added to the class schema before it can be marked as identity property.', 1233775407);
         }
-        if ($this->properties[$propertyName]['lazy'] === true) {
+        if ($this->properties[$propertyName]['lazy']) {
             throw new \InvalidArgumentException('Property "' . $propertyName . '" must not be marked for lazy loading to be marked as identity property.', 1239896904);
         }
 

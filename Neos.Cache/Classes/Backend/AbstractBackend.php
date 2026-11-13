@@ -70,8 +70,6 @@ abstract class AbstractBackend implements BackendInterface
 
     /**
      * @param array<mixed> $properties
-     * @param boolean $throwExceptionIfPropertyNotSettable
-     * @return void
      * @throws \InvalidArgumentException
      */
     protected function setProperties(array $properties, bool $throwExceptionIfPropertyNotSettable = true): void
@@ -89,9 +87,7 @@ abstract class AbstractBackend implements BackendInterface
     }
 
     /**
-     * @param string $propertyName
      * @param mixed $propertyValue
-     * @return boolean
      */
     protected function setProperty(string $propertyName, $propertyValue): bool
     {
@@ -108,7 +104,6 @@ abstract class AbstractBackend implements BackendInterface
      * Sets a reference to the cache frontend which uses this backend
      *
      * @param FrontendInterface $cache The frontend for this backend
-     * @return void
      * @api
      */
     public function setCache(FrontendInterface $cache): void
@@ -123,7 +118,6 @@ abstract class AbstractBackend implements BackendInterface
      * Sets the default lifetime for this cache backend
      *
      * @param integer|string $defaultLifetime Default lifetime of this cache backend in seconds. 0 means unlimited lifetime.
-     * @return void
      * @throws \InvalidArgumentException
      * @api
      */

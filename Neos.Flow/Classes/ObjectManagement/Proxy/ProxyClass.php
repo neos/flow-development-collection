@@ -26,15 +26,11 @@ class ProxyClass
 {
     /**
      * Namespace, extracted from the fully qualified original class name
-     *
-     * @var string
      */
     protected string $namespace = '';
 
     /**
      * The original class name
-     *
-     * @var string
      */
     protected string $originalClassName;
 
@@ -45,9 +41,6 @@ class ProxyClass
      */
     protected string $fullOriginalClassName;
 
-    /**
-     * @var ProxyConstructorGenerator|null
-     */
     protected ?ProxyConstructorGenerator $constructor = null;
 
     /**
@@ -77,9 +70,6 @@ class ProxyClass
      */
     protected array $properties = [];
 
-    /**
-     * @var ReflectionService
-     */
     protected ReflectionService $reflectionService;
 
     /**
@@ -101,9 +91,6 @@ class ProxyClass
 
     /**
      * Injects the Reflection Service
-     *
-     * @param ReflectionService $reflectionService
-     * @return void
      */
     public function injectReflectionService(ReflectionService $reflectionService): void
     {
@@ -113,7 +100,6 @@ class ProxyClass
     /**
      * Returns the ProxyConstructorGenerator for this ProxyClass. Creates it if needed.
      *
-     * @return ProxyConstructorGenerator
      * @throws \ReflectionException
      * @throws CannotBuildObjectException
      */
@@ -156,7 +142,6 @@ class ProxyClass
      *
      * @param string $name Name of the constant. Should be ALL_UPPERCASE_WITH_UNDERSCORES
      * @param string $valueCode PHP code which assigns the value. Example: 'foo' (including quotes!)
-     * @return void
      */
     public function addConstant(string $name, string $valueCode): void
     {
@@ -168,9 +153,6 @@ class ProxyClass
      *
      * @param string $name Name of the property
      * @param string|null $initialValueCode PHP code of the initial value assignment
-     * @param string $visibility
-     * @param string $docComment
-     * @return void
      */
     public function addProperty(string $name, string|null $initialValueCode, string $visibility = 'private', string $docComment = ''): void
     {
@@ -189,7 +171,6 @@ class ProxyClass
      * for example "\Neos\Flow\Foo\BarInterface".
      *
      * @param array<int, string> $interfaceNames Fully qualified names of the interfaces to introduce
-     * @return void
      */
     public function addInterfaces(array $interfaceNames): void
     {
@@ -212,7 +193,6 @@ class ProxyClass
      * for example "\Neos\Flow\ObjectManagement\Proxy\PropertyInjectionTrait".
      *
      * @param array<int, string> $traitNames
-     * @return void
      */
     public function addTraits(array $traitNames): void
     {
@@ -222,7 +202,6 @@ class ProxyClass
     /**
      * Renders and returns the PHP code for this ProxyClass.
      *
-     * @return string
      * @throws CannotBuildObjectException
      */
     public function render(): string
@@ -288,8 +267,6 @@ class ProxyClass
 
     /**
      * Renders code for the added class constants
-     *
-     * @return string
      */
     protected function renderConstantsCode(): string
     {
@@ -302,8 +279,6 @@ class ProxyClass
 
     /**
      * Renders code for the added class properties
-     *
-     * @return string
      */
     protected function renderPropertiesCode(): string
     {
@@ -319,8 +294,6 @@ class ProxyClass
 
     /**
      * Renders code for added traits
-     *
-     * @return string
      */
     protected function renderTraitsCode(): string
     {

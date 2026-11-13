@@ -76,8 +76,8 @@ class FlashMessagesViewHelper extends AbstractTagBasedViewHelper
     public function initializeArguments()
     {
         $this->registerUniversalTagAttributes();
-        $this->registerArgument('as', 'string', 'The name of the current flashMessage variable for rendering inside', false, null);
-        $this->registerArgument('severity', 'string', 'severity of the messages (One of the \Neos\Error\Messages\Message::SEVERITY_* constants)', false, null);
+        $this->registerArgument('as', 'string', 'The name of the current flashMessage variable for rendering inside', false);
+        $this->registerArgument('severity', 'string', 'severity of the messages (One of the \Neos\Error\Messages\Message::SEVERITY_* constants)', false);
     }
 
     /**
@@ -122,9 +122,8 @@ class FlashMessagesViewHelper extends AbstractTagBasedViewHelper
             $tagContent .= sprintf('<li class="%s">%s</li>', htmlspecialchars($severityClass), $messageContent);
         }
         $this->tag->setContent($tagContent);
-        $content = $this->tag->render();
 
-        return $content;
+        return $this->tag->render();
     }
 
     /**

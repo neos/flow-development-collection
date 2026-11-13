@@ -173,7 +173,6 @@ abstract class AbstractTemplateView extends \TYPO3Fluid\Fluid\View\AbstractTempl
     }
 
     /**
-     * @param ControllerContext $controllerContext
      * @return void
      */
     public function setControllerContext(ControllerContext $controllerContext)

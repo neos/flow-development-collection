@@ -189,7 +189,6 @@ abstract class AbstractFrontend implements FrontendInterface
      * Checks the validity of an entry identifier. Returns true if it's valid.
      *
      * @param string $identifier An identifier to be checked for validity
-     * @return boolean
      * @api
      */
     public function isValidEntryIdentifier(string $identifier): bool
@@ -201,7 +200,6 @@ abstract class AbstractFrontend implements FrontendInterface
      * Checks the validity of a tag. Returns true if it's valid.
      *
      * @param string $tag An identifier to be checked for validity
-     * @return boolean
      * @api
      */
     public function isValidTag(string $tag): bool

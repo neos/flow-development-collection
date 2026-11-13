@@ -108,6 +108,6 @@ class SessionDataContainer
     {
         $this->setSecurityTokens([]);
         $this->setCsrfProtectionTokens([]);
-        $this->setInterceptedRequest(null);
+        $this->setInterceptedRequest();
     }
 }

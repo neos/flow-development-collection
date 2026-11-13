@@ -36,7 +36,6 @@ class SignalAspect
      *
      * @Flow\AfterReturning("methodAnnotatedWith(Neos\Flow\Annotations\Signal)")
      * @param JoinPointInterface $joinPoint The current join point
-     * @return void
      * @throws Exception\InvalidSlotException
      */
     public function forwardSignalToDispatcher(JoinPointInterface $joinPoint): void

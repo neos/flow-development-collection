@@ -85,7 +85,6 @@ class ResourceInterceptor implements InterceptorInterface
      * Looks for URIs pointing to package resources and in place of those adds
      * ViewHelperNode instances using the ResourceViewHelper.
      *
-     * @param NodeInterface $node
      * @param integer $interceptorPosition One of the INTERCEPT_* constants for the current interception point
      * @param ParsingState $parsingState the current parsing state. Not needed in this interceptor.
      * @return NodeInterface the modified node

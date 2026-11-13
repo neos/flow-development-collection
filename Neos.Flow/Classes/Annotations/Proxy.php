@@ -49,7 +49,7 @@ final class Proxy
      *
      * (Can be given as anonymous argument.)
      */
-    public bool $enabled = true;
+    public bool $enabled;
 
     /**
      * Force the generation of serialization code (__sleep/__wakeup methods) in the proxy class.
@@ -85,11 +85,11 @@ final class Proxy
      *
      * @see https://flowframework.readthedocs.io/ for more information on object serialization
      */
-    public bool $forceSerializationCode = false;
+    public bool $forceSerializationCode;
 
     public function __construct(bool $enabled = true, bool $forceSerializationCode = false)
     {
-        if ($enabled === false && $forceSerializationCode === true) {
+        if ($enabled === false && $forceSerializationCode) {
             throw new ProxyCompilerException('Cannot disable a Proxy but forceSerializationCode at the same time.', 1756813222);
         }
 

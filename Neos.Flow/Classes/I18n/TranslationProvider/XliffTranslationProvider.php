@@ -34,7 +34,6 @@ class XliffTranslationProvider implements TranslationProviderInterface
     protected $pluralsReader;
 
     /**
-     * @param I18n\Xliff\Service\XliffFileProvider $fileProvider
      * @return void
      */
     public function injectFileProvider(I18n\Xliff\Service\XliffFileProvider $fileProvider)
@@ -43,7 +42,6 @@ class XliffTranslationProvider implements TranslationProviderInterface
     }
 
     /**
-     * @param I18n\Cldr\Reader\PluralsReader $pluralsReader
      * @return void
      */
     public function injectPluralsReader(I18n\Cldr\Reader\PluralsReader $pluralsReader)
@@ -70,7 +68,7 @@ class XliffTranslationProvider implements TranslationProviderInterface
             $pluralFormsForProvidedLocale = $this->pluralsReader->getPluralForms($locale);
 
             if (!in_array($pluralForm, $pluralFormsForProvidedLocale)) {
-                throw new Exception\InvalidPluralFormException('There is no plural form "' . $pluralForm . '" in "' . (string)$locale . '" locale.', 1281033386);
+                throw new Exception\InvalidPluralFormException('There is no plural form "' . $pluralForm . '" in "' . $locale . '" locale.', 1281033386);
             }
             // We need to convert plural form's string to index, as they are accessed using integers in XLIFF files
             $pluralFormIndex = (int)array_search($pluralForm, $pluralFormsForProvidedLocale);
@@ -102,7 +100,7 @@ class XliffTranslationProvider implements TranslationProviderInterface
             $pluralFormsForProvidedLocale = $this->pluralsReader->getPluralForms($locale);
 
             if (!in_array($pluralForm, $pluralFormsForProvidedLocale)) {
-                throw new Exception\InvalidPluralFormException('There is no plural form "' . $pluralForm . '" in "' . (string)$locale . '" locale.', 1281033387);
+                throw new Exception\InvalidPluralFormException('There is no plural form "' . $pluralForm . '" in "' . $locale . '" locale.', 1281033387);
             }
             // We need to convert plural form's string to index, as they are accessed using integers in XLIFF files
             $pluralFormIndex = (int)array_search($pluralForm, $pluralFormsForProvidedLocale);

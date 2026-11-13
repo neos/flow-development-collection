@@ -35,8 +35,6 @@ final class ConnectionFactory
      *
      * This ensure, that configured database and similar settings
      * from Neos.Flow.persistence.doctrine is registered as expected
-     *
-     * @return Connection
      */
     public function create(): Connection
     {

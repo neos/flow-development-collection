@@ -43,7 +43,7 @@ abstract class AbstractTagBasedViewHelper extends AbstractViewHelper
      * @var TagBuilder
      * @api
      */
-    protected $tag = null;
+    protected $tag;
 
     /**
      * Name of the tag to be created by this view helper
@@ -66,7 +66,6 @@ abstract class AbstractTagBasedViewHelper extends AbstractViewHelper
     }
 
     /**
-     * @param TagBuilder $tag
      * @return void
      */
     public function injectTagBuilder(TagBuilder $tag)

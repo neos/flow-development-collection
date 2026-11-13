@@ -72,7 +72,6 @@ class RoutesLoader implements LoaderInterface
 
     /**
      * @param array<PackageInterface> $packages
-     * @param ApplicationContext $context
      * @return array<int,array<mixed>>
      * @throws ConfigurationException | InvalidConfigurationException | InvalidConfigurationTypeException | ParseErrorException | RecursionException
      */
@@ -139,7 +138,6 @@ class RoutesLoader implements LoaderInterface
      * Loads specified sub routes and builds composite routes.
      *
      * @param PackageInterface[] $packages
-     * @param ApplicationContext $context
      * @param array<mixed> $routesConfiguration
      * @param int $subRoutesRecursionLevel Counts how many SubRoutes have been loaded. If this number exceeds MAXIMUM_SUBROUTE_RECURSIONS, an exception is thrown
      * @return array<int,array<mixed>>

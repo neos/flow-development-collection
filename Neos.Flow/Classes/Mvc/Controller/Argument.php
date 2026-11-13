@@ -36,7 +36,7 @@ class Argument
      * Data type of this argument's value
      * @var string
      */
-    protected $dataType = null;
+    protected $dataType;
 
     /**
      * true if this argument is required
@@ -48,25 +48,25 @@ class Argument
      * Actual value of this argument
      * @var object|null
      */
-    protected $value = null;
+    protected $value;
 
     /**
      * Default value. Used if argument is optional.
      * @var mixed
      */
-    protected $defaultValue = null;
+    protected $defaultValue;
 
     /**
      * A custom validator, used supplementary to the base validation
      * @var ValidatorInterface|null
      */
-    protected $validator = null;
+    protected $validator;
 
     /**
      * The validation results. This can be asked if the argument has errors.
      * @var Result
      */
-    protected $validationResults = null;
+    protected $validationResults;
 
     /**
      * If the request body should be mapped into this argument.
@@ -251,7 +251,6 @@ class Argument
     /**
      * Return the Property Mapping Configuration used for this argument; can be used by the initialize*action to modify the Property Mapping.
      *
-     * @return MvcPropertyMappingConfiguration
      * @api
      */
     public function getPropertyMappingConfiguration(): MvcPropertyMappingConfiguration
@@ -271,9 +270,6 @@ class Argument
         return $this->validationResults;
     }
 
-    /**
-     * @return bool
-     */
     public function getMapRequestBody(): bool
     {
         return $this->mapRequestBody;
@@ -282,7 +278,6 @@ class Argument
     /**
      * Set if the request body should be mapped into this argument.
      *
-     * @param bool $mapRequestBody
      * @return Argument $this
      */
     public function setMapRequestBody(bool $mapRequestBody): Argument

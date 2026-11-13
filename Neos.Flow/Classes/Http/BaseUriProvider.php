@@ -32,8 +32,6 @@ class BaseUriProvider
 
     /**
      * Get the configured framework base URI.
-     *
-     * @return UriInterface|null
      */
     private function getConfiguredBaseUri(): ?UriInterface
     {
@@ -49,8 +47,6 @@ class BaseUriProvider
      * Note that we cannot actually know the base URI if your installation
      * is in a sub directory, so in that case this will probably result in
      * a faulty base URI.
-     *
-     * @return UriInterface|null
      */
     private function generateBaseUriFromHttpRequest(): ?UriInterface
     {
@@ -73,7 +69,6 @@ class BaseUriProvider
      * exception if none of the options yields a result.
      *
      * @param ServerRequestInterface|null $fallbackRequest HTTP request to be used if no base Uri is configured and the currently active request can't be determined (e.g. in CLI context)
-     * @return UriInterface
      * @throws Exception
      */
     public function getConfiguredBaseUriOrFallbackToCurrentRequest(?ServerRequestInterface $fallbackRequest = null): UriInterface

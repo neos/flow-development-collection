@@ -59,8 +59,6 @@ class TranslationParameterToken implements ProtectedContextAwareInterface, \Stri
     /**
      * Inject the translator into the token.
      * Used for testing.
-     *
-     * @param Translator $translator
      */
     public function injectTranslator(Translator $translator): void
     {
@@ -193,8 +191,6 @@ class TranslationParameterToken implements ProtectedContextAwareInterface, \Stri
 
     /**
      * Runs translate to avoid the need of calling translate as a finishing method
-     *
-     * @return string
      */
     public function __toString(): string
     {

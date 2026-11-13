@@ -53,9 +53,6 @@ class ContentStream implements StreamInterface
 
     /**
      * Creates an instance representing the given $contents string
-     *
-     * @param string $contents
-     * @return self
      */
     public static function fromContents(string $contents): self
     {
@@ -413,7 +410,6 @@ class ContentStream implements StreamInterface
      * string casting operations.
      *
      * @see http://php.net/manual/en/language.oop5.magic.php#object.tostring
-     * @return string
      */
     public function __toString(): string
     {

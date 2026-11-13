@@ -68,7 +68,6 @@ class Utility
      * Create a closure to be used as Helper for eel.
      *
      * @param string $objectConfiguration className followed by two colons and the method name
-     * @return callable
      */
     private static function createClosureFromConfiguration(string $objectConfiguration): callable
     {
@@ -89,7 +88,6 @@ class Utility
      * Evaluate an Eel expression.
      *
      * @param string $expression
-     * @param EelEvaluatorInterface $eelEvaluator
      * @param array<mixed> $contextVariables
      * @param array<mixed> $defaultContextConfiguration
      * @return mixed

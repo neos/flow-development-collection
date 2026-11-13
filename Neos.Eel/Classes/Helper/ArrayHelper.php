@@ -131,7 +131,6 @@ class ArrayHelper implements ProtectedContextAwareInterface
      * Get the length of an array
      *
      * @param iterable<mixed> $array The array
-     * @return int
      */
     public function length(iterable $array): int
     {
@@ -194,7 +193,6 @@ class ArrayHelper implements ProtectedContextAwareInterface
      * @param iterable<mixed> $array The array
      * @param mixed $searchElement The element value to find
      * @param int $fromIndex Position in the array to start the search.
-     * @return int
      */
     public function indexOf(iterable $array, $searchElement, $fromIndex = null): int
     {
@@ -622,7 +620,6 @@ class ArrayHelper implements ProtectedContextAwareInterface
      * All methods are considered safe
      *
      * @param string $methodName
-     * @return bool
      */
     public function allowsCallOfMethod($methodName): bool
     {

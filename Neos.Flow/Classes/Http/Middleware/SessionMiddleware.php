@@ -66,10 +66,6 @@ class SessionMiddleware implements MiddlewareInterface
         return $this->handleSetCookie($handler->handle($request));
     }
 
-    /**
-     * @param ResponseInterface $response
-     * @return ResponseInterface
-     */
     protected function handleSetCookie(ResponseInterface $response): ResponseInterface
     {
         $currentSession = $this->sessionManager->getCurrentSession();
@@ -83,8 +79,6 @@ class SessionMiddleware implements MiddlewareInterface
     /**
      * Prepares a cookie object for the session.
      *
-     * @param string $name
-     * @param string $value
      * @return Cookie
      */
     protected function prepareCookie(string $name, string $value)

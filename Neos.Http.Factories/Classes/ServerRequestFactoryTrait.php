@@ -36,11 +36,6 @@ trait ServerRequestFactoryTrait
 
     /**
      * ServerRequestFactory constructor.
-     *
-     * @param UriFactoryInterface $uriFactory
-     * @param string $defaultUserAgent
-     * @param string $scriptPath
-     * @param string $defaultHttpVersion
      */
     public function __construct(
         UriFactoryInterface $uriFactory,
@@ -70,7 +65,7 @@ trait ServerRequestFactoryTrait
 
         $defaultServerEnvironment = [
             'HTTP_USER_AGENT' => $this->defaultUserAgent,
-            'HTTP_HOST' => $uri->getHost() . ($isDefaultPort !== true && $uriPort !== null ? ':' . $uriPort : ''),
+            'HTTP_HOST' => $uri->getHost() . (!$isDefaultPort && $uriPort !== null ? ':' . $uriPort : ''),
             'SERVER_NAME' => $uri->getHost(),
             'SERVER_ADDR' => '127.0.0.1',
             'SERVER_PORT' => $uri->getPort() ?: 80,

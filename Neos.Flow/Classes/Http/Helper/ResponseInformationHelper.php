@@ -29,9 +29,7 @@ abstract class ResponseInformationHelper
     /**
      * Creates a response from the given raw, that is plain text, HTTP response.
      *
-     * @param string $rawResponse
      *
-     * @return ResponseInterface
      * @throws \InvalidArgumentException
      */
     public static function createFromRaw(string $rawResponse): ResponseInterface
@@ -43,7 +41,6 @@ abstract class ResponseInformationHelper
      * Returns the human-readable message for the given status code.
      *
      * @param integer $statusCode
-     * @return string
      */
     public static function getStatusMessageByCode($statusCode): string
     {
@@ -129,8 +126,6 @@ abstract class ResponseInformationHelper
      * Note that the URI part is, at the moment, only possible in the form "abs_path" since the
      * actual requestUri of the Request cannot be determined during the creation of the Request.
      *
-     * @param ResponseInterface $response
-     * @return string
      * @see http://www.w3.org/Protocols/rfc2616/rfc2616-sec6.html#sec6.1
      */
     public static function generateStatusLine(ResponseInterface $response): string
@@ -141,7 +136,6 @@ abstract class ResponseInformationHelper
     /**
      * Prepare array of header lines for this response
      *
-     * @param ResponseInterface $response
      * @return array<int,string>
      */
     public static function prepareHeaders(ResponseInterface $response): array
@@ -171,9 +165,7 @@ abstract class ResponseInformationHelper
      * It is recommended to call this method before the response is sent and Flow
      * does so by default in its built-in HTTP request handler.
      *
-     * @param ResponseInterface $response
      * @param RequestInterface $request The corresponding request
-     * @return ResponseInterface
      * @api
      */
     public static function makeStandardsCompliant(ResponseInterface $response, RequestInterface $request): ResponseInterface

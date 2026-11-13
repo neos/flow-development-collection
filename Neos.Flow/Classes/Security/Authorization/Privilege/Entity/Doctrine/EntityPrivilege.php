@@ -113,7 +113,6 @@ class EntityPrivilege extends AbstractPrivilege implements EntityPrivilegeInterf
      * in SQL and not by the voting process, this method will always
      * return false.
      *
-     * @param PrivilegeSubjectInterface $subject
      * @return boolean
      */
     public function matchesSubject(PrivilegeSubjectInterface $subject)

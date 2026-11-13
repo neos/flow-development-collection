@@ -76,9 +76,6 @@ class ApcuBackend extends IndependentAbstractBackend implements TaggableBackendI
 
     /**
      * Initializes the identifier prefix when setting the cache.
-     *
-     * @param FrontendInterface $cache
-     * @return void
      */
     public function setCache(FrontendInterface $cache): void
     {
@@ -117,7 +114,6 @@ class ApcuBackend extends IndependentAbstractBackend implements TaggableBackendI
      * @param string $data The data to be stored
      * @param array<string> $tags Tags to associate with this cache entry
      * @param int|null $lifetime Lifetime of this cache entry in seconds. If NULL is specified, the default lifetime is used. "0" means unlimited lifetime.
-     * @return void
      * @throws Exception if no cache frontend has been set.
      * @throws \InvalidArgumentException if the identifier is not valid
      * @api
@@ -221,7 +217,6 @@ class ApcuBackend extends IndependentAbstractBackend implements TaggableBackendI
     /**
      * Removes all cache entries of this cache.
      *
-     * @return void
      * @throws Exception
      * @api
      */
@@ -267,7 +262,6 @@ class ApcuBackend extends IndependentAbstractBackend implements TaggableBackendI
     /**
      * Associates the identifier with the given tags
      *
-     * @param string $entryIdentifier
      * @param array<string> $tags
      * @return void
      */
@@ -292,7 +286,6 @@ class ApcuBackend extends IndependentAbstractBackend implements TaggableBackendI
     /**
      * Removes association of the identifier with the given tags
      *
-     * @param string $entryIdentifier
      * @return void
      */
     protected function removeIdentifierFromAllTags(string $entryIdentifier)
@@ -324,7 +317,6 @@ class ApcuBackend extends IndependentAbstractBackend implements TaggableBackendI
     /**
      * Does nothing, as APCu does GC itself
      *
-     * @return void
      * @api
      */
     public function collectGarbage(): void
@@ -366,7 +358,6 @@ class ApcuBackend extends IndependentAbstractBackend implements TaggableBackendI
      * Returns the identifier of the current cache entry pointed to by the cache
      * entry iterator.
      *
-     * @return string
      * @api
      */
     public function key(): string

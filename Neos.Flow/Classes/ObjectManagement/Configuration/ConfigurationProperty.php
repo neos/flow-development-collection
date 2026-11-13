@@ -34,7 +34,6 @@ final readonly class ConfigurationProperty
      * @param integer $type Type of the property - one of the PROPERTY_TYPE_* constants
      * @param Configuration|null $objectConfiguration If $type is OBJECT, a custom object configuration may be specified
      * @param boolean $lazyLoading Should this property be lazy loaded
-     * @param int $autowiring
      */
     public function __construct(
         private string $name,
@@ -98,8 +97,6 @@ final readonly class ConfigurationProperty
 
     /**
      * If this property can be lazy loaded if the dependency injection mechanism offers that.
-     *
-     * @return boolean
      */
     public function isLazyLoading(): bool
     {

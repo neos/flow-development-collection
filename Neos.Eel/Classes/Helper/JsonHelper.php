@@ -31,7 +31,6 @@ class JsonHelper implements ProtectedContextAwareInterface
      *
      * @param mixed $value
      * @param array<int> $options Array of option constant names as strings
-     * @return string
      */
     public function stringify($value, array $options = []): string
     {

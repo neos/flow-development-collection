@@ -71,7 +71,7 @@ class RequestBuilder
         $request = new Request();
         $request->setControllerObjectName(HelpCommandController::class);
 
-        if (is_array($commandLine) === true) {
+        if (is_array($commandLine)) {
             $rawCommandLineArguments = $commandLine;
         } else {
             preg_match_all(self::ARGUMENT_MATCHING_EXPRESSION, $commandLine, $commandLineMatchings, PREG_SET_ORDER);

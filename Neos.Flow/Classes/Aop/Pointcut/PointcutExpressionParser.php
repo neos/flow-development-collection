@@ -93,26 +93,17 @@ class PointcutExpressionParser
      */
     protected $sourceHint = '';
 
-    /**
-     * @param ProxyClassBuilder $proxyClassBuilder
-     * @return void
-     */
     public function injectProxyClassBuilder(ProxyClassBuilder $proxyClassBuilder): void
     {
         $this->proxyClassBuilder = $proxyClassBuilder;
     }
 
-    /**
-     * @param ReflectionService $reflectionService
-     * @return void
-     */
     public function injectReflectionService(ReflectionService $reflectionService): void
     {
         $this->reflectionService = $reflectionService;
     }
 
     /**
-     * @param ObjectManagerInterface $objectManager
      * @return void
      */
     public function injectObjectManager(ObjectManagerInterface $objectManager)
@@ -189,7 +180,6 @@ class PointcutExpressionParser
      * @param string $operator The operator
      * @param string $annotationPattern The pattern expression as configuration for the class annotation filter
      * @param PointcutFilterComposite $pointcutFilterComposite An instance of the pointcut filter composite. The result (ie. the class annotation filter) will be added to this composite object.
-     * @return void
      */
     protected function parseDesignatorClassAnnotatedWith(string $operator, string $annotationPattern, PointcutFilterComposite $pointcutFilterComposite): void
     {
@@ -210,7 +200,6 @@ class PointcutExpressionParser
      * @param string $operator The operator
      * @param string $classPattern The pattern expression as configuration for the class filter
      * @param PointcutFilterComposite $pointcutFilterComposite An instance of the pointcut filter composite. The result (ie. the class filter) will be added to this composite object.
-     * @return void
      */
     protected function parseDesignatorClass(string $operator, string $classPattern, PointcutFilterComposite $pointcutFilterComposite): void
     {
@@ -226,7 +215,6 @@ class PointcutExpressionParser
      * @param string $operator The operator
      * @param string $annotationPattern The pattern expression as configuration for the method annotation filter
      * @param PointcutFilterComposite $pointcutFilterComposite An instance of the pointcut filter composite. The result (ie. the method annotation filter) will be added to this composite object.
-     * @return void
      */
     protected function parseDesignatorMethodAnnotatedWith(string $operator, string $annotationPattern, PointcutFilterComposite $pointcutFilterComposite): void
     {
@@ -244,10 +232,7 @@ class PointcutExpressionParser
      * Parse an annotation pattern and adjust $annotationPattern and $annotationPropertyConstraints as
      * needed.
      *
-     * @param string $annotationPattern
      * @param array<mixed> $annotationPropertyConstraints
-     *
-     * @return void
      */
     protected function parseAnnotationPattern(string &$annotationPattern, array &$annotationPropertyConstraints): void
     {
@@ -269,7 +254,6 @@ class PointcutExpressionParser
      * @param string $operator The operator
      * @param string $signaturePattern The pattern expression defining the class and method - the "signature"
      * @param PointcutFilterComposite $pointcutFilterComposite An instance of the pointcut filter composite. The result (ie. the class and method filter) will be added to this composite object.
-     * @return void
      * @throws InvalidPointcutExpressionException if there's an error in the pointcut expression
      */
     protected function parseDesignatorMethod(string $operator, string $signaturePattern, PointcutFilterComposite $pointcutFilterComposite): void
@@ -312,11 +296,9 @@ class PointcutExpressionParser
     /**
      * Adds a class type filter to the pointcut filter composite
      *
-     * @param string $operator
      * @param string $signaturePattern The pattern expression defining the class type
      * @param PointcutFilterComposite $pointcutFilterComposite An instance of the pointcut filter composite. The result (ie. the class type filter) will be added to this composite object.
      * @todo this is only ever called from tests, do we even need this?
-     * @return void
      */
     protected function parseDesignatorWithin(string $operator, string $signaturePattern, PointcutFilterComposite $pointcutFilterComposite): void
     {
@@ -333,7 +315,6 @@ class PointcutExpressionParser
      * @param string $operator The operator
      * @param string $pointcutExpression The pointcut expression (value of the designator)
      * @param PointcutFilterComposite $pointcutFilterComposite An instance of the pointcut filter composite. The result (ie. the pointcut filter) will be added to this composite object.
-     * @return void
      * @throws InvalidPointcutExpressionException
      */
     protected function parseDesignatorPointcut(string $operator, string $pointcutExpression, PointcutFilterComposite $pointcutFilterComposite): void
@@ -353,7 +334,6 @@ class PointcutExpressionParser
      * @param string $operator The operator
      * @param string $filterObjectName Object Name of the custom filter (value of the designator)
      * @param PointcutFilterComposite $pointcutFilterComposite An instance of the pointcut filter composite. The result (ie. the custom filter) will be added to this composite object.
-     * @return void
      * @throws InvalidPointcutExpressionException
      */
     protected function parseDesignatorFilter(string $operator, string $filterObjectName, PointcutFilterComposite $pointcutFilterComposite): void
@@ -371,7 +351,6 @@ class PointcutExpressionParser
      * @param string $operator The operator
      * @param string $configurationPath The path to the settings option, that should be used
      * @param PointcutFilterComposite $pointcutFilterComposite An instance of the pointcut filter composite. The result (ie. the custom filter) will be added to this composite object.
-     * @return void
      */
     protected function parseDesignatorSetting(string $operator, string $configurationPath, PointcutFilterComposite $pointcutFilterComposite): void
     {
@@ -389,7 +368,6 @@ class PointcutExpressionParser
      * @param string $operator The operator
      * @param string $runtimeEvaluations The runtime evaluations string
      * @param PointcutFilterComposite $pointcutFilterComposite An instance of the pointcut filter composite. The result (ie. the custom filter) will be added to this composite object.
-     * @return void
      */
     protected function parseRuntimeEvaluations(string $operator, string $runtimeEvaluations, PointcutFilterComposite $pointcutFilterComposite): void
     {

@@ -55,7 +55,6 @@ class AnsiConsoleBackend extends ConsoleBackend
      *
      * Initializes tag formats.
      *
-     * @return void
      * @throws CouldNotOpenResourceException
      */
     public function open(): void
@@ -77,7 +76,6 @@ class AnsiConsoleBackend extends ConsoleBackend
      * Appends the given message along with the additional information into the log.
      *
      * @param array<mixed>|null $additionalData
-     * @return void
      */
     public function append(string $message, int $severity = LOG_INFO, $additionalData = null, ?string $packageKey = null, ?string $className = null, ?string $methodName = null): void
     {

@@ -76,9 +76,6 @@ class RouterCachingService
      */
     protected $routingSettings;
 
-    /**
-     * @param LoggerInterface $logger
-     */
     public function injectLogger(LoggerInterface $logger): void
     {
         $this->logger = $logger;
@@ -99,7 +96,6 @@ class RouterCachingService
     /**
      * Checks the cache for the given RouteContext and returns the result or false if no matching ache entry was found
      *
-     * @param RouteContext $routeContext
      * @return array<mixed>|false the cached route values or false if no cache entry was found
      */
     public function getCachedMatchResults(RouteContext $routeContext)
@@ -115,10 +111,7 @@ class RouterCachingService
     /**
      * Stores the $matchResults in the cache
      *
-     * @param RouteContext $routeContext
      * @param array<mixed> $matchResults
-     * @param RouteTags|null $matchedTags
-     * @param RouteLifetime|null $matchedLifetime
      * @return void
      */
     public function storeMatchResults(RouteContext $routeContext, array $matchResults, ?RouteTags $matchedTags = null, ?RouteLifetime $matchedLifetime = null)
@@ -138,7 +131,6 @@ class RouterCachingService
     /**
      * Checks the cache for the given ResolveContext and returns the cached UriConstraints if a cache entry is found
      *
-     * @param ResolveContext $resolveContext
      * @return UriConstraints|false the cached URI or false if no cache entry was found
      */
     public function getCachedResolvedUriConstraints(ResolveContext $resolveContext)
@@ -153,10 +145,6 @@ class RouterCachingService
     /**
      * Stores the resolved UriConstraints in the cache together with the $routeValues
      *
-     * @param ResolveContext $resolveContext
-     * @param UriConstraints $uriConstraints
-     * @param RouteTags|null $resolvedTags
-     * @param RouteLifetime|null $resolvedLifetime
      * @return void
      */
     public function storeResolvedUriConstraints(ResolveContext $resolveContext, UriConstraints $uriConstraints, ?RouteTags $resolvedTags = null, ?RouteLifetime $resolvedLifetime = null)
@@ -290,7 +278,6 @@ class RouterCachingService
     /**
      * Generates the Resolve cache identifier for the given Request
      *
-     * @param ResolveContext $resolveContext
      * @param array<mixed> $routeValues
      * @return string
      */

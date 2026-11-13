@@ -56,8 +56,6 @@ abstract class AbstractFormFieldViewHelper extends AbstractFormViewHelper
 
     /**
      * Shortcut for retrieving the request from the controller context
-     *
-     * @return ActionRequest
      */
     protected function getRequest(): ActionRequest
     {
@@ -159,8 +157,6 @@ abstract class AbstractFormFieldViewHelper extends AbstractFormViewHelper
     /**
      * Add additional identity properties in case the current property is hierarchical (of the form "bla.blubb").
      * Then, [bla][__identity] has to be generated as well.
-     *
-     * @return void
      */
     protected function addAdditionalIdentityPropertiesIfNeeded(): void
     {
@@ -210,8 +206,6 @@ abstract class AbstractFormFieldViewHelper extends AbstractFormViewHelper
      * Returns the "absolute" property path of the property bound to this ViewHelper.
      * For <f:form... property="foo.bar" /> this will be "<formObjectName>.foo.bar"
      * For <f:form... name="foo[bar][baz]" /> this will be "foo.bar.baz"
-     *
-     * @return string
      */
     protected function getPropertyPath(): string
     {
@@ -238,8 +232,6 @@ abstract class AbstractFormFieldViewHelper extends AbstractFormViewHelper
 
     /**
      * Add an CSS class if this view helper has errors
-     *
-     * @return void
      */
     protected function setErrorClassAttribute(): void
     {
@@ -261,8 +253,6 @@ abstract class AbstractFormFieldViewHelper extends AbstractFormViewHelper
 
     /**
      * Get errors for the property and form name of this view helper
-     *
-     * @return Result
      */
     protected function getMappingResultsForProperty(): Result
     {
@@ -276,8 +266,6 @@ abstract class AbstractFormFieldViewHelper extends AbstractFormViewHelper
     /**
      * Renders a hidden field with the same name as the element, to make sure the empty value is submitted
      * in case nothing is selected. This is needed for checkbox and multiple select fields
-     *
-     * @return void
      */
     protected function renderHiddenFieldForEmptyValue(): void
     {

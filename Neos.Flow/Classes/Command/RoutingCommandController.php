@@ -60,8 +60,6 @@ class RoutingCommandController extends CommandController
      * List the known routes
      *
      * This command displays a list of all currently registered routes.
-     *
-     * @return void
      */
     public function listCommand(): void
     {
@@ -87,7 +85,6 @@ class RoutingCommandController extends CommandController
      * This command displays the configuration of a route specified by index number.
      *
      * @param integer $index The index of the route as given by routing:list
-     * @return void
      * @throws StopCommandException
      */
     public function showCommand(int $index): void
@@ -124,7 +121,6 @@ class RoutingCommandController extends CommandController
      * @param string $controller Controller name, default is 'Standard'
      * @param string $action Action name, default is 'index'
      * @param string $format Requested Format name default is 'html'
-     * @return void
      * @throws StopCommandException | InvalidRoutePartValueException
      * @deprecated since 7.0 @see resolveCommand(). Will probably be removed with 8.0
      * @internal
@@ -135,7 +131,7 @@ class RoutingCommandController extends CommandController
         $package = $packageParts[0];
         $subpackage = $packageParts[1] ?? null;
 
-        $this->resolveCommand($package, $controller, $action, $format, $subpackage, null);
+        $this->resolveCommand($package, $controller, $action, $format, $subpackage);
     }
 
     /**
@@ -155,7 +151,6 @@ class RoutingCommandController extends CommandController
      * @param string|null $parameters Route parameters as JSON string. Make sure to specify this option as described in the description in order to prevent parsing issues
      * @param string|null $baseUri Base URI of the simulated request, default ist 'http://localhost'
      * @param bool|null $forceAbsoluteUri Whether or not to force the creation of an absolute URI
-     * @return void
      * @throws StopCommandException | InvalidRoutePartValueException
      */
     public function resolveCommand(string $package, ?string $controller = null, ?string $action = null, ?string $format = null, ?string $subpackage = null, ?string $additionalArguments = null, ?string $parameters = null, ?string $baseUri = null, ?bool $forceAbsoluteUri = null): void
@@ -239,7 +234,7 @@ class RoutingCommandController extends CommandController
      */
     public function routePathCommand(string $path, string $method = 'GET'): void
     {
-        $this->matchCommand('/' . ltrim($path, '/'), $method, null);
+        $this->matchCommand('/' . ltrim($path, '/'), $method);
     }
 
     /**
@@ -314,8 +309,6 @@ class RoutingCommandController extends CommandController
     }
 
     /**
-     * @param string|null $json
-     * @return RouteParameters
      * @throws StopCommandException
      */
     private function createRouteParametersFromJson(?string $json): RouteParameters
@@ -338,7 +331,6 @@ class RoutingCommandController extends CommandController
     /**
      * Parses the given JSON string as array
      *
-     * @param string|null $json
      * @return array<string, mixed>
      * @throws StopCommandException
      */
@@ -363,7 +355,6 @@ class RoutingCommandController extends CommandController
      * Outputs a (potentially multi-dimensional) array to the console
      *
      * @param array<string|int, mixed> $array
-     * @param int $indention
      */
     private function outputArray(array $array, int $indention): void
     {
@@ -385,10 +376,6 @@ class RoutingCommandController extends CommandController
      * Outputs the controller object name that corresponds to the given package, subpackage and controller to the console
      *
      * If the corresponding class is not known to the ObjectManager, an error message is added
-     *
-     * @param string $package
-     * @param string|null $subpackage
-     * @param string|null $controller
      */
     private function outputControllerObjectName(string $package, ?string $subpackage, ?string $controller): void
     {
@@ -404,8 +391,6 @@ class RoutingCommandController extends CommandController
 
     /**
      * Outputs route tags to the console, if there are any
-     *
-     * @param RouteTags|null $routeTags
      */
     private function outputRouteTags(?RouteTags $routeTags): void
     {

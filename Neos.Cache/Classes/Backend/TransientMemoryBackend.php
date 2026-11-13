@@ -42,7 +42,6 @@ class TransientMemoryBackend extends IndependentAbstractBackend implements Tagga
      * @param string $data The data to be stored
      * @param array<string> $tags Tags to associate with this cache entry
      * @param ?integer $lifetime Lifetime of this cache entry in seconds. If NULL is specified, the default lifetime is used. "0" means unlimited lifetime.
-     * @return void
      * @throws Exception if no cache frontend has been set.
      * @api
      */
@@ -125,7 +124,6 @@ class TransientMemoryBackend extends IndependentAbstractBackend implements Tagga
     /**
      * Removes all cache entries of this cache.
      *
-     * @return void
      * @api
      */
     public function flush(): void
@@ -167,7 +165,6 @@ class TransientMemoryBackend extends IndependentAbstractBackend implements Tagga
     /**
      * Does nothing
      *
-     * @return void
      * @api
      */
     public function collectGarbage(): void

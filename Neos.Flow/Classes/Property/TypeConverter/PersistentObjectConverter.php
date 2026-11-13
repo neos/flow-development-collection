@@ -117,7 +117,6 @@ class PersistentObjectConverter extends ObjectConverter
      *
      * @param class-string $targetType
      * @param string $propertyName
-     * @param PropertyMappingConfigurationInterface $configuration
      * @return string
      * @throws InvalidTargetException
      */
@@ -232,7 +231,6 @@ class PersistentObjectConverter extends ObjectConverter
      * @param array<mixed> $source
      * @param class-string $targetType
      * @param array<string,mixed> &$convertedChildProperties
-     * @param PropertyMappingConfigurationInterface|null $configuration
      * @return object|TargetNotFoundError
      * @throws InvalidPropertyMappingConfigurationException
      */

@@ -47,9 +47,6 @@ class RuntimeExpressionEvaluator
 
     /**
      * This object is created very early and is part of the excluded "Neos\Flow\Aop" namespace so we can't rely on AOP for the property injection.
-     *
-     * @param ObjectManagerInterface $objectManager
-     * @return void
      */
     public function injectObjectManager(ObjectManagerInterface $objectManager): void
     {
@@ -64,7 +61,6 @@ class RuntimeExpressionEvaluator
      * Evaluate an expression with the given JoinPoint
      *
      * @param string $privilegeIdentifier MD5 hash that identifies a privilege
-     * @param JoinPointInterface $joinPoint
      * @return mixed
      * @throws Exception
      */
@@ -89,8 +85,6 @@ class RuntimeExpressionEvaluator
      * Add expression to the evaluator
      *
      * @param string $privilegeIdentifier MD5 hash that identifies a privilege
-     * @param string $expression
-     * @return void
      */
     public function addExpression(string $privilegeIdentifier, string $expression): void
     {
@@ -102,7 +96,6 @@ class RuntimeExpressionEvaluator
 
     /**
      * @param string $privilegeIdentifier MD5 hash that identifies a privilege
-     * @return string
      */
     protected function generateExpressionFunctionName(string $privilegeIdentifier): string
     {
@@ -111,8 +104,6 @@ class RuntimeExpressionEvaluator
 
     /**
      * Flush all runtime expressions
-     *
-     * @return void
      */
     public function flush(): void
     {

@@ -129,7 +129,7 @@ class PersistenceMagicAspect
 
             $propertyValue = ObjectAccess::getProperty($proxy, $property, true);
 
-            if (is_object($propertyValue) === true) {
+            if (is_object($propertyValue)) {
                 // The persistence manager will return NULL if the given object is unknown to persistence
                 $propertyValue = ($this->persistenceManager->getIdentifierByObject($propertyValue)) ?: $propertyValue;
             }

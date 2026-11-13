@@ -54,7 +54,6 @@ class PersistentObjectSerializer extends AbstractTypeConverter
      * @param object $source
      * @param string $targetType
      * @param array<string,mixed> $convertedChildProperties
-     * @param PropertyMappingConfigurationInterface|null $configuration
      * @return mixed The identifier for the object if it is known, or NULL
      */
     public function convertFrom($source, $targetType, array $convertedChildProperties = [], ?PropertyMappingConfigurationInterface $configuration = null)

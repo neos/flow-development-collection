@@ -43,18 +43,18 @@ class DummyContext extends Context
     /**
      * @var string|null
      */
-    protected $csrfProtectionToken = null;
+    protected $csrfProtectionToken;
 
     /**
      * @var ActionRequest|null
      */
-    protected $interceptedRequest = null;
+    protected $interceptedRequest;
 
     /**
      * @Flow\Transient
      * @var Role[]|null
      */
-    protected $roles = null;
+    protected $roles;
 
     /**
      * @param boolean $initialized

@@ -64,10 +64,8 @@ abstract class UploadedFilesHelper
     }
 
     /**
-     * @param UploadedFileInterface $uploadedFile
      * @param string|array{__identity: string} $originallySubmittedResource
      * @param string $collectionName
-     * @return FlowUploadedFile
      */
     protected static function upcastUploadedFile(UploadedFileInterface $uploadedFile, $originallySubmittedResource = null, ?string $collectionName = null): FlowUploadedFile
     {

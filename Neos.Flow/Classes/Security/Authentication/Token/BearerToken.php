@@ -37,7 +37,6 @@ class BearerToken extends AbstractToken implements SessionlessTokenInterface
     protected $credentials = ['bearer' => ''];
 
     /**
-     * @param ActionRequest $actionRequest
      * @throws AuthenticationRequiredException
      * @throws InvalidAuthenticationStatusException
      */
@@ -61,9 +60,6 @@ class BearerToken extends AbstractToken implements SessionlessTokenInterface
         }
     }
 
-    /**
-     * @return string
-     */
     public function getBearer(): string
     {
         return $this->credentials['bearer'];
@@ -71,8 +67,6 @@ class BearerToken extends AbstractToken implements SessionlessTokenInterface
 
     /**
      * Returns a string representation of the token for logging purposes.
-     *
-     * @return string
      */
     public function __toString(): string
     {

@@ -81,7 +81,6 @@ class IfAccessViewHelper extends AbstractConditionViewHelper
 
     /**
      * @param array<string,mixed> $arguments
-     * @param \Closure $renderChildrenClosure
      * @param FlowAwareRenderingContextInterface&RenderingContextInterface $renderingContext
      * @return mixed
      */

@@ -55,7 +55,6 @@ class PointcutClassNameFilter implements PointcutFilterInterface
      * Injects the reflection service
      *
      * @param ReflectionService $reflectionService The reflection service
-     * @return void
      */
     public function injectReflectionService(ReflectionService $reflectionService): void
     {
@@ -107,9 +106,6 @@ class PointcutClassNameFilter implements PointcutFilterInterface
 
     /**
      * This method is used to optimize the matching process.
-     *
-     * @param ClassNameIndex $classNameIndex
-     * @return ClassNameIndex
      */
     public function reduceTargetClassNames(ClassNameIndex $classNameIndex): ClassNameIndex
     {

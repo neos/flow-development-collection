@@ -127,7 +127,6 @@ class VariableFrontend extends AbstractFrontend
     /**
      * Returns an iterator over the entries of this cache
      *
-     * @return \Neos\Cache\Frontend\CacheEntryIterator
      * @throws NotSupportedByBackendException
      */
     public function getIterator(): CacheEntryIterator

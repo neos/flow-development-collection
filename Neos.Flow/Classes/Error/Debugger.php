@@ -121,10 +121,6 @@ class Debugger
      * Renders a dump of the given variable
      *
      * @param mixed $variable
-     * @param integer $level
-     * @param boolean $plaintext
-     * @param boolean $ansiColors
-     * @return string
      */
     public static function renderDump($variable, int $level, bool $plaintext = false, bool $ansiColors = false): string
     {
@@ -159,10 +155,6 @@ class Debugger
      * Renders a dump of the given array
      *
      * @param iterable<mixed> $array
-     * @param integer $level
-     * @param boolean $plaintext
-     * @param boolean $ansiColors
-     * @return string
      */
     protected static function renderArrayDump(iterable $array, int $level, bool $plaintext = false, bool $ansiColors = false): string
     {
@@ -185,11 +177,6 @@ class Debugger
      * Renders a dump of the given object
      *
      * @param object $object
-     * @param integer $level
-     * @param boolean $renderProperties
-     * @param boolean $plaintext
-     * @param boolean $ansiColors
-     * @return string
      */
     protected static function renderObjectDump($object, int $level, bool $renderProperties = true, bool $plaintext = false, bool $ansiColors = false): string
     {
@@ -232,7 +219,7 @@ class Debugger
             }
         }
 
-        if ($renderProperties === true && !$plaintext) {
+        if ($renderProperties && !$plaintext) {
             if ($scope === '') {
                 $scope = 'prototype';
             }
@@ -272,7 +259,7 @@ class Debugger
             }
         }
 
-        if ($renderProperties === true) {
+        if ($renderProperties) {
             if ($object instanceof \SplObjectStorage) {
                 $dump .= ' (' . (count($object) ?: 'empty') . ')';
                 foreach ($object as $value) {
@@ -322,7 +309,6 @@ class Debugger
      *
      * @param array<int,array<string,mixed>> $trace The trace
      * @param boolean $includeCode Include code snippet
-     * @param boolean $plaintext
      * @return string Backtrace information
      */
     public static function getBacktraceCode(array $trace, bool $includeCode = true, bool $plaintext = false): string
@@ -331,7 +317,7 @@ class Debugger
             return static::getBacktraceCodePlaintext($trace, $includeCode);
         }
         $backtraceCode = '<ol class="Flow-Debug-Backtrace" reversed>';
-        foreach ($trace as $index => $step) {
+        foreach ($trace as $step) {
             $backtraceCode .= '<li class="Flow-Debug-Backtrace-Step">';
             $class = isset($step['class']) ? $step['class'] . '<span class="color-muted">::</span>' : '';
 
@@ -372,7 +358,7 @@ class Debugger
                 } elseif (is_numeric($argument)) {
                     $arguments .= (string)$argument;
                 } elseif (is_bool($argument)) {
-                    $arguments .= ($argument === true ? 'true' : 'false');
+                    $arguments .= ($argument ? 'true' : 'false');
                 } elseif (is_array($argument)) {
                     $arguments .= sprintf(
                         '<em title="%s">array|%d|</em>',
@@ -394,8 +380,6 @@ class Debugger
 
     /**
      * @param array<int,array<string,mixed>> $trace
-     * @param bool $includeCode
-     * @return string
      */
     protected static function getBacktraceCodePlaintext(array $trace, bool $includeCode = true): string
     {
@@ -443,7 +427,7 @@ class Debugger
                 } elseif (is_numeric($argument)) {
                     $arguments .= (string)$argument;
                 } elseif (is_bool($argument)) {
-                    $arguments .= ($argument === true ? 'true' : 'false');
+                    $arguments .= ($argument ? 'true' : 'false');
                 } elseif (is_array($argument)) {
                     $arguments .= 'array|' . count($argument) . '|';
                 } else {
@@ -462,7 +446,6 @@ class Debugger
      *
      * @param string $filePathAndName Absolute path and filename of the PHP file
      * @param integer $lineNumber Line number defining the center of the code snippet
-     * @param boolean $plaintext
      * @return string The code snippet
      */
     public static function getCodeSnippet(string $filePathAndName, int $lineNumber, bool $plaintext = false): string
@@ -557,7 +540,6 @@ class Debugger
     }
 
     /**
-     * @param string $file
      * @return array{short: string, proxy: string}
      */
     public static function findProxyAndShortFilePath(string $file): array
@@ -602,8 +584,6 @@ class Debugger
      * Tries to load the 'Neos.Flow.error.debugger.ignoredClasses' setting
      * to build a regular expression that can be used to filter ignored class names
      * If settings can't be loaded it uses self::$ignoredClassesFallback.
-     *
-     * @return string
      */
     public static function getIgnoredClassesRegex(): string
     {
@@ -637,8 +617,6 @@ class Debugger
      * Tries to load the 'Neos.Flow.error.debugger.recursionLimit' setting
      * to determine the maximal recursions-level fgor the debugger.
      * If settings can't be loaded it uses self::$ignoredClassesFallback.
-     *
-     * @return integer
      */
     public static function getRecursionLimit(): int
     {
@@ -711,7 +689,7 @@ function var_dump($variable, ?string $title = null, bool $return = false, ?bool 
 		';
     }
 
-    if ($return === true) {
+    if ($return) {
         return $output;
     }
     echo $output;

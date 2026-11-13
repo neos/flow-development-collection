@@ -130,7 +130,6 @@ class ObjectConverter extends AbstractTypeConverter
      *
      * @param class-string $targetType
      * @param string $propertyName
-     * @param PropertyMappingConfigurationInterface $configuration
      * @return string|null
      * @throws InvalidTargetException
      */
@@ -189,7 +188,6 @@ class ObjectConverter extends AbstractTypeConverter
      * @param mixed $source
      * @param string $targetType
      * @param array<string,mixed> $convertedChildProperties
-     * @param PropertyMappingConfigurationInterface|null $configuration
      * @return object the target type
      * @throws InvalidTargetException
      * @throws InvalidDataTypeException
@@ -200,7 +198,6 @@ class ObjectConverter extends AbstractTypeConverter
         $object = $this->buildObject($convertedChildProperties, $targetType);
         foreach ($convertedChildProperties as $propertyName => $propertyValue) {
             $result = ObjectAccess::setProperty($object, $propertyName, $propertyValue);
-            /** @var object $object */
             if ($result === false) {
                 $exceptionMessage = sprintf(
                     'Property "%s" having a value of type "%s" could not be set in target object of type "%s". Make sure that the property is accessible properly, for example via an appropriate setter method.',
@@ -220,7 +217,6 @@ class ObjectConverter extends AbstractTypeConverter
      *
      * @param mixed $source
      * @param string $originalTargetType
-     * @param PropertyMappingConfigurationInterface|null $configuration
      * @return string
      * @throws InvalidDataTypeException
      * @throws InvalidPropertyMappingConfigurationException

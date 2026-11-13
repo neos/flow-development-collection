@@ -53,11 +53,6 @@ class ProxyClassBuilder
     protected array $objectConfigurations = [];
 
     /**
-     * @param ReflectionService $reflectionService
-     * @param Compiler $compiler
-     * @param LoggerInterface $logger
-     * @param ConfigurationManager $configurationManager
-     * @param CacheManager $cacheManager
      * @param CompileTimeObjectManager<object> $objectManager
      */
     public function __construct(
@@ -89,7 +84,7 @@ class ProxyClassBuilder
             /** @var class-string $className */
             $className = $objectConfiguration->getClassName();
             if ($objectName !== $className
-                || $this->compiler->hasCacheEntryForClass($className) === true
+                || $this->compiler->hasCacheEntryForClass($className)
                 || $this->reflectionService->isClassAbstract($className)
             ) {
                 continue;
@@ -321,7 +316,6 @@ class ProxyClassBuilder
      * Builds code which injects an object which was specified by its object name
      *
      * @param Configuration $objectConfiguration Configuration of the object to inject into
-     * @param ConfigurationProperty $propertyConfiguration
      * @param string $propertyName Name of the property to inject
      * @param string $propertyObjectName Object name of the object to inject
      * @return string[] lines of PHP code
@@ -440,9 +434,7 @@ class ProxyClassBuilder
     /**
      * Builds code which calls the lifecycle initialization method, if any.
      *
-     * @param Configuration $objectConfiguration
      * @param int $cause a ObjectManagerInterface::INITIALIZATIONCAUSE_* constant which is the cause of the initialization command being called.
-     * @return string
      */
     protected function buildLifecycleInitializationCode(Configuration $objectConfiguration, int $cause): string
     {
@@ -462,9 +454,7 @@ class ProxyClassBuilder
     /**
      * Builds code which registers the lifecycle shutdown method, if any.
      *
-     * @param Configuration $objectConfiguration
      * @param int $cause a ObjectManagerInterface::INITIALIZATIONCAUSE_* constant which is the cause of the initialization command being called.
-     * @return string
      */
     protected function buildLifecycleShutdownCode(Configuration $objectConfiguration, int $cause): string
     {
@@ -482,9 +472,6 @@ class ProxyClassBuilder
     }
 
     /**
-     * @param string $className
-     * @param string $lifeCycleCode
-     * @param int $cause
      * @return string[]
      */
     protected function wrapLifeCycleChecksCode(string $className, string $lifeCycleCode, int $cause): array
@@ -548,7 +535,6 @@ class ProxyClassBuilder
     }
 
     /**
-     * @param string $customFactoryObjectName
      * @param array<int, ?ConfigurationArgument> $arguments
      * @throws InvalidConfigurationTypeException
      */
@@ -562,8 +548,6 @@ class ProxyClassBuilder
      * Compile the result of methods marked with CompileStatic into the proxy class
      *
      * @param class-string $className
-     * @param ProxyClass $proxyClass
-     * @return void
      * @throws ClassLoadingForReflectionFailedException
      * @throws InvalidClassException
      * @throws ObjectException

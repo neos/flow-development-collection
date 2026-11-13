@@ -139,7 +139,6 @@ class Headers implements \Iterator, \Stringable
     /**
      * Get raw header values
      *
-     * @param string $name
      * @return string[]
      */
     public function getRaw(string $name): array
@@ -249,7 +248,6 @@ class Headers implements \Iterator, \Stringable
     /**
      * Sets a cookie
      *
-     * @param Cookie $cookie
      * @return void
      * @api
      */
@@ -429,7 +427,6 @@ class Headers implements \Iterator, \Stringable
     /**
      * Renders this headers object as string, with lines separated by "\r\n" as required by RFC 2616 sec 5.
      *
-     * @return string
      * @api
      */
     public function __toString(): string
@@ -451,9 +448,6 @@ class Headers implements \Iterator, \Stringable
         return $this->getRaw($this->key());
     }
 
-    /**
-     * @return void
-     */
     public function next(): void
     {
         next($this->fields);
@@ -467,17 +461,11 @@ class Headers implements \Iterator, \Stringable
         return key($this->fields);
     }
 
-    /**
-     * @return bool
-     */
     public function valid(): bool
     {
         return !(key($this->fields) === null && current($this->fields) === false);
     }
 
-    /**
-     * @return void
-     */
     public function rewind(): void
     {
         reset($this->fields);

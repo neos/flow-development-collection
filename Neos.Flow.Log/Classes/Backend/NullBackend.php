@@ -25,7 +25,6 @@ class NullBackend extends AbstractBackend
     /**
      * Does nothing
      *
-     * @return void
      * @api
      */
     public function open(): void
@@ -41,7 +40,6 @@ class NullBackend extends AbstractBackend
      * @param string $packageKey Key of the package triggering the log (determined automatically if not specified)
      * @param string $className Name of the class triggering the log (determined automatically if not specified)
      * @param string $methodName Name of the method triggering the log (determined automatically if not specified)
-     * @return void
      * @api
      */
     public function append(string $message, int $severity = 1, $additionalData = null, ?string $packageKey = null, ?string $className = null, ?string $methodName = null): void
@@ -51,7 +49,6 @@ class NullBackend extends AbstractBackend
     /**
      * Does nothing
      *
-     * @return void
      * @api
      */
     public function close(): void

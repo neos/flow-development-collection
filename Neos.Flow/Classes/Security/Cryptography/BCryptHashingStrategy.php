@@ -27,7 +27,6 @@ class BCryptHashingStrategy implements PasswordHashingStrategyInterface
     /**
      * Construct a BCrypt hashing strategy with the given parameters
      *
-     * @param int $cost
      * @throws \InvalidArgumentException
      */
     public function __construct(int $cost)

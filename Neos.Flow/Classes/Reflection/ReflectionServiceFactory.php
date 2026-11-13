@@ -40,8 +40,6 @@ class ReflectionServiceFactory
 
     /**
      * Constructs the factory
-     *
-     * @param Bootstrap $bootstrap
      */
     public function __construct(Bootstrap $bootstrap)
     {

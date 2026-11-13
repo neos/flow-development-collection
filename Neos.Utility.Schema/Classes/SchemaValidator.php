@@ -71,7 +71,6 @@ class SchemaValidator
      * @param mixed $value value to validate
      * @param mixed $schema type as string, schema or array of schemas
      * @param array<mixed> $types the additional type schemas
-     * @return ErrorResult
      */
     public function validate($value, $schema, array $types = []): ErrorResult
     {
@@ -99,7 +98,7 @@ class SchemaValidator
             }
         }
 
-        if (is_string($schema) === true) {
+        if (is_string($schema)) {
             $result->merge($this->validateType($value, ['type' => $schema], $types));
         } elseif ($this->isNumericallyIndexedArray($schema)) {
             $isValid = false;
@@ -150,7 +149,6 @@ class SchemaValidator
      * @param mixed $value
      * @param array<string,mixed> $schema
      * @param array<mixed> $types
-     * @return ErrorResult
      */
     protected function validateType($value, array $schema, array $types = []): ErrorResult
     {
@@ -212,7 +210,6 @@ class SchemaValidator
      * @param mixed $value
      * @param array<string,mixed> $schema
      * @param array<mixed> $types
-     * @return ErrorResult
      */
     protected function validateTypeArray($value, array $schema, array $types = []): ErrorResult
     {
@@ -256,7 +253,6 @@ class SchemaValidator
      *
      * @param mixed $value
      * @param array<string,mixed> $schema
-     * @return ErrorResult
      */
     protected function validateNumberType($value, array $schema): ErrorResult
     {
@@ -307,7 +303,6 @@ class SchemaValidator
      * @see SchemaValidator::validateNumberType
      * @param mixed $value
      * @param array<mixed> $schema
-     * @return ErrorResult
      */
     protected function validateIntegerType($value, array $schema): ErrorResult
     {
@@ -325,7 +320,6 @@ class SchemaValidator
      *
      * @param mixed $value
      * @param array<mixed> $schema
-     * @return ErrorResult
      */
     protected function validateBooleanType($value, array $schema): ErrorResult
     {
@@ -349,7 +343,6 @@ class SchemaValidator
      * @param mixed $value
      * @param array<string,mixed> $schema
      * @param array<mixed> $types
-     * @return ErrorResult
      */
     protected function validateArrayType($value, array $schema, array $types = []): ErrorResult
     {
@@ -374,7 +367,7 @@ class SchemaValidator
         if (isset($schema['items'])) {
             foreach ($value as $index => $itemValue) {
                 $itemResult = $this->validate($itemValue, $schema['items'], $types);
-                if ($itemResult->hasErrors()  === true) {
+                if ($itemResult->hasErrors()) {
                     $result->forProperty('__index_' . $index)->merge($itemResult);
                 }
             }
@@ -407,7 +400,6 @@ class SchemaValidator
      * @param mixed $value
      * @param array<int|string,mixed> $schema
      * @param array<int|string,mixed> $types
-     * @return ErrorResult
      */
     protected function validateDictionaryType($value, array $schema, array $types = []): ErrorResult
     {
@@ -439,7 +431,7 @@ class SchemaValidator
             foreach (array_values($propertyKeysToHandle) as $propertyKey) {
                 foreach ($schema['patternProperties'] as $propertyPattern => $propertySchema) {
                     $keyResult = $this->validateStringType($propertyKey, ['pattern' => $propertyPattern], $types);
-                    if ($keyResult->hasErrors() === true) {
+                    if ($keyResult->hasErrors()) {
                         continue;
                     }
                     $subresult = $this->validate($value[$propertyKey], $propertySchema, $types);
@@ -455,7 +447,7 @@ class SchemaValidator
             foreach (array_values($propertyKeysToHandle) as $propertyKey) {
                 foreach ($schema['formatProperties'] as $propertyPattern => $propertySchema) {
                     $keyResult = $this->validateStringType($propertyKey, ['format' => $propertyPattern], $types);
-                    if ($keyResult->hasErrors() === true) {
+                    if ($keyResult->hasErrors()) {
                         continue;
                     }
                     $subresult = $this->validate($value[$propertyKey], $propertySchema, $types);
@@ -499,7 +491,6 @@ class SchemaValidator
      * @param mixed $value
      * @param array<string,mixed> $schema
      * @param array<mixed> $types
-     * @return ErrorResult
      */
     protected function validateStringType($value, array $schema, array $types = []): ErrorResult
     {
@@ -606,7 +597,6 @@ class SchemaValidator
      *
      * @param mixed $value
      * @param array<mixed> $schema
-     * @return ErrorResult
      */
     protected function validateNullType($value, array $schema): ErrorResult
     {
@@ -622,7 +612,6 @@ class SchemaValidator
      *
      * @param mixed $value
      * @param array<int|string,mixed> $schema
-     * @return ErrorResult
      */
     protected function validateAnyType($value, array $schema): ErrorResult
     {
@@ -633,7 +622,6 @@ class SchemaValidator
      * Create a string information for the given value
      *
      * @param mixed $value
-     * @return string
      */
     protected function renderValue($value): string
     {
@@ -643,9 +631,7 @@ class SchemaValidator
     /**
      * Create Error Object
      *
-     * @param string $expectation
      * @param mixed $value
-     * @return Error
      */
     protected function createError(string $expectation, $value = null): Error
     {
@@ -667,7 +653,6 @@ class SchemaValidator
      *
      * @todo there should be a more sophisticated way to detect schemas
      * @param array<int|string, mixed> $phpArray
-     * @return boolean
      */
     protected function isSchema(array $phpArray): bool
     {
@@ -679,7 +664,6 @@ class SchemaValidator
      * Determine whether the given php array is a plain numerically indexed array
      *
      * @param array<int|string,mixed> $phpArray
-     * @return boolean
      */
     protected function isNumericallyIndexedArray(array $phpArray): bool
     {
@@ -690,7 +674,6 @@ class SchemaValidator
      * Determine whether the given php array is a Dictionary (has no numeric identifiers)
      *
      * @param array<int|string, mixed> $phpArray
-     * @return boolean
      */
     protected function isDictionary(array $phpArray): bool
     {

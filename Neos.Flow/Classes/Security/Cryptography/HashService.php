@@ -31,7 +31,7 @@ class HashService
      * A private, unique key used for encryption tasks
      * @var string|false|null
      */
-    protected $encryptionKey = null;
+    protected $encryptionKey;
 
     /**
      * @var array<string,PasswordHashingStrategyInterface>

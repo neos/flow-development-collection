@@ -27,7 +27,6 @@ interface WithStatusInterface
      * This can be used to test the cache configuration. By default that method is only invoked from CLI
      * so it does not have to be extremely fast and the result can be verbose.
      *
-     * @return Result
      * @api
      */
     public function getStatus(): Result;

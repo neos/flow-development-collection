@@ -52,9 +52,6 @@ class CommandRequestHandler implements RequestHandlerInterface
      */
     protected $response;
 
-    /**
-    * @param Bootstrap $bootstrap
-     */
     public function __construct(Bootstrap $bootstrap)
     {
         $this->bootstrap = $bootstrap;

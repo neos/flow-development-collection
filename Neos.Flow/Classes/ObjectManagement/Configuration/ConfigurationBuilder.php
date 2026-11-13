@@ -42,9 +42,6 @@ readonly class ConfigurationBuilder
     use ObjectNameNormalization;
 
     /**
-     * @param ReflectionService $reflectionService
-     * @param ConfigurationParser $configurationParser
-     * @param LoggerInterface $logger
      * @param array<string> $excludeClassesFromConstructorAutowiring An array of object names for which constructor injection autowiring should be disabled
      * Note that the object names are regular expressions.
      */
@@ -138,7 +135,7 @@ readonly class ConfigurationBuilder
                     $rawObjectConfiguration = $this->enhanceRawConfigurationWithAnnotationOptions($rawObjectConfiguration['className'], $rawObjectConfiguration);
                 }
                 // Virtual objects are determined by a colon ":" in the name (e.g. "Some.Package:Some.Virtual.Object")
-                $isVirtualObject = str_contains($objectName, ':') !== false;
+                $isVirtualObject = str_contains($objectName, ':');
                 if ($isVirtualObject && empty($rawObjectConfiguration['className'])) {
                     throw new InvalidObjectConfigurationException(sprintf('Missing className for virtual object configuration "%s" of package %s. Please check your Objects.yaml.', $objectName, $packageKey), 1585758850);
                 }
@@ -188,9 +185,8 @@ readonly class ConfigurationBuilder
 
         $objectConfigurations = $this->autowireArguments($objectConfigurations);
         $objectConfigurations = $this->autowireProperties($objectConfigurations);
-        $objectConfigurations = $this->wireFactoryArguments($objectConfigurations);
 
-        return $objectConfigurations;
+        return $this->wireFactoryArguments($objectConfigurations);
     }
 
     /**

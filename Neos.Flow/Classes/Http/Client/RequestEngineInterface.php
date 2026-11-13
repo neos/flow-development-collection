@@ -25,8 +25,6 @@ interface RequestEngineInterface
     /**
      * Sends the given HTTP request
      *
-     * @param RequestInterface $request
-     * @return ResponseInterface
      * @throws Http\Client\Exception
      */
     public function sendRequest(RequestInterface $request): ResponseInterface;

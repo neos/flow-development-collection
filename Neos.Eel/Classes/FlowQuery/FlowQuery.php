@@ -126,7 +126,6 @@ class FlowQuery implements ProtectedContextAwareInterface, \IteratorAggregate, \
     /**
      * The q function from eel
      * @param mixed $element
-     * @return FlowQuery
      * @throws Exception
      */
     public static function q($element): self
@@ -137,8 +136,6 @@ class FlowQuery implements ProtectedContextAwareInterface, \IteratorAggregate, \
     /**
      * Setter for setting the operation resolver from the outside, only needed
      * to successfully run unit tests (hacky!)
-     *
-     * @param OperationResolverInterface $operationResolver
      */
     public function setOperationResolver(OperationResolverInterface $operationResolver): void
     {
@@ -182,8 +179,6 @@ class FlowQuery implements ProtectedContextAwareInterface, \IteratorAggregate, \
 
     /**
      * Implementation of the countable() interface, which is mapped to the "count" operation.
-     *
-     * @return integer
      */
     public function count(): int
     {

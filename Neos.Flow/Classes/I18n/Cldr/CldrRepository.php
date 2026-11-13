@@ -65,7 +65,6 @@ class CldrRepository
     protected $models = [];
 
     /**
-     * @param I18n\Service $localizationService
      * @return void
      */
     public function injectLocalizationService(I18n\Service $localizationService)
@@ -147,7 +146,7 @@ class CldrRepository
      */
     protected function findLocaleChain(I18n\Locale $locale, $directoryPath)
     {
-        $filesInHierarchy = [Files::concatenatePaths([$directoryPath, (string)$locale . '.xml'])];
+        $filesInHierarchy = [Files::concatenatePaths([$directoryPath, $locale . '.xml'])];
 
         $localeIdentifier = (string)$locale;
         while ($localeIdentifier = substr($localeIdentifier, 0, (int)strrpos($localeIdentifier, '_'))) {

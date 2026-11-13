@@ -27,7 +27,6 @@ interface BackendInterface
      * Sets a reference to the cache frontend which uses this backend
      *
      * @param FrontendInterface $cache The frontend for this backend
-     * @return void
      * @api
      */
     public function setCache(FrontendInterface $cache): void;
@@ -40,9 +39,6 @@ interface BackendInterface
      * may be necessary to know the actual identifier used by the cache backend
      * in order to share cache entries with other applications. This method allows
      * for retrieving it.
-     *
-     * @param string $entryIdentifier
-     * @return string
      */
     public function getPrefixedIdentifier(string $entryIdentifier): string;
 
@@ -53,7 +49,6 @@ interface BackendInterface
      * @param string $data The data to be stored
      * @param array<string> $tags Tags to associate with this cache entry. If the backend does not support tags, this option can be ignored.
      * @param integer|null $lifetime Lifetime of this cache entry in seconds. If NULL is specified, the default lifetime is used. "0" means unlimited lifetime.
-     * @return void
      * @throws \Neos\Cache\Exception if no cache frontend has been set.
      * @throws \InvalidArgumentException if the identifier is not valid
      * @api
@@ -92,7 +87,6 @@ interface BackendInterface
     /**
      * Removes all cache entries of this cache.
      *
-     * @return void
      * @api
      */
     public function flush(): void;
@@ -100,7 +94,6 @@ interface BackendInterface
     /**
      * Does garbage collection
      *
-     * @return void
      * @api
      */
     public function collectGarbage(): void;

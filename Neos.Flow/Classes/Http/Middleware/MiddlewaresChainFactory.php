@@ -34,7 +34,6 @@ class MiddlewaresChainFactory
 
     /**
      * @param array<mixed> $chainConfiguration
-     * @return MiddlewaresChain
      * @throws Exception
      */
     public function create(array $chainConfiguration): MiddlewaresChain

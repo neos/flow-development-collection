@@ -182,7 +182,7 @@ class KickstartCommandController extends CommandController
 
         $this->outputLine(implode(PHP_EOL, $generatedFiles));
 
-        if ($generatedModels === true) {
+        if ($generatedModels) {
             $this->outputLine('As new models were generated, don\'t forget to update the database schema with the respective doctrine:* commands.');
         }
     }

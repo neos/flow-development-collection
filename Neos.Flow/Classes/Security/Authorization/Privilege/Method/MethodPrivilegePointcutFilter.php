@@ -32,7 +32,7 @@ class MethodPrivilegePointcutFilter implements PointcutFilterInterface
     /**
      * @var PointcutFilterComposite[]
      */
-    protected $filters = null;
+    protected $filters;
 
     /**
      * @var array<mixed>
@@ -57,7 +57,6 @@ class MethodPrivilegePointcutFilter implements PointcutFilterInterface
     /**
      * This object is created very early so we can't rely on AOP for the property injection
      *
-     * @param ObjectManagerInterface $objectManager
      * @return void
      * @throws \Neos\Cache\Exception\NoSuchCacheException
      */
@@ -141,9 +140,6 @@ class MethodPrivilegePointcutFilter implements PointcutFilterInterface
 
     /**
      * This method is used to optimize the matching process.
-     *
-     * @param ClassNameIndex $classNameIndex
-     * @return ClassNameIndex
      */
     public function reduceTargetClassNames(ClassNameIndex $classNameIndex): ClassNameIndex
     {
@@ -163,7 +159,6 @@ class MethodPrivilegePointcutFilter implements PointcutFilterInterface
      * @param string $methodName
      * @param class-string $methodDeclaringClassName
      * @param mixed $pointcutQueryIdentifier
-     * @return \Closure
      */
     protected function getFilterEvaluator($className, $methodName, $methodDeclaringClassName, $pointcutQueryIdentifier): \Closure
     {

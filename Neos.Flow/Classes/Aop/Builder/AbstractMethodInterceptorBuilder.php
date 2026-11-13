@@ -35,17 +35,12 @@ abstract class AbstractMethodInterceptorBuilder
      * Injects the reflection service
      *
      * @param ReflectionService $reflectionService The reflection service
-     * @return void
      */
     public function injectReflectionService(ReflectionService $reflectionService): void
     {
         $this->reflectionService = $reflectionService;
     }
 
-    /**
-     * @param Compiler $compiler
-     * @return void
-     */
     public function injectCompiler(Compiler $compiler): void
     {
         $this->compiler = $compiler;
@@ -57,7 +52,6 @@ abstract class AbstractMethodInterceptorBuilder
      * @param string $methodName Name of the method to build an interceptor for
      * @param array<mixed> $methodMetaInformation An array of method names and their meta information, including advices for the method (if any)
      * @param class-string $targetClassName Name of the target class to build the interceptor for
-     * @return void
      */
     abstract public function build(string $methodName, array $methodMetaInformation, string $targetClassName): void;
 

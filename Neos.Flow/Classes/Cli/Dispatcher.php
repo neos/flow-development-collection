@@ -24,9 +24,6 @@ class Dispatcher
     /**
      * Try processing the request until it is successfully marked "dispatched"
      *
-     * @param Request $request
-     * @param Response $response
-     * @return Response
      * @throws InfiniteLoopException
      * @throws InvalidCommandControllerException
      */
@@ -54,9 +51,6 @@ class Dispatcher
     /**
      * This signal is emitted directly before the request is been dispatched to a controller.
      *
-     * @param Request $request
-     * @param Response $response
-     * @param CommandControllerInterface $controller
      * @return void
      * @Flow\Signal
      */
@@ -68,9 +62,6 @@ class Dispatcher
      * This signal is emitted directly after the request has been dispatched to a controller and the controller
      * returned control back to the dispatcher.
      *
-     * @param Request $request
-     * @param Response $response
-     * @param CommandControllerInterface $controller
      * @return void
      * @Flow\Signal
      */
@@ -83,7 +74,6 @@ class Dispatcher
      * If no controller can be found, an instance of NotFoundControllerInterface is returned.
      *
      * @param Request $request The request to dispatch
-     * @return CommandControllerInterface
      * @throws InvalidCommandControllerException
      */
     protected function resolveController(Request $request): CommandControllerInterface

@@ -72,9 +72,6 @@ class PersistenceManager extends AbstractPersistenceManager
 
     /**
      * Injects the (system) logger based on PSR-3.
-     *
-     * @param LoggerInterface $logger
-     * @return void
      */
     public function injectLogger(LoggerInterface $logger): void
     {
@@ -86,12 +83,11 @@ class PersistenceManager extends AbstractPersistenceManager
      * session into the backend
      *
      * @param boolean $onlyAllowedObjects If true an exception will be thrown if there are scheduled updates/deletes or insertions for objects that are not "allowed" (see AbstractPersistenceManager::allowObject()). Deprecated: Use `persistAllowedObjects()` instead.
-     * @return void
      * @api
      */
     public function persistAll(bool $onlyAllowedObjects = false): void
     {
-        if ($onlyAllowedObjects === true) {
+        if ($onlyAllowedObjects) {
             $this->persistAllowedObjects();
             return;
         }
@@ -111,7 +107,6 @@ class PersistenceManager extends AbstractPersistenceManager
      * An exception will be thrown if there are scheduled updates/deletes or
      * insertions for objects that are not "allowed" (see AbstractPersistenceManager::allowObject())
      *
-     * @return void
      * @throws PersistenceException
      * @api
      */
@@ -133,8 +128,6 @@ class PersistenceManager extends AbstractPersistenceManager
      *
      * Managed instances become detached, any fetches will
      * return data directly from the persistence "backend".
-     *
-     * @return void
      */
     public function clearState(): void
     {
@@ -211,7 +204,7 @@ class PersistenceManager extends AbstractPersistenceManager
             /** @phpstan-ignore return.type */
             return $this->newObjects[$identifier];
         }
-        if ($useLazyLoading === true) {
+        if ($useLazyLoading) {
             return $this->entityManager->getReference($objectType, $identifier);
         }
 
@@ -234,7 +227,6 @@ class PersistenceManager extends AbstractPersistenceManager
      * Adds an object to the persistence.
      *
      * @param object $object The object to add
-     * @return void
      * @throws KnownObjectException if the given $object is not new
      * @throws PersistenceException if another error occurs
      * @throws PropertyNotAccessibleException
@@ -257,7 +249,6 @@ class PersistenceManager extends AbstractPersistenceManager
      * Removes an object to the persistence.
      *
      * @param object $object The object to remove
-     * @return void
      * @api
      */
     public function remove($object): void
@@ -269,7 +260,6 @@ class PersistenceManager extends AbstractPersistenceManager
      * Update an object in the persistence.
      *
      * @param object $object The modified object
-     * @return void
      * @throws UnknownObjectException if the given $object is new
      * @throws PersistenceException if another error occurs
      * @throws PropertyNotAccessibleException
@@ -302,7 +292,6 @@ class PersistenceManager extends AbstractPersistenceManager
     /**
      * Called from functional tests, creates/updates database tables and compiles proxies.
      *
-     * @return boolean
      * @throws ToolsException
      */
     public function compile(): bool
@@ -330,8 +319,6 @@ class PersistenceManager extends AbstractPersistenceManager
 
     /**
      * Called after a functional test in Flow, dumps everything in the database.
-     *
-     * @return void
      */
     public function tearDown(): void
     {
@@ -352,7 +339,6 @@ class PersistenceManager extends AbstractPersistenceManager
      * Signals that all persistAll() has been executed successfully.
      *
      * @Flow\Signal
-     * @return void
      */
     protected function emitAllObjectsPersisted(): void
     {
@@ -363,8 +349,6 @@ class PersistenceManager extends AbstractPersistenceManager
      *
      * This is primarily used to inform the user if he tries to save
      * data in an unsafe request.
-     *
-     * @return boolean
      */
     public function hasUnpersistedChanges(): bool
     {

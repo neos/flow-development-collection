@@ -86,7 +86,6 @@ interface TypeConverterInterface
      *
      * @param string $targetType
      * @param string $propertyName
-     * @param PropertyMappingConfigurationInterface $configuration
      * @return string|null the type of $propertyName in $targetType
      * @api
      */
@@ -106,7 +105,6 @@ interface TypeConverterInterface
      * @param mixed $source
      * @param string $targetType
      * @param array<string,mixed> $convertedChildProperties
-     * @param PropertyMappingConfigurationInterface|null $configuration
      * @return mixed|Error the target type, or an error object if a user-error occurred
      * @throws Exception\TypeConverterException thrown in case a developer error occurred
      * @api

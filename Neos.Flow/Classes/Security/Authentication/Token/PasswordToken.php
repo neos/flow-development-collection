@@ -66,8 +66,6 @@ class PasswordToken extends AbstractToken implements PasswordTokenInterface
 
     /**
      * Returns a string representation of the token for logging purposes.
-     *
-     * @return string
      */
     public function __toString(): string
     {

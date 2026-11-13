@@ -214,7 +214,6 @@ class PropertyConditionGenerator implements SqlGeneratorInterface
 
     /**
      * @param mixed $operandDefinition
-     * @return $this
      * @throws InvalidPolicyException
      */
     public function contains($operandDefinition): PropertyConditionGenerator
@@ -231,7 +230,6 @@ class PropertyConditionGenerator implements SqlGeneratorInterface
     }
 
     /**
-     * @param DoctrineSqlFilter $sqlFilter
      * @param ORMClassMetadata<object> $targetEntity
      * @param string $targetTableAlias
      * @return string
@@ -264,12 +262,7 @@ class PropertyConditionGenerator implements SqlGeneratorInterface
     }
 
     /**
-     * @param DoctrineSqlFilter $sqlFilter
-     * @param QuoteStrategy $quoteStrategy
      * @param ORMClassMetadata<object> $targetEntity
-     * @param string $targetTableAlias
-     * @param string $targetEntityPropertyName
-     * @return string
      * @throws InvalidQueryRewritingConstraintException
      * @throws \Exception
      */
@@ -330,8 +323,6 @@ class PropertyConditionGenerator implements SqlGeneratorInterface
     }
 
     /**
-     * @param DoctrineSqlFilter $sqlFilter
-     * @param QuoteStrategy $quoteStrategy
      * @param ORMClassMetadata<object> $targetEntity
      * @param string $targetTableAlias
      * @param string $targetEntityPropertyName
@@ -355,8 +346,6 @@ class PropertyConditionGenerator implements SqlGeneratorInterface
     }
 
     /**
-     * @param DoctrineSqlFilter $sqlFilter
-     * @param QuoteStrategy $quoteStrategy
      * @param ORMClassMetadata<object> $targetEntity
      * @param string $targetTableAlias
      * @param string $targetEntityPropertyName
@@ -402,8 +391,6 @@ class PropertyConditionGenerator implements SqlGeneratorInterface
     }
 
     /**
-     * @param DoctrineSqlFilter $sqlFilter
-     * @param QuoteStrategy $quoteStrategy
      * @param ORMClassMetadata<object> $targetEntity
      * @param string $targetTableAlias
      * @param string $targetEntityPropertyName
@@ -472,7 +459,6 @@ class PropertyConditionGenerator implements SqlGeneratorInterface
     }
 
     /**
-     * @param DoctrineSqlFilter $sqlFilter
      * @param string $propertyPointer
      * @param string $operandDefinition
      * @return string
@@ -556,16 +542,14 @@ class PropertyConditionGenerator implements SqlGeneratorInterface
             $objectAccess = explode('.', $expression, 3);
             $globalObjectsRegisteredClassName = $this->globalObjects[$objectAccess[1]];
             $globalObject = $this->objectManager->get($globalObjectsRegisteredClassName);
-            $globalObjectValue = $this->securityContext->withoutAuthorizationChecks(fn () => $this->getObjectValueByPath($globalObject, $objectAccess[2]));
 
-            return $globalObjectValue;
+            return $this->securityContext->withoutAuthorizationChecks(fn () => $this->getObjectValueByPath($globalObject, $objectAccess[2]));
         } else {
             return trim($expression, '"\'');
         }
     }
 
     /**
-     * @param DoctrineSqlFilter $sqlFilter
      * @param mixed $name
      * @param mixed $value
      * @param string|int|null $type

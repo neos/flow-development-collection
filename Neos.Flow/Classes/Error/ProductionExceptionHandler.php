@@ -67,9 +67,7 @@ class ProductionExceptionHandler extends AbstractExceptionHandler
     /**
      * Returns the statically rendered exception message
      *
-     * @param integer $statusCode
      * @param string $referenceCode
-     * @return string
      */
     protected function renderStatically(int $statusCode, ?string $referenceCode): string
     {

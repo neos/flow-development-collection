@@ -33,9 +33,6 @@ class AuthenticationRequiredException extends \Neos\Flow\Security\Exception
 
     /**
      * Attach the given action request as intercepted request and return self.
-     *
-     * @param ActionRequest $actionRequest
-     * @return AuthenticationRequiredException
      */
     public function attachInterceptedRequest(ActionRequest $actionRequest): self
     {

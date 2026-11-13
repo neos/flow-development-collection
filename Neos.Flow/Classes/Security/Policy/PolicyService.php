@@ -70,7 +70,6 @@ class PolicyService
      * This object is created very early so we can't rely on AOP for the property injection
      *
      * @param ConfigurationManager $configurationManager The configuration manager
-     * @return void
      */
     public function injectConfigurationManager(ConfigurationManager $configurationManager): void
     {
@@ -79,9 +78,6 @@ class PolicyService
 
     /**
      * This object is created very early so we can't rely on AOP for the property injection
-     *
-     * @param ObjectManagerInterface $objectManager
-     * @return void
      */
     public function injectObjectManager(ObjectManagerInterface $objectManager): void
     {
@@ -91,7 +87,6 @@ class PolicyService
     /**
      * Parses the global policy configuration and initializes roles and privileges accordingly
      *
-     * @return void
      * @throws SecurityException
      * @throws InvalidConfigurationTypeException
      */
@@ -175,7 +170,6 @@ class PolicyService
     /**
      * Initialized all configured privilege targets from the policy definitions
      *
-     * @return void
      * @throws SecurityException
      */
     protected function initializePrivilegeTargets(): void
@@ -217,7 +211,6 @@ class PolicyService
      * Checks if a role exists
      *
      * @param string $roleIdentifier The role identifier, format: (<PackageKey>:)<Role>
-     * @return bool
      * @throws InvalidConfigurationTypeException
      * @throws SecurityException
      */
@@ -231,7 +224,6 @@ class PolicyService
      * Returns a Role object configured in the PolicyService
      *
      * @param string $roleIdentifier The role identifier of the role, format: (<PackageKey>:)<Role>
-     * @return Role
      * @throws InvalidConfigurationTypeException
      * @throws NoSuchRoleException
      * @throws SecurityException
@@ -256,7 +248,7 @@ class PolicyService
     {
         $this->initialize();
         if (!$includeAbstract) {
-            return array_filter($this->roles, static fn (Role $role) => $role->isAbstract() !== true);
+            return array_filter($this->roles, static fn (Role $role) => !$role->isAbstract());
         }
         return $this->roles;
     }
@@ -296,7 +288,6 @@ class PolicyService
      * Returns the privilege target identified by the given string
      *
      * @param string $privilegeTargetIdentifier Identifier of a privilege target
-     * @return PrivilegeTarget|null
      * @throws InvalidConfigurationTypeException
      * @throws SecurityException
      */
@@ -309,8 +300,6 @@ class PolicyService
     /**
      * Resets the PolicyService to behave transparently during
      * functional testing.
-     *
-     * @return void
      */
     public function reset(): void
     {
@@ -325,7 +314,6 @@ class PolicyService
      * $policyConfiguration array by reference so you can alter it.
      *
      * @param array<mixed> $policyConfiguration The policy configuration
-     * @return void
      * @Flow\Signal
      */
     protected function emitConfigurationLoaded(array &$policyConfiguration): void
@@ -339,7 +327,6 @@ class PolicyService
      * reference so you can alter it.
      *
      * @param array<Role> $roles All initialized roles (even abstract roles)
-     * @return void
      * @Flow\Signal
      */
     protected function emitRolesInitialized(array &$roles): void

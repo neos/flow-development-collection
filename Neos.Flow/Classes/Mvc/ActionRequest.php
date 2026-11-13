@@ -56,7 +56,7 @@ class ActionRequest
      * Subpackage key of the controller which is supposed to handle this request.
      * @var string|null
      */
-    protected $controllerSubpackageKey = null;
+    protected $controllerSubpackageKey;
 
     /**
      * Object name of the controller which is supposed to handle this request.
@@ -133,10 +133,6 @@ class ActionRequest
     {
     }
 
-    /**
-     * @param HttpRequestInterface $request
-     * @return ActionRequest
-     */
     public static function fromHttpRequest(HttpRequestInterface $request): ActionRequest
     {
         $mainActionRequest = new ActionRequest();
@@ -146,8 +142,6 @@ class ActionRequest
 
     /**
      * Create a sub request from this action request.
-     *
-     * @return ActionRequest
      */
     public function createSubRequest(): ActionRequest
     {
@@ -159,7 +153,6 @@ class ActionRequest
     /**
      * Returns the parent request
      *
-     * @return ActionRequest|null
      * @api
      */
     public function getParentRequest(): ?ActionRequest
@@ -170,7 +163,6 @@ class ActionRequest
     /**
      * Returns the top level request: the HTTP request object
      *
-     * @return HttpRequestInterface
      * @api
      */
     public function getHttpRequest(): HttpRequestInterface
@@ -185,7 +177,6 @@ class ActionRequest
     /**
      * Returns the top level ActionRequest: the one just below the HTTP request
      *
-     * @return ActionRequest
      * @api
      */
     public function getMainRequest(): ActionRequest
@@ -204,7 +195,6 @@ class ActionRequest
      *
      * @phpstan-assert-if-true null $this->getParentRequest()
      * @phpstan-assert-if-false ActionRequest $this->getParentRequest()
-     * @return boolean
      * @api
      */
     public function isMainRequest(): bool
@@ -286,7 +276,6 @@ class ActionRequest
      * Explicitly sets the object name of the controller
      *
      * @param string $unknownCasedControllerObjectName The fully qualified controller object name
-     * @return void
      * @throws UnknownObjectException
      * @api
      */
@@ -331,7 +320,6 @@ class ActionRequest
      * cannot be verified or corrected and is stored as is.
      *
      * @param string $packageKey The package key
-     * @return void
      * @api
      */
     public function setControllerPackageKey(string $packageKey): void
@@ -355,7 +343,6 @@ class ActionRequest
      * Sets the subpackage key of the controller.
      *
      * @param string|null $subpackageKey The subpackage key.
-     * @return void
      */
     public function setControllerSubpackageKey(?string $subpackageKey): void
     {
@@ -386,7 +373,6 @@ class ActionRequest
      * Examples: "Standard", "Account", ...
      *
      * @param string $controllerName Name of the controller
-     * @return void
      * @throws Exception\InvalidControllerNameException
      */
     public function setControllerName(string $controllerName): void
@@ -421,7 +407,6 @@ class ActionRequest
      * Note that the action name must start with a lower case letter and is case sensitive.
      *
      * @param string $actionName Name of the action to execute by the controller
-     * @return void
      * @throws Exception\InvalidActionNameException if the action name is not valid
      */
     public function setControllerActionName(string $actionName): void
@@ -465,7 +450,6 @@ class ActionRequest
      *
      * @param string $argumentName Name of the argument to set
      * @param mixed $value The new value
-     * @return void
      * @throws Exception\InvalidArgumentNameException if the given argument name is no string
      * @throws Exception\InvalidArgumentTypeException if the given argument value is an object
      * @throws Exception\InvalidControllerNameException
@@ -548,7 +532,6 @@ class ActionRequest
      * which existed before will be overwritten!
      *
      * @param array<mixed> $arguments An array of argument names and their values
-     * @return void
      * @throws Exception\InvalidArgumentNameException if an argument name is not a string
      * @throws Exception\InvalidArgumentTypeException if an argument value is an object
      * @throws Exception\InvalidControllerNameException
@@ -606,7 +589,6 @@ class ActionRequest
      * render argument names which don't conflict with each other.
      *
      * @param string $namespace Argument namespace
-     * @return void
      */
     public function setArgumentNamespace(string $namespace): void
     {
@@ -615,8 +597,6 @@ class ActionRequest
 
     /**
      * Returns the argument namespace, if any.
-     *
-     * @return string
      */
     public function getArgumentNamespace(): string
     {
@@ -637,7 +617,6 @@ class ActionRequest
      * Sets the requested representation format
      *
      * @param string $format The desired format, something like "html", "xml", "png", "json" or the like. Can even be something like "rss.xml".
-     * @return void
      */
     public function setFormat(string $format): void
     {

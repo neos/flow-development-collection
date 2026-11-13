@@ -45,7 +45,6 @@ class DatetimeParser
     protected $datesReader;
 
     /**
-     * @param DatesReader $datesReader
      * @return void
      */
     public function injectDatesReader(DatesReader $datesReader)
@@ -79,7 +78,6 @@ class DatetimeParser
      * locale.
      *
      * @param string $dateToParse date to be parsed
-     * @param I18n\Locale $locale
      * @param string $formatLength One of: full, long, medium, short, or 'default' in order to use default length from CLDR
      * @param boolean $strictMode Work mode (strict when true, lenient when false)
      * @return mixed Array of parsed date elements, false on failure
@@ -96,7 +94,6 @@ class DatetimeParser
      * locale.
      *
      * @param string $timeToParse Time to be parsed
-     * @param I18n\Locale $locale
      * @param string $formatLength One of: full, long, medium, short, or 'default' in order to use default length from CLDR
      * @param boolean $strictMode Work mode (strict when true, lenient when false)
      * @return mixed Array of parsed time elements, false on failure
@@ -113,7 +110,6 @@ class DatetimeParser
      * particular locale.
      *
      * @param string $dateAndTimeToParse Date and time to be parsed
-     * @param I18n\Locale $locale
      * @param string $formatLength One of: full, long, medium, short, or 'default' in order to use default length from CLDR
      * @param boolean $strictMode Work mode (strict when true, lenient when false)
      * @return mixed Array of parsed date and time elements, false on failure

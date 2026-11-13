@@ -80,9 +80,7 @@ readonly class ConfigurationParser
     }
 
     /**
-     * @param Configuration $objectConfiguration
      * @param array<string, mixed> $optionValue
-     * @return Configuration
      * @throws ClassLoadingForReflectionFailedException
      * @throws InvalidClassException
      * @throws InvalidObjectConfigurationException
@@ -108,10 +106,8 @@ readonly class ConfigurationParser
     }
 
     /**
-     * @param Configuration $objectConfiguration
      * @param array<string, mixed> $rawConfigurationOptions
      * @param array<string, mixed> $optionValue
-     * @return Configuration
      * @throws ClassLoadingForReflectionFailedException
      * @throws InvalidClassException
      * @throws InvalidObjectConfigurationException

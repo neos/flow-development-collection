@@ -68,7 +68,6 @@ interface JoinPointInterface
      *
      * @param string $argumentName Name of the argument
      * @param mixed $argumentValue Value of the argument
-     * @return void
      */
     public function setMethodArgument($argumentName, $argumentValue): void;
 

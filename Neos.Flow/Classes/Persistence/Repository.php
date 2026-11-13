@@ -74,7 +74,6 @@ abstract class Repository implements RepositoryInterface
      * Adds an object to this repository.
      *
      * @param T $object The object to add
-     * @return void
      * @throws IllegalObjectTypeException
      * @api
      */
@@ -90,7 +89,6 @@ abstract class Repository implements RepositoryInterface
      * Removes an object from this repository.
      *
      * @param T $object The object to remove
-     * @return void
      * @throws IllegalObjectTypeException
      * @api
      */
@@ -144,7 +142,6 @@ abstract class Repository implements RepositoryInterface
     /**
      * Counts all objects of this repository
      *
-     * @return integer
      * @api
      */
     public function countAll(): int
@@ -156,7 +153,6 @@ abstract class Repository implements RepositoryInterface
      * Removes all objects of this repository as if remove() was called for
      * all of them.
      *
-     * @return void
      * @api
      * @todo use DQL here, would be much more performant
      */
@@ -175,7 +171,6 @@ abstract class Repository implements RepositoryInterface
      * )
      *
      * @param array<string,QueryInterface::ORDER_ASCENDING|QueryInterface::ORDER_DESCENDING> $defaultOrderings The property names to "order by" by default
-     * @return void
      * @api
      */
     public function setDefaultOrderings(array $defaultOrderings): void

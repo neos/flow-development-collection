@@ -53,25 +53,16 @@ final class RouteContext implements CacheAwareInterface
         $this->parameters = $parameters;
     }
 
-    /**
-     * @return ServerRequestInterface
-     */
     public function getHttpRequest(): ServerRequestInterface
     {
         return $this->httpRequest;
     }
 
-    /**
-     * @return RouteParameters
-     */
     public function getParameters(): RouteParameters
     {
         return $this->parameters;
     }
 
-    /**
-     * @return string
-     */
     public function getCacheEntryIdentifier(): string
     {
         if ($this->cacheEntryIdentifier === null) {

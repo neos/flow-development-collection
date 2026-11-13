@@ -49,7 +49,7 @@ class Environment
     /**
      * @var string|null
      */
-    protected $temporaryDirectory = null;
+    protected $temporaryDirectory;
 
     /**
      * Initializes the environment instance.
@@ -65,7 +65,6 @@ class Environment
      * Sets the base path of the temporary directory
      *
      * @param string $temporaryDirectoryBase Base path of the temporary directory, with trailing slash
-     * @return void
      */
     public function setTemporaryDirectoryBase(string $temporaryDirectoryBase): void
     {
@@ -104,8 +103,6 @@ class Environment
 
     /**
      * Whether or not URL rewriting is enabled.
-     *
-     * @return bool
      */
     public function isRewriteEnabled(): bool
     {
@@ -119,7 +116,6 @@ class Environment
      * avoid ambiguity, and look like: Data/Temporary/Production/SubContextLive
      *
      * @param string $temporaryDirectoryBase Full path to the base for the temporary directory
-     * @param ApplicationContext $context
      * @return string The full path to the temporary directory, with trailing slash
      * @throws FilesException
      */
@@ -158,9 +154,6 @@ class Environment
         return $temporaryDirectory;
     }
 
-    /**
-     * @return ApplicationContext
-     */
     public function getContext(): ApplicationContext
     {
         return $this->context;

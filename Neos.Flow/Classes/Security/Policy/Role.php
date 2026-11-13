@@ -99,8 +99,6 @@ class Role implements \Stringable
 
     /**
      * Returns the fully qualified identifier of this role
-     *
-     * @return string
      */
     public function getIdentifier(): string
     {
@@ -109,8 +107,6 @@ class Role implements \Stringable
 
     /**
      * The key of the package that defines this role.
-     *
-     * @return string
      */
     public function getPackageKey(): string
     {
@@ -119,18 +115,12 @@ class Role implements \Stringable
 
     /**
      * The name of this role, being the identifier without the package key.
-     *
-     * @return string
      */
     public function getName(): string
     {
         return $this->name;
     }
 
-    /**
-     * @param bool $abstract
-     * @return void
-     */
     public function setAbstract(bool $abstract): void
     {
         $this->abstract = $abstract;
@@ -138,8 +128,6 @@ class Role implements \Stringable
 
     /**
      * Whether or not this role is "abstract", meaning it can't be assigned to accounts directly but only serves as a "template role" for other roles to inherit from
-     *
-     * @return bool
      */
     public function isAbstract(): bool
     {
@@ -150,7 +138,6 @@ class Role implements \Stringable
      * Assign parent roles to this role.
      *
      * @param Role[] $parentRoles indexed by role identifier
-     * @return void
      */
     public function setParentRoles(array $parentRoles): void
     {
@@ -187,9 +174,6 @@ class Role implements \Stringable
 
     /**
      * Add a (direct) parent role to this role.
-     *
-     * @param Role $parentRole
-     * @return void
      */
     public function addParentRole(Role $parentRole): void
     {
@@ -201,9 +185,6 @@ class Role implements \Stringable
 
     /**
      * Returns true if the given role is a directly assigned parent of this role.
-     *
-     * @param Role $role
-     * @return bool
      */
     public function hasParentRole(Role $role): bool
     {
@@ -214,7 +195,6 @@ class Role implements \Stringable
      * Assign privileges to this role.
      *
      * @param PrivilegeInterface[] $privileges
-     * @return void
      */
     public function setPrivileges(array $privileges): void
     {
@@ -247,7 +227,6 @@ class Role implements \Stringable
     }
 
     /**
-     * @param string $privilegeTargetIdentifier
      * @param array<PrivilegeParameterInterface> $privilegeParameters
      * @return PrivilegeInterface|null the matching privilege or NULL if no privilege exists for the given constraints
      */
@@ -267,9 +246,6 @@ class Role implements \Stringable
 
     /**
      * Add a privilege to this role.
-     *
-     * @param PrivilegeInterface $privilege
-     * @return void
      */
     public function addPrivilege(PrivilegeInterface $privilege): void
     {
@@ -286,17 +262,11 @@ class Role implements \Stringable
         return $this->identifier;
     }
 
-    /**
-     * @return string
-     */
     public function getLabel(): string
     {
         return $this->label;
     }
 
-    /**
-     * @return string
-     */
     public function getDescription(): string
     {
         return $this->description;

@@ -87,8 +87,7 @@ class FlowAnotationReader implements Reader
     public function getMethodAnnotation(ReflectionMethod $method, $annotationName)
     {
         $className = $this->getUnproxiedClassName($method->class);
-        $annotation = $this->reflectionService->getMethodAnnotation($className, $method->getName(), $annotationName);
-        return $annotation;
+        return $this->reflectionService->getMethodAnnotation($className, $method->getName(), $annotationName);
     }
 
     /**

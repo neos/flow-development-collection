@@ -116,7 +116,6 @@ class DatabaseCommandController extends CommandController
      * @param string $characterSet Character set to convert to
      * @param string $collation Collation to set, must be compatible with the character set
      * @param string $outputPathAndFilename
-     * @param boolean $verbose
      * @return void
      * @throws ConnectionException
      * @throws DBALException

@@ -93,7 +93,6 @@ class ConfigurationSchemaValidator
      * @param string $configurationType the configuration typr to validate
      * @param string|null $path configuration path to validate, or NULL.
      * @param array<int,string> $loadedSchemaFiles will be filled with a list of loaded schema files
-     * @return \Neos\Error\Messages\Result
      * @throws Exception\SchemaValidationException
      */
     protected function validateSingleType(string $configurationType, ?string $path = null, array&$loadedSchemaFiles = []): Result

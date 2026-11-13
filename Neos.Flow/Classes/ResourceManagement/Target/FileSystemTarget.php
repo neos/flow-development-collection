@@ -126,7 +126,6 @@ class FileSystemTarget implements TargetInterface
     /**
      * Injects the (system) logger based on PSR-3.
      *
-     * @param LoggerInterface $logger
      * @return void
      */
     public function injectLogger(LoggerInterface $logger)
@@ -189,7 +188,6 @@ class FileSystemTarget implements TargetInterface
      * Checks if the PackageStorage has been previously initialized with symlinks
      * and clears them. Otherwise the original sources would be overwritten.
      *
-     * @param StorageInterface $storage
      * @return void
      */
     protected function checkAndRemovePackageSymlinks(StorageInterface $storage)
@@ -253,8 +251,6 @@ class FileSystemTarget implements TargetInterface
     /**
      * Handle missing data notification
      *
-     * @param ResourceMetaDataInterface $resource
-     * @param CollectionInterface $collection
      * @return void
      */
     protected function handleMissingData(ResourceMetaDataInterface $resource, CollectionInterface $collection)
@@ -325,7 +321,7 @@ class FileSystemTarget implements TargetInterface
     protected function publishFile($sourceStream, $relativeTargetPathAndFilename)
     {
         $pathInfo = UnicodeFunctions::pathinfo($relativeTargetPathAndFilename);
-        if (array_key_exists('extension', $pathInfo) && array_key_exists(strtolower($pathInfo['extension']), $this->excludedExtensions) && $this->excludedExtensions[strtolower($pathInfo['extension'])] === true) {
+        if (array_key_exists('extension', $pathInfo) && array_key_exists(strtolower($pathInfo['extension']), $this->excludedExtensions) && $this->excludedExtensions[strtolower($pathInfo['extension'])]) {
             throw new TargetException(sprintf('Could not publish resource into publishing target "%s" because the filename extension "%s" is excluded.', $this->name, strtolower($pathInfo['extension'])), 1447148472);
         }
 

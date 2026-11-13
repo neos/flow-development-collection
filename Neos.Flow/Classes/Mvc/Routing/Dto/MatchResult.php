@@ -59,8 +59,6 @@ final class MatchResult
 
     /**
      * Whether this result is tagged
-     *
-     * @return bool
      */
     public function hasTags(): bool
     {
@@ -80,7 +78,6 @@ final class MatchResult
     /**
      * Whether this has a lifetime
      *
-     * @return bool
      * @phpstan-assert-if-true RouteLifetime $this->getLifetime()
      */
     public function hasLifetime(): bool
@@ -90,8 +87,6 @@ final class MatchResult
 
     /**
      * RouteLifetime to be associated with the MatchResult, or NULL
-     *
-     * @return RouteLifetime|null
      */
     public function getLifetime(): ?RouteLifetime
     {

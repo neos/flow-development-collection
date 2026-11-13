@@ -54,7 +54,6 @@ class XliffParser extends AbstractXmlParser
     }
 
     /**
-     * @param \SimpleXMLElement $file
      * @return array{sourceLocale: Locale, translationUnits?: array<string,array<int,array{source: string, target: string}>>}
      * @throws InvalidXliffDataException
      */

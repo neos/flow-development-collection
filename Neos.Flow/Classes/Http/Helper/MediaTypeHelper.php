@@ -24,7 +24,6 @@ abstract class MediaTypeHelper
      * Get accepted media types for the given request.
      * If no "Accept" header was found all media types are acceptable.
      *
-     * @param RequestInterface $request
      * @return array<mixed>
      */
     public static function determineAcceptedMediaTypes(RequestInterface $request): array
@@ -33,9 +32,8 @@ abstract class MediaTypeHelper
         if (empty($rawValues)) {
             return ['*/*'];
         }
-        $acceptedMediaTypes = self::parseContentNegotiationQualityValues($rawValues);
 
-        return $acceptedMediaTypes;
+        return self::parseContentNegotiationQualityValues($rawValues);
     }
 
     /**
@@ -103,8 +101,7 @@ abstract class MediaTypeHelper
         }
         $valuesWithoutQualityValue = array_merge(array_keys($valuesWithoutQualityValue[0]), array_keys($valuesWithoutQualityValue[1]), array_keys($valuesWithoutQualityValue[2]), array_keys($valuesWithoutQualityValue[3]));
         arsort($flattenedAcceptedTypes);
-        $parsedValues = array_merge($valuesWithoutQualityValue, array_keys($flattenedAcceptedTypes));
 
-        return $parsedValues;
+        return array_merge($valuesWithoutQualityValue, array_keys($flattenedAcceptedTypes));
     }
 }

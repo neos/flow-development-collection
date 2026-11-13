@@ -50,7 +50,6 @@ class CacheFactory extends \Neos\Cache\CacheFactory
     protected $environmentConfiguration;
 
     /**
-     * @param EnvironmentConfiguration $environmentConfiguration
      *
      * @Flow\Autowiring (enabled=false)
      */
@@ -63,8 +62,6 @@ class CacheFactory extends \Neos\Cache\CacheFactory
      * Constructs this cache factory
      *
      * @param ApplicationContext $context The current Flow context
-     * @param Environment $environment
-     * @param string $applicationIdentifier
      * @Flow\Autowiring(enabled=false)
      */
     public function __construct(ApplicationContext $context, Environment $environment, string $applicationIdentifier)
@@ -81,12 +78,9 @@ class CacheFactory extends \Neos\Cache\CacheFactory
     }
 
     /**
-     * @param string $cacheIdentifier
      * @param class-string<FrontendInterface> $cacheObjectName
      * @param class-string<BackendInterface> $backendObjectName
      * @param array<mixed> $backendOptions
-     * @param bool $persistent
-     * @return FrontendInterface
      */
     public function create(string $cacheIdentifier, string $cacheObjectName, string $backendObjectName, array $backendOptions = [], bool $persistent = false): FrontendInterface
     {
@@ -115,8 +109,6 @@ class CacheFactory extends \Neos\Cache\CacheFactory
      * @template T of BackendInterface
      * @param class-string<T> $backendObjectName
      * @param array<string,mixed> $backendOptions
-     * @param EnvironmentConfiguration $environmentConfiguration
-     * @param boolean $persistent
      * @return T
      * @throws InvalidBackendException
      */

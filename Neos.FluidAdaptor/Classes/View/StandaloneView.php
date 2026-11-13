@@ -37,13 +37,13 @@ class StandaloneView extends AbstractTemplateView
      * Source code of the Fluid template
      * @var string
      */
-    protected $templateSource = null;
+    protected $templateSource;
 
     /**
      * absolute path of the Fluid template
      * @var string
      */
-    protected $templatePathAndFilename = null;
+    protected $templatePathAndFilename;
 
     /**
      * @var \Neos\Flow\Utility\Environment

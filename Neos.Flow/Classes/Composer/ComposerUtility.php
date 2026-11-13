@@ -41,7 +41,6 @@ class ComposerUtility
     /**
      * Returns contents of Composer manifest - or part there of.
      *
-     * @param string $manifestPath
      * @param ?string $configurationPath Optional. Only return the part of the manifest indexed by configurationPath
      * @return mixed
      */
@@ -82,7 +81,6 @@ class ComposerUtility
     /**
      * Read the content of composer.json in the given path
      *
-     * @param string $manifestPath
      * @return array<string,mixed>
      * @throws Exception\MissingPackageManifestException
      */
@@ -109,9 +107,6 @@ class ComposerUtility
 
     /**
      * Checks if the given (composer) package type is a type native to the neos project.
-     *
-     * @param string $packageType
-     * @return boolean
      */
     public static function isFlowPackageType(string $packageType): bool
     {
@@ -121,8 +116,6 @@ class ComposerUtility
     /**
      * Write a composer manifest for the package.
      *
-     * @param string $manifestPath
-     * @param FlowPackageKey $packageKey
      * @param array<string,mixed> $composerManifestData
      * @return array<string,mixed> the manifest data written
      */

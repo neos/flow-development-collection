@@ -120,7 +120,6 @@ class PackageManager
      * the package manager subpackage is excluded from proxy class building.
      *
      * @param array<string,mixed> $settings
-     * @return void
      */
     public function injectSettings(array $settings): void
     {
@@ -142,7 +141,6 @@ class PackageManager
      * Initializes the package manager
      *
      * @param Bootstrap $bootstrap The current bootstrap
-     * @return void
      * @throws Exception
      * @throws Exception\CorruptPackageException
      * @throws FilesException
@@ -191,8 +189,6 @@ class PackageManager
 
     /**
      * Returns the base path for packages
-     *
-     * @return string
      */
     public function getPackagesBasePath(): string
     {
@@ -384,8 +380,7 @@ class PackageManager
     public function rescanPackages(): array
     {
         $loadedPackageStates = $this->scanAvailablePackages();
-        $loadedPackageStates = $this->sortAndSavePackageStates($loadedPackageStates);
-        return $loadedPackageStates;
+        return $this->sortAndSavePackageStates($loadedPackageStates);
     }
 
     /**
@@ -556,7 +551,6 @@ class PackageManager
      *
      * @param string $composerName
      * @param array<string,mixed> $packageStateConfiguration
-     * @return void
      * @throws Exception\CorruptPackageException
      */
     protected function registerPackageFromStateConfiguration($composerName, $packageStateConfiguration): void
@@ -677,7 +671,6 @@ class PackageManager
      * Resolves a Flow package key from a composer package name.
      *
      * @param string $composerName
-     * @return string
      * @throws Exception\InvalidPackageStateException
      */
     public function getPackageKeyFromComposerName($composerName): string
@@ -713,7 +706,6 @@ class PackageManager
      *
      * The advice is not proxyable, so the signal is dispatched manually here.
      *
-     * @return void
      * @throws \Neos\Flow\Exception
      * @throws InvalidSlotException
      * @Flow\Signal

@@ -67,7 +67,6 @@ class PhpFrontend extends StringFrontend
     /**
      * Returns the code wrapped in php tags as written to the cache, ready to be included.
      *
-     * @param string $entryIdentifier
      * @return string
      * @throws \InvalidArgumentException
      */

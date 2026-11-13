@@ -31,7 +31,6 @@ abstract class AbstractFormViewHelper extends AbstractTagBasedViewHelper
     /**
      * Injects the Flow Persistence Manager
      *
-     * @param PersistenceManagerInterface $persistenceManager
      * @return void
      */
     public function injectPersistenceManager(PersistenceManagerInterface $persistenceManager)

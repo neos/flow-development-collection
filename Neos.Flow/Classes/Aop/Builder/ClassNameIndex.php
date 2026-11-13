@@ -44,7 +44,6 @@ class ClassNameIndex
      * names. Note: Make sure to sort the array before!
      *
      * @param array<class-string> $classNames
-     * @return void
      */
     public function setClassNames(array $classNames): void
     {
@@ -76,7 +75,6 @@ class ClassNameIndex
      * Returns a new index object with all class names contained in this and
      * the given index
      *
-     * @param ClassNameIndex $classNameIndex
      * @return ClassNameIndex A new index object
      */
     public function intersect(ClassNameIndex $classNameIndex): ClassNameIndex
@@ -87,9 +85,6 @@ class ClassNameIndex
     /**
      * Sets this index to all class names which are present currently and
      * contained in the given index
-     *
-     * @param ClassNameIndex $classNameIndex
-     * @return void
      */
     public function applyIntersect(ClassNameIndex $classNameIndex): void
     {
@@ -100,7 +95,6 @@ class ClassNameIndex
      * Returns a new index object containing all class names of
      * this index and the given one
      *
-     * @param ClassNameIndex $classNameIndex
      * @return ClassNameIndex A new index object
      */
     public function union(ClassNameIndex $classNameIndex): ClassNameIndex
@@ -113,9 +107,6 @@ class ClassNameIndex
     /**
      * Sets this index to all class names which are either already present or are
      * contained in the given index
-     *
-     * @param ClassNameIndex $classNameIndex
-     * @return void
      */
     public function applyUnion(ClassNameIndex $classNameIndex): void
     {
@@ -132,9 +123,6 @@ class ClassNameIndex
         }
     }
 
-    /**
-     * @return void
-     */
     public function sort(): void
     {
         ksort($this->classNames);
@@ -183,7 +171,7 @@ class ClassNameIndex
             }
         }
 
-        if ($found === true) {
+        if ($found) {
             $startIndex = $currentPosition;
             while ($startIndex >= 0 && str_starts_with($pointcuts[$startIndex], $prefixFilter)) {
                 $startIndex--;

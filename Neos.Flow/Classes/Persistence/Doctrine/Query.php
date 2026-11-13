@@ -129,7 +129,6 @@ class Query implements QueryInterface
     }
 
     /**
-     * @param EntityManagerInterface $entityManager
      * @return void
      */
     public function injectEntityManager(EntityManagerInterface $entityManager)
@@ -143,16 +142,12 @@ class Query implements QueryInterface
      * for further use.
      *
      * @param array<string,mixed> $settings
-     * @return void
      */
     public function injectSettings(array $settings): void
     {
         $this->settings = $settings['persistence'];
     }
 
-    /**
-     * @param LoggerInterface $logger
-     */
     public function injectLogger(LoggerInterface $logger): void
     {
         $this->logger = $logger;
@@ -318,7 +313,6 @@ class Query implements QueryInterface
      * Sets the maximum size of the result set to limit. Returns $this to allow
      * for chaining (fluid interface)
      *
-     * @param integer|null $limit
      * @return QueryInterface<T>
      * @api
      */
@@ -343,7 +337,6 @@ class Query implements QueryInterface
     /**
      * Sets the DISTINCT flag for this query.
      *
-     * @param boolean $distinct
      * @return QueryInterface<T>
      * @api
      */
@@ -357,7 +350,6 @@ class Query implements QueryInterface
     /**
      * Returns the DISTINCT flag for this query.
      *
-     * @return boolean
      * @api
      */
     public function isDistinct(): bool
@@ -369,7 +361,6 @@ class Query implements QueryInterface
      * Sets the start offset of the result set to offset. Returns $this to
      * allow for chaining (fluid interface)
      *
-     * @param integer|null $offset
      * @return QueryInterface<T>
      * @api
      */
@@ -492,7 +483,7 @@ class Query implements QueryInterface
             return $this->queryBuilder->expr()->isNull($aliasedPropertyName);
         }
 
-        if ($caseSensitive === true) {
+        if ($caseSensitive) {
             return $this->queryBuilder->expr()->eq($aliasedPropertyName, $this->getParamNeedle($operand));
         }
 
@@ -513,7 +504,7 @@ class Query implements QueryInterface
     public function like(string $propertyName, string $operand, bool $caseSensitive = true)
     {
         $aliasedPropertyName = $this->getPropertyNameWithAlias($propertyName);
-        if ($caseSensitive === true) {
+        if ($caseSensitive) {
             return $this->queryBuilder->expr()->like($aliasedPropertyName, $this->getParamNeedle($operand));
         }
 

@@ -110,7 +110,6 @@ class ResourceManager
     /**
      * Injects the (system) logger based on PSR-3.
      *
-     * @param LoggerInterface $logger
      * @return void
      */
     public function injectLogger(LoggerInterface $logger)
@@ -517,7 +516,6 @@ class ResourceManager
     /**
      * Returns an array of Collection instances which use the given storage
      *
-     * @param StorageInterface $storage
      * @return array<CollectionInterface>
      */
     public function getCollectionsByStorage(StorageInterface $storage)
@@ -648,7 +646,7 @@ class ResourceManager
 
         $this->throwIfFileExtensionIsBlocked($pathInfo['basename']);
 
-        if ($openBasedirEnabled === true) {
+        if ($openBasedirEnabled) {
             // Move uploaded file to a readable folder before trying to read sha1 value of file
             $newTemporaryTargetPathAndFilename = $this->environment->getPathToTemporaryDirectory() . 'ResourceUpload.' . Algorithms::generateRandomString(13) . '.tmp';
             if (move_uploaded_file($temporaryTargetPathAndFilename, $newTemporaryTargetPathAndFilename) === false) {
@@ -675,8 +673,6 @@ class ResourceManager
      * Code that imports a stream and sets a filename from outside afterwards (e.g. the client filename of an
      * upload) must call this before importing, otherwise the content is stored before the name is checked.
      *
-     * @param string $filename
-     * @return void
      * @throws Exception
      * @internal
      */

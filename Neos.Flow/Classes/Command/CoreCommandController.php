@@ -85,7 +85,6 @@ class CoreCommandController extends CommandController
     protected $environment;
 
     /**
-     * @param RequestBuilder $requestBuilder
      * @return void
      */
     public function injectRequestBuilder(RequestBuilder $requestBuilder)
@@ -94,7 +93,6 @@ class CoreCommandController extends CommandController
     }
 
     /**
-     * @param Dispatcher $dispatcher
      * @return void
      */
     public function injectDispatcher(Dispatcher $dispatcher)
@@ -103,7 +101,6 @@ class CoreCommandController extends CommandController
     }
 
     /**
-     * @param SignalSlotDispatcher $signalSlotDispatcher
      * @return void
      */
     public function injectSignalSlotDispatcher(SignalSlotDispatcher $signalSlotDispatcher)
@@ -112,7 +109,6 @@ class CoreCommandController extends CommandController
     }
 
     /**
-     * @param Bootstrap $bootstrap
      * @return void
      */
     public function injectBootstrap(Bootstrap $bootstrap)
@@ -121,7 +117,6 @@ class CoreCommandController extends CommandController
     }
 
     /**
-     * @param CacheManager $cacheManager
      * @return void
      */
     public function injectCacheManager(CacheManager $cacheManager)
@@ -130,7 +125,6 @@ class CoreCommandController extends CommandController
     }
 
     /**
-     * @param Compiler $proxyClassCompiler
      * @return void
      */
     public function injectProxyClassCompiler(Compiler $proxyClassCompiler)
@@ -139,7 +133,6 @@ class CoreCommandController extends CommandController
     }
 
     /**
-     * @param AopProxyClassBuilder $aopProxyClassBuilder
      * @return void
      */
     public function injectAopProxyClassBuilder(AopProxyClassBuilder $aopProxyClassBuilder)
@@ -148,7 +141,6 @@ class CoreCommandController extends CommandController
     }
 
     /**
-     * @param ProxyClassBuilder $dependencyInjectionProxyClassBuilder
      * @return void
      */
     public function injectDependencyInjectionProxyClassBuilder(ProxyClassBuilder $dependencyInjectionProxyClassBuilder)
@@ -157,7 +149,6 @@ class CoreCommandController extends CommandController
     }
 
     /**
-     * @param Environment $environment
      * @return void
      */
     public function injectEnvironment(Environment $environment)

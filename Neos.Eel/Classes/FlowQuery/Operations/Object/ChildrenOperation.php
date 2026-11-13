@@ -92,7 +92,6 @@ class ChildrenOperation extends AbstractOperation
      * Evaluate the property name filter by traversing to the child object. We only support
      * nested objects right now
      *
-     * @param FlowQuery $query
      * @param string $propertyNameFilter
      * @return void
      */

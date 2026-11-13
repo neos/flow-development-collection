@@ -176,7 +176,6 @@ class NumbersReader
     protected $localizedSymbols;
 
     /**
-     * @param CldrRepository $repository
      * @return void
      */
     public function injectCldrRepository(CldrRepository $repository)
@@ -187,7 +186,6 @@ class NumbersReader
     /**
      * Injects the Flow_I18n_CDLR_Reader_NumbersReader cache
      *
-     * @param VariableFrontend $cache
      * @return void
      */
     public function injectCache(VariableFrontend $cache)
@@ -212,7 +210,6 @@ class NumbersReader
     /**
      * Shutdowns the object, saving parsed format strings to the cache.
      *
-     * @return void
      * @throws \Neos\Cache\Exception
      */
     public function shutdownObject(): void
@@ -229,7 +226,6 @@ class NumbersReader
      * When third parameter ($formatLength) equals 'default', default format for a
      * locale will be used.
      *
-     * @param Locale $locale
      * @param string $formatType A type of format (one of constant values)
      * @param string $formatLength A length of format (one of constant values)
      * @return ParsedFormat An array representing parsed format
@@ -274,10 +270,6 @@ class NumbersReader
         return $this->parsedFormats[$format] = $parsedFormat;
     }
 
-    /**
-     * @param Locale $locale
-     * @return string
-     */
     public function getDefaultNumberingSystem(Locale $locale): string
     {
         $model = $this->cldrRepository->getModelForLocale($locale);
@@ -313,7 +305,6 @@ class NumbersReader
      *
      * Symbols arrays for every requested locale are cached.
      *
-     * @param Locale $locale
      * @return array{decimal: string} Symbols array
      */
     public function getLocalizedSymbolsForLocale(Locale $locale): array
@@ -334,8 +325,6 @@ class NumbersReader
      * Validates provided format type and throws exception if value is not
      * allowed.
      *
-     * @param string $formatType
-     * @return void
      * @throws Exception\InvalidFormatTypeException When value is unallowed
      */
     public static function validateFormatType(string $formatType): void
@@ -349,8 +338,6 @@ class NumbersReader
      * Validates provided format length and throws exception if value is not
      * allowed.
      *
-     * @param string $formatLength
-     * @return void
      * @throws Exception\InvalidFormatLengthException When value is unallowed
      */
     public static function validateFormatLength(string $formatLength): void
@@ -366,7 +353,6 @@ class NumbersReader
      * Not all features from CLDR specification are implemented. Please see the
      * documentation for this class for details what is missing.
      *
-     * @param string $format
      * @return ParsedFormat Parsed format
      * @throws Exception\UnsupportedNumberFormatException When unsupported format characters encountered
      * @see NumbersReader::$parsedFormats

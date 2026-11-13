@@ -396,7 +396,6 @@ class ValidatorResolver
      * If multiple validators have the same priority, which one will be added is not deterministic.
      *
      * @param string $targetClassName
-     * @param ConjunctionValidator $conjunctionValidator
      * @return void
      * @throws Exception\InvalidValidationConfigurationException
      * @throws Exception\NoSuchValidatorException
@@ -442,8 +441,7 @@ class ValidatorResolver
     public static function getPolyTypeObjectValidatorImplementationClassNames($objectManager)
     {
         $reflectionService = $objectManager->get(ReflectionService::class);
-        $result = $reflectionService->getAllImplementationClassNamesForInterface(Validator\PolyTypeObjectValidatorInterface::class);
-        return $result;
+        return $reflectionService->getAllImplementationClassNamesForInterface(Validator\PolyTypeObjectValidatorInterface::class);
     }
 
     /**
@@ -500,7 +498,7 @@ class ValidatorResolver
      */
     protected function getValidatorType($type)
     {
-        $type = match ($type) {
+        return match ($type) {
             'int' => 'Integer',
             'bool' => 'Boolean',
             'double' => 'Float',
@@ -508,6 +506,5 @@ class ValidatorResolver
             'mixed' => 'Raw',
             default => ucfirst($type),
         };
-        return $type;
     }
 }

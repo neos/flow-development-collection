@@ -36,11 +36,9 @@ interface PrivilegeInterface extends CacheAwareInterface
      * @param PrivilegeParameterInterface[] $parameters
      */
     // public function __construct(PrivilegeTarget $privilegeTarget, $matcher, $permission, array $parameters) {
-
     /**
      * This object is created very early so we can't rely on AOP for the property injection
      *
-     * @param ObjectManagerInterface $objectManager
      * @return void
      */
     public function injectObjectManager(ObjectManagerInterface $objectManager);
@@ -99,7 +97,6 @@ interface PrivilegeInterface extends CacheAwareInterface
     /**
      * Returns true, if this privilege covers the given subject
      *
-     * @param PrivilegeSubjectInterface $subject
      * @return boolean
      * @throws InvalidPrivilegeTypeException if the given $subject is not supported by the privilege
      */

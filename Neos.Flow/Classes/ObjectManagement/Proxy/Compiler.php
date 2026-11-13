@@ -99,7 +99,7 @@ class Compiler
         }
 
         $classReflection = new \ReflectionClass($fullClassName);
-        if ($classReflection->isInternal() === true) {
+        if ($classReflection->isInternal()) {
             return false;
         }
 
@@ -186,9 +186,6 @@ class Compiler
         $this->signalSlotDispatcher->dispatch(self::class, 'afterCompile', [$compiledClasses]);
     }
 
-    /**
-     * @return string
-     */
     public function getStoredProxyClassMap(): string
     {
         return '<?php
@@ -206,7 +203,6 @@ return ' . var_export($this->storedProxyClasses, true) . ';';
      * @param string $className Short class name of the class to copy
      * @param string $pathAndFilename Full path and filename of the original class file
      * @param string $proxyClassCode The code that makes up the proxy class
-     * @return void
      *
      * @throws Exception If the original class filename doesn't match the actual class name inside the file.
      * @throws InvalidDataException
@@ -240,7 +236,6 @@ return ' . var_export($this->storedProxyClasses, true) . ';';
     /**
      * Removes the first opening php tag ("<?php") from the given $classCode if there is any
      *
-     * @param string $classCode
      * @return string the original class code without opening php tag
      */
     protected function stripOpeningPhpTag(string $classCode): string
@@ -256,7 +251,6 @@ return ' . var_export($this->storedProxyClasses, true) . ';';
     /**
      * Render the source (string) form of a PHP Attribute.
      * @param \ReflectionAttribute<object> $attribute
-     * @return string
      */
     public static function renderAttribute(\ReflectionAttribute $attribute): string
     {
@@ -326,9 +320,6 @@ return ' . var_export($this->storedProxyClasses, true) . ';';
 
     /**
      * Render the source (string) form of an Annotation instance.
-     *
-     * @param object $annotation
-     * @return string
      */
     public static function renderAnnotation(object $annotation): string
     {
@@ -367,7 +358,6 @@ return ' . var_export($this->storedProxyClasses, true) . ';';
      * Render an array value as string for an annotation.
      *
      * @param array<string, mixed> $optionValue
-     * @return string
      */
     protected static function renderOptionArrayValueAsString(array $optionValue): string
     {
@@ -397,9 +387,6 @@ return ' . var_export($this->storedProxyClasses, true) . ';';
     /**
      * Appends ORIGINAL_CLASSNAME_SUFFIX to the original class name
      *
-     * @param string $classCode
-     * @param string $pathAndFilename
-     * @return string
      * @throws Exception
      */
     protected function replaceClassName(string $classCode, string $pathAndFilename): string

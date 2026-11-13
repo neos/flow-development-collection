@@ -26,7 +26,6 @@ class StandardController extends ActionController
     /**
      * Overrides the standard resolveView method
      *
-     * @param ActionRequest $request
      * @return ViewInterface $view The view
      */
     protected function resolveView(ActionRequest $request)

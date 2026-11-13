@@ -168,8 +168,6 @@ class WidgetContext
     }
 
     /**
-     * @param RootNode $viewHelperChildNodes
-     * @param RenderingContextInterface $viewHelperChildNodeRenderingContext
      * @return void
      */
     public function setViewHelperChildNodes(RootNode $viewHelperChildNodes, RenderingContextInterface $viewHelperChildNodeRenderingContext)

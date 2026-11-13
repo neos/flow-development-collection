@@ -71,7 +71,6 @@ final class SignalInformation
     /**
      *
      *
-     * @param string $argumentName
      * @return mixed
      */
     public function getSignalArgument(string $argumentName)

@@ -101,7 +101,6 @@ class PluralsReader
     protected $rulesetsIndices;
 
     /**
-     * @param CldrRepository $repository
      * @return void
      */
     public function injectCldrRepository(CldrRepository $repository)
@@ -112,7 +111,6 @@ class PluralsReader
     /**
      * Injects the Flow_I18n_Cldr_Reader_PluralsReader cache
      *
-     * @param VariableFrontend $cache
      * @return void
      */
     public function injectCache(VariableFrontend $cache)
@@ -146,7 +144,6 @@ class PluralsReader
      * of the rules, or there is no rules for given locale.
      *
      * @param mixed $quantity A number to find plural form for (float or int)
-     * @param Locale $locale
      * @return string One of plural form constants
      */
     public function getPluralForm($quantity, Locale $locale): string
@@ -249,7 +246,6 @@ class PluralsReader
      * The properties $rulesets and $rulesetsIndices should be empty before
      * running this method.
      *
-     * @return void
      * @throws Exception\InvalidPluralRuleException
      * @see PluralsReader::$rulesets
      */
@@ -305,7 +301,6 @@ class PluralsReader
      * Array returned follows simple internal format (see documentation for
      * $rulesets property for details).
      *
-     * @param string $rule
      * @return array<mixed> Parsed rule
      * @throws Exception\InvalidPluralRuleException When plural rule does not match regexp pattern
      */

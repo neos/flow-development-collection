@@ -65,10 +65,6 @@ class AjaxWidgetMiddleware implements MiddlewareInterface
     /**
      * Check if the current request contains a widget context.
      * If so dispatch it directly, otherwise continue with the next HTTP component.
-     *
-     * @param ServerRequestInterface $httpRequest
-     * @param RequestHandlerInterface $next
-     * @return ResponseInterface
      */
     public function process(ServerRequestInterface $httpRequest, RequestHandlerInterface $next): ResponseInterface
     {
@@ -88,7 +84,6 @@ class AjaxWidgetMiddleware implements MiddlewareInterface
      * If the request contains an argument "__widgetId" the context is fetched from the session (AjaxWidgetContextHolder).
      * Otherwise the argument "__widgetContext" is expected to contain the serialized WidgetContext (protected by a HMAC suffix)
      *
-     * @param ServerRequestInterface $httpRequest
      * @return WidgetContext
      * @throws Exception\WidgetContextNotFoundException
      * @throws \Neos\Flow\Security\Exception\InvalidArgumentForHashGenerationException

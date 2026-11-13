@@ -94,7 +94,6 @@ final class AnnotationsCacheFlusher
      * A slot that flushes caches as needed if classes with specific annotations have changed @see registerAnnotation()
      *
      * @param array<class-string> $classNames The full class names of the classes that got compiled
-     * @return void
      * @throws NoSuchCacheException
      */
     public function flushConfigurationCachesByCompiledClass(array $classNames): void

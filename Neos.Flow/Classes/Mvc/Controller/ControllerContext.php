@@ -57,11 +57,6 @@ class ControllerContext
 
     /**
      * Constructs this context
-     *
-     * @param ActionRequest $request
-     * @param ActionResponse $response
-     * @param Arguments $arguments
-     * @param UriBuilder $uriBuilder
      */
     public function __construct(ActionRequest $request, ActionResponse $response, Arguments $arguments, UriBuilder $uriBuilder)
     {

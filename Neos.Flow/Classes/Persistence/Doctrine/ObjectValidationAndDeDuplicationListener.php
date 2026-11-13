@@ -62,7 +62,6 @@ class ObjectValidationAndDeDuplicationListener
      * This removes all existing value objects in doctrines identity map. This is needed as doctrine handles their
      * identity based on the object and not based on the
      *
-     * @param PrePersistEventArgs $eventArgs
      * @return void
      */
     public function prePersist(PrePersistEventArgs $eventArgs)
@@ -89,7 +88,6 @@ class ObjectValidationAndDeDuplicationListener
     /**
      * An onFlush event listener used to act upon persistence.
      *
-     * @param OnFlushEventArgs $eventArgs
      * @return void
      * @throws ObjectValidationFailedException
      */

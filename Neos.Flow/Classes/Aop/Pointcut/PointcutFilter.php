@@ -62,9 +62,6 @@ class PointcutFilter implements PointcutFilterInterface
 
     /**
      * Injects the AOP Proxy Class Builder
-     *
-     * @param ProxyClassBuilder $proxyClassBuilder
-     * @return void
      */
     public function injectProxyClassBuilder(ProxyClassBuilder $proxyClassBuilder): void
     {
@@ -117,9 +114,6 @@ class PointcutFilter implements PointcutFilterInterface
 
     /**
      * This method is used to optimize the matching process.
-     *
-     * @param ClassNameIndex $classNameIndex
-     * @return ClassNameIndex
      */
     public function reduceTargetClassNames(ClassNameIndex $classNameIndex): ClassNameIndex
     {

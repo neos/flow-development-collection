@@ -75,22 +75,14 @@ class FlowAnnotationDriver implements DoctrineMappingDriverInterface, PointcutFi
     /**
      * @var integer
      */
-    protected $tableNameLengthLimit = null;
+    protected $tableNameLengthLimit;
 
-    /**
-     * @param ReflectionService $reflectionService
-     * @return void
-     */
     public function injectReflectionService(ReflectionService $reflectionService): void
     {
         $this->reflectionService = $reflectionService;
         $this->reader = new FlowAnotationReader($reflectionService);
     }
 
-    /**
-     * @param EntityManagerInterface $entityManager
-     * @return void
-     */
     public function setEntityManager(EntityManagerInterface $entityManager): void
     {
         $this->entityManager = $entityManager;
@@ -100,7 +92,6 @@ class FlowAnnotationDriver implements DoctrineMappingDriverInterface, PointcutFi
      * Fetch a class schema for the given class, if possible.
      *
      * @param string $className
-     * @return ClassSchema
      * @throws ClassSchemaNotFoundException
      */
     protected function getClassSchema($className): ClassSchema
@@ -118,7 +109,6 @@ class FlowAnnotationDriver implements DoctrineMappingDriverInterface, PointcutFi
      *
      * @param class-string $className
      * @param string $propertySourceHint
-     * @return boolean
      * @throws ClassSchemaNotFoundException
      */
     protected function isAggregateRoot($className, $propertySourceHint): bool
@@ -136,7 +126,6 @@ class FlowAnnotationDriver implements DoctrineMappingDriverInterface, PointcutFi
      *
      * @param class-string $className
      * @param string $propertySourceHint
-     * @return boolean
      * @throws ClassSchemaNotFoundException
      */
     protected function isValueObject($className, $propertySourceHint): bool
@@ -449,7 +438,6 @@ class FlowAnnotationDriver implements DoctrineMappingDriverInterface, PointcutFi
      *
      * @param string $className
      * @param integer $lengthLimit
-     * @return string
      */
     public function inferTableNameFromClassName($className, $lengthLimit = null): string
     {
@@ -460,7 +448,6 @@ class FlowAnnotationDriver implements DoctrineMappingDriverInterface, PointcutFi
      * Given a class name returns a value to be used as a discriminator type value.
      *
      * @param string $className
-     * @return string
      */
     public static function inferDiscriminatorTypeFromClassName($className): string
     {
@@ -522,7 +509,6 @@ class FlowAnnotationDriver implements DoctrineMappingDriverInterface, PointcutFi
      *
      * @param array<mixed> $joinColumns
      * @param array<mixed> $mapping
-     * @param \ReflectionProperty $property
      * @param int $direction regular or inverse mapping (use is to be coded)
      * @return array<mixed>
      */
@@ -561,7 +547,6 @@ class FlowAnnotationDriver implements DoctrineMappingDriverInterface, PointcutFi
      * Evaluate the property annotations and amend the metadata accordingly.
      *
      * @param ORM\ClassMetadataInfo<object> $metadata
-     * @return void
      * @throws ORM\MappingException
      */
     protected function evaluatePropertyAnnotations(ORM\ClassMetadataInfo $metadata): void
@@ -850,9 +835,6 @@ class FlowAnnotationDriver implements DoctrineMappingDriverInterface, PointcutFi
     /**
      * Evaluate JoinTable annotations and fill missing bits as needed.
      *
-     * @param ORM\JoinTable $joinTableAnnotation
-     * @param \ReflectionProperty $property
-     * @param string $className
      * @param array<mixed> $mapping
      * @return array{name: string, schema: ?string, joinColumns: array<int,mixed>, inverseJoinColumns: array<int,mixed>}
      */
@@ -902,7 +884,6 @@ class FlowAnnotationDriver implements DoctrineMappingDriverInterface, PointcutFi
      *
      * If no annotations are found, a default is returned.
      *
-     * @param \ReflectionProperty $property
      * @return array<int,array<mixed>>
      */
     protected function evaluateJoinColumnAnnotations(\ReflectionProperty $property): array
@@ -925,7 +906,6 @@ class FlowAnnotationDriver implements DoctrineMappingDriverInterface, PointcutFi
      *
      * @param array<mixed> $classAnnotations
      * @param ORM\ClassMetadataInfo<object> $metadata
-     * @return void
      */
     protected function evaluateOverridesAnnotations(array $classAnnotations, ORM\ClassMetadataInfo $metadata): void
     {
@@ -985,7 +965,6 @@ class FlowAnnotationDriver implements DoctrineMappingDriverInterface, PointcutFi
      * @param \ReflectionClass<object> $class
      * @param ORM\ClassMetadata<object> $metadata
      * @param array<mixed> $classAnnotations
-     * @return void
      * @throws ORM\MappingException
      */
     protected function evaluateEntityListenersAnnotation(\ReflectionClass $class, ORM\ClassMetadata $metadata, array $classAnnotations): void
@@ -1026,7 +1005,6 @@ class FlowAnnotationDriver implements DoctrineMappingDriverInterface, PointcutFi
      *
      * @param \ReflectionClass<object> $class
      * @param ORM\ClassMetadataInfo<object> $metadata
-     * @return void
      */
     protected function evaluateLifeCycleAnnotations(\ReflectionClass $class, ORM\ClassMetadataInfo $metadata): void
     {
@@ -1047,7 +1025,6 @@ class FlowAnnotationDriver implements DoctrineMappingDriverInterface, PointcutFi
     /**
      * Returns an array of callbacks for lifecycle annotations on the given method.
      *
-     * @param \ReflectionMethod $method
      * @return array<int,array<int,mixed>>
      */
     protected function getMethodCallbacks(\ReflectionMethod $method): array
@@ -1150,7 +1127,6 @@ class FlowAnnotationDriver implements DoctrineMappingDriverInterface, PointcutFi
     /**
      * Parse the given JoinColumn into an array
      *
-     * @param ORM\JoinColumn $joinColumnAnnotation
      * @param string $propertyName
      * @return array{name: ?string, unique: bool, nullable: bool, onDelete: mixed, columnDefinition: ?string, referencedColumnName: string}
      */
@@ -1169,7 +1145,6 @@ class FlowAnnotationDriver implements DoctrineMappingDriverInterface, PointcutFi
     /**
      * Parse the given Column into an array
      *
-     * @param ORM\Column $columnAnnotation
      * @param array<string,mixed> $mapping
      * @param string $fieldName
      * @return array<string,mixed>
@@ -1272,9 +1247,6 @@ class FlowAnnotationDriver implements DoctrineMappingDriverInterface, PointcutFi
 
     /**
      * This method is used to optimize the matching process.
-     *
-     * @param ClassNameIndex $classNameIndex
-     * @return ClassNameIndex
      */
     public function reduceTargetClassNames(ClassNameIndex $classNameIndex): ClassNameIndex
     {

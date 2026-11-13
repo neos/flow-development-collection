@@ -54,7 +54,7 @@ class TestingProvider extends AbstractProvider
         if ($this->authenticationStatus === TokenInterface::AUTHENTICATION_SUCCESSFUL) {
             $authenticationToken->setAccount($this->account);
         } else {
-            $authenticationToken->setAccount(null);
+            $authenticationToken->setAccount();
         }
     }
 

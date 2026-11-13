@@ -80,7 +80,6 @@ class CldrModel
     /**
      * Injects the Flow_I18n_Cldr_CldrModelCache cache
      *
-     * @param VariableFrontend $cache
      * @return void
      */
     public function injectCache(VariableFrontend $cache)
@@ -89,7 +88,6 @@ class CldrModel
     }
 
     /**
-     * @param CldrParser $parser
      * @return void
      */
     public function injectParser(CldrParser $parser)
@@ -100,7 +98,6 @@ class CldrModel
     /**
      * When it's called, CLDR file is parsed or cache is loaded, if available.
      *
-     * @return void
      * @throws Exception\InvalidCldrDataException
      * @throws \Neos\Cache\Exception
      */

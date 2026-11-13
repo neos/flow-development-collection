@@ -35,9 +35,6 @@ class PhpAnalyzer
      */
     protected $phpCode;
 
-    /**
-     * @param string $phpCode
-     */
     public function __construct(string $phpCode)
     {
         $this->phpCode = $phpCode;
@@ -108,8 +105,6 @@ class PhpAnalyzer
     /**
      * Extracts the className of the given PHP code
      * Note: This only returns the class name without namespace, @see extractFullyQualifiedClassName()
-     *
-     * @return string|null
      */
     public function extractClassName(): ?string
     {

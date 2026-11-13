@@ -74,7 +74,6 @@ abstract class AbstractWidgetViewHelper extends AbstractViewHelper implements Ch
     private $widgetContext;
 
     /**
-     * @param AjaxWidgetContextHolder $ajaxWidgetContextHolder
      * @return void
      */
     public function injectAjaxWidgetContextHolder(AjaxWidgetContextHolder $ajaxWidgetContextHolder)
@@ -83,7 +82,6 @@ abstract class AbstractWidgetViewHelper extends AbstractViewHelper implements Ch
     }
 
     /**
-     * @param WidgetContext $widgetContext
      * @return void
      */
     public function injectWidgetContext(WidgetContext $widgetContext)
@@ -277,7 +275,6 @@ abstract class AbstractWidgetViewHelper extends AbstractViewHelper implements Ch
     /**
      * Pass the arguments of the widget to the sub request.
      *
-     * @param ActionRequest $subRequest
      * @return void
      */
     private function passArgumentsToSubRequest(ActionRequest $subRequest)
@@ -327,8 +324,6 @@ abstract class AbstractWidgetViewHelper extends AbstractViewHelper implements Ch
      * @param string $argumentsName
      * @param string $closureName
      * @param string $initializationPhpCode
-     * @param ViewHelperNode $node
-     * @param TemplateCompiler $compiler
      * @return string
      */
     public function compile($argumentsName, $closureName, &$initializationPhpCode, ViewHelperNode $node, TemplateCompiler $compiler)

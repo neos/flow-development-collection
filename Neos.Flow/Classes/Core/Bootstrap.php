@@ -149,7 +149,6 @@ class Bootstrap
      * All registered request handlers will be queried if they can handle a request
      * when the bootstrap's run() method is called.
      *
-     * @param RequestHandlerInterface $requestHandler
      * @return void
      * @api
      */
@@ -173,8 +172,6 @@ class Bootstrap
 
     /**
      * Returns the request handler (if any) which is currently handling the request.
-     *
-     * @return RequestHandlerInterface
      */
     public function getActiveRequestHandler(): RequestHandlerInterface
     {
@@ -190,7 +187,6 @@ class Bootstrap
      * test case can then set the active request handler to one which simulates, for
      * example, an HTTP request.
      *
-     * @param RequestHandlerInterface $requestHandler
      * @return void
      */
     public function setActiveRequestHandler(RequestHandlerInterface $requestHandler)
@@ -216,7 +212,6 @@ class Bootstrap
      * Tells if the given command controller is registered for compiletime or not.
      *
      * @param string $commandIdentifier Package key, controller name and command name separated by colon, e.g. "neos.flow:cache:flush"
-     * @return boolean
      * @api
      */
     public function isCompiletimeCommand(string $commandIdentifier): bool
@@ -258,8 +253,6 @@ class Bootstrap
      * Builds a boot sequence with the minimum modules necessary for both, compiletime
      * and runtime.
      *
-     * @param string $identifier
-     * @return Sequence
      * @api
      */
     public function buildEssentialsSequence(string $identifier): Sequence
@@ -290,7 +283,6 @@ class Bootstrap
      * Builds a boot sequence starting all modules necessary for the compiletime state.
      * This includes all of the "essentials" sequence.
      *
-     * @return Sequence
      * @api
      */
     public function buildCompiletimeSequence(): Sequence
@@ -310,7 +302,6 @@ class Bootstrap
      * Builds a boot sequence starting all modules necessary for the runtime state.
      * This includes all of the "essentials" sequence.
      *
-     * @return Sequence
      * @api
      */
     public function buildRuntimeSequence(): Sequence
@@ -347,7 +338,6 @@ class Bootstrap
     /**
      * Returns the signal slot dispatcher instance
      *
-     * @return Dispatcher
      * @api
      */
     public function getSignalSlotDispatcher(): Dispatcher
@@ -386,7 +376,6 @@ class Bootstrap
     /**
      * Returns the object manager instance
      *
-     * @return ObjectManagerInterface
      * @throws FlowException
      */
     public function getObjectManager(): ObjectManagerInterface
@@ -454,7 +443,6 @@ class Bootstrap
     /**
      * Emits a signal that the bootstrap finished and is shutting down.
      *
-     * @param string $runLevel
      * @return void
      * @Flow\Signal
      */
@@ -630,7 +618,6 @@ class Bootstrap
      * - $_SERVER[$variableName] (this is an alternative to set FLOW_* environment variables if passing environment variables is not possible)
      * - $_SERVER[REDIRECT_ . $variableName] (again for php cgi environments)
      *
-     * @param string $variableName
      * @return string|null NULL if this variable was not set at all.
      */
     public static function getEnvironmentConfigurationSetting(string $variableName)

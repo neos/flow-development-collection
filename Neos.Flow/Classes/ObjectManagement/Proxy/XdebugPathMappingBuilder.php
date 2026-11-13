@@ -35,7 +35,6 @@ class XdebugPathMappingBuilder
 
     /**
      * @param array<string, mixed> $settings
-     * @return void
      */
     public function injectSettings(array $settings): void
     {
@@ -49,8 +48,6 @@ class XdebugPathMappingBuilder
 
     /**
      * @param array<string, array{path: string, proxyClassIdentifier: string}> $compiledClasses
-     * @param string $flowContextName
-     * @return void
      */
     public function buildFromCompiledClasses(array $compiledClasses, string $flowContextName): void
     {

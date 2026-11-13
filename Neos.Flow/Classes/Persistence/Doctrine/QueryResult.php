@@ -127,7 +127,6 @@ class QueryResult implements QueryResultInterface
      * but it isn't very useful as the offset has to be an integer
      *
      * @param mixed $offset
-     * @return boolean
      */
     public function offsetExists($offset): bool
     {
@@ -137,7 +136,6 @@ class QueryResult implements QueryResultInterface
 
     /**
      * @param mixed $offset
-     * @return mixed
      */
     public function offsetGet($offset): mixed
     {
@@ -150,7 +148,6 @@ class QueryResult implements QueryResultInterface
      *
      * @param mixed $offset
      * @param mixed $value
-     * @return void
      */
     public function offsetSet($offset, $value): void
     {
@@ -162,7 +159,6 @@ class QueryResult implements QueryResultInterface
      * This method has no effect on the persisted objects but only on the result set
      *
      * @param mixed $offset
-     * @return void
      */
     public function offsetUnset($offset): void
     {
@@ -170,48 +166,33 @@ class QueryResult implements QueryResultInterface
         unset($this->rows[$offset]);
     }
 
-    /**
-     * @return mixed
-     */
     public function current(): mixed
     {
         $this->initialize();
         return current($this->rows);
     }
 
-    /**
-     * @return mixed
-     */
     public function key(): mixed
     {
         $this->initialize();
         return key($this->rows);
     }
 
-    /**
-     * @return void
-     */
     public function next(): void
     {
         $this->initialize();
         next($this->rows);
     }
 
-    /**
-     * @return void
-     */
     public function rewind(): void
     {
         $this->initialize();
         reset($this->rows);
     }
 
-    /**
-     * @return boolean
-     */
     public function valid(): bool
     {
         $this->initialize();
-        return current($this->rows ?: []) !== false;
+        return current($this->rows) !== false;
     }
 }

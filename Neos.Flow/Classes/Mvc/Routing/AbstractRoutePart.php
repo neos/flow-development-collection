@@ -23,21 +23,21 @@ abstract class AbstractRoutePart implements RoutePartInterface
      *
      * @var ?string
      */
-    protected $name = null;
+    protected $name;
 
     /**
      * Value of the Route Part after decoding.
      *
      * @var mixed
      */
-    protected $value = null;
+    protected $value;
 
     /**
      * Default value of the Route Part.
      *
      * @var mixed
      */
-    protected $defaultValue = null;
+    protected $defaultValue;
 
     /**
      * Specifies whether this Route Part is optional. Which means it's put in parentheses in the routes URI pattern.

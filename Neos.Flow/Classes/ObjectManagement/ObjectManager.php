@@ -106,7 +106,6 @@ class ObjectManager implements ObjectManagerInterface
      * Sets the objects array
      *
      * @param array<class-string|string, ObjectRecordShape> $objects An array of object names and some information about each registered object (scope, lower cased name etc.)
-     * @return void
      */
     public function setObjects(array $objects): void
     {
@@ -160,7 +159,6 @@ class ObjectManager implements ObjectManagerInterface
      * Returns false otherwise.
      *
      * @param string $objectName
-     * @return bool
      */
     public function has($objectName): bool
     {
@@ -172,7 +170,6 @@ class ObjectManager implements ObjectManagerInterface
      *
      * @param object $object The object to register the shutdown method for
      * @param string $shutdownLifecycleMethodName The method name of the shutdown method to be called
-     * @return void
      * @api
      */
     public function registerShutdownObject($object, $shutdownLifecycleMethodName): void
@@ -434,7 +431,6 @@ class ObjectManager implements ObjectManagerInterface
      *
      * @param string $objectName The object name
      * @param object $instance A prebuilt instance
-     * @return void
      * @throws Exception\WrongScopeException
      * @throws Exception\UnknownObjectException
      */
@@ -489,7 +485,6 @@ class ObjectManager implements ObjectManagerInterface
      * this method should only be used in a setUp() method of a functional test case.
      *
      * @param string $objectName The object name
-     * @return void
      */
     public function forgetInstance($objectName): void
     {
@@ -521,7 +516,6 @@ class ObjectManager implements ObjectManagerInterface
      * Shuts down this Object Container by calling the shutdown methods of all
      * object instances which were configured to be shut down.
      *
-     * @return void
      * @throws Exception\CannotBuildObjectException
      * @throws Exception\UnknownObjectException
      * @throws InvalidConfigurationTypeException
@@ -749,7 +743,6 @@ class ObjectManager implements ObjectManagerInterface
      * Executes the methods of the provided objects.
      *
      * @param \SplObjectStorage<object,mixed> $shutdownObjects
-     * @return void
      */
     protected function callShutdownMethods(\SplObjectStorage $shutdownObjects): void
     {

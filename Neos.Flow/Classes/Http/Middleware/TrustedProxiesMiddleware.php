@@ -204,7 +204,6 @@ class TrustedProxiesMiddleware implements MiddlewareInterface
      * Check if the given IP address is from a trusted proxy.
      *
      * @param string $ipAddress
-     * @return bool
      */
     protected function ipIsTrustedProxy($ipAddress): bool
     {
@@ -226,7 +225,6 @@ class TrustedProxiesMiddleware implements MiddlewareInterface
     /**
      * Check if the given request is from a trusted proxy.
      *
-     * @param ServerRequestInterface $request
      * @return bool If the server REMOTE_ADDR is from a trusted proxy
      */
     protected function isFromTrustedProxy(ServerRequestInterface $request): bool
@@ -246,7 +244,6 @@ class TrustedProxiesMiddleware implements MiddlewareInterface
      * If no proxies are trusted or no client IP header is trusted, this is the remote address of the machine
      * directly connected to the server.
      *
-     * @param ServerRequestInterface $request
      * @return string|bool The most trusted client's IP address or false if no remote address can be found
      */
     protected function getTrustedClientIpAddress(ServerRequestInterface $request)

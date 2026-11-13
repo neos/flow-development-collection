@@ -44,8 +44,6 @@ final class RouteParameters implements CacheAwareInterface
 
     /**
      * Creates an empty instance of this class
-     *
-     * @return RouteParameters
      */
     public static function createEmpty(): self
     {
@@ -72,7 +70,6 @@ final class RouteParameters implements CacheAwareInterface
     /**
      * Checks whether a given parameter exists
      *
-     * @param string $parameterName
      * @return bool
      */
     public function has(string $parameterName)
@@ -83,7 +80,6 @@ final class RouteParameters implements CacheAwareInterface
     /**
      * Returns the value for a given $parameterName, or NULL if it doesn't exist
      *
-     * @param string $parameterName
      * @return bool|float|int|string|CacheAwareInterface|null
      */
     public function getValue(string $parameterName)
@@ -91,9 +87,6 @@ final class RouteParameters implements CacheAwareInterface
         return $this->parameters[$parameterName] ?? null;
     }
 
-    /**
-     * @return bool
-     */
     public function isEmpty(): bool
     {
         return $this->parameters === [];
@@ -107,9 +100,6 @@ final class RouteParameters implements CacheAwareInterface
         return $this->parameters;
     }
 
-    /**
-     * @return string
-     */
     public function getCacheEntryIdentifier(): string
     {
         $cacheIdentifierParts = [];

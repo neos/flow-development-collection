@@ -99,7 +99,6 @@ abstract class Repository extends EntityRepository implements RepositoryInterfac
      * Adds an object to this repository.
      *
      * @param T $object The object to add
-     * @return void
      * @throws IllegalObjectTypeException
      * @api
      */
@@ -115,7 +114,6 @@ abstract class Repository extends EntityRepository implements RepositoryInterfac
      * Removes an object from this repository.
      *
      * @param T $object The object to remove
-     * @return void
      * @throws IllegalObjectTypeException
      * @api
      */
@@ -196,7 +194,6 @@ abstract class Repository extends EntityRepository implements RepositoryInterfac
     /**
      * Counts all objects of this repository
      *
-     * @return integer
      * @throws Exception\DatabaseConnectionException
      * @throws Exception\DatabaseConnectionException
      * @api
@@ -210,7 +207,6 @@ abstract class Repository extends EntityRepository implements RepositoryInterfac
      * Removes all objects of this repository as if remove() was called for
      * all of them.
      *
-     * @return void
      * @throws IllegalObjectTypeException
      * @todo maybe use DQL here, would be much more performant
      * @api
@@ -230,7 +226,6 @@ abstract class Repository extends EntityRepository implements RepositoryInterfac
      * )
      *
      * @param array<string,QueryInterface::ORDER_ASCENDING|QueryInterface::ORDER_DESCENDING> $defaultOrderings The property names to "order by" by default
-     * @return void
      * @api
      */
     public function setDefaultOrderings(array $defaultOrderings): void
@@ -242,7 +237,6 @@ abstract class Repository extends EntityRepository implements RepositoryInterfac
      * Schedules a modified object for persistence.
      *
      * @param T $object The modified object
-     * @return void
      * @throws IllegalObjectTypeException
      * @throws UnknownObjectException
      * @api
@@ -272,7 +266,7 @@ abstract class Repository extends EntityRepository implements RepositoryInterfac
     {
         $query = $this->createQuery();
         $caseSensitive = isset($arguments[1]) ? (bool)$arguments[1] : true;
-        $cacheResult = isset($arguments[2]) ? (bool)$arguments[2] : false;
+        $cacheResult = isset($arguments[2]) && (bool)$arguments[2];
 
         if (isset($method[10]) && str_starts_with($method, 'findOneBy')) {
             $propertyName = lcfirst(substr($method, 9));

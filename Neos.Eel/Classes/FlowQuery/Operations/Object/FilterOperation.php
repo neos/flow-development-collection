@@ -225,7 +225,6 @@ class FilterOperation extends AbstractOperation
      * Evaluate an operator
      *
      * @param mixed $value
-     * @param string $operator
      * @param mixed $operand
      * @return boolean
      */

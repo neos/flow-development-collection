@@ -25,7 +25,6 @@ abstract class Files
      * It's needed to compare paths (especially on windows).
      *
      * @param string $path Path which should transformed to the Unix Style.
-     * @return string
      * @api
      */
     public static function getUnixStylePath(string $path): string
@@ -39,8 +38,6 @@ abstract class Files
     /**
      * Makes sure path has a trailing slash
      *
-     * @param string $path
-     * @return string
      * @api
      */
     public static function getNormalizedPath(string $path): string
@@ -93,10 +90,7 @@ abstract class Files
     }
 
     /**
-     * @param string $path
      * @param string $suffix
-     * @param boolean $returnRealPath
-     * @param boolean $returnDotFiles
      * @return \Generator
      * @throws FilesException
      */
@@ -155,7 +149,7 @@ abstract class Files
         }
 
         if (self::is_link($path)) {
-            if (self::unlink($path) !== true) {
+            if (!self::unlink($path)) {
                 throw new FilesException('Could not unlink symbolic link "' . $path . '".', 1323697654);
             }
         } else {
@@ -165,7 +159,7 @@ abstract class Files
                     continue;
                 }
                 if (!$fileInfo->isDir()) {
-                    if (self::unlink($fileInfo->getPathname()) !== true) {
+                    if (!self::unlink($fileInfo->getPathname())) {
                         throw new FilesException('Could not unlink file "' . $fileInfo->getPathname() . '".', 1169047619);
                     }
                 } elseif (!$directoryIterator->isDot()) {
@@ -233,13 +227,13 @@ abstract class Files
     public static function removeDirectoryRecursively(string $path)
     {
         if (self::is_link($path)) {
-            if (self::unlink($path) !== true) {
+            if (!self::unlink($path)) {
                 throw new FilesException('Could not unlink symbolic link "' . $path . '".', 1316000297);
             }
         } else {
             self::emptyDirectoryRecursively($path);
             try {
-                if (rmdir($path) !== true) {
+                if (!rmdir($path)) {
                     throw new FilesException('Could not remove directory "' . $path . '".', 1316000298);
                 }
             } catch (\Exception) {
@@ -290,10 +284,6 @@ abstract class Files
      * If $copyDotFiles is true, this will copy files whose name begin with
      * a dot. It defaults to false.
      *
-     * @param string $sourceDirectory
-     * @param string $targetDirectory
-     * @param boolean $keepExistingFiles
-     * @param boolean $copyDotFiles
      * @return void
      * @throws FilesException
      * @api
@@ -351,7 +341,6 @@ abstract class Files
      * constant.
      *
      * @param integer $errorCode One of the UPLOAD_ERR_ constants
-     * @return string
      */
     public static function getUploadErrorMessage(int $errorCode): string
     {
@@ -489,7 +478,7 @@ abstract class Files
         }
         $size = (float)$matches['size'];
         if (empty($matches['unit'])) {
-            return (float)round($size);
+            return round($size);
         }
         $unit = strtoupper(trim($matches['unit']));
         if ($unit !== 'B' && strlen($unit) === 1) {
@@ -508,7 +497,6 @@ abstract class Files
      *
      * @param string $target The absolute target where the symlink should point to relatively
      * @param string $link The absolute path to the link where the symlink will be created
-     * @return boolean
      * @throws FilesException
      */
     public static function createRelativeSymlink(string $target, string $link): bool
@@ -540,7 +528,6 @@ abstract class Files
      *
      * @param string $from An absolute path to base on
      * @param string $to An absolute path to find the relative representation onto $from
-     * @return string
      */
     public static function getRelativePath(string $from, string $to): string
     {

@@ -28,12 +28,12 @@ class RequestFilter
     /**
      * @var RequestPatternInterface
      */
-    protected $pattern = null;
+    protected $pattern;
 
     /**
      * @var InterceptorInterface
      */
-    protected $securityInterceptor = null;
+    protected $securityInterceptor;
 
     /**
      * Constructor.

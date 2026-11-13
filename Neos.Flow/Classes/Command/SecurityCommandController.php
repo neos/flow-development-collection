@@ -68,7 +68,6 @@ class SecurityCommandController extends CommandController
     /**
      * Injects the Cache Manager because we cannot inject an automatically factored cache during compile time.
      *
-     * @param CacheManager $cacheManager
      * @return void
      */
     public function injectCacheManager(CacheManager $cacheManager)
@@ -298,7 +297,7 @@ class SecurityCommandController extends CommandController
             }
         }
 
-        if ($allActionsAreProtected === true) {
+        if ($allActionsAreProtected) {
             $this->outputLine('All public controller actions are covered by your security policy. Good job!');
         }
     }

@@ -96,7 +96,6 @@ class StringConverter extends AbstractTypeConverter
      * @param mixed $source
      * @param string $targetType
      * @param array<string,mixed> $convertedChildProperties
-     * @param PropertyMappingConfigurationInterface|null $configuration
      * @return string
      * @throws InvalidPropertyMappingConfigurationException
      * @api
@@ -125,7 +124,6 @@ class StringConverter extends AbstractTypeConverter
      *
      * If no format is specified in the mapping configuration DEFAULT_DATE_FORMAT is used.
      *
-     * @param PropertyMappingConfigurationInterface|null $configuration
      * @return string
      * @throws InvalidPropertyMappingConfigurationException
      */
@@ -150,7 +148,6 @@ class StringConverter extends AbstractTypeConverter
      *
      * If no delimiter is specified in the mapping configuration DEFAULT_CSV_DELIMITER is used.
      *
-     * @param PropertyMappingConfigurationInterface|null $configuration
      * @return string
      * @throws InvalidPropertyMappingConfigurationException
      */
@@ -175,7 +172,6 @@ class StringConverter extends AbstractTypeConverter
      *
      * If no format is specified in the mapping configuration DEFAULT_ARRAY_FORMAT is used.
      *
-     * @param PropertyMappingConfigurationInterface|null $configuration
      * @return string
      * @throws InvalidPropertyMappingConfigurationException
      */

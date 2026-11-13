@@ -53,17 +53,16 @@ class Router implements RouterInterface
     /**
      * @var Route|null
      */
-    protected $lastMatchedRoute = null;
+    protected $lastMatchedRoute;
 
     /**
      * @var Route|null
      */
-    protected $lastResolvedRoute = null;
+    protected $lastResolvedRoute;
 
     /**
      * Injects the (system) logger based on PSR-3.
      *
-     * @param LoggerInterface $logger
      * @return void
      */
     public function injectLogger(LoggerInterface $logger)

@@ -142,7 +142,7 @@ class Service
         }
 
         if ($strict === true) {
-            $possibleLocalizedFilename = $pathAndFilenameWithoutExtension . '.' . (string)$locale . $extension;
+            $possibleLocalizedFilename = $pathAndFilenameWithoutExtension . '.' . $locale . $extension;
             if (file_exists($possibleLocalizedFilename)) {
                 return [$possibleLocalizedFilename, $locale];
             }
@@ -194,7 +194,6 @@ class Service
     /**
      * Build a chain of locale objects according to the fallback rule and
      * the available locales.
-     * @param Locale $locale
      * @return array<string,Locale>
      */
     public function getLocaleChain(Locale $locale)

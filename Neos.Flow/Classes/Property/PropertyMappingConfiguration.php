@@ -52,7 +52,7 @@ class PropertyMappingConfiguration implements PropertyMappingConfigurationInterf
     /**
      * @var TypeConverterInterface
      */
-    protected $typeConverter = null;
+    protected $typeConverter;
 
     /**
      * List of allowed property names to be converted
@@ -88,10 +88,6 @@ class PropertyMappingConfiguration implements PropertyMappingConfigurationInterf
      * @var boolean
      */
     protected $mapUnknownProperties = false;
-
-    public function __construct()
-    {
-    }
 
     /**
      * The behavior is as follows:
@@ -151,7 +147,6 @@ class PropertyMappingConfiguration implements PropertyMappingConfigurationInterf
      *
      * Example: allowProperties('title', 'content', 'author')
      *
-     * @param string ...$propertyNames
      * @return PropertyMappingConfiguration this
      * @api
      */
@@ -169,7 +164,6 @@ class PropertyMappingConfiguration implements PropertyMappingConfigurationInterf
      *
      * Example: skipProperties('unused', 'dummy')
      *
-     * @param string ...$propertyNames
      * @return PropertyMappingConfiguration this
      * @api
      */
@@ -187,7 +181,6 @@ class PropertyMappingConfiguration implements PropertyMappingConfigurationInterf
      *
      * Example: allowAllPropertiesExcept('password', 'userGroup')
      *
-     * @param string ...$propertyNames
      * @return PropertyMappingConfiguration this
      * @api
      */
@@ -392,7 +385,6 @@ class PropertyMappingConfiguration implements PropertyMappingConfigurationInterf
     /**
      * Set a type converter which should be used for this specific conversion.
      *
-     * @param TypeConverterInterface $typeConverter
      * @return PropertyMappingConfiguration this
      * @api
      */

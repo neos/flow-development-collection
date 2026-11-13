@@ -29,9 +29,6 @@ class RuntimeSequenceHttpRequestHandler extends RuntimeSequenceInvokingRequestHa
 {
     private ServerRequestInterface|null $httpRequest = null;
 
-    /**
-     * @param ServerRequestInterface $request
-     */
     public function setHttpRequest(ServerRequestInterface $request): void
     {
         $this->httpRequest = $request;
@@ -39,8 +36,6 @@ class RuntimeSequenceHttpRequestHandler extends RuntimeSequenceInvokingRequestHa
 
     /**
      * Returns the currently processed HTTP request
-     *
-     * @return ServerRequestInterface
      */
     public function getHttpRequest(): ServerRequestInterface
     {

@@ -37,7 +37,6 @@ class Detector
     protected $localeCollection;
 
     /**
-     * @param I18n\Service $localizationService
      * @return void
      */
     public function injectLocalizationService(I18n\Service $localizationService)
@@ -46,7 +45,6 @@ class Detector
     }
 
     /**
-     * @param LocaleCollection $localeCollection
      * @return void
      */
     public function injectLocaleCollection(LocaleCollection $localeCollection)

@@ -49,7 +49,6 @@ class MessageCollector
     /**
      * Injects the (system) logger based on PSR-3.
      *
-     * @param LoggerInterface $logger
      * @return void
      */
     public function injectLogger(LoggerInterface $logger)
@@ -69,7 +68,6 @@ class MessageCollector
      * @param string $message The message to log
      * @param string $severity An integer value, one of the Error::SEVERITY_* constants
      * @param integer|null $code A unique error code
-     * @return void
      * @throws Exception
      * @api
      */
@@ -95,7 +93,6 @@ class MessageCollector
     }
 
     /**
-     * @return boolean
      * @api
      */
     public function hasMessages(): bool
@@ -105,7 +102,6 @@ class MessageCollector
 
     /**
      * @param callable $callback a callback function to process every notification
-     * @return void
      * @api
      */
     public function flush(?callable $callback = null): void
@@ -123,8 +119,6 @@ class MessageCollector
 
     /**
      * Flush all notification during the object lifecycle
-     *
-     * @return void
      */
     public function __destruct()
     {

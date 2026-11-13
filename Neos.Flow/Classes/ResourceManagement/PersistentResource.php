@@ -431,8 +431,6 @@ class PersistentResource implements ResourceMetaDataInterface, CacheAwareInterfa
     /**
      * Returns a string which distinctly identifies this object and thus can be used as an identifier for cache entries
      * related to this object. Introduced through the CacheAwareInterface.
-     *
-     * @return string
      */
     public function getCacheEntryIdentifier(): string
     {

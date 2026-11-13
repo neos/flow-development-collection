@@ -127,7 +127,6 @@ class ResourceTypeConverter extends AbstractTypeConverter
     /**
      * Injects the (system) logger based on PSR-3.
      *
-     * @param LoggerInterface $logger
      * @return void
      */
     public function injectLogger(LoggerInterface $logger)
@@ -148,7 +147,6 @@ class ResourceTypeConverter extends AbstractTypeConverter
      * @param array<string,mixed>|string|UploadedFileInterface $source The upload info (expected keys: error, name, tmp_name), the hash or an UploadedFile
      * @param string $targetType
      * @param array<mixed> $convertedChildProperties
-     * @param PropertyMappingConfigurationInterface|null $configuration
      * @return PersistentResource|null|FlowError if the input format is not supported or could not be converted for other reasons
      * @throws Exception
      * @throws Exception\InvalidResourceDataException
@@ -179,7 +177,6 @@ class ResourceTypeConverter extends AbstractTypeConverter
 
     /**
      * @param array<string,mixed> $source
-     * @param PropertyMappingConfigurationInterface|null $configuration
      * @return PersistentResource|null|FlowError
      */
     protected function handleFileUploads(array $source, ?PropertyMappingConfigurationInterface $configuration = null)
@@ -221,7 +218,6 @@ class ResourceTypeConverter extends AbstractTypeConverter
 
     /**
      * @param array<string,mixed> $source
-     * @param PropertyMappingConfigurationInterface|null $configuration
      * @return PersistentResource|FlowError
      * @throws Exception
      * @throws Exception\InvalidResourceDataException
@@ -280,8 +276,6 @@ class ResourceTypeConverter extends AbstractTypeConverter
     }
 
     /**
-     * @param UploadedFileInterface $source
-     * @param PropertyMappingConfigurationInterface|null $configuration
      * @return PersistentResource|null|FlowError
      */
     protected function handleUploadedFile(UploadedFileInterface $source, ?PropertyMappingConfigurationInterface $configuration = null)
@@ -340,7 +334,6 @@ class ResourceTypeConverter extends AbstractTypeConverter
      * and __collectionName is in the $source this will finally be the value.
      *
      * @param array<string,mixed>|UploadedFileInterface $source
-     * @param PropertyMappingConfigurationInterface|null $configuration
      * @return string
      * @throws InvalidPropertyMappingConfigurationException
      */

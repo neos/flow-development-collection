@@ -55,7 +55,6 @@ class FlashMessageSessionStorage implements FlashMessageStorageInterface
 
     /**
      * @param HttpRequestInterface $_ Not used in this implementation
-     * @return FlashMessageContainer
      */
     public function load(HttpRequestInterface $_): FlashMessageContainer
     {
@@ -66,9 +65,6 @@ class FlashMessageSessionStorage implements FlashMessageStorageInterface
         return $this->flashMessageContainer;
     }
 
-    /**
-     * @return FlashMessageContainer|null
-     */
     private function restoreFlashMessageContainerFromSession(): ?FlashMessageContainer
     {
         if ($this->session->canBeResumed()) {
@@ -89,7 +85,6 @@ class FlashMessageSessionStorage implements FlashMessageStorageInterface
 
     /**
      * @param HttpResponseInterface $response Not used in this implementation
-     * @return HttpResponseInterface
      */
     public function persist(HttpResponseInterface $response): HttpResponseInterface
     {

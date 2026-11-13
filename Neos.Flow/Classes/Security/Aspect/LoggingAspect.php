@@ -103,7 +103,6 @@ class LoggingAspect
 
     /**
      * @param array<string> $collectedIdentifiers
-     * @param TokenInterface $token
      * @return array<string>
      */
     protected function reduceTokenToAccountIdentifier(array $collectedIdentifiers, TokenInterface $token): array
@@ -145,7 +144,6 @@ class LoggingAspect
      * Logs calls and result of vote() for method privileges
      *
      * @Flow\After("method(Neos\Flow\Security\Authorization\Privilege\Method\MethodPrivilege->vote())")
-     * @param JoinPointInterface $joinPoint
      * @return void
      */
     public function logJoinPointAccessDecisions(JoinPointInterface $joinPoint)
@@ -160,7 +158,6 @@ class LoggingAspect
      * Logs calls and result of isPrivilegeTargetGranted()
      *
      * @Flow\After("method(Neos\Flow\Security\Authorization\PrivilegeManager->isPrivilegeTargetGranted())")
-     * @param JoinPointInterface $joinPoint
      * @return void
      */
     public function logPrivilegeAccessDecisions(JoinPointInterface $joinPoint)
@@ -171,7 +168,6 @@ class LoggingAspect
     }
 
     /**
-     * @param JoinPointInterface $joinPoint
      * @return array<string,array{packageKey: string, className: string, methodName: string}>
      */
     protected function getLogEnvironmentFromJoinPoint(JoinPointInterface $joinPoint): array

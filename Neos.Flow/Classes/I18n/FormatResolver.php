@@ -64,7 +64,6 @@ class FormatResolver
     protected $formatters;
 
     /**
-     * @param ObjectManagerInterface $objectManager
      * @return void
      */
     public function injectObjectManager(ObjectManagerInterface $objectManager)
@@ -73,7 +72,6 @@ class FormatResolver
     }
 
     /**
-     * @param I18n\Service $localizationService
      * @return void
      */
     public function injectLocalizationService(I18n\Service $localizationService)

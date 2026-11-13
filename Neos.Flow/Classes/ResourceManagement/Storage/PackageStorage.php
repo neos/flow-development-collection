@@ -93,7 +93,6 @@ class PackageStorage extends FileSystemStorage
      * Create a storage object for the given static resource path.
      *
      * @param string $resourcePathAndFilename
-     * @param FlowPackageInterface $resourcePackage
      * @return StorageObject
      */
     protected function createStorageObject($resourcePathAndFilename, FlowPackageInterface $resourcePackage)

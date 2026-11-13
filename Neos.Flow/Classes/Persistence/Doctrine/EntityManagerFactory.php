@@ -133,9 +133,6 @@ class EntityManagerFactory
     }
 
     /**
-     * @param Connection $connection
-     * @param Configuration $config
-     * @param EventManager $eventManager
      * @Flow\Signal
      */
     public function emitBeforeDoctrineEntityManagerCreation(Connection $connection, Configuration $config, EventManager $eventManager): void
@@ -143,8 +140,6 @@ class EntityManagerFactory
     }
 
     /**
-     * @param Configuration $config
-     * @param EntityManager $entityManager
      * @Flow\Signal
      */
     public function emitAfterDoctrineEntityManagerCreation(Configuration $config, EntityManager $entityManager): void
@@ -155,8 +150,6 @@ class EntityManagerFactory
      * The logger middleware needs to be set on the configuration applied to the Driver and Connection
      *
      * @param class-string $configuredSqlLogger
-     * @param Configuration $doctrineConfiguration
-     * @return Configuration
      * @throws InvalidConfigurationException
      */
     protected function enableSqlLogger(string $configuredSqlLogger, Configuration $doctrineConfiguration): Configuration

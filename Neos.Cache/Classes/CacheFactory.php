@@ -35,8 +35,6 @@ class CacheFactory implements CacheFactoryInterface
 
     /**
      * Constructs this cache factory
-     *
-     * @param EnvironmentConfiguration $environmentConfiguration
      */
     public function __construct(EnvironmentConfiguration $environmentConfiguration)
     {
@@ -81,10 +79,6 @@ class CacheFactory implements CacheFactoryInterface
     }
 
     /**
-     * @param string $cacheIdentifier
-     * @param string $cacheObjectName
-     * @param BackendInterface $backend
-     * @return FrontendInterface
      * @throws InvalidCacheException
      */
     protected function instantiateCache(string $cacheIdentifier, string $cacheObjectName, BackendInterface $backend): FrontendInterface

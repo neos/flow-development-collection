@@ -72,16 +72,12 @@ class DoctrineCommandController extends CommandController
      * Injects the Flow settings, only the persistence part is kept for further use
      *
      * @param array{persistence: array<string, mixed>} $settings
-     * @return void
      */
     public function injectSettings(array $settings): void
     {
         $this->settings = $settings['persistence'];
     }
 
-    /**
-     * @param LoggerInterface $logger
-     */
     public function injectLogger(LoggerInterface $logger): void
     {
         $this->logger = $logger;
@@ -90,7 +86,6 @@ class DoctrineCommandController extends CommandController
     /**
      * Compile the Doctrine proxy classes
      *
-     * @return void
      * @throws UtilityException
      * @throws FilesException
      * @Flow\Internal
@@ -110,7 +105,6 @@ class DoctrineCommandController extends CommandController
      * Note that this does not check the table structure in the database in
      * any way.
      *
-     * @return void
      * @throws StopCommandException
      * @see neos.flow:doctrine:entitystatus
      */
@@ -141,7 +135,6 @@ class DoctrineCommandController extends CommandController
      * exist, this will lead to errors.
      *
      * @param string|null $output A file to write SQL to, instead of executing it
-     * @return void
      * @throws ToolsException
      * @throws StopCommandException
      * @see neos.flow:doctrine:update
@@ -171,7 +164,6 @@ class DoctrineCommandController extends CommandController
      *
      * @param boolean $unsafeMode If set, foreign keys, sequences and tables can potentially be dropped.
      * @param string|null $output A file to write SQL to, instead of executing the update directly
-     * @return void
      * @throws StopCommandException
      * @see neos.flow:doctrine:create
      * @see neos.flow:doctrine:migrate
@@ -201,7 +193,6 @@ class DoctrineCommandController extends CommandController
      *
      * @param boolean $dumpMappingData If set, the mapping data will be output
      * @param string|null $entityClassName If given, the mapping data for just this class will be output
-     * @return void
      * @throws ORMException
      * @see neos.flow:doctrine:validate
      */
@@ -255,7 +246,6 @@ class DoctrineCommandController extends CommandController
      * @param string $hydrationMode One of: object, array, scalar, single-scalar, simpleobject
      * @param integer|null $offset Offset the result by this number
      * @param integer|null $limit Limit the result to this number
-     * @return void
      * @throws StopCommandException
      */
     public function dqlCommand(int $depth = 3, string $hydrationMode = 'array', ?int $offset = null, ?int $limit = null): void
@@ -285,7 +275,6 @@ class DoctrineCommandController extends CommandController
      *
      * @param boolean $showMigrations Output a list of all migrations and their status
      * @param string|null $migrationFolder Provide alternative platform folder name (as in "Mysql"), otherwise configured connection is used.
-     * @return void
      * @throws DBALException
      * @throws StopCommandException
      * @see neos.flow:doctrine:migrate
@@ -315,7 +304,6 @@ class DoctrineCommandController extends CommandController
      * @param boolean $dryRun Whether to do a dry run or not
      * @param boolean $quiet If set, only the executed migration versions will be output, one per line
      * @param string|null $migrationFolder Provide alternative platform folder name (as in "Mysql"), otherwise configured connection is used.
-     * @return void
      * @throws StopCommandException
      * @see neos.flow:doctrine:migrationstatus
      * @see neos.flow:doctrine:migrationexecute
@@ -347,7 +335,6 @@ class DoctrineCommandController extends CommandController
     }
 
     /**
-     * @return void
      * @Flow\Signal
      */
     protected function emitAfterDatabaseMigration(): void
@@ -364,7 +351,6 @@ class DoctrineCommandController extends CommandController
      * @param string|null $output A file to write SQL to, instead of executing it
      * @param boolean $dryRun Whether to do a dry run or not
      * @param string|null $migrationFolder Provide alternative platform folder name (as in "Mysql"), otherwise configured connection is used.
-     * @return void
      * @throws StopCommandException
      * @see neos.flow:doctrine:migrate
      * @see neos.flow:doctrine:migrationstatus
@@ -400,7 +386,6 @@ class DoctrineCommandController extends CommandController
      * @param boolean $add The migration to mark as migrated
      * @param boolean $delete The migration to mark as not migrated
      * @param string|null $migrationFolder Provide alternative platform folder name (as in "Mysql"), otherwise configured connection is used.
-     * @return void
      * @throws DBALException
      * @throws FilesException
      * @throws StopCommandException
@@ -422,7 +407,7 @@ class DoctrineCommandController extends CommandController
 
         $this->maybeOutputMigrationFolderWarning($migrationFolder);
         try {
-            $this->doctrineService->markAsMigrated($this->normalizeVersion($version), $add ?: false, $migrationFolder);
+            $this->doctrineService->markAsMigrated($this->normalizeVersion($version), $add, $migrationFolder);
         } catch (MigrationException $exception) {
             $this->outputLine($exception->getMessage());
             $this->quit(1);
@@ -452,7 +437,6 @@ class DoctrineCommandController extends CommandController
      * @param string|null $filterExpression Only include tables/sequences matching the filter expression regexp
      * @param boolean $force Generate migrations even if there are migrations left to execute
      * @param string|null $migrationFolder Provide alternative platform folder name (as in "Mysql"), otherwise configured connection is used.
-     * @return void
      * @throws DBALException
      * @throws StopCommandException
      * @throws FilesException
@@ -534,7 +518,6 @@ class DoctrineCommandController extends CommandController
      * Output an error message and log the exception.
      *
      * @param \Exception $exception
-     * @return void
      * @throws StopCommandException
      */
     protected function handleException(\Throwable $exception): void
@@ -557,7 +540,6 @@ class DoctrineCommandController extends CommandController
     /**
      * Migrates a numeric version like "12345678901234" to a fully qualified version "Neos\Flow\Persistence\Doctrine\Migrations\Version12345678901234"
      *
-     * @param string $version
      * @return string To fully qualified version including PHP namespace
      */
     private function normalizeVersion(string $version): string

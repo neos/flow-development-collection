@@ -79,7 +79,7 @@ abstract class ObjectAccess
 
         $propertyExists = false;
         $propertyValue = self::getPropertyInternal($subject, $propertyName, $forceDirectAccess, $propertyExists);
-        if ($propertyExists === true) {
+        if ($propertyExists) {
             return $propertyValue;
         }
         throw new PropertyNotAccessibleException('The property "' . $propertyName . '" on the subject was not accessible.', 1263391473);
@@ -121,7 +121,7 @@ abstract class ObjectAccess
         $propertyExists = true;
         $className = TypeHandling::getTypeForValue($subject);
 
-        if ($forceDirectAccess === true) {
+        if ($forceDirectAccess) {
             // try actual class property first
             if (property_exists($className, $propertyName)) {
                 $propertyReflection = new \ReflectionProperty($className, $propertyName);
@@ -168,9 +168,7 @@ abstract class ObjectAccess
     }
 
     /**
-     * @param string $cacheIdentifier
      * @param mixed $subject
-     * @param string $propertyName
      * @return void
      */
     protected static function initializePropertyGetterCache(string $cacheIdentifier, $subject, string $propertyName)
@@ -204,7 +202,6 @@ abstract class ObjectAccess
      * For arrays the keys are checked likewise.
      *
      * @param mixed $subject An object or array
-     * @param string $propertyPath
      * @return mixed Value of the property
      */
     public static function getPropertyPath($subject, string $propertyPath)
@@ -213,7 +210,7 @@ abstract class ObjectAccess
         foreach ($propertyPathSegments as $pathSegment) {
             $propertyExists = false;
             $propertyValue = self::getPropertyInternal($subject, $pathSegment, false, $propertyExists);
-            if ($propertyExists !== true && (is_array($subject) || $subject instanceof \ArrayAccess) && isset($subject[$pathSegment])) {
+            if (!$propertyExists && (is_array($subject) || $subject instanceof \ArrayAccess) && isset($subject[$pathSegment])) {
                 $subject = $subject[$pathSegment];
             } else {
                 $subject = $propertyValue;
@@ -261,7 +258,7 @@ abstract class ObjectAccess
             throw new \InvalidArgumentException('subject must be an object or array, ' . gettype($subject) . ' given.', 1237301368);
         }
 
-        if ($forceDirectAccess === true) {
+        if ($forceDirectAccess) {
             if (!is_string($propertyName)) {
                 throw new \InvalidArgumentException('Given property name is not of type string.', 1648244846);
             }
@@ -376,7 +373,6 @@ abstract class ObjectAccess
      *
      * @param object $object Object containing the property
      * @param string $propertyName Name of the property to check
-     * @return boolean
      * @throws \InvalidArgumentException
      */
     public static function isPropertySettable($object, string $propertyName): bool
@@ -399,7 +395,6 @@ abstract class ObjectAccess
      *
      * @param object $object Object containing the property
      * @param string $propertyName Name of the property to check
-     * @return boolean
      * @throws \InvalidArgumentException
      */
     public static function isPropertyGettable($object, string $propertyName): bool
@@ -438,7 +433,7 @@ abstract class ObjectAccess
         foreach (self::getGettablePropertyNames($object) as $propertyName) {
             $propertyExists = false;
             $propertyValue = self::getPropertyInternal($object, $propertyName, false, $propertyExists);
-            if ($propertyExists === true) {
+            if ($propertyExists) {
                 $properties[$propertyName] = $propertyValue;
             }
         }

@@ -74,7 +74,6 @@ class XliffFileProvider
     /**
      * Injects the Flow_I18n_XmlModelCache cache
      *
-     * @param VariableFrontend $cache
      * @return void
      */
     public function injectCache(VariableFrontend $cache)
@@ -95,7 +94,6 @@ class XliffFileProvider
 
     /**
      * @param string $fileId
-     * @param Locale $locale
      * @return XliffRecord
      * @todo Add XLIFF 2.0 support
      */
@@ -127,10 +125,7 @@ class XliffFileProvider
     }
 
     /**
-     * @param string $translationPath
      * @param array{fileIdentifier: string, sourceLocale?: Locale, translationUnits?: array<string,array<int,array{source: string, target: string}>>} $parsedData
-     * @param string $fileId
-     * @param string $defaultPackageName
      * @return void
      */
     protected function readDirectoryRecursively(string $translationPath, array & $parsedData, string $fileId, string $defaultPackageName = 'Neos.Flow')
@@ -172,7 +167,6 @@ class XliffFileProvider
 
     /**
      * @param string $fileId
-     * @param Locale $locale
      * @return FileAdapter
      */
     public function getFile($fileId, Locale $locale)

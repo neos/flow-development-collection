@@ -162,7 +162,7 @@ class UriTemplate
                 $configuration['modifier'] = '*';
                 $configuration['value'] = substr($expressionPart, 0, -1);
             } else {
-                $configuration['value'] = (string)$expressionPart;
+                $configuration['value'] = $expressionPart;
                 $configuration['modifier'] = '';
             }
 

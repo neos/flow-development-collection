@@ -100,7 +100,6 @@ class SessionMetaDataStore
     }
 
     /**
-     * @param string $tag
      * @return \Generator<string, SessionMetaData> Session metadata indexed by sessionIdentifier
      * @throws NotSupportedByBackendException
      */

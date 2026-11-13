@@ -79,7 +79,6 @@ class CommandController implements CommandControllerInterface
     }
 
     /**
-     * @param CommandManager $commandManager
      * @return void
      */
     public function injectCommandManager(CommandManager $commandManager)
@@ -90,7 +89,6 @@ class CommandController implements CommandControllerInterface
     /**
      * Injects the reflection service
      *
-     * @param ObjectManagerInterface $objectManager
      * @return void
      */
     public function injectObjectManager(ObjectManagerInterface $objectManager)
@@ -103,7 +101,6 @@ class CommandController implements CommandControllerInterface
      *
      * @param Request $request The request object
      * @param Response $response The response, modified by this handler
-     * @return void
      * @throws InvalidArgumentTypeException
      * @throws NoSuchCommandException
      * @api
@@ -198,8 +195,6 @@ class CommandController implements CommandControllerInterface
      * Request is directly transferred to the other command / controller
      * without the need for a new request.
      *
-     * @param string $commandName
-     * @param ?string $controllerObjectName
      * @param array<mixed> $arguments
      * @return void
      * @throws StopCommandException
@@ -264,8 +259,6 @@ class CommandController implements CommandControllerInterface
 
     /**
      * Returns the CLI Flow command depending on the environment
-     *
-     * @return string
      */
     public function getFlowInvocationString(): string
     {

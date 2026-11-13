@@ -65,7 +65,7 @@ class IdentityRoutePart extends DynamicRoutePart
      *
      * @var string
      */
-    protected $uriPattern = null;
+    protected $uriPattern;
 
     /**
      * @param class-string $objectType
@@ -316,7 +316,6 @@ class IdentityRoutePart extends DynamicRoutePart
      * Transforms the given string into a URI compatible format without special characters.
      * In the long term this should be done with proper transliteration
      *
-     * @param string $value
      * @return string
      * @todo use transliteration of the I18n sub package
      */
@@ -339,8 +338,7 @@ class IdentityRoutePart extends DynamicRoutePart
         $value = preg_replace('/[^-a-z0-9.\\' . $spaceCharacter . ']/i', '', $value) ?: '';
 
         $value = preg_replace('/\\' . $spaceCharacter . '{2,}/', $spaceCharacter, $value) ?: '';
-        $value = trim($value, $spaceCharacter) ?: '';
 
-        return $value;
+        return trim($value, $spaceCharacter) ?: '';
     }
 }

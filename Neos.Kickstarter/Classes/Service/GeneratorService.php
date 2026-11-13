@@ -592,7 +592,6 @@ class GeneratorService
     }
 
     /**
-     * @param PackageInterface $package
      * @return array<mixed>
      */
     protected function getPrimaryNamespaceAndEntryPath(PackageInterface $package)

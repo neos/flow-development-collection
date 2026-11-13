@@ -127,8 +127,6 @@ class Request
 
     /**
      * Returns the command object for this request
-     *
-     * @return Command
      */
     public function getCommand(): Command
     {
@@ -146,7 +144,6 @@ class Request
      *
      * @param string $argumentName Name of the argument to set
      * @param mixed $value The new value
-     * @return void
      * @throws InvalidArgumentNameException
      */
     public function setArgument(string $argumentName, $value): void

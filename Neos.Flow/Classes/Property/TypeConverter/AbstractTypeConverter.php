@@ -83,7 +83,6 @@ abstract class AbstractTypeConverter implements TypeConverterInterface
      *
      * @param mixed $source the source data
      * @param string $originalTargetType the type we originally want to convert to
-     * @param PropertyMappingConfigurationInterface|null $configuration
      * @return string
      * @api
      */
@@ -133,7 +132,6 @@ abstract class AbstractTypeConverter implements TypeConverterInterface
      *
      * @param string $targetType
      * @param string $propertyName
-     * @param PropertyMappingConfigurationInterface $configuration
      * @return string|null
      * @api
      */

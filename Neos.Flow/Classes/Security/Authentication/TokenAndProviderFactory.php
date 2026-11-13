@@ -182,7 +182,7 @@ class TokenAndProviderFactory implements TokenAndProviderFactoryInterface
 
             if (isset($providerConfiguration['requestPatterns']) && is_array($providerConfiguration['requestPatterns'])) {
                 $requestPatterns = [];
-                foreach ($providerConfiguration['requestPatterns'] as $patternName => $patternConfiguration) {
+                foreach ($providerConfiguration['requestPatterns'] as $patternConfiguration) {
                     // skip request patterns that are set to NULL (i.e. `somePattern: ~` in a YAML file)
                     if ($patternConfiguration === null) {
                         continue;

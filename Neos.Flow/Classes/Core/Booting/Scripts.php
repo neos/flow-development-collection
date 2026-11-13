@@ -66,12 +66,11 @@ use Neos\Utility\OpcodeCacheHelper;
 class Scripts
 {
     /** @var string|null */
-    protected static $builtPhpCommand = null;
+    protected static $builtPhpCommand;
 
     /**
      * Initializes the Class Loader
      *
-     * @param Bootstrap $bootstrap
      * @return void
      */
     public static function initializeClassLoader(Bootstrap $bootstrap)
@@ -111,7 +110,6 @@ class Scripts
      * Register the class loader into the Doctrine AnnotationRegistry so
      * the DocParser is able to load annotation classes from packages.
      *
-     * @param Bootstrap $bootstrap
      * @return void
      */
     public static function registerClassLoaderInAnnotationRegistry(Bootstrap $bootstrap)
@@ -125,7 +123,6 @@ class Scripts
     /**
      * Injects the classes cache to the already initialized class loader
      *
-     * @param Bootstrap $bootstrap
      * @return void
      */
     public static function initializeClassLoaderClassesCache(Bootstrap $bootstrap)
@@ -141,7 +138,6 @@ class Scripts
      * Does some emergency, forced, low level flush caches if the user told to do
      * so through the command line.
      *
-     * @param Bootstrap $bootstrap
      * @return void
      */
     public static function forceFlushCachesIfNecessary(Bootstrap $bootstrap)
@@ -169,7 +165,6 @@ class Scripts
     /**
      * Initializes the Signal Slot module
      *
-     * @param Bootstrap $bootstrap
      * @return void
      */
     public static function initializeSignalSlot(Bootstrap $bootstrap)
@@ -181,7 +176,6 @@ class Scripts
      * Initializes the package system and loads the package configuration and settings
      * provided by the packages.
      *
-     * @param Bootstrap $bootstrap
      * @return void
      */
     public static function initializePackageManagement(Bootstrap $bootstrap)
@@ -206,7 +200,6 @@ class Scripts
     /**
      * Initializes the Configuration Manager, the Flow settings and the Environment service
      *
-     * @param Bootstrap $bootstrap
      * @return void
      * @throws FlowException
      */
@@ -248,8 +241,6 @@ class Scripts
     /**
      * Initializes the System Logger
      *
-     * @param Bootstrap $bootstrap
-     * @return void
      * @throws FlowException
      * @throws InvalidConfigurationTypeException
      */
@@ -273,7 +264,6 @@ class Scripts
     /**
      * Initialize the exception storage
      *
-     * @param Bootstrap $bootstrap
      * @param array{
      *     log?: array{
      *         throwables?: array{
@@ -283,7 +273,6 @@ class Scripts
      *         }
      *     }
      * } $settings The Neos.Flow settings
-     * @return ThrowableStorageInterface
      * @throws FlowException
      * @throws InvalidConfigurationTypeException
      */
@@ -337,7 +326,6 @@ class Scripts
     /**
      * Initializes the error handling
      *
-     * @param Bootstrap $bootstrap
      * @return void
      * @throws FlowException
      * @throws InvalidConfigurationTypeException
@@ -377,7 +365,6 @@ class Scripts
     /**
      * Initializes the cache framework
      *
-     * @param Bootstrap $bootstrap
      * @return void
      * @throws FlowException
      * @throws InvalidConfigurationTypeException
@@ -420,7 +407,6 @@ class Scripts
     /**
      * Runs the compile step if necessary
      *
-     * @param Bootstrap $bootstrap
      * @return void
      * @throws FlowException
      */
@@ -475,7 +461,6 @@ class Scripts
      * Recompile classes after file monitoring was executed and class files
      * have been changed.
      *
-     * @param Bootstrap $bootstrap
      * @return void
      * @throws FlowException
      */
@@ -487,7 +472,6 @@ class Scripts
     /**
      * Initializes the Compiletime Object Manager (phase 1)
      *
-     * @param Bootstrap $bootstrap
      * @return void
      */
     public static function initializeObjectManagerCompileTimeCreate(Bootstrap $bootstrap)
@@ -509,7 +493,6 @@ class Scripts
     /**
      * Initializes the Compiletime Object Manager (phase 2)
      *
-     * @param Bootstrap $bootstrap
      * @return void
      */
     public static function initializeObjectManagerCompileTimeFinalize(Bootstrap $bootstrap)
@@ -540,12 +523,11 @@ class Scripts
     /**
      * Initializes the runtime Object Manager
      *
-     * @param Bootstrap $bootstrap
      * @return void
      */
     public static function initializeObjectManager(Bootstrap $bootstrap)
     {
-        $configurationManager = $bootstrap->getEarlyInstance(ConfigurationManager::class);
+        $bootstrap->getEarlyInstance(ConfigurationManager::class);
         $objectConfigurationCache = $bootstrap->getEarlyInstance(CacheManager::class)->getCache('Flow_Object_Configuration');
 
         $logger = $bootstrap->getEarlyInstance(PsrLoggerFactoryInterface::class)->get('systemLogger');
@@ -567,7 +549,6 @@ class Scripts
     /**
      * Initializes the Reflection Service Factory
      *
-     * @param Bootstrap $bootstrap
      * @return void
      */
     public static function initializeReflectionServiceFactory(Bootstrap $bootstrap)
@@ -580,7 +561,6 @@ class Scripts
     /**
      * Initializes the Reflection Service
      *
-     * @param Bootstrap $bootstrap
      * @return void
      * @throws FlowException
      */
@@ -600,7 +580,6 @@ class Scripts
      * by the file monitor through a signal. For Flow, those signal-slot connections
      * are defined in the class \Neos\Flow\Package.
      *
-     * @param Bootstrap $bootstrap
      * @return void
      */
     public static function initializeSystemFileMonitor(Bootstrap $bootstrap)
@@ -647,7 +626,6 @@ class Scripts
     }
 
     /**
-     * @param Bootstrap $bootstrap
      * @return array<mixed>
      */
     protected static function getListOfPackagesWithConfiguredObjects(Bootstrap $bootstrap): array
@@ -655,22 +633,19 @@ class Scripts
         $objectManager = $bootstrap->getObjectManager();
         /** @phpstan-ignore method.notFound (not part of the interface) */
         $allObjectConfigurations = $objectManager->getAllObjectConfigurations();
-        $packagesWithConfiguredObjects = array_reduce($allObjectConfigurations, function ($foundPackages, $item) {
+
+        return array_reduce($allObjectConfigurations, function ($foundPackages, $item) {
             if (isset($item['p']) && !in_array($item['p'], $foundPackages)) {
                 $foundPackages[] = $item['p'];
             }
 
             return $foundPackages;
         }, []);
-
-        return $packagesWithConfiguredObjects;
     }
 
     /**
      * Let the given file monitor track changes of the specified directory if it exists.
      *
-     * @param FileMonitor $fileMonitor
-     * @param string $path
      * @param string $filenamePattern Optional pattern for filenames to consider for file monitoring (regular expression). @see FileMonitor::monitorDirectory()
      * @return void
      */
@@ -688,7 +663,6 @@ class Scripts
      * needs the advised proxy classes to run. When that signal is fired, they
      * have been written, but not loaded.
      *
-     * @param Bootstrap $bootstrap
      * @return void
      */
     protected static function compileDoctrineProxies(Bootstrap $bootstrap)
@@ -712,7 +686,6 @@ class Scripts
     /**
      * Initialize the stream wrappers.
      *
-     * @param Bootstrap $bootstrap
      * @return void
      */
     public static function initializeResources(Bootstrap $bootstrap)
@@ -1053,7 +1026,6 @@ class Scripts
      *
      * The old class loader is used only in a testing context.
      *
-     * @param Bootstrap $bootstrap
      * @return bool
      */
     protected static function useClassLoader(Bootstrap $bootstrap)

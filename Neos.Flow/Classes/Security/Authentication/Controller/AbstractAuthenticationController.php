@@ -95,7 +95,7 @@ abstract class AbstractAuthenticationController extends ActionController
 
         $storedRequest = $this->securityContext->getInterceptedRequest();
         if ($storedRequest !== null) {
-            $this->securityContext->setInterceptedRequest(null);
+            $this->securityContext->setInterceptedRequest();
         }
         return $this->onAuthenticationSuccess($storedRequest);
     }

@@ -64,7 +64,7 @@ class CropViewHelper extends AbstractViewHelper
     {
         $this->registerArgument('maxCharacters', 'integer', 'Place where to truncate the string', true);
         $this->registerArgument('append', 'string', 'What to append, if truncation happened', false, '...');
-        $this->registerArgument('value', 'string', 'The input value which should be cropped. If not set, the evaluated contents of the child nodes will be used', false, null);
+        $this->registerArgument('value', 'string', 'The input value which should be cropped. If not set, the evaluated contents of the child nodes will be used', false);
     }
 
     /**
@@ -80,8 +80,6 @@ class CropViewHelper extends AbstractViewHelper
 
     /**
      * @param array<string,mixed> $arguments
-     * @param \Closure $renderChildrenClosure
-     * @param RenderingContextInterface $renderingContext
      * @return string
      */
     public static function renderStatic(array $arguments, \Closure $renderChildrenClosure, RenderingContextInterface $renderingContext)

@@ -218,7 +218,6 @@ class SessionManager implements SessionManagerInterface
      * This method must not be called manually – it is invoked by Flow's object
      * management.
      *
-     * @return void
      * @throws NotSupportedByBackendException
      * @throws CacheException
      */

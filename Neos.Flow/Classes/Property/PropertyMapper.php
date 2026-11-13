@@ -214,7 +214,6 @@ class PropertyMapper
      *
      * @param mixed $source
      * @param string $targetType
-     * @param PropertyMappingConfigurationInterface $configuration
      * @return TypeConverterInterface Type Converter which should be used to convert between $source and $targetType.
      * @throws Exception\TypeConverterException
      * @throws Exception\InvalidTargetException

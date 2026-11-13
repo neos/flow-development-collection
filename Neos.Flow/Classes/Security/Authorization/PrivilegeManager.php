@@ -141,27 +141,18 @@ class PrivilegeManager implements PrivilegeManagerInterface
         }
 
         $privilegeFound = $privileges !== [];
-        if ($result->getDenies() === 0 && $result->getGrants() === 0 && $privilegeFound === true && $this->allowAccessIfAllAbstain === true) {
+        if ($result->getDenies() === 0 && $result->getGrants() === 0 && $privilegeFound && $this->allowAccessIfAllAbstain === true) {
             return true;
         }
 
         return false;
     }
 
-    /**
-     * @param PrivilegePermissionResult $result
-     * @param PrivilegeInterface|null $privilege
-     * @return PrivilegePermissionResult
-     */
     protected function applyPrivilegeToResult(PrivilegePermissionResult $result, ?PrivilegeInterface $privilege = null): PrivilegePermissionResult
     {
         return $result->withPrivilege($privilege);
     }
 
-    /**
-     * @param string $privilegeType
-     * @return \Closure
-     */
     protected function getPrivilegeByTypeReducer(string $privilegeType): \Closure
     {
         return fn (array $availablePrivileges, Role $role) => array_merge($availablePrivileges, $role->getPrivilegesByType($privilegeType));
@@ -169,7 +160,6 @@ class PrivilegeManager implements PrivilegeManagerInterface
 
     /**
      * @param mixed $subject
-     * @return \Closure
      */
     protected function getPrivilegeSubjectFilter($subject): \Closure
     {

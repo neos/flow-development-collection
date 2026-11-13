@@ -68,7 +68,6 @@ class FileBackend extends SimpleFileBackend implements PhpCapableBackendInterfac
      * On the positive side, a frozen cache backend is much faster on read access.
      * A frozen backend can only be thawed by calling the flush() method.
      *
-     * @return void
      * @throws \RuntimeException
      */
     public function freeze(): void
@@ -97,15 +96,13 @@ class FileBackend extends SimpleFileBackend implements PhpCapableBackendInterfac
         } else {
             $data = serialize($this->cacheEntryIdentifiers);
         }
-        if ($this->writeCacheFile($cachePathAndFileName, $data) !== false) {
+        if ($this->writeCacheFile($cachePathAndFileName, $data)) {
             $this->frozen = true;
         }
     }
 
     /**
      * Tells if this backend is frozen.
-     *
-     * @return boolean
      */
     public function isFrozen(): bool
     {
@@ -120,7 +117,6 @@ class FileBackend extends SimpleFileBackend implements PhpCapableBackendInterfac
      * flag accordingly.
      *
      * @param FrontendInterface $cache The cache frontend
-     * @return void
      * @throws Exception
      */
     public function setCache(FrontendInterface $cache): void
@@ -146,7 +142,6 @@ class FileBackend extends SimpleFileBackend implements PhpCapableBackendInterfac
      * @param string $data The data to be stored
      * @param array<string> $tags Tags to associate with this cache entry
      * @param ?integer $lifetime Lifetime of this cache entry in seconds. If NULL is specified, the default lifetime is used. "0" means unlimited lifetime.
-     * @return void
      * @throws \RuntimeException
      * @throws Exception if the directory does not exist or is not writable or exceeds the maximum allowed path length, or if no cache frontend has been set.
      * @throws \InvalidArgumentException
@@ -169,7 +164,7 @@ class FileBackend extends SimpleFileBackend implements PhpCapableBackendInterfac
         $expiryTime = ($lifetime === 0) ? 0 : (time() + $lifetime);
         $entry = new FileBackendEntryDto($data, $tags, $expiryTime);
         $result = $this->writeCacheFile($cacheEntryPathAndFilename, (string)$entry);
-        if ($result !== false) {
+        if ($result) {
             if ($this->cacheEntryFileExtension === '.php') {
                 OpcodeCacheHelper::clearAllActive($cacheEntryPathAndFilename);
             }
@@ -196,7 +191,6 @@ class FileBackend extends SimpleFileBackend implements PhpCapableBackendInterfac
     /**
      * Checks if a cache entry with the specified identifier exists.
      *
-     * @param string $entryIdentifier
      * @return boolean true if such an entry exists, false if not
      * @throws \InvalidArgumentException
      * @api
@@ -287,7 +281,6 @@ class FileBackend extends SimpleFileBackend implements PhpCapableBackendInterfac
     /**
      * Removes all cache entries of this cache and sets the frozen flag to false.
      *
-     * @return void
      * @throws FilesException
      * @api
      */
@@ -336,9 +329,6 @@ class FileBackend extends SimpleFileBackend implements PhpCapableBackendInterfac
      * Checks if the given cache entry files are still valid or if their
      * lifetime has exceeded.
      *
-     * @param string $cacheEntryPathAndFilename
-     * @param boolean $acquireLock
-     * @return boolean
      * @api
      */
     protected function isCacheFileExpired(string $cacheEntryPathAndFilename, bool $acquireLock = true): bool
@@ -357,7 +347,6 @@ class FileBackend extends SimpleFileBackend implements PhpCapableBackendInterfac
     /**
      * Does garbage collection
      *
-     * @return void
      * @api
      */
     public function collectGarbage(): void
@@ -424,8 +413,6 @@ class FileBackend extends SimpleFileBackend implements PhpCapableBackendInterfac
     /**
      * Internal get method, allows to nest locks by using the $acquireLock flag
      *
-     * @param string $entryIdentifier
-     * @param boolean $acquireLock
      * @return bool|string
      * @throws \InvalidArgumentException
      */
@@ -458,7 +445,6 @@ class FileBackend extends SimpleFileBackend implements PhpCapableBackendInterfac
     /**
      * Internal get method in case the cache is frozen, this will not check expiry times!
      *
-     * @param string $entryIdentifier
      * @return bool|string
      * @throws \InvalidArgumentException
      */

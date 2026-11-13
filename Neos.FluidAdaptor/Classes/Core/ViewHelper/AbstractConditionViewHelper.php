@@ -69,7 +69,6 @@ abstract class AbstractConditionViewHelper extends AbstractViewHelper
      * be a warning if someone considers changing this method signature!
      *
      * @param array<mixed>|NULL $arguments
-     * @param RenderingContextInterface $renderingContext
      * @return boolean
      * @api
      */
@@ -81,8 +80,6 @@ abstract class AbstractConditionViewHelper extends AbstractViewHelper
 
     /**
      * @param array<string,mixed> $arguments
-     * @param \Closure $renderChildrenClosure
-     * @param RenderingContextInterface $renderingContext
      * @return mixed
      */
     public static function renderStatic(array $arguments, \Closure $renderChildrenClosure, RenderingContextInterface $renderingContext)
@@ -108,7 +105,6 @@ abstract class AbstractConditionViewHelper extends AbstractViewHelper
     /**
      * @param array<mixed> $closures
      * @param array<mixed> $conditionClosures
-     * @param RenderingContextInterface $renderingContext
      * @return string
      */
     protected static function evaluateElseClosures(array $closures, array $conditionClosures, RenderingContextInterface $renderingContext)
@@ -145,9 +141,7 @@ abstract class AbstractConditionViewHelper extends AbstractViewHelper
             if ($childNode instanceof ViewHelperNode
                 && str_ends_with($childNode->getViewHelperClassName(), 'ThenViewHelper')
             ) {
-                $data = $childNode->evaluate($this->renderingContext);
-
-                return $data;
+                return $childNode->evaluate($this->renderingContext);
             }
             if ($childNode instanceof ViewHelperNode
                 && str_ends_with($childNode->getViewHelperClassName(), 'ElseViewHelper')
@@ -202,8 +196,6 @@ abstract class AbstractConditionViewHelper extends AbstractViewHelper
      * @param string $argumentsName
      * @param string $closureName
      * @param string $initializationPhpCode
-     * @param ViewHelperNode $node
-     * @param TemplateCompiler $compiler
      * @return string
      */
     public function compile($argumentsName, $closureName, &$initializationPhpCode, ViewHelperNode $node, TemplateCompiler $compiler)
@@ -240,7 +232,6 @@ abstract class AbstractConditionViewHelper extends AbstractViewHelper
     /**
      * @param boolean $isConditionFullfilled
      * @param array<string,mixed> $arguments
-     * @param RenderingContextInterface $renderingContext
      * @return mixed
      */
     protected static function renderResult($isConditionFullfilled, array $arguments, RenderingContextInterface $renderingContext)

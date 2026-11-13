@@ -63,7 +63,6 @@ class Translator
     protected $pluralsReader;
 
     /**
-     * @param I18n\Service $localizationService
      * @return void
      */
     public function injectLocalizationService(I18n\Service $localizationService)
@@ -72,7 +71,6 @@ class Translator
     }
 
     /**
-     * @param TranslationProvider\TranslationProviderInterface $translationProvider
      * @return void
      */
     public function injectTranslationProvider(TranslationProvider\TranslationProviderInterface $translationProvider)
@@ -81,7 +79,6 @@ class Translator
     }
 
     /**
-     * @param FormatResolver $formatResolver
      * @return void
      */
     public function injectFormatResolver(FormatResolver $formatResolver)
@@ -90,7 +87,6 @@ class Translator
     }
 
     /**
-     * @param Cldr\Reader\PluralsReader $pluralsReader
      * @return void
      */
     public function injectPluralsReader(Cldr\Reader\PluralsReader $pluralsReader)
@@ -217,7 +213,6 @@ class Translator
      * In all other cases, NULL is returned.
      *
      * @param mixed $quantity
-     * @param Locale $locale
      * @return string|null
      */
     protected function getPluralForm($quantity, Locale $locale)

@@ -56,7 +56,7 @@ abstract class AbstractToken implements TokenInterface
      * The authentication entry point
      * @var EntryPointInterface
      */
-    protected $entryPoint = null;
+    protected $entryPoint;
 
     /**
      * Token options

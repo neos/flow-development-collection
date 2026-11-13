@@ -31,7 +31,6 @@ class XliffReader
 
     /**
      * @param string $sourcePath
-     * @param callable $iterator
      * @return void
      */
     public function readFiles($sourcePath, callable $iterator)
@@ -62,7 +61,6 @@ class XliffReader
     }
 
     /**
-     * @param \XMLReader $reader
      * @return boolean
      */
     protected function isFileNode(\XMLReader $reader)

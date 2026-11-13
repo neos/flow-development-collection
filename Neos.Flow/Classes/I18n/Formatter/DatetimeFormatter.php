@@ -36,7 +36,6 @@ class DatetimeFormatter implements FormatterInterface
     protected $datesReader;
 
     /**
-     * @param DatesReader $datesReader
      * @return void
      */
     public function injectDatesReader(DatesReader $datesReader)
@@ -102,7 +101,6 @@ class DatetimeFormatter implements FormatterInterface
      * locale.
      *
      * @param \DateTimeInterface $date PHP object representing particular point in time
-     * @param Locale $locale
      * @param string $formatLength One of DatesReader FORMAT_LENGTH constants
      * @return string Formatted date
      * @api
@@ -118,7 +116,6 @@ class DatetimeFormatter implements FormatterInterface
      * locale.
      *
      * @param \DateTimeInterface $time PHP object representing particular point in time
-     * @param Locale $locale
      * @param string $formatLength One of DatesReader FORMAT_LENGTH constants
      * @return string Formatted time
      * @api
@@ -137,7 +134,6 @@ class DatetimeFormatter implements FormatterInterface
      * from CLDR is used to place date and time in correct order.
      *
      * @param \DateTimeInterface $dateTime PHP object representing particular point in time
-     * @param Locale $locale
      * @param string $formatLength One of DatesReader FORMAT_LENGTH constants
      * @return string Formatted date and time
      * @api

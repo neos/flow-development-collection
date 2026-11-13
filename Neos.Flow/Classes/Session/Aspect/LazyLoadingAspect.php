@@ -64,7 +64,7 @@ class LazyLoadingAspect
     {
         $session = $this->sessionManager->getCurrentSession();
 
-        if ($session->isStarted() === true) {
+        if ($session->isStarted()) {
             return;
         }
 

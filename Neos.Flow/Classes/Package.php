@@ -78,7 +78,7 @@ class Package extends BasePackage
                 /** @phpstan-ignore-next-line the object manager interface doesn't specify this method */
                 $bootstrap->getObjectManager()->hasInstance(Persistence\PersistenceManagerInterface::class)
             ) {
-                if (SecurityHelper::hasSafeMethod($request->getHttpRequest()) !== true) {
+                if (!SecurityHelper::hasSafeMethod($request->getHttpRequest())) {
                     $bootstrap->getObjectManager()->get(Persistence\PersistenceManagerInterface::class)->persistAll();
                 } elseif (SecurityHelper::hasSafeMethod($request->getHttpRequest())) {
                     /** @phpstan-ignore-next-line the persistence manager interface doesn't specify this method */
@@ -108,7 +108,7 @@ class Package extends BasePackage
                     $publicResourcesFileMonitor = Monitor\FileMonitor::createFileMonitorAtBoot('Flow_PublicResourcesFiles', $bootstrap);
                     /** @var PackageManager $packageManager */
                     $packageManager = $bootstrap->getEarlyInstance(Package\PackageManager::class);
-                    foreach ($packageManager->getFlowPackages() as $packageKey => $package) {
+                    foreach ($packageManager->getFlowPackages() as $package) {
                         $publicResourcesPath = $package->getResourcesPath() . 'Public/';
                         if (is_dir($publicResourcesPath)) {
                             $publicResourcesFileMonitor->monitorDirectory($publicResourcesPath);

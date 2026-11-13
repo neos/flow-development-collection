@@ -31,9 +31,6 @@ abstract class PdoHelper
      * so they can be removed automatically. This is not done for driver-specific
      * SQL, though.
      *
-     * @param \PDO $databaseHandle
-     * @param string $pdoDriver
-     * @param string $pathAndFilename
      * @param array<string,string> $replacePairs every key in this array will be replaced with the corresponding value in the loaded SQL (example: ['###CACHE_TABLE_NAME###' => 'caches', '###TAGS_TABLE_NAME###' => 'tags'])
      * @return void
      */

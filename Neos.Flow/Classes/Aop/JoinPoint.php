@@ -56,13 +56,13 @@ class JoinPoint implements JoinPointInterface
      * The result of the method invocations (only used for After Returning advices)
      * @var mixed
      */
-    protected $result = null;
+    protected $result;
 
     /**
      * The exception thrown (only used for After Throwing advices)
      * @var \Exception|null
      */
-    protected $exception = null;
+    protected $exception;
 
     /**
      * Constructor, creates the join point
@@ -151,7 +151,6 @@ class JoinPoint implements JoinPointInterface
      *
      * @param string $argumentName Name of the argument
      * @param mixed $argumentValue Value of the argument
-     * @return void
      * @throws Exception\InvalidArgumentException
      * @api
      */
@@ -191,7 +190,6 @@ class JoinPoint implements JoinPointInterface
      * If an exception was thrown by the target method
      * Only makes sense for After Throwing advices.
      *
-     * @return boolean
      * @api
      */
     public function hasException(): bool

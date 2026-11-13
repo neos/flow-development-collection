@@ -27,7 +27,7 @@ class RequireAuthentication implements InterceptorInterface
     /**
      * @var AuthenticationManagerInterface
      */
-    protected $authenticationManager = null;
+    protected $authenticationManager;
 
     /**
      * Constructor.

@@ -51,19 +51,10 @@ use Neos\Flow\Reflection\ReflectionService;
  */
 class CompileTimeObjectManager extends ObjectManager
 {
-    /**
-     * @var VariableFrontend|null
-     */
     protected ?VariableFrontend $configurationCache = null;
 
-    /**
-     * @var ReflectionService|null
-     */
     protected ?ReflectionService $reflectionService = null;
 
-    /**
-     * @var ConfigurationManager|null
-     */
     protected ?ConfigurationManager $configurationManager = null;
 
     /**
@@ -88,19 +79,11 @@ class CompileTimeObjectManager extends ObjectManager
      */
     protected array $cachedClassNamesByScope = [];
 
-    /**
-     * @param ReflectionService $reflectionService
-     * @return void
-     */
     public function injectReflectionService(ReflectionService $reflectionService): void
     {
         $this->reflectionService = $reflectionService;
     }
 
-    /**
-     * @param ConfigurationManager $configurationManager
-     * @return void
-     */
     public function injectConfigurationManager(ConfigurationManager $configurationManager): void
     {
         $this->configurationManager = $configurationManager;
@@ -108,9 +91,6 @@ class CompileTimeObjectManager extends ObjectManager
 
     /**
      * Injects the configuration cache of the Object Framework
-     *
-     * @param VariableFrontend $configurationCache
-     * @return void
      */
     public function injectConfigurationCache(VariableFrontend $configurationCache): void
     {
@@ -121,7 +101,6 @@ class CompileTimeObjectManager extends ObjectManager
      * Initializes the object configurations and some other parts of this Object Manager.
      *
      * @param array<string, PackageInterface&PackageKeyAwareInterface> $packages An array of active packages to consider
-     * @return void
      * @throws InvalidConfigurationTypeException
      * @throws InvalidObjectConfigurationException
      * @throws CacheException
@@ -180,7 +159,6 @@ class CompileTimeObjectManager extends ObjectManager
      *
      * @param string $objectName The object name
      * @param object $instance A prebuilt instance
-     * @return void
      * @throws UnknownObjectException
      * @throws WrongScopeException
      */
@@ -491,8 +469,6 @@ class CompileTimeObjectManager extends ObjectManager
     /**
      * Shuts down this Object Container by calling the shutdown methods of all
      * object instances which were configured to be shut down.
-     *
-     * @return void
      */
     public function shutdown(): void
     {

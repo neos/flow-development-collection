@@ -62,7 +62,6 @@ class SimpleCache implements CacheInterface
      * @param string $key An identifier used for this cache entry
      * @param mixed $value The variable to cache
      * @param null|int|\DateInterval $ttl Lifetime of this cache entry in seconds. If NULL is specified, the default lifetime is used. "0" means unlimited lifetime.
-     * @return bool
      *
      * @throws Exception
      * @throws InvalidArgumentException
@@ -88,7 +87,6 @@ class SimpleCache implements CacheInterface
      * Finds and returns a variable value from the cache.
      *
      * @param string $key Identifier of the cache entry to fetch
-     * @param mixed $default
      * @return mixed The value or the defaultValue if entry was not found
      * @throws Exception
      * @throws InvalidArgumentException
@@ -109,8 +107,6 @@ class SimpleCache implements CacheInterface
     }
 
     /**
-     * @param string $key
-     * @return bool
      * @throws Exception
      * @throws InvalidArgumentException
      */
@@ -124,9 +120,6 @@ class SimpleCache implements CacheInterface
         }
     }
 
-    /**
-     * @return bool
-     */
     public function clear(): bool
     {
         $this->backend->flush();
@@ -135,7 +128,6 @@ class SimpleCache implements CacheInterface
 
     /**
      * @param iterable<string> $keys
-     * @param mixed $default
      * @return iterable<string, mixed>
      * @throws InvalidArgumentException
      * @throws Exception
@@ -151,8 +143,6 @@ class SimpleCache implements CacheInterface
 
     /**
      * @param iterable<string> $values
-     * @param null|int|\DateInterval $ttl
-     * @return bool
      * @throws Exception
      * @throws InvalidArgumentException
      */
@@ -173,7 +163,6 @@ class SimpleCache implements CacheInterface
 
     /**
      * @param iterable<string> $keys
-     * @return bool
      * @throws InvalidArgumentException
      * @throws Exception
      */
@@ -187,8 +176,6 @@ class SimpleCache implements CacheInterface
     }
 
     /**
-     * @param string $key
-     * @return bool
      * @throws InvalidArgumentException
      */
     public function has(string $key): bool
@@ -197,10 +184,6 @@ class SimpleCache implements CacheInterface
         return $this->backend->has($key);
     }
 
-    /**
-     * @param string $key
-     * @return bool
-     */
     protected function isValidEntryIdentifier(string $key): bool
     {
         return (preg_match(self::PATTERN_ENTRYIDENTIFIER, $key) === 1);
@@ -208,7 +191,6 @@ class SimpleCache implements CacheInterface
 
     /**
      * @param string $key
-     * @return void
      * @throws InvalidArgumentException
      */
     protected function ensureValidEntryIdentifier($key): void
@@ -218,18 +200,13 @@ class SimpleCache implements CacheInterface
         }
     }
 
-    /**
-     * @param \DateInterval $ttl
-     * @return int
-     */
     protected function calculateLifetimeFromDateInterval(\DateInterval $ttl): int
     {
-        $lifetime = (int)(
+        return (int)(
             ((int)$ttl->format('a')) * 86400
             + $ttl->h * 3600
             + $ttl->m * 60
             + $ttl->s
         );
-        return $lifetime;
     }
 }

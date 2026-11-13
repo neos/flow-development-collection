@@ -54,7 +54,6 @@ class FileStorage implements ThrowableStorageInterface
      * Factory method to get an instance.
      *
      * @param array{storagePath?: string, maximumThrowableDumpAge?: int, maximumThrowableDumpCount: ?int} $options
-     * @return ThrowableStorageInterface
      */
     public static function createWithOptions(array $options): ThrowableStorageInterface
     {
@@ -67,9 +66,6 @@ class FileStorage implements ThrowableStorageInterface
     /**
      * Create new instance.
      *
-     * @param string $storagePath
-     * @param int $maximumThrowableDumpAge
-     * @param int $maximumThrowableDumpCount
      * @see createWithOptions
      */
     public function __construct(string $storagePath, int $maximumThrowableDumpAge, int $maximumThrowableDumpCount)
@@ -105,7 +101,6 @@ class FileStorage implements ThrowableStorageInterface
     }
 
     /**
-     * @param \Closure $requestInformationRenderer
      * @return $this|ThrowableStorageInterface
      */
     public function setRequestInformationRenderer(\Closure $requestInformationRenderer)
@@ -116,7 +111,6 @@ class FileStorage implements ThrowableStorageInterface
     }
 
     /**
-     * @param \Closure $backtraceRenderer
      * @return $this|ThrowableStorageInterface
      */
     public function setBacktraceRenderer(\Closure $backtraceRenderer)
@@ -134,7 +128,6 @@ class FileStorage implements ThrowableStorageInterface
      * The returned message follows this pattern:
      * Exception #<code> in <line> of <file>: <message> - See also: <dumpFilename>
      *
-     * @param \Throwable $throwable
      * @param array<mixed> $additionalData
      * @return string Informational message about the stored throwable
      */
@@ -181,7 +174,6 @@ class FileStorage implements ThrowableStorageInterface
     /**
      * Get current error post mortem informations with support for error chaining
      *
-     * @param \Throwable $error
      * @param array<mixed> $additionalData
      * @return string
      */
@@ -212,7 +204,6 @@ class FileStorage implements ThrowableStorageInterface
     }
 
     /**
-     * @param \Throwable $error
      * @return string
      */
     protected function getErrorLogMessage(\Throwable $error)

@@ -85,8 +85,8 @@ class IfHasRoleViewHelper extends AbstractConditionViewHelper
     {
         parent::initializeArguments();
         $this->registerArgument('role', 'mixed', 'The role or role identifier.', true);
-        $this->registerArgument('packageKey', 'string', 'PackageKey of the package defining the role.', false, null);
-        $this->registerArgument('account', Account::class, 'If specified, this subject of this check is the given Account instead of the currently authenticated account', false, null);
+        $this->registerArgument('packageKey', 'string', 'PackageKey of the package defining the role.', false);
+        $this->registerArgument('account', Account::class, 'If specified, this subject of this check is the given Account instead of the currently authenticated account', false);
     }
 
     /**

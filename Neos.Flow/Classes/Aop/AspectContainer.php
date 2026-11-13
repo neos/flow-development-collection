@@ -149,7 +149,6 @@ class AspectContainer
      * Adds an advisor to this aspect container
      *
      * @param Advisor $advisor The advisor to add
-     * @return void
      */
     public function addAdvisor(Advisor $advisor): void
     {
@@ -158,9 +157,6 @@ class AspectContainer
 
     /**
      * Adds an introduction declaration to this aspect container
-     *
-     * @param InterfaceIntroduction $introduction
-     * @return void
      */
     public function addInterfaceIntroduction(InterfaceIntroduction $introduction): void
     {
@@ -169,9 +165,6 @@ class AspectContainer
 
     /**
      * Adds an introduction declaration to this aspect container
-     *
-     * @param PropertyIntroduction $introduction
-     * @return void
      */
     public function addPropertyIntroduction(PropertyIntroduction $introduction): void
     {
@@ -180,9 +173,6 @@ class AspectContainer
 
     /**
      * Adds an introduction declaration to this aspect container
-     *
-     * @param TraitIntroduction $introduction
-     * @return void
      */
     public function addTraitIntroduction(TraitIntroduction $introduction): void
     {
@@ -193,7 +183,6 @@ class AspectContainer
      * Adds a pointcut (from a pointcut declaration) to this aspect container
      *
      * @param Pointcut $pointcut The pointcut to add
-     * @return void
      */
     public function addPointcut(Pointcut $pointcut): void
     {
@@ -202,9 +191,6 @@ class AspectContainer
 
     /**
      * This method is used to optimize the matching process.
-     *
-     * @param Builder\ClassNameIndex $classNameIndex
-     * @return Builder\ClassNameIndex
      */
     public function reduceTargetClassNames(Builder\ClassNameIndex $classNameIndex): Builder\ClassNameIndex
     {
@@ -225,9 +211,6 @@ class AspectContainer
         return $result;
     }
 
-    /**
-     * @return Builder\ClassNameIndex
-     */
     public function getCachedTargetClassNameCandidates(): Builder\ClassNameIndex
     {
         return $this->cachedTargetClassNameCandidates;

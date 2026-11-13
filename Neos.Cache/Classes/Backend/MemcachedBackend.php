@@ -139,7 +139,6 @@ class MemcachedBackend extends IndependentAbstractBackend implements TaggableBac
     /**
      * Setter for compression flags bit
      *
-     * @param boolean $useCompression
      * @return void
      * @api
      */
@@ -149,7 +148,7 @@ class MemcachedBackend extends IndependentAbstractBackend implements TaggableBac
             $this->memcache->setOption(\Memcached::OPT_COMPRESSION, $useCompression);
             return;
         }
-        if ($useCompression === true) {
+        if ($useCompression) {
             $this->flags ^= MEMCACHE_COMPRESSED;
         } else {
             $this->flags &= ~MEMCACHE_COMPRESSED;
@@ -158,9 +157,6 @@ class MemcachedBackend extends IndependentAbstractBackend implements TaggableBac
 
     /**
      * Initializes the identifier prefix when setting the cache.
-     *
-     * @param FrontendInterface $cache
-     * @return void
      */
     public function setCache(FrontendInterface $cache): void
     {
@@ -199,7 +195,6 @@ class MemcachedBackend extends IndependentAbstractBackend implements TaggableBac
      * @param string $data The data to be stored
      * @param array<string> $tags Tags to associate with this cache entry
      * @param ?integer $lifetime Lifetime of this cache entry in seconds. If NULL is specified, the default lifetime is used. "0" means unlimited lifetime.
-     * @return void
      * @throws Exception if no cache frontend has been set.
      * @throws \InvalidArgumentException if the identifier is not valid or the final memcached key is longer than 250 characters
      * @api
@@ -248,9 +243,6 @@ class MemcachedBackend extends IndependentAbstractBackend implements TaggableBac
     /**
      * Stores an item on the server
      *
-     * @param string $key
-     * @param string $value
-     * @param integer $expiration
      * @return boolean
      */
     protected function setItem(string $key, string $value, int $expiration)
@@ -341,7 +333,6 @@ class MemcachedBackend extends IndependentAbstractBackend implements TaggableBac
     /**
      * Removes all cache entries of this cache.
      *
-     * @return void
      * @throws Exception
      * @api
      */
@@ -387,7 +378,6 @@ class MemcachedBackend extends IndependentAbstractBackend implements TaggableBac
     /**
      * Associates the identifier with the given tags
      *
-     * @param string $entryIdentifier
      * @param array<string> $tags
      * @return void
      */
@@ -412,7 +402,6 @@ class MemcachedBackend extends IndependentAbstractBackend implements TaggableBac
     /**
      * Removes association of the identifier with the given tags
      *
-     * @param string $entryIdentifier
      * @return void
      */
     protected function removeIdentifierFromAllTags(string $entryIdentifier)
@@ -443,7 +432,6 @@ class MemcachedBackend extends IndependentAbstractBackend implements TaggableBac
     /**
      * Does nothing, as memcache/memcached does GC itself
      *
-     * @return void
      * @api
      */
     public function collectGarbage(): void

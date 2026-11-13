@@ -92,7 +92,6 @@ class ResourceRepository extends Repository
      * Removes a PersistentResource object from this repository
      *
      * @param object $object
-     * @return void
      */
     public function remove($object): void
     {
@@ -243,11 +242,6 @@ class ResourceRepository extends Repository
 
     /**
      * Counts all resources with the same SHA1 hash and collection
-     *
-     * @param string $sha1Hash
-     * @param string $collectionName
-     *
-     * @return int
      */
     public function countBySha1AndCollectionName(string $sha1Hash, string $collectionName): int
     {

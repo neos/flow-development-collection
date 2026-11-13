@@ -40,7 +40,6 @@ class ConditionGenerator
     }
 
     /**
-     * @param SqlGeneratorInterface $expression
      * @return NotExpressionGenerator
      */
     public function notExpression(SqlGeneratorInterface $expression)

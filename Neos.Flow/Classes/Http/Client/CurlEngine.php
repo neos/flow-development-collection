@@ -57,7 +57,6 @@ class CurlEngine implements RequestEngineInterface
     /**
      * Sends the given HTTP request
      *
-     * @param RequestInterface $request
      * @return ResponseInterface The response or false
      * @throws Http\Exception
      * @throws CurlEngineException

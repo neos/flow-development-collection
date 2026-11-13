@@ -42,8 +42,6 @@ class PsrLoggerFactory implements PsrLoggerFactoryInterface
      * Get the logger configured with given identifier.
      * This implementation treats the logger as singleton.
      *
-     * @param string $identifier
-     * @return \Psr\Log\LoggerInterface
      * @throws \Exception
      */
     public function get(string $identifier): \Psr\Log\LoggerInterface
@@ -73,7 +71,6 @@ class PsrLoggerFactory implements PsrLoggerFactoryInterface
      * Create a new instance of this PsrLoggerFactory
      *
      * @param array<mixed> $configuration
-     * @return PsrLoggerFactory
      * @api
      */
     public static function create(array $configuration): PsrLoggerFactory
@@ -103,9 +100,7 @@ class PsrLoggerFactory implements PsrLoggerFactoryInterface
     /**
      * Instantiate a backend based on configuration.
      *
-     * @param string $class
      * @param array<mixed> $options
-     * @return BackendInterface
      * @throws \Exception
      */
     protected function instantiateBackend(string $class, array $options = []): BackendInterface

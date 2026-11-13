@@ -38,8 +38,6 @@ class SlaveRequestHandler implements RequestHandlerInterface
 
     /**
      * Constructor
-     *
-     * @param Bootstrap $bootstrap
      */
     public function __construct(Bootstrap $bootstrap)
     {

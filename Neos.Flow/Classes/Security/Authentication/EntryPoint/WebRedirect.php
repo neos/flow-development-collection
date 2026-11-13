@@ -45,7 +45,6 @@ class WebRedirect extends AbstractEntryPoint
      *
      * @param ServerRequestInterface $request The current request
      * @param ResponseInterface $response The current response
-     * @return ResponseInterface
      * @throws MissingConfigurationException
      */
     public function startAuthentication(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
@@ -53,7 +52,7 @@ class WebRedirect extends AbstractEntryPoint
         $uri = null;
 
         if (isset($this->options['uri'])) {
-            $uri = str_contains($this->options['uri'], '://') ? $this->options['uri'] : (string)$this->baseUriProvider->getConfiguredBaseUriOrFallbackToCurrentRequest() . $this->options['uri'];
+            $uri = str_contains($this->options['uri'], '://') ? $this->options['uri'] : $this->baseUriProvider->getConfiguredBaseUriOrFallbackToCurrentRequest() . $this->options['uri'];
         }
 
         if (isset($this->options['routeValues'])) {
@@ -77,8 +76,6 @@ class WebRedirect extends AbstractEntryPoint
 
     /**
      * @param array<string,mixed> $routeValues
-     * @param ServerRequestInterface $request
-     * @return string
      * @throws \Neos\Flow\Mvc\Routing\Exception\MissingActionNameException
      */
     protected function generateUriFromRouteValues(array $routeValues, ServerRequestInterface $request): string

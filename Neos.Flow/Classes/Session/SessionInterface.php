@@ -66,9 +66,6 @@ interface SessionInterface
 
     /**
      * Returns true if $key is available.
-     *
-     * @param string $key
-     * @return bool
      */
     public function hasKey(string $key): bool;
 
@@ -77,7 +74,6 @@ interface SessionInterface
      *
      * @param string $key The key under which the data should be stored
      * @param mixed $data The data to be stored
-     * @return void
      * @throws Exception\SessionNotStartedException
      */
     public function putData(string $key, mixed $data): void;
@@ -89,7 +85,6 @@ interface SessionInterface
      * recommended to use namespaced tags such as "Acme-Demo-MySpecialTag".
      *
      * @param string $tag The tag – must match be a valid cache frontend tag
-     * @return void
      * @throws Exception\SessionNotStartedException
      * @throws \InvalidArgumentException
      * @api
@@ -100,7 +95,6 @@ interface SessionInterface
      * Removes the specified tag from this session.
      *
      * @param string $tag The tag – must match be a valid cache frontend tag
-     * @return void
      * @throws Exception\SessionNotStartedException
      * @api
      */
@@ -145,7 +139,6 @@ interface SessionInterface
      * Explicitly destroys all session data
      *
      * @param string|null $reason A reason for destroying the session – used by the LoggingAspect
-     * @return void
      * @throws Exception\SessionNotStartedException
      */
     public function destroy(?string $reason = null): void;

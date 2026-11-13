@@ -22,19 +22,12 @@ class FileHelper implements ProtectedContextAwareInterface
 {
     /**
      * Read and return the files contents for further use.
-     *
-     * @param string $filepath
-     * @return string
      */
     public function readFile(string $filepath): string
     {
         return file_get_contents($filepath) ?: '';
     }
 
-    /**
-     * @param string $filepath
-     * @return string
-     */
     public function getSha1(string $filepath): string
     {
         return sha1_file($filepath) ?: '';
@@ -43,7 +36,6 @@ class FileHelper implements ProtectedContextAwareInterface
     /**
      * Get file name and path information
      *
-     * @param string $filepath
      * @return array<mixed> with keys dirname, basename, extension (if any), and filename
      */
     public function fileInfo(string $filepath)
@@ -54,7 +46,6 @@ class FileHelper implements ProtectedContextAwareInterface
     /**
      * Get file information like creation and modification times as well as size.
      *
-     * @param string $filepath
      * @return array<mixed> with keys mode, uid, gid, size, atime, mtime, ctime, (blksize, blocks, dev, ino, nlink, rdev)
      */
     public function stat(string $filepath)
@@ -64,9 +55,6 @@ class FileHelper implements ProtectedContextAwareInterface
 
     /**
      * Check if the given file path exists
-     *
-     * @param string $filepath
-     * @return bool
      */
     public function exists(string $filepath): bool
     {

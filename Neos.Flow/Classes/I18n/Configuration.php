@@ -63,7 +63,6 @@ class Configuration
     /**
      * Sets the current locale of this configuration.
      *
-     * @param Locale $locale
      * @return void
      */
     public function setCurrentLocale(Locale $locale)

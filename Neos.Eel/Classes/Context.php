@@ -27,9 +27,6 @@ use Neos\Utility\ObjectAccess;
  */
 class Context
 {
-    /**
-     * @param mixed $value
-     */
     public function __construct(
         protected mixed $value = null,
         private ?EelInvocationTracerInterface $tracer = null

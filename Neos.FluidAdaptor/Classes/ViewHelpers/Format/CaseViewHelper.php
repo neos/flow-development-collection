@@ -107,7 +107,7 @@ class CaseViewHelper extends AbstractViewHelper
      */
     public function initializeArguments()
     {
-        $this->registerArgument('value', 'string', 'The input value. If not given, the evaluated child nodes will be used', false, null);
+        $this->registerArgument('value', 'string', 'The input value. If not given, the evaluated child nodes will be used', false);
         $this->registerArgument('mode', 'string', 'The case to apply, must be one of this\' CASE_* constants. Defaults to uppercase application', false, self::CASE_UPPER);
     }
 
@@ -125,8 +125,6 @@ class CaseViewHelper extends AbstractViewHelper
 
     /**
      * @param array<string,mixed> $arguments
-     * @param \Closure $renderChildrenClosure
-     * @param RenderingContextInterface $renderingContext
      * @return string
      * @throws InvalidVariableException
      */

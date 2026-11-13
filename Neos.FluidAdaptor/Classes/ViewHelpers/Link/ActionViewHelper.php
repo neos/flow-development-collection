@@ -12,7 +12,6 @@ namespace Neos\FluidAdaptor\ViewHelpers\Link;
  * source code.
  */
 
-use Neos\Flow\Mvc\ActionRequest;
 use Neos\FluidAdaptor\Core\ViewHelper;
 use Neos\FluidAdaptor\Core\ViewHelper\AbstractTagBasedViewHelper;
 
@@ -61,9 +60,9 @@ class ActionViewHelper extends AbstractTagBasedViewHelper
         $this->registerTagAttribute('target', 'string', 'Specifies where to open the linked document');
         $this->registerArgument('action', 'string', 'Target action', true);
         $this->registerArgument('arguments', 'array', 'Arguments', false, []);
-        $this->registerArgument('controller', 'string', 'Target controller. If NULL current controllerName is used', false, null);
-        $this->registerArgument('package', 'string', 'Target package. if NULL current package is used', false, null);
-        $this->registerArgument('subpackage', 'string', 'Target subpackage. if NULL current subpackage is used', false, null);
+        $this->registerArgument('controller', 'string', 'Target controller. If NULL current controllerName is used', false);
+        $this->registerArgument('package', 'string', 'Target package. if NULL current package is used', false);
+        $this->registerArgument('subpackage', 'string', 'Target subpackage. if NULL current subpackage is used', false);
         $this->registerArgument('section', 'string', 'The anchor to be added to the URI', false, '');
         $this->registerArgument('format', 'string', 'The requested format, e.g. ".html"', false, '');
         $this->registerArgument('additionalParams', 'array', 'additional query parameters that won\'t be prefixed like $arguments (overrule $arguments)', false, []);
@@ -91,10 +90,6 @@ class ActionViewHelper extends AbstractTagBasedViewHelper
                 throw new ViewHelper\Exception('You can\'t use the parent Request, you are already in the MainRequest.', 1360163536);
             }
             $parentRequest = $request->getParentRequest();
-            /** @phpstan-ignore instanceof.alwaysTrue (annotations can be wrong) */
-            if (!$parentRequest instanceof ActionRequest) {
-                throw new ViewHelper\Exception('The parent requests was unexpectedly empty, probably the current request is broken.', 1565948237);
-            }
 
             $uriBuilder = clone $uriBuilder;
             $uriBuilder->setRequest($parentRequest);

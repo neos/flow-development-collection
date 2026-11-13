@@ -289,7 +289,6 @@ class ReflectionService
      * Tells if the specified class is known to this reflection service and
      * reflection information is available.
      *
-     * @param string $className
      *
      * @api
      */
@@ -324,7 +323,6 @@ class ReflectionService
      * implementation was found in the package defining the interface, false is returned.
      *
      * @param class-string $interfaceName
-     * @return string|bool
      * @throws ClassLoadingForReflectionFailedException
      * @throws InvalidClassException
      * @throws \ReflectionException
@@ -598,9 +596,6 @@ class ReflectionService
     /**
      * Tells if the specified method is final or not
      *
-     * @param string $className
-     * @param string $methodName
-     * @return bool
      * @throws ClassLoadingForReflectionFailedException
      * @throws InvalidClassException
      * @throws \ReflectionException
@@ -615,7 +610,6 @@ class ReflectionService
     /**
      * Tells if the specified method is declared as static or not
      *
-     * @param string $className
      * @throws ClassLoadingForReflectionFailedException
      * @throws InvalidClassException
      * @throws \ReflectionException
@@ -694,9 +688,7 @@ class ReflectionService
      * Tells if the specified method has the given annotation
      *
      * @param class-string $className
-     * @param string $methodName
      * @param class-string $annotationClassName
-     * @return bool
      * @throws \ReflectionException
      * @api
      */
@@ -900,7 +892,6 @@ class ReflectionService
      * Returns all tags and their values the specified class property is tagged with
      *
      * @param class-string $className
-     * @param string $propertyName
      * @return array<int|string,array<mixed>>
      * @throws ClassLoadingForReflectionFailedException
      * @throws InvalidClassException
@@ -917,8 +908,6 @@ class ReflectionService
      * Returns the values of the specified class property tag
      *
      * @param class-string $className
-     * @param string $propertyName
-     * @param string $tag
      * @return array<mixed>
      * @throws ClassLoadingForReflectionFailedException
      * @throws InvalidClassException
@@ -936,8 +925,6 @@ class ReflectionService
      * Returns the property type
      *
      * @param class-string $className
-     * @param string $propertyName
-     * @return string|null
      * @throws ClassLoadingForReflectionFailedException
      * @throws InvalidClassException
      * @throws \ReflectionException
@@ -950,8 +937,6 @@ class ReflectionService
 
     /**
      * @param class-string $className
-     * @param string $propertyName
-     * @return bool
      * @throws ClassLoadingForReflectionFailedException
      * @throws InvalidClassException
      * @throws \ReflectionException
@@ -978,9 +963,6 @@ class ReflectionService
      * Tells if the specified class property is tagged with the given tag
      *
      * @param class-string $className
-     * @param string $propertyName
-     * @param string $tag
-     * @return bool
      * @throws ClassLoadingForReflectionFailedException
      * @throws InvalidClassException
      * @throws \ReflectionException
@@ -996,9 +978,7 @@ class ReflectionService
      * Tells if the specified property has the given annotation
      *
      * @param class-string $className
-     * @param string $propertyName
      * @param class-string $annotationClassName
-     * @return bool
      * @throws ClassLoadingForReflectionFailedException
      * @throws InvalidClassException
      * @throws \ReflectionException
@@ -1042,7 +1022,6 @@ class ReflectionService
      *
      * @template Annotation of object
      * @param class-string $className
-     * @param string $propertyName
      * @param class-string<Annotation>|null $annotationClassName
      * @return ($annotationClassName is null ? array<class-string,array<object>> : array<Annotation>)
      * @throws ClassLoadingForReflectionFailedException
@@ -1075,7 +1054,6 @@ class ReflectionService
      *
      * @template Annotation of object
      * @param class-string $className
-     * @param string $propertyName
      * @param class-string<Annotation> $annotationClassName
      * @return Annotation|null
      * @throws ClassLoadingForReflectionFailedException
@@ -1093,9 +1071,6 @@ class ReflectionService
 
     /**
      * Returns the class schema for the given class
-     *
-     * @param string|object $classNameOrObject
-     * @return ClassSchema|null
      */
     public function getClassSchema(string|object $classNameOrObject): ?ClassSchema
     {
@@ -1118,7 +1093,6 @@ class ReflectionService
     /**
      * Initializes the ReflectionService, cleans the given class name and finally reflects the class if necessary.
      *
-     * @param string $className
      * @return class-string
      * @throws ClassLoadingForReflectionFailedException
      * @throws InvalidClassException
@@ -1208,7 +1182,6 @@ class ReflectionService
     /**
      * Reflects the given class and stores the results in this service's properties.
      *
-     * @param string $className
      * @throws ClassLoadingForReflectionFailedException
      * @throws InvalidClassException
      * @throws \ReflectionException
@@ -1392,7 +1365,6 @@ class ReflectionService
 
     /**
      * @param class-string $className
-     * @param MethodReflection $method
      * @throws \ReflectionException
      */
     protected function reflectClassMethod(string $className, MethodReflection $method): void
@@ -1576,7 +1548,6 @@ class ReflectionService
 
     /**
      * @param class-string $className
-     * @return ClassSchema
      * @throws ClassLoadingForReflectionFailedException
      * @throws ClassSchemaConstraintViolationException
      * @throws InvalidClassException
@@ -1609,7 +1580,7 @@ class ReflectionService
         if (
             class_exists($possibleRepositoryClassName)
             && is_subclass_of($possibleRepositoryClassName, RepositoryInterface::class)
-            && $this->isClassReflected($possibleRepositoryClassName) === true
+            && $this->isClassReflected($possibleRepositoryClassName)
         ) {
             $classSchema->setRepositoryClassName($possibleRepositoryClassName);
         }
@@ -1624,7 +1595,6 @@ class ReflectionService
      *
      * Invalid annotations will cause an exception to be thrown.
      *
-     * @param ClassSchema $classSchema
      * @throws ClassLoadingForReflectionFailedException
      * @throws ClassSchemaConstraintViolationException
      * @throws InvalidClassException
@@ -1647,15 +1617,12 @@ class ReflectionService
             $skipArtificialIdentity = $this->evaluateClassPropertyAnnotationsForSchema($classSchema, $propertyName) ? true : $skipArtificialIdentity;
         }
 
-        if ($skipArtificialIdentity !== true) {
+        if (!$skipArtificialIdentity) {
             $classSchema->addProperty('Persistence_Object_Identifier', 'string');
         }
     }
 
     /**
-     * @param ClassSchema $classSchema
-     * @param string $propertyName
-     * @return bool
      * @throws ClassLoadingForReflectionFailedException
      * @throws ClassSchemaConstraintViolationException
      * @throws InvalidClassException
@@ -1754,7 +1721,6 @@ class ReflectionService
      * Assigns the repository of any aggregate root to all it's
      * subclasses, unless they are aggregate root already.
      *
-     * @param ClassSchema $classSchema
      * @throws ClassLoadingForReflectionFailedException
      * @throws ClassSchemaConstraintViolationException
      * @throws InvalidClassException
@@ -1943,7 +1909,6 @@ class ReflectionService
      * Checks which classes lack a cache entry and removes their reflection data
      * accordingly.
      *
-     * @return void
      * @throws ClassLoadingForReflectionFailedException
      * @throws InvalidClassException
      * @throws \ReflectionException
@@ -2084,7 +2049,6 @@ class ReflectionService
 
     /**
      * Clean a given type from possibly prefixed backslash
-     * @return string
      */
     protected function cleanTypeName(string $typeName): string
     {
@@ -2121,10 +2085,6 @@ class ReflectionService
         $this->logger?->log($severity, $message, $additionalData);
     }
 
-    /**
-     * @param \ReflectionType|null $parameterType
-     * @return string|null
-     */
     private function renderParameterType(?\ReflectionType $parameterType = null): string|null
     {
         return match (true) {

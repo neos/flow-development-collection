@@ -24,7 +24,6 @@ interface WithSetupInterface
     /**
      * Sets up the cache backend, if possible, and returns the status
      *
-     * @return Result
      * @api
      */
     public function setup(): Result;

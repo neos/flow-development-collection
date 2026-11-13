@@ -47,7 +47,6 @@ class ArrayObjectConverter extends AbstractTypeConverter
      * @param mixed $source
      * @param string $targetType
      * @param array<string,mixed> $convertedChildProperties
-     * @param PropertyMappingConfigurationInterface|null $configuration
      * @return array<mixed>
      * @throws InvalidSourceException
      * @api

@@ -37,7 +37,6 @@ class SessionCommandController extends CommandController
     protected $sessionManager;
 
     /**
-     * @param CacheManager $cacheManager
      * @return void
      */
     public function injectCacheManager(CacheManager $cacheManager)
@@ -46,7 +45,6 @@ class SessionCommandController extends CommandController
     }
 
     /**
-     * @param SessionManagerInterface $sessionManager
      * @return void
      */
     public function injectSessionManager(SessionManagerInterface $sessionManager)

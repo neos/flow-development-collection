@@ -42,8 +42,7 @@ class PropertyReflection extends \ReflectionProperty
      */
     public function isTaggedWith($tag)
     {
-        $result = $this->getDocCommentParser()->isTaggedWith($tag);
-        return $result;
+        return $this->getDocCommentParser()->isTaggedWith($tag);
     }
 
     /**
@@ -112,7 +111,6 @@ class PropertyReflection extends \ReflectionProperty
      *
      * @param object $object Instance of the declaring class to set the value on
      * @param mixed $value The value to set on the property
-     * @return void
      * @throws Exception
      */
     public function setValue($object = null, $value = null): void

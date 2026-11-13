@@ -68,7 +68,6 @@ class CommandManager
      * If more than one Command matches an AmbiguousCommandIdentifierException is thrown that contains the matched Commands
      *
      * @param string $commandIdentifier command identifier in the format foo:bar:baz
-     * @return Command
      * @throws NoSuchCommandException if no matching command is available
      * @throws AmbiguousCommandIdentifierException if more than one Command matches the identifier (the exception contains the matched commands)
      * @api
@@ -181,7 +180,6 @@ class CommandManager
      *  - if the commandIdentifier matches the second command part (CommandController name, case insensitive)
      * The first part (package key) can be reduced to the last subpackage, as long as the result is unambiguous.
      *
-     * @param Command $command
      * @param string $commandIdentifier command identifier in the format foo:bar:baz (all lower case)
      * @return boolean true if the specified command identifier matches this commands identifier
      */
@@ -214,8 +212,6 @@ class CommandManager
     /**
      * Get the possible parameters for the command specified by CommandController and method name.
      *
-     * @param string $controllerObjectName
-     * @param string $commandMethodName
      * @return array<string,mixed>
      */
     public function getCommandMethodParameters(string $controllerObjectName, string $commandMethodName): array
@@ -226,7 +222,6 @@ class CommandManager
     }
 
     /**
-     * @param ObjectManagerInterface $objectManager
      * @return array<class-string<CommandController>, array<string, array<string,mixed>>> of method arguments per controller and method.
      * @Flow\CompileStatic
      */

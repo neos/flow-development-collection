@@ -43,9 +43,6 @@ class Dispatcher
 
     /**
      * Injects the object manager
-     *
-     * @param ObjectManagerInterface $objectManager
-     * @return void
      */
     public function injectObjectManager(ObjectManagerInterface $objectManager): void
     {
@@ -65,7 +62,6 @@ class Dispatcher
      * @param mixed $slotClassNameOrObject Name of the class containing the slot or the instantiated class or a Closure object
      * @param string $slotMethodName Name of the method to be used as a slot. If $slotClassNameOrObject is a Closure object, this parameter is ignored
      * @param boolean $passSignalInformation If set to true, the last argument passed to the slot will be information about the signal (EmitterClassName::signalName)
-     * @return void
      * @throws \InvalidArgumentException
      * @api
      * @see wire()
@@ -86,7 +82,6 @@ class Dispatcher
      * @param string $signalName Name of the signal
      * @param mixed $slotClassNameOrObject Name of the class containing the slot or the instantiated class or a Closure object
      * @param string $slotMethodName Name of the method to be used as a slot. If $slotClassNameOrObject is a Closure object, this parameter is ignored
-     * @return void
      * @throws \InvalidArgumentException
      * @api
      * @see connect()
@@ -99,12 +94,7 @@ class Dispatcher
 
     /**
      * @param class-string $signalClassName
-     * @param string $signalName
      * @param mixed $slotClassNameOrObject
-     * @param string $slotMethodName
-     * @param bool $passSignalInformation
-     * @param bool $useSignalInformationObject
-     * @return void
      */
     private function connectSignalToSlot(string $signalClassName, string $signalName, $slotClassNameOrObject, string $slotMethodName, bool $passSignalInformation, bool $useSignalInformationObject): void
     {
@@ -142,7 +132,6 @@ class Dispatcher
      * @param string $signalClassName Name of the class containing the signal
      * @param string $signalName Name of the signal
      * @param array<mixed> $signalArguments arguments passed to the signal method
-     * @return void
      * @throws Exception\InvalidSlotException if the slot is not valid
      * @api
      */

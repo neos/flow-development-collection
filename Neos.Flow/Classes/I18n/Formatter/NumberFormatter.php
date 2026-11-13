@@ -36,7 +36,6 @@ class NumberFormatter implements FormatterInterface
     protected $currencyReader;
 
     /**
-     * @param NumbersReader $numbersReader
      * @return void
      */
     public function injectNumbersReader(NumbersReader $numbersReader)
@@ -46,7 +45,6 @@ class NumberFormatter implements FormatterInterface
 
 
     /**
-     * @param CurrencyReader $currencyReader
      * @return void
      */
     public function injectCurrencyReader(CurrencyReader $currencyReader)
@@ -106,7 +104,6 @@ class NumberFormatter implements FormatterInterface
      * But it's defined in the specification, so we support it here.
      *
      * @param mixed $number Float or int, can be negative, can be NaN or infinite
-     * @param Locale $locale
      * @param string $formatLength One of NumbersReader FORMAT_LENGTH constants
      * @return string Formatted number. Will return string-casted version of $number if there is no pattern for given $locale / $formatLength
      * @api
@@ -125,7 +122,6 @@ class NumberFormatter implements FormatterInterface
      * But it's defined in the specification, so we support it here.
      *
      * @param mixed $number Float or int, can be negative, can be NaN or infinite
-     * @param Locale $locale
      * @param string $formatLength One of NumbersReader FORMAT_LENGTH constants
      * @return string Formatted number. Will return string-casted version of $number if there is no pattern for given $locale / $formatLength
      * @api
@@ -146,7 +142,6 @@ class NumberFormatter implements FormatterInterface
      * But it's defined in the specification, so we support it here.
      *
      * @param mixed $number Float or int, can be negative, can be NaN or infinite
-     * @param Locale $locale
      * @param string $currency Currency symbol (or name)
      * @param string $formatLength One of NumbersReader FORMAT_LENGTH constants
      * @param string $currencyCode The ISO 4217 currency code of the currency to format. Used to set decimal places and rounding.

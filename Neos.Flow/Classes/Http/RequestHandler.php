@@ -53,9 +53,6 @@ class RequestHandler implements HttpRequestHandlerInterface
      */
     public $exit;
 
-    /**
-     * @param Bootstrap $bootstrap
-     */
     public function __construct(Bootstrap $bootstrap)
     {
         $this->bootstrap = $bootstrap;
@@ -148,7 +145,6 @@ class RequestHandler implements HttpRequestHandlerInterface
 
     /**
      * Send the HttpResponse of the component context to the browser and flush all output buffers.
-     * @param ResponseInterface $response
      * @return void
      */
     protected function sendResponse(ResponseInterface $response)

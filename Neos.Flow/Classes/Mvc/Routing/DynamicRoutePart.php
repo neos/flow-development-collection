@@ -181,7 +181,6 @@ class DynamicRoutePart extends AbstractRoutePart implements DynamicRoutePartInte
      * If a corresponding element is found in $routeValues, this element is removed from the array.
      *
      * @param array<mixed> $routeValues
-     * @param RouteParameters $parameters
      * @return bool|ResolveResult
      */
     final public function resolveWithParameters(array &$routeValues, RouteParameters $parameters)

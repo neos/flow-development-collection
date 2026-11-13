@@ -44,8 +44,6 @@ final class RouteTags
 
     /**
      * Creates an instance without any tags
-     *
-     * @return RouteTags
      */
     public static function createEmpty(): self
     {
@@ -56,7 +54,6 @@ final class RouteTags
      * Creates an instance with one given tag
      *
      * @param string $tag Tag value satisfying the PATTERN_TAG regex
-     * @return RouteTags
      */
     public static function createFromTag(string $tag): self
     {
@@ -68,7 +65,6 @@ final class RouteTags
      * Creates an instance with one given tags
      *
      * @param string[] $tags An array of strings satisfying the PATTERN_TAG regex
-     * @return RouteTags
      */
     public static function createFromArray(array $tags): self
     {
@@ -80,9 +76,6 @@ final class RouteTags
 
     /**
      * Merges two instances of this class combining and unifying all tags
-     *
-     * @param RouteTags $tags
-     * @return RouteTags
      */
     public function merge(RouteTags $tags): self
     {
@@ -93,9 +86,6 @@ final class RouteTags
     /**
      * Creates a new instance with the given $tag added
      * If the $tag has been added already, this instance is returned
-     *
-     * @param string $tag
-     * @return RouteTags
      */
     public function withTag(string $tag): self
     {
@@ -128,7 +118,6 @@ final class RouteTags
     /**
      * Whether a given $tag is contained in the collection of this instance
      *
-     * @param string $tag
      * @return bool
      */
     public function has(string $tag)

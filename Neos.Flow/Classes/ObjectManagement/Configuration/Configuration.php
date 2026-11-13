@@ -31,7 +31,6 @@ class Configuration
 
     /**
      * Name of the object
-     * @var string $objectName
      */
     protected string $objectName;
 
@@ -43,19 +42,16 @@ class Configuration
 
     /**
      * Key of the package the specified object is part of
-     * @var string
      */
     protected string $packageKey = '';
 
     /**
      * If set, specifies the factory object name used to create this object
-     * @var string
      */
     protected string $factoryObjectName = '';
 
     /**
      * Name of the factory method.
-     * @var string
      */
     protected string $factoryMethodName = '';
 
@@ -65,9 +61,6 @@ class Configuration
      */
     protected array $factoryArguments = [];
 
-    /**
-     * @var int
-     */
     protected int $scope = self::SCOPE_PROTOTYPE;
 
     /**
@@ -84,25 +77,21 @@ class Configuration
 
     /**
      * Mode of the autowiring feature. One of the AUTOWIRING_MODE_* constants
-     * @var integer
      */
     protected int $autowiring = self::AUTOWIRING_MODE_ON;
 
     /**
      * Name of the method to call during the initialization of the object (after dependencies are injected)
-     * @var string
      */
     protected string $lifecycleInitializationMethodName = 'initializeObject';
 
     /**
      * Name of the method to call during the shutdown of the framework
-     * @var string
      */
     protected string $lifecycleShutdownMethodName = 'shutdownObject';
 
     /**
      * Information about where this configuration has been created. Used in error messages to make debugging easier.
-     * @var string
      */
     protected string $configurationSourceHint = '< unknown >';
 
@@ -127,9 +116,6 @@ class Configuration
 
     /**
      * Sets the object name
-     *
-     * @param string $objectName
-     * @return void
      */
     public function setObjectName(string $objectName): void
     {
@@ -150,7 +136,6 @@ class Configuration
      * Setter function for property "className"
      *
      * @param class-string $className Name of the class which provides the functionality for this object
-     * @return void
      */
     public function setClassName(string $className): void
     {
@@ -171,7 +156,6 @@ class Configuration
      * Sets the package key
      *
      * @param string $packageKey Key of the package this object is part of
-     * @return void
      */
     public function setPackageKey(string $packageKey): void
     {
@@ -192,7 +176,6 @@ class Configuration
      * Sets the class name of a factory which is in charge of instantiating this object
      *
      * @param string $objectName Valid object name of a factory
-     * @return void
      */
     public function setFactoryObjectName(string $objectName): void
     {
@@ -218,7 +201,6 @@ class Configuration
      * Sets the name of the factory method
      *
      * @param string $methodName The factory method name
-     * @return void
      * @throws \InvalidArgumentException
      */
     public function setFactoryMethodName(string $methodName): void
@@ -251,7 +233,6 @@ class Configuration
      * Setter function for property "scope"
      *
      * @param integer $scope Name of the scope
-     * @return void
      */
     public function setScope(int $scope): void
     {
@@ -272,7 +253,6 @@ class Configuration
      * Setter function for property "autowiring"
      *
      * @param integer $autowiring One of the AUTOWIRING_MODE_* constants
-     * @return void
      */
     public function setAutowiring(int $autowiring): void
     {
@@ -293,7 +273,6 @@ class Configuration
      * Setter function for property "lifecycleInitializationMethodName"
      *
      * @param string $lifecycleInitializationMethodName Name of the method to call after setter injection
-     * @return void
      */
     public function setLifecycleInitializationMethodName(string $lifecycleInitializationMethodName): void
     {
@@ -314,7 +293,6 @@ class Configuration
      * Setter function for property "lifecycleShutdownMethodName"
      *
      * @param string $lifecycleShutdownMethodName Name of the method to call during shutdown of the framework
-     * @return void
      */
     public function setLifecycleShutdownMethodName(string $lifecycleShutdownMethodName): void
     {
@@ -336,7 +314,6 @@ class Configuration
      * method, all (possibly) defined properties are removed from the configuration.
      *
      * @param ConfigurationProperty[] $properties Array of ConfigurationProperty
-     * @return void
      */
     public function setProperties(array $properties): void
     {
@@ -358,9 +335,6 @@ class Configuration
 
     /**
      * Setter function for a single injection property
-     *
-     * @param ConfigurationProperty $property
-     * @return void
      */
     public function setProperty(ConfigurationProperty $property): void
     {
@@ -373,7 +347,6 @@ class Configuration
      *
      * @param array<?ConfigurationArgument> $arguments
      * @throws InvalidConfigurationException
-     * @return void
      */
     public function setArguments(array $arguments): void
     {
@@ -389,7 +362,6 @@ class Configuration
      * Setter function for a single constructor argument
      *
      * @param ConfigurationArgument $argument The argument
-     * @return void
      */
     public function setArgument(ConfigurationArgument $argument): void
     {
@@ -421,7 +393,6 @@ class Configuration
      * Setter function for a single factory method argument
      *
      * @param ConfigurationArgument $argument The argument
-     * @return void
      */
     public function setFactoryArgument(ConfigurationArgument $argument): void
     {
@@ -453,7 +424,6 @@ class Configuration
      * Sets some information (hint) about where this configuration has been created.
      *
      * @param string $hint The hint - e.g. the filename of the configuration file
-     * @return void
      */
     public function setConfigurationSourceHint(string $hint): void
     {

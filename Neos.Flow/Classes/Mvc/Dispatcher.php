@@ -58,7 +58,6 @@ class Dispatcher
      * Inject the Object Manager through setter injection because property injection
      * is not available during compile time.
      *
-     * @param ObjectManagerInterface $objectManager
      * @return void
      */
     public function injectObjectManager(ObjectManagerInterface $objectManager)
@@ -66,17 +65,11 @@ class Dispatcher
         $this->objectManager = $objectManager;
     }
 
-    /**
-     * @param Context $context
-     */
     public function injectSecurityContext(Context $context): void
     {
         $this->securityContext = $context;
     }
 
-    /**
-     * @param FirewallInterface $firewall
-     */
     public function injectFirewall(FirewallInterface $firewall): void
     {
         $this->firewall = $firewall;
@@ -117,7 +110,6 @@ class Dispatcher
     /**
      * Try processing the request until it is successfully marked "dispatched"
      *
-     * @param ActionRequest $request
      * @throws InvalidControllerException|InfiniteLoopException|NoSuchOptionException
      */
     protected function initiateDispatchLoop(ActionRequest $request): ResponseInterface
@@ -145,8 +137,6 @@ class Dispatcher
     /**
      * This signal is emitted directly before the request is being dispatched to a controller.
      *
-     * @param ActionRequest $request
-     * @param ControllerInterface $controller
      * @return void
      * @Flow\Signal
      */
@@ -158,9 +148,7 @@ class Dispatcher
      * This signal is emitted directly after the request has been dispatched to a controller and the controller
      * returned control back to the dispatcher.
      *
-     * @param ActionRequest $request
      * @param ResponseInterface|null $response The readonly response the controller returned or null, if it was just forwarding a request.
-     * @param ControllerInterface $controller
      * @return void
      * @Flow\Signal
      */
@@ -173,7 +161,6 @@ class Dispatcher
      * If no controller can be found, an instance of NotFoundControllerInterface is returned.
      *
      * @param ActionRequest $request The request to dispatch
-     * @return ControllerInterface
      * @throws InvalidControllerException
      */
     protected function resolveController(ActionRequest $request): ControllerInterface
@@ -182,13 +169,11 @@ class Dispatcher
         $controllerObjectName = $request->getControllerObjectName();
         if ($controllerObjectName === '') {
             $exceptionMessage = 'No controller could be resolved which would match your request';
-            if ($request instanceof ActionRequest) {
-                $exceptionMessage .= sprintf('. Package key: "%s", controller name: "%s"', $request->getControllerPackageKey(), $request->getControllerName());
-                if ($request->getControllerSubpackageKey() !== null) {
-                    $exceptionMessage .= sprintf(', SubPackage key: "%s"', (string)$request->getControllerSubpackageKey());
-                }
-                $exceptionMessage .= sprintf('. (%s %s)', $request->getHttpRequest()->getMethod(), $request->getHttpRequest()->getUri());
+            $exceptionMessage .= sprintf('. Package key: "%s", controller name: "%s"', $request->getControllerPackageKey(), $request->getControllerName());
+            if ($request->getControllerSubpackageKey() !== null) {
+                $exceptionMessage .= sprintf(', SubPackage key: "%s"', $request->getControllerSubpackageKey());
             }
+            $exceptionMessage .= sprintf('. (%s %s)', $request->getHttpRequest()->getMethod(), $request->getHttpRequest()->getUri());
             throw new Controller\Exception\InvalidControllerException($exceptionMessage, 1303209195, null, $request);
         }
 

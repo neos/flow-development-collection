@@ -54,7 +54,6 @@ class RoleConverter extends AbstractTypeConverter
      * @param mixed $source
      * @param string $targetType
      * @param array<mixed> $convertedChildProperties
-     * @param PropertyMappingConfigurationInterface|null $configuration
      * @return object the target type
      */
     public function convertFrom($source, $targetType, array $convertedChildProperties = [], ?PropertyMappingConfigurationInterface $configuration = null)

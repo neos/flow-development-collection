@@ -44,7 +44,6 @@ class DocumentationCommandController extends CommandController
      * @param string $xsdNamespace Unique target namespace used in the XSD schema (for example "http://yourdomain.org/ns/viewhelpers"). Defaults to "https://neos.io/ns/<php namespace>".
      * @param string $targetFile File path and name of the generated XSD schema. If not specified the schema will be output to standard output.
      * @param string $xsdDomain Domain used in the XSD schema (for example "http://yourdomain.org"). Defaults to "https://neos.io".
-     * @return void
      */
     public function generateXsdCommand(string $phpNamespace, ?string $xsdNamespace = null, ?string $targetFile = null, string $xsdDomain = ''): void
     {

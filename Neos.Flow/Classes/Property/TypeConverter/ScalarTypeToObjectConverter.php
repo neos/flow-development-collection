@@ -62,11 +62,9 @@ class ScalarTypeToObjectConverter extends AbstractTypeConverter
         if (!class_exists($targetType)) {
             return false;
         }
-        if ((
-            $this->reflectionService->isClassAnnotatedWith($targetType, Flow\Entity::class) ||
-            $this->reflectionService->isClassAnnotatedWith($targetType, Flow\ValueObject::class) ||
-            $this->reflectionService->isClassAnnotatedWith($targetType, Entity::class)
-        ) === true) {
+        if ($this->reflectionService->isClassAnnotatedWith($targetType, Flow\Entity::class) ||
+        $this->reflectionService->isClassAnnotatedWith($targetType, Flow\ValueObject::class) ||
+        $this->reflectionService->isClassAnnotatedWith($targetType, Entity::class)) {
             return false;
         }
 
@@ -85,7 +83,6 @@ class ScalarTypeToObjectConverter extends AbstractTypeConverter
      * @param string|float|integer|bool $source
      * @param string $targetType
      * @param array<string,mixed> $convertedChildProperties
-     * @param PropertyMappingConfigurationInterface|null $configuration
      * @return object
      */
     public function convertFrom($source, $targetType, array $convertedChildProperties = [], ?PropertyMappingConfigurationInterface $configuration = null)

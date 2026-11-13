@@ -59,7 +59,6 @@ class AutocompleteViewHelper extends AbstractWidgetViewHelper
 
     /**
      *
-     * @return string
      * @throws \Neos\Flow\Mvc\Exception\InfiniteLoopException
      * @throws \Neos\FluidAdaptor\Core\Widget\Exception\InvalidControllerException
      * @throws \Neos\FluidAdaptor\Core\Widget\Exception\MissingControllerException

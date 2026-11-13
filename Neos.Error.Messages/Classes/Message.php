@@ -83,7 +83,6 @@ class Message implements \Stringable
     }
 
     /**
-     * @return bool
      * @api
      */
     public function hasCode(): bool
@@ -112,7 +111,6 @@ class Message implements \Stringable
     }
 
     /**
-     * @return bool
      * @api
      */
     public function hasTitle(): bool
@@ -121,7 +119,6 @@ class Message implements \Stringable
     }
 
     /**
-     * @return string
      * @api
      */
     public function getTitle(): string
@@ -130,7 +127,6 @@ class Message implements \Stringable
     }
 
     /**
-     * @return string
      * @api
      */
     public function getSeverity(): string
@@ -138,9 +134,6 @@ class Message implements \Stringable
         return $this->severity;
     }
 
-    /**
-     * @return string
-     */
     public function render(): string
     {
         if ($this->arguments !== []) {
@@ -153,7 +146,6 @@ class Message implements \Stringable
     /**
      * Converts this error into a string
      *
-     * @return string
      * @api
      */
     public function __toString(): string

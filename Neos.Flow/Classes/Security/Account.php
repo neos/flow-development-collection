@@ -233,7 +233,6 @@ class Account
     /**
      * Return if the account has a certain role
      *
-     * @param Role $role
      * @return boolean
      * @api
      */
@@ -246,7 +245,6 @@ class Account
     /**
      * Adds a role to this account
      *
-     * @param Role $role
      * @return void
      * @throws \InvalidArgumentException
      * @api
@@ -267,7 +265,6 @@ class Account
     /**
      * Removes a role from this account
      *
-     * @param Role $role
      * @return void
      * @api
      */
@@ -308,7 +305,6 @@ class Account
     /**
      * Sets the date on which this account will become inactive
      *
-     * @param ?\DateTime $expirationDate
      * @return void
      * @api
      */

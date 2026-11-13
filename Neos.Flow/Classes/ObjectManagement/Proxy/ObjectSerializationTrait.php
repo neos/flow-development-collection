@@ -29,10 +29,6 @@ trait ObjectSerializationTrait
 {
     /**
      * Code to find and serialize entities on sleep
-     *
-     * @param array $transientProperties
-     * @param array $propertyVarTags
-     * @return array
      */
     private function Flow_serializeRelatedEntities(array $transientProperties, array $propertyVarTags): array
     {
@@ -97,9 +93,6 @@ trait ObjectSerializationTrait
     /**
      * Serialize entities that are inside an array or SplObjectStorage
      *
-     * @param string $path
-     * @param mixed $propertyValue
-     * @param string $originalPropertyName
      * @return bool if an entity was found
      */
     private function Flow_searchForEntitiesAndStoreIdentifierArray(string $path, mixed $propertyValue, string $originalPropertyName): bool
@@ -135,8 +128,6 @@ trait ObjectSerializationTrait
     /**
      * Reconstitutes related entities to a deserialized object in __wakeup.
      * Used in __wakeup methods of proxy classes.
-     *
-     * @return void
      */
     private function Flow_setRelatedEntities(): void
     {

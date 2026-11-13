@@ -22,7 +22,6 @@ use Neos\Flow\Annotations as Flow;
 interface SqlGeneratorInterface
 {
     /**
-     * @param DoctrineSqlFilter $sqlFilter
      * @param ClassMetadata<object> $targetEntity Metadata object for the target entity to create the constraint for
      * @param string $targetTableAlias The target table alias used in the current query
      * @return string

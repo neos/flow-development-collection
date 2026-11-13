@@ -65,7 +65,6 @@ class AllowedObjectsListener
      * Doctrine onFlush listener that checks for only allowed objects and reconnects
      * if the database connection was closed.
      *
-     * @param OnFlushEventArgs $args
      * @throws PersistenceException
      */
     public function onFlush(OnFlushEventArgs $args): void
@@ -118,7 +117,6 @@ class AllowedObjectsListener
      * Checks if the given object is allowed and if not, throws an exception
      *
      * @param object $object
-     * @return void
      * @throws \Neos\Flow\Persistence\Exception
      */
     protected function throwExceptionIfObjectIsNotAllowed($object): void

@@ -50,7 +50,6 @@ final class ResolveResult
     private $lifetime;
 
     /**
-     * @param string $resolvedValue
      * @param UriConstraints $uriConstraints
      * @param RouteTags $tags
      */
@@ -70,9 +69,6 @@ final class ResolveResult
         return $this->resolvedValue;
     }
 
-    /**
-     * @return bool
-     */
     public function hasUriConstraints(): bool
     {
         return $this->uriConstraints !== null;
@@ -86,9 +82,6 @@ final class ResolveResult
         return $this->uriConstraints;
     }
 
-    /**
-     * @return bool
-     */
     public function hasTags(): bool
     {
         return $this->tags !== null;
@@ -105,7 +98,6 @@ final class ResolveResult
     /**
      * Whether this result has a lifetime
      *
-     * @return bool
      * @phpstan-assert-if-true RouteLifetime $this->getLifetime()
      */
     public function hasLifetime(): bool
@@ -115,8 +107,6 @@ final class ResolveResult
 
     /**
      * RouteLifetime to be associated with the MatchResult, or NULL
-     *
-     * @return RouteLifetime|null
      */
     public function getLifetime(): ?RouteLifetime
     {

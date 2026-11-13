@@ -45,7 +45,6 @@ class ConsoleBackend extends AbstractBackend
      * Carries out all actions necessary to prepare the logging backend, such as opening
      * the log file or opening a database connection.
      *
-     * @return void
      * @throws CouldNotOpenResourceException
      * @api
      */
@@ -78,7 +77,6 @@ class ConsoleBackend extends AbstractBackend
      * @param string $packageKey Key of the package triggering the log (determined automatically if not specified)
      * @param string $className Name of the class triggering the log (determined automatically if not specified)
      * @param string $methodName Name of the method triggering the log (determined automatically if not specified)
-     * @return void
      * @api
      */
     public function append(string $message, int $severity = LOG_INFO, $additionalData = null, ?string $packageKey = null, ?string $className = null, ?string $methodName = null): void
@@ -104,7 +102,6 @@ class ConsoleBackend extends AbstractBackend
      * Note: for this backend we do nothing here and rely on PHP to close the stream handle
      * when the request ends. This is to allow full logging until request end.
      *
-     * @return void
      * @api
      * @todo revise upon resolution of http://forge.typo3.org/issues/9861
      */

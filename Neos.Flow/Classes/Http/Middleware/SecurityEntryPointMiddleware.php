@@ -90,8 +90,6 @@ class SecurityEntryPointMiddleware implements MiddlewareInterface
 
     /**
      * Build a base HTTP Response in case of a missing authentication exception
-     *
-     * @return ResponseInterface
      */
     protected function buildHttpResponse(): ResponseInterface
     {

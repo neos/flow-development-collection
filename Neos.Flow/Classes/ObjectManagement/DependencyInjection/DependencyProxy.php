@@ -71,7 +71,6 @@ final class DependencyProxy
      * be injected into once this proxy is activated.
      *
      * @param mixed &$propertyVariable The variable to replace
-     * @return void
      */
     public function _addPropertyVariable(&$propertyVariable): void
     {
@@ -84,7 +83,6 @@ final class DependencyProxy
      *
      * @param string $methodName Name of the method to be called
      * @param array<mixed> $arguments An array of arguments to be passed to the method
-     * @return mixed
      */
     public function __call(string $methodName, array $arguments): mixed
     {

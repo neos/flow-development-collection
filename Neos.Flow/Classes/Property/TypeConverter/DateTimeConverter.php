@@ -117,7 +117,6 @@ class DateTimeConverter extends AbstractTypeConverter
      * @param string|integer|array<string,mixed> $source the string to be converted to a \DateTime object
      * @param string $targetType must be "DateTime"
      * @param array<string,mixed> $convertedChildProperties not used currently
-     * @param PropertyMappingConfigurationInterface|null $configuration
      * @return \DateTimeInterface|null|Error
      * @throws InvalidPropertyMappingConfigurationException
      * @throws TypeConverterException
@@ -195,7 +194,6 @@ class DateTimeConverter extends AbstractTypeConverter
      * Determines the default date format to use for the conversion.
      * If no format is specified in the mapping configuration DEFAULT_DATE_FORMAT is used.
      *
-     * @param PropertyMappingConfigurationInterface|null $configuration
      * @return string
      * @throws InvalidPropertyMappingConfigurationException
      */
@@ -216,7 +214,6 @@ class DateTimeConverter extends AbstractTypeConverter
     /**
      * Overrides hour, minute & second of the given date with the values in the $source array
      *
-     * @param \DateTimeInterface $date
      * @param array<string,mixed> $source
      * @return \DateTimeInterface
      */

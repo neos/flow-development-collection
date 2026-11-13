@@ -48,7 +48,6 @@ abstract class AbstractPersistenceManager implements PersistenceManagerInterface
      * for further use.
      *
      * @param array<string,array<mixed>> $settings
-     * @return void
      */
     public function injectSettings(array $settings): void
     {
@@ -57,8 +56,6 @@ abstract class AbstractPersistenceManager implements PersistenceManagerInterface
 
     /**
      * Clears the in-memory state of the persistence.
-     *
-     * @return void
      */
     public function clearState(): void
     {
@@ -76,7 +73,6 @@ abstract class AbstractPersistenceManager implements PersistenceManagerInterface
      * method.
      *
      * @param Aspect\PersistenceMagicInterface $object The new object to register
-     * @return void
      */
     public function registerNewObject(Aspect\PersistenceMagicInterface $object): void
     {
@@ -102,8 +98,6 @@ abstract class AbstractPersistenceManager implements PersistenceManagerInterface
      *
      * This is primarily used to inform the user if he tries to save
      * data in an unsafe request.
-     *
-     * @return boolean
      */
     public function hasUnpersistedChanges(): bool
     {

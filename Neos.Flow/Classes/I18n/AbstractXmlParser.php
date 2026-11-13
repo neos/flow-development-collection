@@ -44,8 +44,6 @@ abstract class AbstractXmlParser
     }
 
     /**
-     * @param string $sourcePath
-     * @return \SimpleXMLElement
      * @throws Exception\InvalidXmlFileException
      */
     protected function getRootNode(string $sourcePath): \SimpleXMLElement

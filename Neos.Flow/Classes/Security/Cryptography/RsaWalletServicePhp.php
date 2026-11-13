@@ -369,7 +369,7 @@ class RsaWalletServicePhp implements RsaWalletServiceInterface
         if (openssl_private_decrypt($cipher, $decrypted, $key, $this->paddingAlgorithm) === false) {
             // Fallback for data that was encrypted with old default OPENSSL_PKCS1_PADDING
             if ($this->paddingAlgorithm !== OPENSSL_PKCS1_PADDING) {
-                if (openssl_private_decrypt($cipher, $decrypted, $key, OPENSSL_PKCS1_PADDING) !== false) {
+                if (openssl_private_decrypt($cipher, $decrypted, $key, OPENSSL_PKCS1_PADDING)) {
                     return $decrypted;
                 }
             }

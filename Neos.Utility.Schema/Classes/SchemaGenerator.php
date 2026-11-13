@@ -96,7 +96,6 @@ class SchemaGenerator
     /**
      * Create a schema for a given string
      *
-     * @param string $stringValue
      * @return array<string,mixed>
      */
     protected function generateStringSchema(string $stringValue): array

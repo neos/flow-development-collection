@@ -24,7 +24,7 @@ class TestingPrivilegeManager extends PrivilegeManager
     /**
      * @var boolean|null
      */
-    protected $overrideDecision = null;
+    protected $overrideDecision;
 
     /**
      * Returns true, if the given privilege type is granted for the given subject based

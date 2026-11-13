@@ -114,7 +114,6 @@ class ArrayConverter extends AbstractTypeConverter
      * @param mixed $source
      * @param string $targetType
      * @param array<string,mixed> $convertedChildProperties
-     * @param PropertyMappingConfigurationInterface|null $configuration
      * @return array<mixed>
      * @throws InvalidPropertyMappingConfigurationException
      * @throws InvalidSourceException
@@ -188,7 +187,6 @@ class ArrayConverter extends AbstractTypeConverter
     }
 
     /**
-     * @param PropertyMappingConfigurationInterface|null $configuration
      * @return non-empty-string
      * @throws InvalidPropertyMappingConfigurationException
      */
@@ -211,7 +209,6 @@ class ArrayConverter extends AbstractTypeConverter
     }
 
     /**
-     * @param PropertyMappingConfigurationInterface|null $configuration
      * @return string
      * @throws InvalidPropertyMappingConfigurationException
      */
@@ -232,7 +229,6 @@ class ArrayConverter extends AbstractTypeConverter
     }
 
     /**
-     * @param PropertyMappingConfigurationInterface|null $configuration
      * @return string
      * @throws InvalidPropertyMappingConfigurationException
      */

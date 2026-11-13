@@ -105,8 +105,6 @@ class InternalRequestEngine implements RequestEngineInterface
     /**
      * Sends the given HTTP request
      *
-     * @param RequestInterface $httpRequest
-     * @return ResponseInterface
      * @throws FlowException
      * @throws Http\Exception
      */
@@ -164,8 +162,6 @@ class InternalRequestEngine implements RequestEngineInterface
 
     /**
      * Returns the router used by this internal request engine
-     *
-     * @return RouterInterface
      */
     public function getRouter(): RouterInterface
     {
@@ -176,8 +172,6 @@ class InternalRequestEngine implements RequestEngineInterface
      * Prepare a response in case an error occurred.
      *
      * @param \Throwable $exception
-     * @param ResponseInterface $response
-     * @return ResponseInterface
      */
     protected function prepareErrorResponse($exception, ResponseInterface $response): ResponseInterface
     {

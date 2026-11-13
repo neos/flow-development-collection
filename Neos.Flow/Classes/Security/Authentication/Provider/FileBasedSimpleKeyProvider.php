@@ -101,8 +101,6 @@ class FileBasedSimpleKeyProvider extends AbstractProvider
     }
 
     /**
-     * @param PasswordTokenInterface $authenticationToken
-     * @return void
      * @throws \Neos\Flow\Security\Exception
      */
     protected function validateCredentials(PasswordTokenInterface $authenticationToken): void

@@ -71,9 +71,6 @@ class AuthenticationProviderManager implements AuthenticationManagerInterface
      */
     protected $authenticationStrategy;
 
-    /**
-     * @param TokenAndProviderFactoryInterface $tokenAndProviderFactory
-     */
     public function __construct(TokenAndProviderFactoryInterface $tokenAndProviderFactory)
     {
         $this->tokenAndProviderFactory = $tokenAndProviderFactory;
@@ -83,7 +80,6 @@ class AuthenticationProviderManager implements AuthenticationManagerInterface
      * Inject the settings and does a fresh build of tokens based on the injected settings
      *
      * @param array<string,mixed> $settings The settings
-     * @return void
      * @throws Exception
      */
     public function injectSettings(array $settings): void
@@ -118,7 +114,6 @@ class AuthenticationProviderManager implements AuthenticationManagerInterface
      * authentication will stop after the first authenticated token. The strategy
      * "atLeastOne" will try to authenticate at least one and as many tokens as possible.
      *
-     * @return void
      * @throws Exception
      * @throws AuthenticationRequiredException
      * @throws NoTokensAuthenticatedException
@@ -187,7 +182,6 @@ class AuthenticationProviderManager implements AuthenticationManagerInterface
      *
      * Will call authenticate() if not done before.
      *
-     * @return boolean
      * @throws Exception
      */
     public function isAuthenticated(): bool
@@ -205,13 +199,12 @@ class AuthenticationProviderManager implements AuthenticationManagerInterface
     /**
      * Logout all active authentication tokens
      *
-     * @return void
      * @throws Exception
      * @throws SessionNotStartedException
      */
     public function logout(): void
     {
-        if ($this->isAuthenticated() !== true) {
+        if (!$this->isAuthenticated()) {
             return;
         }
         $this->isAuthenticated = null;
@@ -230,7 +223,6 @@ class AuthenticationProviderManager implements AuthenticationManagerInterface
      * Signals that the specified token has been successfully authenticated.
      *
      * @param TokenInterface $token The token which has been authenticated
-     * @return void
      * @Flow\Signal
      */
     protected function emitAuthenticatedToken(TokenInterface $token): void
@@ -241,7 +233,6 @@ class AuthenticationProviderManager implements AuthenticationManagerInterface
      * Signals that all active authentication tokens have been invalidated.
      * Note: the session will be destroyed after this signal has been emitted.
      *
-     * @return void
      * @Flow\Signal
      */
     protected function emitLoggedOut(): void
@@ -251,7 +242,6 @@ class AuthenticationProviderManager implements AuthenticationManagerInterface
     /**
      * Signals that authentication commenced and at least one token was authenticated.
      *
-     * @return void
      * @Flow\Signal
      */
     protected function emitSuccessfullyAuthenticated(): void

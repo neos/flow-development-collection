@@ -487,7 +487,6 @@ class StreamWrapperAdapter
     /**
      * Returns all class names implementing the StreamWrapperInterface.
      *
-     * @param ObjectManagerInterface $objectManager
      * @return array<class-string<StreamWrapperInterface>> Array of stream wrapper implementations
      * @Flow\CompileStatic
      */

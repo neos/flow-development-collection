@@ -39,7 +39,6 @@ class PolicyEnforcementAspect
 
     /**
      * @param PolicyEnforcement $policyEnforcementInterceptor The policy enforcement interceptor
-     * @param Context $securityContext
      */
     public function __construct(PolicyEnforcement $policyEnforcementInterceptor, Context $securityContext)
     {

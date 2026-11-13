@@ -113,8 +113,6 @@ class MvcPropertyMappingConfigurationService
      * Initialize the property mapping configuration in $controllerArguments if
      * the trusted properties are set inside the request.
      *
-     * @param ActionRequest $request
-     * @param Arguments $controllerArguments
      * @return void
      * @throws InvalidArgumentForHashGenerationException
      * @throws InvalidHashException
@@ -147,7 +145,6 @@ class MvcPropertyMappingConfigurationService
      * All other properties are specified as allowed properties.
      *
      * @param mixed $propertyConfiguration
-     * @param PropertyMappingConfiguration $propertyMappingConfiguration
      * @return void
      */
     protected function modifyPropertyMappingConfiguration($propertyConfiguration, PropertyMappingConfiguration $propertyMappingConfiguration)

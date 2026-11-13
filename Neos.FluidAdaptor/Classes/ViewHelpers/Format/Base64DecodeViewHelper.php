@@ -61,7 +61,7 @@ class Base64DecodeViewHelper extends AbstractViewHelper
      */
     public function initializeArguments()
     {
-        $this->registerArgument('value', 'string', 'string to format', false, null);
+        $this->registerArgument('value', 'string', 'string to format', false);
     }
 
     /**
@@ -90,8 +90,6 @@ class Base64DecodeViewHelper extends AbstractViewHelper
      * @param string $argumentsName
      * @param string $closureName
      * @param string $initializationPhpCode
-     * @param ViewHelperNode $node
-     * @param TemplateCompiler $compiler
      * @return string
      * @see \Neos\FluidAdaptor\Core\Parser\TemplateProcessor\NamespaceDetectionTemplateProcessor::protectCDataSectionsFromParser
      */

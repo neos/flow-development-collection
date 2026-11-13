@@ -62,13 +62,12 @@ class Result
     /**
      * @var Result
      */
-    protected $parent = null;
+    protected $parent;
 
     /**
      * Injects the parent result and propagates the
      * cached error states upwards
      *
-     * @param Result $parent
      * @return void
      */
     public function setParent(Result $parent)
@@ -90,7 +89,6 @@ class Result
     /**
      * Add an error to the current Result object
      *
-     * @param Error $error
      * @return void
      * @api
      */
@@ -103,7 +101,6 @@ class Result
     /**
      * Add a warning to the current Result object
      *
-     * @param Warning $warning
      * @return void
      * @api
      */
@@ -116,7 +113,6 @@ class Result
     /**
      * Add a notice to the current Result object
      *
-     * @param Notice $notice
      * @return void
      * @api
      */
@@ -218,7 +214,6 @@ class Result
      * for property "foo.bar"
      *
      * @param string $propertyPath
-     * @return Result
      * @api
      */
     public function forProperty(?string $propertyPath = null): Result
@@ -241,7 +236,6 @@ class Result
      * Internal use only!
      *
      * @param array<string> $pathSegments
-     * @return Result
      */
     public function recurseThroughResult(array $pathSegments): Result
     {
@@ -264,7 +258,6 @@ class Result
     /**
      * Does the current Result object have Errors? (Recursively)
      *
-     * @return boolean
      * @api
      */
     public function hasErrors(): bool
@@ -289,7 +282,6 @@ class Result
     /**
      * Does the current Result object have Warnings? (Recursively)
      *
-     * @return boolean
      * @api
      */
     public function hasWarnings(): bool
@@ -339,8 +331,6 @@ class Result
 
     /**
      * Does the current Result object have Notices, Errors or Warnings? (Recursively)
-     *
-     * @return bool
      */
     public function hasMessages(): bool
     {
@@ -413,7 +403,6 @@ class Result
      * Flatten a tree of Result objects, based on a certain property.
      *
      * @template T of Message
-     * @param string $propertyName
      * @param array<mixed> $result The current result to be flattened
      * @param array<string> $level The property path in the format array('level1', 'level2', ...) for recursion
      * @param ?class-string<T> $messageTypeFilter $messageTypeFilter If specified only messages implementing the given class name are taken into account
@@ -449,7 +438,6 @@ class Result
     /**
      * Merge the given Result object into this one.
      *
-     * @param Result $otherResult
      * @return void
      * @api
      */
@@ -478,9 +466,6 @@ class Result
     /**
      * Merge a single property from the other result object.
      *
-     * @param Result $otherResult
-     * @param string $getterName
-     * @param string $adderName
      * @return void
      */
     protected function mergeProperty(Result $otherResult, string $getterName, string $adderName)

@@ -67,8 +67,6 @@ class LockManager
 
     /**
      * Returns the absolute path to a directory that should contain the lock files
-     *
-     * @return string
      */
     protected function getLockPath(): string
     {
@@ -100,7 +98,6 @@ class LockManager
     /**
      * Tells if the site is currently locked
      *
-     * @return boolean
      * @api
      */
     public function isSiteLocked(): bool
@@ -115,7 +112,7 @@ class LockManager
      */
     public function exitIfSiteLocked()
     {
-        if ($this->isSiteLocked() === true) {
+        if ($this->isSiteLocked()) {
             $this->doExit();
         }
     }

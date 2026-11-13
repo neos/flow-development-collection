@@ -127,12 +127,12 @@ class Context
     /**
      * @var ActionRequest|null
      */
-    protected $request = null;
+    protected $request;
 
     /**
      * @var Role[]|null
      */
-    protected $roles = null;
+    protected $roles;
 
     /**
      * Whether authorization is disabled @see areAuthorizationChecksDisabled()
@@ -146,7 +146,7 @@ class Context
      *
      * @var string|null
      */
-    protected $contextHash = null;
+    protected $contextHash;
 
     /**
      * CSRF tokens that are valid during this request but will be gone after.
@@ -605,23 +605,20 @@ class Context
     }
 
     /**
-     * @param Account $account
      * @return array<string,Role>
      */
     protected function collectRolesAndParentRolesFromAccount(Account $account): array
     {
         $reducer = function (array $roles, $currentRole) {
             $roles[$currentRole->getIdentifier()] = $currentRole;
-            $roles = array_merge($roles, $this->collectParentRoles($currentRole));
 
-            return $roles;
+            return array_merge($roles, $this->collectParentRoles($currentRole));
         };
 
         return array_reduce($account->getRoles(), $reducer, []);
     }
 
     /**
-     * @param Role $role
      * @return array<string,Role>
      */
     protected function collectParentRoles(Role $role): array
@@ -660,7 +657,6 @@ class Context
      * - If no RequestPattern is configured for this token, it is active
      * - Otherwise it is active only if at least one configured RequestPattern per type matches the request
      *
-     * @param TokenInterface $token
      * @return bool true if the given token is active, otherwise false
      */
     protected function isTokenActive(TokenInterface $token)
@@ -671,7 +667,7 @@ class Context
         $requestPatternsByType = [];
         foreach ($token->getRequestPatterns() as $requestPattern) {
             $patternType = TypeHandling::getTypeForValue($requestPattern);
-            if (isset($requestPatternsByType[$patternType]) && $requestPatternsByType[$patternType] === true) {
+            if (isset($requestPatternsByType[$patternType]) && $requestPatternsByType[$patternType]) {
                 continue;
             }
             if (!$this->request) {
@@ -705,9 +701,7 @@ class Context
     /**
      * Tries to find a token matchting the given manager token in the session tokens, will return that or the manager token.
      *
-     * @param TokenInterface $managerToken
      * @param TokenInterface[] $sessionTokens
-     * @return TokenInterface
      * @throws \Neos\Flow\Session\Exception\SessionNotStartedException
      */
     protected function findBestMatchingToken(TokenInterface $managerToken, array $sessionTokens): TokenInterface
@@ -843,9 +837,6 @@ class Context
 
     /**
      * returns the tag to use for sessions belonging to the given $account
-     *
-     * @param Account $account
-     * @return string
      */
     public function getSessionTagForAccount(Account $account): string
     {
@@ -854,10 +845,6 @@ class Context
 
     /**
      * destroys all sessions belonging to the given $account
-     *
-     * @param Account $account
-     * @param string $reason
-     * @return void
      */
     public function destroySessionsForAccount(Account $account, string $reason = ''): void
     {

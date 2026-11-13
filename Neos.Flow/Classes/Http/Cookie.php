@@ -250,7 +250,7 @@ class Cookie implements \Stringable
             }
         }
 
-        $cookie = new static(
+        return new static(
             $cookieName,
             $cookieValue,
             $expiresAttribute,
@@ -261,8 +261,6 @@ class Cookie implements \Stringable
             $httpOnlyAttribute,
             $sameSite
         );
-
-        return $cookie;
     }
 
     /**
@@ -414,8 +412,6 @@ class Cookie implements \Stringable
 
     /**
      * Renders the field value suitable for a HTTP "Set-Cookie" header.
-     *
-     * @return string
      */
     public function __toString(): string
     {

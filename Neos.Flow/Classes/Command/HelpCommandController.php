@@ -156,7 +156,6 @@ class HelpCommandController extends CommandController
     /**
      * Render help text for a single command
      *
-     * @param Command $command
      * @return void
      */
     protected function displayHelpForCommand(Command $command)
@@ -249,7 +248,6 @@ class HelpCommandController extends CommandController
      * Displays an error message
      *
      * @Flow\Internal
-     * @param CommandException $exception
      * @return void
      * @throws StopActionException
      */

@@ -101,7 +101,6 @@ interface QueryInterface
     /**
      * Returns the type this query cares for.
      *
-     * @return string
      * @api
      */
     public function getType(): string;
@@ -152,7 +151,6 @@ interface QueryInterface
      * Sets the maximum size of the result set to limit. Returns $this to allow
      * for chaining (fluid interface).
      *
-     * @param integer|null $limit
      * @return QueryInterface<T>
      * @api
      */
@@ -161,7 +159,6 @@ interface QueryInterface
     /**
      * Returns the maximum size of the result set to limit.
      *
-     * @return integer|null
      * @api
      */
     public function getLimit(): ?int;
@@ -169,7 +166,6 @@ interface QueryInterface
     /**
      * Sets the DISTINCT flag for this query.
      *
-     * @param boolean $distinct
      * @return QueryInterface<T>
      * @api
      */
@@ -178,7 +174,6 @@ interface QueryInterface
     /**
      * Returns the DISTINCT flag for this query.
      *
-     * @return boolean
      * @api
      */
     public function isDistinct(): bool;
@@ -187,7 +182,6 @@ interface QueryInterface
      * Sets the start offset of the result set to offset. Returns $this to
      * allow for chaining (fluid interface).
      *
-     * @param integer|null $offset
      * @return QueryInterface<T>
      * @api
      */

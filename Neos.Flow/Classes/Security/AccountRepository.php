@@ -47,7 +47,6 @@ class AccountRepository extends Repository
      * Removes an account
      *
      * @param object $object The account to remove
-     * @return void
      * @throws IllegalObjectTypeException
      */
     public function remove($object): void

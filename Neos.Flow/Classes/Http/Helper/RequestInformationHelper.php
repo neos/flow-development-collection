@@ -63,9 +63,6 @@ abstract class RequestInformationHelper
     /**
      * Constructs a relative path for this request,
      * that is the path segments left after removing the baseUri.
-     *
-     * @param RequestInterface $request
-     * @return string
      */
     public static function getRelativeRequestPath(RequestInterface $request): string
     {
@@ -75,18 +72,14 @@ abstract class RequestInformationHelper
 
     /**
      * Tries to detect the base URI of request.
-     *
-     * @param RequestInterface $request
-     * @return UriInterface
      */
     public static function generateBaseUri(RequestInterface $request): UriInterface
     {
         $baseUri = clone $request->getUri();
         $baseUri = $baseUri->withQuery('');
         $baseUri = $baseUri->withFragment('');
-        $baseUri = $baseUri->withPath(self::getScriptRequestPath($request));
 
-        return $baseUri;
+        return $baseUri->withPath(self::getScriptRequestPath($request));
     }
 
     /**
@@ -95,8 +88,6 @@ abstract class RequestInformationHelper
      * Note that the URI part is, at the moment, only possible in the form "abs_path" since the
      * actual requestUri of the Request cannot be determined during the creation of the Request.
      *
-     * @param RequestInterface $request
-     * @return string
      * @see http://www.w3.org/Protocols/rfc2616/rfc2616-sec5.html#sec5.1
      */
     public static function generateRequestLine(RequestInterface $request): string
@@ -106,9 +97,6 @@ abstract class RequestInformationHelper
 
     /**
      * Renders information about the request
-     *
-     * @param RequestInterface $request
-     * @return string
      */
     public static function renderRequestInformation(RequestInterface $request): string
     {
@@ -122,9 +110,6 @@ abstract class RequestInformationHelper
 
     /**
      * Renders the HTTP headers - EXCLUDING the status header - of the given request
-     *
-     * @param RequestInterface $request
-     * @return string
      */
     public static function renderRequestHeaders(RequestInterface $request): string
     {
@@ -144,7 +129,6 @@ abstract class RequestInformationHelper
     /**
      * Extract the charset from the content type header if available
      *
-     * @param RequestInterface $request
      * @return string the found charset or empty string if none
      */
     public static function getContentCharset(RequestInterface $request): string

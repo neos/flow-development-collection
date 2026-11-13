@@ -30,15 +30,11 @@ interface FreezableBackendInterface extends BackendInterface
      *
      * On the positive side, a frozen cache backend is much faster on read access.
      * A frozen backend can only be thawed by calling the flush() method.
-     *
-     * @return void
      */
     public function freeze(): void;
 
     /**
      * Tells if this backend is frozen.
-     *
-     * @return boolean
      */
     public function isFrozen(): bool;
 }

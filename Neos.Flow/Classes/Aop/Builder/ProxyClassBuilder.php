@@ -178,7 +178,7 @@ class ProxyClassBuilder
         foreach ($targetClassNameCandidates->getClassNames() as $targetClassName) {
             $isUnproxied = $this->objectConfigurationCache->has('unproxiedClass-' . str_replace('\\', '_', $targetClassName));
             $hasCacheEntry = $this->compiler->hasCacheEntryForClass($targetClassName) || $isUnproxied;
-            if ($rebuildEverything === true || $hasCacheEntry === false) {
+            if ($rebuildEverything || $hasCacheEntry === false) {
                 $proxyBuildResult = $this->buildProxyClass($targetClassName, $this->aspectContainers);
                 if ($proxyBuildResult === false && get_parent_class($targetClassName) !== false) {
                     // In case the proxy was not built because there was nothing advised,
@@ -186,7 +186,7 @@ class ProxyClassBuilder
                     $treatedSubClasses = $this->addBuildMethodsAndAdvicesCodeToClass($targetClassName, $treatedSubClasses);
                 }
                 $treatedSubClasses = $this->proxySubClassesOfClassToEnsureAdvices($targetClassName, $targetClassNameCandidates, $treatedSubClasses);
-                if ($proxyBuildResult !== false) {
+                if ($proxyBuildResult) {
                     if ($isUnproxied) {
                         $this->objectConfigurationCache->remove('unproxiedClass-' . str_replace('\\', '_', $targetClassName));
                     }
@@ -537,8 +537,6 @@ class ProxyClassBuilder
      * Adds code to build the methods and advices array in case the parent class has some.
      *
      * @param class-string $className
-     * @param ClassNameIndex $treatedSubClasses
-     * @return ClassNameIndex
      * @throws \ReflectionException
      * @throws CannotBuildObjectException
      */
@@ -642,7 +640,6 @@ class ProxyClassBuilder
      *
      * @param class-string $targetClassName The target class the pointcut should match with
      * @param array<string,array{groupedAdvices: array<mixed>}> $interceptedMethods An array of method names which need to be intercepted
-     * @return void
      * @throws Aop\Exception\VoidImplementationException
      */
     protected function buildMethodsInterceptorCode(string $targetClassName, array $interceptedMethods): void
@@ -668,7 +665,6 @@ class ProxyClassBuilder
      * @param array<array{0: class-string, 1: string}> $methods An array of class and method names which are matched against the pointcut (class name = name of the class or interface the method was declared)
      * @param class-string $targetClassName Name of the class the pointcut should match with
      * @param array<AspectContainer> $aspectContainers All aspects to take into consideration
-     * @return void
      */
     protected function addAdvisedMethodsToInterceptedMethods(array &$interceptedMethods, array $methods, string $targetClassName, array $aspectContainers): void
     {
@@ -707,7 +703,6 @@ class ProxyClassBuilder
      *
      * @param array<string,mixed> &$interceptedMethods An array (empty or not) which contains the names of the intercepted methods and additional information
      * @param array<array{0: class-string, 1: string}> $methodsFromIntroducedInterfaces An array of class and method names from introduced interfaces
-     * @return void
      */
     protected function addIntroducedMethodsToInterceptedMethods(array &$interceptedMethods, array $methodsFromIntroducedInterfaces): void
     {

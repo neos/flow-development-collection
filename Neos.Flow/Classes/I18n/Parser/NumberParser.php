@@ -47,7 +47,6 @@ class NumberParser
     protected $numbersReader;
 
     /**
-     * @param NumbersReader $numbersReader
      * @return void
      */
     public function injectNumbersReader(NumbersReader $numbersReader)

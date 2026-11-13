@@ -29,7 +29,6 @@ class AdvisedConstructorInterceptorBuilder extends AbstractMethodInterceptorBuil
      * @param string $methodName Name of the method to build an interceptor for
      * @param array<string,mixed> $methodMetaInformation An array of method names and their meta information, including advices for the method (if any)
      * @param class-string $targetClassName Name of the target class to build the interceptor for
-     * @return void
      * @throws Exception
      */
     public function build(string $methodName, array $methodMetaInformation, string $targetClassName): void

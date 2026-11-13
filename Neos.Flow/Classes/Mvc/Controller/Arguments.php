@@ -35,7 +35,6 @@ class Arguments extends \ArrayObject
      *
      * @param mixed $offset Offset - not used here
      * @param mixed $value The argument.
-     * @return void
      * @throws \InvalidArgumentException if the argument is not a valid Controller Argument object
      * @api
      */
@@ -54,7 +53,6 @@ class Arguments extends \ArrayObject
      * Sets an argument, aliased to offsetSet()
      *
      * @param mixed $value The value
-     * @return void
      * @throws \InvalidArgumentException if the argument is not a valid Controller Argument object
      * @api
      */
@@ -70,7 +68,6 @@ class Arguments extends \ArrayObject
      * Unsets an argument
      *
      * @param mixed $offset Offset
-     * @return void
      * @api
      */
     public function offsetUnset($offset): void
@@ -87,7 +84,6 @@ class Arguments extends \ArrayObject
      * Returns whether the requested index exists
      *
      * @param mixed $offset Offset
-     * @return boolean
      * @api
      */
     public function offsetExists($offset): bool

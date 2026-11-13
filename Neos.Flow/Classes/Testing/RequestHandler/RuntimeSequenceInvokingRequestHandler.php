@@ -29,8 +29,6 @@ class RuntimeSequenceInvokingRequestHandler implements RequestHandlerInterface
 
     /**
      * Constructor
-     *
-     * @param \Neos\Flow\Core\Bootstrap $bootstrap
      */
     public function __construct(Bootstrap $bootstrap)
     {
@@ -63,8 +61,6 @@ class RuntimeSequenceInvokingRequestHandler implements RequestHandlerInterface
 
     /**
      * Handles a command line request
-     *
-     * @return void
      */
     public function handleRequest(): void
     {

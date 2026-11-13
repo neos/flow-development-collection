@@ -92,7 +92,6 @@ class UploadViewHelper extends AbstractFormFieldViewHelper
     /**
      * Renders the upload field.
      *
-     * @return string
      * @api
      */
     public function render(): string

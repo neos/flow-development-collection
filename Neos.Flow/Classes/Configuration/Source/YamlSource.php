@@ -49,11 +49,10 @@ class YamlSource
      *
      * @param string $pathAndFilename Full path and filename of the file to load, excluding the file extension (ie. ".yaml")
      * @param boolean $allowSplitSource If true, the type will be used as a prefix when looking for configuration files
-     * @return boolean
      */
     public function has(string $pathAndFilename, bool $allowSplitSource = false): bool
     {
-        if ($allowSplitSource === true) {
+        if ($allowSplitSource) {
             $pathsAndFileNames = glob($pathAndFilename . '.*.yaml');
             if ($pathsAndFileNames !== false) {
                 foreach ($pathsAndFileNames as $pathAndFilename) {
@@ -85,7 +84,7 @@ class YamlSource
     {
         $this->detectFilesWithWrongExtension($pathAndFilename, $allowSplitSource);
         $pathsAndFileNames = [$pathAndFilename . '.yaml'];
-        if ($allowSplitSource === true) {
+        if ($allowSplitSource) {
             $splitSourcePathsAndFileNames = glob($pathAndFilename . '.*.yaml') ?: [];
             $splitSourcePathsAndFileNames = array_merge($splitSourcePathsAndFileNames, glob($pathAndFilename . '.*.yml') ?: []);
             if ($splitSourcePathsAndFileNames != []) {
@@ -126,7 +125,6 @@ class YamlSource
     /**
      * Loads the file with the given path and merge it's contents into the configuration array.
      *
-     * @param string $pathAndFilename
      * @param array<mixed> $configuration
      * @return array<mixed>
      * @throws ParseErrorException
@@ -187,7 +185,6 @@ class YamlSource
      * Read the header part from the given file. That means, every line
      * until the first non comment line is found.
      *
-     * @param string $pathAndFilename
      * @return string The header of the given YAML file
      */
     protected function getHeaderFromFile(string $pathAndFilename): string

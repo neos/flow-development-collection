@@ -200,7 +200,6 @@ class DatesReader
     protected $localizedLiterals;
 
     /**
-     * @param CldrRepository $repository
      * @return void
      */
     public function injectCldrRepository(CldrRepository $repository)
@@ -211,7 +210,6 @@ class DatesReader
     /**
      * Injects the Flow_I18n_Cldr_Reader_DatesReader cache
      *
-     * @param VariableFrontend $cache
      * @return void
      */
     public function injectCache(VariableFrontend $cache)
@@ -253,7 +251,6 @@ class DatesReader
      * When third parameter ($formatLength) equals 'default', default format for a
      * locale will be used.
      *
-     * @param Locale $locale
      * @param string $formatType A type of format (one of constant values)
      * @param string $formatLength A length of format (one of constant values)
      * @return array<mixed> An array representing parsed format
@@ -322,7 +319,6 @@ class DatesReader
      *
      * If array was not generated earlier, it will be generated and cached.
      *
-     * @param Locale $locale
      * @return array<mixed> An array with localized literals
      */
     public function getLocalizedLiteralsForLocale(Locale $locale): array
@@ -349,8 +345,6 @@ class DatesReader
      * Validates provided format type and throws exception if value is not
      * allowed.
      *
-     * @param string $formatType
-     * @return void
      * @throws Exception\InvalidFormatTypeException When value is unallowed
      */
     public static function validateFormatType(string $formatType): void
@@ -364,8 +358,6 @@ class DatesReader
      * Validates provided format length and throws exception if value is not
      * allowed.
      *
-     * @param string $formatLength
-     * @return void
      * @throws Exception\InvalidFormatLengthException When value is not allowed
      */
     public static function validateFormatLength(string $formatLength): void
@@ -381,7 +373,6 @@ class DatesReader
      * Not all features from CLDR specification are implemented. Please see the
      * documentation for this class for details what is missing.
      *
-     * @param string $format
      * @return array<mixed> Parsed format
      * @throws Exception\InvalidDateTimeFormatException When subformat is longer than maximal value defined in $maxLengthOfSubformats property
      * @see DatesReader::$parsedFormats

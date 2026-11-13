@@ -54,7 +54,6 @@ class AjaxWidgetContextHolder
      * Stores the WidgetContext inside the Context, and sets the
      * AjaxWidgetIdentifier inside the Widget Context correctly.
      *
-     * @param WidgetContext $widgetContext
      * @return void
      * @Flow\Session(autoStart=true)
      */

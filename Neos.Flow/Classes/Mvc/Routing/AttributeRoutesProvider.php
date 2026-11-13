@@ -94,7 +94,6 @@ final class AttributeRoutesProvider implements RoutesProviderInterface
     }
 
     /**
-     * @param ObjectManagerInterface $objectManager
      * @return array<string,array<int,array{
      *      name?: string,
      *      uriPattern: string,

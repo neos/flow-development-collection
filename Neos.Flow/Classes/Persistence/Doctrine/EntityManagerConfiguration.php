@@ -39,7 +39,6 @@ class EntityManagerConfiguration
 {
     /**
      * @Flow\Inject
-     * @var ObjectManagerInterface
      */
     protected ObjectManagerInterface $objectManager;
 
@@ -53,7 +52,6 @@ class EntityManagerConfiguration
      * for further use.
      *
      * @param array<string, mixed> $settings
-     * @return void
      * @throws InvalidConfigurationException
      */
     public function injectSettings(array $settings): void
@@ -70,9 +68,6 @@ class EntityManagerConfiguration
      * Note that this is called via SignalSlot in {@see Package} and therefore the arguments are
      * defined by what beforeDoctrineEntityManagerCreation provides (leaving the first argument unused here).
      *
-     * @param Connection $connection
-     * @param Configuration $config
-     * @param EventManager $eventManager
      * @throws InvalidConfigurationException
      * @throws IllegalObjectTypeException
      * @throws NoSuchCacheException
@@ -100,7 +95,6 @@ class EntityManagerConfiguration
 
     /**
      * @param array<class-string> $configuredSubscribers
-     * @param EventManager $eventManager
      * @throws IllegalObjectTypeException
      */
     protected function registerEventSubscribers(array $configuredSubscribers, EventManager $eventManager): void
@@ -116,7 +110,6 @@ class EntityManagerConfiguration
 
     /**
      * @param array<array{listener: class-string<object>, events: string|array<string>}> $configuredListeners
-     * @param EventManager $eventManager
      */
     protected function registerEventListeners(array $configuredListeners, EventManager $eventManager): void
     {
@@ -131,8 +124,6 @@ class EntityManagerConfiguration
      * At the moment, these are custom DQL functions.
      *
      * @param array<string,mixed> $configuredSettings
-     * @param Configuration $doctrineConfiguration
-     * @return void
      */
     protected function applyDqlSettingsToConfiguration(array $configuredSettings, Configuration $doctrineConfiguration): void
     {
@@ -150,7 +141,6 @@ class EntityManagerConfiguration
     /**
      * Apply basic cache configuration for the metadata, query and result caches.
      *
-     * @param Configuration $config
      * @throws NoSuchCacheException
      */
     protected function applyCacheConfiguration(Configuration $config): void
@@ -175,8 +165,6 @@ class EntityManagerConfiguration
      * Apply configured settings regarding Doctrine's second level cache.
      *
      * @param array<string,mixed> $configuredSettings
-     * @param Configuration $doctrineConfiguration
-     * @return void
      * @throws NoSuchCacheException
      */
     protected function applySecondLevelCacheSettingsToConfiguration(array $configuredSettings, Configuration $doctrineConfiguration): void
@@ -215,8 +203,6 @@ class EntityManagerConfiguration
     /**
      * Enhance the Doctrine EntityManager by applying post creation settings, like custom filters.
      *
-     * @param Configuration $config
-     * @param EntityManager $entityManager
      * @throws DBALException
      */
     public function enhanceEntityManager(Configuration $config, EntityManager $entityManager): void

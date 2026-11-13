@@ -53,8 +53,6 @@ class SecurityHelper implements ProtectedContextAwareInterface
 
     /**
      * Returns CSRF token which is required for "unsafe" requests (e.g. POST, PUT, DELETE, ...)
-     *
-     * @return string
      */
     public function csrfToken(): string
     {

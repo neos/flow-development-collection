@@ -88,10 +88,6 @@ class TemplateVariableContainer extends StandardVariableProvider
         return $subject;
     }
 
-    /**
-     * @param string $propertyPath
-     * @return string
-     */
     protected function resolveSubVariableReferences(string $propertyPath): string
     {
         if (str_contains($propertyPath, '{')) {

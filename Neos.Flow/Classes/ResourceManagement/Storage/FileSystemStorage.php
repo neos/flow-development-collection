@@ -143,7 +143,6 @@ class FileSystemStorage implements StorageInterface
     /**
      * Retrieve all Objects stored in this storage, filtered by the given collection name
      *
-     * @param CollectionInterface $collection
      * @return \Generator<StorageObject>
      */
     public function getObjectsByCollection(CollectionInterface $collection)

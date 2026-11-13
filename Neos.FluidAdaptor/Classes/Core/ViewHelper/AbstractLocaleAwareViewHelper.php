@@ -38,7 +38,6 @@ abstract class AbstractLocaleAwareViewHelper extends AbstractViewHelper
     }
 
     /**
-     * @param I18n\Service $localizationService
      * @return void
      */
     public function injectLocalizationService(I18n\Service $localizationService)

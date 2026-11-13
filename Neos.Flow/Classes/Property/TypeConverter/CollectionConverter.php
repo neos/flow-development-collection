@@ -51,7 +51,6 @@ class CollectionConverter extends AbstractTypeConverter
      * @param mixed $source
      * @param string $targetType
      * @param array<string,mixed> $convertedChildProperties
-     * @param PropertyMappingConfigurationInterface|null $configuration
      * @return ArrayCollection<string,mixed>
      * @api
      */
@@ -80,7 +79,6 @@ class CollectionConverter extends AbstractTypeConverter
      *
      * @param string $targetType
      * @param string $propertyName
-     * @param PropertyMappingConfigurationInterface $configuration
      * @return string
      * @api
      */

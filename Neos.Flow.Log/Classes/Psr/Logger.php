@@ -61,7 +61,6 @@ class Logger implements LoggerInterface
 
     /**
      * @param mixed $level
-     * @param string|\Stringable $message
      * @param array<string,mixed> $context
      * @api
      */

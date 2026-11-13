@@ -158,7 +158,6 @@ abstract class Functions
      *
      * @see https://www.php.net/manual/en/function.pathinfo.php
      *
-     * @param string $path
      * @param integer|null $options Optional, one of PATHINFO_DIRNAME, PATHINFO_BASENAME, PATHINFO_EXTENSION or PATHINFO_FILENAME.
      * @return ($options is null ? array{dirname?: string, basename: string, extension?: string, filename: string} : string)
      * @api

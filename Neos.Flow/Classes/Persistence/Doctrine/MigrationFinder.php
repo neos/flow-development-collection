@@ -31,8 +31,6 @@ final class MigrationFinder extends Finder
     }
 
     /**
-     * @param string $directory
-     * @param string|null $namespace
      * @return string[]
      */
     public function findMigrations(string $directory, ?string $namespace = null): array

@@ -100,10 +100,8 @@ class DateHelper implements ProtectedContextAwareInterface
     /**
      * Format a date to a string with a given cldr formatLength
      *
-     * @param \DateTimeInterface $dateTime
      * @param string $formatLength FormatLength in CLDR format ("Full", "Long", "Medium", "Short") (see https://cldr.unicode.org/translation/date-time/date-time-patterns#basic-date-formats)
      * @param null|string $locale String locale - example (de|en|en_US). If not provided the current locale of I18nService is used.
-     * @return string
      */
     public function formatCldrDate(\DateTimeInterface $dateTime, string $formatLength = DatesReader::FORMAT_LENGTH_DEFAULT, ?string $locale = null): string
     {
@@ -114,10 +112,8 @@ class DateHelper implements ProtectedContextAwareInterface
     /**
      * Format a time to a string with a given cldr formatLength
      *
-     * @param \DateTimeInterface $dateTime
      * @param string $formatLength FormatLength in CLDR format ("Full", "Long", "Medium", "Short") (see https://cldr.unicode.org/translation/date-time/date-time-patterns#basic-time-formats)
      * @param null|string $locale String locale - example (de|en|en_US). If not provided the current locale of I18nService is used.
-     * @return string
      */
     public function formatCldrTime(\DateTimeInterface $dateTime, string $formatLength = DatesReader::FORMAT_LENGTH_DEFAULT, ?string $locale = null): string
     {
@@ -128,10 +124,8 @@ class DateHelper implements ProtectedContextAwareInterface
     /**
      * Format a datetime to a string with a given cldr formatLength
      *
-     * @param \DateTimeInterface $dateTime
      * @param string $formatLength FormatLength in CLDR format ("Full", "Long", "Medium", "Short") (see https://cldr.unicode.org/translation/date-time/date-time-patterns#basic-date-formats and https://cldr.unicode.org/translation/date-time/date-time-patterns#basic-date-formats)
      * @param null|string $locale String locale - example (de|en|en_US). If not provided the current locale of I18nService is used.
-     * @return string
      */
     public function formatCldrDateTime(\DateTimeInterface $dateTime, string $formatLength = DatesReader::FORMAT_LENGTH_DEFAULT, ?string $locale = null): string
     {
@@ -148,7 +142,6 @@ class DateHelper implements ProtectedContextAwareInterface
      *     Date.create('first day of next year')
      *
      * @param String $time A date/time string. For valid formats see http://php.net/manual/en/datetime.formats.php
-     * @return \DateTime
      */
     public function create(string $time): \DateTime
     {
@@ -226,7 +219,6 @@ class DateHelper implements ProtectedContextAwareInterface
     /**
      * Get the day of month of a date
      *
-     * @param \DateTimeInterface $dateTime
      * @return integer The day of month of the given date
      */
     public function dayOfMonth(\DateTimeInterface $dateTime)
@@ -237,7 +229,6 @@ class DateHelper implements ProtectedContextAwareInterface
     /**
      * Get the month of a date
      *
-     * @param \DateTimeInterface $dateTime
      * @return integer The month of the given date
      */
     public function month(\DateTimeInterface $dateTime)
@@ -248,7 +239,6 @@ class DateHelper implements ProtectedContextAwareInterface
     /**
      * Get the year of a date
      *
-     * @param \DateTimeInterface $dateTime
      * @return integer The year of the given date
      */
     public function year(\DateTimeInterface $dateTime)
@@ -259,7 +249,6 @@ class DateHelper implements ProtectedContextAwareInterface
     /**
      * Get the hour of a date (24 hour format)
      *
-     * @param \DateTimeInterface $dateTime
      * @return integer The hour of the given date
      */
     public function hour(\DateTimeInterface $dateTime)
@@ -270,7 +259,6 @@ class DateHelper implements ProtectedContextAwareInterface
     /**
      * Get the minute of a date
      *
-     * @param \DateTimeInterface $dateTime
      * @return integer The minute of the given date
      */
     public function minute(\DateTimeInterface $dateTime)
@@ -281,7 +269,6 @@ class DateHelper implements ProtectedContextAwareInterface
     /**
      * Get the second of a date
      *
-     * @param \DateTimeInterface $dateTime
      * @return integer The second of the given date
      */
     public function second(\DateTimeInterface $dateTime)

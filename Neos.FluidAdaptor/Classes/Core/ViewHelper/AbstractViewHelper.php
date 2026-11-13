@@ -66,9 +66,6 @@ abstract class AbstractViewHelper extends FluidAbstractViewHelper
         }
     }
 
-    /**
-     * @param ObjectManagerInterface $objectManager
-     */
     public function injectObjectManager(ObjectManagerInterface $objectManager): void
     {
         $this->objectManager = $objectManager;
@@ -76,18 +73,12 @@ abstract class AbstractViewHelper extends FluidAbstractViewHelper
 
     /**
      * Injects the (system) logger based on PSR-3.
-     *
-     * @param LoggerInterface $logger
-     * @return void
      */
     public function injectLogger(LoggerInterface $logger): void
     {
         $this->logger = $logger;
     }
 
-    /**
-     * @return boolean
-     */
     public function isEscapingInterceptorEnabled(): bool
     {
         return $this->isChildrenEscapingEnabled();

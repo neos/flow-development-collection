@@ -28,7 +28,6 @@ class JsonFileBackend extends FileBackend
      * @param string $packageKey Key of the package triggering the log (determined automatically if not specified)
      * @param string $className Name of the class triggering the log (determined automatically if not specified)
      * @param string $methodName Name of the method triggering the log (determined automatically if not specified)
-     * @return void
      */
     public function append(string $message, int $severity = LOG_INFO, $additionalData = null, ?string $packageKey = null, ?string $className = null, ?string $methodName = null): void
     {

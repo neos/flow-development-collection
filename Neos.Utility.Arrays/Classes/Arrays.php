@@ -224,7 +224,6 @@ abstract class Arrays
      * @internal experimental feature, not stable API
      * @param array<mixed> $array The array to traverse
      * @param array<mixed>|string $path The path to follow. Either a simple array of keys or a string in the format 'foo.bar.baz'
-     * @return ValueAccessor
      */
     public static function getAccessorByPath(array $array, array|string $path): ValueAccessor
     {

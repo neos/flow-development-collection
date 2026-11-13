@@ -63,8 +63,6 @@ final class UriConstraints
 
     /**
      * Create a new instance without any constraints
-     *
-     * @return UriConstraints
      */
     public static function create(): self
     {
@@ -73,8 +71,6 @@ final class UriConstraints
 
     /**
      * Create a new instance with constraints extracted from the given $uri
-     *
-     * @return UriConstraints
      */
     public static function fromUri(UriInterface $uri): self
     {
@@ -101,9 +97,6 @@ final class UriConstraints
     /**
      * Merge two instances of UriConstraints
      * Constraints of the given $uriConstraints instance will overrule similar constraints of this instance
-     *
-     * @param UriConstraints $uriConstraints
-     * @return UriConstraints
      */
     public function merge(UriConstraints $uriConstraints): self
     {
@@ -115,7 +108,6 @@ final class UriConstraints
      * Create a new instance with the scheme constraint added
      *
      * @param string $scheme The URI scheme to force, usually "http" or "https"
-     * @return UriConstraints
      */
     public function withScheme(string $scheme): self
     {
@@ -128,7 +120,6 @@ final class UriConstraints
      * Create a new instance with the host constraint added
      *
      * @param string $host The URI host part to force, for example "neos.io"
-     * @return UriConstraints
      */
     public function withHost(string $host): self
     {
@@ -142,7 +133,6 @@ final class UriConstraints
      *
      * @param string $prefix The URI host prefix to force, for example "en."
      * @param string[] $replacePrefixes a list of prefixes that should be replaced with the given prefix. if the list is empty or does not match the current host $prefix will be prepended as is
-     * @return UriConstraints
      */
     public function withHostPrefix(string $prefix, array $replacePrefixes = []): self
     {
@@ -159,7 +149,6 @@ final class UriConstraints
      *
      * @param string $suffix The URI host suffix to force, for example ".com"
      * @param string[] $replaceSuffixes a list of suffixes that should be replaced with the given suffix. if the list is empty or does not match, no replacement happens
-     * @return UriConstraints
      */
     public function withHostSuffix(string $suffix, array $replaceSuffixes = []): self
     {
@@ -175,7 +164,6 @@ final class UriConstraints
      * Create a new instance with the port constraint added
      *
      * @param int $port The URI port to force, for example 80
-     * @return UriConstraints
      */
     public function withPort(int $port): self
     {
@@ -188,7 +176,6 @@ final class UriConstraints
      * Create a new instance with the path constraint added
      *
      * @param string $path The URI path to force, for example "some/path/"
-     * @return UriConstraints
      */
     public function withPath(string $path): self
     {
@@ -199,9 +186,6 @@ final class UriConstraints
 
     /**
      * Create a new instance with the query string constraint added
-     *
-     * @param string $queryString
-     * @return UriConstraints
      */
     public function withQueryString(string $queryString): self
     {
@@ -214,7 +198,6 @@ final class UriConstraints
      * Create a new instance with a query string corresponding to the given $values merged with any existing query string constraint
      *
      * @param array<mixed> $values
-     * @return UriConstraints
      */
     public function withAddedQueryValues(array $values): self
     {
@@ -231,9 +214,6 @@ final class UriConstraints
 
     /**
      * Create a new instance with the fragment constraint added
-     *
-     * @param string $fragment
-     * @return UriConstraints
      */
     public function withFragment(string $fragment): self
     {
@@ -248,7 +228,6 @@ final class UriConstraints
      *
      * @param string $pathPrefix The URI path prefix to force, for example "some-prefix/"
      * @param bool $append If true the $pathPrefix will be added *after* previous path prefix constraints. By default prefixes are added *before* any existing prefix
-     * @return UriConstraints
      */
     public function withPathPrefix(string $pathPrefix, bool $append = false): self
     {
@@ -274,7 +253,6 @@ final class UriConstraints
      *
      * @param string $pathSuffix The URI path suffix to force, for example ".html"
      * @param bool $prepend If true the $pathSuffix will be added *before* previous path suffix constraints. By default suffixes are added *after* any existing suffix
-     * @return UriConstraints
      */
     public function withPathSuffix(string $pathSuffix, bool $prepend = false): self
     {
@@ -289,7 +267,6 @@ final class UriConstraints
     /**
      * Returns the URI path constraint, which consists of the path and query string parts, or NULL if none was set
      *
-     * @return string|null
      * @deprecated With Flow 7.0, use toUri()->getPath() and/or toUri()->getQuery() instead. @see toUri()
      */
     public function getPathConstraint(): ?string
@@ -428,9 +405,6 @@ final class UriConstraints
         return $uri;
     }
 
-    /**
-     * @return UriInterface
-     */
     public function toUri(): UriInterface
     {
         return $this->applyTo(new Uri(''), false);
@@ -438,10 +412,6 @@ final class UriConstraints
 
     /**
      * Whether the given $string starts with the specified $prefix
-     *
-     * @param string $string
-     * @param string $prefix
-     * @return bool
      */
     private function stringStartsWith(string $string, string $prefix): bool
     {
@@ -450,10 +420,6 @@ final class UriConstraints
 
     /**
      * Whether the given $string ends with the specified $suffix
-     *
-     * @param string $string
-     * @param string $suffix
-     * @return bool
      */
     private function stringEndsWith(string $string, string $suffix): bool
     {

@@ -46,7 +46,6 @@ class RequestBodyParsingMiddleware implements MiddlewareInterface
     /**
      * Parses the request body according to the media type.
      *
-     * @param ServerRequestInterface $httpRequest
      * @return null|array<mixed>
      */
     protected function parseRequestBody(ServerRequestInterface $httpRequest)

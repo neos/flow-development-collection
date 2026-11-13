@@ -29,17 +29,17 @@ class FilterFirewall implements FirewallInterface
     /**
      * @var ObjectManagerInterface
      */
-    protected $objectManager = null;
+    protected $objectManager;
 
     /**
      * @var RequestPatternResolver
      */
-    protected $requestPatternResolver = null;
+    protected $requestPatternResolver;
 
     /**
      * @var InterceptorResolver
      */
-    protected $interceptorResolver = null;
+    protected $interceptorResolver;
 
     /**
      * @var RequestFilter[]
@@ -101,7 +101,6 @@ class FilterFirewall implements FirewallInterface
 
     /**
      * @param array<string,mixed> $filterConfiguration
-     * @return RequestFilter
      * @throws \Neos\Flow\Security\Exception\NoInterceptorFoundException
      * @throws \Neos\Flow\Security\Exception\NoRequestPatternFoundException
      */

@@ -55,13 +55,10 @@ class FlashMessageService
 
     /**
      * Persist all FlashMessageContainers that have been instantiated during the current request cycle
-     *
-     * @param HttpResponseInterface $response
-     * @return HttpResponseInterface
      */
     public function persistFlashMessages(HttpResponseInterface $response): HttpResponseInterface
     {
-        foreach ($this->instantiatedStorages as $containerName => $flashMessageStorage) {
+        foreach ($this->instantiatedStorages as $flashMessageStorage) {
             $response = $flashMessageStorage->persist($response);
         }
         return $response;
@@ -70,8 +67,6 @@ class FlashMessageService
     /**
      * Load the FlashMessageContainer for the given request
      *
-     * @param ActionRequest $request
-     * @return FlashMessageContainer
      * @throws InvalidFlashMessageConfigurationException
      * @throws InvalidRequestPatternException|NoRequestPatternFoundException
      */
@@ -82,8 +77,6 @@ class FlashMessageService
     }
 
     /**
-     * @param ActionRequest $request
-     * @return FlashMessageStorageInterface
      * @throws InvalidFlashMessageConfigurationException
      * @throws InvalidRequestPatternException|NoRequestPatternFoundException
      */

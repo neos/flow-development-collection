@@ -87,12 +87,11 @@ class UriBuilder
     /**
      * @var string|null
      */
-    protected $format = null;
+    protected $format;
 
     /**
      * Sets the current request and resets the UriBuilder
      *
-     * @param ActionRequest $request
      * @return void
      * @api
      * @see reset()
@@ -332,7 +331,6 @@ class UriBuilder
      * )
      *
      * @param array<mixed> $arguments arguments
-     * @param ActionRequest $currentRequest
      * @return array<mixed> arguments with namespace
      */
     protected function addNamespaceToArguments(array $arguments, ActionRequest $currentRequest)
@@ -398,7 +396,7 @@ class UriBuilder
         if ($this->request !== $this->request->getMainRequest()) {
             $subRequest = $this->request;
             while ($subRequest instanceof ActionRequest) {
-                $requestArguments = (array)$subRequest->getArguments();
+                $requestArguments = $subRequest->getArguments();
 
                 // Reset arguments for the request that is bound to this UriBuilder instance
                 if ($subRequest === $this->request) {
@@ -469,9 +467,6 @@ class UriBuilder
     /**
      * Get the path of the argument namespaces of all parent requests.
      * Example: mainrequest.subrequest.subsubrequest
-     *
-     * @param ActionRequest $request
-     * @return string
      */
     protected function getRequestNamespacePath(ActionRequest $request): string
     {

@@ -56,7 +56,6 @@ abstract class AbstractBackend implements BackendInterface
      * The maximum severity to log, anything less severe will not be logged.
      *
      * @param int $severityThreshold One of the LOG_* constants
-     * @return void
      * @api
      */
     public function setSeverityThreshold(int $severityThreshold): void
@@ -68,7 +67,6 @@ abstract class AbstractBackend implements BackendInterface
      * Enables or disables logging of IP addresses.
      *
      * @param bool $logIpAddress Set to true to enable logging of IP address, or false to disable
-     * @return void
      */
     public function setLogIpAddress(bool $logIpAddress): void
     {

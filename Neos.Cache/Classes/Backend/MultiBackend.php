@@ -70,7 +70,7 @@ class MultiBackend extends AbstractBackend
      */
     protected function prepareBackends(): void
     {
-        if ($this->initialized === true) {
+        if ($this->initialized) {
             return;
         }
         foreach ($this->backendConfigurations as $backendConfiguration) {

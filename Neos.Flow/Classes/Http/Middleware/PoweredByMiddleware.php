@@ -68,8 +68,6 @@ class PoweredByMiddleware implements MiddlewareInterface
      * Generate an application information header for the response based on settings and package versions.
      * Will statically compile in production for performance benefits.
      *
-     * @param ObjectManagerInterface $objectManager
-     * @return string
      * @throws \Neos\Flow\Configuration\Exception\InvalidConfigurationTypeException
      * @Flow\CompileStatic
      */
