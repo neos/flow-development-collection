@@ -100,10 +100,8 @@ class CldrParser extends AbstractXmlParser
                 $nameOfChild .= $parsedAttributes;
             }
 
-            if (!isset($parsedNode[$nameOfChild])) {
-                // We accept only first child when they are non distinguishable (i.e. they differs only by non-distinguishing attributes)
-                $parsedNode[$nameOfChild] = $parsedChild;
-            }
+            // We accept only first child when they are non distinguishable (i.e. they differs only by non-distinguishing attributes)
+            $parsedNode[$nameOfChild] ??= $parsedChild;
         }
 
         return $parsedNode;

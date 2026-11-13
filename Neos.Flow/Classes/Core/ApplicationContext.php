@@ -32,7 +32,7 @@ use Neos\Flow\Exception as FlowException;
  * @api
  * @Flow\Proxy(false)
  */
-class ApplicationContext
+class ApplicationContext implements \Stringable
 {
     /**
      * The (internal) context string; could be something like "Development" or "Development/MyLocalMacBook"

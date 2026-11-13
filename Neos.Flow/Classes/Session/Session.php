@@ -49,7 +49,7 @@ use Psr\Log\LoggerInterface;
  */
 class Session implements CookieEnabledInterface
 {
-    private const FLOW_OBJECT_STORAGE_KEY = 'Neos_Flow_Object_ObjectManager';
+    private const string FLOW_OBJECT_STORAGE_KEY = 'Neos_Flow_Object_ObjectManager';
 
     #[Flow\Inject(lazy: false)]
     protected ObjectManagerInterface $objectManager;
@@ -249,7 +249,7 @@ class Session implements CookieEnabledInterface
             if (is_array($sessionObjects)) {
                 foreach ($sessionObjects as $object) {
                     if ($object instanceof ProxyInterface) {
-                        $objectName = $this->objectManager->getObjectNameByClassName(get_class($object));
+                        $objectName = $this->objectManager->getObjectNameByClassName($object::class);
                         if ($objectName && $this->objectManager->getScope($objectName) === ObjectConfiguration::SCOPE_SESSION) {
                             $this->objectManager->setInstance($objectName, $object);
                             $this->objectManager->get(Aspect\LazyLoadingAspect::class)->registerSessionInstance($objectName, $object);

@@ -117,7 +117,7 @@ class CacheItem implements CacheItemInterface
     {
         $expiresAt = null;
         if ($time instanceof \DateInterval) {
-            $expiresAt = (new \DateTime())->add($time);
+            $expiresAt = new \DateTime()->add($time);
         }
 
         if (is_int($time)) {

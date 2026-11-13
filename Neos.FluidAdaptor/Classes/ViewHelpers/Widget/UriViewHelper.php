@@ -88,9 +88,7 @@ class UriViewHelper extends AbstractViewHelper
         $action = $this->arguments['action'];
         $arguments = $this->arguments['arguments'];
 
-        if ($action === null) {
-            $action = $this->controllerContext->getRequest()->getControllerActionName();
-        }
+        $action ??= $this->controllerContext->getRequest()->getControllerActionName();
         $arguments['@action'] = $action;
         if ($this->arguments['format'] !== '') {
             $arguments['@format'] = $this->arguments['format'];

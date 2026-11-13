@@ -101,9 +101,7 @@ class FileStorage implements ThrowableStorageInterface
             return $output;
         };
 
-        $this->backtraceRenderer = static function ($backtrace) {
-            return Debugger::getBacktraceCode($backtrace, false, true);
-        };
+        $this->backtraceRenderer = (static fn ($backtrace) => Debugger::getBacktraceCode($backtrace, false, true));
     }
 
     /**
@@ -177,7 +175,7 @@ class FileStorage implements ThrowableStorageInterface
     protected function generateUniqueReferenceCode()
     {
         $timestamp = $_SERVER['REQUEST_TIME'] ?? time();
-        return date('YmdHis', $timestamp) . substr(md5((string)rand()), 0, 6);
+        return date('YmdHis', $timestamp) . substr(md5((string)random_int(0, mt_getrandmax())), 0, 6);
     }
 
     /**
@@ -208,7 +206,7 @@ class FileStorage implements ThrowableStorageInterface
 
         $postMortemInfo .= PHP_EOL . $this->renderRequestInfo();
         $postMortemInfo .= PHP_EOL;
-        $postMortemInfo .= empty($additionalData) ? '' : (new PlainTextFormatter($additionalData))->format();
+        $postMortemInfo .= empty($additionalData) ? '' : new PlainTextFormatter($additionalData)->format();
 
         return $postMortemInfo;
     }

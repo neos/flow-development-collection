@@ -231,9 +231,7 @@ class ReflectionService
 
     protected function getDoctrinePhpParser(): PhpParser
     {
-        if ($this->doctrinePhpParser === null) {
-            $this->doctrinePhpParser = new PhpParser();
-        }
+        $this->doctrinePhpParser ??= new PhpParser();
 
         return $this->doctrinePhpParser;
     }
@@ -821,7 +819,7 @@ class ReflectionService
         }
         $className = $this->cleanClassName($className);
 
-        return (new MethodReflection($className, $methodName))->getTagsValues();
+        return new MethodReflection($className, $methodName)->getTagsValues();
     }
 
     /**
@@ -1111,9 +1109,7 @@ class ReflectionService
         }
         $className = $this->cleanClassName($className);
 
-        if (!isset($this->classSchemata[$className])) {
-            $this->classSchemata[$className] = $this->classSchemataRuntimeCache->get($this->produceCacheIdentifierFromClassName($className));
-        }
+        $this->classSchemata[$className] ??= $this->classSchemataRuntimeCache->get($this->produceCacheIdentifierFromClassName($className));
 
         $classSchema = $this->classSchemata[$className] ?? false;
         return $classSchema === false ? null : $classSchema;
@@ -1254,7 +1250,7 @@ class ReflectionService
         }
 
         foreach ($this->annotationReader->getClassAnnotations($class) as $annotation) {
-            $annotationClassName = get_class($annotation);
+            $annotationClassName = $annotation::class;
             $this->annotatedClasses[$annotationClassName][$className] = true;
             $this->classReflectionData[$className][self::DATA_CLASS_ANNOTATIONS][] = $annotation;
         }
@@ -1315,7 +1311,7 @@ class ReflectionService
 
         foreach ($this->annotationReader->getPropertyAnnotations($property) as $annotation) {
             /** @phpstan-ignore offsetAccess.nonOffsetAccessible  (the offset exists) */
-            $this->classReflectionData[$className][self::DATA_CLASS_PROPERTIES][$propertyName][self::DATA_PROPERTY_ANNOTATIONS][get_class($annotation)][] = $annotation;
+            $this->classReflectionData[$className][self::DATA_CLASS_PROPERTIES][$propertyName][self::DATA_PROPERTY_ANNOTATIONS][$annotation::class][] = $annotation;
         }
 
         foreach ($property->getAttributes() as $attribute) {
@@ -1411,10 +1407,8 @@ class ReflectionService
         $this->classReflectionData[$className][self::DATA_CLASS_METHODS][$methodName][self::DATA_METHOD_VISIBILITY] = $this->extractVisibility($method);
 
         foreach ($this->getMethodAnnotations($className, $methodName) as $methodAnnotation) {
-            $annotationClassName = get_class($methodAnnotation);
-            if (!isset($this->classesByMethodAnnotations[$annotationClassName][$className])) {
-                $this->classesByMethodAnnotations[$annotationClassName][$className] = [];
-            }
+            $annotationClassName = $methodAnnotation::class;
+            $this->classesByMethodAnnotations[$annotationClassName][$className] ??= [];
             $this->classesByMethodAnnotations[$annotationClassName][$className][$methodName] = $methodName;
         }
 
@@ -1508,7 +1502,7 @@ class ReflectionService
         }
 
         // expand SomeElementType[]" to "array<\ElementTypeNamespace\SomeElementType>"
-        if (substr_compare($typeWithoutNull, '[]', -2, 2) === 0) {
+        if (str_ends_with($typeWithoutNull, '[]')) {
             $elementType = substr($typeWithoutNull, 0, -2);
             return 'array<' . $this->expandType($class, $elementType) . '>' . ($isNullable ? '|null' : '');
         }
@@ -1526,9 +1520,7 @@ class ReflectionService
 
         // and then we try to find "use" statements for the class.
         $className = $class->getName();
-        if (!isset($this->useStatementsForClassCache[$className])) {
-            $this->useStatementsForClassCache[$className] = $this->getDoctrinePhpParser()->parseUseStatements($class);
-        }
+        $this->useStatementsForClassCache[$className] ??= $this->getDoctrinePhpParser()->parseUseStatements($class);
         $useStatementsForClass = $this->useStatementsForClassCache[$className];
 
         // ... and try to expand them
@@ -1821,9 +1813,7 @@ class ReflectionService
             throw new InvalidValueObjectException('A value object must have a constructor, "' . $className . '" does not have one.', 1268740874);
         }
 
-        $setterMethods = array_filter($methods, static function ($method) {
-            return str_starts_with($method, 'set');
-        });
+        $setterMethods = array_filter($methods, static fn ($method) => str_starts_with($method, 'set'));
 
         if ($setterMethods !== []) {
             throw new InvalidValueObjectException('A value object must not have setters, "' . $className . '" does.', 1268740878);
@@ -2148,9 +2138,7 @@ class ReflectionService
                 $parameterType->getTypes()
             )),
             $parameterType instanceof \ReflectionIntersectionType => implode('&', array_map(
-                function (\ReflectionType $type) {
-                    return $this->renderParameterType($type);
-                },
+                $this->renderParameterType(...),
                 $parameterType->getTypes()
             )),
             $parameterType instanceof \ReflectionNamedType => $parameterType->getName(),

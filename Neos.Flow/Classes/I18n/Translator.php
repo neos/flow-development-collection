@@ -126,9 +126,7 @@ class Translator
      */
     public function translateByOriginalLabel($originalLabel, array $arguments = [], $quantity = null, ?Locale $locale = null, string $sourceName = 'Main', string $packageKey = 'Neos.Flow')
     {
-        if ($locale === null) {
-            $locale = $this->localizationService->getConfiguration()->getCurrentLocale();
-        }
+        $locale ??= $this->localizationService->getConfiguration()->getCurrentLocale();
 
         foreach ($this->localizationService->getLocaleChain($locale) as $localeInChain) {
             $translatedMessage = $this->translationProvider->getTranslationByOriginalLabel(
@@ -184,9 +182,7 @@ class Translator
      */
     public function translateById($labelId, array $arguments = [], $quantity = null, ?Locale $locale = null, $sourceName = 'Main', $packageKey = 'Neos.Flow')
     {
-        if ($locale === null) {
-            $locale = $this->localizationService->getConfiguration()->getCurrentLocale();
-        }
+        $locale ??= $this->localizationService->getConfiguration()->getCurrentLocale();
 
         foreach ($this->localizationService->getLocaleChain($locale) as $localeInChain) {
             $translatedMessage = $this->translationProvider->getTranslationById(

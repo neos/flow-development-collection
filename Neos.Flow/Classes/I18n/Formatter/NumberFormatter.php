@@ -72,12 +72,10 @@ class NumberFormatter implements FormatterInterface
             $formatType = NumbersReader::FORMAT_TYPE_DECIMAL;
         }
 
-        switch ($formatType) {
-            case NumbersReader::FORMAT_TYPE_PERCENT:
-                return $this->formatPercentNumber($value, $locale, NumbersReader::FORMAT_LENGTH_DEFAULT);
-            default:
-                return $this->formatDecimalNumber($value, $locale, NumbersReader::FORMAT_LENGTH_DEFAULT);
-        }
+        return match ($formatType) {
+            NumbersReader::FORMAT_TYPE_PERCENT => $this->formatPercentNumber($value, $locale, NumbersReader::FORMAT_LENGTH_DEFAULT),
+            default => $this->formatDecimalNumber($value, $locale, NumbersReader::FORMAT_LENGTH_DEFAULT),
+        };
     }
 
     /**
@@ -209,7 +207,7 @@ class NumberFormatter implements FormatterInterface
         $number = abs($number * $parsedFormat['multiplier']);
 
         if ($parsedFormat['rounding'] > 0) {
-            $number = round($number / $parsedFormat['rounding'], 0, \PHP_ROUND_HALF_EVEN) * $parsedFormat['rounding'];
+            $number = round($number / $parsedFormat['rounding'], 0, \RoundingMode::HalfEven) * $parsedFormat['rounding'];
         }
 
         if ($parsedFormat['maxDecimalDigits'] >= 0) {

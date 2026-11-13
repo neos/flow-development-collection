@@ -53,9 +53,7 @@ class DocumentationCommandController extends CommandController
         if (empty($xsdDomain) || !isset($parsedDomain['host'], $parsedDomain['scheme'])) {
             $xsdDomain = 'https://neos.io';
         }
-        if ($xsdNamespace === null) {
-            $xsdNamespace = sprintf('%s/ns/%s', $xsdDomain, str_replace('\\', '/', $phpNamespace));
-        }
+        $xsdNamespace ??= sprintf('%s/ns/%s', $xsdDomain, str_replace('\\', '/', $phpNamespace));
         $xsdSchema = '';
         try {
             $xsdSchema = $this->xsdGenerator->generateXsd($phpNamespace, $xsdNamespace);

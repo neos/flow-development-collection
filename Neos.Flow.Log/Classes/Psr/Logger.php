@@ -69,7 +69,7 @@ class Logger implements LoggerInterface
     {
         $backendLogLevel = self::LOGLEVEL_MAPPING[$level];
 
-        list($packageKey, $className, $methodName) = $this->extractLegacyDataFromContext($context);
+        [$packageKey, $className, $methodName] = $this->extractLegacyDataFromContext($context);
         $additionalData = $this->removeLegacyDataFromContext($context);
 
         if ($message instanceof \Stringable) {

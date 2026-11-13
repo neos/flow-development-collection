@@ -367,9 +367,7 @@ class ArrayHelper implements ProtectedContextAwareInterface
         if (is_scalar($array)) {
             $array = [$array];
         }
-        if ($array === null) {
-            $array = [];
-        }
+        $array ??= [];
         if (is_array($array) === false) {
             throw new \InvalidArgumentException('$array must be of type iterable|scalar|null got: ' . gettype($array), 1647595715);
         }

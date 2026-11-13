@@ -24,7 +24,7 @@ use Neos\Flow\Composer\ComposerUtility;
  */
 final readonly class FlowPackageKey
 {
-    public const PATTERN = '/^[a-z0-9]+\.(?:[a-z0-9][\.a-z0-9]*)+$/i';
+    public const string PATTERN = '/^[a-z0-9]+\.(?:[a-z0-9][\.a-z0-9]*)+$/i';
 
     /**
      * @Flow\Autowiring(false)

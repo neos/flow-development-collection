@@ -30,7 +30,7 @@ abstract class Files
      */
     public static function getUnixStylePath(string $path): string
     {
-        if (strpos($path, ':') === false) {
+        if (!str_contains($path, ':')) {
             return str_replace(['//', '\\'], '/', $path);
         }
         return preg_replace('/^([a-z]{2,}):\//', '$1://', str_replace(['//', '\\'], '/', $path)) ?: '';
@@ -122,7 +122,7 @@ abstract class Files
                     $pathAndFilename = self::concatenatePaths([$currentDirectory, $filename]);
                     if (is_dir($pathAndFilename)) {
                         array_push($directories, self::getNormalizedPath($pathAndFilename));
-                    } elseif ($suffix === null || strpos(strrev($filename), strrev($suffix)) === 0) {
+                    } elseif ($suffix === null || str_starts_with(strrev($filename), strrev($suffix))) {
                         if ($returnRealPath) {
                             $nonRealPathAndFilename = $pathAndFilename;
                             $pathAndFilename = realpath($pathAndFilename);
@@ -192,7 +192,7 @@ abstract class Files
     {
         if ($basePath !== null) {
             $basePath = rtrim($basePath, '/');
-            if (strpos($path, $basePath) !== 0) {
+            if (!str_starts_with($path, $basePath)) {
                 throw new FilesException(sprintf('Could not remove empty directories on path because the given base path "%s" is not a parent path of "%s".', $basePath, $path), 1323962907);
             }
         }
@@ -203,7 +203,7 @@ abstract class Files
             if (file_exists($path . '/.DS_Store')) {
                 try {
                     @unlink($path . '/.DS_Store');
-                } catch (\Throwable $e) {
+                } catch (\Throwable) {
                     // PHP 8 apparently throws for unlink even with shutup operator, but we really don't care at this place. It's also the only way to handle this race-condition free.
                 }
             }
@@ -211,7 +211,7 @@ abstract class Files
                 if (@rmdir($path) === false) {
                     throw new FilesException(sprintf('Could not remove directory "%s".', $path), 1634928640);
                 }
-            } catch (\Throwable $e) {
+            } catch (\Throwable) {
                 // PHP 8 throws for rmdir even with a shutup operator set. To ensure the loop gets correctly ended in PHP 8 and below, an additional FilesException is used.
                 break;
             }
@@ -242,7 +242,7 @@ abstract class Files
                 if (rmdir($path) !== true) {
                     throw new FilesException('Could not remove directory "' . $path . '".', 1316000298);
                 }
-            } catch (\Exception $exception) {
+            } catch (\Exception) {
                 throw new FilesException('Could not remove directory "' . $path . '".', 1323961907);
             }
         }
@@ -260,7 +260,7 @@ abstract class Files
      */
     public static function createDirectoryRecursively(string $path)
     {
-        if (substr($path, -2) === '/.') {
+        if (str_ends_with($path, '/.')) {
             $path = substr($path, 0, -1);
         }
         if ($path === '') {
@@ -340,7 +340,7 @@ abstract class Files
             } else {
                 $content = file_get_contents($pathAndFilename, $useIncludePath, $context, $offset);
             }
-        } catch (ErrorException $ignoredException) {
+        } catch (ErrorException) {
             $content = false;
         }
         return $content;
@@ -355,24 +355,16 @@ abstract class Files
      */
     public static function getUploadErrorMessage(int $errorCode): string
     {
-        switch ($errorCode) {
-            case \UPLOAD_ERR_INI_SIZE:
-                return 'The uploaded file exceeds the upload_max_filesize directive in php.ini';
-            case \UPLOAD_ERR_FORM_SIZE:
-                return 'The uploaded file exceeds the MAX_FILE_SIZE directive that was specified in the HTML form';
-            case \UPLOAD_ERR_PARTIAL:
-                return 'The uploaded file was only partially uploaded';
-            case \UPLOAD_ERR_NO_FILE:
-                return 'No file was uploaded';
-            case \UPLOAD_ERR_NO_TMP_DIR:
-                return 'Missing a temporary folder';
-            case \UPLOAD_ERR_CANT_WRITE:
-                return 'Failed to write file to disk';
-            case \UPLOAD_ERR_EXTENSION:
-                return 'File upload stopped by extension';
-            default:
-                return 'Unknown upload error';
-        }
+        return match ($errorCode) {
+            \UPLOAD_ERR_INI_SIZE => 'The uploaded file exceeds the upload_max_filesize directive in php.ini',
+            \UPLOAD_ERR_FORM_SIZE => 'The uploaded file exceeds the MAX_FILE_SIZE directive that was specified in the HTML form',
+            \UPLOAD_ERR_PARTIAL => 'The uploaded file was only partially uploaded',
+            \UPLOAD_ERR_NO_FILE => 'No file was uploaded',
+            \UPLOAD_ERR_NO_TMP_DIR => 'Missing a temporary folder',
+            \UPLOAD_ERR_CANT_WRITE => 'Failed to write file to disk',
+            \UPLOAD_ERR_EXTENSION => 'File upload stopped by extension',
+            default => 'Unknown upload error',
+        };
     }
 
     /**
@@ -425,14 +417,14 @@ abstract class Files
                 }
                 return true;
             }
-        } catch (\Exception $exception) {
+        } catch (\Exception) {
             clearstatcache();
             return !file_exists($pathAndFilename);
         }
 
         try {
             return rmdir($pathAndFilename);
-        } catch (\Exception $exception) {
+        } catch (\Exception) {
             return false;
         }
     }
@@ -466,20 +458,14 @@ abstract class Files
         }
 
         // FIXME: The defaults should again be in the function declaration and nulls not allowed. This is a breaking change though.
-        if ($decimals === null) {
-            $decimals = 0;
-        }
-        if ($decimalSeparator === null) {
-            $decimalSeparator = '.';
-        }
-        if ($thousandsSeparator === null) {
-            $thousandsSeparator = ',';
-        }
+        $decimals ??= 0;
+        $decimalSeparator ??= '.';
+        $thousandsSeparator ??= ',';
 
         $bytes = max($bytes, 0);
         $pow = floor(($bytes ? log($bytes) : 0) / log(1024));
         $pow = min($pow, count(self::$sizeUnits) - 1);
-        $bytes /= pow(2, (10 * $pow));
+        $bytes /= 2 ** (10 * $pow);
 
         return sprintf(
             '%s %s',
@@ -513,7 +499,7 @@ abstract class Files
         if ($pow === false) {
             throw new FilesException(sprintf('Unknown file size unit "%s"', $matches['unit']), 1417695299);
         }
-        return $size * pow(2, (10 * (int)$pow));
+        return $size * 2 ** (10 * (int)$pow);
     }
 
     /**

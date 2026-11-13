@@ -67,9 +67,7 @@ class Nl2brViewHelper extends AbstractViewHelper
     {
         $value = $this->arguments['value'];
 
-        if ($value === null) {
-            $value = $this->renderChildren();
-        }
+        $value ??= $this->renderChildren();
 
         return nl2br($value);
     }

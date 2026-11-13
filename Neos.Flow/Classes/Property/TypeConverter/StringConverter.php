@@ -110,14 +110,11 @@ class StringConverter extends AbstractTypeConverter
         }
 
         if (is_array($source)) {
-            switch ($this->getArrayFormat($configuration)) {
-                case self::ARRAY_FORMAT_CSV:
-                    return implode($this->getCsvDelimiter($configuration), $source);
-                case self::ARRAY_FORMAT_JSON:
-                    return json_encode($source, JSON_THROW_ON_ERROR);
-                default:
-                    throw new InvalidPropertyMappingConfigurationException(sprintf('Invalid array export format "%s" given', $this->getArrayFormat($configuration)), 1404317220);
-            }
+            return match ($this->getArrayFormat($configuration)) {
+                self::ARRAY_FORMAT_CSV => implode($this->getCsvDelimiter($configuration), $source),
+                self::ARRAY_FORMAT_JSON => json_encode($source, JSON_THROW_ON_ERROR),
+                default => throw new InvalidPropertyMappingConfigurationException(sprintf('Invalid array export format "%s" given', $this->getArrayFormat($configuration)), 1404317220),
+            };
         }
 
         return (string)$source;
@@ -142,7 +139,7 @@ class StringConverter extends AbstractTypeConverter
         if ($dateFormat === null) {
             return self::DEFAULT_DATE_FORMAT;
         } elseif (!is_string($dateFormat)) {
-            throw new InvalidPropertyMappingConfigurationException('CONFIGURATION_DATE_FORMAT must be of type string, "' . (is_object($dateFormat) ? get_class($dateFormat) : gettype($dateFormat)) . '" given', 1404229004);
+            throw new InvalidPropertyMappingConfigurationException('CONFIGURATION_DATE_FORMAT must be of type string, "' . (get_debug_type($dateFormat)) . '" given', 1404229004);
         }
 
         return $dateFormat;
@@ -167,7 +164,7 @@ class StringConverter extends AbstractTypeConverter
         if ($csvDelimiter === null) {
             return self::DEFAULT_CSV_DELIMITER;
         } elseif (!is_string($csvDelimiter)) {
-            throw new InvalidPropertyMappingConfigurationException('CONFIGURATION_CSV_DELIMITER must be of type string, "' . (is_object($csvDelimiter) ? get_class($csvDelimiter) : gettype($csvDelimiter)) . '" given', 1404229000);
+            throw new InvalidPropertyMappingConfigurationException('CONFIGURATION_CSV_DELIMITER must be of type string, "' . (get_debug_type($csvDelimiter)) . '" given', 1404229000);
         }
 
         return $csvDelimiter;
@@ -192,7 +189,7 @@ class StringConverter extends AbstractTypeConverter
         if ($arrayFormat === null) {
             return self::DEFAULT_ARRAY_FORMAT;
         } elseif (!is_string($arrayFormat)) {
-            throw new InvalidPropertyMappingConfigurationException('CONFIGURATION_ARRAY_FORMAT must be of type string, "' . (is_object($arrayFormat) ? get_class($arrayFormat) : gettype($arrayFormat)) . '" given', 1404228995);
+            throw new InvalidPropertyMappingConfigurationException('CONFIGURATION_ARRAY_FORMAT must be of type string, "' . (get_debug_type($arrayFormat)) . '" given', 1404228995);
         }
 
         return $arrayFormat;

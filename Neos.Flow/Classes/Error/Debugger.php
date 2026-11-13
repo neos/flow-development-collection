@@ -169,9 +169,9 @@ class Debugger
         if (is_array($array)) {
             $dump = 'array' . (count($array) ? '(' . count($array) . ')' : '(empty)');
         } elseif ($array instanceof \Countable) {
-            $dump = get_class($array) . (count($array) ? '(' . count($array) . ')' : '(empty)');
+            $dump = $array::class . (count($array) ? '(' . count($array) . ')' : '(empty)');
         } else {
-            $dump = get_class($array);
+            $dump = $array::class;
         }
         foreach ($array as $key => $value) {
             $dump .= chr(10) . str_repeat(' ', $level) . self::renderDump($key, 0, $plaintext, $ansiColors) . ' => ';
@@ -204,17 +204,17 @@ class Debugger
         // Objects returned from Doctrine's Debug::export function are stdClass with special properties:
         try {
             $objectIdentifier = ObjectAccess::getProperty($object, 'Persistence_Object_Identifier', true);
-        } catch (\Neos\Utility\Exception\PropertyNotAccessibleException $exception) {
+        } catch (\Neos\Utility\Exception\PropertyNotAccessibleException) {
             $objectIdentifier = spl_object_hash($object);
         }
-        $className = ($object instanceof \stdClass && isset($object->__CLASS__)) ? $object->__CLASS__ : get_class($object);
+        $className = ($object instanceof \stdClass && isset($object->__CLASS__)) ? $object->__CLASS__ : $object::class;
         if (isset(self::$renderedObjects[$objectIdentifier]) || preg_match(self::getIgnoredClassesRegex(), $className) !== 0) {
             $renderProperties = false;
         }
         self::$renderedObjects[$objectIdentifier] = true;
 
         if (self::$objectManager !== null) {
-            $objectName = self::$objectManager->getObjectNameByClassName(get_class($object));
+            $objectName = self::$objectManager->getObjectNameByClassName($object::class);
             if ($objectName !== false) {
                 switch (self::$objectManager->getScope($objectName)) {
                     case Configuration::SCOPE_PROTOTYPE:
@@ -292,7 +292,6 @@ class Debugger
                     }
                     $dump .= chr(10);
                     $dump .= str_repeat(' ', $level) . ($plaintext ? '' : '<span class="debug-property">') . self::ansiEscapeWrap($property->getName(), '36', $ansiColors) . ($plaintext ? '' : '</span>') . ' => ';
-                    $property->setAccessible(true);
                     if ($property->isInitialized($object) === false) {
                         $value = null;
                     } else {
@@ -383,7 +382,7 @@ class Debugger
                 } else {
                     $arguments .= '<em>' . get_debug_type($argument) . '</em>';
                 }
-            } catch (\Throwable $_) {
+            } catch (\Throwable) {
                 $arguments .= '<em>' . get_debug_type($argument) . '</em>';
             }
 
@@ -450,7 +449,7 @@ class Debugger
                 } else {
                     $arguments .= get_debug_type($argument);
                 }
-            } catch (\Throwable $_) {
+            } catch (\Throwable) {
                 $arguments .= get_debug_type($argument);
             }
         }
@@ -519,12 +518,12 @@ class Debugger
             return self::getObjectShortName($object) . '|' . self::truncateObjectOutput(json_encode($publicProperties, JSON_THROW_ON_ERROR, 1)) . '|';
         }
 
-        return get_class($object);
+        return $object::class;
     }
 
     protected static function getObjectShortName(object $object): string
     {
-        $classNameParts = explode('\\', get_class($object));
+        $classNameParts = explode('\\', $object::class);
         return array_pop($classNameParts);
     }
 
@@ -686,9 +685,7 @@ function var_dump($variable, ?string $title = null, bool $return = false, ?bool 
         $ansiColors = false;
     }
 
-    if ($title === null) {
-        $title = 'Flow Variable Dump';
-    }
+    $title ??= 'Flow Variable Dump';
     if ($ansiColors) {
         $title = "\x1B[1m" . $title . "\x1B[0m";
     }

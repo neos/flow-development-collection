@@ -262,39 +262,23 @@ class Context
     {
         if (isset($settings['security']['authentication']['authenticationStrategy'])) {
             $authenticationStrategyName = $settings['security']['authentication']['authenticationStrategy'];
-            switch ($authenticationStrategyName) {
-                case 'allTokens':
-                    $this->authenticationStrategy = self::AUTHENTICATE_ALL_TOKENS;
-                    break;
-                case 'oneToken':
-                    $this->authenticationStrategy = self::AUTHENTICATE_ONE_TOKEN;
-                    break;
-                case 'atLeastOneToken':
-                    $this->authenticationStrategy = self::AUTHENTICATE_AT_LEAST_ONE_TOKEN;
-                    break;
-                case 'anyToken':
-                    $this->authenticationStrategy = self::AUTHENTICATE_ANY_TOKEN;
-                    break;
-                default:
-                    throw new Exception('Invalid setting "' . $authenticationStrategyName . '" for security.authentication.authenticationStrategy', 1291043022);
-            }
+            $this->authenticationStrategy = match ($authenticationStrategyName) {
+                'allTokens' => self::AUTHENTICATE_ALL_TOKENS,
+                'oneToken' => self::AUTHENTICATE_ONE_TOKEN,
+                'atLeastOneToken' => self::AUTHENTICATE_AT_LEAST_ONE_TOKEN,
+                'anyToken' => self::AUTHENTICATE_ANY_TOKEN,
+                default => throw new Exception('Invalid setting "' . $authenticationStrategyName . '" for security.authentication.authenticationStrategy', 1291043022),
+            };
         }
 
         if (isset($settings['security']['csrf']['csrfStrategy'])) {
             $csrfStrategyName = $settings['security']['csrf']['csrfStrategy'];
-            switch ($csrfStrategyName) {
-                case 'onePerRequest':
-                    $this->csrfProtectionStrategy = self::CSRF_ONE_PER_REQUEST;
-                    break;
-                case 'onePerSession':
-                    $this->csrfProtectionStrategy = self::CSRF_ONE_PER_SESSION;
-                    break;
-                case 'onePerUri':
-                    $this->csrfProtectionStrategy = self::CSRF_ONE_PER_URI;
-                    break;
-                default:
-                    throw new Exception('Invalid setting "' . $csrfStrategyName . '" for security.csrf.csrfStrategy', 1291043024);
-            }
+            $this->csrfProtectionStrategy = match ($csrfStrategyName) {
+                'onePerRequest' => self::CSRF_ONE_PER_REQUEST,
+                'onePerSession' => self::CSRF_ONE_PER_SESSION,
+                'onePerUri' => self::CSRF_ONE_PER_URI,
+                default => throw new Exception('Invalid setting "' . $csrfStrategyName . '" for security.csrf.csrfStrategy', 1291043024),
+            };
         }
     }
 
@@ -408,9 +392,7 @@ class Context
 
         $this->roles = ['Neos.Flow:Everybody' => $this->policyService->getRole('Neos.Flow:Everybody')];
 
-        $authenticatedTokens = array_filter($this->getAuthenticationTokens(), static function (TokenInterface $token) {
-            return $token->isAuthenticated();
-        });
+        $authenticatedTokens = array_filter($this->getAuthenticationTokens(), static fn (TokenInterface $token) => $token->isAuthenticated());
 
         if (empty($authenticatedTokens)) {
             $this->roles['Neos.Flow:Anonymous'] = $this->policyService->getRole('Neos.Flow:Anonymous');
@@ -506,8 +488,7 @@ class Context
         $sessionDataContainer = $this->objectManager->get(SessionDataContainer::class);
         $csrfProtectionTokens = $sessionDataContainer->getCsrfProtectionTokens();
         if ($this->csrfProtectionStrategy === self::CSRF_ONE_PER_SESSION && count($csrfProtectionTokens) === 1) {
-            reset($csrfProtectionTokens);
-            return key($csrfProtectionTokens);
+            return array_key_first($csrfProtectionTokens);
         }
 
         if ($this->csrfProtectionStrategy === self::CSRF_ONE_PER_REQUEST) {
@@ -731,9 +712,7 @@ class Context
      */
     protected function findBestMatchingToken(TokenInterface $managerToken, array $sessionTokens): TokenInterface
     {
-        $matchingSessionTokens = array_filter($sessionTokens, function (TokenInterface $sessionToken) use ($managerToken) {
-            return ($sessionToken->getAuthenticationProviderName() === $managerToken->getAuthenticationProviderName());
-        });
+        $matchingSessionTokens = array_filter($sessionTokens, fn (TokenInterface $sessionToken) => $sessionToken->getAuthenticationProviderName() === $managerToken->getAuthenticationProviderName());
 
         if (empty($matchingSessionTokens)) {
             return $managerToken;
@@ -746,7 +725,7 @@ class Context
             sprintf(
                 'Session %s contains auth token %s for provider %s. Status: %s',
                 $session->getId(),
-                get_class($matchingSessionToken),
+                $matchingSessionToken::class,
                 $matchingSessionToken->getAuthenticationProviderName(),
                 $this->tokenStatusLabels[$matchingSessionToken->getAuthenticationStatus()]
             ),
@@ -775,9 +754,7 @@ class Context
             $token->updateCredentials($this->request);
         }
 
-        $tokensForSession = array_filter(array_merge($this->inactiveTokens, $this->activeTokens), static function (TokenInterface $token) {
-            return !$token instanceof SessionlessTokenInterface;
-        });
+        $tokensForSession = array_filter(array_merge($this->inactiveTokens, $this->activeTokens), static fn (TokenInterface $token) => !$token instanceof SessionlessTokenInterface);
         $sessionDataContainer = $this->objectManager->get(SessionDataContainer::class);
         $sessionDataContainer->setSecurityTokens($tokensForSession);
     }

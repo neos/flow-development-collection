@@ -54,7 +54,7 @@ class SessionDataContainer
     {
         foreach ($securityTokens as $token) {
             if ($token instanceof SessionlessTokenInterface) {
-                throw new \InvalidArgumentException(sprintf('Tokens implementing the SessionlessTokenInterface must not be stored in the session. Got: %s', get_class($token)), 1562670555);
+                throw new \InvalidArgumentException(sprintf('Tokens implementing the SessionlessTokenInterface must not be stored in the session. Got: %s', $token::class), 1562670555);
             }
         }
         $this->securityTokens = $securityTokens;

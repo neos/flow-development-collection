@@ -417,7 +417,7 @@ readonly class ConfigurationBuilder
                 /** @var list<non-falsy-string>|null $classMethodNames */
                 /** @phpstan-ignore varTag.nativeType (this can actually be null) */
                 $classMethodNames = get_class_methods($className);
-            } catch (\TypeError $error) {
+            } catch (\TypeError) {
                 throw new UnknownClassException(sprintf('The class "%s" defined in the object configuration for object "%s", defined in package: %s, does not exist.', $className, $objectConfiguration->getObjectName(), $objectConfiguration->getPackageKey()), 1352371372);
             }
             if (!is_array($classMethodNames)) {
@@ -475,9 +475,7 @@ readonly class ConfigurationBuilder
                             $enableLazyInjection = false; # See:  https://github.com/neos/flow-development-collection/issues/2114
                         }
                     }
-                    if ($objectName === null) {
-                        $objectName = trim(implode('', $this->reflectionService->getPropertyTagValues($className, $propertyName, 'var')), ' \\');
-                    }
+                    $objectName ??= trim(implode('', $this->reflectionService->getPropertyTagValues($className, $propertyName, 'var')), ' \\');
                     $configurationProperty = new ConfigurationProperty($propertyName, $this->normalizeObjectName($objectName), ConfigurationProperty::PROPERTY_TYPES_OBJECT, null, $enableLazyInjection);
                     $properties[$propertyName] = $configurationProperty;
                 }

@@ -303,9 +303,7 @@ class Scripts
         /** @var ThrowableStorageInterface $throwableStorage */
         $throwableStorage = $storageClassName::createWithOptions($storageOptions);
 
-        $throwableStorage->setBacktraceRenderer(static function ($backtrace) {
-            return Debugger::getBacktraceCode($backtrace, false, true);
-        });
+        $throwableStorage->setBacktraceRenderer(static fn ($backtrace) => Debugger::getBacktraceCode($backtrace, false, true));
 
         $throwableStorage->setRequestInformationRenderer(function () use ($renderRequestInformation) {
             // The following lines duplicate FileStorage::__construct(), which is intended to provide a renderer
@@ -763,7 +761,7 @@ class Scripts
                 }
                 if (file_exists(FLOW_PATH_DATA . 'Logs/Exceptions') && is_dir(FLOW_PATH_DATA . 'Logs/Exceptions') && is_writable(FLOW_PATH_DATA . 'Logs/Exceptions')) {
                     // Logs the command string `php ./flow foo:bar` inside `Logs/Exceptions/123-command.txt`
-                    $referenceCode = date('YmdHis', $_SERVER['REQUEST_TIME']) . substr(md5((string)rand()), 0, 6);
+                    $referenceCode = date('YmdHis', $_SERVER['REQUEST_TIME']) . substr(md5((string)random_int(0, mt_getrandmax())), 0, 6);
                     $errorDumpPathAndFilename = FLOW_PATH_DATA . 'Logs/Exceptions/' . $referenceCode . '-command.txt';
                     file_put_contents($errorDumpPathAndFilename, $command);
                     $exceptionMessage .= sprintf(' It has been stored in: %s', basename($errorDumpPathAndFilename));
@@ -1035,9 +1033,7 @@ class Scripts
          *
          * versionsAlmostEqual(8.1.0, 8.1.1) === true
          */
-        $versionsAlmostEqual = function (string $oneVersion, string $otherVersion): bool {
-            return array_slice(explode('.', $oneVersion), 0, 2) === array_slice(explode('.', $otherVersion), 0, 2);
-        };
+        $versionsAlmostEqual = (fn (string $oneVersion, string $otherVersion): bool => array_slice(explode('.', $oneVersion), 0, 2) === array_slice(explode('.', $otherVersion), 0, 2));
 
         if (!$versionsAlmostEqual($phpInformation['version'], PHP_VERSION)) {
             throw new FlowException(sprintf(

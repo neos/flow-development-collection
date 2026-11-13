@@ -41,9 +41,7 @@ class Exception extends \Exception implements WithReferenceCodeInterface, WithHt
      */
     public function getReferenceCode()
     {
-        if ($this->referenceCode === null) {
-            $this->referenceCode = date('YmdHis', $_SERVER['REQUEST_TIME']) . substr(md5((string)rand()), 0, 6);
-        }
+        $this->referenceCode ??= date('YmdHis', $_SERVER['REQUEST_TIME']) . substr(md5((string)random_int(0, mt_getrandmax())), 0, 6);
         return $this->referenceCode;
     }
 

@@ -48,7 +48,7 @@ abstract class Repository implements RepositoryInterface
     public function __construct()
     {
         if (defined('static::ENTITY_CLASSNAME') === false) {
-            $entityClassName = preg_replace(['/\\\Repository\\\/', '/Repository$/'], ['\\Model\\', ''], get_class($this));
+            $entityClassName = preg_replace(['/\\\Repository\\\/', '/Repository$/'], ['\\Model\\', ''], static::class);
         } else {
             $entityClassName = static::ENTITY_CLASSNAME;
         }
@@ -81,7 +81,7 @@ abstract class Repository implements RepositoryInterface
     public function add($object): void
     {
         if (!($object instanceof $this->entityClassName)) {
-            throw new IllegalObjectTypeException('The value given to add() was ' . get_class($object) . ' , however the ' . get_class($this) . ' can only store ' . $this->entityClassName . ' instances.', 1298403438);
+            throw new IllegalObjectTypeException('The value given to add() was ' . $object::class . ' , however the ' . static::class . ' can only store ' . $this->entityClassName . ' instances.', 1298403438);
         }
         $this->persistenceManager->add($object);
     }
@@ -97,7 +97,7 @@ abstract class Repository implements RepositoryInterface
     public function remove($object): void
     {
         if (!($object instanceof $this->entityClassName)) {
-            throw new IllegalObjectTypeException('The value given to remove() was ' . get_class($object) . ' , however the ' . get_class($this) . ' can only handle ' . $this->entityClassName . ' instances.', 1298403442);
+            throw new IllegalObjectTypeException('The value given to remove() was ' . $object::class . ' , however the ' . static::class . ' can only handle ' . $this->entityClassName . ' instances.', 1298403442);
         }
         $this->persistenceManager->remove($object);
     }
@@ -193,7 +193,7 @@ abstract class Repository implements RepositoryInterface
     public function update($object): void
     {
         if (!($object instanceof $this->entityClassName)) {
-            throw new IllegalObjectTypeException('The value given to update() was ' . get_class($object) . ' , however the ' . get_class($this) . ' can only store ' . $this->entityClassName . ' instances.', 1249479625);
+            throw new IllegalObjectTypeException('The value given to update() was ' . $object::class . ' , however the ' . static::class . ' can only store ' . $this->entityClassName . ' instances.', 1249479625);
         }
 
         $this->persistenceManager->update($object);
@@ -233,6 +233,6 @@ abstract class Repository implements RepositoryInterface
             return $query->matching($query->equals($propertyName, $arguments[0], $caseSensitive))->execute($cacheResult);
         }
 
-        throw new \InvalidArgumentException('Call to undefined method ' . get_class($this) . '::' . $method, 1683026148);
+        throw new \InvalidArgumentException('Call to undefined method ' . static::class . '::' . $method, 1683026148);
     }
 }

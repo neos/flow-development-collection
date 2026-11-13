@@ -21,10 +21,10 @@ use Neos\Flow\Annotations as Flow;
  */
 final readonly class ConfigurationProperty
 {
-    public const PROPERTY_TYPES_STRAIGHTVALUE = 0;
-    public const PROPERTY_TYPES_OBJECT = 1;
-    public const PROPERTY_TYPES_CONFIGURATION = 2;
-    public const PROPERTY_TYPES_CACHE = 3;
+    public const int PROPERTY_TYPES_STRAIGHTVALUE = 0;
+    public const int PROPERTY_TYPES_OBJECT = 1;
+    public const int PROPERTY_TYPES_CONFIGURATION = 2;
+    public const int PROPERTY_TYPES_CACHE = 3;
 
     /**
      * Constructor - sets the name, type and value of the property

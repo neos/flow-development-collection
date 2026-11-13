@@ -83,7 +83,7 @@ abstract class AbstractBackend implements BackendInterface
             }
 
             if ($throwExceptionIfPropertyNotSettable) {
-                throw new \InvalidArgumentException('Invalid cache backend option "' . $propertyName . '" for backend of type "' . get_class($this) . '"', 1231267498);
+                throw new \InvalidArgumentException('Invalid cache backend option "' . $propertyName . '" for backend of type "' . static::class . '"', 1231267498);
             }
         }
     }
@@ -148,9 +148,7 @@ abstract class AbstractBackend implements BackendInterface
             return new \DateTime(self::DATETIME_EXPIRYTIME_UNLIMITED, new \DateTimeZone('UTC'));
         }
 
-        if ($lifetime === null) {
-            $lifetime = $this->defaultLifetime;
-        }
+        $lifetime ??= $this->defaultLifetime;
         return new \DateTime('now +' . $lifetime . ' seconds', new \DateTimeZone('UTC'));
     }
 

@@ -42,7 +42,7 @@ class AddOperation extends AbstractOperation
             $output[] = $element;
         }
         if (isset($arguments[0])) {
-            if (is_array($arguments[0]) || $arguments[0] instanceof \Traversable) {
+            if (is_iterable($arguments[0])) {
                 foreach ($arguments[0] as $element) {
                     $output[] = $element;
                 }

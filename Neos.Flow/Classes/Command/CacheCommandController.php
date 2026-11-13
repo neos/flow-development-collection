@@ -287,7 +287,7 @@ class CacheCommandController extends CommandController
     {
         try {
             $cache = $this->cacheManager->getCache($cacheIdentifier);
-        } catch (NoSuchCacheException $exception) {
+        } catch (NoSuchCacheException) {
             $this->outputLine('<error>A Cache with id "%s" is not configured.</error>', [$cacheIdentifier]);
             $this->outputLine('Use the <i>neos.flow:cache:list</i> command to get a list of all configured Caches.');
             $this->quit(1);
@@ -332,7 +332,7 @@ class CacheCommandController extends CommandController
     {
         try {
             $cache = $this->cacheManager->getCache($cacheIdentifier);
-        } catch (NoSuchCacheException $exception) {
+        } catch (NoSuchCacheException) {
             $this->outputLine('<error>A Cache with id "%s" is not configured.</error>', [$cacheIdentifier]);
             $this->outputLine('Use the <i>neos.flow:cache:list</i> command to get a list of all configured Caches.');
             $this->quit(1);

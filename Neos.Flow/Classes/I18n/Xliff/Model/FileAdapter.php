@@ -59,9 +59,7 @@ class FileAdapter
     public function __construct(array $fileData, Locale $requestedLocale)
     {
         $this->fileData = $fileData;
-        if (!isset($this->fileData['translationUnits'])) {
-            $this->fileData['translationUnits'] = [];
-        }
+        $this->fileData['translationUnits'] ??= [];
         $this->requestedLocale = $requestedLocale;
     }
 

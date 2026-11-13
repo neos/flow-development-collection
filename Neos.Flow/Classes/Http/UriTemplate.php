@@ -53,7 +53,7 @@ class UriTemplate
      */
     public static function expand($template, array $variables)
     {
-        if (strpos($template, '{') === false) {
+        if (!str_contains($template, '{')) {
             return $template;
         }
 
@@ -158,7 +158,7 @@ class UriTemplate
                 $configuration['value'] = substr($expressionPart, 0, $colonPosition);
                 $configuration['modifier'] = ':';
                 $configuration['position'] = (int)substr($expressionPart, $colonPosition + 1);
-            } elseif (substr($expressionPart, -1) === '*') {
+            } elseif (str_ends_with($expressionPart, '*')) {
                 $configuration['modifier'] = '*';
                 $configuration['value'] = substr($expressionPart, 0, -1);
             } else {
@@ -254,7 +254,7 @@ class UriTemplate
      */
     protected static function isAssociative(array $array)
     {
-        return count(array_filter(array_keys($array), 'is_string')) > 0;
+        return count(array_filter(array_keys($array), is_string(...))) > 0;
     }
 
     /**

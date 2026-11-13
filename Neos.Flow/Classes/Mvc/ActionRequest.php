@@ -391,7 +391,7 @@ class ActionRequest
      */
     public function setControllerName(string $controllerName): void
     {
-        if (strpos($controllerName, '_') !== false) {
+        if (str_contains($controllerName, '_')) {
             throw new Exception\InvalidControllerNameException('The controller name must not contain underscores.', 1217846412);
         }
         $this->controllerName = $controllerName;
@@ -484,7 +484,7 @@ class ActionRequest
 
         // Allowing FlowUploadedFile because that already comes from the HTTP request.
         if (is_object($value) && !($value instanceof FlowUploadedFile)) {
-            throw new Exception\InvalidArgumentTypeException('You are not allowed to store objects in the request arguments. Please convert the object of type "' . get_class($value) . '" given for argument "' . $argumentName . '" to a simple type first.', 1302783022);
+            throw new Exception\InvalidArgumentTypeException('You are not allowed to store objects in the request arguments. Please convert the object of type "' . $value::class . '" given for argument "' . $argumentName . '" to a simple type first.', 1302783022);
         }
 
         if (str_starts_with($argumentName, '--')) {

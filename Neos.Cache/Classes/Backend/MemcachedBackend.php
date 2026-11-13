@@ -214,7 +214,7 @@ class MemcachedBackend extends IndependentAbstractBackend implements TaggableBac
         }
 
         $tags[] = '%MEMCACHEBE%' . $this->cacheIdentifier;
-        $expiration = $lifetime !== null ? $lifetime : $this->defaultLifetime;
+        $expiration = $lifetime ?? $this->defaultLifetime;
         // Memcache considers values over 2592000 sec (30 days) as UNIX timestamp
         // thus $expiration should be converted from lifetime to UNIX timestamp
         if ($expiration > 2592000) {
@@ -271,7 +271,7 @@ class MemcachedBackend extends IndependentAbstractBackend implements TaggableBac
     public function get(string $entryIdentifier)
     {
         $value = $this->memcache->get($this->getPrefixedIdentifier($entryIdentifier));
-        if (is_string($value) && strpos($value, 'Flow*chunked:') === 0) {
+        if (is_string($value) && str_starts_with($value, 'Flow*chunked:')) {
             [, $chunkCount] = explode(':', $value);
             $value = '';
             for ($chunkNumber = 1; $chunkNumber < $chunkCount; $chunkNumber++) {

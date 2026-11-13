@@ -253,10 +253,7 @@ class PropertyMappingConfiguration implements PropertyMappingConfigurationInterf
      */
     public function getTargetPropertyName($sourcePropertyName)
     {
-        if (isset($this->mapping[$sourcePropertyName])) {
-            return $this->mapping[$sourcePropertyName];
-        }
-        return $sourcePropertyName;
+        return $this->mapping[$sourcePropertyName] ?? $sourcePropertyName;
     }
 
     /**

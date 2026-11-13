@@ -83,9 +83,7 @@ class PointcutFilter implements PointcutFilterInterface
      */
     public function matches($className, $methodName, $methodDeclaringClassName, $pointcutQueryIdentifier): bool
     {
-        if ($this->pointcut === null) {
-            $this->pointcut = $this->proxyClassBuilder->findPointcut($this->aspectClassName, $this->pointcutMethodName) ?: null;
-        }
+        $this->pointcut ??= $this->proxyClassBuilder->findPointcut($this->aspectClassName, $this->pointcutMethodName) ?: null;
         if ($this->pointcut === null) {
             throw new UnknownPointcutException('No pointcut "' . $this->pointcutMethodName . '" found in aspect class "' . $this->aspectClassName . '" .', 1172223694);
         }
@@ -109,9 +107,7 @@ class PointcutFilter implements PointcutFilterInterface
      */
     public function getRuntimeEvaluationsDefinition(): array
     {
-        if ($this->pointcut === null) {
-            $this->pointcut = $this->proxyClassBuilder->findPointcut($this->aspectClassName, $this->pointcutMethodName) ?: null;
-        }
+        $this->pointcut ??= $this->proxyClassBuilder->findPointcut($this->aspectClassName, $this->pointcutMethodName) ?: null;
         if ($this->pointcut === null) {
             return [];
         }
@@ -127,9 +123,7 @@ class PointcutFilter implements PointcutFilterInterface
      */
     public function reduceTargetClassNames(ClassNameIndex $classNameIndex): ClassNameIndex
     {
-        if ($this->pointcut === null) {
-            $this->pointcut = $this->proxyClassBuilder->findPointcut($this->aspectClassName, $this->pointcutMethodName) ?: null;
-        }
+        $this->pointcut ??= $this->proxyClassBuilder->findPointcut($this->aspectClassName, $this->pointcutMethodName) ?: null;
         if ($this->pointcut === null) {
             return $classNameIndex;
         }

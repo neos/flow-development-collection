@@ -44,7 +44,7 @@ class SessionKeyValueStore
     public function initializeObject(): void
     {
         if (!$this->cache->getBackend() instanceof IterableBackendInterface) {
-            throw new InvalidBackendException(sprintf('The session storage cache must provide a backend implementing the IterableBackendInterface, but the given backend "%s" does not implement it.', get_class($this->cache->getBackend())), 1370964558);
+            throw new InvalidBackendException(sprintf('The session storage cache must provide a backend implementing the IterableBackendInterface, but the given backend "%s" does not implement it.', $this->cache->getBackend()::class), 1370964558);
         }
         $this->useIgBinary = extension_loaded('igbinary');
     }

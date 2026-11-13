@@ -53,7 +53,7 @@ class BearerToken extends AbstractToken implements SessionlessTokenInterface
         $this->setAuthenticationStatus(TokenInterface::NO_CREDENTIALS_GIVEN);
 
         foreach ($httpRequest->getHeader('Authorization') as $authorizationHeader) {
-            if (strpos($authorizationHeader, 'Bearer ') === 0) {
+            if (str_starts_with($authorizationHeader, 'Bearer ')) {
                 $this->credentials['bearer'] = substr($authorizationHeader, strlen('Bearer '));
                 $this->setAuthenticationStatus(TokenInterface::AUTHENTICATION_NEEDED);
                 return;
@@ -74,7 +74,7 @@ class BearerToken extends AbstractToken implements SessionlessTokenInterface
      *
      * @return string
      */
-    public function __toString()
+    public function __toString(): string
     {
         return 'Bearer token';
     }

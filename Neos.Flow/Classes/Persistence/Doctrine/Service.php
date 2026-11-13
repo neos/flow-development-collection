@@ -284,19 +284,13 @@ class Service
      */
     private function getSortedVersions(AvailableMigrationsList $availableMigrations, ExecutedMigrationsList $executedMigrations, Comparator $comparator): array
     {
-        $availableVersions = array_map(static function (AvailableMigration $availableMigration): Version {
-            return $availableMigration->getVersion();
-        }, $availableMigrations->getItems());
+        $availableVersions = array_map(static fn (AvailableMigration $availableMigration): Version => $availableMigration->getVersion(), $availableMigrations->getItems());
 
-        $executedVersions = array_map(static function (ExecutedMigration $executedMigration): Version {
-            return $executedMigration->getVersion();
-        }, $executedMigrations->getItems());
+        $executedVersions = array_map(static fn (ExecutedMigration $executedMigration): Version => $executedMigration->getVersion(), $executedMigrations->getItems());
 
         $versions = array_unique(array_merge($availableVersions, $executedVersions));
 
-        uasort($versions, static function (Version $a, Version $b) use ($comparator): int {
-            return $comparator->compare($a, $b);
-        });
+        uasort($versions, $comparator->compare(...));
 
         return $versions;
     }
@@ -328,12 +322,12 @@ class Service
 
         try {
             $resolvedVersion = $dependencyFactory->getVersionAliasResolver()->resolveVersionAlias($version);
-        } catch (UnknownMigrationVersion $e) {
+        } catch (UnknownMigrationVersion) {
             return sprintf(
                 'Unknown version: %s',
                 OutputFormatter::escape($version)
             );
-        } catch (NoMigrationsToExecute | NoMigrationsFoundWithCriteria $e) {
+        } catch (NoMigrationsToExecute | NoMigrationsFoundWithCriteria) {
             $currentVersion = $dependencyFactory->getVersionAliasResolver()->resolveVersionAlias('current');
             return ($quiet === false ? $this->exitMessageForAlias($currentVersion, $version) : '');
         }
@@ -394,7 +388,7 @@ class Service
                 $versionAlias,
                 (string)$currentVersion
             );
-        } elseif (in_array($versionAlias, ['next', 'prev'], true) || strpos($versionAlias, 'current') === 0) {
+        } elseif (in_array($versionAlias, ['next', 'prev'], true) || str_starts_with($versionAlias, 'current')) {
             $message = sprintf(
                 'The version "%s" couldn\'t be reached, you are at version "%s"',
                 $versionAlias,
@@ -520,7 +514,7 @@ class Service
 
         try {
             $availableMigration = $dependencyFactory->getMigrationRepository()->getMigration($version);
-        } catch (MigrationClassNotFound $e) {
+        } catch (MigrationClassNotFound) {
             $availableMigration = null;
         }
 
@@ -640,7 +634,7 @@ class Service
         $diffGenerator = $dependencyFactory->getDiffGenerator();
         try {
             $path = $diffGenerator->generate($fqcn, $filterExpression);
-        } catch (NoChangesDetected $exception) {
+        } catch (NoChangesDetected) {
             return ['No changes detected', false];
         }
 
@@ -735,9 +729,7 @@ class Service
                         );
                     }
 
-                    $identifierConstructorCallback = static function ($columnName) {
-                        return new Identifier($columnName);
-                    };
+                    $identifierConstructorCallback = (static fn ($columnName) => new Identifier($columnName));
                     $localColumns = array_map($identifierConstructorCallback, $localColumns);
                     $foreignColumns = array_map($identifierConstructorCallback, $foreignColumns);
 

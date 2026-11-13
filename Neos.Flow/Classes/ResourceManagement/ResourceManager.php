@@ -181,7 +181,7 @@ class ResourceManager
         }
         /** @var PersistentResource $resource */
         $this->resourceRepository->add($resource);
-        $this->logger->debug(sprintf('Successfully imported file into the resource collection "%s" (storage: %s, a %s. SHA1: %s)', $collectionName, $collection->getStorage()->getName(), get_class($collection), $resource->getSha1()));
+        $this->logger->debug(sprintf('Successfully imported file into the resource collection "%s" (storage: %s, a %s. SHA1: %s)', $collectionName, $collection->getStorage()->getName(), $collection::class, $resource->getSha1()));
         return $resource;
     }
 
@@ -231,7 +231,7 @@ class ResourceManager
 
         /** @var PersistentResource $resource */
         $this->resourceRepository->add($resource);
-        $this->logger->debug(sprintf('Successfully imported content into the resource collection "%s" (storage: %s, a %s. SHA1: %s)', $collectionName, $collection->getStorage()->getName(), get_class($collection->getStorage()), $resource->getSha1()));
+        $this->logger->debug(sprintf('Successfully imported content into the resource collection "%s" (storage: %s, a %s. SHA1: %s)', $collectionName, $collection->getStorage()->getName(), $collection->getStorage()::class, $resource->getSha1()));
 
         return $resource;
     }
@@ -267,7 +267,7 @@ class ResourceManager
         }
 
         $this->resourceRepository->add($resource);
-        $this->logger->debug(sprintf('Successfully imported the uploaded file "%s" into the resource collection "%s" (storage: "%s", a %s. SHA1: %s)', $resource->getFilename(), $collectionName, $this->collections[$collectionName]->getStorage()->getName(), get_class($this->collections[$collectionName]->getStorage()), $resource->getSha1()));
+        $this->logger->debug(sprintf('Successfully imported the uploaded file "%s" into the resource collection "%s" (storage: "%s", a %s. SHA1: %s)', $resource->getFilename(), $collectionName, $this->collections[$collectionName]->getStorage()->getName(), $this->collections[$collectionName]->getStorage()::class, $resource->getSha1()));
 
         return $resource;
     }
@@ -452,7 +452,7 @@ class ResourceManager
     public function getPublicPackageResourceUriByPath($path)
     {
         $this->initialize();
-        list($packageKey, $relativePathAndFilename) = $this->getPackageAndPathByPublicPath($path);
+        [$packageKey, $relativePathAndFilename] = $this->getPackageAndPathByPublicPath($path);
         return $this->getPublicPackageResourceUri($packageKey, $relativePathAndFilename);
     }
 
@@ -485,7 +485,7 @@ class ResourceManager
     {
         $this->initialize();
 
-        return isset($this->storages[$storageName]) ? $this->storages[$storageName] : null;
+        return $this->storages[$storageName] ?? null;
     }
 
     /**
@@ -499,7 +499,7 @@ class ResourceManager
     {
         $this->initialize();
 
-        return isset($this->collections[$collectionName]) ? $this->collections[$collectionName] : null;
+        return $this->collections[$collectionName] ?? null;
     }
 
     /**
@@ -618,8 +618,8 @@ class ResourceManager
                 throw new Exception(sprintf('The configuration for the resource collection "%s" defined in your settings has not defined a valid "target" option. Please check the configuration syntax and make sure that the specified class "%s" really exists.', $collectionName, $collectionDefinition['target']), 1361468924);
             }
 
-            $pathPatterns = (isset($collectionDefinition['pathPatterns'])) ? $collectionDefinition['pathPatterns'] : [];
-            $filenames = (isset($collectionDefinition['filenames'])) ? $collectionDefinition['filenames'] : [];
+            $pathPatterns = $collectionDefinition['pathPatterns'] ?? [];
+            $filenames = $collectionDefinition['filenames'] ?? [];
 
             $this->collections[$collectionName] = new Collection($collectionName, $this->storages[$collectionDefinition['storage']], $this->targets[$collectionDefinition['target']], $pathPatterns);
         }

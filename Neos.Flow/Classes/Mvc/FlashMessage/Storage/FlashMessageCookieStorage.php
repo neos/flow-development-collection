@@ -58,9 +58,7 @@ class FlashMessageCookieStorage implements FlashMessageStorageInterface
     {
         if ($this->flashMessageContainer === null) {
             $this->flashMessageContainer = $this->restoreFlashMessageContainerFromCookie($request);
-            if ($this->flashMessageContainer === null) {
-                $this->flashMessageContainer = new FlashMessageContainer();
-            }
+            $this->flashMessageContainer ??= new FlashMessageContainer();
         }
         return $this->flashMessageContainer;
     }

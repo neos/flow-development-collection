@@ -78,17 +78,12 @@ abstract class TypeHandling
      */
     public static function normalizeType(string $type): string
     {
-        switch ($type) {
-            case 'int':
-                $type = 'integer';
-                break;
-            case 'bool':
-                $type = 'boolean';
-                break;
-            case 'double':
-                $type = 'float';
-                break;
-        }
+        $type = match ($type) {
+            'int' => 'integer',
+            'bool' => 'boolean',
+            'double' => 'float',
+            default => $type,
+        };
         return $type;
     }
 
@@ -208,7 +203,7 @@ abstract class TypeHandling
                     return $type;
                 }
             }
-            return get_class($value);
+            return $value::class;
         }
         return gettype($value);
     }

@@ -183,7 +183,7 @@ class PersistenceManager extends AbstractPersistenceManager
         if ($this->entityManager->contains($object)) {
             try {
                 return current($this->entityManager->getUnitOfWork()->getEntityIdentifier($object));
-            } catch (ORMException $exception) {
+            } catch (ORMException) {
             }
         }
         return null;
@@ -243,13 +243,13 @@ class PersistenceManager extends AbstractPersistenceManager
     public function add($object): void
     {
         if (!$this->isNewObject($object)) {
-            throw new KnownObjectException('The object of type "' . get_class($object) . '" (identifier: "' . $this->getIdentifierByObject($object) . '") which was passed to EntityManager->add() is not a new object. Check the code which adds this entity to the repository and make sure that only objects are added which were not persisted before. Alternatively use update() for updating existing objects."', 1337934295);
+            throw new KnownObjectException('The object of type "' . $object::class . '" (identifier: "' . $this->getIdentifierByObject($object) . '") which was passed to EntityManager->add() is not a new object. Check the code which adds this entity to the repository and make sure that only objects are added which were not persisted before. Alternatively use update() for updating existing objects."', 1337934295);
         }
 
         try {
             $this->entityManager->persist($object);
         } catch (\Exception $exception) {
-            throw new PersistenceException('Could not add object of type "' . get_class($object) . '"', 1337934455, $exception);
+            throw new PersistenceException('Could not add object of type "' . $object::class . '"', 1337934455, $exception);
         }
     }
 
@@ -278,12 +278,12 @@ class PersistenceManager extends AbstractPersistenceManager
     public function update($object): void
     {
         if ($this->isNewObject($object)) {
-            throw new UnknownObjectException('The object of type "' . get_class($object) . '" (identifier: "' . $this->getIdentifierByObject($object) . '") which was passed to EntityManager->update() is not a previously persisted object. Check the code which updates this entity and make sure that only objects are updated which were persisted before. Alternatively use add() for persisting new objects."', 1313663277);
+            throw new UnknownObjectException('The object of type "' . $object::class . '" (identifier: "' . $this->getIdentifierByObject($object) . '") which was passed to EntityManager->update() is not a previously persisted object. Check the code which updates this entity and make sure that only objects are updated which were persisted before. Alternatively use add() for persisting new objects."', 1313663277);
         }
         try {
             $this->entityManager->persist($object);
         } catch (\Exception $exception) {
-            throw new PersistenceException('Could not merge object of type "' . get_class($object) . '"', 1297778180, $exception);
+            throw new PersistenceException('Could not merge object of type "' . $object::class . '"', 1297778180, $exception);
         }
     }
 

@@ -90,22 +90,13 @@ class AuthenticationProviderManager implements AuthenticationManagerInterface
     {
         if (isset($settings['security']['authentication']['authenticationStrategy'])) {
             $authenticationStrategyName = $settings['security']['authentication']['authenticationStrategy'];
-            switch ($authenticationStrategyName) {
-                case 'allTokens':
-                    $this->authenticationStrategy = Context::AUTHENTICATE_ALL_TOKENS;
-                    break;
-                case 'oneToken':
-                    $this->authenticationStrategy = Context::AUTHENTICATE_ONE_TOKEN;
-                    break;
-                case 'atLeastOneToken':
-                    $this->authenticationStrategy = Context::AUTHENTICATE_AT_LEAST_ONE_TOKEN;
-                    break;
-                case 'anyToken':
-                    $this->authenticationStrategy = Context::AUTHENTICATE_ANY_TOKEN;
-                    break;
-                default:
-                    throw new Exception('Invalid setting "' . $authenticationStrategyName . '" for security.authentication.authenticationStrategy', 1291043022);
-            }
+            $this->authenticationStrategy = match ($authenticationStrategyName) {
+                'allTokens' => Context::AUTHENTICATE_ALL_TOKENS,
+                'oneToken' => Context::AUTHENTICATE_ONE_TOKEN,
+                'atLeastOneToken' => Context::AUTHENTICATE_AT_LEAST_ONE_TOKEN,
+                'anyToken' => Context::AUTHENTICATE_ANY_TOKEN,
+                default => throw new Exception('Invalid setting "' . $authenticationStrategyName . '" for security.authentication.authenticationStrategy', 1291043022),
+            };
         }
     }
 
@@ -204,13 +195,11 @@ class AuthenticationProviderManager implements AuthenticationManagerInterface
         if ($this->isAuthenticated === null) {
             try {
                 $this->authenticate();
-            } catch (AuthenticationRequiredException $exception) {
+            } catch (AuthenticationRequiredException) {
             }
         }
 
-        return $this->isAuthenticated !== null
-            ? $this->isAuthenticated
-            : false;
+        return $this->isAuthenticated ?? false;
     }
 
     /**

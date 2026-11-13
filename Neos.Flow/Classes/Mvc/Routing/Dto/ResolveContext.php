@@ -70,7 +70,7 @@ final class ResolveContext
         $this->uriPathPrefix = $uriPathPrefix;
         $this->parameters = $parameters;
 
-        if (strpos($this->uriPathPrefix, '/') === 0) {
+        if (str_starts_with($this->uriPathPrefix, '/')) {
             throw new \InvalidArgumentException('UriPathPrefix "' . $uriPathPrefix . '" is not allowed to start with "/".', 1570187176);
         }
     }

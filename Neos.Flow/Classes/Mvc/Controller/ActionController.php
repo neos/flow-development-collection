@@ -255,9 +255,7 @@ class ActionController extends AbstractController
                 $this->initializeActionMethodValidators($this->arguments);
             }
 
-            if ($this->view === null) {
-                $this->view = $this->resolveView($request);
-            }
+            $this->view ??= $this->resolveView($request);
             if ($this->view !== null) {
                 $this->view->assign('settings', $this->settings);
                 $this->view->assign('request', $this->request);
@@ -323,11 +321,11 @@ class ActionController extends AbstractController
     {
         $actionMethodName = $request->getControllerActionName() . 'Action';
         if (!is_callable([$this, $actionMethodName])) {
-            throw new NoSuchActionException(sprintf('An action "%s" does not exist in controller "%s".', $actionMethodName, get_class($this)), 1186669086);
+            throw new NoSuchActionException(sprintf('An action "%s" does not exist in controller "%s".', $actionMethodName, static::class), 1186669086);
         }
         $publicActionMethods = static::getPublicActionMethods($this->objectManager);
         if (!isset($publicActionMethods[$actionMethodName])) {
-            throw new InvalidActionVisibilityException(sprintf('The action "%s" in controller "%s" is not public!', $actionMethodName, get_class($this)), 1186669086);
+            throw new InvalidActionVisibilityException(sprintf('The action "%s" in controller "%s" is not public!', $actionMethodName, static::class), 1186669086);
         }
         return $actionMethodName;
     }
@@ -360,7 +358,7 @@ class ActionController extends AbstractController
                 $dataType = 'array';
             }
             if ($dataType === null) {
-                throw new InvalidArgumentTypeException('The argument type for parameter $' . $parameterName . ' of method ' . get_class($this) . '->' . $this->actionMethodName . '() could not be detected.', 1253175643);
+                throw new InvalidArgumentTypeException('The argument type for parameter $' . $parameterName . ' of method ' . static::class . '->' . $this->actionMethodName . '() could not be detected.', 1253175643);
             }
             $defaultValue = ($parameterInfo['defaultValue'] ?? null);
             if ($defaultValue === null && $parameterInfo['optional'] === true) {
@@ -384,7 +382,7 @@ class ActionController extends AbstractController
 
         $result = [];
 
-        $className = get_called_class();
+        $className = static::class;
         $methodNames = get_class_methods($className);
         foreach ($methodNames as $methodName) {
             if (strlen($methodName) > 6 && strpos($methodName, 'Action', strlen($methodName) - 6) !== false) {
@@ -452,7 +450,7 @@ class ActionController extends AbstractController
         } else {
             $validateAnnotations = [];
         }
-        $parameterValidators = $this->validatorResolver->buildMethodArgumentsValidatorConjunctions(get_class($this), $this->actionMethodName, $methodParameters, $validateAnnotations);
+        $parameterValidators = $this->validatorResolver->buildMethodArgumentsValidatorConjunctions(static::class, $this->actionMethodName, $methodParameters, $validateAnnotations);
 
         if (isset($actionIgnoredArguments[$this->actionMethodName])) {
             $ignoredArguments = $actionIgnoredArguments[$this->actionMethodName];
@@ -490,7 +488,7 @@ class ActionController extends AbstractController
 
         $result = [];
 
-        $className = get_called_class();
+        $className = static::class;
         $methodNames = get_class_methods($className);
         foreach ($methodNames as $methodName) {
             if (strlen($methodName) > 6 && strpos($methodName, 'Action', strlen($methodName) - 6) !== false) {
@@ -518,18 +516,16 @@ class ActionController extends AbstractController
 
         $result = [];
 
-        $className = get_called_class();
+        $className = static::class;
         $methodNames = get_class_methods($className);
         foreach ($methodNames as $methodName) {
             if (strlen($methodName) > 6 && strpos($methodName, 'Action', strlen($methodName) - 6) !== false) {
                 $validateAnnotations = $reflectionService->getMethodAnnotations($className, $methodName, Flow\Validate::class);
-                $result[$methodName] = array_map(function ($validateAnnotation) {
-                    return [
-                        'type' => $validateAnnotation->type,
-                        'options' => $validateAnnotation->options,
-                        'argumentName' => $validateAnnotation->argumentName,
-                    ];
-                }, $validateAnnotations);
+                $result[$methodName] = array_map(fn ($validateAnnotation) => [
+                    'type' => $validateAnnotation->type,
+                    'options' => $validateAnnotation->options,
+                    'argumentName' => $validateAnnotation->argumentName,
+                ], $validateAnnotations);
             }
         }
 
@@ -619,7 +615,7 @@ class ActionController extends AbstractController
             }
 
             if (!$result instanceof StreamInterface) {
-                throw new \Exception('Cannot assign object of type ' . get_class($result) . ' to HTTP response body', 1744326907);
+                throw new \Exception('Cannot assign object of type ' . $result::class . ' to HTTP response body', 1744326907);
             }
 
             return $httpResponse->withBody($result);
@@ -647,7 +643,7 @@ class ActionController extends AbstractController
         }
 
         $policyEnforcement = $this->objectManager->get(PolicyEnforcement::class);
-        $policyEnforcement->setJoinPoint(new JoinPoint($this, get_class($this), $this->actionMethodName, $namedArguments));
+        $policyEnforcement->setJoinPoint(new JoinPoint($this, static::class, $this->actionMethodName, $namedArguments));
         $policyEnforcement->invoke();
     }
 
@@ -662,7 +658,7 @@ class ActionController extends AbstractController
 
         $result = [];
 
-        $className = get_called_class();
+        $className = static::class;
         $methodNames = get_class_methods($className);
         foreach ($methodNames as $methodName) {
             if (strlen($methodName) > 6 && strpos($methodName, 'Action', strlen($methodName) - 6) !== false) {
@@ -694,7 +690,7 @@ class ActionController extends AbstractController
 
         $result = [];
 
-        $className = get_called_class();
+        $className = static::class;
         $methodNames = get_class_methods($className);
         foreach ($methodNames as $methodName) {
             if (strlen($methodName) > 6 && strpos($methodName, 'Action', strlen($methodName) - 6) !== false) {
@@ -732,7 +728,7 @@ class ActionController extends AbstractController
                 'View class has to implement ViewInterface but "%s" in action "%s" of controller "%s" does not.',
                 $viewObjectName,
                 $request->getControllerActionName(),
-                get_class($this)
+                static::class
             ), 1355153188);
         }
 
@@ -778,9 +774,7 @@ class ActionController extends AbstractController
         $possibleViewObjectName = str_replace('@action', $request->getControllerActionName(), $possibleViewObjectName);
 
         $viewObjectName = $this->objectManager->getCaseSensitiveObjectName(strtolower(str_replace('@format', $format, $possibleViewObjectName)));
-        if ($viewObjectName === null) {
-            $viewObjectName = $this->objectManager->getCaseSensitiveObjectName(strtolower(str_replace('@format', '', $possibleViewObjectName)));
-        }
+        $viewObjectName ??= $this->objectManager->getCaseSensitiveObjectName(strtolower(str_replace('@format', '', $possibleViewObjectName)));
         if ($viewObjectName === null && isset($this->viewFormatToObjectNameMap[$format])) {
             $viewObjectName = $this->viewFormatToObjectNameMap[$format];
         }
@@ -887,7 +881,7 @@ class ActionController extends AbstractController
      */
     protected function getFlattenedValidationErrorMessage()
     {
-        $outputMessage = 'Validation failed while trying to call ' . get_class($this) . '->' . $this->actionMethodName . '().' . PHP_EOL;
+        $outputMessage = 'Validation failed while trying to call ' . static::class . '->' . $this->actionMethodName . '().' . PHP_EOL;
         $logMessage = $outputMessage;
 
         foreach ($this->arguments->getValidationResults()->getFlattenedErrors() as $propertyPath => $errors) {
@@ -910,6 +904,6 @@ class ActionController extends AbstractController
      */
     protected function getErrorFlashMessage()
     {
-        return new Error\Error('An error occurred while trying to call %1$s->%2$s()', null, [get_class($this), $this->actionMethodName]);
+        return new Error\Error('An error occurred while trying to call %1$s->%2$s()', null, [static::class, $this->actionMethodName]);
     }
 }

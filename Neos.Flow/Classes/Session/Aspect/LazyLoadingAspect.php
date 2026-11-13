@@ -69,7 +69,7 @@ class LazyLoadingAspect
         }
 
         if ($this->logger) {
-            $objectName = $this->objectManager->getObjectNameByClassName(get_class($joinPoint->getProxy()));
+            $objectName = $this->objectManager->getObjectNameByClassName($joinPoint->getProxy()::class);
             $methodName = $joinPoint->getMethodName();
             $this->logger->debug(sprintf('Session initialization triggered by %s->%s.', $objectName, $methodName));
         }
@@ -83,16 +83,14 @@ class LazyLoadingAspect
     #[Flow\Around("filter(Neos\Flow\Session\Aspect\SessionObjectMethodsPointcutFilter)")]
     public function callMethodOnOriginalSessionObject(JoinPointInterface $joinPoint): mixed
     {
-        $objectName = $this->objectManager->getObjectNameByClassName(get_class($joinPoint->getProxy()));
+        $objectName = $this->objectManager->getObjectNameByClassName($joinPoint->getProxy()::class);
         if ($objectName === false) {
             throw new \RuntimeException('Could not determine object name for proxy object.', 1789481206);
         }
         $methodName = $joinPoint->getMethodName();
         $proxy = $joinPoint->getProxy();
 
-        if (!isset($this->sessionOriginalInstances[$objectName])) {
-            $this->sessionOriginalInstances[$objectName] = $this->objectManager->get($objectName);
-        }
+        $this->sessionOriginalInstances[$objectName] ??= $this->objectManager->get($objectName);
 
         if ($this->sessionOriginalInstances[$objectName] === $proxy) {
             return $joinPoint->getAdviceChain()->proceed($joinPoint);

@@ -311,7 +311,7 @@ class FileSystemTarget implements TargetInterface
      */
     protected function encodeRelativePathAndFilenameForUri($relativePathAndFilename)
     {
-        return implode('/', array_map('rawurlencode', explode('/', $relativePathAndFilename)));
+        return implode('/', array_map(rawurlencode(...), explode('/', $relativePathAndFilename)));
     }
 
     /**
@@ -420,7 +420,7 @@ class FileSystemTarget implements TargetInterface
      */
     protected function detectResourcesBaseUri()
     {
-        if ($this->baseUri !== '' && ($this->baseUri[0] === '/' || strpos($this->baseUri, '://') !== false)) {
+        if ($this->baseUri !== '' && ($this->baseUri[0] === '/' || str_contains($this->baseUri, '://'))) {
             return $this->baseUri;
         }
 

@@ -22,7 +22,7 @@ use Neos\Utility\ObjectAccess;
  */
 class PasswordToken extends AbstractToken implements PasswordTokenInterface
 {
-    private const DEFAULT_PASSWORD_POST_FIELD = '__authentication.Neos.Flow.Security.Authentication.Token.PasswordToken.password';
+    private const string DEFAULT_PASSWORD_POST_FIELD = '__authentication.Neos.Flow.Security.Authentication.Token.PasswordToken.password';
 
     /**
      * The password credentials
@@ -69,7 +69,7 @@ class PasswordToken extends AbstractToken implements PasswordTokenInterface
      *
      * @return string
      */
-    public function __toString()
+    public function __toString(): string
     {
         return 'Password token';
     }

@@ -125,14 +125,12 @@ abstract class ObjectAccess
             // try actual class property first
             if (property_exists($className, $propertyName)) {
                 $propertyReflection = new \ReflectionProperty($className, $propertyName);
-                $propertyReflection->setAccessible(true);
                 return $propertyReflection->getValue($subject);
             }
             // then see if it's a Flow proxy and try to get the parent class property
             $className = get_parent_class($className);
             if ($subject instanceof ProxyInterface && $className !== false && property_exists($className, $propertyName)) {
                 $propertyReflection = new \ReflectionProperty($className, $propertyName);
-                $propertyReflection->setAccessible(true);
                 return $propertyReflection->getValue($subject);
             }
             // then try to get the property directly
@@ -270,11 +268,9 @@ abstract class ObjectAccess
             $className = TypeHandling::getTypeForValue($subject);
             if (property_exists($className, $propertyName)) {
                 $propertyReflection = new \ReflectionProperty($className, $propertyName);
-                $propertyReflection->setAccessible(true);
                 $propertyReflection->setValue($subject, $propertyValue);
             } elseif ($subject instanceof ProxyInterface && property_exists(get_parent_class($className) ?: $className, $propertyName)) {
                 $propertyReflection = new \ReflectionProperty(get_parent_class($className) ?: $className, $propertyName);
-                $propertyReflection->setAccessible(true);
                 $propertyReflection->setValue($subject, $propertyValue);
             } else {
                 $subject->$propertyName = $propertyValue;
@@ -323,7 +319,7 @@ abstract class ObjectAccess
             foreach (get_class_methods($object) as $methodName) {
                 if (is_callable([$object, $methodName])) {
                     $methodNameLength = strlen($methodName);
-                    if ($methodNameLength > 2 && substr($methodName, 0, 2) === 'is') {
+                    if ($methodNameLength > 2 && str_starts_with($methodName, 'is')) {
                         $declaredPropertyNames[] = lcfirst(substr($methodName, 2));
                     } elseif ($methodNameLength > 3 && (($methodNamePrefix = substr($methodName, 0, 3)) === 'get' || $methodNamePrefix === 'has')) {
                         $declaredPropertyNames[] = lcfirst(substr($methodName, 3));
@@ -365,7 +361,7 @@ abstract class ObjectAccess
         }
 
         foreach (get_class_methods($object) as $methodName) {
-            if (substr($methodName, 0, 3) === 'set' && strlen($methodName) > 3 && is_callable([$object, $methodName])) {
+            if (str_starts_with($methodName, 'set') && strlen($methodName) > 3 && is_callable([$object, $methodName])) {
                 $declaredPropertyNames[] = lcfirst(substr($methodName, 3));
             }
         }

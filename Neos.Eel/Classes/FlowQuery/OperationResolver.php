@@ -79,9 +79,7 @@ class OperationResolver implements OperationResolverInterface
             $operationPriority = $operationClassName::getPriority();
             $isFinalOperation = $operationClassName::isFinal();
 
-            if (!isset($operations[$shortOperationName])) {
-                $operations[$shortOperationName] = [];
-            }
+            $operations[$shortOperationName] ??= [];
 
             if (isset($operations[$shortOperationName][$operationPriority])) {
                 throw new FlowQueryException(sprintf('Operation with name "%s" and priority %s is already defined in class %s, and the class %s has the same priority and name.', $shortOperationName, $operationPriority, $operations[$shortOperationName][$operationPriority], $operationClassName), 1332491678);

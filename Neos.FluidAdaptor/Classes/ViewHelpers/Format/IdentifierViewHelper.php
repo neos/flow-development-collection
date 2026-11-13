@@ -83,9 +83,7 @@ class IdentifierViewHelper extends AbstractViewHelper
     {
         $value = $this->arguments['value'];
 
-        if ($value === null) {
-            $value = $this->renderChildren();
-        }
+        $value ??= $this->renderChildren();
         if ($value === null) {
             return null;
         }

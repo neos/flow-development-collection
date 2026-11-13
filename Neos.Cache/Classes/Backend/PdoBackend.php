@@ -191,7 +191,7 @@ class PdoBackend extends IndependentAbstractBackend implements TaggableBackendIn
             throw new Exception('No cache frontend has been set yet via setCache().', 1259515600);
         }
 
-        $lifetime = ($lifetime === null) ? $this->defaultLifetime : $lifetime;
+        $lifetime ??= $this->defaultLifetime;
 
         $this->databaseHandle->beginTransaction();
         try {
@@ -620,7 +620,7 @@ class PdoBackend extends IndependentAbstractBackend implements TaggableBackendIn
     {
         try {
             $this->connect();
-        } catch (Exception $e) {
+        } catch (Exception) {
             return;
         }
 
@@ -725,7 +725,7 @@ class PdoBackend extends IndependentAbstractBackend implements TaggableBackendIn
     {
         try {
             $this->databaseHandle->prepare('SELECT 1 FROM "' . $tableName . '" LIMIT 1')->execute();
-        } catch (\PDOException $exception) {
+        } catch (\PDOException) {
             return false;
         }
         return true;

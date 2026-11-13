@@ -472,11 +472,9 @@ class FlowAnnotationDriver implements DoctrineMappingDriverInterface, PointcutFi
      */
     protected function truncateIdentifier(string $identifier, ?int $lengthLimit = null, ?string $hashSource = null): string
     {
-        if ($lengthLimit === null) {
-            $lengthLimit = $this->getMaxIdentifierLength();
-        }
+        $lengthLimit ??= $this->getMaxIdentifierLength();
         if (strlen($identifier) > $lengthLimit) {
-            $identifier = substr($identifier, 0, $lengthLimit - 6) . '_' . substr(sha1($hashSource !== null ? $hashSource : $identifier), 0, 5);
+            $identifier = substr($identifier, 0, $lengthLimit - 6) . '_' . substr(sha1($hashSource ?? $identifier), 0, 5);
         }
 
         return $identifier;
@@ -547,10 +545,10 @@ class FlowAnnotationDriver implements DoctrineMappingDriverInterface, PointcutFi
                     $joinColumnName = $this->buildJoinTableColumnName($className);
                 }
                 if (count($idProperties) === 0) {
-                    $joinColumn['name'] = $joinColumn['name'] === null ? $joinColumnName : $joinColumn['name'];
+                    $joinColumn['name'] ??= $joinColumnName;
                     $joinColumn['referencedColumnName'] = strtolower('Persistence_Object_Identifier');
                 } elseif (count($idProperties) === 1) {
-                    $joinColumn['name'] = $joinColumn['name'] === null ? $joinColumnName : $joinColumn['name'];
+                    $joinColumn['name'] ??= $joinColumnName;
                     $joinColumn['referencedColumnName'] = strtolower(current($idProperties));
                 }
             }
@@ -681,17 +679,11 @@ class FlowAnnotationDriver implements DoctrineMappingDriverInterface, PointcutFi
                         ];
                     }
                     foreach ($joinTable['inverseJoinColumns'] as &$inverseJoinColumn) {
-                        if (!isset($inverseJoinColumn['unique'])) {
-                            $inverseJoinColumn['unique'] = true;
-                        }
-                        if (!isset($inverseJoinColumn['onDelete'])) {
-                            $inverseJoinColumn['onDelete'] = 'cascade';
-                        }
+                        $inverseJoinColumn['unique'] ??= true;
+                        $inverseJoinColumn['onDelete'] ??= 'cascade';
                     }
                     foreach ($joinTable['joinColumns'] as &$joinColumn) {
-                        if (!isset($joinColumn['onDelete'])) {
-                            $joinColumn['onDelete'] = 'cascade';
-                        }
+                        $joinColumn['onDelete'] ??= 'cascade';
                     }
 
                     $mapping['joinTable'] = $joinTable;
@@ -797,7 +789,7 @@ class FlowAnnotationDriver implements DoctrineMappingDriverInterface, PointcutFi
                             $mapping['type'] = $propertyMetaData['type'];
                             break;
                         default:
-                            if (strpos($propertyMetaData['type'], '\\') !== false) {
+                            if (str_contains($propertyMetaData['type'], '\\')) {
                                 if (class_exists($propertyMetaData['type']) && $this->reflectionService->isClassAnnotatedWith($propertyMetaData['type'], Flow\ValueObject::class)) {
                                     $valueObjectAnnotation = $this->reflectionService->getClassAnnotation($propertyMetaData['type'], Flow\ValueObject::class);
                                     if ($valueObjectAnnotation && $valueObjectAnnotation->embedded === true) {
@@ -870,9 +862,7 @@ class FlowAnnotationDriver implements DoctrineMappingDriverInterface, PointcutFi
             'name' => $joinTableAnnotation->name,
             'schema' => $joinTableAnnotation->schema
         ];
-        if ($joinTable['name'] === null) {
-            $joinTable['name'] = $this->inferJoinTableNameFromClassAndPropertyName($className, $property->getName());
-        }
+        $joinTable['name'] ??= $this->inferJoinTableNameFromClassAndPropertyName($className, $property->getName());
 
         foreach ($joinTableAnnotation->joinColumns as $joinColumn) {
             $joinTable['joinColumns'][] = $this->joinColumnToArray($joinColumn);
@@ -1150,10 +1140,8 @@ class FlowAnnotationDriver implements DoctrineMappingDriverInterface, PointcutFi
         );
         $this->classNames = array_filter(
             $this->classNames,
-            function ($className) {
-                return !interface_exists($className, false)
-                        && strpos($className, Compiler::ORIGINAL_CLASSNAME_SUFFIX) === false;
-            }
+            fn ($className) => !interface_exists($className, false)
+                    && !str_contains($className, Compiler::ORIGINAL_CLASSNAME_SUFFIX)
         );
 
         return $this->classNames;
@@ -1169,7 +1157,7 @@ class FlowAnnotationDriver implements DoctrineMappingDriverInterface, PointcutFi
     protected function joinColumnToArray(ORM\JoinColumn $joinColumnAnnotation, ?string $propertyName = null): array
     {
         return [
-            'name' => $joinColumnAnnotation->name === null ? $propertyName : $joinColumnAnnotation->name,
+            'name' => $joinColumnAnnotation->name ?? $propertyName,
             'unique' => $joinColumnAnnotation->unique,
             'nullable' => $joinColumnAnnotation->nullable,
             'onDelete' => $joinColumnAnnotation->onDelete,
@@ -1259,13 +1247,7 @@ class FlowAnnotationDriver implements DoctrineMappingDriverInterface, PointcutFi
     public function matches($className, $methodName, $methodDeclaringClassName, $pointcutQueryIdentifier): bool
     {
         $class = new \ReflectionClass($className);
-        foreach ($class->getProperties() as $property) {
-            if ($this->reader->getPropertyAnnotation($property, ORM\Id::class) !== null) {
-                return false;
-            }
-        }
-
-        return true;
+        return array_all($class->getProperties(), fn ($property) => !($this->reader->getPropertyAnnotation($property, ORM\Id::class) !== null));
     }
 
     /**

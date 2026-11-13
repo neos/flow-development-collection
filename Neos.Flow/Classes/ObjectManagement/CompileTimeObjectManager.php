@@ -54,17 +54,17 @@ class CompileTimeObjectManager extends ObjectManager
     /**
      * @var VariableFrontend|null
      */
-    protected ?VariableFrontend $configurationCache;
+    protected ?VariableFrontend $configurationCache = null;
 
     /**
      * @var ReflectionService|null
      */
-    protected ?ReflectionService $reflectionService;
+    protected ?ReflectionService $reflectionService = null;
 
     /**
      * @var ConfigurationManager|null
      */
-    protected ?ConfigurationManager $configurationManager;
+    protected ?ConfigurationManager $configurationManager = null;
 
     /**
      * @var array<class-string,Configuration>

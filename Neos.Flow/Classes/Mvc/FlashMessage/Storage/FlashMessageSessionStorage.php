@@ -61,9 +61,7 @@ class FlashMessageSessionStorage implements FlashMessageStorageInterface
     {
         if ($this->flashMessageContainer === null) {
             $this->flashMessageContainer = $this->restoreFlashMessageContainerFromSession();
-            if ($this->flashMessageContainer === null) {
-                $this->flashMessageContainer = new FlashMessageContainer();
-            }
+            $this->flashMessageContainer ??= new FlashMessageContainer();
         }
         return $this->flashMessageContainer;
     }

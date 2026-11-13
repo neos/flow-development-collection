@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Neos\Cache\Backend;
 
-final class FileBackendEntryDto
+final class FileBackendEntryDto implements \Stringable
 {
-    private const EXPIRYTIME_LENGTH = 14;
-    private const DATASIZE_DIGITS = 10;
+    private const int EXPIRYTIME_LENGTH = 14;
+    private const int DATASIZE_DIGITS = 10;
 
     public function __construct(
         private string $data,

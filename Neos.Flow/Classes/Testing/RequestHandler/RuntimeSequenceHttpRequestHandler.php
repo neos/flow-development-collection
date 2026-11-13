@@ -44,9 +44,7 @@ class RuntimeSequenceHttpRequestHandler extends RuntimeSequenceInvokingRequestHa
      */
     public function getHttpRequest(): ServerRequestInterface
     {
-        if ($this->httpRequest === null) {
-            $this->httpRequest = ServerRequest::fromGlobals();
-        }
+        $this->httpRequest ??= ServerRequest::fromGlobals();
 
         return $this->httpRequest;
     }

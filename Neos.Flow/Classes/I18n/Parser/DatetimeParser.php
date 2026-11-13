@@ -323,7 +323,7 @@ class DatetimeParser
                     $datetimeToParse = substr_replace($datetimeToParse, '', 0, $numberOfCharactersToRemove);
                 }
             }
-        } catch (Exception\InvalidParseStringException $exception) {
+        } catch (Exception\InvalidParseStringException) {
             // Method extractAndCheckNumber() throws exception when constraints in $datetimeToParse are not fulfilled
             return false;
         }
@@ -386,9 +386,7 @@ class DatetimeParser
                         }
                         // no break
                     case 'h':
-                        if (!isset($hour)) {
-                            $hour = $this->extractNumberAndGetPosition($datetimeToParse, $position);
-                        }
+                        $hour ??= $this->extractNumberAndGetPosition($datetimeToParse, $position);
                         if ($hour >= 1 && $hour <= 12) {
                             $numberOfCharactersToRemove = $position + strlen($hour);
                             if ((int)$hour === 12) {
@@ -400,9 +398,7 @@ class DatetimeParser
                         }
                         // no break
                     case 'H':
-                        if (!isset($hour)) {
-                            $hour = $this->extractNumberAndGetPosition($datetimeToParse, $position);
-                        }
+                        $hour ??= $this->extractNumberAndGetPosition($datetimeToParse, $position);
                         if ($hour >= 0 && $hour <= 23) {
                             $numberOfCharactersToRemove = $position + strlen((string)$hour);
                             $datetimeElements['hour'] = (int)$hour;
@@ -410,9 +406,7 @@ class DatetimeParser
                         }
                         // no break
                     case 'k':
-                        if (!isset($hour)) {
-                            $hour = $this->extractNumberAndGetPosition($datetimeToParse, $position);
-                        }
+                        $hour ??= $this->extractNumberAndGetPosition($datetimeToParse, $position);
                         if ($hour >= 1 && $hour <= 24) {
                             $numberOfCharactersToRemove = $position + strlen($hour);
                             if ((int)$hour === 24) {
@@ -426,11 +420,11 @@ class DatetimeParser
                         // no break
                     case 'a':
                         $dayPeriods = $localizedLiterals['dayPeriods']['format']['wide'];
-                        $positionOfDayPeriod = strpos($datetimeToParse, $dayPeriods['am']);
+                        $positionOfDayPeriod = strpos($datetimeToParse, (string) $dayPeriods['am']);
                         if ($positionOfDayPeriod !== false) {
                             $numberOfCharactersToRemove = $positionOfDayPeriod + strlen($dayPeriods['am']);
                         } else {
-                            $positionOfDayPeriod = strpos($datetimeToParse, $dayPeriods['pm']);
+                            $positionOfDayPeriod = strpos($datetimeToParse, (string) $dayPeriods['pm']);
                             if ($positionOfDayPeriod !== false) {
                                 $numberOfCharactersToRemove = $positionOfDayPeriod + strlen($dayPeriods['pm']);
                                 $timeIsPm = true;
@@ -476,12 +470,12 @@ class DatetimeParser
                                         $datetimeElements['month'] = (int)$month;
                                         break;
                                     }
-                                } catch (Exception\InvalidParseStringException $exception) {
+                                } catch (Exception\InvalidParseStringException) {
                                     // Try to match month's name by cases below
                                 }
                             case 3:
                                 foreach ($localizedLiterals['months'][$typeOfLiteral]['abbreviated'] as $monthId => $monthName) {
-                                    $positionOfMonthName = strpos($datetimeToParse, $monthName);
+                                    $positionOfMonthName = strpos($datetimeToParse, (string) $monthName);
                                     if ($positionOfMonthName !== false) {
                                         $numberOfCharactersToRemove = $positionOfMonthName + strlen($monthName);
                                         $datetimeElements['month'] = (int)$monthId;
@@ -495,7 +489,7 @@ class DatetimeParser
                                 // no break
                             case 4:
                                 foreach ($localizedLiterals['months'][$typeOfLiteral]['wide'] as $monthId => $monthName) {
-                                    $positionOfMonthName = strpos($datetimeToParse, $monthName);
+                                    $positionOfMonthName = strpos($datetimeToParse, (string) $monthName);
                                     if ($positionOfMonthName !== false) {
                                         $numberOfCharactersToRemove = $positionOfMonthName + strlen($monthName);
                                         $datetimeElements['month'] = (int)$monthId;
@@ -571,7 +565,7 @@ class DatetimeParser
                 if ($numberOfCharactersToRemove > 0) {
                     $datetimeToParse = substr_replace($datetimeToParse, '', 0, $numberOfCharactersToRemove);
                 }
-            } catch (Exception\InvalidParseStringException $exception) {
+            } catch (Exception\InvalidParseStringException) {
                 // Matching failed, but in lenient mode we ignore it and try to match next element
                 continue;
             }

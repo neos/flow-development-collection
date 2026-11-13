@@ -89,7 +89,7 @@ class FlashMessageService
      */
     private function getStorageByRequest(ActionRequest $request): FlashMessageStorageInterface
     {
-        $sortedContainerConfiguration = (new PositionalArraySorter($this->flashMessageContainerConfiguration))->toArray();
+        $sortedContainerConfiguration = new PositionalArraySorter($this->flashMessageContainerConfiguration)->toArray();
         foreach ($sortedContainerConfiguration as $containerName => $containerConfiguration) {
             if (isset($this->instantiatedStorages[$containerName])) {
                 return $this->instantiatedStorages[$containerName];

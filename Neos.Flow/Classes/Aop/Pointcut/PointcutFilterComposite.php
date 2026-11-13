@@ -68,9 +68,7 @@ class PointcutFilterComposite implements PointcutFilterInterface
             switch ($operator) {
                 case '&&':
                     if ($currentFilterMatches === true && $filter->hasRuntimeEvaluationsDefinition()) {
-                        if (!isset($this->runtimeEvaluationsDefinition[$operator])) {
-                            $this->runtimeEvaluationsDefinition[$operator] = [];
-                        }
+                        $this->runtimeEvaluationsDefinition[$operator] ??= [];
                         $this->runtimeEvaluationsDefinition[$operator] = array_merge_recursive($this->runtimeEvaluationsDefinition[$operator], $currentRuntimeEvaluationsDefinition);
                     }
                     if ($this->earlyReturn && !$currentFilterMatches) {
@@ -80,9 +78,7 @@ class PointcutFilterComposite implements PointcutFilterInterface
                     break;
                 case '&&!':
                     if ($currentFilterMatches === true && $filter->hasRuntimeEvaluationsDefinition()) {
-                        if (!isset($this->runtimeEvaluationsDefinition[$operator])) {
-                            $this->runtimeEvaluationsDefinition[$operator] = [];
-                        }
+                        $this->runtimeEvaluationsDefinition[$operator] ??= [];
                         $this->runtimeEvaluationsDefinition[$operator] = array_merge_recursive($this->runtimeEvaluationsDefinition[$operator], $currentRuntimeEvaluationsDefinition);
                         $currentFilterMatches = false;
                     }
@@ -93,18 +89,14 @@ class PointcutFilterComposite implements PointcutFilterInterface
                     break;
                 case '||':
                     if ($currentFilterMatches === true && $filter->hasRuntimeEvaluationsDefinition()) {
-                        if (!isset($this->runtimeEvaluationsDefinition[$operator])) {
-                            $this->runtimeEvaluationsDefinition[$operator] = [];
-                        }
+                        $this->runtimeEvaluationsDefinition[$operator] ??= [];
                         $this->runtimeEvaluationsDefinition[$operator] = array_merge_recursive($this->runtimeEvaluationsDefinition[$operator], $currentRuntimeEvaluationsDefinition);
                     }
                     $matches = $matches || $currentFilterMatches;
                     break;
                 case '||!':
                     if ($currentFilterMatches === true && $filter->hasRuntimeEvaluationsDefinition()) {
-                        if (!isset($this->runtimeEvaluationsDefinition[$operator])) {
-                            $this->runtimeEvaluationsDefinition[$operator] = [];
-                        }
+                        $this->runtimeEvaluationsDefinition[$operator] ??= [];
                         $this->runtimeEvaluationsDefinition[$operator] = array_merge_recursive($this->runtimeEvaluationsDefinition[$operator], $currentRuntimeEvaluationsDefinition);
                         $currentFilterMatches = false;
                     }

@@ -550,7 +550,7 @@ class Route
             }
             if ($routePartValue !== null) {
                 if ($this->containsObject($routePartValue)) {
-                    throw new InvalidRoutePartValueException('RoutePart::getValue() must only return simple types after calling RoutePart::match(). RoutePart "' . get_class($routePart) . '" returned one or more objects in Route "' . $this->getName() . '".');
+                    throw new InvalidRoutePartValueException('RoutePart::getValue() must only return simple types after calling RoutePart::match(). RoutePart "' . $routePart::class . '" returned one or more objects in Route "' . $this->getName() . '".');
                 }
                 $routePartName = $routePart->getName();
                 if ($routePartName === null) {
@@ -629,11 +629,11 @@ class Route
                 $remainingDefaults = Arrays::unsetValueByPath($remainingDefaults, $routePart->getName());
             }
             if ($hasRoutePartValue && !is_string($routePartValue)) {
-                throw new InvalidRoutePartValueException('RoutePart::getValue() must return a string after calling RoutePart::resolve(), got ' . (is_object($routePartValue) ? get_class($routePartValue) : gettype($routePartValue)) . ' for RoutePart "' . get_class($routePart) . '" in Route "' . $this->getName() . '".');
+                throw new InvalidRoutePartValueException('RoutePart::getValue() must return a string after calling RoutePart::resolve(), got ' . (get_debug_type($routePartValue)) . ' for RoutePart "' . $routePart::class . '" in Route "' . $this->getName() . '".');
             }
             $routePartDefaultValue = $routePart->getDefaultValue();
             if ($routePartDefaultValue !== null && !is_string($routePartDefaultValue)) {
-                throw new InvalidRoutePartValueException('RoutePart::getDefaultValue() must return a string, got ' . (is_object($routePartDefaultValue) ? get_class($routePartDefaultValue) : gettype($routePartDefaultValue)) . ' for RoutePart "' . get_class($routePart) . '" in Route "' . $this->getName() . '".');
+                throw new InvalidRoutePartValueException('RoutePart::getDefaultValue() must return a string, got ' . (get_debug_type($routePartDefaultValue)) . ' for RoutePart "' . $routePart::class . '" in Route "' . $this->getName() . '".');
             }
             if (!$routePart->isOptional()) {
                 $resolvedUriPath .= $hasRoutePartValue ? $routePartValue : $routePartDefaultValue;
@@ -730,12 +730,12 @@ class Route
     {
         $internalArguments = [];
         foreach ($arguments as $argumentKey => &$argumentValue) {
-            if (substr($argumentKey, 0, 2) === '__') {
+            if (str_starts_with($argumentKey, '__')) {
                 $internalArguments[$argumentKey] = $argumentValue;
                 unset($arguments[$argumentKey]);
                 continue;
             }
-            if (substr($argumentKey, 0, 2) === '--' && is_array($argumentValue)) {
+            if (str_starts_with($argumentKey, '--') && is_array($argumentValue)) {
                 $internalArguments[$argumentKey] = $this->extractInternalArguments($argumentValue);
                 if ($internalArguments[$argumentKey] === []) {
                     unset($internalArguments[$argumentKey]);
@@ -762,12 +762,7 @@ class Route
         if (!is_array($subject)) {
             return false;
         }
-        foreach ($subject as $value) {
-            if ($this->containsObject($value)) {
-                return true;
-            }
-        }
-        return false;
+        return array_any($subject, fn ($value) => $this->containsObject($value));
     }
 
     /**
@@ -784,7 +779,7 @@ class Route
         }
         $this->routeParts = [];
         $currentRoutePartIsOptional = false;
-        if (substr($this->uriPattern, -1) === '/') {
+        if (str_ends_with($this->uriPattern, '/')) {
             throw new InvalidUriPatternException('The URI pattern "' . $this->uriPattern . '" of route "' . $this->getName() . '" ends with a slash, which is not allowed. You can put the trailing slash in brackets to make it optional.', 1234782997);
         }
         if ($this->uriPattern[0] === '/') {

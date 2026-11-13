@@ -602,16 +602,14 @@ class ProxyClassBuilder
                 continue;
             }
             $propertyType = $this->reflectionService->getPropertyType($className, $propertyName);
-            if ($propertyType === null) {
-                $propertyType = $this->reflectionService->getPropertyTagValues($className, $propertyName, 'var')[0] ?? null;
-            }
+            $propertyType ??= $this->reflectionService->getPropertyTagValues($className, $propertyName, 'var')[0] ?? null;
             if ($propertyType === null) {
                 continue;
             }
 
             try {
                 $typeInformation = TypeHandling::parseType($propertyType);
-            } catch (\Throwable $throwable) {
+            } catch (\Throwable) {
                 // we will skip on unparsable types
                 continue;
             }

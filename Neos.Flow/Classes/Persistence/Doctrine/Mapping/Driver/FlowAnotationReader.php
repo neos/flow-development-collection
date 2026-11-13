@@ -41,7 +41,7 @@ class FlowAnotationReader implements Reader
         $className = $this->getUnproxiedClassName($class->getName());
         $indexedAnnotations = [];
         foreach ($this->reflectionService->getClassAnnotations($className) as $annotation) {
-            $indexedAnnotations[get_class($annotation)] = $annotation;
+            $indexedAnnotations[$annotation::class] = $annotation;
         }
         return $indexedAnnotations;
     }
@@ -71,7 +71,7 @@ class FlowAnotationReader implements Reader
         $className = $this->getUnproxiedClassName($method->class);
         $indexedAnnotations = [];
         foreach ($this->reflectionService->getMethodAnnotations($className, $method->getName()) as $annotation) {
-            $indexedAnnotations[get_class($annotation)] = $annotation;
+            $indexedAnnotations[$annotation::class] = $annotation;
         }
         return $indexedAnnotations;
     }
@@ -103,7 +103,7 @@ class FlowAnotationReader implements Reader
         $indexedAnnotations = [];
         foreach ($this->reflectionService->getPropertyAnnotations($className, $property->getName()) as $annotation) {
             /** @var object $annotation */
-            $indexedAnnotations[get_class($annotation)] = $annotation;
+            $indexedAnnotations[$annotation::class] = $annotation;
         }
         return $indexedAnnotations;
     }

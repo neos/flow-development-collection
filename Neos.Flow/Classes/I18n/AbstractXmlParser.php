@@ -38,9 +38,7 @@ abstract class AbstractXmlParser
      */
     public function getParsedData(string $sourcePath)
     {
-        if (!isset($this->parsedFiles[$sourcePath])) {
-            $this->parsedFiles[$sourcePath] = $this->parseXmlFile($sourcePath);
-        }
+        $this->parsedFiles[$sourcePath] ??= $this->parseXmlFile($sourcePath);
 
         return $this->parsedFiles[$sourcePath];
     }

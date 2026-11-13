@@ -82,7 +82,7 @@ class PhpAnalyzer
                 if (is_string($token)) {
                     break;
                 }
-                list($type, $value) = $token;
+                [$type, $value] = $token;
                 if (defined('T_NAME_QUALIFIED') && $type === T_NAME_QUALIFIED) {
                     return $value;
                 }
@@ -125,7 +125,7 @@ class PhpAnalyzer
                 if (is_string($token)) {
                     break;
                 }
-                list($type, $value) = $token;
+                [$type, $value] = $token;
                 if ($type === T_STRING) {
                     return $value;
                 }

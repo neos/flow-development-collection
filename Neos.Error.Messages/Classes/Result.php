@@ -226,7 +226,7 @@ class Result
         if ($propertyPath === '' || $propertyPath === null) {
             return $this;
         }
-        if (strpos($propertyPath, '.') !== false) {
+        if (str_contains($propertyPath, '.')) {
             return $this->recurseThroughResult(explode('.', $propertyPath));
         }
         if (!isset($this->propertyResults[$propertyPath])) {
@@ -443,9 +443,7 @@ class Result
         if ($messageTypeFilter === null) {
             return $messages;
         }
-        return array_filter($messages, function (Message $message) use ($messageTypeFilter) {
-            return $message instanceof $messageTypeFilter;
-        });
+        return array_filter($messages, fn (Message $message) => $message instanceof $messageTypeFilter);
     }
 
     /**

@@ -51,7 +51,7 @@ trait AdvicesTrait
      */
     public function Flow_Aop_Proxy_invokeJoinPoint(\Neos\Flow\Aop\JoinPointInterface $joinPoint)
     {
-        if (__CLASS__ !== $joinPoint->getClassName()) {
+        if (self::class !== $joinPoint->getClassName()) {
             return parent::Flow_Aop_Proxy_invokeJoinPoint($joinPoint);
         }
         $methodName = $joinPoint->getMethodName();
@@ -79,7 +79,7 @@ trait AdvicesTrait
 
         $cacheKey = $this::class . '::' . $methodName;
         if (!array_key_exists($cacheKey, $variadicParameterNames)) {
-            $parameters = (new \ReflectionMethod($this, $methodName))->getParameters();
+            $parameters = new \ReflectionMethod($this, $methodName)->getParameters();
             $lastParameter = end($parameters);
             $variadicParameterNames[$cacheKey] = ($lastParameter !== false && $lastParameter->isVariadic()) ? $lastParameter->getName() : null;
         }

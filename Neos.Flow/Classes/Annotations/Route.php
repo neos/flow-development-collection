@@ -34,7 +34,7 @@ final readonly class Route
      * Magic route values cannot be set as default nor be contained as segments like `{\@action}` or `{\@controller}` in the uriPattern.
      * The magic route value `\@format` is allowed if necessary.
      */
-    private const PRESERVED_DEFAULTS = ['@package', '@subpackage', '@controller', '@action'];
+    private const array PRESERVED_DEFAULTS = ['@package', '@subpackage', '@controller', '@action'];
 
     /**
      * @param string $uriPattern The uri-pattern for the route without leading '/'. Might contain route values in the form of `path/{foo}`

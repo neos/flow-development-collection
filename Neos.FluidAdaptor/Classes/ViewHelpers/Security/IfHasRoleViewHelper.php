@@ -124,7 +124,7 @@ class IfHasRoleViewHelper extends AbstractConditionViewHelper
 
         $role = $arguments['role'] ?? null;
         $account = $arguments['account'] ?? null;
-        $packageKey = isset($arguments['packageKey']) ? $arguments['packageKey'] : $renderingContext->getControllerContext()->getRequest()->getControllerPackageKey();
+        $packageKey = $arguments['packageKey'] ?? $renderingContext->getControllerContext()->getRequest()->getControllerPackageKey();
 
         if (is_string($role)) {
             $roleIdentifier = $role;
@@ -133,7 +133,7 @@ class IfHasRoleViewHelper extends AbstractConditionViewHelper
                 $roleIdentifier = 'Neos.Flow:' . $roleIdentifier;
             }
 
-            if (strpos($roleIdentifier, '.') === false && strpos($roleIdentifier, ':') === false) {
+            if (!str_contains($roleIdentifier, '.') && !str_contains($roleIdentifier, ':')) {
                 $roleIdentifier = $packageKey . ':' . $roleIdentifier;
             }
 

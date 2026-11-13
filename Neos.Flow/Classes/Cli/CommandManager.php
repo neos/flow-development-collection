@@ -145,17 +145,13 @@ class CommandManager
         if ($this->shortCommandIdentifiers === []) {
             $commandsByCommandName = [];
             foreach ($this->getAvailableCommands() as $availableCommand) {
-                list($packageKey, $controllerName, $commandName) = explode(':', $availableCommand->getCommandIdentifier());
-                if (!isset($commandsByCommandName[$commandName])) {
-                    $commandsByCommandName[$commandName] = [];
-                }
-                if (!isset($commandsByCommandName[$commandName][$controllerName])) {
-                    $commandsByCommandName[$commandName][$controllerName] = [];
-                }
+                [$packageKey, $controllerName, $commandName] = explode(':', $availableCommand->getCommandIdentifier());
+                $commandsByCommandName[$commandName] ??= [];
+                $commandsByCommandName[$commandName][$controllerName] ??= [];
                 $commandsByCommandName[$commandName][$controllerName][] = $packageKey;
             }
             foreach ($this->getAvailableCommands() as $availableCommand) {
-                list($packageKey, $controllerName, $commandName) = explode(':', $availableCommand->getCommandIdentifier());
+                [$packageKey, $controllerName, $commandName] = explode(':', $availableCommand->getCommandIdentifier());
                 if (count($commandsByCommandName[$commandName][$controllerName]) > 1 || $this->bootstrap->isCompiletimeCommand($availableCommand->getCommandIdentifier())) {
                     $packageKeyParts = array_reverse(explode('.', $packageKey));
                     for ($i = 1; $i <= count($packageKeyParts); $i++) {
@@ -164,7 +160,7 @@ class CommandManager
                             $this->getCommandByIdentifier($shortCommandIdentifier);
                             $this->shortCommandIdentifiers[$availableCommand->getCommandIdentifier()] = $shortCommandIdentifier;
                             break;
-                        } catch (CommandException $exception) {
+                        } catch (CommandException) {
                         }
                     }
                 } else {
@@ -192,7 +188,7 @@ class CommandManager
     protected function commandMatchesIdentifier(Command $command, string $commandIdentifier): bool
     {
         $commandIdentifierParts = explode(':', $command->getCommandIdentifier());
-        if (strpos($commandIdentifier, ':') === false && strpos($commandIdentifier, '.') === false) {
+        if (!str_contains($commandIdentifier, ':') && !str_contains($commandIdentifier, '.')) {
             return $commandIdentifier === $commandIdentifierParts[1];
         }
         $searchedCommandIdentifierParts = explode(':', $commandIdentifier);
@@ -226,7 +222,7 @@ class CommandManager
     {
         $commandControllerMethodArgumentMap = static::getCommandControllerMethodArguments($this->objectManager);
 
-        return isset($commandControllerMethodArgumentMap[$controllerObjectName][$commandMethodName]) ? $commandControllerMethodArgumentMap[$controllerObjectName][$commandMethodName] : [];
+        return $commandControllerMethodArgumentMap[$controllerObjectName][$commandMethodName] ?? [];
     }
 
     /**

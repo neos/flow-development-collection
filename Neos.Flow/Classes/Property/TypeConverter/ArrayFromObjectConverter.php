@@ -102,7 +102,7 @@ class ArrayFromObjectConverter extends AbstractTypeConverter
         if ($source instanceof DoctrineProxy) {
             $className = get_parent_class($source);
         } else {
-            $className = get_class($source);
+            $className = $source::class;
         }
 
         $properties = array_merge($properties, $convertedChildProperties);

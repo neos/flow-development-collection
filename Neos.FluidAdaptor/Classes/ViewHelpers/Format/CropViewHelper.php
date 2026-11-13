@@ -87,9 +87,7 @@ class CropViewHelper extends AbstractViewHelper
     public static function renderStatic(array $arguments, \Closure $renderChildrenClosure, RenderingContextInterface $renderingContext)
     {
         $value = $arguments['value'];
-        if ($value === null) {
-            $value = (string)$renderChildrenClosure();
-        }
+        $value ??= (string)$renderChildrenClosure();
 
         if (UnicodeUtilityFunctions::strlen($value) > $arguments['maxCharacters']) {
             return UnicodeUtilityFunctions::substr($value, 0, $arguments['maxCharacters']) . $arguments['append'];

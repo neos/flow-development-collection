@@ -189,7 +189,7 @@ class NumberParser
             }
         }
 
-        $positionOfDecimalSeparator = strpos($numberToParse, $localizedSymbols['decimal']);
+        $positionOfDecimalSeparator = strpos($numberToParse, (string) $localizedSymbols['decimal']);
         if ($positionOfDecimalSeparator === false) {
             $numberToParse = str_replace($localizedSymbols['group'], '', $numberToParse);
 

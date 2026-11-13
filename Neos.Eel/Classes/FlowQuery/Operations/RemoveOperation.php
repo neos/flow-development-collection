@@ -50,9 +50,7 @@ class RemoveOperation extends AbstractOperation
         $context = $flowQuery->getContext();
         $filteredContext = array_filter(
             $context instanceof \Traversable ? iterator_to_array($context) : $context,
-            function ($item) use ($valuesToRemove) {
-                return in_array($item, $valuesToRemove, true) === false;
-            }
+            fn ($item) => in_array($item, $valuesToRemove, true) === false
         );
         $flowQuery->setContext($filteredContext);
     }

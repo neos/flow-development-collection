@@ -95,7 +95,7 @@ class ResourceInterceptor implements InterceptorInterface
         if (!$node instanceof TextNode) {
             return $node;
         }
-        if (strpos($node->getText(), 'Public/') === false) {
+        if (!str_contains($node->getText(), 'Public/')) {
             return $node;
         }
         $textParts = preg_split(self::PATTERN_SPLIT_AT_RESOURCE_URIS, $node->getText(), -1, PREG_SPLIT_NO_EMPTY | PREG_SPLIT_DELIM_CAPTURE) ?: [];

@@ -247,7 +247,7 @@ class TemplatePaths extends \TYPO3Fluid\Fluid\View\TemplatePaths
             $paths = $this->expandGenericPathPattern($this->options['templatePathAndFilenamePattern'], array_merge($this->patternReplacementVariables, [
                 'controllerName' => $controller,
                 'action' => $action,
-                'format' => ($format !== null ? $format : $this->patternReplacementVariables['format'])
+                'format' => ($format ?? $this->patternReplacementVariables['format'])
             ]), false, false);
         }
 
@@ -257,7 +257,7 @@ class TemplatePaths extends \TYPO3Fluid\Fluid\View\TemplatePaths
                     return $path;
                 }
             }
-        } catch (\Neos\Flow\ResourceManagement\Exception $resourceException) {/* ignoring to throw the exception below */
+        } catch (\Neos\Flow\ResourceManagement\Exception) {/* ignoring to throw the exception below */
         }
 
 
@@ -311,8 +311,8 @@ class TemplatePaths extends \TYPO3Fluid\Fluid\View\TemplatePaths
             'partial' => $partialName,
         ]);
 
-        if (strpos($partialName, ':') !== false) {
-            list($packageKey, $actualPartialName) = explode(':', $partialName);
+        if (str_contains($partialName, ':')) {
+            [$packageKey, $actualPartialName] = explode(':', $partialName);
             /** @var FlowPackageInterface $package */
             $package = $this->packageManager->getPackage($packageKey);
             $patternReplacementVariables['package'] = $packageKey;
@@ -340,7 +340,7 @@ class TemplatePaths extends \TYPO3Fluid\Fluid\View\TemplatePaths
         if ($this->packageManager === null) {
             return '';
         }
-        if (strpos($packageName, '/') !== false) {
+        if (str_contains($packageName, '/')) {
             $packageName = $this->packageManager->getPackageKeyFromComposerName($packageName);
         }
 
@@ -415,9 +415,9 @@ class TemplatePaths extends \TYPO3Fluid\Fluid\View\TemplatePaths
         $paths = $this->expandPatterns($paths, '@partialRoot', isset($patternReplacementVariables['partialRoot']) ? [$patternReplacementVariables['partialRoot']] : $this->getPartialRootPaths());
         $paths = $this->expandPatterns($paths, '@layoutRoot', isset($patternReplacementVariables['layoutRoot']) ? [$patternReplacementVariables['layoutRoot']] : $this->getLayoutRootPaths());
 
-        $subPackageKey = isset($patternReplacementVariables['subPackageKey']) ? $patternReplacementVariables['subPackageKey'] : '';
-        $controllerName = isset($patternReplacementVariables['controllerName']) ? $patternReplacementVariables['controllerName'] : '';
-        $format = isset($patternReplacementVariables['format']) ? $patternReplacementVariables['format'] : '';
+        $subPackageKey = $patternReplacementVariables['subPackageKey'] ?? '';
+        $controllerName = $patternReplacementVariables['controllerName'] ?? '';
+        $format = $patternReplacementVariables['format'] ?? '';
         unset($patternReplacementVariables['subPackageKey']);
         unset($patternReplacementVariables['controllerName']);
         unset($patternReplacementVariables['format']);

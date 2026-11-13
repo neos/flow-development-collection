@@ -79,9 +79,7 @@ class JsonViewHelper extends AbstractViewHelper
     {
         $value = $this->arguments['value'];
 
-        if ($value === null) {
-            $value = $this->renderChildren();
-        }
+        $value ??= $this->renderChildren();
         $options = JSON_HEX_TAG;
         if ($this->arguments['forceObject'] !== false) {
             $options = $options | JSON_FORCE_OBJECT;

@@ -300,9 +300,7 @@ class PackageManager
         if ($this->isPackageAvailable($packageKey->value)) {
             throw new Exception\PackageKeyAlreadyExistsException('The package key "' . $packageKey->value . '" already exists', 1220722873);
         }
-        if (!isset($manifest['type'])) {
-            $manifest['type'] = PackageInterface::DEFAULT_COMPOSER_TYPE;
-        }
+        $manifest['type'] ??= PackageInterface::DEFAULT_COMPOSER_TYPE;
 
         $runComposerRequireForTheCreatedPackage = false;
         if ($packagesPath === null) {
@@ -311,7 +309,7 @@ class PackageManager
                 foreach ($composerManifestRepositories as $repository) {
                     if (is_array($repository) &&
                         isset($repository['type']) && $repository['type'] === 'path' &&
-                        isset($repository['url']) && substr($repository['url'], 0, 2) === './' && substr($repository['url'], -2) === '/*'
+                        isset($repository['url']) && str_starts_with($repository['url'], './') && str_ends_with($repository['url'], '/*')
                     ) {
                         $packagesPath = Files::getUnixStylePath(Files::concatenatePaths([FLOW_PATH_ROOT, substr($repository['url'], 0, -2)]));
                         $runComposerRequireForTheCreatedPackage = true;
@@ -459,7 +457,7 @@ class PackageManager
                 throw new InvalidConfigurationException(sprintf('A package composer.json was found at "%s" that contained no "name".', $packagePath), 1445933572);
             }
 
-            if (strpos($packagePath, Files::concatenatePaths([$this->packagesBasePath, 'Inactive'])) === 0) {
+            if (str_starts_with($packagePath, Files::concatenatePaths([$this->packagesBasePath, 'Inactive']))) {
                 // Skip packages in legacy "Inactive" folder.
                 continue;
             }
@@ -618,7 +616,7 @@ class PackageManager
         if (is_file($legacyPackageStatesPath)) {
             try {
                 @unlink($legacyPackageStatesPath);
-            } catch (\Throwable $e) {
+            } catch (\Throwable) {
                 // PHP 8 apparently throws for unlink even with shutup operator, but we really don't care at this place. It's also the only way to handle this race-condition free.
             }
         }
@@ -626,8 +624,7 @@ class PackageManager
 
         try {
             $this->emitPackageStatesUpdated();
-        } catch (InvalidSlotException $e) {
-        } catch (\Neos\Flow\Exception $e) {
+        } catch (InvalidSlotException|\Neos\Flow\Exception) {
         }
     }
 
@@ -658,9 +655,7 @@ class PackageManager
      */
     protected function collectPackageManifestData(array $packageStates): array
     {
-        return array_map(function ($packageState) {
-            return ComposerUtility::getComposerManifest(Files::getNormalizedPath(Files::concatenatePaths([$this->packagesBasePath, $packageState['packagePath']])));
-        }, $packageStates['packages']);
+        return array_map(fn ($packageState) => ComposerUtility::getComposerManifest(Files::getNormalizedPath(Files::concatenatePaths([$this->packagesBasePath, $packageState['packagePath']]))), $packageStates['packages']);
     }
 
     /**

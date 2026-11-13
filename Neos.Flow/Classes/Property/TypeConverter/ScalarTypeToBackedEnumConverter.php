@@ -25,7 +25,7 @@ class ScalarTypeToBackedEnumConverter extends AbstractTypeConverter
     public function canConvertFrom($source, $targetType): bool
     {
         if (is_a($targetType, \BackedEnum::class, true)) {
-            $backingType = (new \ReflectionEnum($targetType))->getBackingType()?->getName();
+            $backingType = new \ReflectionEnum($targetType)->getBackingType()?->getName();
             return (
                 is_int($source) && $backingType === 'int'
                 || is_string($source) && $backingType === 'string'

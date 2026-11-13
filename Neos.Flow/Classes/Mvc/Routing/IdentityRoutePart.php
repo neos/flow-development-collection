@@ -186,7 +186,7 @@ class IdentityRoutePart extends DynamicRoutePart
         }
         $matches = [];
         preg_match('/^' . $regexPattern . '/', trim($routePath, '/'), $matches);
-        return isset($matches[0]) ? $matches[0] : '';
+        return $matches[0] ?? '';
     }
 
     /**
@@ -284,7 +284,7 @@ class IdentityRoutePart extends DynamicRoutePart
                         $dateFormat = isset($dynamicPathSegmentParts[1]) ? trim($dynamicPathSegmentParts[1]) : 'Y-m-d';
                         $pathSegment .= $this->rewriteForUri($dynamicPathSegment->format($dateFormat));
                     } else {
-                        throw new InvalidUriPatternException(sprintf('Invalid uriPattern "%s" for route part "%s". Property "%s" must be of type string or \DateTime. "%s" given.', $this->getUriPattern(), $this->getName(), $propertyPath, get_class($dynamicPathSegment)), 1316442409);
+                        throw new InvalidUriPatternException(sprintf('Invalid uriPattern "%s" for route part "%s". Property "%s" must be of type string or \DateTime. "%s" given.', $this->getUriPattern(), $this->getName(), $propertyPath, $dynamicPathSegment::class), 1316442409);
                     }
                 } else {
                     $pathSegment .= $this->rewriteForUri((string)$dynamicPathSegment);

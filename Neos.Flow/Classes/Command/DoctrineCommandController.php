@@ -499,7 +499,7 @@ class DoctrineCommandController extends CommandController
             /** @var Package $package */
             foreach ($this->packageManager->getAvailablePackages() as $package) {
                 $type = $package->getComposerManifest('type');
-                if ($type === null || !is_string($type) || (strpos($type, 'typo3-') !== 0 && strpos($type, 'neos-') !== 0)) {
+                if ($type === null || !is_string($type) || (!str_starts_with($type, 'typo3-') && !str_starts_with($type, 'neos-'))) {
                     continue;
                 }
                 $choices[] = $package->getPackageKey();
@@ -537,7 +537,7 @@ class DoctrineCommandController extends CommandController
      * @return void
      * @throws StopCommandException
      */
-    protected function handleException(\Exception $exception): void
+    protected function handleException(\Throwable $exception): void
     {
         $this->outputLine('<error>%s</error>', [$exception->getMessage()]);
         $this->outputLine();

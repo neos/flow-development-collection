@@ -66,7 +66,7 @@ class PlainTextFormatter
         }
 
         if (is_object($var)) {
-            $output .= '[' . get_class($var) . ']:' . PHP_EOL;
+            $output .= '[' . $var::class . ']:' . PHP_EOL;
             foreach (get_object_vars($var) as $objVarName => $objVarValue) {
                 $output .= $this->renderKeyValue($objVarName, $objVarValue, $spaces, $continuationSpaces);
             }

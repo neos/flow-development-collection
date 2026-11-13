@@ -21,9 +21,9 @@ use Neos\Flow\Security\Authorization\Privilege\PrivilegeInterface;
 /**
  * A role. These roles can be structured in a tree.
  */
-class Role
+class Role implements \Stringable
 {
-    private const ROLE_IDENTIFIER_PATTERN = '/^(\w+(?:\.\w+)*)\:(\w+)$/';   // Vendor(.Package)?:RoleName
+    private const string ROLE_IDENTIFIER_PATTERN = '/^(\w+(?:\.\w+)*)\:(\w+)$/';   // Vendor(.Package)?:RoleName
 
     /**
      * The identifier of this role
@@ -281,7 +281,7 @@ class Role
      *
      * @return string the string representation of this role
      */
-    public function __toString()
+    public function __toString(): string
     {
         return $this->identifier;
     }

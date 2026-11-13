@@ -35,18 +35,18 @@ use Psr\Http\Message\UriInterface;
  */
 final class UriConstraints
 {
-    public const CONSTRAINT_SCHEME = 'scheme';
-    public const CONSTRAINT_HOST = 'host';
-    public const CONSTRAINT_HOST_PREFIX = 'hostPrefix';
-    public const CONSTRAINT_HOST_SUFFIX = 'hostSuffix';
-    public const CONSTRAINT_PORT = 'port';
-    public const CONSTRAINT_PATH = 'path';
-    public const CONSTRAINT_PATH_PREFIX = 'pathPrefix';
-    public const CONSTRAINT_PATH_SUFFIX = 'pathSuffix';
-    public const CONSTRAINT_QUERY_STRING = 'queryString';
-    public const CONSTRAINT_FRAGMENT = 'fragment';
+    public const string CONSTRAINT_SCHEME = 'scheme';
+    public const string CONSTRAINT_HOST = 'host';
+    public const string CONSTRAINT_HOST_PREFIX = 'hostPrefix';
+    public const string CONSTRAINT_HOST_SUFFIX = 'hostSuffix';
+    public const string CONSTRAINT_PORT = 'port';
+    public const string CONSTRAINT_PATH = 'path';
+    public const string CONSTRAINT_PATH_PREFIX = 'pathPrefix';
+    public const string CONSTRAINT_PATH_SUFFIX = 'pathSuffix';
+    public const string CONSTRAINT_QUERY_STRING = 'queryString';
+    public const string CONSTRAINT_FRAGMENT = 'fragment';
 
-    public const HTTP_DEFAULT_HOST = 'localhost';
+    public const string HTTP_DEFAULT_HOST = 'localhost';
 
     /**
      * @var array<mixed>
@@ -260,7 +260,7 @@ final class UriConstraints
             $pathPrefix = $append ? $newConstraints[self::CONSTRAINT_PATH_PREFIX] . $pathPrefix : $pathPrefix . $newConstraints[self::CONSTRAINT_PATH_PREFIX];
         }
 
-        if (strncmp($pathPrefix, '/', 1) === 0) {
+        if (str_starts_with($pathPrefix, '/')) {
             throw new \InvalidArgumentException('path prefix is not allowed to start with "/". The passed-in path prefix was "' . $pathPrefix . '", and the computed path prefix (including previously set path prefixes) is "' . $pathPrefix . '". The computed path prefix may never start with "/".', 1570187341);
         }
 
@@ -445,7 +445,7 @@ final class UriConstraints
      */
     private function stringStartsWith(string $string, string $prefix): bool
     {
-        return strpos($string, $prefix) === 0;
+        return str_starts_with($string, $prefix);
     }
 
     /**
@@ -457,6 +457,6 @@ final class UriConstraints
      */
     private function stringEndsWith(string $string, string $suffix): bool
     {
-        return substr($string, -strlen($suffix)) === $suffix;
+        return str_ends_with($string, $suffix);
     }
 }

@@ -116,7 +116,7 @@ class Configuration
     {
         $backtrace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 2);
         if (isset($backtrace[1]['object'])) {
-            $this->configurationSourceHint = get_class($backtrace[1]['object']);
+            $this->configurationSourceHint = $backtrace[1]['object']::class;
         } elseif (isset($backtrace[1]['class'])) {
             $this->configurationSourceHint = $backtrace[1]['class'];
         }

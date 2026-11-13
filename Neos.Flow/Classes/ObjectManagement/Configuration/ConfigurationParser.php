@@ -178,11 +178,9 @@ readonly class ConfigurationParser
                 }
             }
 
-            if ($objectName === null) {
-                // This is a weird object configuration, we create a magic virtual object for it, throwing might be stricter,
-                // but this can happen in the real world. So safer for now. Also global Objects.yaml is problematic.
-                $objectName = 'Runtime.Virtual.Object:' . md5(json_encode($objectNameOrConfiguration, JSON_THROW_ON_ERROR));
-            }
+            // This is a weird object configuration, we create a magic virtual object for it, throwing might be stricter,
+            // but this can happen in the real world. So safer for now. Also global Objects.yaml is problematic.
+            $objectName ??= 'Runtime.Virtual.Object:' . md5(json_encode($objectNameOrConfiguration, JSON_THROW_ON_ERROR));
 
             $objectConfiguration = $this->parseConfigurationArray($objectName, $objectNameOrConfiguration, $parentObjectConfiguration->getConfigurationSourceHint() . ', argument "' . $argumentName . '"');
             $argument = new ConfigurationArgument((int)$argumentName, $objectConfiguration, ConfigurationArgument::ARGUMENT_TYPES_OBJECT);
@@ -243,16 +241,12 @@ readonly class ConfigurationParser
      */
     protected static function parseScope(string $value): int
     {
-        switch ($value) {
-            case 'singleton':
-                return Configuration::SCOPE_SINGLETON;
-            case 'prototype':
-                return Configuration::SCOPE_PROTOTYPE;
-            case 'session':
-                return Configuration::SCOPE_SESSION;
-            default:
-                throw new InvalidObjectConfigurationException('Invalid scope "' . $value . '"', 1167574991);
-        }
+        return match ($value) {
+            'singleton' => Configuration::SCOPE_SINGLETON,
+            'prototype' => Configuration::SCOPE_PROTOTYPE,
+            'session' => Configuration::SCOPE_SESSION,
+            default => throw new InvalidObjectConfigurationException('Invalid scope "' . $value . '"', 1167574991),
+        };
     }
 
     /**

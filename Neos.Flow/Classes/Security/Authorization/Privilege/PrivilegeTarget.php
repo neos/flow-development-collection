@@ -136,7 +136,7 @@ class PrivilegeTarget
         $privilegeParameters = array_map($this->createParameterMapper($parameters), $this->parameterDefinitions);
         $privilege = new $this->privilegeClassName($this, $this->matcher, $permission, $privilegeParameters);
         if (!$privilege instanceof PrivilegeInterface) {
-            throw new SecurityException(sprintf('Expected instance of PrivilegeInterface, got "%s"', get_class($privilege)), 1395869340);
+            throw new SecurityException(sprintf('Expected instance of PrivilegeInterface, got "%s"', $privilege::class), 1395869340);
         }
         $privilege->injectObjectManager($this->objectManager);
 
@@ -157,9 +157,7 @@ class PrivilegeTarget
      */
     protected function createParameterMapper(array $parameters): \Closure
     {
-        return function (PrivilegeParameterDefinition $parameterDefinition) use ($parameters) {
-            return $this->createParameter($parameterDefinition, $parameters);
-        };
+        return fn (PrivilegeParameterDefinition $parameterDefinition) => $this->createParameter($parameterDefinition, $parameters);
     }
 
     /**

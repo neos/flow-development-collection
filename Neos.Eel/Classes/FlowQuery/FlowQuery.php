@@ -131,7 +131,7 @@ class FlowQuery implements ProtectedContextAwareInterface, \IteratorAggregate, \
      */
     public static function q($element): self
     {
-        return new static(is_array($element) || $element instanceof \Traversable ? $element : [$element]);
+        return new static(is_iterable($element) ? $element : [$element]);
     }
 
     /**

@@ -88,9 +88,7 @@ class HtmlentitiesViewHelper extends AbstractViewHelper
     public static function renderStatic(array $arguments, \Closure $renderChildrenClosure, RenderingContextInterface $renderingContext)
     {
         $value = $arguments['value'];
-        if ($value === null) {
-            $value = $renderChildrenClosure();
-        }
+        $value ??= $renderChildrenClosure();
         if (is_object($value) && method_exists($value, '__toString')) {
             $value = $value->__toString();
         } elseif (!is_string($value)) {

@@ -37,9 +37,7 @@ class PackageFactory
     {
         $absolutePackagePath = Files::concatenatePaths([$packagesBasePath, $packagePath]) . '/';
 
-        if ($packageClassInformation === null) {
-            $packageClassInformation = $this->detectFlowPackageFilePath($packageKey, $absolutePackagePath);
-        }
+        $packageClassInformation ??= $this->detectFlowPackageFilePath($packageKey, $absolutePackagePath);
 
         $packageClassName = $packageClassInformation['className'];
 
@@ -76,7 +74,7 @@ class PackageFactory
         }
 
         $composerManifest = ComposerUtility::getComposerManifest($absolutePackagePath);
-        if (!ComposerUtility::isFlowPackageType(isset($composerManifest['type']) ? $composerManifest['type'] : '')) {
+        if (!ComposerUtility::isFlowPackageType($composerManifest['type'] ?? '')) {
             return ['className' => GenericPackage::class, 'pathAndFilename' => ''];
         }
 
@@ -105,7 +103,7 @@ class PackageFactory
         if (!$packageClassContents) {
             throw new Exception\CorruptPackageException(sprintf('Could not read package class file of package "%s"', $packageKey->value), 1744142431);
         }
-        $packageClassName = (new PhpAnalyzer($packageClassContents))->extractFullyQualifiedClassName();
+        $packageClassName = new PhpAnalyzer($packageClassContents)->extractFullyQualifiedClassName();
         if ($packageClassName === null || !is_subclass_of($packageClassName, PackageInterface::class)) {
             throw new Exception\CorruptPackageException(sprintf('The package "%s" does not contain a valid package class. Check if the file "%s" really contains a class.', $packageKey->value, $packageClassPathAndFilename), 1327587091);
         }

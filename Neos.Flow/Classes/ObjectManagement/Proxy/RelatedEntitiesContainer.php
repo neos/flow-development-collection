@@ -42,7 +42,7 @@ final class RelatedEntitiesContainer implements \IteratorAggregate
         if ($propertyValue instanceof DoctrineProxy) {
             $className = get_parent_class($propertyValue);
         } else {
-            $className = Bootstrap::$staticObjectManager->getObjectNameByClassName(get_class($propertyValue));
+            $className = Bootstrap::$staticObjectManager->getObjectNameByClassName($propertyValue::class);
         }
         $identifier = Bootstrap::$staticObjectManager->get(PersistenceManagerInterface::class)->getIdentifierByObject($propertyValue);
         if (!$identifier && $propertyValue instanceof DoctrineProxy) {

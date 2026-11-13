@@ -47,14 +47,12 @@ class Utility
             $leafName = array_pop($variablePathNames);
             $currentPathBase = & $defaultContextVariables;
             foreach ($variablePathNames as $pathName) {
-                if (!isset($currentPathBase[$pathName])) {
-                    $currentPathBase[$pathName] = [];
-                }
+                $currentPathBase[$pathName] ??= [];
                 $currentPathBase = & $currentPathBase[$pathName];
             }
 
-            if (strpos($objectType, '::') !== false) {
-                if (strpos($variableName, '.') !== false) {
+            if (str_contains($objectType, '::')) {
+                if (str_contains($variableName, '.')) {
                     throw new Exception(sprintf('Function helpers are only allowed on root level, "%s" was given?', $variableName), 1557911015);
                 }
                 $currentPathBase[$leafName] = self::createClosureFromConfiguration($objectType);
@@ -74,7 +72,7 @@ class Utility
      */
     private static function createClosureFromConfiguration(string $objectConfiguration): callable
     {
-        list($className, $methodName) = explode('::', $objectConfiguration, 2);
+        [$className, $methodName] = explode('::', $objectConfiguration, 2);
         return function (...$arguments) use ($className, $methodName, $objectConfiguration) {
             $callback = [$className, $methodName];
             if (!is_callable($callback)) {

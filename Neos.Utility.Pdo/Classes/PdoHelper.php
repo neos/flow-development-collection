@@ -55,7 +55,7 @@ abstract class PdoHelper
         $statement = '';
         foreach ($sql ?: [] as $line) {
             $statement .= ' ' . trim(strtr($line, $replacePairs));
-            if (substr($statement, -1) === ';') {
+            if (str_ends_with($statement, ';')) {
                 $databaseHandle->exec($statement);
                 $statement = '';
             }

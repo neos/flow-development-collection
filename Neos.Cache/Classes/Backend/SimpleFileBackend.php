@@ -265,9 +265,9 @@ class SimpleFileBackend extends IndependentAbstractBackend implements PhpCapable
                     $this->cacheFilesIterator = null;
                     return true;
                 }
-            } catch (\Exception $e) {
+            } catch (\Exception) {
             }
-            usleep(rand(10, 500));
+            usleep(random_int(10, 500));
         }
 
         return false;
@@ -414,11 +414,9 @@ class SimpleFileBackend extends IndependentAbstractBackend implements PhpCapable
      */
     public function rewind(): void
     {
-        if ($this->cacheFilesIterator === null) {
-            $this->cacheFilesIterator = new \DirectoryIterator($this->cacheDirectory);
-        }
+        $this->cacheFilesIterator ??= new \DirectoryIterator($this->cacheDirectory);
         $this->cacheFilesIterator->rewind();
-        while (substr($this->cacheFilesIterator->getFilename(), 0, 1) === '.' && $this->cacheFilesIterator->valid()) {
+        while (str_starts_with($this->cacheFilesIterator->getFilename(), '.') && $this->cacheFilesIterator->valid()) {
             $this->cacheFilesIterator->next();
         }
     }
@@ -469,7 +467,7 @@ class SimpleFileBackend extends IndependentAbstractBackend implements PhpCapable
         if (!is_writable($cacheDirectory)) {
             try {
                 Files::createDirectoryRecursively($cacheDirectory);
-            } catch (FilesException $exception) {
+            } catch (FilesException) {
                 throw new Exception('The cache directory "' . $cacheDirectory . '" could not be created.', 1264426237);
             }
         }
@@ -517,13 +515,13 @@ class SimpleFileBackend extends IndependentAbstractBackend implements PhpCapable
                     flock($file, LOCK_UN);
                 }
                 fclose($file);
-            } catch (\Exception $e) {
+            } catch (\Exception) {
             }
 
             if ($data !== false) {
                 return $data;
             }
-            usleep(rand(10, 500));
+            usleep(random_int(10, 500));
         }
 
         return false;
@@ -559,13 +557,13 @@ class SimpleFileBackend extends IndependentAbstractBackend implements PhpCapable
                     flock($file, LOCK_UN);
                 }
                 fclose($file);
-            } catch (\Exception $e) {
+            } catch (\Exception) {
             }
             if ($result !== false) {
                 clearstatcache(true, $cacheEntryPathAndFilename);
                 return $result;
             }
-            usleep(rand(10, 500));
+            usleep(random_int(10, 500));
         }
 
         return false;

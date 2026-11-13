@@ -55,9 +55,7 @@ class SessionManager implements SessionManagerInterface
      */
     public function getCurrentSession(): SessionInterface
     {
-        if ($this->currentSession === null) {
-            $this->currentSession = Session::create();
-        }
+        $this->currentSession ??= Session::create();
         return $this->currentSession;
     }
 
@@ -232,7 +230,7 @@ class SessionManager implements SessionManagerInterface
         } else {
             $factor = 1;
         }
-        if (rand(1, 100 * $factor) <= ($this->garbageCollectionProbability * $factor)) {
+        if (random_int(1, 100 * $factor) <= ($this->garbageCollectionProbability * $factor)) {
             $this->collectGarbage();
         }
     }

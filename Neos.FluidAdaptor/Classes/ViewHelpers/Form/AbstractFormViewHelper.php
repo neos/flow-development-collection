@@ -81,7 +81,7 @@ abstract class AbstractFormViewHelper extends AbstractTagBasedViewHelper
         }
         $identifier = $this->persistenceManager->getIdentifierByObject($object);
         if ($identifier === null) {
-            return chr(10) . '<!-- Object of type ' . get_class($object) . ' is without identity -->' . chr(10);
+            return chr(10) . '<!-- Object of type ' . $object::class . ' is without identity -->' . chr(10);
         }
         $name = $this->prefixFieldName($name) . '[__identity]';
         $this->registerFieldNameForFormTokenGeneration($name);

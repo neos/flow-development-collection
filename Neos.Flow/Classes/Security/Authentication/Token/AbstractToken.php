@@ -147,7 +147,7 @@ abstract class AbstractToken implements TokenInterface
     {
         foreach ($requestPatterns as $requestPattern) {
             if (!$requestPattern instanceof RequestPatternInterface) {
-                throw new \InvalidArgumentException(sprintf('Invalid request pattern passed to token of type "%s"', get_class($this)), 1327398366);
+                throw new \InvalidArgumentException(sprintf('Invalid request pattern passed to token of type "%s"', static::class), 1327398366);
             }
         }
         $this->requestPatterns = $requestPatterns;
@@ -225,8 +225,8 @@ abstract class AbstractToken implements TokenInterface
      *
      * @return string The class name
      */
-    public function __toString()
+    public function __toString(): string
     {
-        return get_class($this);
+        return static::class;
     }
 }

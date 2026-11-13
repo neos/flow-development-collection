@@ -186,11 +186,9 @@ class XliffFileProvider
      */
     public function getParser($documentVersion)
     {
-        switch ($documentVersion) {
-            case '1.2':
-                return new V12XliffParser();
-            default:
-                return null;
-        }
+        return match ($documentVersion) {
+            '1.2' => new V12XliffParser(),
+            default => null,
+        };
     }
 }

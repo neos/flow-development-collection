@@ -121,9 +121,7 @@ class RedisBackend extends IndependentAbstractBackend implements TaggableBackend
             throw new \RuntimeException(sprintf('Cannot add or modify cache entry because the backend of cache "%s" is frozen.', $this->cacheIdentifier), 1323344192);
         }
 
-        if ($lifetime === null) {
-            $lifetime = $this->defaultLifetime;
-        }
+        $lifetime ??= $this->defaultLifetime;
 
         $setOptions = [];
         if ($lifetime > 0) {
@@ -338,9 +336,7 @@ class RedisBackend extends IndependentAbstractBackend implements TaggableBackend
         // Flush tags in batches
         for ($i = 0, $iMax = count($tags); $i < $iMax; $i += $this->batchSize) {
             $tagList = array_slice($tags, $i, $this->batchSize);
-            $keys = array_map(function ($tag) {
-                return $this->getPrefixedIdentifier('tag:' . $tag);
-            }, $tagList);
+            $keys = array_map(fn ($tag) => $this->getPrefixedIdentifier('tag:' . $tag), $tagList);
             $values = array_fill(0, count($keys), $this->getPrefixedIdentifier(''));
 
             $flushedEntries = $this->redis->eval($script, array_merge($keys, $values), count($keys));
@@ -442,9 +438,7 @@ class RedisBackend extends IndependentAbstractBackend implements TaggableBackend
      */
     public function isFrozen(): bool
     {
-        if (null === $this->frozen) {
-            $this->frozen = (bool)$this->redis->exists($this->getPrefixedIdentifier('frozen'));
-        }
+        $this->frozen ??= (bool)$this->redis->exists($this->getPrefixedIdentifier('frozen'));
 
         return $this->frozen;
     }

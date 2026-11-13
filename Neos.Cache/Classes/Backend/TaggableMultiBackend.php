@@ -38,7 +38,7 @@ class TaggableMultiBackend extends MultiBackend implements TaggableBackendInterf
     protected function buildSubBackend(string $backendClassName, array $backendOptions): ?BackendInterface
     {
         if (!is_subclass_of($backendClassName, TaggableBackendInterface::class)) {
-            $message = sprintf('Failed building sub backend %s for %s because it does not implement %s', $backendClassName, get_class($this), TaggableBackendInterface::class);
+            $message = sprintf('Failed building sub backend %s for %s because it does not implement %s', $backendClassName, static::class, TaggableBackendInterface::class);
             $throwable = new Exception($message);
             $this->logger?->error(($this->throwableStorage ? $this->throwableStorage->logThrowable($throwable) : $message), LogEnvironment::fromMethodName(__METHOD__));
             $this->handleError($throwable);
@@ -58,7 +58,7 @@ class TaggableMultiBackend extends MultiBackend implements TaggableBackendInterf
             try {
                 $flushed += $backend->flushByTag($tag);
             } catch (Throwable $throwable) {
-                $this->logger?->error('Failed flushing cache by tag using backend ' . get_class($backend) . ' in ' . get_class($this) . ': ' . $this->throwableStorage?->logThrowable($throwable), LogEnvironment::fromMethodName(__METHOD__));
+                $this->logger?->error('Failed flushing cache by tag using backend ' . $backend::class . ' in ' . static::class . ': ' . $this->throwableStorage?->logThrowable($throwable), LogEnvironment::fromMethodName(__METHOD__));
                 $this->handleError($throwable);
                 $this->removeUnhealthyBackend($backend);
             }
@@ -92,7 +92,7 @@ class TaggableMultiBackend extends MultiBackend implements TaggableBackendInterf
             try {
                 $identifiers[] = $backend->findIdentifiersByTag($tag);
             } catch (Throwable $throwable) {
-                $this->logger?->error('Failed finding identifiers by tag using backend ' . get_class($backend) . ' in ' . get_class($this) . ': ' . $this->throwableStorage?->logThrowable($throwable), LogEnvironment::fromMethodName(__METHOD__));
+                $this->logger?->error('Failed finding identifiers by tag using backend ' . $backend::class . ' in ' . static::class . ': ' . $this->throwableStorage?->logThrowable($throwable), LogEnvironment::fromMethodName(__METHOD__));
                 $this->handleError($throwable);
                 $this->removeUnhealthyBackend($backend);
             }

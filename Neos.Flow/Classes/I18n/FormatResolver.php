@@ -101,9 +101,7 @@ class FormatResolver
      */
     public function resolvePlaceholders($textWithPlaceholders, array $arguments, ?Locale $locale = null)
     {
-        if ($locale === null) {
-            $locale = $this->localizationService->getConfiguration()->getDefaultLocale();
-        }
+        $locale ??= $this->localizationService->getConfiguration()->getDefaultLocale();
 
         $lastPlaceHolderAt = 0;
         while ($lastPlaceHolderAt < strlen($textWithPlaceholders) && ($startOfPlaceholder = strpos($textWithPlaceholders, '{', $lastPlaceHolderAt)) !== false) {
@@ -182,7 +180,7 @@ class FormatResolver
             $foundFormatter = $this->objectManager->get($possibleClassName);
         }
         if (!$foundFormatter instanceof FormatterInterface) {
-            throw new \Exception('No valid formatter found, got ' . get_class($foundFormatter), 1744412948);
+            throw new \Exception('No valid formatter found, got ' . $foundFormatter::class, 1744412948);
         }
 
         $this->formatters[$formatterType] = $foundFormatter;

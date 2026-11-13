@@ -21,9 +21,9 @@ use Neos\Flow\Annotations as Flow;
  */
 final readonly class ConfigurationArgument
 {
-    public const ARGUMENT_TYPES_STRAIGHTVALUE = 0;
-    public const ARGUMENT_TYPES_OBJECT = 1;
-    public const ARGUMENT_TYPES_SETTING = 2;
+    public const int ARGUMENT_TYPES_STRAIGHTVALUE = 0;
+    public const int ARGUMENT_TYPES_OBJECT = 1;
+    public const int ARGUMENT_TYPES_SETTING = 2;
 
     /**
      * Constructor - sets the index, value and type of the argument

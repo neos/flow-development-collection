@@ -312,7 +312,7 @@ class StandaloneView extends AbstractTemplateView
             );
 
             return true;
-        } catch (InvalidTemplateResourceException $e) {
+        } catch (InvalidTemplateResourceException) {
             return false;
         }
     }

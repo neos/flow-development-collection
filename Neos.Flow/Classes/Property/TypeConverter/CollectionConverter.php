@@ -37,7 +37,7 @@ class CollectionConverter extends AbstractTypeConverter
     /**
      * @var string
      */
-    protected $targetType = 'Doctrine\Common\Collections\Collection';
+    protected $targetType = \Doctrine\Common\Collections\Collection::class;
 
     /**
      * @var integer

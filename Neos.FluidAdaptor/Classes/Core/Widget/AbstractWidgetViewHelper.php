@@ -143,7 +143,7 @@ abstract class AbstractWidgetViewHelper extends AbstractViewHelper implements Ch
         $this->widgetContext->setNonAjaxWidgetConfiguration($this->getNonAjaxWidgetConfiguration());
         $this->initializeWidgetIdentifier();
 
-        $this->widgetContext->setControllerObjectName(get_class($this->controller));
+        $this->widgetContext->setControllerObjectName($this->controller::class);
     }
 
     /**
@@ -307,7 +307,7 @@ abstract class AbstractWidgetViewHelper extends AbstractViewHelper implements Ch
      */
     private function initializeWidgetIdentifier()
     {
-        $widgetIdentifier = ($this->hasArgument('widgetId') ? $this->arguments['widgetId'] : strtolower(str_replace('\\', '-', get_class($this))));
+        $widgetIdentifier = ($this->hasArgument('widgetId') ? $this->arguments['widgetId'] : strtolower(str_replace('\\', '-', static::class)));
         $this->widgetContext->setWidgetIdentifier($widgetIdentifier);
     }
 

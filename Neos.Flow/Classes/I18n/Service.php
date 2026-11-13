@@ -129,12 +129,10 @@ class Service
      */
     public function getLocalizedFilename($pathAndFilename, ?Locale $locale = null, $strict = false)
     {
-        if ($locale === null) {
-            $locale = $this->configuration->getCurrentLocale();
-        }
+        $locale ??= $this->configuration->getCurrentLocale();
 
         $filename = basename($pathAndFilename);
-        if ((strpos($filename, '.')) !== false) {
+        if (str_contains($filename, '.')) {
             $dotPosition = strrpos($pathAndFilename, '.') ?: 0;
             $pathAndFilenameWithoutExtension = substr($pathAndFilename, 0, $dotPosition);
             $extension = substr($pathAndFilename, $dotPosition);
@@ -182,9 +180,7 @@ class Service
      */
     public function getXliffFilenameAndPath($path, $sourceName, ?Locale $locale = null)
     {
-        if ($locale === null) {
-            $locale = $this->configuration->getCurrentLocale();
-        }
+        $locale ??= $this->configuration->getCurrentLocale();
 
         foreach ($this->getLocaleChain($locale) as $localeIdentifier => $locale) {
             $possibleXliffFilename = Files::concatenatePaths([$path, $localeIdentifier, $sourceName . '.xlf']);

@@ -36,7 +36,7 @@ class JsonHelper implements ProtectedContextAwareInterface
     public function stringify($value, array $options = []): string
     {
         /** @phpstan-ignore argument.type ("constant" is callable) */
-        $optionSum = array_sum(array_map('constant', $options));
+        $optionSum = array_sum(array_map(constant(...), $options));
         return json_encode($value, $optionSum | JSON_THROW_ON_ERROR);
     }
 

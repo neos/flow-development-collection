@@ -33,7 +33,7 @@ class ArrayTypeConverter extends AbstractTypeConverter
     /**
      * @var array<string>
      */
-    protected $sourceTypes = ['Doctrine\Common\Collections\Collection'];
+    protected $sourceTypes = [\Doctrine\Common\Collections\Collection::class];
 
     /**
      * @var string

@@ -37,7 +37,7 @@ trait ObjectSerializationTrait
     private function Flow_serializeRelatedEntities(array $transientProperties, array $propertyVarTags): array
     {
         $propertiesToSerialize = [];
-        $reflectedClass = new \ReflectionClass(__CLASS__);
+        $reflectedClass = new \ReflectionClass(self::class);
         $allReflectedProperties = $reflectedClass->getProperties();
         foreach ($allReflectedProperties as $reflectionProperty) {
             $propertyName = $reflectionProperty->name;
@@ -73,7 +73,7 @@ trait ObjectSerializationTrait
                         $className = $reflectionProperty->getType()?->getName();
                     }
                     if (Bootstrap::$staticObjectManager->isRegistered($className) === false) {
-                        $className = Bootstrap::$staticObjectManager->getObjectNameByClassName(get_class($this->$propertyName));
+                        $className = Bootstrap::$staticObjectManager->getObjectNameByClassName($this->$propertyName::class);
                     }
                 }
                 if ($this->$propertyName instanceof DoctrineProxy || ($this->$propertyName instanceof PersistenceMagicInterface && !Bootstrap::$staticObjectManager->get(PersistenceManagerInterface::class)->isNewObject($this->$propertyName))) {

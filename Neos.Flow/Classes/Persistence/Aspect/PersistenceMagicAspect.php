@@ -26,7 +26,7 @@ use Neos\Utility\ObjectAccess;
  * @Flow\Scope("singleton")
  * @Flow\Aspect
  */
-#[Flow\Introduce("Neos\Flow\Persistence\Aspect\PersistenceMagicAspect->isEntityOrValueObject", "Neos\Flow\Persistence\Aspect\PersistenceMagicInterface")]
+#[Flow\Introduce("Neos\Flow\Persistence\Aspect\PersistenceMagicAspect->isEntityOrValueObject", \Neos\Flow\Persistence\Aspect\PersistenceMagicInterface::class)]
 class PersistenceMagicAspect
 {
     /**
@@ -112,7 +112,7 @@ class PersistenceMagicAspect
     public function generateValueHash(JoinPointInterface $joinPoint)
     {
         $proxy = $joinPoint->getProxy();
-        $proxyClassName = get_class($proxy);
+        $proxyClassName = $proxy::class;
         $hashSourceParts = [];
 
         $classSchema = $this->reflectionService->getClassSchema($proxyClassName);

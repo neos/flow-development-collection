@@ -57,7 +57,7 @@ class TypeHelper implements ProtectedContextAwareInterface
             return null;
         }
 
-        return get_class($variable);
+        return $variable::class;
     }
 
     /**

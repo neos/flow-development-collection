@@ -92,9 +92,7 @@ class FilterFirewall implements FirewallInterface
      */
     public function blockIllegalRequests(ActionRequest $request)
     {
-        $filterMatched = array_reduce($this->filters, function (bool $filterMatched, RequestFilter $filter) use ($request) {
-            return ($filter->filterRequest($request) ? true : $filterMatched);
-        }, false);
+        $filterMatched = array_reduce($this->filters, fn (bool $filterMatched, RequestFilter $filter) => $filter->filterRequest($request) ? true : $filterMatched, false);
 
         if ($this->rejectAll && !$filterMatched) {
             throw new AccessDeniedException('The request was blocked, because no request filter explicitly allowed it.', 1216923741);
@@ -109,10 +107,10 @@ class FilterFirewall implements FirewallInterface
      */
     protected function createFilterFromConfiguration(array $filterConfiguration): RequestFilter
     {
-        $patternType = isset($filterConfiguration['pattern']) ? $filterConfiguration['pattern'] : $filterConfiguration['patternType'];
+        $patternType = $filterConfiguration['pattern'] ?? $filterConfiguration['patternType'];
         $patternClassName = $this->requestPatternResolver->resolveRequestPatternClass($patternType);
 
-        $patternOptions = isset($filterConfiguration['patternOptions']) ? $filterConfiguration['patternOptions'] : [];
+        $patternOptions = $filterConfiguration['patternOptions'] ?? [];
         /** @var RequestPatternInterface $requestPattern */
         $requestPattern = $this->objectManager->get($patternClassName, $patternOptions);
 

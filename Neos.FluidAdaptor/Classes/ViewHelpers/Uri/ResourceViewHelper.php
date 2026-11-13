@@ -132,10 +132,10 @@ class ResourceViewHelper extends AbstractViewHelper
             $controllerContext = $renderingContext->getControllerContext();
             $package = $controllerContext->getRequest()->getControllerPackageKey();
         }
-        if (strpos($path, 'resource://') === 0) {
+        if (str_starts_with($path, 'resource://')) {
             try {
-                list($package, $path) = $resourceManager->getPackageAndPathByPublicPath($path);
-            } catch (Exception $exception) {
+                [$package, $path] = $resourceManager->getPackageAndPathByPublicPath($path);
+            } catch (Exception) {
                 throw new InvalidVariableException(sprintf('The specified path "%s" does not point to a public resource.', $path), 1386458851);
             }
         }

@@ -45,9 +45,7 @@ class StringHelper implements ProtectedContextAwareInterface
     {
         $string = (string)$string;
 
-        if ($length === null) {
-            $length = mb_strlen($string, 'UTF-8');
-        }
+        $length ??= mb_strlen($string, 'UTF-8');
         $length = max(0, $length);
         return mb_substr($string, $start, $length, 'UTF-8');
     }
@@ -71,9 +69,7 @@ class StringHelper implements ProtectedContextAwareInterface
     {
         $string = (string)$string;
 
-        if ($end === null) {
-            $end = mb_strlen($string, 'UTF-8');
-        }
+        $end ??= mb_strlen($string, 'UTF-8');
         $start = max(0, $start);
         $end = max(0, $end);
         if ($start > $end) {
@@ -121,7 +117,7 @@ class StringHelper implements ProtectedContextAwareInterface
         $string = (string)$string;
         $search = (string)$search;
 
-        $position = $position ?? mb_strlen($string, 'UTF-8');
+        $position ??= mb_strlen($string, 'UTF-8');
         $position = $position - mb_strlen($search, 'UTF-8');
         return mb_strrpos($string, $search, 0, 'UTF-8') === $position;
     }
@@ -206,9 +202,7 @@ class StringHelper implements ProtectedContextAwareInterface
         $string = (string)$string;
 
         $length = mb_strlen($string, 'UTF-8');
-        if ($toIndex === null) {
-            $toIndex = $length;
-        }
+        $toIndex ??= $length;
         $toIndex = max(0, $toIndex);
         if ($search === '') {
             return min($length, $toIndex);
@@ -288,9 +282,7 @@ class StringHelper implements ProtectedContextAwareInterface
      */
     public function pregReplace($string, $pattern, $replace, $limit = -1)
     {
-        if ($limit === null) {
-            $limit = -1;
-        }
+        $limit ??= -1;
         return preg_replace($pattern, $replace, (string)$string, $limit);
     }
 
@@ -390,7 +382,7 @@ class StringHelper implements ProtectedContextAwareInterface
      */
     public function startsWith($string, $search, $position = null)
     {
-        $position = $position ?? 0;
+        $position ??= 0;
         return mb_strpos((string)$string, (string)$search, 0, 'UTF-8') === $position;
     }
 

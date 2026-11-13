@@ -119,7 +119,7 @@ class ResourceCommandController extends CommandController
                     $message = sprintf(
                         'An error occurred while publishing the collection "%s": %s (Exception code: %u): %s',
                         $collection->getName(),
-                        get_class($exception),
+                        $exception::class,
                         $exception->getCode(),
                         $exception->getMessage()
                     );
@@ -137,7 +137,7 @@ class ResourceCommandController extends CommandController
         } catch (Exception $exception) {
             $this->outputLine();
             $this->outputLine('An error occurred while publishing resources (see full description below). You can check and probably fix the integrity of the resource registry by using the resource:clean command.');
-            $this->outputLine('%s (Exception code: %s)', [get_class($exception), $exception->getCode()]);
+            $this->outputLine('%s (Exception code: %s)', [$exception::class, $exception->getCode()]);
             $this->outputLine($exception->getMessage());
             $this->quit(1);
         }
@@ -272,7 +272,7 @@ class ResourceCommandController extends CommandController
                 $this->outputLine('%s (%s) from "%s" collection', [$resource->getFilename(), $resource->getSha1(), $resource->getCollectionName()]);
                 if (isset($relatedAssets[$resource])) {
                     foreach ($relatedAssets[$resource] as $asset) {
-                        $this->outputLine(' -> %s (%s)', [get_class($asset), $asset->getIdentifier()]);
+                        $this->outputLine(' -> %s (%s)', [$asset::class, $asset->getIdentifier()]);
                     }
                 }
             }

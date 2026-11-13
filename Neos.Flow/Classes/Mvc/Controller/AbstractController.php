@@ -370,13 +370,11 @@ abstract class AbstractController implements ControllerInterface
     {
         $httpResponse = $this->response->buildHttpResponse();
         $httpResponse = $httpResponse->withStatus($statusCode);
-        if ($content === null) {
-            $content = sprintf(
-                '%s %s',
-                $statusCode,
-                $statusMessage ?? ResponseInformationHelper::getStatusMessageByCode($statusCode)
-            );
-        }
+        $content ??= sprintf(
+            '%s %s',
+            $statusCode,
+            $statusMessage ?? ResponseInformationHelper::getStatusMessageByCode($statusCode)
+        );
         $httpResponse = $httpResponse->withBody(Utils::streamFor($content));
         throw StopActionException::createForResponse($httpResponse, $content);
     }

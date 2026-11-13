@@ -125,7 +125,7 @@ class SlaveRequestHandler implements RequestHandlerInterface
      */
     protected function emitDispatchedCommandLineSlaveRequest()
     {
-        $this->bootstrap->getSignalSlotDispatcher()->dispatch(__CLASS__, 'dispatchedCommandLineSlaveRequest', []);
+        $this->bootstrap->getSignalSlotDispatcher()->dispatch(self::class, 'dispatchedCommandLineSlaveRequest', []);
     }
 
     /**
@@ -135,7 +135,7 @@ class SlaveRequestHandler implements RequestHandlerInterface
      * @param \Exception $exception
      * @return void
      */
-    protected function handleException(\Exception $exception)
+    protected function handleException(\Throwable $exception)
     {
         $response = new Response();
 

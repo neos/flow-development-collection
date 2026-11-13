@@ -275,7 +275,7 @@ class FilterOperation extends AbstractOperation
                     }
                     return false;
                 } else {
-                    return strpos((string)$value, (string)$operand) === 0;
+                    return str_starts_with((string)$value, (string)$operand);
                 }
                 // no break
             case '^=~':
@@ -290,24 +290,14 @@ class FilterOperation extends AbstractOperation
                 // no break
             case '*=':
                 if (is_array($value)) {
-                    foreach ($value as $item) {
-                        if ($this->evaluateOperator($item, '=', $operand)) {
-                            return true;
-                        }
-                    }
-                    return false;
+                    return array_any($value, fn ($item) => $this->evaluateOperator($item, '=', $operand));
                 } else {
-                    return strpos((string)$value, (string)$operand) !== false;
+                    return str_contains((string)$value, (string)$operand);
                 }
                 // no break
             case '*=~':
                 if (is_array($value)) {
-                    foreach ($value as $item) {
-                        if ($this->evaluateOperator($item, '=~', $operand)) {
-                            return true;
-                        }
-                    }
-                    return false;
+                    return array_any($value, fn ($item) => $this->evaluateOperator($item, '=~', $operand));
                 } else {
                     return stripos((string)$value, (string)$operand) !== false;
                 }

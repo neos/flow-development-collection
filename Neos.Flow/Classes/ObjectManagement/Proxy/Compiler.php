@@ -183,7 +183,7 @@ class Compiler
      */
     public function emitAfterCompile(array $compiledClasses): void
     {
-        $this->signalSlotDispatcher->dispatch(__CLASS__, 'afterCompile', [$compiledClasses]);
+        $this->signalSlotDispatcher->dispatch(self::class, 'afterCompile', [$compiledClasses]);
     }
 
     /**
@@ -332,9 +332,9 @@ return ' . var_export($this->storedProxyClasses, true) . ';';
      */
     public static function renderAnnotation(object $annotation): string
     {
-        $annotationAsString = '@\\' . get_class($annotation);
+        $annotationAsString = '@\\' . $annotation::class;
 
-        $optionDefaults = get_class_vars(get_class($annotation));
+        $optionDefaults = get_class_vars($annotation::class);
         $optionValues = get_object_vars($annotation);
         $optionsAsStrings = [];
         foreach ($optionValues as $optionName => $optionValue) {

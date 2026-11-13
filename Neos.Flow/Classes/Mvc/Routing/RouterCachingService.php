@@ -255,12 +255,7 @@ class RouterCachingService
         if (!is_array($subject)) {
             return false;
         }
-        foreach ($subject as $value) {
-            if ($this->containsObject($value)) {
-                return true;
-            }
-        }
-        return false;
+        return array_any($subject, fn ($value) => $this->containsObject($value));
     }
 
     /**

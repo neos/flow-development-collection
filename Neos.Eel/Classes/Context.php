@@ -62,7 +62,7 @@ class Context
                 $this->tracer?->recordPropertyAccess($this->value, (string)$path);
                 try {
                     return ObjectAccess::getProperty($this->value, $path);
-                } catch (PropertyNotAccessibleException $exception) {
+                } catch (PropertyNotAccessibleException) {
                     return null;
                 }
             }

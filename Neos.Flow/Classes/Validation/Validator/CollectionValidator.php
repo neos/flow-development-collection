@@ -53,7 +53,7 @@ class CollectionValidator extends GenericObjectValidator
     {
         if ($value instanceof \Doctrine\Common\Collections\AbstractLazyCollection && !$value->isInitialized()) {
             return;
-        } elseif (is_object($value) && !TypeHandling::isCollectionType(get_class($value))) {
+        } elseif (is_object($value) && !TypeHandling::isCollectionType($value::class)) {
             $this->addError('The given subject was not a collection.', 1317204797);
             return;
         } elseif (is_object($value) && $this->isValidatedAlready($value)) {

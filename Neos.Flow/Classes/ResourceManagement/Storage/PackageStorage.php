@@ -60,8 +60,8 @@ class PackageStorage extends FileSystemStorage
     {
         $directories = [];
 
-        if (strpos($pattern, '/') !== false) {
-            list($packageKeyPattern, $directoryPattern) = explode('/', $pattern, 2);
+        if (str_contains($pattern, '/')) {
+            [$packageKeyPattern, $directoryPattern] = explode('/', $pattern, 2);
         } else {
             $packageKeyPattern = $pattern;
             $directoryPattern = '*';
@@ -111,9 +111,7 @@ class PackageStorage extends FileSystemStorage
             $object->setFileSize($fileSize);
         }
         $object->setRelativePublicationPath($this->prepareRelativePublicationPath($pathInfo['dirname'] ?? '', $resourcePackage->getPackageKey(), $resourcePackage->getResourcesPath()));
-        $object->setStream(function () use ($resourcePathAndFilename) {
-            return fopen($resourcePathAndFilename, 'r');
-        });
+        $object->setStream(fn () => fopen($resourcePathAndFilename, 'r'));
 
         return $object;
     }

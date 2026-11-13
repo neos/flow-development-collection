@@ -134,9 +134,7 @@ class CaseViewHelper extends AbstractViewHelper
     {
         $value = $arguments['value'];
         $mode = $arguments['mode'];
-        if ($value === null) {
-            $value = $renderChildrenClosure();
-        }
+        $value ??= $renderChildrenClosure();
 
         $originalEncoding = mb_internal_encoding();
         mb_internal_encoding('UTF-8');

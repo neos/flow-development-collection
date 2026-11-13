@@ -69,14 +69,11 @@ class DatetimeFormatter implements FormatterInterface
             $formatLength = DatesReader::FORMAT_LENGTH_DEFAULT;
         }
 
-        switch ($formatType) {
-            case DatesReader::FORMAT_TYPE_DATE:
-                return $this->formatDate($value, $locale, $formatLength);
-            case DatesReader::FORMAT_TYPE_TIME:
-                return $this->formatTime($value, $locale, $formatLength);
-            default:
-                return $this->formatDateTime($value, $locale, $formatLength);
-        }
+        return match ($formatType) {
+            DatesReader::FORMAT_TYPE_DATE => $this->formatDate($value, $locale, $formatLength),
+            DatesReader::FORMAT_TYPE_TIME => $this->formatTime($value, $locale, $formatLength),
+            default => $this->formatDateTime($value, $locale, $formatLength),
+        };
     }
 
     /**

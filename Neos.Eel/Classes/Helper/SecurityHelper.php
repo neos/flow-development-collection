@@ -72,9 +72,7 @@ class SecurityHelper implements ProtectedContextAwareInterface
             return false;
         }
 
-        return array_reduce($this->securityContext->getAuthenticationTokens(), function (bool $isAuthenticated, TokenInterface $token) {
-            return $isAuthenticated || $token->isAuthenticated();
-        }, false);
+        return array_reduce($this->securityContext->getAuthenticationTokens(), fn (bool $isAuthenticated, TokenInterface $token) => $isAuthenticated || $token->isAuthenticated(), false);
     }
 
     /**

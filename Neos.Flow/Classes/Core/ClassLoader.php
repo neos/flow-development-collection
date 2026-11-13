@@ -225,14 +225,10 @@ class ClassLoader
 
         $currentArray = & $this->packageNamespaces;
         foreach (explode('\\', rtrim($namespace, '\\')) as $namespacePart) {
-            if (!isset($currentArray[$namespacePart])) {
-                $currentArray[$namespacePart] = [];
-            }
+            $currentArray[$namespacePart] ??= [];
             $currentArray = & $currentArray[$namespacePart];
         }
-        if (!isset($currentArray['_pathData'])) {
-            $currentArray['_pathData'] = [];
-        }
+        $currentArray['_pathData'] ??= [];
 
         $currentArray['_pathData'][$entryIdentifier] = [
             'mappingType' => $mappingType,
@@ -249,12 +245,10 @@ class ClassLoader
     public function createFallbackPathEntry(string $path)
     {
         $entryIdentifier = md5($path);
-        if (!isset($this->fallbackClassPaths[$entryIdentifier])) {
-            $this->fallbackClassPaths[$entryIdentifier] = [
-                'path' => $path,
-                'mappingType' => self::MAPPING_TYPE_PSR4
-            ];
-        }
+        $this->fallbackClassPaths[$entryIdentifier] ??= [
+            'path' => $path,
+            'mappingType' => self::MAPPING_TYPE_PSR4
+        ];
     }
 
     /**

@@ -22,7 +22,7 @@ use Neos\Flow\Annotations as Flow;
  * @see http://tools.ietf.org/html/rfc6265
  * @Flow\Proxy(false)
  */
-class Cookie
+class Cookie implements \Stringable
 {
     /**
      * A token as per RFC 2616, Section 2.2
@@ -147,7 +147,7 @@ class Cookie
             throw new \InvalidArgumentException('The parameter "path" passed to the Cookie constructor must be a valid path as per RFC 6265, Section 4.1.1.', 1345123078);
         }
 
-        $sameSite = $sameSite ?? self::SAMESITE_LAX;
+        $sameSite ??= self::SAMESITE_LAX;
         if (!\in_array($sameSite, [self::SAMESITE_LAX, self::SAMESITE_STRICT, self::SAMESITE_NONE], true)) {
             throw new \InvalidArgumentException('The parameter "sameSite" passed to the Cookie constructor must be a valid samesite value. Possible values are "none", "strict" and "lax"', 1584955500);
         }
@@ -179,9 +179,9 @@ class Cookie
     {
         $nameValueAndUnparsedAttributes = explode(';', $header, 2);
         $expectedNameValuePair = $nameValueAndUnparsedAttributes[0];
-        $unparsedAttributes = isset($nameValueAndUnparsedAttributes[1]) ? $nameValueAndUnparsedAttributes[1] : '';
+        $unparsedAttributes = $nameValueAndUnparsedAttributes[1] ?? '';
 
-        if (strpos($expectedNameValuePair, '=') === false) {
+        if (!str_contains($expectedNameValuePair, '=')) {
             return null;
         }
         $cookieNameAndValue = explode('=', $expectedNameValuePair, 2);
@@ -208,7 +208,7 @@ class Cookie
                     case 'EXPIRES':
                         try {
                             $expiresAttribute = new \DateTime($attributeValue);
-                        } catch (\Exception $exception) {
+                        } catch (\Exception) {
                             // as of RFC 6265 Section 5.2.1, a non parsable Expires date should result into
                             // ignoring, but since the Cookie constructor relies on it, we'll
                             // assume a Session cookie with an expiry date of 0.
@@ -226,7 +226,7 @@ class Cookie
                         }
                         break;
                     case 'PATH':
-                        if ($attributeValue === '' || substr($attributeValue, 0, 1) !== '/') {
+                        if ($attributeValue === '' || !str_starts_with($attributeValue, '/')) {
                             $pathAttribute = '/';
                         } else {
                             $pathAttribute = $attributeValue;
@@ -417,7 +417,7 @@ class Cookie
      *
      * @return string
      */
-    public function __toString()
+    public function __toString(): string
     {
         if ($this->value === false) {
             $value = 0;

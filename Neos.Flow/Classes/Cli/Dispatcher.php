@@ -43,7 +43,7 @@ class Dispatcher
                 $this->emitBeforeControllerInvocation($request, $response, $controller);
                 $controller->processRequest($request, $response);
                 $this->emitAfterControllerInvocation($request, $response, $controller);
-            } catch (StopCommandException $exception) {
+            } catch (StopCommandException) {
                 $this->emitAfterControllerInvocation($request, $response, $controller);
             }
         }

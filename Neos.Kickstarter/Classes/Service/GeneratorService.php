@@ -68,7 +68,7 @@ class GeneratorService
      */
     public function generateActionController($packageKey, $subpackage, $controllerName, $fusionView = false, $overwrite = false)
     {
-        list($baseNamespace, $namespaceEntryPath) = $this->getPrimaryNamespaceAndEntryPath($this->packageManager->getPackage($packageKey));
+        [$baseNamespace, $namespaceEntryPath] = $this->getPrimaryNamespaceAndEntryPath($this->packageManager->getPackage($packageKey));
         $controllerName = ucfirst($controllerName);
         $controllerClassName = $controllerName . 'Controller';
 
@@ -107,7 +107,7 @@ class GeneratorService
      */
     public function generateCrudController($packageKey, $subpackage, $controllerName, $fusionView = false, $overwrite = false)
     {
-        list($baseNamespace, $namespaceEntryPath) = $this->getPrimaryNamespaceAndEntryPath($this->packageManager->getPackage($packageKey));
+        [$baseNamespace, $namespaceEntryPath] = $this->getPrimaryNamespaceAndEntryPath($this->packageManager->getPackage($packageKey));
         $controllerName = ucfirst($controllerName);
         $controllerClassName = $controllerName . 'Controller';
 
@@ -148,7 +148,7 @@ class GeneratorService
      */
     public function generateCommandController($packageKey, $controllerName, $overwrite = false)
     {
-        list($baseNamespace, $namespaceEntryPath) = $this->getPrimaryNamespaceAndEntryPath($this->packageManager->getPackage($packageKey));
+        [$baseNamespace, $namespaceEntryPath] = $this->getPrimaryNamespaceAndEntryPath($this->packageManager->getPackage($packageKey));
         $controllerName = ucfirst($controllerName) . 'Command';
         $controllerClassName = $controllerName . 'Controller';
 
@@ -184,7 +184,7 @@ class GeneratorService
      */
     public function generateView($packageKey, $subpackage, $controllerName, $viewName, $templateName, $overwrite = false)
     {
-        list($baseNamespace) = $this->getPrimaryNamespaceAndEntryPath($this->packageManager->getPackage($packageKey));
+        [$baseNamespace] = $this->getPrimaryNamespaceAndEntryPath($this->packageManager->getPackage($packageKey));
         $viewName = ucfirst($viewName);
 
         $templatePathAndFilename = 'resource://Neos.Kickstarter/Private/Generator/View/' . $templateName . 'Template.html';
@@ -351,7 +351,7 @@ class GeneratorService
      */
     public function generateModel($packageKey, $modelName, array $fieldDefinitions, $overwrite = false)
     {
-        list($baseNamespace, $namespaceEntryPath) = $this->getPrimaryNamespaceAndEntryPath($this->packageManager->getPackage($packageKey));
+        [$baseNamespace, $namespaceEntryPath] = $this->getPrimaryNamespaceAndEntryPath($this->packageManager->getPackage($packageKey));
         $modelName = ucfirst($modelName);
         $namespace = trim($baseNamespace, '\\') . '\\Domain\\Model';
         $fieldDefinitions = $this->normalizeFieldDefinitions($fieldDefinitions, $namespace);
@@ -387,7 +387,7 @@ class GeneratorService
      */
     public function generateTestsForModel($packageKey, $modelName, $overwrite = false)
     {
-        list($baseNamespace) = $this->getPrimaryNamespaceAndEntryPath($this->packageManager->getPackage($packageKey));
+        [$baseNamespace] = $this->getPrimaryNamespaceAndEntryPath($this->packageManager->getPackage($packageKey));
         $testName = ucfirst($modelName) . 'Test';
         $namespace = trim($baseNamespace, '\\') . '\\Tests\\Unit\\Domain\\Model';
 
@@ -420,7 +420,7 @@ class GeneratorService
      */
     public function generateRepository($packageKey, $modelName, $overwrite = false)
     {
-        list($baseNamespace, $namespaceEntryPath) = $this->getPrimaryNamespaceAndEntryPath($this->packageManager->getPackage($packageKey));
+        [$baseNamespace, $namespaceEntryPath] = $this->getPrimaryNamespaceAndEntryPath($this->packageManager->getPackage($packageKey));
         $modelName = ucfirst($modelName);
         $repositoryClassName = $modelName . 'Repository';
         $namespace = trim($baseNamespace, '\\') . '\\Domain\\Repository';
@@ -558,10 +558,10 @@ class GeneratorService
             \Neos\Utility\Files::createDirectoryRecursively(dirname($targetPathAndFilename));
         }
 
-        if (substr($targetPathAndFilename, 0, 11) === 'resource://') {
-            list($packageKey, $resourcePath) = explode('/', substr($targetPathAndFilename, 11), 2);
+        if (str_starts_with($targetPathAndFilename, 'resource://')) {
+            [$packageKey, $resourcePath] = explode('/', substr($targetPathAndFilename, 11), 2);
             $relativeTargetPathAndFilename = $packageKey . '/Resources/' . $resourcePath;
-        } elseif (strpos($targetPathAndFilename, 'Tests') !== false) {
+        } elseif (str_contains($targetPathAndFilename, 'Tests')) {
             $relativeTargetPathAndFilename = substr($targetPathAndFilename, strrpos(substr($targetPathAndFilename, 0, strpos($targetPathAndFilename, 'Tests/') - 1), '/') + 1);
         } else {
             $relativeTargetPathAndFilename = substr($targetPathAndFilename, strrpos(substr($targetPathAndFilename, 0, strpos($targetPathAndFilename, 'Classes/') - 1), '/') + 1);

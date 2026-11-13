@@ -169,7 +169,7 @@ class ResourceStreamWrapper implements StreamWrapperInterface
      */
     public function removeDirectory($path, $options)
     {
-        throw new \BadMethodCallException(__CLASS__ . ' does not support removeDirectory().', 1256827649);
+        throw new \BadMethodCallException(self::class . ' does not support removeDirectory().', 1256827649);
     }
 
     /**
@@ -300,7 +300,7 @@ class ResourceStreamWrapper implements StreamWrapperInterface
     {
         // w, a or x should try to create the file
         // x should fail if file exists - fopen handles that below!
-        if (strpos($mode, 'w') !== false || strpos($mode, 'a') !== false || strpos($mode, 'x') !== false) {
+        if (str_contains($mode, 'w') || str_contains($mode, 'a') || str_contains($mode, 'x')) {
             $resourceUriOrStream = $this->evaluateResourcePath($path, false);
         } else {
             $resourceUriOrStream = $this->evaluateResourcePath($path);
@@ -505,7 +505,7 @@ class ResourceStreamWrapper implements StreamWrapperInterface
     {
         $requestPathParts = explode('://', $requestedPath, 2);
         if ($requestPathParts[0] !== self::SCHEME) {
-            throw new \InvalidArgumentException('The ' . __CLASS__ . ' only supports the \'' . self::SCHEME . '\' scheme.', 1256052544);
+            throw new \InvalidArgumentException('The ' . self::class . ' only supports the \'' . self::SCHEME . '\' scheme.', 1256052544);
         }
 
         if (!isset($requestPathParts[1])) {
@@ -514,12 +514,12 @@ class ResourceStreamWrapper implements StreamWrapperInterface
 
         $resourceUriWithoutScheme = $requestPathParts[1];
 
-        if (strpos($resourceUriWithoutScheme, '/') === false && preg_match('/^[0-9a-f]{40}$/i', $resourceUriWithoutScheme) === 1) {
+        if (!str_contains($resourceUriWithoutScheme, '/') && preg_match('/^[0-9a-f]{40}$/i', $resourceUriWithoutScheme) === 1) {
             $resource = $this->resourceManager->getResourceBySha1($resourceUriWithoutScheme);
             return $resource ? $this->resourceManager->getStreamByResource($resource) : false;
         }
 
-        list($packageName, $path) = explode('/', $resourceUriWithoutScheme, 2);
+        [$packageName, $path] = explode('/', $resourceUriWithoutScheme, 2);
 
         try {
             $package = $this->packageManager->getPackage($packageName);

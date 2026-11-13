@@ -57,8 +57,8 @@ class Utility
                     continue;
                 }
 
-                if (strpos($localeIdentifier, '-') !== false) {
-                    list($language, $region) = explode('-', $localeIdentifier);
+                if (str_contains($localeIdentifier, '-')) {
+                    [$language, $region] = explode('-', $localeIdentifier);
                 } else {
                     $language = $localeIdentifier;
                     $region = null;
@@ -94,7 +94,7 @@ class Utility
      */
     public static function extractLocaleTagFromFilename($filename)
     {
-        if (strpos($filename, '.') === false) {
+        if (!str_contains($filename, '.')) {
             return false;
         }
 
@@ -142,7 +142,7 @@ class Utility
      */
     public static function stringBeginsWith($haystack, $needle)
     {
-        if (!empty($needle) && strncmp($haystack, $needle, strlen($needle)) === 0) {
+        if (!empty($needle) && str_starts_with($haystack, $needle)) {
             return true;
         }
 
@@ -158,7 +158,7 @@ class Utility
      */
     public static function stringEndsWith($haystack, $needle)
     {
-        if (!empty($needle) && substr($haystack, - strlen($needle)) === $needle) {
+        if (!empty($needle) && str_ends_with($haystack, $needle)) {
             return true;
         }
 

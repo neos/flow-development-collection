@@ -249,7 +249,7 @@ class SelectViewHelper extends AbstractFormFieldViewHelper
                                 sprintf(
                                     'Identifying value at path "%s" for %s was an object.',
                                     $this->arguments['optionValueField'],
-                                    is_object($value) ? 'object of class "' . get_class($value) . '"' : 'array'
+                                    is_object($value) ? 'object of class "' . $value::class . '"' : 'array'
                                 ),
                                 1247827428
                             );
@@ -265,7 +265,7 @@ class SelectViewHelper extends AbstractFormFieldViewHelper
                 } elseif (method_exists($value, '__toString')) {
                     $key = (string)$value;
                 } else {
-                    throw new ViewHelper\Exception('No identifying value for object of class "' . get_class($value) . '" found.', 1247826696);
+                    throw new ViewHelper\Exception('No identifying value for object of class "' . $value::class . '" found.', 1247826696);
                 }
 
                 if ($this->hasArgument('optionLabelField')) {
@@ -274,7 +274,7 @@ class SelectViewHelper extends AbstractFormFieldViewHelper
                         if (method_exists($value, '__toString')) {
                             $value = (string)$value;
                         } else {
-                            throw new ViewHelper\Exception('Label value for object of class "' . get_class($value) . '" was an object without a __toString() method.', 1247827553);
+                            throw new ViewHelper\Exception('Label value for object of class "' . $value::class . '" was an object without a __toString() method.', 1247827553);
                         }
                     }
                 } elseif (is_array($value)) {
@@ -396,8 +396,8 @@ class SelectViewHelper extends AbstractFormFieldViewHelper
     {
         $translationConfiguration = $this->arguments['translate'];
 
-        $translateBy = isset($translationConfiguration['by']) ? $translationConfiguration['by'] : 'id';
-        $sourceName = isset($translationConfiguration['source']) ? $translationConfiguration['source'] : 'Main';
+        $translateBy = $translationConfiguration['by'] ?? 'id';
+        $sourceName = $translationConfiguration['source'] ?? 'Main';
         $request = $this->controllerContext->getRequest();
         $packageKey = 'Neos.Flow';
         if (isset($translationConfiguration['package'])) {
@@ -405,12 +405,12 @@ class SelectViewHelper extends AbstractFormFieldViewHelper
         } elseif ($request instanceof ActionRequest) {
             $packageKey = $request->getControllerPackageKey();
         }
-        $prefix = isset($translationConfiguration['prefix']) ? $translationConfiguration['prefix'] : '';
+        $prefix = $translationConfiguration['prefix'] ?? '';
 
         if (isset($translationConfiguration['locale'])) {
             try {
                 $localeObject = new Locale($translationConfiguration['locale']);
-            } catch (InvalidLocaleIdentifierException $e) {
+            } catch (InvalidLocaleIdentifierException) {
                 throw new ViewHelper\Exception('"' . $translationConfiguration['locale'] . '" is not a valid locale identifier.', 1330013193);
             }
         } else {
@@ -424,7 +424,7 @@ class SelectViewHelper extends AbstractFormFieldViewHelper
             case 'id':
                 $id =  $prefix . (isset($translationConfiguration['using']) && $translationConfiguration['using'] === 'label' ? $label : $value);
                 $translation = $this->translator->translateById($id, [], null, $localeObject, $sourceName, $packageKey);
-                return ($translation !== null) ? $translation : $label;
+                return $translation ?? $label;
             default:
                 throw new ViewHelper\Exception('You can only request to translate by "label" or by "id", but asked for "' . $translateBy . '" in your SelectViewHelper tag.', 1340050647);
         }

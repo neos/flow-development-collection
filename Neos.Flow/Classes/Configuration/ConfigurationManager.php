@@ -355,9 +355,7 @@ class ConfigurationManager
             throw new Exception\InvalidConfigurationTypeException('Configuration type "' . $configurationType . '" is not registered. You can Register it by calling $configurationManager->registerConfigurationType($configurationType).', 1339166495);
         }
 
-        if (!isset($this->configurations[$configurationType])) {
-            $this->configurations[$configurationType] = [];
-        }
+        $this->configurations[$configurationType] ??= [];
 
         $this->cacheNeedsUpdate = true;
 
@@ -542,9 +540,7 @@ class ConfigurationManager
             }
 
             $constantUntilEndOfLine = false;
-            if (!isset($matchGroup['endString'])) {
-                $matchGroup['endString'] = "',\n";
-            }
+            $matchGroup['endString'] ??= "',\n";
             if ($matchGroup['endString'] === "',\n") {
                 $constantUntilEndOfLine = true;
             }

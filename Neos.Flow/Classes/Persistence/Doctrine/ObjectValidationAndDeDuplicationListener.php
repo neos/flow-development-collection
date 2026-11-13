@@ -71,7 +71,7 @@ class ObjectValidationAndDeDuplicationListener
         $unitOfWork = $entityManager->getUnitOfWork();
         $objectToPersist = $eventArgs->getObject();
 
-        $classMetadata = $entityManager->getClassMetadata(get_class($objectToPersist));
+        $classMetadata = $entityManager->getClassMetadata($objectToPersist::class);
         $className = $classMetadata->rootEntityName;
 
         $classSchema = $this->reflectionService->getClassSchema($className);
@@ -149,7 +149,7 @@ class ObjectValidationAndDeDuplicationListener
      */
     private function validateObject($object, \SplObjectStorage $validatedInstancesContainer)
     {
-        $className = $this->entityManager->getClassMetadata(get_class($object))->getName();
+        $className = $this->entityManager->getClassMetadata($object::class)->getName();
         $validator = $this->validatorResolver->getBaseValidatorConjunction($className, ['Persistence', 'Default']);
 
         $validator->setValidatedInstancesContainer($validatedInstancesContainer);
@@ -165,7 +165,7 @@ class ObjectValidationAndDeDuplicationListener
                     $errorMessages .= $error . PHP_EOL;
                 }
             }
-            throw new ObjectValidationFailedException('An instance of "' . get_class($object) . '" failed to pass validation with ' . $errorCount . ' error(s): ' . PHP_EOL . $errorMessages, 1322585164);
+            throw new ObjectValidationFailedException('An instance of "' . $object::class . '" failed to pass validation with ' . $errorCount . ' error(s): ' . PHP_EOL . $errorMessages, 1322585164);
         }
     }
 }

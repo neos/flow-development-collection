@@ -366,7 +366,7 @@ class CacheManager
                 continue;
             }
             $fileContents = file_get_contents($pathAndFilename) ?: '';
-            $className = (new PhpAnalyzer($fileContents))->extractFullyQualifiedClassName();
+            $className = new PhpAnalyzer($fileContents)->extractFullyQualifiedClassName();
             if ($className === null) {
                 continue;
             }
@@ -374,7 +374,7 @@ class CacheManager
             $modifiedClassNamesWithUnderscores[$classNameWithUnderscores] = true;
 
             // If an aspect was modified, the whole code cache needs to be flushed, so keep track of them:
-            if (substr($classNameWithUnderscores, -6, 6) === 'Aspect') {
+            if (str_ends_with($classNameWithUnderscores, 'Aspect')) {
                 $modifiedAspectClassNamesWithUnderscores[$classNameWithUnderscores] = true;
             }
             // As long as no modified aspect was found, we are optimistic that only part of the cache needs to be flushed:

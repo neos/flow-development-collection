@@ -153,9 +153,7 @@ abstract class AbstractExceptionHandler implements ExceptionHandlerInterface
 
         $statusMessage = ResponseInformationHelper::getStatusMessageByCode($statusCode);
         $viewClassName = $renderingOptions['viewClassName'];
-        $viewOptions = array_filter($renderingOptions['viewOptions'], static function ($optionValue) {
-            return $optionValue !== null;
-        });
+        $viewOptions = array_filter($renderingOptions['viewOptions'], static fn ($optionValue) => $optionValue !== null);
         /** @var ViewInterface $view */
         $view = $viewClassName::createWithOptions($viewOptions);
 
@@ -313,7 +311,7 @@ abstract class AbstractExceptionHandler implements ExceptionHandlerInterface
         }
 
         $exceptionMessage .= PHP_EOL;
-        $exceptionMessage .= $this->renderExceptionDetailCli('Type', get_class($exception));
+        $exceptionMessage .= $this->renderExceptionDetailCli('Type', $exception::class);
         if ($exception->getCode()) {
             $exceptionMessage .= $this->renderExceptionDetailCli('Code', $exception->getCode());
         }

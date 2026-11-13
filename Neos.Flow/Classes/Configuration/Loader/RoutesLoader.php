@@ -51,10 +51,8 @@ class RoutesLoader implements LoaderInterface
 {
     /**
      * The maximum number of recursions when merging subroute configurations.
-     *
-     * @var integer
      */
-    private const MAXIMUM_SUBROUTE_RECURSIONS = 99;
+    private const int MAXIMUM_SUBROUTE_RECURSIONS = 99;
 
     /**
      * @var YamlSource
@@ -104,7 +102,7 @@ class RoutesLoader implements LoaderInterface
      */
     protected function includeSubRoutesFromSettings(array $routeDefinitions, array $routeSettings): array
     {
-        $sortedRouteSettings = (new PositionalArraySorter($routeSettings))->toArray();
+        $sortedRouteSettings = new PositionalArraySorter($routeSettings)->toArray();
         foreach ($sortedRouteSettings as $configurationKey => $routeFromSettings) {
             if ($routeFromSettings === false) {
                 continue;

@@ -51,14 +51,12 @@ class RoutingMiddleware implements MiddlewareInterface
     public function process(ServerRequestInterface $request, RequestHandlerInterface $next): ResponseInterface
     {
         $parameters = $request->getAttribute(ServerRequestAttributes::ROUTING_PARAMETERS);
-        if ($parameters === null) {
-            $parameters = RouteParameters::createEmpty();
-        }
+        $parameters ??= RouteParameters::createEmpty();
         $routeContext = new RouteContext($request, $parameters);
 
         try {
             $matchResults = $this->router->route($routeContext);
-        } catch (NoMatchingRouteException $exception) {
+        } catch (NoMatchingRouteException) {
             $matchResults = null;
         }
 

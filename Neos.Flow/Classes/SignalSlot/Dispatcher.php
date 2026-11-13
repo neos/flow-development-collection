@@ -111,7 +111,7 @@ class Dispatcher
         $class = null;
         $object = null;
 
-        if (strpos($signalName, 'emit') === 0) {
+        if (str_starts_with($signalName, 'emit')) {
             $possibleSignalName = lcfirst(substr($signalName, strlen('emit')));
             throw new \InvalidArgumentException('The signal should not be connected with the method name ("' . $signalName . '"). Try "' . $possibleSignalName . '" for the signal name.', 1314016630);
         }
@@ -156,7 +156,7 @@ class Dispatcher
             $finalSignalArguments = array_values($signalArguments);
             if (isset($slotInformation['object'])) {
                 $object = $slotInformation['object'];
-            } elseif (strpos($slotInformation['method'], '::') === 0) {
+            } elseif (str_starts_with($slotInformation['method'], '::')) {
                 if ($this->objectManager === null) {
                     if (is_callable($slotInformation['class'] . $slotInformation['method'])) {
                         $object = $slotInformation['class'];
@@ -183,7 +183,7 @@ class Dispatcher
                 $object = $this->objectManager->get($slotInformation['class']);
             }
             if (is_object($object) && !method_exists($object, $slotInformation['method'])) {
-                throw new Exception\InvalidSlotException('The slot method ' . get_class($object) . '->' . $slotInformation['method'] . '() does not exist.', 1245673368);
+                throw new Exception\InvalidSlotException('The slot method ' . $object::class . '->' . $slotInformation['method'] . '() does not exist.', 1245673368);
             }
 
             $callable = [$object, $slotInformation['method']];

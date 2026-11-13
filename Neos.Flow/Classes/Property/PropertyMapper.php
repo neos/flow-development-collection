@@ -111,9 +111,7 @@ class PropertyMapper
      */
     public function convert($source, string $targetType, ?PropertyMappingConfigurationInterface $configuration = null)
     {
-        if ($configuration === null) {
-            $configuration = $this->buildPropertyMappingConfiguration();
-        }
+        $configuration ??= $this->buildPropertyMappingConfiguration();
 
         $currentPropertyPath = [];
         $this->messages = new Result();
@@ -169,9 +167,7 @@ class PropertyMapper
             }
         }
 
-        if ($source === null) {
-            $source = '';
-        }
+        $source ??= '';
 
         $typeConverter = $this->findTypeConverter($source, $targetType, $configuration);
         $targetType = $typeConverter->getTargetTypeForSource($source, $targetType, $configuration);
@@ -380,7 +376,7 @@ class PropertyMapper
         } elseif (is_bool($source)) {
             return ['boolean'];
         } elseif (is_object($source)) {
-            $class = get_class($source);
+            $class = $source::class;
             $parentClasses = class_parents($class);
             $interfaces = class_implements($class);
 
@@ -407,7 +403,7 @@ class PropertyMapper
                 $normalizedSourceType = TypeHandling::normalizeType($supportedSourceType);
                 $normalizedTargetType = TypeHandling::normalizeType($typeConverter->getSupportedTargetType());
                 if (isset($typeConverterMap[$normalizedSourceType][$normalizedTargetType][$typeConverter->getPriority()])) {
-                    throw new Exception\DuplicateTypeConverterException('There exist at least two converters which handle the conversion from "' . $supportedSourceType . '" to "' . $normalizedTargetType . '" with priority "' . $typeConverter->getPriority() . '": ' . $typeConverterMap[$supportedSourceType][$normalizedTargetType][$typeConverter->getPriority()] . ' and ' . get_class($typeConverter), 1297951378);
+                    throw new Exception\DuplicateTypeConverterException('There exist at least two converters which handle the conversion from "' . $supportedSourceType . '" to "' . $normalizedTargetType . '" with priority "' . $typeConverter->getPriority() . '": ' . $typeConverterMap[$supportedSourceType][$normalizedTargetType][$typeConverter->getPriority()] . ' and ' . $typeConverter::class, 1297951378);
                 }
                 $typeConverterMap[$normalizedSourceType][$normalizedTargetType][$typeConverter->getPriority()] = $typeConverterClassName;
             }

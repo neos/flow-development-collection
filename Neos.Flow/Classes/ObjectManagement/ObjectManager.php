@@ -127,7 +127,7 @@ class ObjectManager implements ObjectManagerInterface
             self::KEY_INSTANCE => $this,
             self::KEY_SCOPE => ObjectConfiguration::SCOPE_SINGLETON
         ];
-        $this->objects[get_class($this)] = [
+        $this->objects[static::class] = [
             self::KEY_INSTANCE => $this,
             self::KEY_SCOPE => ObjectConfiguration::SCOPE_SINGLETON
         ];
@@ -177,7 +177,7 @@ class ObjectManager implements ObjectManagerInterface
      */
     public function registerShutdownObject($object, $shutdownLifecycleMethodName): void
     {
-        if (str_starts_with(get_class($object), 'Neos\Flow\\')) {
+        if (str_starts_with($object::class, 'Neos\Flow\\')) {
             $this->internalShutdownObjects[$object] = $shutdownLifecycleMethodName;
         } else {
             $this->shutdownObjects[$object] = $shutdownLifecycleMethodName;
@@ -216,7 +216,7 @@ class ObjectManager implements ObjectManagerInterface
             }
 
             $instance = $this->buildObjectByFactory($objectName);
-            $this->registerInstance($objectName, get_class($instance), $instance);
+            $this->registerInstance($objectName, $instance::class, $instance);
             return $instance;
         }
 
@@ -267,9 +267,7 @@ class ObjectManager implements ObjectManagerInterface
      */
     protected function createLazyInstance(string $objectName, string $className): object
     {
-        $builder = function () use ($objectName, $className): object {
-            return $this->instantiateClass($className, $this->autowireConstructorArguments($objectName, $className, []));
-        };
+        $builder = (fn (): object => $this->instantiateClass($className, $this->autowireConstructorArguments($objectName, $className, [])));
         if ($this->hasInternalClassInAncestry($className)) {
             return $builder();
         }
@@ -454,7 +452,7 @@ class ObjectManager implements ObjectManagerInterface
             throw new Exception\WrongScopeException('Cannot set instance of object "' . $objectName . '" because it is of scope prototype. Only session and singleton instances can be set.', 1265370540);
         }
 
-        $this->registerInstance($objectName, get_class($instance), $instance);
+        $this->registerInstance($objectName, $instance::class, $instance);
     }
 
     /**
@@ -596,17 +594,13 @@ class ObjectManager implements ObjectManagerInterface
         }
 
         if ($factory !== null) {
-            $builder = static function () use ($factory, $factoryMethodName, $factoryMethodArguments): object {
-                return $factory->$factoryMethodName(...$factoryMethodArguments);
-            };
+            $builder = (static fn (): object => $factory->$factoryMethodName(...$factoryMethodArguments));
         } else {
             if (!is_callable($factoryMethodName)) {
                 throw new \Exception($factoryMethodName . ' is not callable', 1744233428);
             }
 
-            $builder = static function () use ($factoryMethodName, $factoryMethodArguments): object {
-                return $factoryMethodName(...$factoryMethodArguments);
-            };
+            $builder = (static fn (): object => $factoryMethodName(...$factoryMethodArguments));
         }
 
         $className = $this->getClassNameByObjectName($objectName);
@@ -644,7 +638,7 @@ class ObjectManager implements ObjectManagerInterface
      */
     protected function buildLazyProxy(string $className, \Closure $builder): object
     {
-        return (new \ReflectionClass($className))->newLazyProxy($builder);
+        return new \ReflectionClass($className)->newLazyProxy($builder);
     }
 
     /**

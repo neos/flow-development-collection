@@ -86,9 +86,7 @@ class MvcPropertyMappingConfigurationService
                     if ($formFieldPart === '') {
                         throw new InvalidArgumentForHashGenerationException('The form field "' . $formField . '" is invalid. Reason: "[]" used not as last argument, but somewhere in the middle (like foo[][bar]).', 1255072832);
                     }
-                    if (!isset($currentPosition[$formFieldPart])) {
-                        $currentPosition[$formFieldPart] = [];
-                    }
+                    $currentPosition[$formFieldPart] ??= [];
                     $currentPosition = & $currentPosition[$formFieldPart];
                 }
             }

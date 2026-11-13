@@ -132,7 +132,7 @@ class CommandController implements CommandControllerInterface
     {
         $commandMethodName = $this->request->getControllerCommandName() . 'Command';
         if (!is_callable([$this, $commandMethodName])) {
-            throw new NoSuchCommandException(sprintf('A command method "%s()" does not exist in controller "%s".', $commandMethodName, get_class($this)), 1300902143);
+            throw new NoSuchCommandException(sprintf('A command method "%s()" does not exist in controller "%s".', $commandMethodName, static::class), 1300902143);
         }
 
         return $commandMethodName;
@@ -148,7 +148,7 @@ class CommandController implements CommandControllerInterface
     protected function initializeCommandMethodArguments()
     {
         $this->arguments->removeAll();
-        $methodParameters = $this->commandManager->getCommandMethodParameters(get_class($this), $this->commandMethodName);
+        $methodParameters = $this->commandManager->getCommandMethodParameters(static::class, $this->commandMethodName);
 
         foreach ($methodParameters as $parameterName => $parameterInfo) {
             $dataType = null;
@@ -158,9 +158,9 @@ class CommandController implements CommandControllerInterface
                 $dataType = 'array';
             }
             if ($dataType === null) {
-                throw new InvalidArgumentTypeException(sprintf('The argument type for parameter $%s of method %s->%s() could not be detected.', $parameterName, get_class($this), $this->commandMethodName), 1306755296);
+                throw new InvalidArgumentTypeException(sprintf('The argument type for parameter $%s of method %s->%s() could not be detected.', $parameterName, static::class, $this->commandMethodName), 1306755296);
             }
-            $defaultValue = (isset($parameterInfo['defaultValue']) ? $parameterInfo['defaultValue'] : null);
+            $defaultValue = ($parameterInfo['defaultValue'] ?? null);
             $this->arguments->addNewArgument($parameterName, $dataType, ($parameterInfo['optional'] === false), $defaultValue);
         }
     }
@@ -238,7 +238,7 @@ class CommandController implements CommandControllerInterface
             $preparedArguments[] = $argument->getValue();
         }
 
-        $command = new Command(get_class($this), $this->request->getControllerCommandName());
+        $command = new Command(static::class, $this->request->getControllerCommandName());
         if ($command->isDeprecated()) {
             $suggestedCommandMessage = '';
 

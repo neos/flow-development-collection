@@ -65,7 +65,7 @@ class TrustedProxiesMiddleware implements MiddlewareInterface
         }
 
         if (is_string($this->settings['proxies']) && $this->settings['proxies'] !== '*') {
-            $this->settings['proxies'] = array_map('trim', explode(',', $this->settings['proxies']));
+            $this->settings['proxies'] = array_map(trim(...), explode(',', $this->settings['proxies']));
         }
 
         if (!is_array($this->settings['proxies']) && $this->settings['proxies'] !== '*') {
@@ -91,7 +91,7 @@ class TrustedProxiesMiddleware implements MiddlewareInterface
         $hostHeader = $this->getFirstTrustedProxyHeaderValue(self::HEADER_HOST, $trustedRequest);
         $portFromHost = null;
         if ($hostHeader !== null) {
-            if (strpos($hostHeader, '[') === 0 && strrpos($hostHeader, ']') !== false) {
+            if (str_starts_with($hostHeader, '[') && strrpos($hostHeader, ']') !== false) {
                 $portSeparatorIndex = strrpos($hostHeader, ':', -strrpos($hostHeader, ']'));
             } else {
                 $portSeparatorIndex = strrpos($hostHeader, ':');
@@ -120,9 +120,7 @@ class TrustedProxiesMiddleware implements MiddlewareInterface
      */
     protected function unquoteArray($array): array
     {
-        return array_map(function ($value) {
-            return trim($value, '"');
-        }, array_values(array_filter($array)));
+        return array_map(fn ($value) => trim($value, '"'), array_values(array_filter($array)));
     }
 
     /**
@@ -170,7 +168,7 @@ class TrustedProxiesMiddleware implements MiddlewareInterface
             yield null;
             return;
         }
-        $trustedHeaders = array_map('trim', explode(',', $trustedHeaders));
+        $trustedHeaders = array_map(trim(...), explode(',', $trustedHeaders));
 
         foreach ($trustedHeaders as $trustedHeader) {
             if (!$request->hasHeader($trustedHeader)) {
@@ -182,7 +180,7 @@ class TrustedProxiesMiddleware implements MiddlewareInterface
                     yield $forwardedHeaderValue;
                 }
             } else {
-                yield array_map('trim', explode(', ', implode(',', $request->getHeader($trustedHeader))));
+                yield array_map(trim(...), explode(', ', implode(',', $request->getHeader($trustedHeader))));
             }
         }
 
@@ -283,7 +281,7 @@ class TrustedProxiesMiddleware implements MiddlewareInterface
                 $ipAddress = $matches[1];
             } elseif (filter_var($headerIpAddress, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6)) { // IPv6 without port
                 $ipAddress = $headerIpAddress;
-            } elseif (strpos($headerIpAddress, ':') !== false) { // IPv4 with port
+            } elseif (str_contains($headerIpAddress, ':')) { // IPv4 with port
                 $parts = explode(':', $headerIpAddress);
                 if (count($parts) === 2) {
                     $ipAddress = $parts[0];

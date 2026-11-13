@@ -96,9 +96,7 @@ class CachePool implements CacheItemPoolInterface
      */
     public function getItems(array $keys = []): iterable
     {
-        return array_map(function ($key) {
-            return $this->getItem($key);
-        }, $keys);
+        return array_map($this->getItem(...), $keys);
     }
 
     /**
@@ -177,7 +175,7 @@ class CachePool implements CacheItemPoolInterface
         }
 
         if ($expiresAt instanceof \DateTimeInterface) {
-            $lifetime = $expiresAt->getTimestamp() - (new \DateTime())->getTimestamp();
+            $lifetime = $expiresAt->getTimestamp() - new \DateTime()->getTimestamp();
         }
 
         $this->backend->set($item->getKey(), serialize($item->get()), [], $lifetime);

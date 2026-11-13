@@ -219,7 +219,7 @@ class PropertyConditionGenerator implements SqlGeneratorInterface
      */
     public function contains($operandDefinition): PropertyConditionGenerator
     {
-        if (strpos($this->path, '.') !== false) {
+        if (str_contains($this->path, '.')) {
             throw new InvalidPolicyException(sprintf('The "contains" operator does not work on nested property paths (contained a "."). Got: "%s"', $this->path), 1545212769);
         }
 
@@ -246,7 +246,7 @@ class PropertyConditionGenerator implements SqlGeneratorInterface
 
         if ($targetEntity->hasAssociation($targetEntityPropertyName) === false) {
             return $this->getSqlForSimpleProperty($sqlFilter, $quoteStrategy, $targetEntity, $targetTableAlias, $targetEntityPropertyName);
-        } elseif (strstr($this->path, '.') === false && $targetEntity->isSingleValuedAssociation($targetEntityPropertyName) === true && $targetEntity->isAssociationInverseSide($targetEntityPropertyName) === false) {
+        } elseif (!str_contains($this->path, '.') && $targetEntity->isSingleValuedAssociation($targetEntityPropertyName) === true && $targetEntity->isAssociationInverseSide($targetEntityPropertyName) === false) {
             return $this->getSqlForManyToOneAndOneToOneRelationsWithoutPropertyPath($sqlFilter, $quoteStrategy, $targetEntity, $targetTableAlias, $targetEntityPropertyName);
         } elseif ($targetEntity->isSingleValuedAssociation($targetEntityPropertyName) === true && $targetEntity->isAssociationInverseSide($targetEntityPropertyName) === false) {
             return $this->getSqlForManyToOneAndOneToOneRelationsWithPropertyPath($sqlFilter, $quoteStrategy, $targetEntity, $targetTableAlias, $targetEntityPropertyName);
@@ -456,34 +456,17 @@ class PropertyConditionGenerator implements SqlGeneratorInterface
         $subselectQuery = new Query($associationTargetClass);
         $propertyName = str_replace($targetEntityPropertyName . '.', '', $this->path);
 
-        switch ($this->operator) {
-            case '==':
-                $subselectConstraint = $subselectQuery->equals($propertyName, $this->operand);
-                break;
-            case '!=':
-                $subselectConstraint = $subselectQuery->logicalNot($subselectQuery->equals($propertyName, $this->operand));
-                break;
-            case '<':
-                $subselectConstraint = $subselectQuery->lessThan($propertyName, $this->operand);
-                break;
-            case '>':
-                $subselectConstraint = $subselectQuery->greaterThan($propertyName, $this->operand);
-                break;
-            case '<=':
-                $subselectConstraint = $subselectQuery->lessThanOrEqual($propertyName, $this->operand);
-                break;
-            case '>=':
-                $subselectConstraint = $subselectQuery->greaterThanOrEqual($propertyName, $this->operand);
-                break;
-            case 'like':
-                $subselectConstraint = $subselectQuery->like($propertyName, $this->operand);
-                break;
-            case 'in':
-                $subselectConstraint = $subselectQuery->in($propertyName, $this->operand);
-                break;
-            default:
-                throw new \Exception(sprintf('Invalid operator "%s".', $this->operator), 1699025734);
-        }
+        $subselectConstraint = match ($this->operator) {
+            '==' => $subselectQuery->equals($propertyName, $this->operand),
+            '!=' => $subselectQuery->logicalNot($subselectQuery->equals($propertyName, $this->operand)),
+            '<' => $subselectQuery->lessThan($propertyName, $this->operand),
+            '>' => $subselectQuery->greaterThan($propertyName, $this->operand),
+            '<=' => $subselectQuery->lessThanOrEqual($propertyName, $this->operand),
+            '>=' => $subselectQuery->greaterThanOrEqual($propertyName, $this->operand),
+            'like' => $subselectQuery->like($propertyName, $this->operand),
+            'in' => $subselectQuery->in($propertyName, $this->operand),
+            default => throw new \Exception(sprintf('Invalid operator "%s".', $this->operator), 1699025734),
+        };
         $subselectQuery->matching($subselectConstraint);
         return $subselectQuery;
     }
@@ -496,7 +479,7 @@ class PropertyConditionGenerator implements SqlGeneratorInterface
      */
     protected function getConstraintStringForSimpleProperty(DoctrineSqlFilter $sqlFilter, $propertyPointer, $operandDefinition = null)
     {
-        $operandDefinition = ($operandDefinition === null ? $this->operandDefinition : $operandDefinition);
+        $operandDefinition ??= $this->operandDefinition;
         $parameter = null;
         $addNullExpression = false;
         try {
@@ -516,7 +499,7 @@ class PropertyConditionGenerator implements SqlGeneratorInterface
                 }
                 $parameter = $sqlFilter->getParameter((string) $operandDefinition);
             }
-        } catch (\InvalidArgumentException $exception) {
+        } catch (\InvalidArgumentException) {
         }
 
         if ($parameter === null || $parameter === '') {
@@ -569,13 +552,11 @@ class PropertyConditionGenerator implements SqlGeneratorInterface
             return false;
         } elseif ($expression === null) {
             return null;
-        } elseif (strpos($expression, 'context.') === 0) {
+        } elseif (str_starts_with($expression, 'context.')) {
             $objectAccess = explode('.', $expression, 3);
             $globalObjectsRegisteredClassName = $this->globalObjects[$objectAccess[1]];
             $globalObject = $this->objectManager->get($globalObjectsRegisteredClassName);
-            $globalObjectValue = $this->securityContext->withoutAuthorizationChecks(function () use ($globalObject, $objectAccess) {
-                return $this->getObjectValueByPath($globalObject, $objectAccess[2]);
-            });
+            $globalObjectValue = $this->securityContext->withoutAuthorizationChecks(fn () => $this->getObjectValueByPath($globalObject, $objectAccess[2]));
 
             return $globalObjectValue;
         } else {
