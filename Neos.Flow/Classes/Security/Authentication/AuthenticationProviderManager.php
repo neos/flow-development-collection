@@ -24,15 +24,14 @@ use Neos\Flow\Session\SessionManagerInterface;
 /**
  * The default authentication manager, which relies on Authentication Providers
  * to authenticate the tokens stored in the security context.
- *
- * @Flow\Scope("singleton")
  */
+#[Flow\Scope('singleton')]
 class AuthenticationProviderManager implements AuthenticationManagerInterface
 {
     /**
      * @var SessionManagerInterface
-     * @Flow\Inject
      */
+    #[Flow\Inject]
     protected $sessionManager;
 
     /**
@@ -43,9 +42,9 @@ class AuthenticationProviderManager implements AuthenticationManagerInterface
     /**
      * The security context of the current request
      *
-     * @Flow\Inject
      * @var Context
      */
+    #[Flow\Inject]
     protected $securityContext;
 
     /**
@@ -223,8 +222,8 @@ class AuthenticationProviderManager implements AuthenticationManagerInterface
      * Signals that the specified token has been successfully authenticated.
      *
      * @param TokenInterface $token The token which has been authenticated
-     * @Flow\Signal
      */
+    #[Flow\Signal]
     protected function emitAuthenticatedToken(TokenInterface $token): void
     {
     }
@@ -232,18 +231,16 @@ class AuthenticationProviderManager implements AuthenticationManagerInterface
     /**
      * Signals that all active authentication tokens have been invalidated.
      * Note: the session will be destroyed after this signal has been emitted.
-     *
-     * @Flow\Signal
      */
+    #[Flow\Signal]
     protected function emitLoggedOut(): void
     {
     }
 
     /**
      * Signals that authentication commenced and at least one token was authenticated.
-     *
-     * @Flow\Signal
      */
+    #[Flow\Signal]
     protected function emitSuccessfullyAuthenticated(): void
     {
     }

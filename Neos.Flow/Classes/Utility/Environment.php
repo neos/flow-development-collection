@@ -25,9 +25,9 @@ use Neos\Utility\Files;
 /**
  * Abstraction methods which return system environment variables.
  *
- * @Flow\Scope("singleton")
  * @api
  */
+#[Flow\Scope('singleton')]
 class Environment
 {
     /**

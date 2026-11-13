@@ -25,9 +25,9 @@ use Neos\Utility\Unicode\Functions as UnicodeFunctions;
 class PackageStorage extends FileSystemStorage
 {
     /**
-     * @Flow\Inject
      * @var PackageManager
      */
+    #[Flow\Inject]
     protected $packageManager;
 
     /**

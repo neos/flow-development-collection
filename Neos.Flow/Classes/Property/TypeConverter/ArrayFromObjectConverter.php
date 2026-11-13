@@ -27,9 +27,9 @@ use Neos\Utility\ObjectAccess;
 class ArrayFromObjectConverter extends AbstractTypeConverter
 {
     /**
-     * @Flow\Inject
      * @var PersistenceManagerInterface
      */
+    #[Flow\Inject]
     protected $persistenceManager;
 
     /**

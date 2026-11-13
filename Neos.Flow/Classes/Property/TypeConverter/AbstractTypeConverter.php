@@ -26,8 +26,8 @@ use Neos\Flow\Property\TypeConverterInterface;
  * - implement convertFrom()
  *
  * @api
- * @Flow\Scope("singleton")
  */
+#[Flow\Scope('singleton')]
 abstract class AbstractTypeConverter implements TypeConverterInterface
 {
     /**

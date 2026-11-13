@@ -21,9 +21,8 @@ use Neos\Flow\Utility;
 
 /**
  * Implementation of the RSAWalletServiceInterface using PHP's OpenSSL extension
- *
- * @Flow\Scope("singleton")
  */
+#[Flow\Scope('singleton')]
 class RsaWalletServicePhp implements RsaWalletServiceInterface
 {
     /**

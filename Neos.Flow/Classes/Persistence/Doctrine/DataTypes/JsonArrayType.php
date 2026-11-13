@@ -19,9 +19,8 @@ use Neos\Utility\TypeHandling;
 
 /**
  * Extends the default doctrine JsonArrayType to work with entities.
- *
- * @Flow\Proxy(false)
  */
+#[Flow\Proxy(false)]
 class JsonArrayType extends DoctrineJsonType
 {
     public const FLOW_JSON_ARRAY = 'flow_json_array';

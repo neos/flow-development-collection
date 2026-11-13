@@ -22,9 +22,8 @@ use Neos\Utility\TypeHandling;
  * if they implement ParameterAwareRoutePartInterface
  *
  * Routing RouteParameters are usually registered using HTTP components
- *
- * @Flow\Proxy(false)
  */
+#[Flow\Proxy(false)]
 final class RouteParameters implements CacheAwareInterface
 {
     /**

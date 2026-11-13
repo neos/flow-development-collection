@@ -16,9 +16,8 @@ use Neos\Flow\Annotations as Flow;
 
 /**
  * An access decision manager that can be overridden for tests
- *
- * @Flow\Scope("singleton")
  */
+#[Flow\Scope('singleton')]
 class TestingPrivilegeManager extends PrivilegeManager
 {
     /**

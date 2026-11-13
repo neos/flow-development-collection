@@ -21,9 +21,8 @@ use Psr\Http\Message\ServerRequestInterface;
 
 /**
  * A request handler which can handle HTTP requests.
- *
- * @Flow\Scope("singleton")
  */
+#[Flow\Scope('singleton')]
 class RequestHandler implements HttpRequestHandlerInterface
 {
     /**

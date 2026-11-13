@@ -71,27 +71,27 @@ use Psr\Log\LoggerInterface;
 class ActionController extends AbstractController
 {
     /**
-     * @Flow\Inject
      * @var ObjectManagerInterface
      */
+    #[Flow\Inject]
     protected $objectManager;
 
     /**
-     * @Flow\Inject
      * @var ReflectionService
      */
+    #[Flow\Inject]
     protected $reflectionService;
 
     /**
-     * @Flow\Inject
      * @var MvcPropertyMappingConfigurationService
      */
+    #[Flow\Inject]
     protected $mvcPropertyMappingConfigurationService;
 
     /**
-     * @Flow\Inject
      * @var ViewConfigurationManager
      */
+    #[Flow\Inject]
     protected $viewConfigurationManager;
 
     /**
@@ -132,9 +132,9 @@ class ActionController extends AbstractController
     protected $defaultViewObjectName;
 
     /**
-     * @Flow\InjectConfiguration(package="Neos.Flow", path="mvc.view.defaultImplementation")
      * @var string
      */
+    #[Flow\InjectConfiguration(package: 'Neos.Flow', path: 'mvc.view.defaultImplementation')]
     protected $defaultViewImplementation;
 
     /**
@@ -370,8 +370,8 @@ class ActionController extends AbstractController
      *
      * @param ObjectManagerInterface $objectManager
      * @return array<string,mixed> Array of method parameters by action name
-     * @Flow\CompileStatic
      */
+    #[Flow\CompileStatic]
     public static function getActionMethodParameters($objectManager)
     {
         $reflectionService = $objectManager->get(ReflectionService::class);
@@ -476,8 +476,8 @@ class ActionController extends AbstractController
      *
      * @param ObjectManagerInterface $objectManager
      * @return array<string,array<string>> Array of validation groups by action method name
-     * @Flow\CompileStatic
      */
+    #[Flow\CompileStatic]
     public static function getActionValidationGroups($objectManager)
     {
         $reflectionService = $objectManager->get(ReflectionService::class);
@@ -504,8 +504,8 @@ class ActionController extends AbstractController
      *
      * @param ObjectManagerInterface $objectManager
      * @return array<string,array<array{type: ?string, options: array<mixed>, argumentName: string}>> Array of validate annotation parameters by action method name
-     * @Flow\CompileStatic
      */
+    #[Flow\CompileStatic]
     public static function getActionValidateAnnotationData($objectManager)
     {
         $reflectionService = $objectManager->get(ReflectionService::class);
@@ -644,8 +644,8 @@ class ActionController extends AbstractController
     /**
      * @param ObjectManagerInterface $objectManager
      * @return array<string,array<string,array{evaluate: bool}>> Array of argument names as key by action method name
-     * @Flow\CompileStatic
      */
+    #[Flow\CompileStatic]
     public static function getActionIgnoredValidationArguments($objectManager)
     {
         $reflectionService = $objectManager->get(ReflectionService::class);
@@ -675,8 +675,8 @@ class ActionController extends AbstractController
     /**
      * @param ObjectManagerInterface $objectManager
      * @return array<string,true> Array of all public action method names, indexed by method name
-     * @Flow\CompileStatic
      */
+    #[Flow\CompileStatic]
     public static function getPublicActionMethods($objectManager)
     {
         /** @var ReflectionService $reflectionService */
@@ -740,8 +740,8 @@ class ActionController extends AbstractController
      * before passing it on to further rendering
      *
      * @return void
-     * @Flow\Signal
      */
+    #[Flow\Signal]
     protected function emitViewResolved(ViewInterface $view)
     {
     }

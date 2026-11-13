@@ -32,39 +32,39 @@ use Psr\Log\LoggerInterface;
 class CsrfProtection implements RequestPatternInterface
 {
     /**
-     * @Flow\Inject
      * @var Context
      */
+    #[Flow\Inject]
     protected $securityContext;
 
     /**
-     * @Flow\Inject
      * @var AuthenticationManagerInterface
      */
+    #[Flow\Inject]
     protected $authenticationManager;
 
     /**
-     * @Flow\Inject
      * @var ObjectManagerInterface
      */
+    #[Flow\Inject]
     protected $objectManager;
 
     /**
-     * @Flow\Inject
      * @var ReflectionService
      */
+    #[Flow\Inject]
     protected $reflectionService;
 
     /**
-     * @Flow\Inject
      * @var PolicyService
      */
+    #[Flow\Inject]
     protected $policyService;
 
     /**
-     * @Flow\Inject(name="Neos.Flow:SystemLogger")
      * @var LoggerInterface
      */
+    #[Flow\Inject(name: 'Neos.Flow:SystemLogger')]
     protected $logger;
 
     /**

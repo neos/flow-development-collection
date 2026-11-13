@@ -36,8 +36,8 @@ use Symfony\Component\Console\Input\ArrayInput;
  * }
  *
  * @api
- * @Flow\Scope("singleton")
  */
+#[Flow\Scope('singleton')]
 class PackageManager
 {
     /**
@@ -708,8 +708,8 @@ class PackageManager
      *
      * @throws \Neos\Flow\Exception
      * @throws InvalidSlotException
-     * @Flow\Signal
      */
+    #[Flow\Signal]
     protected function emitPackageStatesUpdated(): void
     {
         if ($this->bootstrap === null) {

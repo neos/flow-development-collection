@@ -18,8 +18,8 @@ use Neos\Flow\Annotations as Flow;
  * Extended version of the ReflectionClass
  *
  * @extends \ReflectionClass<object>
- * @Flow\Proxy(false)
  */
+#[Flow\Proxy(false)]
 class ClassReflection extends \ReflectionClass
 {
     /**

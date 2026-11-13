@@ -32,8 +32,8 @@ class HumanizeCamelCaseViewHelper extends AbstractViewHelper
 {
     /**
      * @var \Neos\Kickstarter\Utility\Inflector
-     * @Flow\Inject
      */
+    #[Flow\Inject]
     protected $inflector;
 
     /**

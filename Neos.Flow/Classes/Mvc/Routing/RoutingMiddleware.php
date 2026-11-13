@@ -31,15 +31,15 @@ use Psr\Http\Server\RequestHandlerInterface;
 class RoutingMiddleware implements MiddlewareInterface
 {
     /**
-     * @Flow\Inject
      * @var RouterInterface
      */
+    #[Flow\Inject]
     protected $router;
 
     /**
-     * @Flow\Inject
      * @var PackageManager
      */
+    #[Flow\Inject]
     protected $packageManager;
 
     /**

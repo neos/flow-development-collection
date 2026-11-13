@@ -22,9 +22,8 @@ use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 
 /**
  * A controller which processes requests from the command line
- *
- * @Flow\Scope("singleton")
  */
+#[Flow\Scope('singleton')]
 class CommandController implements CommandControllerInterface
 {
     /**

@@ -18,9 +18,9 @@ use Neos\Flow\I18n;
 /**
  * The Detector class provides methods for automatic locale detection
  *
- * @Flow\Scope("singleton")
  * @api
  */
+#[Flow\Scope('singleton')]
 class Detector
 {
     /**

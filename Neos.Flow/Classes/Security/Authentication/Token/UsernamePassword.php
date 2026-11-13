@@ -28,8 +28,8 @@ class UsernamePassword extends AbstractToken implements UsernamePasswordTokenInt
     /**
      * The username/password credentials
      * @var array{username: string, password: string,}
-     * @Flow\Transient
      */
+    #[Flow\Transient]
     protected $credentials = ['username' => '', 'password' => ''];
 
     /**

@@ -22,15 +22,14 @@ use Neos\Flow\Mvc\Exception\StopActionException;
 
 /**
  * Command controller for tasks related to database handling
- *
- * @Flow\Scope("singleton")
  */
+#[Flow\Scope('singleton')]
 class DatabaseCommandController extends CommandController
 {
     /**
-     * @Flow\InjectConfiguration(path="persistence")
      * @var array<string, mixed>
      */
+    #[Flow\InjectConfiguration(path: 'persistence')]
     protected $persistenceSettings = [];
 
     /**

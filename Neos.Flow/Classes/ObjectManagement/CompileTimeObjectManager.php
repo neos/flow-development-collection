@@ -46,9 +46,9 @@ use Neos\Flow\Reflection\ReflectionService;
  *     f?: array{string, string},
  *     fa?: array<int, null|array{t:int, v:mixed}>
  * }
- * @Flow\Scope("singleton")
- * @Flow\Proxy(false)
  */
+#[Flow\Scope('singleton')]
+#[Flow\Proxy(false)]
 class CompileTimeObjectManager extends ObjectManager
 {
     protected ?VariableFrontend $configurationCache = null;

@@ -162,15 +162,15 @@ class Route
     protected $isParsed = false;
 
     /**
-     * @Flow\Inject
      * @var ObjectManagerInterface
      */
+    #[Flow\Inject]
     protected $objectManager;
 
     /**
-     * @Flow\Inject
      * @var RouteValuesNormalizerInterface
      */
+    #[Flow\Inject]
     protected $routeValuesNormalizer;
 
     /**

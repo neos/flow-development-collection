@@ -29,21 +29,21 @@ use Neos\Utility\Arrays;
 class UriBuilder
 {
     /**
-     * @Flow\Inject
      * @var \Neos\Flow\Mvc\Routing\RouterInterface
      */
+    #[Flow\Inject]
     protected $router;
 
     /**
-     * @Flow\Inject
      * @var \Neos\Flow\Utility\Environment
      */
+    #[Flow\Inject]
     protected $environment;
 
     /**
-     * @Flow\Inject
      * @var BaseUriProvider
      */
+    #[Flow\Inject]
     protected $baseUriProvider;
 
     /**

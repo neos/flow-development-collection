@@ -19,10 +19,9 @@ use Neos\Flow\Core\RequestHandlerInterface;
  *
  * As this request handler will be the "active" request handler returned by
  * the bootstrap's getActiveRequestHandler() method.
- *
- * @Flow\Scope("singleton")
- * @Flow\Proxy(false)
  */
+#[Flow\Scope('singleton')]
+#[Flow\Proxy(false)]
 class RuntimeSequenceInvokingRequestHandler implements RequestHandlerInterface
 {
     protected Bootstrap $bootstrap;

@@ -34,12 +34,12 @@ use Neos\Flow\I18n;
  * Actual translating is done by injected TranslationProvider instance, so
  * storage format depends on concrete implementation.
  *
- * @Flow\Scope("singleton")
  * @api
  * @see FormatResolver
  * @see TranslationProvider\TranslationProviderInterface
  * @see Cldr\Reader\PluralsReader
  */
+#[Flow\Scope('singleton')]
 class Translator
 {
     /**

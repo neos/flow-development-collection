@@ -17,10 +17,10 @@ use Neos\Flow\Annotations as Flow;
 /**
  * A Proxy Class Builder which integrates Dependency Injection.
  *
- * @Flow\Proxy(false)
  * @deprecated since Flow 9.2, not used in the Framework anymore. Flow now uses PHP 8.4 lazy objects
  * @template T of object
  */
+#[Flow\Proxy(false)]
 final class DependencyProxy
 {
     /**

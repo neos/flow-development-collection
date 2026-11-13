@@ -25,8 +25,8 @@ use Neos\Utility\TypeHandling;
  * type converters and the result will be used to populate a Doctrine ArrayCollection.
  *
  * @api
- * @Flow\Scope("singleton")
  */
+#[Flow\Scope('singleton')]
 class CollectionConverter extends AbstractTypeConverter
 {
     /**

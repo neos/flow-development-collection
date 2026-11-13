@@ -27,15 +27,15 @@ use Neos\Utility\Arrays;
 class KickstartCommandController extends CommandController
 {
     /**
-     * @Flow\Inject
      * @var PackageManager
      */
+    #[Flow\Inject]
     protected $packageManager;
 
     /**
-     * @Flow\Inject
      * @var \Neos\Kickstarter\Service\GeneratorService
      */
+    #[Flow\Inject]
     protected $generatorService;
 
     /**

@@ -26,14 +26,14 @@ class QueryResult implements QueryResultInterface
 {
     /**
      * @var ?array<mixed>
-     * @Flow\Transient
      */
+    #[Flow\Transient]
     protected $rows;
 
     /**
      * @var integer
-     * @Flow\Transient
      */
+    #[Flow\Transient]
     protected $numberOfRows;
 
     /**

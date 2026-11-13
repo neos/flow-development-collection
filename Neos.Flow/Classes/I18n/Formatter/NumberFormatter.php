@@ -20,9 +20,9 @@ use Neos\Flow\I18n\Locale;
 /**
  * Formatter for numbers.
  *
- * @Flow\Scope("singleton")
  * @api
  */
+#[Flow\Scope('singleton')]
 class NumberFormatter implements FormatterInterface
 {
     /**

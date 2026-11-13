@@ -29,26 +29,26 @@ class GeneratorService
 {
     /**
      * @var \Neos\Flow\ObjectManagement\ObjectManagerInterface
-     * @Flow\Inject
      */
+    #[Flow\Inject]
     protected $objectManager;
 
     /**
      * @var PackageManager
-     * @Flow\Inject
      */
+    #[Flow\Inject]
     protected $packageManager;
 
     /**
      * @var \Neos\Kickstarter\Utility\Inflector
-     * @Flow\Inject
      */
+    #[Flow\Inject]
     protected $inflector;
 
     /**
      * @var \Neos\Flow\Reflection\ReflectionService
-     * @Flow\Inject
      */
+    #[Flow\Inject]
     protected $reflectionService;
 
     /**

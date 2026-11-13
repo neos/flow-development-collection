@@ -31,16 +31,16 @@ use Psr\Http\Server\RequestHandlerInterface;
 class SessionMiddleware implements MiddlewareInterface
 {
     /**
-     * @Flow\InjectConfiguration(package="Neos.Flow", path="session")
      * @todo enforce with extractor
      * @var array{name: string, cookie: array{lifetime: int, domain: string, path: string, secure: bool, httponly: true, samesite: string}}
      */
+    #[Flow\InjectConfiguration(package: 'Neos.Flow', path: 'session')]
     protected $sessionSettings;
 
     /**
-     * @Flow\Inject(lazy=false)
      * @var SessionManagerInterface
      */
+    #[Flow\Inject(lazy: false)]
     protected $sessionManager;
 
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface

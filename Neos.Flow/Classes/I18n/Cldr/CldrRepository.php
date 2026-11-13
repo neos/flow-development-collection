@@ -21,9 +21,8 @@ use Neos\Utility\Files;
  *
  * CldrRepository manages CldrModel instances across the framework, so there is
  * only one instance of CldrModel for every unique CLDR data file or file group.
- *
- * @Flow\Scope("singleton")
  */
+#[Flow\Scope('singleton')]
 class CldrRepository
 {
     /**

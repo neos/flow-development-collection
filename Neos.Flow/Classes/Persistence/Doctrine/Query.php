@@ -44,15 +44,15 @@ class Query implements QueryInterface
     protected $entityClassName;
 
     /**
-     * @Flow\Inject(name="Neos.Flow:SystemLogger")
      * @var LoggerInterface
      */
+    #[Flow\Inject(name: 'Neos.Flow:SystemLogger')]
     protected $logger;
 
     /**
-     * @Flow\Inject
      * @var ThrowableStorageInterface
      */
+    #[Flow\Inject]
     protected $throwableStorage;
 
     /**

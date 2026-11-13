@@ -69,27 +69,27 @@ class FormViewHelper extends AbstractFormViewHelper
     protected $tagName = 'form';
 
     /**
-     * @Flow\Inject
      * @var HashService
      */
+    #[Flow\Inject]
     protected $hashService;
 
     /**
-     * @Flow\Inject
      * @var Context
      */
+    #[Flow\Inject]
     protected $securityContext;
 
     /**
-     * @Flow\Inject
      * @var MvcPropertyMappingConfigurationService
      */
+    #[Flow\Inject]
     protected $mvcPropertyMappingConfigurationService;
 
     /**
-     * @Flow\Inject
      * @var AuthenticationManagerInterface
      */
+    #[Flow\Inject]
     protected $authenticationManager;
 
     /**

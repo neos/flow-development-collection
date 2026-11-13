@@ -27,11 +27,11 @@ use Neos\Flow\I18n\Xliff\Exception\InvalidXliffDataException;
  *   forms
  * - reads only "source" and "target" in "trans-unit" tags
  *
- * @Flow\Scope("singleton")
  * @throws InvalidXliffDataException
  * @see http://docs.oasis-open.org/xliff/v1.2/os/xliff-core.html [1]
  * @see http://docs.oasis-open.org/xliff/v1.2/xliff-profile-po/xliff-profile-po-1.2-cd02.html#s.detailed_mapping.tu [2]
  */
+#[Flow\Scope('singleton')]
 class XliffParser extends AbstractXmlParser
 {
     /**

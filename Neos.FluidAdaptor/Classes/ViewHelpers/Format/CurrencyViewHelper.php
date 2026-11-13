@@ -95,9 +95,9 @@ use Neos\FluidAdaptor\Core\ViewHelper\Exception\InvalidVariableException;
 class CurrencyViewHelper extends AbstractLocaleAwareViewHelper
 {
     /**
-     * @Flow\Inject
      * @var NumberFormatter
      */
+    #[Flow\Inject]
     protected $numberFormatter;
 
     /**

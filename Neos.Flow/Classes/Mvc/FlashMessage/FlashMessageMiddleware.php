@@ -26,9 +26,9 @@ use Psr\Http\Server\RequestHandlerInterface;
 class FlashMessageMiddleware implements MiddlewareInterface
 {
     /**
-     * @Flow\Inject
      * @var FlashMessageService
      */
+    #[Flow\Inject]
     protected $flashMessageService;
 
     public function process(ServerRequestInterface $request, RequestHandlerInterface $next): ResponseInterface

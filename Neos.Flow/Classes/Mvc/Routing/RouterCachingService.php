@@ -29,43 +29,41 @@ use Psr\Log\LoggerInterface;
 
 /**
  * Caching of findMatchResults() and resolve() calls on the web Router.
- *
- * @Flow\Scope("singleton")
  */
+#[Flow\Scope('singleton')]
 class RouterCachingService
 {
     /**
      * @var VariableFrontend
-     * @Flow\Inject
      */
+    #[Flow\Inject]
     protected $routeCache;
 
     /**
      * @var VariableFrontend
-     * @Flow\Inject
      */
+    #[Flow\Inject]
     protected $resolveCache;
 
     /**
      * @var PersistenceManagerInterface
-     * @Flow\Inject
      */
+    #[Flow\Inject]
     protected $persistenceManager;
 
     /**
      * @var LoggerInterface
-     * @Flow\Inject(name="Neos.Flow:SystemLogger")
      */
+    #[Flow\Inject(name: 'Neos.Flow:SystemLogger')]
     protected $logger;
 
     /**
-     * @Flow\Inject
      * @var ObjectManagerInterface
      */
+    #[Flow\Inject]
     protected $objectManager;
 
     /**
-     * @Flow\InjectConfiguration("mvc.routes")
      * @phpstan-var array<string,bool|array{
      *     position?: string,
      *     variables?: array<string,mixed>,
@@ -74,6 +72,7 @@ class RouterCachingService
      * }> indexed by package key
      * @var array
      */
+    #[Flow\InjectConfiguration('mvc.routes')]
     protected $routingSettings;
 
     public function injectLogger(LoggerInterface $logger): void

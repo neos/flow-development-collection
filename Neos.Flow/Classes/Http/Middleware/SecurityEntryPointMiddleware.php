@@ -28,21 +28,21 @@ use Psr\Log\LoggerInterface;
 class SecurityEntryPointMiddleware implements MiddlewareInterface
 {
     /**
-     * @Flow\Inject(lazy=false)
      * @var Context
      */
+    #[Flow\Inject(lazy: false)]
     protected $securityContext;
 
     /**
-     * @Flow\Inject(name="Neos.Flow:SecurityLogger")
      * @var LoggerInterface
      */
+    #[Flow\Inject(name: 'Neos.Flow:SecurityLogger')]
     protected $securityLogger;
 
     /**
-     * @Flow\Inject(lazy=false)
      * @var ActionRequestFactory
      */
+    #[Flow\Inject(lazy: false)]
     protected $actionRequestFactory;
 
     /**

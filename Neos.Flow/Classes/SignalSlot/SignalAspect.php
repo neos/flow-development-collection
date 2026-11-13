@@ -19,25 +19,24 @@ use Neos\Flow\Aop\JoinPointInterface;
 
 /**
  * Aspect which connects signal methods with the Signal Dispatcher
- *
- * @Flow\Scope("singleton")
- * @Flow\Aspect
  */
+#[Flow\Scope('singleton')]
+#[Flow\Aspect]
 class SignalAspect
 {
     /**
-     * @Flow\Inject
      * @var Dispatcher
      */
+    #[Flow\Inject]
     protected $dispatcher;
 
     /**
      * Passes the signal over to the Dispatcher
      *
-     * @Flow\AfterReturning("methodAnnotatedWith(Neos\Flow\Annotations\Signal)")
      * @param JoinPointInterface $joinPoint The current join point
      * @throws Exception\InvalidSlotException
      */
+    #[Flow\AfterReturning('methodAnnotatedWith(Neos\Flow\Annotations\Signal)')]
     public function forwardSignalToDispatcher(JoinPointInterface $joinPoint): void
     {
         $signalName = lcfirst(str_replace('emit', '', $joinPoint->getMethodName()));

@@ -80,9 +80,9 @@ class Argument
     protected $propertyMappingConfiguration;
 
     /**
-     * @Flow\Inject
      * @var PropertyMapper
      */
+    #[Flow\Inject]
     protected $propertyMapper;
 
     /**

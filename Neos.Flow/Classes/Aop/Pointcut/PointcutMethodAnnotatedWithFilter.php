@@ -19,9 +19,8 @@ use Psr\Log\LoggerInterface;
 
 /**
  * A method filter which fires on methods annotated with a certain annotation
- *
- * @Flow\Proxy(false)
  */
+#[Flow\Proxy(false)]
 class PointcutMethodAnnotatedWithFilter implements PointcutFilterInterface
 {
     /**

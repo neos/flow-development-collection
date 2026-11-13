@@ -32,8 +32,8 @@ class BearerToken extends AbstractToken implements SessionlessTokenInterface
     /**
      * The password credentials
      * @var array{bearer: string}
-     * @Flow\Transient
      */
+    #[Flow\Transient]
     protected $credentials = ['bearer' => ''];
 
     /**

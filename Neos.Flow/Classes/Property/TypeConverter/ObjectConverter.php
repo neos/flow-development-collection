@@ -36,8 +36,8 @@ use Neos\Utility\TypeHandling;
  * the respective values. For the mechanics used to set the values see ObjectAccess::setProperty().
  *
  * @api
- * @Flow\Scope("singleton")
  */
+#[Flow\Scope('singleton')]
 class ObjectConverter extends AbstractTypeConverter
 {
     /**
@@ -66,15 +66,15 @@ class ObjectConverter extends AbstractTypeConverter
     protected $priority = 0;
 
     /**
-     * @Flow\Inject
      * @var ObjectManagerInterface
      */
+    #[Flow\Inject]
     protected $objectManager;
 
     /**
-     * @Flow\Inject
      * @var ReflectionService
      */
+    #[Flow\Inject]
     protected $reflectionService;
 
     /**

@@ -31,27 +31,26 @@ use Psr\Log\LoggerInterface;
 
 /**
  * EntityManager factory for Doctrine integration
- *
- * @Flow\Scope("singleton")
  */
+#[Flow\Scope('singleton')]
 class EntityManagerFactory
 {
     /**
-     * @Flow\Inject
      * @var ObjectManagerInterface
      */
+    #[Flow\Inject]
     protected $objectManager;
 
     /**
-     * @Flow\Inject
      * @var ReflectionService
      */
+    #[Flow\Inject]
     protected $reflectionService;
 
     /**
-     * @Flow\Inject
      * @var Environment
      */
+    #[Flow\Inject]
     protected $environment;
 
     /**
@@ -132,16 +131,12 @@ class EntityManagerFactory
         return $entityManager;
     }
 
-    /**
-     * @Flow\Signal
-     */
+    #[Flow\Signal]
     public function emitBeforeDoctrineEntityManagerCreation(Connection $connection, Configuration $config, EventManager $eventManager): void
     {
     }
 
-    /**
-     * @Flow\Signal
-     */
+    #[Flow\Signal]
     public function emitAfterDoctrineEntityManagerCreation(Configuration $config, EntityManager $entityManager): void
     {
     }

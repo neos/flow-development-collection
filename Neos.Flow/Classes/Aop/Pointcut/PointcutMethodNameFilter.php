@@ -21,9 +21,8 @@ use Psr\Log\LoggerInterface;
 
 /**
  * A little filter which filters for method names
- *
- * @Flow\Proxy(false)
  */
+#[Flow\Proxy(false)]
 class PointcutMethodNameFilter implements PointcutFilterInterface
 {
     public const PATTERN_MATCHVISIBILITYMODIFIER = '/^(|public|protected)$/';

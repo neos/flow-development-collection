@@ -24,9 +24,9 @@ use Neos\Flow\Persistence\Exception\IllegalObjectTypeException;
 abstract class Repository implements RepositoryInterface
 {
     /**
-     * @Flow\Inject
      * @var PersistenceManagerInterface
      */
+    #[Flow\Inject]
     protected $persistenceManager;
 
     /**

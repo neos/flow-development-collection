@@ -23,9 +23,8 @@ use Neos\Flow\Security\Exception\InvalidQueryRewritingConstraintException;
 
 /**
  * A filter to rewrite doctrine queries according to the security policy.
- *
- * @Flow\Proxy(false)
  */
+#[Flow\Proxy(false)]
 class EntityPrivilege extends AbstractPrivilege implements EntityPrivilegeInterface
 {
     /**

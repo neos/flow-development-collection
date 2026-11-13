@@ -30,9 +30,8 @@ use Psr\Log\LoggerInterface;
 /**
  * This is the default implementation of a security context, which holds current
  * security information like roles oder details of authenticated users.
- *
- * @Flow\Scope("singleton")
  */
+#[Flow\Scope('singleton')]
 class Context
 {
     /**
@@ -161,41 +160,41 @@ class Context
     protected $requestCsrfToken = '';
 
     /**
-     * @Flow\Inject
      * @var TokenAndProviderFactoryInterface
      */
+    #[Flow\Inject]
     protected $tokenAndProviderFactory;
 
     /**
-     * @Flow\Inject
      * @var SessionManagerInterface
      */
+    #[Flow\Inject]
     protected $sessionManager;
 
     /**
-     * @Flow\Inject(name="Neos.Flow:SecurityLogger")
      * @var LoggerInterface
      */
+    #[Flow\Inject(name: 'Neos.Flow:SecurityLogger')]
     protected $securityLogger;
 
     /**
-     * @Flow\Inject
      * @var Policy\PolicyService
      */
+    #[Flow\Inject]
     protected $policyService;
 
     /**
-     * @Flow\Inject
      * @var ObjectManagerInterface
      */
+    #[Flow\Inject]
     protected $objectManager;
 
     /**
      * Array of registered global objects that can be accessed as operands
      *
-     * @Flow\InjectConfiguration("aop.globalObjects")
      * @var array<string,string>
      */
+    #[Flow\InjectConfiguration('aop.globalObjects')]
     protected $globalObjects = [];
 
 
@@ -244,8 +243,8 @@ class Context
      *
      * @param ActionRequest $request The current ActionRequest
      * @return void
-     * @Flow\Autowiring(false)
      */
+    #[Flow\Autowiring(false)]
     public function setRequest(ActionRequest $request)
     {
         $this->request = $request;
@@ -481,8 +480,8 @@ class Context
      * protection strategy.
      *
      * @return string
-     * @Flow\Session(autoStart=true)
      */
+    #[Flow\Session(autoStart: true)]
     public function getCsrfProtectionToken()
     {
         $sessionDataContainer = $this->objectManager->get(SessionDataContainer::class);
@@ -556,8 +555,8 @@ class Context
      *
      * @param ActionRequest $interceptedRequest
      * @return void
-     * @Flow\Session(autoStart=true)
      */
+    #[Flow\Session(autoStart: true)]
     public function setInterceptedRequest(?ActionRequest $interceptedRequest = null)
     {
         if ($this->initialized === false) {

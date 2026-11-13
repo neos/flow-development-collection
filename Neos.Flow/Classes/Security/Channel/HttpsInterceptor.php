@@ -19,9 +19,8 @@ use Neos\Flow\Security\Authorization\InterceptorInterface;
  * This security interceptor switches the current channel between HTTP and HTTPS protocol.
  *
  * TODO this interceptor was never properly implemented. Either throw away or finish it ;)
- *
- * @Flow\Scope("singleton")
  */
+#[Flow\Scope('singleton')]
 class HttpsInterceptor implements InterceptorInterface
 {
     /**

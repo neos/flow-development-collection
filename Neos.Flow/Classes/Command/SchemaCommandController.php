@@ -22,21 +22,20 @@ use Symfony\Component\Yaml\Yaml;
 
 /**
  * Configuration command controller for the Neos.Flow package
- *
- * @Flow\Scope("singleton")
  */
+#[Flow\Scope('singleton')]
 class SchemaCommandController extends CommandController
 {
     /**
-     * @Flow\Inject(lazy = false)
      * @var SchemaValidator
      */
+    #[Flow\Inject(lazy: false)]
     protected $schemaValidator;
 
     /**
-     * @Flow\Inject
      * @var PackageManager
      */
+    #[Flow\Inject]
     protected $packageManager;
 
     /**

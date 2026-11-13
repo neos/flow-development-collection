@@ -13,9 +13,9 @@ use Neos\Flow\Log\Psr\Logger;
  * It is no dependency of Neos.Flow but a suggestion.
  * So IF you use the default logging Neos.Log needs to be installed.
  *
- * @Flow\Proxy(false)
  * @api
  */
+#[Flow\Proxy(false)]
 class PsrLoggerFactory implements PsrLoggerFactoryInterface
 {
     /**

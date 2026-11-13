@@ -34,8 +34,8 @@ class CollectionValidator extends GenericObjectValidator
 
     /**
      * @var \Neos\Flow\Validation\ValidatorResolver
-     * @Flow\Inject
      */
+    #[Flow\Inject]
     protected $validatorResolver;
 
     /**

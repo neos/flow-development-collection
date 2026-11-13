@@ -38,8 +38,8 @@ abstract class AbstractToken implements TokenInterface
     /**
      * The credentials submitted by the client
      * @var array<mixed>
-     * @Flow\Transient
      */
+    #[Flow\Transient]
     protected $credentials = [];
 
     /**

@@ -22,9 +22,9 @@ use Neos\Utility\Files;
  * A Service which provides further information about a given locale
  * and the current state of the i18n and L10n components.
  *
- * @Flow\Scope("singleton")
  * @api
  */
+#[Flow\Scope('singleton')]
 class Service
 {
     /**
@@ -33,24 +33,24 @@ class Service
     protected $settings;
 
     /**
-     * @Flow\Inject
      * @var PackageManager
      */
+    #[Flow\Inject]
     protected $packageManager;
 
     /**
      * A collection of Locale objects representing currently installed locales,
      * in a hierarchical manner.
      *
-     * @Flow\Inject(lazy=false)
      * @var LocaleCollection
      */
+    #[Flow\Inject(lazy: false)]
     protected $localeCollection;
 
     /**
-     * @Flow\Inject(lazy=false)
      * @var VariableFrontend
      */
+    #[Flow\Inject(lazy: false)]
     protected $cache;
 
     /**

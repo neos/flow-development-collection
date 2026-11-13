@@ -19,9 +19,8 @@ use Neos\Utility;
 
 /**
  * File based simple encrypted key service
- *
- * @Flow\Scope("singleton")
  */
+#[Flow\Scope('singleton')]
 class FileBasedSimpleKeyService
 {
     /**
@@ -41,8 +40,8 @@ class FileBasedSimpleKeyService
 
     /**
      * @var HashService
-     * @Flow\Inject
      */
+    #[Flow\Inject]
     protected $hashService;
 
     /**

@@ -35,39 +35,39 @@ use Psr\Log\LoggerInterface;
 /**
  * Flow's Doctrine PersistenceManager
  *
- * @Flow\Scope("singleton")
  * @api
  */
+#[Flow\Scope('singleton')]
 class PersistenceManager extends AbstractPersistenceManager
 {
     /**
-     * @Flow\Inject(name="Neos.Flow:SystemLogger")
      * @var LoggerInterface
      */
+    #[Flow\Inject(name: 'Neos.Flow:SystemLogger')]
     protected $logger;
 
     /**
-     * @Flow\Inject
      * @var ThrowableStorageInterface
      */
+    #[Flow\Inject]
     protected $throwableStorage;
 
     /**
-     * @Flow\Inject
      * @var EntityManagerInterface
      */
+    #[Flow\Inject]
     protected $entityManager;
 
     /**
-     * @Flow\Inject
      * @var ValidatorResolver
      */
+    #[Flow\Inject]
     protected $validatorResolver;
 
     /**
-     * @Flow\Inject
      * @var ReflectionService
      */
+    #[Flow\Inject]
     protected $reflectionService;
 
     /**
@@ -337,9 +337,8 @@ class PersistenceManager extends AbstractPersistenceManager
 
     /**
      * Signals that all persistAll() has been executed successfully.
-     *
-     * @Flow\Signal
      */
+    #[Flow\Signal]
     protected function emitAllObjectsPersisted(): void
     {
     }

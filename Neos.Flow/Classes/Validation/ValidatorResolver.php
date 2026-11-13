@@ -28,9 +28,9 @@ use Neos\Utility\TypeHandling;
 /**
  * Validator resolver to automatically find a appropriate validator for a given subject
  *
- * @Flow\Scope("singleton")
  * @api
  */
+#[Flow\Scope('singleton')]
 class ValidatorResolver
 {
     /**
@@ -66,15 +66,15 @@ class ValidatorResolver
 		/ixS';
 
     /**
-     * @Flow\Inject
      * @var ObjectManagerInterface
      */
+    #[Flow\Inject]
     protected $objectManager;
 
     /**
-     * @Flow\Inject
      * @var ReflectionService
      */
+    #[Flow\Inject]
     protected $reflectionService;
 
     /**
@@ -436,8 +436,8 @@ class ValidatorResolver
      *
      * @param ObjectManagerInterface $objectManager
      * @return list<class-string<PolyTypeObjectValidatorInterface>> Array of object validator class names
-     * @Flow\CompileStatic
      */
+    #[Flow\CompileStatic]
     public static function getPolyTypeObjectValidatorImplementationClassNames($objectManager)
     {
         $reflectionService = $objectManager->get(ReflectionService::class);
@@ -481,8 +481,8 @@ class ValidatorResolver
      *
      * @param ObjectManagerInterface $objectManager
      * @return array<class-string<ValidatorInterface>,int> Array of class names implementing ValidatorInterface indexed by class name
-     * @Flow\CompileStatic
      */
+    #[Flow\CompileStatic]
     public static function getValidatorImplementationClassNames($objectManager)
     {
         $reflectionService = $objectManager->get(ReflectionService::class);

@@ -32,8 +32,8 @@ use Neos\Flow\ResourceManagement\PersistentResource;
  *   CONFIGURATION_RESOURCE_SAVE_PATH must be set as well.
  *
  * @api
- * @Flow\Scope("singleton")
  */
+#[Flow\Scope('singleton')]
 class ArrayConverter extends AbstractTypeConverter
 {
     /**

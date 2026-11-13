@@ -23,8 +23,8 @@ use Neos\Flow\Aop\Builder\ClassNameIndex;
  * doesn't match, the overall result is "no".
  *
  * @see \Neos\Flow\Aop\Pointcut\PointcutExpressionParser, \Neos\Flow\Aop\Pointcut\PointcutClassNameFilter, \Neos\Flow\Aop\Pointcut\PointcutMethodFilter
- * @Flow\Proxy(false)
  */
+#[Flow\Proxy(false)]
 class PointcutFilterComposite implements PointcutFilterInterface
 {
     /**

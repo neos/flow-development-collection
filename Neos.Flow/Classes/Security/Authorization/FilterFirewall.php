@@ -21,9 +21,8 @@ use Neos\Flow\Security\RequestPatternResolver;
 
 /**
  * Default Firewall which analyzes the request with a RequestFilter chain.
- *
- * @Flow\Scope("singleton")
  */
+#[Flow\Scope('singleton')]
 class FilterFirewall implements FirewallInterface
 {
     /**

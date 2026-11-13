@@ -64,15 +64,15 @@ use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
 class ResourceViewHelper extends AbstractViewHelper
 {
     /**
-     * @Flow\Inject
      * @var ResourceManager
      */
+    #[Flow\Inject]
     protected $resourceManager;
 
     /**
-     * @Flow\Inject
      * @var Service
      */
+    #[Flow\Inject]
     protected $i18nService;
 
     /**

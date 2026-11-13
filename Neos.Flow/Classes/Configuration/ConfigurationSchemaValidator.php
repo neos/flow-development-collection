@@ -33,33 +33,32 @@ use Symfony\Component\Yaml\Yaml;
  * Settings/Neos/Flow.persistence.schema.yaml will match the same paths
  * like Settings.Neos.Flow.persistence.schema.yaml or
  * Settings/Neos.Flow/persistence.schema.yaml
- *
- * @Flow\Scope("singleton")
  */
+#[Flow\Scope('singleton')]
 class ConfigurationSchemaValidator
 {
     /**
-     * @Flow\Inject
      * @var \Neos\Flow\Configuration\ConfigurationManager
      */
+    #[Flow\Inject]
     protected $configurationManager;
 
     /**
-     * @Flow\Inject
      * @var \Neos\Flow\Package\PackageManager
      */
+    #[Flow\Inject]
     protected $packageManager;
 
     /**
-     * @Flow\Inject
      * @var \Neos\Utility\SchemaValidator
      */
+    #[Flow\Inject]
     protected $schemaValidator;
 
     /**
-     * @Flow\Inject
      * @var Translator
      */
+    #[Flow\Inject]
     protected $translator;
 
     /**

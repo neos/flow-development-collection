@@ -38,9 +38,9 @@ abstract class AbstractPersistenceManager implements PersistenceManagerInterface
     protected $hasUnpersistedChanges = false;
 
     /**
-     * @Flow\Inject
      * @var AllowedObjectsContainer
      */
+    #[Flow\Inject]
     protected $allowedObjects;
 
     /**

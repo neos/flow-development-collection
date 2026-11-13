@@ -29,10 +29,8 @@ use Psr\Http\Message\UriInterface;
  *   ->withPort(8080)
  *   ->withPathPrefix('prefix/');
  * $resultingUri = $uriConstraints->applyTo($exampleUri); // https://de.some-domain.tld:8080/prefix/foo
- *
- *
- * @Flow\Proxy(false)
  */
+#[Flow\Proxy(false)]
 final class UriConstraints
 {
     public const string CONSTRAINT_SCHEME = 'scheme';

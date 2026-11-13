@@ -17,9 +17,8 @@ use Neos\Flow\Configuration\Exception\InvalidConfigurationException;
 
 /**
  * Flow Object Configuration
- *
- * @Flow\Proxy(false)
  */
+#[Flow\Proxy(false)]
 class Configuration
 {
     public const AUTOWIRING_MODE_OFF = 0;

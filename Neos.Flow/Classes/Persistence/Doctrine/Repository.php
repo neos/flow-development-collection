@@ -35,9 +35,9 @@ use Neos\Flow\Persistence\RepositoryInterface;
 abstract class Repository extends EntityRepository implements RepositoryInterface
 {
     /**
-     * @Flow\Inject
      * @var PersistenceManagerInterface
      */
+    #[Flow\Inject]
     protected $persistenceManager;
 
     /**

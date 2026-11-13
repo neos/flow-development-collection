@@ -22,9 +22,8 @@ use Neos\Flow\Validation\Error;
 
 /**
  * This converter transforms strings to role instances
- *
- * @Flow\Scope("singleton")
  */
+#[Flow\Scope('singleton')]
 class RoleConverter extends AbstractTypeConverter
 {
     /**
@@ -43,9 +42,9 @@ class RoleConverter extends AbstractTypeConverter
     protected $priority = 0;
 
     /**
-     * @Flow\Inject
      * @var PolicyService
      */
+    #[Flow\Inject]
     protected $policyService;
 
     /**

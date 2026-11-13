@@ -39,10 +39,9 @@ use Psr\Log\LoggerInterface;
  *      fa?: array<int, null|array{t:int, v:mixed}>,
  *      o?: list<string>
  * }
- *
- * @Flow\Scope("singleton")
- * @Flow\Proxy(false)
  */
+#[Flow\Scope('singleton')]
+#[Flow\Proxy(false)]
 class ObjectManager implements ObjectManagerInterface
 {
     use ObjectNameNormalization;

@@ -16,9 +16,8 @@ use Neos\Flow\Annotations as Flow;
 
 /**
  * The result of a RoutePartInterface::resolve() call if the corresponding Route Part resolved
- *
- * @Flow\Proxy(false)
  */
+#[Flow\Proxy(false)]
 final class ResolveResult
 {
     /**

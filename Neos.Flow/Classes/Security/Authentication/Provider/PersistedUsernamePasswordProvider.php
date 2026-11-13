@@ -30,34 +30,34 @@ class PersistedUsernamePasswordProvider extends AbstractProvider
 {
     /**
      * @var AccountRepository
-     * @Flow\Inject
      */
+    #[Flow\Inject]
     protected $accountRepository;
 
     /**
      * @var HashService
-     * @Flow\Inject
      */
+    #[Flow\Inject]
     protected $hashService;
 
     /**
      * @var Context
-     * @Flow\Inject
      */
+    #[Flow\Inject]
     protected $securityContext;
 
     /**
      * @var \Neos\Flow\Persistence\PersistenceManagerInterface
-     * @Flow\Inject
      */
+    #[Flow\Inject]
     protected $persistenceManager;
 
     /**
      * The PrecomposedHashProvider has to be injected non-lazy to prevent timing differences
      *
      * @var PrecomposedHashProvider
-     * @Flow\Inject(lazy=false)
      */
+    #[Flow\Inject(lazy: false)]
     protected $precomposedHashProvider;
 
     /**

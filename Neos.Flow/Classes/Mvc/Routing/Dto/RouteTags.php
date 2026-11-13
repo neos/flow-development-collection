@@ -19,9 +19,8 @@ use Neos\Flow\Annotations as Flow;
  *
  * RouteTags can be added by Route Part handlers via the ResolveResult/MatchResult return values
  * The tags will be added to the corresponding cache entries, so that they can be flushed selectively using the RouterCachingService
- *
- * @Flow\Proxy(false)
  */
+#[Flow\Proxy(false)]
 final class RouteTags
 {
     /**

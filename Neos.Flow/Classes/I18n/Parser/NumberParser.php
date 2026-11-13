@@ -23,11 +23,11 @@ use Neos\Flow\I18n\Utility;
  * This parser does not support full syntax of number formats as defined in
  * CLDR. It uses parsed formats from NumbersReader class.
  *
- * @Flow\Scope("singleton")
  * @see NumbersReader
  * @api
  * @todo Currency support
  */
+#[Flow\Scope('singleton')]
 class NumberParser
 {
     /**

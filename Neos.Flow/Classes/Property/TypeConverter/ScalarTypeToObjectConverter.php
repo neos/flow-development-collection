@@ -24,9 +24,8 @@ use Neos\Utility\TypeHandling;
  *
  * This converter will only be used if the target class has a constructor with exactly one argument whose type must
  * be the given type.
- *
- * @Flow\Scope("singleton")
  */
+#[Flow\Scope('singleton')]
 class ScalarTypeToObjectConverter extends AbstractTypeConverter
 {
     /**
@@ -45,9 +44,9 @@ class ScalarTypeToObjectConverter extends AbstractTypeConverter
     protected $priority = 10;
 
     /**
-     * @Flow\Inject
      * @var ReflectionService
      */
+    #[Flow\Inject]
     protected $reflectionService;
 
     /**

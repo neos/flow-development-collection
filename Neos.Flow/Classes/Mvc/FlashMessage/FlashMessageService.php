@@ -23,27 +23,25 @@ use Neos\Flow\Security\RequestPatternResolver;
 use Neos\Utility\PositionalArraySorter;
 use Psr\Http\Message\ResponseInterface as HttpResponseInterface;
 
-/**
- * @Flow\Scope("singleton")
- */
+#[Flow\Scope('singleton')]
 class FlashMessageService
 {
     /**
-     * @Flow\Inject
      * @var ObjectManagerInterface
      */
+    #[Flow\Inject]
     protected $objectManager;
 
     /**
-     * @Flow\Inject
      * @var RequestPatternResolver
      */
+    #[Flow\Inject]
     protected $requestPatternResolver;
 
     /**
-     * @Flow\InjectConfiguration(path="mvc.flashMessages.containers")
      * @var array<mixed>
      */
+    #[Flow\InjectConfiguration(path: 'mvc.flashMessages.containers')]
     protected $flashMessageContainerConfiguration;
 
     /**

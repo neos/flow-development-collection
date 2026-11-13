@@ -17,9 +17,8 @@ use Neos\Flow\Annotations as Flow;
 /**
  * The Lock Manager controls the master lock of the whole site which is mainly
  * used to regenerate code caches in peace.
- *
- * @Flow\Scope("singleton")
  */
+#[Flow\Scope('singleton')]
 class LockManager
 {
     /**

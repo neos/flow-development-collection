@@ -28,27 +28,27 @@ use Neos\Utility\TypeHandling;
  *
  * Used to de-duplicate value objects and validate new and updated objects during flush.
  *
- * @Flow\Scope("singleton")
  * @api
  */
+#[Flow\Scope('singleton')]
 class ObjectValidationAndDeDuplicationListener
 {
     /**
-     * @Flow\Inject
      * @var ValidatorResolver
      */
+    #[Flow\Inject]
     protected $validatorResolver;
 
     /**
-     * @Flow\Inject
      * @var ReflectionService
      */
+    #[Flow\Inject]
     protected $reflectionService;
 
     /**
-     * @Flow\Inject
      * @var PersistenceManager
      */
+    #[Flow\Inject]
     protected $persistenceManager;
 
     /**

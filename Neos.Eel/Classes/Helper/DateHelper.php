@@ -25,15 +25,15 @@ use Neos\Flow\I18n\Service as I18nService;
 class DateHelper implements ProtectedContextAwareInterface
 {
     /**
-     * @Flow\Inject
      * @var DatetimeFormatter
      */
+    #[Flow\Inject]
     protected $datetimeFormatter;
 
     /**
-     * @Flow\Inject
      * @var I18nService
      */
+    #[Flow\Inject]
     protected $localizationService;
 
     /**

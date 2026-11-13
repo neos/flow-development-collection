@@ -8,9 +8,9 @@ use Traversable;
 
 /**
  * @internal
- * @Flow\Proxy(false)
  * @implements \IteratorAggregate<int, Route>
  */
+#[Flow\Proxy(false)]
 final class Routes implements \IteratorAggregate
 {
     /**

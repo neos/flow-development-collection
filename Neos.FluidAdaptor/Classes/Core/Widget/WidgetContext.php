@@ -73,8 +73,8 @@ class WidgetContext
      * Only available inside non-AJAX requests.
      *
      * @var ?RootNode
-     * @Flow\Transient
      */
+    #[Flow\Transient]
     protected $viewHelperChildNodes;
 
     /**
@@ -82,8 +82,8 @@ class WidgetContext
      * Only available inside non-AJAX requests.
      *
      * @var ?RenderingContextInterface
-     * @Flow\Transient
      */
+    #[Flow\Transient]
     protected $viewHelperChildNodeRenderingContext;
 
     /**

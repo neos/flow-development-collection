@@ -19,9 +19,8 @@ use Neos\Flow\Annotations as Flow;
 
 /**
  * A walker to transform a select query into a count query.
- *
- * @Flow\Proxy(false)
  */
+#[Flow\Proxy(false)]
 class CountWalker extends TreeWalkerAdapter
 {
     /**

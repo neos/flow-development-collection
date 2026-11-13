@@ -31,45 +31,44 @@ use Symfony\Component\Console\Helper\ProgressIndicator;
 
 /**
  * PersistentResource command controller for the Neos.Flow package
- *
- * @Flow\Scope("singleton")
  */
+#[Flow\Scope('singleton')]
 class ResourceCommandController extends CommandController
 {
     /**
-     * @Flow\Inject
      * @var ResourceManager
      */
+    #[Flow\Inject]
     protected $resourceManager;
 
     /**
-     * @Flow\Inject
      * @var ResourceRepository
      */
+    #[Flow\Inject]
     protected $resourceRepository;
 
     /**
-     * @Flow\Inject
      * @var PersistenceManagerInterface
      */
+    #[Flow\Inject]
     protected $persistenceManager;
 
     /**
-     * @Flow\Inject
      * @var PackageManager
      */
+    #[Flow\Inject]
     protected $packageManager;
 
     /**
-     * @Flow\Inject
      * @var ObjectManagerInterface
      */
+    #[Flow\Inject]
     protected $objectManager;
 
     /**
-     * @Flow\Inject
      * @var MessageCollector
      */
+    #[Flow\Inject]
     protected $messageCollector;
 
     /**

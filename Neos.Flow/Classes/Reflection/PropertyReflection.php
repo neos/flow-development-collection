@@ -16,9 +16,8 @@ use Neos\Flow\Annotations as Flow;
 
 /**
  * Extended version of the ReflectionProperty
- *
- * @Flow\Proxy(false)
  */
+#[Flow\Proxy(false)]
 class PropertyReflection extends \ReflectionProperty
 {
     /**

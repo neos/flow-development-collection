@@ -22,9 +22,8 @@ use Neos\Flow\Reflection\ReflectionService;
 
 /**
  * A helper for CLI Commands
- *
- * @Flow\Scope("singleton")
  */
+#[Flow\Scope('singleton')]
 class CommandManager
 {
     /**
@@ -223,8 +222,8 @@ class CommandManager
 
     /**
      * @return array<class-string<CommandController>, array<string, array<string,mixed>>> of method arguments per controller and method.
-     * @Flow\CompileStatic
      */
+    #[Flow\CompileStatic]
     public static function getCommandControllerMethodArguments(ObjectManagerInterface $objectManager): array
     {
         /** @var ReflectionService $reflectionService */

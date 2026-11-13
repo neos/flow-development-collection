@@ -18,15 +18,14 @@ use Neos\Flow\Annotations as Flow;
 
 /**
  * Connection factory for Doctrine connection class
- *
- * @Flow\Scope("singleton")
  */
+#[Flow\Scope('singleton')]
 final class ConnectionFactory
 {
     /**
-     * @Flow\Inject
      * @var EntityManagerInterface
      */
+    #[Flow\Inject]
     protected $entityManager;
 
     /**

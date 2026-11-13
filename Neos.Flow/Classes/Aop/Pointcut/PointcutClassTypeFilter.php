@@ -19,9 +19,8 @@ use Neos\Flow\Reflection\ReflectionService;
 
 /**
  * A class type filter which fires on class or interface names
- *
- * @Flow\Proxy(false)
  */
+#[Flow\Proxy(false)]
 class PointcutClassTypeFilter implements PointcutFilterInterface
 {
     /**

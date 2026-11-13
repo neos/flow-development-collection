@@ -21,9 +21,8 @@ use Neos\Flow\Configuration\ConfigurationManager;
  * A settings filter which fires on configuration setting set to true or equal to the given condition.
  *
  * Example: setting(FooPackage.configuration.option = 'AOP is cool')
- *
- * @Flow\Proxy(false)
  */
+#[Flow\Proxy(false)]
 class PointcutSettingFilter implements PointcutFilterInterface
 {
     public const PATTERN_SPLITBYEQUALSIGN = '/\s*( *= *)\s*/';

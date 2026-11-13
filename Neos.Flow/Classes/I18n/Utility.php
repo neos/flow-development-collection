@@ -16,9 +16,8 @@ use Neos\Flow\Annotations as Flow;
 
 /**
  * The Utility class for locale specific actions
- *
- * @Flow\Scope("singleton")
  */
+#[Flow\Scope('singleton')]
 class Utility
 {
     /**

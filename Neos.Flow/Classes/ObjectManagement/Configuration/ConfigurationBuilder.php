@@ -33,10 +33,9 @@ use Psr\Log\LoggerInterface;
  * Object Configuration Builder which can build object configuration objects
  * from information collected by reflection combined with arrays of configuration
  * options as defined in an Objects.yaml file.
- *
- * @Flow\Scope("singleton")
- * @Flow\Proxy(false)
  */
+#[Flow\Scope('singleton')]
+#[Flow\Proxy(false)]
 readonly class ConfigurationBuilder
 {
     use ObjectNameNormalization;

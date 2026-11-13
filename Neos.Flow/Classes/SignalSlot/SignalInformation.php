@@ -21,8 +21,8 @@ use Neos\Flow\Annotations as Flow;
  * at a slot during a signal/slot dispatch operation.
  *
  * @api
- * @Flow\Proxy(false)
  */
+#[Flow\Proxy(false)]
 final class SignalInformation
 {
     /**

@@ -18,15 +18,14 @@ use Neos\Flow\Core\Booting\Scripts;
 
 /**
  * Command controller for starting the development-server
- *
- * @Flow\Scope("singleton")
  */
+#[Flow\Scope('singleton')]
 class ServerCommandController extends CommandController
 {
     /**
-     * @Flow\InjectConfiguration
      * @var array<string, mixed>
      */
+    #[Flow\InjectConfiguration]
     protected $settings;
 
     /**

@@ -18,9 +18,8 @@ use Neos\Flow\Security\Exception\NoInterceptorFoundException;
 
 /**
  * The security interceptor resolver. It resolves the class name of a security interceptor based on names.
- *
- * @Flow\Scope("singleton")
  */
+#[Flow\Scope('singleton')]
 class InterceptorResolver
 {
     /**

@@ -10,9 +10,8 @@ use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 
 /**
  * A command dispatcher.
- *
- * @Flow\Scope("singleton")
  */
+#[Flow\Scope('singleton')]
 class Dispatcher
 {
     public function __construct(
@@ -52,8 +51,8 @@ class Dispatcher
      * This signal is emitted directly before the request is been dispatched to a controller.
      *
      * @return void
-     * @Flow\Signal
      */
+    #[Flow\Signal]
     protected function emitBeforeControllerInvocation(Request $request, Response $response, CommandControllerInterface $controller)
     {
     }
@@ -63,8 +62,8 @@ class Dispatcher
      * returned control back to the dispatcher.
      *
      * @return void
-     * @Flow\Signal
      */
+    #[Flow\Signal]
     protected function emitAfterControllerInvocation(Request $request, Response $response, CommandControllerInterface $controller)
     {
     }

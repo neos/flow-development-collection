@@ -22,9 +22,8 @@ use Neos\Flow\Utility;
 
 /**
  * A hash service which should be used to generate and validate hashes.
- *
- * @Flow\Scope("singleton")
  */
+#[Flow\Scope('singleton')]
 class HashService
 {
     /**
@@ -45,14 +44,14 @@ class HashService
 
     /**
      * @var ObjectManagerInterface
-     * @Flow\Inject
      */
+    #[Flow\Inject]
     protected $objectManager;
 
     /**
      * @var StringFrontend
-     * @Flow\Inject
      */
+    #[Flow\Inject]
     protected $cache;
 
     /**

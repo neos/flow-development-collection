@@ -46,15 +46,15 @@ class ResourceStreamWrapper implements StreamWrapperInterface
     protected $uri;
 
     /**
-     * @Flow\Inject(lazy = false)
      * @var PackageManager
      */
+    #[Flow\Inject(lazy: false)]
     protected $packageManager;
 
     /**
-     * @Flow\Inject
      * @var ResourceManager
      */
+    #[Flow\Inject]
     protected $resourceManager;
 
     /**

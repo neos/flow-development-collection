@@ -18,9 +18,8 @@ use Psr\Http\Message\ResponseInterface;
 
 /**
  * A quite exception handler which catches but ignores any exception.
- *
- * @Flow\Scope("singleton")
  */
+#[Flow\Scope('singleton')]
 class ProductionExceptionHandler extends AbstractExceptionHandler
 {
     /**

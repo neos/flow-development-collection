@@ -89,20 +89,20 @@ use Neos\Flow\Property\PropertyMappingConfigurationInterface;
  *  );
  *
  * @api
- * @Flow\Scope("singleton")
  */
+#[Flow\Scope('singleton')]
 class FloatConverter extends AbstractTypeConverter
 {
     /**
-     * @Flow\Inject
      * @var \Neos\Flow\I18n\Service
      */
+    #[Flow\Inject]
     protected $localizationService;
 
     /**
-     * @Flow\Inject
      * @var \Neos\Flow\I18n\Parser\NumberParser
      */
+    #[Flow\Inject]
     protected $numberParser;
 
     /**

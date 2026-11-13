@@ -33,9 +33,8 @@ use Neos\Flow\Aop\Pointcut\Pointcut;
  *
  * If used on a property an introduction contains a pointcut expression and is
  * used to introduce the annotated property into the target class.
- *
- * @Flow\Proxy(false)
  */
+#[Flow\Proxy(false)]
 class AspectContainer
 {
     /**

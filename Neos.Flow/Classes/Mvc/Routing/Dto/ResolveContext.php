@@ -17,9 +17,8 @@ use Psr\Http\Message\UriInterface;
 
 /**
  * Simple DTO wrapping the values required for a Router::resolve() call
- *
- * @Flow\Proxy(false)
  */
+#[Flow\Proxy(false)]
 final class ResolveContext
 {
     /**

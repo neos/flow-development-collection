@@ -34,9 +34,8 @@ use Psr\Log\LoggerInterface;
 
 /**
  * Command controller for tasks related to Doctrine
- *
- * @Flow\Scope("singleton")
  */
+#[Flow\Scope('singleton')]
 class DoctrineCommandController extends CommandController
 {
     /**
@@ -45,27 +44,27 @@ class DoctrineCommandController extends CommandController
     protected $settings = [];
 
     /**
-     * @Flow\Inject
      * @var DoctrineService
      */
+    #[Flow\Inject]
     protected $doctrineService;
 
     /**
-     * @Flow\Inject
      * @var PackageManager
      */
+    #[Flow\Inject]
     protected $packageManager;
 
     /**
-     * @Flow\Inject
      * @var ThrowableStorageInterface
      */
+    #[Flow\Inject]
     protected $throwableStorage;
 
     /**
-     * @Flow\Inject(name="Neos.Flow:SystemLogger")
      * @var LoggerInterface
      */
+    #[Flow\Inject(name: 'Neos.Flow:SystemLogger')]
     protected $logger;
 
     /**
@@ -88,8 +87,8 @@ class DoctrineCommandController extends CommandController
      *
      * @throws UtilityException
      * @throws FilesException
-     * @Flow\Internal
      */
+    #[Flow\Internal]
     public function compileProxiesCommand(): void
     {
         $this->doctrineService->compileProxies();
@@ -334,9 +333,7 @@ class DoctrineCommandController extends CommandController
         }
     }
 
-    /**
-     * @Flow\Signal
-     */
+    #[Flow\Signal]
     protected function emitAfterDatabaseMigration(): void
     {
     }

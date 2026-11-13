@@ -15,9 +15,9 @@ use Neos\Utility\Files;
 final class MigrationFinder extends Finder
 {
     /**
-     * @Flow\Inject
      * @var PackageManager
      */
+    #[Flow\Inject]
     protected $packageManager;
 
     /**

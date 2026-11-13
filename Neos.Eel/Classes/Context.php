@@ -23,8 +23,8 @@ use Neos\Utility\ObjectAccess;
  * for safe access without warnings (on missing properties).
  *
  * @phpstan-consistent-constructor
- * @Flow\Proxy(false)
  */
+#[Flow\Proxy(false)]
 class Context
 {
     public function __construct(

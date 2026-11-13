@@ -37,9 +37,9 @@ class AutocompleteViewHelper extends AbstractWidgetViewHelper
     protected $ajaxWidget = true;
 
     /**
-     * @Flow\Inject
      * @var Controller\AutocompleteController
      */
+    #[Flow\Inject]
     protected $controller;
 
     /**

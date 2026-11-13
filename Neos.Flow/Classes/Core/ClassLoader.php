@@ -18,10 +18,9 @@ use Neos\Utility\Files;
 
 /**
  * Class Loader implementation for test classes.
- *
- * @Flow\Proxy(false)
- * @Flow\Scope("singleton")
  */
+#[Flow\Proxy(false)]
+#[Flow\Scope('singleton')]
 class ClassLoader
 {
     /**

@@ -21,9 +21,8 @@ use Neos\Flow\Aop\Exception\CircularPointcutReferenceException;
  * code associated with the pointcut (ie. advices) should be executed. This set of
  * join points is defined by a pointcut expression which is matched against class
  * and method signatures.
- *
- * @Flow\Proxy(false)
  */
+#[Flow\Proxy(false)]
 class Pointcut implements PointcutFilterInterface
 {
     public const MAXIMUM_RECURSIONS = 99;

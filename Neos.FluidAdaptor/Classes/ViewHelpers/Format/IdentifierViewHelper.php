@@ -56,9 +56,9 @@ class IdentifierViewHelper extends AbstractViewHelper
     protected $escapeChildren = false;
 
     /**
-     * @Flow\Inject
      * @var PersistenceManagerInterface
      */
+    #[Flow\Inject]
     protected $persistenceManager;
 
     /**

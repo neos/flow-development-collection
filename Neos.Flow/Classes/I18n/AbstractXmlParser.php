@@ -16,9 +16,8 @@ use Neos\Flow\Annotations as Flow;
 
 /**
  * An abstract class for all concrete classes that parses any kind of XML data.
- *
- * @Flow\Scope("singleton")
  */
+#[Flow\Scope('singleton')]
 abstract class AbstractXmlParser
 {
     /**

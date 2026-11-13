@@ -29,21 +29,21 @@ use Psr\Http\Message\ServerRequestInterface as HttpRequestInterface;
 class ActionRequest
 {
     /**
-     * @Flow\Inject
      * @var ObjectManagerInterface
      */
+    #[Flow\Inject]
     protected $objectManager;
 
     /**
-     * @Flow\Inject
      * @var HashService
      */
+    #[Flow\Inject]
     protected $hashService;
 
     /**
-     * @Flow\Inject
      * @var PackageManager
      */
+    #[Flow\Inject]
     protected $packageManager;
 
     /**

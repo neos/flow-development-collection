@@ -35,9 +35,9 @@ use Neos\FluidAdaptor\Core\Widget\WidgetContext;
 class UriViewHelper extends AbstractViewHelper
 {
     /**
-     * @Flow\Inject
      * @var HashService
      */
+    #[Flow\Inject]
     protected $hashService;
 
     /**

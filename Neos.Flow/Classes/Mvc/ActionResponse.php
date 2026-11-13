@@ -71,8 +71,8 @@ use Psr\Http\Message\UriInterface;
  * ```
  *
  * @deprecated with Flow 9
- * @Flow\Proxy(false)
  */
+#[Flow\Proxy(false)]
 final class ActionResponse
 {
     /**

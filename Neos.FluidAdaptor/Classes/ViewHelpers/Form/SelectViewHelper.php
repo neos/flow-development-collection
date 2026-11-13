@@ -122,9 +122,9 @@ use Neos\Utility\ObjectAccess;
 class SelectViewHelper extends AbstractFormFieldViewHelper
 {
     /**
-     * @Flow\Inject
      * @var Translator
      */
+    #[Flow\Inject]
     protected $translator;
 
     /**

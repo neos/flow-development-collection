@@ -33,33 +33,33 @@ use Psr\Http\Server\RequestHandlerInterface;
 class AjaxWidgetMiddleware implements MiddlewareInterface
 {
     /**
-     * @Flow\Inject
      * @var ActionRequestFactory
      */
+    #[Flow\Inject]
     protected $actionRequestFactory;
 
     /**
-     * @Flow\Inject
      * @var HashService
      */
+    #[Flow\Inject]
     protected $hashService;
 
     /**
-     * @Flow\Inject
      * @var AjaxWidgetContextHolder
      */
+    #[Flow\Inject]
     protected $ajaxWidgetContextHolder;
 
     /**
-     * @Flow\Inject
      * @var Context
      */
+    #[Flow\Inject]
     protected $securityContext;
 
     /**
-     * @Flow\Inject
      * @var Dispatcher
      */
+    #[Flow\Inject]
     protected $dispatcher;
 
     /**

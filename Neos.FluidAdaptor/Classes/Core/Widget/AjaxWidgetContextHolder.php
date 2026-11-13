@@ -22,9 +22,8 @@ use Neos\FluidAdaptor\Core\Widget\Exception\WidgetContextNotFoundException;
  * Widget AJAX requests.
  *
  * This class is only used internally by the widget framework.
- *
- * @Flow\Scope("session")
  */
+#[Flow\Scope('session')]
 class AjaxWidgetContextHolder
 {
     /**
@@ -55,8 +54,8 @@ class AjaxWidgetContextHolder
      * AjaxWidgetIdentifier inside the Widget Context correctly.
      *
      * @return void
-     * @Flow\Session(autoStart=true)
      */
+    #[Flow\Session(autoStart: true)]
     public function store(WidgetContext $widgetContext)
     {
         $ajaxWidgetId = Algorithms::generateUUID();

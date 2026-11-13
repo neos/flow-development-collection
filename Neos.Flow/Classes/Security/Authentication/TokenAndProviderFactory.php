@@ -20,9 +20,8 @@ use Neos\Flow\Security\RequestPatternResolver;
 
 /**
  * Default factory for providers and tokens.
- *
- * @Flow\Scope("singleton")
  */
+#[Flow\Scope('singleton')]
 class TokenAndProviderFactory implements TokenAndProviderFactoryInterface
 {
     /**
@@ -61,9 +60,9 @@ class TokenAndProviderFactory implements TokenAndProviderFactoryInterface
     protected $requestPatternResolver;
 
     /**
-     * @Flow\Inject
      * @var ObjectManagerInterface
      */
+    #[Flow\Inject]
     protected $objectManager;
 
     /**

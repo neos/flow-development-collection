@@ -16,10 +16,9 @@ use Neos\Flow\Annotations as Flow;
 
 /**
  * A filterable index of class names
- *
- * @Flow\Proxy(false)
- * @Flow\Scope("prototype")
  */
+#[Flow\Proxy(false)]
+#[Flow\Scope('prototype')]
 class ClassNameIndex
 {
     /**

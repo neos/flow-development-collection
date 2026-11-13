@@ -20,9 +20,8 @@ use Neos\Utility\ObjectAccess;
  * context for an Eel evaluation to match a request
  * using the Eel Syntax. This is primarily used
  * in the requestFilter of the Views.yaml configuration.
- *
- * @Flow\Proxy(false)
  */
+#[Flow\Proxy(false)]
 class RequestMatcher
 {
     /**

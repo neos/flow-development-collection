@@ -47,8 +47,8 @@ class StandaloneView extends AbstractTemplateView
 
     /**
      * @var \Neos\Flow\Utility\Environment
-     * @Flow\Inject
      */
+    #[Flow\Inject]
     protected $environment;
 
     /**
@@ -58,8 +58,8 @@ class StandaloneView extends AbstractTemplateView
 
     /**
      * @var Bootstrap
-     * @Flow\Inject
      */
+    #[Flow\Inject]
     protected $bootstrap;
 
     /**

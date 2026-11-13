@@ -31,9 +31,8 @@ use Neos\Flow\Security\Exception\NoTokensAuthenticatedException;
  * 1. If authentication has not been performed (flag is set in the security context) the configured authentication manager is called to authenticate its tokens
  * 2. If a AuthenticationRequired exception has been thrown we look for an authentication entry point in the active tokens to redirect to authentication
  * 3. Then the configured AccessDecisionManager is called to authorize the request/action
- *
- * @Flow\Scope("singleton")
  */
+#[Flow\Scope('singleton')]
 class PolicyEnforcement implements InterceptorInterface
 {
     /**

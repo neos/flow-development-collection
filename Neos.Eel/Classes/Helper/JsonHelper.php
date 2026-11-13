@@ -17,9 +17,8 @@ use Neos\Flow\Annotations as Flow;
 
 /**
  * JSON helpers for Eel contexts
- *
- * @Flow\Proxy(false)
  */
+#[Flow\Proxy(false)]
 class JsonHelper implements ProtectedContextAwareInterface
 {
     /**

@@ -22,21 +22,20 @@ use Neos\Flow\Security\Exception\AuthenticationRequiredException;
 
 /**
  * An action controller for generic authentication in Flow
- *
- * @Flow\Scope("singleton")
  */
+#[Flow\Scope('singleton')]
 abstract class AbstractAuthenticationController extends ActionController
 {
     /**
      * @var AuthenticationManagerInterface
-     * @Flow\Inject
      */
+    #[Flow\Inject]
     protected $authenticationManager;
 
     /**
      * @var Context
-     * @Flow\Inject
      */
+    #[Flow\Inject]
     protected $securityContext;
 
     /**
@@ -73,8 +72,8 @@ abstract class AbstractAuthenticationController extends ActionController
      * onAuthenticationFailure()).
      *
      * @return string|null
-     * @Flow\SkipCsrfProtection
      */
+    #[Flow\SkipCsrfProtection]
     public function authenticateAction()
     {
         $authenticationException = null;
@@ -106,8 +105,8 @@ abstract class AbstractAuthenticationController extends ActionController
      * method to do the actual logout.
      *
      * @return void
-     * @Flow\SkipCsrfProtection
      */
+    #[Flow\SkipCsrfProtection]
     public function logoutAction()
     {
         $this->authenticationManager->logout();

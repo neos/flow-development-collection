@@ -79,9 +79,9 @@ class FilterOperation extends AbstractOperation
     protected static $shortName = 'filter';
 
     /**
-     * @Flow\Inject
      * @var PersistenceManagerInterface
      */
+    #[Flow\Inject]
     protected $persistenceManager;
 
     /**

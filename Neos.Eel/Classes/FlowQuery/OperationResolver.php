@@ -18,21 +18,20 @@ use Neos\Flow\Reflection\ReflectionService;
 
 /**
  * FlowQuery Operation Resolver
- *
- * @Flow\Scope("singleton")
  */
+#[Flow\Scope('singleton')]
 class OperationResolver implements OperationResolverInterface
 {
     /**
      * @var ObjectManagerInterface
-     * @Flow\Inject
      */
+    #[Flow\Inject]
     protected $objectManager;
 
     /**
      * @var ReflectionService
-     * @Flow\Inject
      */
+    #[Flow\Inject]
     protected $reflectionService;
 
     /**
@@ -65,8 +64,8 @@ class OperationResolver implements OperationResolverInterface
      * @param ObjectManagerInterface $objectManager
      * @return array{0: array<mixed>, 1: array<mixed>} Array of sorted operations and array of final operation names
      * @throws FlowQueryException
-     * @Flow\CompileStatic
      */
+    #[Flow\CompileStatic]
     public static function buildOperationsAndFinalOperationNames($objectManager)
     {
         $operations = [];

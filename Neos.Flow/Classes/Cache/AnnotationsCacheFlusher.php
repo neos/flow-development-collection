@@ -21,35 +21,33 @@ use Neos\Flow\Log\Utility\LogEnvironment;
 use Neos\Flow\Reflection\ReflectionService;
 use Psr\Log\LoggerInterface;
 
-/**
- * @Flow\Scope("singleton")
- */
+#[Flow\Scope('singleton')]
 final class AnnotationsCacheFlusher
 {
     /**
-     * @Flow\Inject
      * @var LoggerInterface
      */
+    #[Flow\Inject]
     protected $logger;
 
     /**
-     * @Flow\Inject
      * @var ConfigurationManager
      */
+    #[Flow\Inject]
     protected $configurationManager;
 
     /**
-     * @Flow\Inject
      * @var CacheManager
      */
+    #[Flow\Inject]
     protected $cacheManager;
 
     /**
      * The ReflectionService is only needed during compile time for handling flushConfigurationCachesByCompiledClass
      *
-     * @Flow\Inject
      * @var ReflectionService
      */
+    #[Flow\Inject]
     protected $reflectionService;
 
     /**

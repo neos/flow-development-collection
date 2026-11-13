@@ -23,9 +23,8 @@ use Neos\Flow\ObjectManagement\ObjectManagerInterface;
  * An evaluator for AOP runtime expressions
  *
  * We expect that ALL runtime expressions are regenerated during compiletime. This currently does not support adding of expressions. See shutdownObject()
- *
- * @Flow\Scope("singleton")
  */
+#[Flow\Scope('singleton')]
 class RuntimeExpressionEvaluator
 {
     /**

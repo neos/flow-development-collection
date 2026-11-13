@@ -46,9 +46,9 @@ class ArrayTypeConverter extends AbstractTypeConverter
     protected $priority = 1;
 
     /**
-     * @Flow\Inject
      * @var PropertyMapper
      */
+    #[Flow\Inject]
     protected $propertyMapper;
 
     /**

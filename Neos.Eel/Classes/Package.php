@@ -17,9 +17,8 @@ use Neos\Flow\Package\Package as BasePackage;
 
 /**
  * Package base class of the Eel package.
- *
- * @Flow\Scope("singleton")
  */
+#[Flow\Scope('singleton')]
 class Package extends BasePackage
 {
     public const EelExpressionRecognizer = <<<'REGEX'

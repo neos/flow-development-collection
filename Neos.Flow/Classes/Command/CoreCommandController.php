@@ -33,10 +33,9 @@ use Neos\Utility\Files;
  * Command controller for core commands
  *
  * NOTE: This command controller will run in compile time (as defined in the package bootstrap)
- *
- * @Flow\Scope("singleton")
- * @Flow\Proxy(false)
  */
+#[Flow\Scope('singleton')]
+#[Flow\Proxy(false)]
 class CoreCommandController extends CommandController
 {
     /**
@@ -163,10 +162,10 @@ class CoreCommandController extends CommandController
      * Although a compilation run is triggered automatically by Flow, there might
      * be cases in a production context where a manual compile run is needed.
      *
-     * @Flow\Internal
      * @param boolean $force If set, classes will be compiled even though the cache says that everything is up to date.
      * @return void
      */
+    #[Flow\Internal]
     public function compileCommand(bool $force = false)
     {
         /** @var VariableFrontend $objectConfigurationCache */
@@ -259,8 +258,8 @@ class CoreCommandController extends CommandController
      *
      * @param integer $classCount Number of compiled proxy classes
      * @return void
-     * @Flow\Signal
      */
+    #[Flow\Signal]
     protected function emitFinishedCompilationRun(int $classCount)
     {
         $this->signalSlotDispatcher->dispatch(self::class, 'finishedCompilationRun', [$classCount]);

@@ -36,21 +36,21 @@ use Neos\Utility\ObjectAccess;
 class IdentityRoutePart extends DynamicRoutePart
 {
     /**
-     * @Flow\Inject
      * @var PersistenceManagerInterface
      */
+    #[Flow\Inject]
     protected $persistenceManager;
 
     /**
-     * @Flow\Inject
      * @var ReflectionService
      */
+    #[Flow\Inject]
     protected $reflectionService;
 
     /**
-     * @Flow\Inject
      * @var ObjectPathMappingRepository
      */
+    #[Flow\Inject]
     protected $objectPathMappingRepository;
 
     /**

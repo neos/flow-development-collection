@@ -32,33 +32,33 @@ use Psr\Log\LoggerInterface;
  * This listener is outsourced from the PersistenceManager to avoid recursive dependencies when building
  * the EntityManager.
  *
- * @Flow\Scope("singleton")
  * @api
  */
+#[Flow\Scope('singleton')]
 class AllowedObjectsListener
 {
     /**
-     * @Flow\Inject
      * @var LoggerInterface
      */
+    #[Flow\Inject]
     protected $logger;
 
     /**
-     * @Flow\Inject
      * @var ThrowableStorageInterface
      */
+    #[Flow\Inject]
     protected $throwableStorage;
 
     /**
-     * @Flow\Inject
      * @var AllowedObjectsContainer
      */
+    #[Flow\Inject]
     protected $allowedObjects;
 
     /**
-     * @Flow\Inject(lazy=true)
      * @var PersistenceManagerInterface
      */
+    #[Flow\Inject(lazy: true)]
     protected $persistenceManager;
 
     /**

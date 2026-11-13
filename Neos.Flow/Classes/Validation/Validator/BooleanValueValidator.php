@@ -18,8 +18,8 @@ use Neos\Flow\Annotations as Flow;
  * Validator for a specific boolean value.
  *
  * @api
- * @Flow\Scope("prototype")
  */
+#[Flow\Scope('prototype')]
 class BooleanValueValidator extends AbstractValidator
 {
     /**

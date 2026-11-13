@@ -68,9 +68,9 @@ class Role implements \Stringable
     protected $description;
 
     /**
-     * @Flow\Transient
      * @var Role[]
      */
+    #[Flow\Transient]
     protected $parentRoles;
 
     /**

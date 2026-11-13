@@ -19,9 +19,8 @@ use Psr\Http\Message\ServerRequestInterface;
 
 /**
  * Simple DTO wrapping the values required for a Router::route() call
- *
- * @Flow\Proxy(false)
  */
+#[Flow\Proxy(false)]
 final class RouteContext implements CacheAwareInterface
 {
     /**

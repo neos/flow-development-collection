@@ -24,9 +24,9 @@ class FlashMessageSessionStorage implements FlashMessageStorageInterface
     public const DEFAULT_SESSION_KEY = 'Neos_Flow_FlashMessages';
 
     /**
-     * @Flow\Inject
      * @var SessionInterface
      */
+    #[Flow\Inject]
     protected $session;
 
     /**

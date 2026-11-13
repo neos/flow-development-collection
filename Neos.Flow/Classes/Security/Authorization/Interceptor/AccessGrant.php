@@ -17,9 +17,8 @@ use Neos\Flow\Security\Authorization\InterceptorInterface;
 
 /**
  * This security interceptor always grants access.
- *
- * @Flow\Scope("singleton")
  */
+#[Flow\Scope('singleton')]
 class AccessGrant implements InterceptorInterface
 {
     /**

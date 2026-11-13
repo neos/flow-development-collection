@@ -23,8 +23,8 @@ use Neos\Utility\TypeHandling;
  * the element type <T> of the target array using an available type converter.
  *
  * @api
- * @Flow\Scope("singleton")
  */
+#[Flow\Scope('singleton')]
 class TypedArrayConverter extends AbstractTypeConverter
 {
     /**

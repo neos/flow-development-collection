@@ -37,9 +37,9 @@ use Neos\Flow\Reflection\ReflectionService;
  *      leftValue: string,
  *      rightValue: mixed,
  * }
- * @Flow\Scope("singleton")
- * @Flow\Proxy(false)
  */
+#[Flow\Scope('singleton')]
+#[Flow\Proxy(false)]
 class PointcutExpressionParser
 {
     public const PATTERN_SPLITBYOPERATOR = '/\s*(\&\&|\|\|)\s*/';

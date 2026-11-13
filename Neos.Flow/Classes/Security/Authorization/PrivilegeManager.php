@@ -21,9 +21,8 @@ use Neos\Flow\Security\Policy\Role;
 
 /**
  * An access decision voter manager
- *
- * @Flow\Scope("singleton")
  */
+#[Flow\Scope('singleton')]
 class PrivilegeManager implements PrivilegeManagerInterface
 {
     /**
@@ -39,9 +38,9 @@ class PrivilegeManager implements PrivilegeManagerInterface
     /**
      * If set to true access will be granted for objects where all voters abstain from decision.
      *
-     * @Flow\InjectConfiguration("security.authorization.allowAccessIfAllVotersAbstain")
      * @var boolean
      */
+    #[Flow\InjectConfiguration('security.authorization.allowAccessIfAllVotersAbstain')]
     protected $allowAccessIfAllAbstain = false;
 
     /**

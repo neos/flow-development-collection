@@ -23,9 +23,8 @@ use Neos\Flow\Security\Policy\PolicyService;
 
 /**
  * A filter to rewrite doctrine queries according to the security policy.
- *
- * @Flow\Proxy(false)
  */
+#[Flow\Proxy(false)]
 class SqlFilter extends DoctrineSqlFilter
 {
     /**

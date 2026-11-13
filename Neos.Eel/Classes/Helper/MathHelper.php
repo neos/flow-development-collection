@@ -22,9 +22,8 @@ use Neos\Flow\Annotations as Flow;
  *
  * See https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Math for a documentation and
  * specification of the JavaScript implementation.
- *
- * @Flow\Proxy(false)
  */
+#[Flow\Proxy(false)]
 class MathHelper implements ProtectedContextAwareInterface
 {
     /**

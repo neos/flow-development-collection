@@ -35,10 +35,10 @@ use Neos\Utility\OpcodeCacheHelper;
 /**
  * A general purpose configuration manager
  *
- * @Flow\Scope("singleton")
- * @Flow\Proxy(false)
  * @api
  */
+#[Flow\Scope('singleton')]
+#[Flow\Proxy(false)]
 class ConfigurationManager
 {
     /**
@@ -267,9 +267,8 @@ class ConfigurationManager
 
     /**
      * Emits a signal after The ConfigurationManager has been loaded
-     *
-     * @Flow\Signal
      */
+    #[Flow\Signal]
     protected function emitConfigurationManagerReady(ConfigurationManager $configurationManager): void
     {
     }

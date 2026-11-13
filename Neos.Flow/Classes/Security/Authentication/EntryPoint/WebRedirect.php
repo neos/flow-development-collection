@@ -27,17 +27,17 @@ use Psr\Http\Message\ServerRequestInterface;
 class WebRedirect extends AbstractEntryPoint
 {
     /**
-     * @Flow\Inject(lazy = false)
-     * @Flow\Transient
      * @var UriBuilder
      */
+    #[Flow\Inject(lazy: false)]
+    #[Flow\Transient]
     protected $uriBuilder;
 
     /**
-     * @Flow\Inject
-     * @Flow\Transient
      * @var BaseUriProvider
      */
+    #[Flow\Inject]
+    #[Flow\Transient]
     protected $baseUriProvider;
 
     /**

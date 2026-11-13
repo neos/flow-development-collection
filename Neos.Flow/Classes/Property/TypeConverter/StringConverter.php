@@ -27,8 +27,8 @@ use Neos\Flow\Property\PropertyMappingConfigurationInterface;
  * For array to CSV string, the delimiter can be set via CONFIGURATION_CSV_DELIMITER.
  *
  * @api
- * @Flow\Scope("singleton")
  */
+#[Flow\Scope('singleton')]
 class StringConverter extends AbstractTypeConverter
 {
     /**

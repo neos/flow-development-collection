@@ -19,9 +19,8 @@ use Neos\Flow\Annotations as Flow;
  *
  * RouteLifetime can be set by Route Part handlers via the ResolveResult/MatchResult return values
  * The lifetime will be set for the corresponding cache entries. The lowest lifetime is used if multiple are defined.
- *
- * @Flow\Proxy(false)
  */
+#[Flow\Proxy(false)]
 final class RouteLifetime
 {
     /**

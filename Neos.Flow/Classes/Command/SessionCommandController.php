@@ -21,9 +21,8 @@ use Neos\Flow\Session\SessionManagerInterface;
  * Command controller for managing sessions
  *
  * NOTE: This command controller will run in compile time (as defined in the package bootstrap)
- *
- * @Flow\Scope("singleton")
  */
+#[Flow\Scope('singleton')]
 class SessionCommandController extends CommandController
 {
     /**

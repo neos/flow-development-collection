@@ -88,27 +88,27 @@ class FileSystemTarget implements TargetInterface
     protected $excludedExtensions = [];
 
     /**
-     * @Flow\Inject
      * @var ResourceRepository
      */
+    #[Flow\Inject]
     protected $resourceRepository;
 
     /**
-     * @Flow\Inject(name="Neos.Flow:SystemLogger")
      * @var LoggerInterface
      */
+    #[Flow\Inject(name: 'Neos.Flow:SystemLogger')]
     protected $logger;
 
     /**
-     * @Flow\Inject
      * @var MessageCollector
      */
+    #[Flow\Inject]
     protected $messageCollector;
 
     /**
-     * @Flow\Inject
      * @var BaseUriProvider
      */
+    #[Flow\Inject]
     protected $baseUriProvider;
 
     /**

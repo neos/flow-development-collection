@@ -31,9 +31,8 @@ use Neos\Flow\Security\Exception\NoSuchRoleException;
  *
  * The access decision voters get the roles and privileges configured (in the
  * security policy) for a specific method invocation from this service.
- *
- * @Flow\Scope("singleton")
  */
+#[Flow\Scope('singleton')]
 class PolicyService
 {
     /**
@@ -314,8 +313,8 @@ class PolicyService
      * $policyConfiguration array by reference so you can alter it.
      *
      * @param array<mixed> $policyConfiguration The policy configuration
-     * @Flow\Signal
      */
+    #[Flow\Signal]
     protected function emitConfigurationLoaded(array &$policyConfiguration): void
     {
     }
@@ -327,8 +326,8 @@ class PolicyService
      * reference so you can alter it.
      *
      * @param array<Role> $roles All initialized roles (even abstract roles)
-     * @Flow\Signal
      */
+    #[Flow\Signal]
     protected function emitRolesInitialized(array &$roles): void
     {
     }

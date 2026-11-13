@@ -26,10 +26,9 @@ use Neos\Utility\ObjectAccess;
 /**
  * Builder for proxy classes which are used to implement Dependency Injection and
  * Aspect-Oriented Programming
- *
- * @Flow\Scope("singleton")
- * @Flow\Proxy(false)
  */
+#[Flow\Scope('singleton')]
+#[Flow\Proxy(false)]
 class Compiler
 {
     /**

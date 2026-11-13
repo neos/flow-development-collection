@@ -50,9 +50,9 @@ class ControllerContext
     protected $uriBuilder;
 
     /**
-     * @Flow\Inject
      * @var FlashMessageService
      */
+    #[Flow\Inject]
     protected $flashMessageService;
 
     /**

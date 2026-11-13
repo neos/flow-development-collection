@@ -21,15 +21,14 @@ use Psr\Http\Server\MiddlewareInterface;
 
 /**
  * Creates a new MiddlewaresChain according to the specified settings
- *
- * @Flow\Scope("singleton")
  */
+#[Flow\Scope('singleton')]
 class MiddlewaresChainFactory
 {
     /**
-     * @Flow\Inject
      * @var ObjectManagerInterface
      */
+    #[Flow\Inject]
     protected $objectManager;
 
     /**

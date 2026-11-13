@@ -22,9 +22,8 @@ use Psr\Http\Message\ResponseInterface;
  * A basic but solid exception handler which catches everything which
  * falls through the other exception handlers and provides useful debugging
  * information.
- *
- * @Flow\Scope("singleton")
  */
+#[Flow\Scope('singleton')]
 class DebugExceptionHandler extends AbstractExceptionHandler
 {
     /**

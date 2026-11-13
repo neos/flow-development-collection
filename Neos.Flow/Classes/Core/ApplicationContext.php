@@ -30,8 +30,8 @@ use Neos\Flow\Exception as FlowException;
  * $context->isDevelopment() inside your custom code.
  *
  * @api
- * @Flow\Proxy(false)
  */
+#[Flow\Proxy(false)]
 class ApplicationContext implements \Stringable
 {
     /**

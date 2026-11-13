@@ -31,33 +31,32 @@ use Neos\Utility\Arrays;
 
 /**
  * Command controller for tasks related to security
- *
- * @Flow\Scope("singleton")
  */
+#[Flow\Scope('singleton')]
 class SecurityCommandController extends CommandController
 {
     /**
-     * @Flow\Inject
      * @var ObjectManagerInterface
      */
+    #[Flow\Inject]
     protected $objectManager;
 
     /**
-     * @Flow\Inject
      * @var ReflectionService
      */
+    #[Flow\Inject]
     protected $reflectionService;
 
     /**
-     * @Flow\Inject
      * @var RsaWalletServicePhp
      */
+    #[Flow\Inject]
     protected $rsaWalletService;
 
     /**
-     * @Flow\Inject
      * @var PolicyService
      */
+    #[Flow\Inject]
     protected $policyService;
 
     /**

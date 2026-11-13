@@ -24,33 +24,32 @@ use Neos\Flow\Package\PackageManager;
 
 /**
  * A Command Controller which provides help for available commands
- *
- * @Flow\Scope("singleton")
  */
+#[Flow\Scope('singleton')]
 class HelpCommandController extends CommandController
 {
     /**
-     * @Flow\Inject
      * @var PackageManager
      */
+    #[Flow\Inject]
     protected $packageManager;
 
     /**
-     * @Flow\Inject
      * @var Bootstrap
      */
+    #[Flow\Inject]
     protected $bootstrap;
 
     /**
-     * @Flow\InjectConfiguration(path = "core.applicationPackageKey")
      * @var string
      */
+    #[Flow\InjectConfiguration(path: 'core.applicationPackageKey')]
     protected $applicationPackageKey;
 
     /**
-     * @Flow\InjectConfiguration(path = "core.applicationName")
      * @var string
      */
+    #[Flow\InjectConfiguration(path: 'core.applicationName')]
     protected $applicationName;
 
     /**
@@ -60,8 +59,8 @@ class HelpCommandController extends CommandController
      * get more help about commands.
      *
      * @return void
-     * @Flow\Internal
      */
+    #[Flow\Internal]
     public function helpStubCommand()
     {
         $context = $this->bootstrap->getContext();
@@ -247,10 +246,10 @@ class HelpCommandController extends CommandController
     /**
      * Displays an error message
      *
-     * @Flow\Internal
      * @return void
      * @throws StopActionException
      */
+    #[Flow\Internal]
     public function errorCommand(CommandException $exception)
     {
         $this->outputLine('<error>%s</error>', [$exception->getMessage()]);

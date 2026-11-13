@@ -97,9 +97,9 @@ class DateViewHelper extends AbstractLocaleAwareViewHelper
     protected $escapeChildren = false;
 
     /**
-     * @Flow\Inject
      * @var DatetimeFormatter
      */
+    #[Flow\Inject]
     protected $datetimeFormatter;
 
     /**

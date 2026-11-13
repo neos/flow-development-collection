@@ -21,10 +21,9 @@ use Neos\Flow\Security\Context;
 
 /**
  * A request handler which can handle command line requests.
- *
- * @Flow\Proxy(false)
- * @Flow\Scope("singleton")
  */
+#[Flow\Proxy(false)]
+#[Flow\Scope('singleton')]
 class CommandRequestHandler implements RequestHandlerInterface
 {
     /**

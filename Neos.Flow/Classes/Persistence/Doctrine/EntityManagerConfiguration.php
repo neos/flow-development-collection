@@ -32,14 +32,11 @@ use Psr\Cache\CacheItemPoolInterface;
 
 /**
  * EntityManager configuration handler
- *
- * @Flow\Scope("singleton")
  */
+#[Flow\Scope('singleton')]
 class EntityManagerConfiguration
 {
-    /**
-     * @Flow\Inject
-     */
+    #[Flow\Inject]
     protected ObjectManagerInterface $objectManager;
 
     /**

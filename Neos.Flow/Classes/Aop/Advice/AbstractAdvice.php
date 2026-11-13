@@ -123,8 +123,8 @@ class AbstractAdvice implements AdviceInterface
      * The advice is not proxyable, so the signal is dispatched manually here.
      *
      * @param object $aspectObject
-     * @Flow\Signal
      */
+    #[Flow\Signal]
     protected function emitAdviceInvoked($aspectObject, string $methodName, JoinPointInterface $joinPoint): void
     {
         if ($this->dispatcher === null) {

@@ -97,9 +97,9 @@ class FlowQuery implements ProtectedContextAwareInterface, \IteratorAggregate, \
     protected $operations = [];
 
     /**
-     * @Flow\Inject
      * @var OperationResolverInterface
      */
+    #[Flow\Inject]
     protected $operationResolver;
 
     /**

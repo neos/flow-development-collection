@@ -19,10 +19,9 @@ use Neos\Flow\Utility\Environment;
 /**
  * Class loader for Flow proxy classes.
  * This will be asked before the composer loader.
- *
- * @Flow\Proxy(false)
- * @Flow\Scope("singleton")
  */
+#[Flow\Proxy(false)]
+#[Flow\Scope('singleton')]
 class ProxyClassLoader
 {
     /**

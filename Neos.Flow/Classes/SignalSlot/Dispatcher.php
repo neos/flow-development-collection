@@ -20,9 +20,9 @@ use Neos\Flow\ObjectManagement\ObjectManagerInterface;
  * and passing them the method arguments which were originally passed to the
  * signal method.
  *
- * @Flow\Scope("singleton")
  * @api
  */
+#[Flow\Scope('singleton')]
 class Dispatcher
 {
     protected ?ObjectManagerInterface $objectManager = null;

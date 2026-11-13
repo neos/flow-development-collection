@@ -34,9 +34,9 @@ use Psr\Log\LoggerInterface;
  * Dispatches requests to the controller which was specified by the request and
  * returns the response the controller generated.
  *
- * @Flow\Scope("singleton")
  * @api
  */
+#[Flow\Scope('singleton')]
 class Dispatcher
 {
     /**
@@ -138,8 +138,8 @@ class Dispatcher
      * This signal is emitted directly before the request is being dispatched to a controller.
      *
      * @return void
-     * @Flow\Signal
      */
+    #[Flow\Signal]
     protected function emitBeforeControllerInvocation(ActionRequest $request, ControllerInterface $controller)
     {
     }
@@ -150,8 +150,8 @@ class Dispatcher
      *
      * @param ResponseInterface|null $response The readonly response the controller returned or null, if it was just forwarding a request.
      * @return void
-     * @Flow\Signal
      */
+    #[Flow\Signal]
     protected function emitAfterControllerInvocation(ActionRequest $request, ?ResponseInterface $response, ControllerInterface $controller)
     {
     }

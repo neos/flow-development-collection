@@ -18,8 +18,8 @@ use Neos\Flow\Annotations as Flow;
  * Represents a URI Template as per http://tools.ietf.org/html/rfc6570
  *
  * @api
- * @Flow\Proxy(false)
  */
+#[Flow\Proxy(false)]
 class UriTemplate
 {
     /**

@@ -19,9 +19,8 @@ use Neos\Flow\Aop\Exception\UnknownPointcutException;
 
 /**
  * A filter which refers to another pointcut.
- *
- * @Flow\Proxy(false)
  */
+#[Flow\Proxy(false)]
 class PointcutFilter implements PointcutFilterInterface
 {
     /**

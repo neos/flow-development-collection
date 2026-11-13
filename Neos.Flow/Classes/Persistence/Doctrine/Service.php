@@ -62,9 +62,8 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 /**
  * Service class for tasks related to Doctrine
- *
- * @Flow\Scope("singleton")
  */
+#[Flow\Scope('singleton')]
 class Service
 {
     public const DOCTRINE_MIGRATIONSTABLENAME = 'flow_doctrine_migrationstatus';
@@ -72,21 +71,21 @@ class Service
     public const DOCTRINE_MIGRATIONSNAMESPACE = 'Neos\Flow\Persistence\Doctrine\Migrations';
 
     /**
-     * @Flow\Inject(lazy = false)
      * @var EntityManagerInterface
      */
+    #[Flow\Inject(lazy: false)]
     protected $entityManager;
 
     /**
-     * @Flow\Inject
      * @var PackageManager
      */
+    #[Flow\Inject]
     protected $packageManager;
 
     /**
-     * @Flow\Inject
      * @var Environment
      */
+    #[Flow\Inject]
     protected $environment;
 
     /**

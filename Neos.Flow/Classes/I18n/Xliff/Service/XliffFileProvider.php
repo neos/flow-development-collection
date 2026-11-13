@@ -25,33 +25,33 @@ use Neos\Utility\Files;
 /**
  * A provider service for XLIFF file objects within the application
  *
- * @Flow\Scope("singleton")
  * @phpstan-import-type XliffRecord from FileAdapter
  */
+#[Flow\Scope('singleton')]
 class XliffFileProvider
 {
     /**
-     * @Flow\Inject
      * @var PackageManager
      */
+    #[Flow\Inject]
     protected $packageManager;
 
     /**
-     * @Flow\Inject
      * @var I18n\Service
      */
+    #[Flow\Inject]
     protected $localizationService;
 
     /**
-     * @Flow\Inject
      * @var XliffReader
      */
+    #[Flow\Inject]
     protected $xliffReader;
 
     /**
-     * @Flow\InjectConfiguration(path="i18n.globalTranslationPath")
      * @var string
      */
+    #[Flow\InjectConfiguration(path: 'i18n.globalTranslationPath')]
     protected $globalTranslationPath;
 
     /**

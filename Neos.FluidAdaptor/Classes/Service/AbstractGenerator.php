@@ -32,14 +32,14 @@ abstract class AbstractGenerator
      * The doc comment parser.
      *
      * @var \Neos\Flow\Reflection\DocCommentParser
-     * @Flow\Inject
      */
+    #[Flow\Inject]
     protected $docCommentParser;
 
     /**
      * @var \Neos\Flow\Reflection\ReflectionService
-     * @Flow\Inject
      */
+    #[Flow\Inject]
     protected $reflectionService;
 
     /**

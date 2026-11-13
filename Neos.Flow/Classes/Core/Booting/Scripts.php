@@ -59,10 +59,9 @@ use Neos\Utility\OpcodeCacheHelper;
 
 /**
  * Initialization scripts for modules of the Flow package
- *
- * @Flow\Proxy(false)
- * @Flow\Scope("singleton")
  */
+#[Flow\Proxy(false)]
+#[Flow\Scope('singleton')]
 class Scripts
 {
     /** @var string|null */

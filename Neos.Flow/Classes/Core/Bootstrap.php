@@ -26,10 +26,10 @@ use Neos\Utility\Files;
  * General purpose central core hyper Flow bootstrap class
  *
  * @api
- * @Flow\Proxy(false)
- * @Flow\Scope("singleton")
- * @Flow\Autowiring(false)
  */
+#[Flow\Proxy(false)]
+#[Flow\Scope('singleton')]
+#[Flow\Autowiring(false)]
 class Bootstrap
 {
     public const RUNLEVEL_COMPILETIME = 'Compiletime';
@@ -422,8 +422,8 @@ class Bootstrap
      * Emits a signal that the compile run was finished.
      *
      * @return void
-     * @Flow\Signal
      */
+    #[Flow\Signal]
     protected function emitFinishedCompiletimeRun()
     {
         $this->getSignalSlotDispatcher()->dispatch(self::class, 'finishedCompiletimeRun', []);
@@ -433,8 +433,8 @@ class Bootstrap
      * Emits a signal that the runtime run was finished.
      *
      * @return void
-     * @Flow\Signal
      */
+    #[Flow\Signal]
     protected function emitFinishedRuntimeRun()
     {
         $this->getSignalSlotDispatcher()->dispatch(self::class, 'finishedRuntimeRun', []);
@@ -444,8 +444,8 @@ class Bootstrap
      * Emits a signal that the bootstrap finished and is shutting down.
      *
      * @return void
-     * @Flow\Signal
      */
+    #[Flow\Signal]
     protected function emitBootstrapShuttingDown(string $runLevel)
     {
         $this->getSignalSlotDispatcher()->dispatch(self::class, 'bootstrapShuttingDown', [$runLevel]);

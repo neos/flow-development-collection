@@ -34,15 +34,15 @@ class NumberValidator extends AbstractValidator
     ];
 
     /**
-     * @Flow\Inject
      * @var I18n\Service
      */
+    #[Flow\Inject]
     protected $localizationService;
 
     /**
-     * @Flow\Inject
      * @var I18n\Parser\NumberParser
      */
+    #[Flow\Inject]
     protected $numberParser;
 
     /**

@@ -47,10 +47,10 @@ use Neos\Flow\I18n\Locale;
  *     secondaryGroupingSize: int,
  *     rounding: float
  * }
- * @Flow\Scope("singleton")
  * @see http://www.unicode.org/reports/tr35/#Number_Elements
  * @see http://www.unicode.org/reports/tr35/#Number_Format_Patterns
  */
+#[Flow\Scope('singleton')]
 class NumbersReader
 {
     /**

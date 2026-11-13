@@ -17,10 +17,9 @@ use Neos\Flow\Aop\Exception;
 
 /**
  * A method interceptor build for constructors with advice.
- *
- * @Flow\Proxy(false)
- * @Flow\Scope("singleton")
  */
+#[Flow\Proxy(false)]
+#[Flow\Scope('singleton')]
 class AdvisedConstructorInterceptorBuilder extends AbstractMethodInterceptorBuilder
 {
     /**

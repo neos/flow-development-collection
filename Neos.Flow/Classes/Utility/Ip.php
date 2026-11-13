@@ -18,9 +18,8 @@ use Neos\Flow\Annotations as Flow;
 
 /**
  * A utility class for dealing with IP addresses.
- *
- * @Flow\Scope("singleton")
  */
+#[Flow\Scope('singleton')]
 class Ip
 {
     /**

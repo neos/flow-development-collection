@@ -30,8 +30,8 @@ use Neos\Flow\Configuration\ConfigurationManager;
  *     viewObjectName?: string,
  *     options?: array<string,mixed>
  * }
- * @Flow\Scope("singleton")
  */
+#[Flow\Scope('singleton')]
 class ViewConfigurationManager
 {
     public function __construct(

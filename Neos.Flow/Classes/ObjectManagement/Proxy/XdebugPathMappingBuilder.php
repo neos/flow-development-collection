@@ -17,15 +17,13 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Cache\CacheManager;
 use Neos\Utility\Files;
 
-/**
- * @Flow\Scope("singleton")
- */
+#[Flow\Scope('singleton')]
 class XdebugPathMappingBuilder
 {
     /**
-     * @Flow\Inject
      * @var CacheManager
      */
+    #[Flow\Inject]
     protected $cacheManager;
 
     /**

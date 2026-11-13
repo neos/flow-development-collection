@@ -16,9 +16,8 @@ use Neos\Flow\Annotations as Flow;
 
 /**
  * A little parser which creates tag objects from doc comments
- *
- * @Flow\Scope("singleton")
  */
+#[Flow\Scope('singleton')]
 class DocCommentParser
 {
     /**

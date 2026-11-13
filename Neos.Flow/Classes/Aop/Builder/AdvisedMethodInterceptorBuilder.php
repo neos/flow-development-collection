@@ -19,9 +19,8 @@ use Neos\Flow\ObjectManagement\Proxy\ProxyMethodGenerator;
 
 /**
  * An AOP interceptor code builder for methods enriched by advices.
- *
- * @Flow\Scope("singleton")
  */
+#[Flow\Scope('singleton')]
 class AdvisedMethodInterceptorBuilder extends AbstractMethodInterceptorBuilder
 {
     /**

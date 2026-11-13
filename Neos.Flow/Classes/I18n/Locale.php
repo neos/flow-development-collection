@@ -33,9 +33,8 @@ use Neos\Flow\Annotations as Flow;
  * @api
  * @see http://www.unicode.org/reports/tr35/
  * @see \Neos\Flow\I18n\Service
- *
- * @Flow\Proxy(false)
  */
+#[Flow\Proxy(false)]
 class Locale implements \Stringable
 {
     /**

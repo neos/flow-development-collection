@@ -71,9 +71,9 @@ class UploadViewHelper extends AbstractFormFieldViewHelper
     protected $tagName = 'input';
 
     /**
-     * @Flow\Inject
      * @var PropertyMapper
      */
+    #[Flow\Inject]
     protected $propertyMapper;
 
     /**

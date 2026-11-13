@@ -64,15 +64,15 @@ class RenderingContext extends FluidRenderingContext implements FlowAwareRenderi
     protected $objectManager;
 
     /**
-     * @Flow\Inject
      * @var ViewHelperResolver
      */
+    #[Flow\Inject]
     protected $viewHelperResolver;
 
     /**
-     * @Flow\Inject
      * @var CacheAdaptor
      */
+    #[Flow\Inject]
     protected $cache;
 
     /**

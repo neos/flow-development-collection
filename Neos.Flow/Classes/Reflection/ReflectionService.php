@@ -50,9 +50,9 @@ use Psr\Log\LogLevel;
  * The internal representation of cache data is optimized for memory consumption.
  *
  * @api
- * @Flow\Scope("singleton")
- * @Flow\Proxy(false)
  */
+#[Flow\Scope('singleton')]
+#[Flow\Proxy(false)]
 class ReflectionService
 {
     protected const VISIBILITY_PRIVATE = 1;

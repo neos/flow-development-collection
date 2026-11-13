@@ -29,8 +29,8 @@ class DynamicRoutePart extends AbstractRoutePart implements DynamicRoutePartInte
 {
     /**
      * @var PersistenceManagerInterface
-     * @Flow\Inject
      */
+    #[Flow\Inject]
     protected $persistenceManager;
 
     /**

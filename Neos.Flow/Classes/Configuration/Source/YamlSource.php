@@ -22,10 +22,10 @@ use Symfony\Component\Yaml\Yaml;
 /**
  * Configuration source based on YAML files
  *
- * @Flow\Scope("singleton")
- * @Flow\Proxy(false)
  * @api
  */
+#[Flow\Scope('singleton')]
+#[Flow\Proxy(false)]
 class YamlSource
 {
     /**

@@ -48,9 +48,9 @@ use Neos\FluidAdaptor\Core\Widget\AbstractWidgetViewHelper;
 class PaginateViewHelper extends AbstractWidgetViewHelper
 {
     /**
-     * @Flow\Inject
      * @var Controller\PaginateController
      */
+    #[Flow\Inject]
     protected $controller;
 
     /**

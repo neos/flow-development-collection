@@ -27,15 +27,15 @@ use Neos\Utility\ObjectAccess;
 class UniqueEntityValidator extends AbstractValidator
 {
     /**
-     * @Flow\Inject
      * @var ReflectionService
      */
+    #[Flow\Inject]
     protected $reflectionService;
 
     /**
-     * @Flow\Inject
      * @var PersistenceManagerInterface
      */
+    #[Flow\Inject]
     protected $persistenceManager;
 
     /**

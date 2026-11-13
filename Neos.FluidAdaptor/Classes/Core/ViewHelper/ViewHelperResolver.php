@@ -29,21 +29,20 @@ use TYPO3Fluid\Fluid\Core\ViewHelper\ViewHelperInterface;
  * made capable of "mixing" two different ViewHelper namespaces
  * to effectively create aliases for the Fluid core ViewHelpers
  * to be loaded in the (TYPO3|Neos) scope as well.
- *
- * @Flow\Scope("singleton")
  */
+#[Flow\Scope('singleton')]
 class ViewHelperResolver extends \TYPO3Fluid\Fluid\Core\ViewHelper\ViewHelperResolver
 {
     /**
-     * @Flow\Inject
      * @var ObjectManagerInterface
      */
+    #[Flow\Inject]
     protected $objectManager;
 
     /**
-     * @Flow\Inject
      * @var PackageManager
      */
+    #[Flow\Inject]
     protected $packageManager;
 
     /**
@@ -56,9 +55,9 @@ class ViewHelperResolver extends \TYPO3Fluid\Fluid\Core\ViewHelper\ViewHelperRes
     protected $namespaces = [];
 
     /**
-     * @Flow\InjectConfiguration(path="namespaces")
      * @var array<mixed>
      */
+    #[Flow\InjectConfiguration(path: 'namespaces')]
     protected $namespacesFromConfiguration;
 
     /**

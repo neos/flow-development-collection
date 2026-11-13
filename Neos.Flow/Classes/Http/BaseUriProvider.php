@@ -11,23 +11,22 @@ use Psr\Http\Message\UriInterface;
 
 /**
  * Supports to get a baseUri from various possible sources.
- *
- * @Flow\Scope("singleton")
  */
+#[Flow\Scope('singleton')]
 class BaseUriProvider
 {
     /**
      * THe possibly configured Flow base URI.
      *
-     * @Flow\InjectConfiguration(package="Neos.Flow", path="http.baseUri")
      * @var string|null
      */
+    #[Flow\InjectConfiguration(package: 'Neos.Flow', path: 'http.baseUri')]
     protected $configuredBaseUri;
 
     /**
-     * @Flow\Inject
      * @var Bootstrap
      */
+    #[Flow\Inject]
     protected $bootstrap;
 
     /**

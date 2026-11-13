@@ -19,9 +19,8 @@ use Neos\Flow\Tests\PhpBench\Core\BootstrapBench;
  * Useful for testing a Flow Bootstrap without having run a full boot sequence. E.g. performance of
  * Bootstrap->run() without boot sequence (to compare against with boot sequence).
  * @see BootstrapBench
- *
- * @Flow\Proxy(false)
  */
+#[Flow\Proxy(false)]
 final class EmptyRequestHandler implements RequestHandlerInterface
 {
     public function handleRequest(): void

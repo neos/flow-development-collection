@@ -51,9 +51,9 @@ abstract class AbstractController implements ControllerInterface
     protected $uriBuilder;
 
     /**
-     * @Flow\Inject
      * @var ValidatorResolver
      */
+    #[Flow\Inject]
     protected $validatorResolver;
 
     /**
@@ -94,9 +94,9 @@ abstract class AbstractController implements ControllerInterface
     protected $controllerContext;
 
     /**
-     * @Flow\Inject
      * @var RouteValuesNormalizerInterface
      */
+    #[Flow\Inject]
     protected $routeValuesNormalizer;
 
     /**

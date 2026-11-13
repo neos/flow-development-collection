@@ -61,9 +61,7 @@ abstract class AbstractExceptionHandler implements ExceptionHandlerInterface
      */
     protected $renderingOptions;
 
-    /**
-     * @Flow\Autowiring(enabled=false)
-     */
+    #[Flow\Autowiring(enabled: false)]
     public function injectLogger(LoggerInterface $logger): void
     {
         $this->logger = $logger;

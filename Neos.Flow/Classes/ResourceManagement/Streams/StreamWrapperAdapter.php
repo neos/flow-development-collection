@@ -488,8 +488,8 @@ class StreamWrapperAdapter
      * Returns all class names implementing the StreamWrapperInterface.
      *
      * @return array<class-string<StreamWrapperInterface>> Array of stream wrapper implementations
-     * @Flow\CompileStatic
      */
+    #[Flow\CompileStatic]
     public static function getStreamWrapperImplementationClassNames(ObjectManagerInterface $objectManager)
     {
         return $objectManager->get(ReflectionService::class)->getAllImplementationClassNamesForInterface(StreamWrapperInterface::class);

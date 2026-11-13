@@ -16,9 +16,8 @@ use Neos\Flow\Annotations as Flow;
 
 /**
  * The result of a RoutePartInterface::match() call if the corresponding Route Part matched
- *
- * @Flow\Proxy(false)
  */
+#[Flow\Proxy(false)]
 final class MatchResult
 {
     /**

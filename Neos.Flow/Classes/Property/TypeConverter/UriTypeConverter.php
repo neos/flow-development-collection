@@ -22,9 +22,8 @@ use Psr\Http\Message\UriInterface;
  * A type converter for converting URI strings to Http Uri objects.
  *
  * This converter simply creates a Neos\Flow\Http\Uri instance from the source string.
- *
- * @Flow\Scope("singleton")
  */
+#[Flow\Scope('singleton')]
 class UriTypeConverter extends AbstractTypeConverter
 {
     /**

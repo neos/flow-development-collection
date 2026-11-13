@@ -23,8 +23,8 @@ use Neos\Utility\MediaTypes;
  * based media types as well as urlencoded content.
  *
  * @api
- * @Flow\Scope("singleton")
  */
+#[Flow\Scope('singleton')]
 class MediaTypeConverter extends AbstractTypeConverter implements MediaTypeConverterInterface
 {
     /**

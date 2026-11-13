@@ -27,21 +27,21 @@ use Neos\Utility\TypeHandling;
  * The Property Mapper transforms simple types (arrays, strings, integers, floats, booleans) to objects or other simple types.
  * It is used most prominently to map incoming HTTP arguments to objects.
  *
- * @Flow\Scope("singleton")
  * @api
  */
+#[Flow\Scope('singleton')]
 class PropertyMapper
 {
     /**
-     * @Flow\Inject
      * @var ObjectManagerInterface
      */
+    #[Flow\Inject]
     protected $objectManager;
 
     /**
-     * @Flow\Inject
      * @var VariableFrontend
      */
+    #[Flow\Inject]
     protected $cache;
 
     /**
@@ -87,8 +87,8 @@ class PropertyMapper
      *
      * @param ObjectManagerInterface $objectManager
      * @return array<class-string<TypeConverterInterface>> Array of type converter implementations
-     * @Flow\CompileStatic
      */
+    #[Flow\CompileStatic]
     public static function getTypeConverterImplementationClassNames($objectManager)
     {
         $reflectionService = $objectManager->get(ReflectionService::class);

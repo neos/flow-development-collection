@@ -20,8 +20,8 @@ use Neos\Flow\Property\TypeConverter\AbstractTypeConverter;
  * Converter which transforms strings to a Locale object.
  *
  * @api
- * @Flow\Scope("singleton")
  */
+#[Flow\Scope('singleton')]
 class LocaleTypeConverter extends AbstractTypeConverter
 {
     /**

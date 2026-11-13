@@ -24,8 +24,8 @@ class XsdGenerator extends AbstractGenerator
 {
     /**
      * @var \Neos\Flow\ObjectManagement\ObjectManagerInterface
-     * @Flow\Inject
      */
+    #[Flow\Inject]
     protected $objectManager;
 
     /**

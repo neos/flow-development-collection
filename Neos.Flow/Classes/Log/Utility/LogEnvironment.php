@@ -96,8 +96,8 @@ abstract class LogEnvironment
 
     /**
      * @return array<string,true>
-     * @Flow\CompileStatic
      */
+    #[Flow\CompileStatic]
     protected static function getPackageKeys(): array
     {
         if (self::$initialized === false) {

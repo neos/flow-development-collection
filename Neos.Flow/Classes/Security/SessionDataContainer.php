@@ -8,9 +8,9 @@ use Neos\Flow\Security\Authentication\Token\SessionlessTokenInterface;
 use Neos\Flow\Security\Authentication\TokenInterface;
 
 /**
- * @Flow\Scope("session")
  * @internal
  */
+#[Flow\Scope('session')]
 class SessionDataContainer
 {
     /**

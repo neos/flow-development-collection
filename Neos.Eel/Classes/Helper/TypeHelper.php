@@ -17,9 +17,8 @@ use Neos\Flow\Annotations as Flow;
 
 /**
  * Type helper for Eel contexts
- *
- * @Flow\Proxy(false)
  */
+#[Flow\Proxy(false)]
 class TypeHelper implements ProtectedContextAwareInterface
 {
     /**

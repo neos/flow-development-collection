@@ -20,8 +20,8 @@ use Neos\Flow\Annotations as Flow;
  * @phpstan-consistent-constructor
  * @api
  * @see http://tools.ietf.org/html/rfc6265
- * @Flow\Proxy(false)
  */
+#[Flow\Proxy(false)]
 class Cookie implements \Stringable
 {
     /**

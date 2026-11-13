@@ -24,9 +24,8 @@ use Neos\Flow\Security\Policy\PolicyService;
 
 /**
  * Pointcut filter which connects the method privileges to the AOP framework
- *
- * @Flow\Scope("singleton")
  */
+#[Flow\Scope('singleton')]
 class MethodPrivilegePointcutFilter implements PointcutFilterInterface
 {
     /**

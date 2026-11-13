@@ -35,9 +35,9 @@ use Neos\Flow\Reflection\ReflectionService;
  * {0,number,decimal}
  * {1,datetime,time,full}
  *
- * @Flow\Scope("singleton")
  * @api
  */
+#[Flow\Scope('singleton')]
 class FormatResolver
 {
     /**
@@ -51,9 +51,9 @@ class FormatResolver
     protected $localizationService;
 
     /**
-     * @Flow\Inject
      * @var ReflectionService
      */
+    #[Flow\Inject]
     protected $reflectionService;
 
     /**

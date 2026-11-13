@@ -23,16 +23,15 @@ use Psr\Log\LoggerInterface;
 
 /**
  * An aspect which centralizes the logging of security relevant actions.
- *
- * @Flow\Scope("singleton")
- * @Flow\Aspect
  */
+#[Flow\Scope('singleton')]
+#[Flow\Aspect]
 class LoggingAspect
 {
     /**
-     * @Flow\Inject(name="Neos.Flow:SecurityLogger")
      * @var LoggerInterface
      */
+    #[Flow\Inject(name: 'Neos.Flow:SecurityLogger')]
     protected $securityLogger;
 
     /**
@@ -43,11 +42,11 @@ class LoggingAspect
     /**
      * Logs calls and results of the authenticate() method of the Authentication Manager
      *
-     * @Flow\After("within(Neos\Flow\Security\Authentication\AuthenticationManagerInterface) && method(.*->authenticate())")
      * @param JoinPointInterface $joinPoint The current joinpoint
      * @return mixed The result of the target method if it has not been intercepted
      * @throws \Exception
      */
+    #[Flow\After('within(Neos\Flow\Security\Authentication\AuthenticationManagerInterface) && method(.*->authenticate())')]
     public function logManagerAuthenticate(JoinPointInterface $joinPoint)
     {
         if ($joinPoint->hasException()) {
@@ -77,10 +76,10 @@ class LoggingAspect
     /**
      * Logs calls and results of the logout() method of the Authentication Manager
      *
-     * @Flow\AfterReturning("within(Neos\Flow\Security\Authentication\AuthenticationManagerInterface) && method(.*->logout())")
      * @param JoinPointInterface $joinPoint The current joinpoint
      * @return mixed The result of the target method if it has not been intercepted
      */
+    #[Flow\AfterReturning('within(Neos\Flow\Security\Authentication\AuthenticationManagerInterface) && method(.*->logout())')]
     public function logManagerLogout(JoinPointInterface $joinPoint)
     {
         /** @var AuthenticationManagerInterface $authenticationManager */
@@ -118,10 +117,10 @@ class LoggingAspect
     /**
      * Logs calls and results of the authenticate() method of an authentication provider
      *
-     * @Flow\AfterReturning("within(Neos\Flow\Security\Authentication\AuthenticationProviderInterface) && method(.*->authenticate())")
      * @param JoinPointInterface $joinPoint The current joinpoint
      * @return mixed The result of the target method if it has not been intercepted
      */
+    #[Flow\AfterReturning('within(Neos\Flow\Security\Authentication\AuthenticationProviderInterface) && method(.*->authenticate())')]
     public function logPersistedUsernamePasswordProviderAuthenticate(JoinPointInterface $joinPoint)
     {
         $token = $joinPoint->getMethodArgument('authenticationToken');
@@ -143,9 +142,9 @@ class LoggingAspect
     /**
      * Logs calls and result of vote() for method privileges
      *
-     * @Flow\After("method(Neos\Flow\Security\Authorization\Privilege\Method\MethodPrivilege->vote())")
      * @return void
      */
+    #[Flow\After('method(Neos\Flow\Security\Authorization\Privilege\Method\MethodPrivilege->vote())')]
     public function logJoinPointAccessDecisions(JoinPointInterface $joinPoint)
     {
         $subjectJoinPoint = $joinPoint->getMethodArgument('subject');
@@ -157,9 +156,9 @@ class LoggingAspect
     /**
      * Logs calls and result of isPrivilegeTargetGranted()
      *
-     * @Flow\After("method(Neos\Flow\Security\Authorization\PrivilegeManager->isPrivilegeTargetGranted())")
      * @return void
      */
+    #[Flow\After('method(Neos\Flow\Security\Authorization\PrivilegeManager->isPrivilegeTargetGranted())')]
     public function logPrivilegeAccessDecisions(JoinPointInterface $joinPoint)
     {
         $decision = $joinPoint->getResult() === true ? 'GRANTED' : 'DENIED';

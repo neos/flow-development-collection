@@ -22,15 +22,15 @@ use Neos\Flow\ResourceManagement\ResourceManager;
 class StaticResourceHelper implements ProtectedContextAwareInterface
 {
     /**
-     * @Flow\Inject
      * @var ResourceManager
      */
+    #[Flow\Inject]
     protected $resourceManager;
 
     /**
-     * @Flow\Inject
      * @var I18nService
      */
+    #[Flow\Inject]
     protected $i18nService;
 
     /**

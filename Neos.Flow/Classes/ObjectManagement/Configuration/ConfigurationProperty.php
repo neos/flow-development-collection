@@ -16,9 +16,8 @@ use Neos\Flow\Annotations as Flow;
 
 /**
  * Injection property as used in a Object Configuration
- *
- * @Flow\Proxy(false)
  */
+#[Flow\Proxy(false)]
 final readonly class ConfigurationProperty
 {
     public const int PROPERTY_TYPES_STRAIGHTVALUE = 0;

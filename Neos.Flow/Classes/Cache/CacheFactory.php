@@ -27,9 +27,9 @@ use Neos\Flow\Utility\Environment;
  * a certain cache backend. In a Flow context you should use the CacheManager to
  * get a Cache.
  *
- * @Flow\Scope("singleton")
  * @api
  */
+#[Flow\Scope('singleton')]
 class CacheFactory extends \Neos\Cache\CacheFactory
 {
     /**
@@ -49,10 +49,7 @@ class CacheFactory extends \Neos\Cache\CacheFactory
      */
     protected $environmentConfiguration;
 
-    /**
-     *
-     * @Flow\Autowiring (enabled=false)
-     */
+    #[Flow\Autowiring(enabled: false)]
     public function injectEnvironmentConfiguration(EnvironmentConfiguration $environmentConfiguration): void
     {
         $this->environmentConfiguration = $environmentConfiguration;
@@ -62,8 +59,8 @@ class CacheFactory extends \Neos\Cache\CacheFactory
      * Constructs this cache factory
      *
      * @param ApplicationContext $context The current Flow context
-     * @Flow\Autowiring(enabled=false)
      */
+    #[Flow\Autowiring(enabled: false)]
     public function __construct(ApplicationContext $context, Environment $environment, string $applicationIdentifier)
     {
         $this->context = $context;

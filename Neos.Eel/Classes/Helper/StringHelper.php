@@ -20,9 +20,8 @@ use Neos\Utility\Unicode\TextIterator;
 
 /**
  * String helpers for Eel contexts
- *
- * @Flow\Proxy(false)
  */
+#[Flow\Proxy(false)]
 class StringHelper implements ProtectedContextAwareInterface
 {
     /**

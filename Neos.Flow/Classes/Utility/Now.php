@@ -24,10 +24,10 @@ use Neos\Flow\Annotations as Flow;
  * At any place you'd normally call PHP's time() function or create a DateTime
  * object with the current time, you can instead use this instance.
  *
- * @Flow\Scope("singleton")
  * @psalm-immutable
  * @api
  */
+#[Flow\Scope('singleton')]
 class Now extends \DateTimeImmutable
 {
 }

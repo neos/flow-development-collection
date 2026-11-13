@@ -66,9 +66,9 @@ class BytesViewHelper extends AbstractLocaleAwareViewHelper
     protected const SIZE_UNITS = ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
 
     /**
-     * @Flow\Inject
      * @var NumberFormatter
      */
+    #[Flow\Inject]
     protected $numberFormatter;
 
     /**

@@ -19,9 +19,8 @@ use Neos\Flow\Annotations as Flow;
  *
  * - Access to public properties and array is allowed
  * - Methods have to be allowed
- *
- * @Flow\Proxy(false)
  */
+#[Flow\Proxy(false)]
 class ProtectedContext extends Context
 {
     /**

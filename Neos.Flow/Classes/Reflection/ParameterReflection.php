@@ -16,9 +16,8 @@ use Neos\Flow\Annotations as Flow;
 
 /**
  * Extended version of the ReflectionParameter
- *
- * @Flow\Proxy(false)
  */
+#[Flow\Proxy(false)]
 class ParameterReflection extends \ReflectionParameter
 {
     /**

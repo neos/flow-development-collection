@@ -48,9 +48,9 @@ use Neos\Flow\I18n\AbstractXmlParser;
  *   )
  * )
  *
- * @Flow\Scope("singleton")
  * @see http://www.unicode.org/reports/tr35/#Inheritance_and_Validity [1]
  */
+#[Flow\Scope('singleton')]
 class CldrParser extends AbstractXmlParser
 {
     /**

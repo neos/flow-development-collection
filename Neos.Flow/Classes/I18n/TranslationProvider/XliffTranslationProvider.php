@@ -18,9 +18,8 @@ use Neos\Flow\I18n;
 /**
  * The concrete implementation of TranslationProviderInterface which uses XLIFF
  * file format to store labels.
- *
- * @Flow\Scope("singleton")
  */
+#[Flow\Scope('singleton')]
 class XliffTranslationProvider implements TranslationProviderInterface
 {
     /**

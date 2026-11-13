@@ -27,10 +27,10 @@ use Neos\Flow\I18n\Locale;
  * - support for other calendars than Gregorian
  * - some data from "dates" tag is not used (fields, timeZoneNames)
  *
- * @Flow\Scope("singleton")
  * @see http://www.unicode.org/reports/tr35/#Date_Elements
  * @see http://www.unicode.org/reports/tr35/#Date_Format_Patterns
  */
+#[Flow\Scope('singleton')]
 class DatesReader
 {
     /**

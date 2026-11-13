@@ -31,9 +31,9 @@ use Neos\Flow\I18n\Locale;
  * - subrule: one of the conditions of rule. One rule can have many conditions
  *   joined with "and" or "or" logical operator.
  *
- * @Flow\Scope("singleton")
  * @see http://www.unicode.org/reports/tr35/#Language_Plural_Rules
  */
+#[Flow\Scope('singleton')]
 class PluralsReader
 {
     /**

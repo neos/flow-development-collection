@@ -20,9 +20,8 @@ use Ramsey\Uuid\Uuid;
 
 /**
  * A utility class for various algorithms.
- *
- * @Flow\Scope("singleton")
  */
+#[Flow\Scope('singleton')]
 class Algorithms
 {
     /**

@@ -41,7 +41,6 @@ use Psr\Log\LoggerInterface;
  * 2. Strings / arbitrary Arrays
  *
  *    If the source
-
  *    - is an array and contains the key '__identity'
  *
  *    the converter will find an existing resource with the given identity or continue and assign the given identity if
@@ -57,9 +56,8 @@ use Psr\Log\LoggerInterface;
  *    and a PersistentResource representing this content is created and returned.
  *
  *    The imported PersistentResource will be given a 'filename' if set in the source array in both cases (import from file or data).
- *
- * @Flow\Scope("singleton")
  */
+#[Flow\Scope('singleton')]
 class ResourceTypeConverter extends AbstractTypeConverter
 {
     /**
@@ -96,27 +94,27 @@ class ResourceTypeConverter extends AbstractTypeConverter
     protected $priority = 1;
 
     /**
-     * @Flow\Inject
      * @var ResourceManager
      */
+    #[Flow\Inject]
     protected $resourceManager;
 
     /**
-     * @Flow\Inject
      * @var ResourceRepository
      */
+    #[Flow\Inject]
     protected $resourceRepository;
 
     /**
-     * @Flow\Inject
      * @var PersistenceManagerInterface
      */
+    #[Flow\Inject]
     protected $persistenceManager;
 
     /**
-     * @Flow\Inject(name="Neos.Flow:SystemLogger")
      * @var LoggerInterface
      */
+    #[Flow\Inject(name: 'Neos.Flow:SystemLogger')]
     protected $logger;
 
     /**

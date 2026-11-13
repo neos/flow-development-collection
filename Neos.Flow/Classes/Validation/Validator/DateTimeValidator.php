@@ -34,15 +34,15 @@ class DateTimeValidator extends AbstractValidator
     ];
 
     /**
-     * @Flow\Inject
      * @var I18n\Service
      */
+    #[Flow\Inject]
     protected $localizationService;
 
     /**
-     * @Flow\Inject
      * @var I18n\Parser\DatetimeParser
      */
+    #[Flow\Inject]
     protected $datetimeParser;
 
     /**

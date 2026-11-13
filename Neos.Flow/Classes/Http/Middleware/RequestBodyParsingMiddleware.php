@@ -20,15 +20,15 @@ use Psr\Http\Server\RequestHandlerInterface;
 class RequestBodyParsingMiddleware implements MiddlewareInterface
 {
     /**
-     * @Flow\Inject
      * @var PropertyMapper
      */
+    #[Flow\Inject]
     protected $propertyMapper;
 
     /**
-     * @Flow\Inject
      * @var ObjectManagerInterface
      */
+    #[Flow\Inject]
     protected $objectManager;
 
     /**

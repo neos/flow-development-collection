@@ -31,8 +31,8 @@ class PluralizeViewHelper extends \Neos\FluidAdaptor\Core\ViewHelper\AbstractVie
 {
     /**
      * @var \Neos\Kickstarter\Utility\Inflector
-     * @Flow\Inject
      */
+    #[Flow\Inject]
     protected $inflector;
 
     /**

@@ -33,27 +33,26 @@ use Neos\Utility\Arrays;
 
 /**
  * Command controller for tasks related to routing
- *
- * @Flow\Scope("singleton")
  */
+#[Flow\Scope('singleton')]
 class RoutingCommandController extends CommandController
 {
     /**
-     * @Flow\Inject
      * @var RoutesProviderInterface
      */
+    #[Flow\Inject]
     protected $routesProvider;
 
     /**
-     * @Flow\Inject
      * @var ObjectManagerInterface
      */
+    #[Flow\Inject]
     protected $objectManager;
 
     /**
-     * @Flow\Inject
      * @var ServerRequestFactory
      */
+    #[Flow\Inject]
     protected $serverRequestFactory;
 
     /**

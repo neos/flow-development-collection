@@ -20,15 +20,14 @@ use Neos\FluidAdaptor\Service;
 
 /**
  * Command controller for Fluid documentation rendering
- *
- * @Flow\Scope("singleton")
  */
+#[Flow\Scope('singleton')]
 class DocumentationCommandController extends CommandController
 {
     /**
-     * @Flow\Inject
      * @var \Neos\FluidAdaptor\Service\XsdGenerator
      */
+    #[Flow\Inject]
     protected $xsdGenerator;
 
     /**

@@ -24,8 +24,8 @@ use Neos\Flow\Session\SessionManagerInterface;
  * Given a session ID this will return an instance of Neos\Flow\Session\Session.
  *
  * @api
- * @Flow\Scope("singleton")
  */
+#[Flow\Scope('singleton')]
 class SessionConverter extends AbstractTypeConverter
 {
     /**
@@ -49,9 +49,9 @@ class SessionConverter extends AbstractTypeConverter
     protected $priority = 1;
 
     /**
-     * @Flow\Inject
      * @var SessionManagerInterface
      */
+    #[Flow\Inject]
     protected $sessionManager;
 
     /**

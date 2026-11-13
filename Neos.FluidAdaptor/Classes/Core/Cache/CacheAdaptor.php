@@ -18,9 +18,7 @@ use TYPO3Fluid\Fluid\Core\Cache\FluidCacheInterface;
 use TYPO3Fluid\Fluid\Core\Cache\FluidCacheWarmerInterface;
 use TYPO3Fluid\Fluid\Core\Cache\StandardCacheWarmer;
 
-/**
- * @Flow\Scope("singleton")
- */
+#[Flow\Scope('singleton')]
 class CacheAdaptor implements FluidCacheInterface
 {
     /**

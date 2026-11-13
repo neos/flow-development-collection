@@ -25,9 +25,9 @@ use Neos\Flow\I18n\Locale;
  * - rules for displaying timezone names are simplified
  * - some less frequently used format characters are not supported
  *
- * @Flow\Scope("singleton")
  * @api
  */
+#[Flow\Scope('singleton')]
 class DatetimeFormatter implements FormatterInterface
 {
     /**

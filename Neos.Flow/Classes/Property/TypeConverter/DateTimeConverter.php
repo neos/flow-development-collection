@@ -58,8 +58,8 @@ use Neos\Flow\Validation\Error;
  *  );
  *
  * @api
- * @Flow\Scope("singleton")
  */
+#[Flow\Scope('singleton')]
 class DateTimeConverter extends AbstractTypeConverter
 {
     /**

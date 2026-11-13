@@ -23,9 +23,8 @@ use Psr\Log\LogLevel;
 
 /**
  * Message Collector
- *
- * @Flow\Scope("singleton")
  */
+#[Flow\Scope('singleton')]
 class MessageCollector
 {
     public const LOGLEVEL_MAPPING = [
@@ -41,9 +40,9 @@ class MessageCollector
     protected $messages;
 
     /**
-     * @Flow\Inject(name="Neos.Flow:SystemLogger")
      * @var LoggerInterface
      */
+    #[Flow\Inject(name: 'Neos.Flow:SystemLogger')]
     protected $logger;
 
     /**

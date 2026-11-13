@@ -22,10 +22,9 @@ use Neos\Flow\Log\PsrLoggerFactoryInterface;
 /**
  * Factory for getting an reflection service instance.
  * This is purely to delay instanciating the reflection service until needed.
- *
- * @Flow\Scope("singleton")
- * @Flow\Proxy(false)
  */
+#[Flow\Scope('singleton')]
+#[Flow\Proxy(false)]
 class ReflectionServiceFactory
 {
     /**

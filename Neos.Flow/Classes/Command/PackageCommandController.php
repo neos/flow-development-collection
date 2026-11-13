@@ -21,9 +21,8 @@ use Neos\Flow\Package\PackageManager;
 
 /**
  * Package command controller to handle packages from CLI
- *
- * @Flow\Scope("singleton")
  */
+#[Flow\Scope('singleton')]
 class PackageCommandController extends CommandController
 {
     /**
@@ -45,12 +44,12 @@ class PackageCommandController extends CommandController
      * This command creates a new package which contains only the mandatory
      * directories and files.
      *
-     * @Flow\FlushesCaches
      * @param string $packageKey The package key of the package to create
      * @param string $packageType The package type of the package to create
      * @return void
      * @see neos.kickstarter:kickstart:package
      */
+    #[Flow\FlushesCaches]
     public function createCommand(string $packageKey, string $packageType = PackageInterface::DEFAULT_COMPOSER_TYPE)
     {
         if (!$this->packageManager->isPackageKeyValid($packageKey)) {

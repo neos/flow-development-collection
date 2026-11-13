@@ -41,9 +41,8 @@ use Neos\Flow\Reflection\ReflectionService;
  *
  * If a property is not marked as an association the mapping type is set to
  * "object" for objects.
- *
- * @Flow\Scope("singleton")
  */
+#[Flow\Scope('singleton')]
 class FlowAnnotationDriver implements DoctrineMappingDriverInterface, PointcutFilterInterface
 {
     /**

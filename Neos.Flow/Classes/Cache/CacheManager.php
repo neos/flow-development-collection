@@ -40,9 +40,9 @@ use Psr\SimpleCache\CacheInterface;
  *      backendOptions?: array<mixed>,
  *      persistent?: bool,
  * }
- * @Flow\Scope("singleton")
  * @api
  */
+#[Flow\Scope('singleton')]
 class CacheManager
 {
     /**

@@ -26,15 +26,15 @@ use Neos\Flow\Security\Context as SecurityContext;
 class SecurityHelper implements ProtectedContextAwareInterface
 {
     /**
-     * @Flow\Inject
      * @var SecurityContext
      */
+    #[Flow\Inject]
     protected $securityContext;
 
     /**
-     * @Flow\Inject
      * @var PrivilegeManagerInterface
      */
+    #[Flow\Inject]
     protected $privilegeManager;
 
     /**

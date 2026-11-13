@@ -26,10 +26,10 @@ use Neos\Flow\Persistence\Repository;
  * Note that this repository is not part of the public API and must not be used in client code. Please use the API
  * provided by ResourceManager instead.
  *
- * @Flow\Scope("singleton")
  * @extends Repository<PersistentResource>
  * @see ResourceManager
  */
+#[Flow\Scope('singleton')]
 class ResourceRepository extends Repository
 {
     /**
@@ -38,15 +38,15 @@ class ResourceRepository extends Repository
     public const ENTITY_CLASSNAME = PersistentResource::class;
 
     /**
-     * @Flow\Inject
      * @var EntityManagerInterface
      */
+    #[Flow\Inject]
     protected $entityManager;
 
     /**
-     * @Flow\Inject
      * @var PersistenceManagerInterface
      */
+    #[Flow\Inject]
     protected $persistenceManager;
 
     /**

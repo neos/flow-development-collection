@@ -16,9 +16,8 @@ use Neos\Flow\Annotations as Flow;
 
 /**
  * Injection (constructor-) argument as used in a Object Configuration
- *
- * @Flow\Proxy(false)
  */
+#[Flow\Proxy(false)]
 final readonly class ConfigurationArgument
 {
     public const int ARGUMENT_TYPES_STRAIGHTVALUE = 0;

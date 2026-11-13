@@ -27,27 +27,27 @@ use Psr\Log\LoggerInterface;
 /**
  * The default web router
  *
- * @Flow\Scope("singleton")
  * @api
  */
+#[Flow\Scope('singleton')]
 class Router implements RouterInterface
 {
     /**
-     * @Flow\Inject
      * @var RoutesProviderInterface
      */
+    #[Flow\Inject]
     protected $routesProvider;
 
     /**
-     * @Flow\Inject(name="Neos.Flow:SystemLogger")
      * @var LoggerInterface
      */
+    #[Flow\Inject(name: 'Neos.Flow:SystemLogger')]
     protected $logger;
 
     /**
-     * @Flow\Inject
      * @var RouterCachingService
      */
+    #[Flow\Inject]
     protected $routerCachingService;
 
     /**

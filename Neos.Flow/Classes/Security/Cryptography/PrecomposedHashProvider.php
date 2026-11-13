@@ -20,23 +20,22 @@ use Neos\Flow\Utility\Algorithms as UtilityAlgorithms;
 
 /**
  * Precomposes a hash to be used to prevent timing attacks
- *
- * @Flow\Scope("singleton")
  */
+#[Flow\Scope('singleton')]
 class PrecomposedHashProvider
 {
     /**
      * @var HashService
-     * @Flow\Inject
      */
+    #[Flow\Inject]
     protected $hashService;
 
     /**
      * The Cache have to be injected non-lazy to prevent timing differences
      *
      * @var StringFrontend
-     * @Flow\Inject(lazy=false)
      */
+    #[Flow\Inject(lazy: false)]
     protected $cache;
 
     public function getPrecomposedHash(): string

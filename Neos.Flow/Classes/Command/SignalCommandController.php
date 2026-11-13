@@ -20,15 +20,14 @@ use Neos\Flow\SignalSlot\Dispatcher;
 
 /**
  * Signal command controller for the Neos.Flow package
- *
- * @Flow\Scope("singleton")
  */
+#[Flow\Scope('singleton')]
 class SignalCommandController extends CommandController
 {
     /**
-     * @Flow\Inject
      * @var Dispatcher
      */
+    #[Flow\Inject]
     protected $dispatcher;
 
     /**

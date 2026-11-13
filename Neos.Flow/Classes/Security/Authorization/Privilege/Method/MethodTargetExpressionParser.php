@@ -19,10 +19,9 @@ use Neos\Flow\Aop\Pointcut\PointcutFilterComposite;
 
 /**
  * A specialized pointcut expression parser tailored to policy expressions
- *
- * @Flow\Scope("singleton")
- * @Flow\Proxy(false)
  */
+#[Flow\Scope('singleton')]
+#[Flow\Proxy(false)]
 class MethodTargetExpressionParser extends PointcutExpressionParser
 {
     /**

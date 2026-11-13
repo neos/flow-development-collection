@@ -23,9 +23,8 @@ use Neos\Flow\Utility\Environment;
 
 /**
  * Builds a CLI request object from the raw command call
- *
- * @Flow\Scope("singleton")
  */
+#[Flow\Scope('singleton')]
 class RequestBuilder
 {
     /**

@@ -26,9 +26,7 @@ final readonly class FlowPackageKey
 {
     public const string PATTERN = '/^[a-z0-9]+\.(?:[a-z0-9][\.a-z0-9]*)+$/i';
 
-    /**
-     * @Flow\Autowiring(false)
-     */
+    #[Flow\Autowiring(false)]
     private function __construct(
         public string $value
     ) {

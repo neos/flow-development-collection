@@ -20,9 +20,8 @@ use Neos\Flow\I18n\Cldr\CldrRepository;
 
 /**
  * A reader for data placed in "currencyData" tag in CLDR.
- *
- * @Flow\Scope("singleton")
  */
+#[Flow\Scope('singleton')]
 class CurrencyReader
 {
     /**

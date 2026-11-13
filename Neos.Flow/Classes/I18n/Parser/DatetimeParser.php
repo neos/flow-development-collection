@@ -20,9 +20,9 @@ use Neos\Flow\I18n\Exception\InvalidArgumentException;
 /**
  * Parser for date and time.
  *
- * @Flow\Scope("singleton")
  * @api
  */
+#[Flow\Scope('singleton')]
 class DatetimeParser
 {
     /**

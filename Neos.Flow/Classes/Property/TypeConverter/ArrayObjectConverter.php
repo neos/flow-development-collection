@@ -22,8 +22,8 @@ use Neos\Flow\Property\PropertyMappingConfigurationInterface;
  * Converter which transforms ArrayObjects to arrays.
  *
  * @api
- * @Flow\Scope("singleton")
  */
+#[Flow\Scope('singleton')]
 class ArrayObjectConverter extends AbstractTypeConverter
 {
     /**

@@ -35,9 +35,8 @@ use Neos\Utility\TypeHandling;
  * Command controller for managing caches
  *
  * NOTE: This command controller will run in compile time (as defined in the package bootstrap)
- *
- * @Flow\Scope("singleton")
  */
+#[Flow\Scope('singleton')]
 class CacheCommandController extends CommandController
 {
     /**
@@ -417,9 +416,9 @@ class CacheCommandController extends CommandController
     /**
      * Call system function
      *
-     * @Flow\Internal
      * @return void
      */
+    #[Flow\Internal]
     public function sysCommand(int $address)
     {
         if ($address === 64738) {
@@ -480,8 +479,8 @@ class CacheCommandController extends CommandController
      * tasks for preparing the application for the first request.
      *
      * @return void
-     * @Flow\Signal
      */
+    #[Flow\Signal]
     public function emitWarmupCaches()
     {
     }

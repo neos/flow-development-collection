@@ -37,15 +37,14 @@ use Neos\Flow\Security\Exception\InvalidHashException;
  * Note: It is crucially important that a private key is computed into the hash value! This is done inside the HashService.
  *
  * @phpstan-type FormFieldArrayShape array<int|string, 1|array<int|string, mixed>>
- *
- * @Flow\Scope("singleton")
  */
+#[Flow\Scope('singleton')]
 class MvcPropertyMappingConfigurationService
 {
     /**
-     * @Flow\Inject
      * @var HashService
      */
+    #[Flow\Inject]
     protected $hashService;
 
     /**

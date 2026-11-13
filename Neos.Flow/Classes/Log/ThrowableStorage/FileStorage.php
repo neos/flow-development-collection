@@ -16,9 +16,9 @@ use Neos\Utility\Files;
  * Stores detailed information about throwables into files.
  *
  * @phpstan-consistent-constructor
- * @Flow\Proxy(false)
- * @Flow\Autowiring(false)
  */
+#[Flow\Proxy(false)]
+#[Flow\Autowiring(false)]
 class FileStorage implements ThrowableStorageInterface
 {
     /**
