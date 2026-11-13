@@ -45,11 +45,6 @@ class FileSystemTarget implements TargetInterface
     protected $name;
 
     /**
-     * @var list<\Closure(int $iteration): void>
-     */
-    protected $callbacks = [];
-
-    /**
      * The path (in a filesystem) where resources are published to
      *
      * @var string
@@ -171,21 +166,6 @@ class FileSystemTarget implements TargetInterface
     }
 
     /**
-     * @param \Closure(int $iteration): void $callback Function called after each resource publishing
-     */
-    public function onPublish(\Closure $callback): void
-    {
-        $this->callbacks[] = $callback;
-    }
-
-    protected function invokeOnPublishCallbacks(int $iteration): void
-    {
-        foreach ($this->callbacks as $callback) {
-            $callback($iteration);
-        }
-    }
-
-    /**
      * Checks if the PackageStorage has been previously initialized with symlinks
      * and clears them. Otherwise the original sources would be overwritten.
      *
@@ -209,9 +189,9 @@ class FileSystemTarget implements TargetInterface
      * Publishes the whole collection to this target
      *
      * @param CollectionInterface $collection The collection to publish
-     * @return void
+     * @return \Generator<ResourcePublishResult>
      */
-    public function publishCollection(CollectionInterface $collection)
+    public function publishCollection(CollectionInterface $collection): \Generator
     {
         $storage = $collection->getStorage();
         $this->checkAndRemovePackageSymlinks($storage);
@@ -223,10 +203,11 @@ class FileSystemTarget implements TargetInterface
                 continue;
             }
 
-            $this->publishFile($sourceStream, $this->getRelativePublicationPathAndFilename($object));
+            $filePath = $this->getRelativePublicationPathAndFilename($object);
+            $this->publishFile($sourceStream, $filePath);
             fclose($sourceStream);
 
-            $this->invokeOnPublishCallbacks($iteration);
+            yield new ResourcePublishResult($iteration, sprintf('File %s was published', $filePath), $object);
             $iteration++;
         }
     }
