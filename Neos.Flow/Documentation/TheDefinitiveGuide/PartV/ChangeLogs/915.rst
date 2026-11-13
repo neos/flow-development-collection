@@ -1,0 +1,25 @@
+`9.1.5 (2026-11-13) <https://github.com/neos/flow-development-collection/releases/tag/9.1.5>`_
+==============================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`BUGFIX: RedisBackend::flushByTags() returns the total over all batches <https://github.com/neos/flow-development-collection/pull/3633>`_
+-----------------------------------------------------------------------------------------------------------------------------------------
+
+``RedisBackend::flushByTags()`` now returns the number of flushed entries over all batches. The count was assigned (``=``) instead of accumulated (``+=``) inside the batching loop, so with more tags than ``batchSize`` (default 100000) only the count of the last batch was returned. Callers such as the content cache flusher then log a wrong number of removed entries.
+
+**Upgrade instructions**
+
+None. The return value was wrong only when more than one batch was needed.
+
+**Review instructions**
+
+The new functional test sets ``batchSize`` to 2 and flushes five tags with one entry each. It returns 1 without the change and 5 with it. ``RedisBackendTest`` (14 tests) passes on ``8.3`` against Redis 7.
+
+🤖 Generated with `Claude Code <https://claude.com/claude-code>`_
+
+* Packages: ``Flow`` ``Cache``
+
+`Detailed log <https://github.com/neos/flow-development-collection/compare/9.1.4...9.1.5>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
