@@ -37,6 +37,8 @@ use Neos\Error\Messages\Result;
  *  - username:         The username needed for the redis clients to connect to the server (hostname)
  *  - password:        The password needed for redis clients to connect to the server (hostname)
  *  - batchSize:       Maximum number of parameters per query for batch operations
+ *  - retryOnError:    Whether to retry reading if Redis is not available (yet)
+ *  - maximumRetries:  How often to retry reading before giving up
  *
  * Requirements:
  *  - Redis 6.0.0+
@@ -54,6 +56,7 @@ use Neos\Error\Messages\Result;
 class RedisBackend extends IndependentAbstractBackend implements TaggableBackendInterface, IterableBackendInterface, FreezableBackendInterface, PhpCapableBackendInterface, WithStatusInterface
 {
     use RequireOnceFromValueTrait;
+    use RetryTrait;
 
     public const MIN_REDIS_VERSION = '6.0.0';
 
@@ -173,7 +176,9 @@ class RedisBackend extends IndependentAbstractBackend implements TaggableBackend
      */
     public function get(string $entryIdentifier): string|bool
     {
-        return $this->uncompress($this->redis->get($this->getPrefixedIdentifier('entry:' . $entryIdentifier)));
+        return $this->withRetries(
+            fn () => $this->uncompress($this->redis->get($this->getPrefixedIdentifier('entry:' . $entryIdentifier)))
+        );
     }
 
     /**
@@ -186,7 +191,9 @@ class RedisBackend extends IndependentAbstractBackend implements TaggableBackend
     public function has(string $entryIdentifier): bool
     {
         // exists returned true or false in phpredis versions < 4.0.0, now it returns the number of keys
-        return (bool)$this->redis->exists($this->getPrefixedIdentifier('entry:' . $entryIdentifier));
+        return $this->withRetries(
+            fn () => (bool)$this->redis->exists($this->getPrefixedIdentifier('entry:' . $entryIdentifier))
+        );
     }
 
     /**
@@ -506,6 +513,14 @@ class RedisBackend extends IndependentAbstractBackend implements TaggableBackend
         if ($redis !== null) {
             $this->redis = $redis;
         }
+    }
+
+    /**
+     * phpredis throws a RedisException if the server is unreachable or e.g. still loading its dataset
+     */
+    protected function isRetryableError(\Throwable $throwable): bool
+    {
+        return $throwable instanceof \RedisException;
     }
 
     private function uncompress(bool|string $value): bool|string

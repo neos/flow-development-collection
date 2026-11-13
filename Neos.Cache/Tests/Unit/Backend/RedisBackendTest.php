@@ -76,6 +76,94 @@ final class RedisBackendTest extends BaseTestCase
     }
 
     #[Test]
+    public function getRetriesOnRedisException(): void
+    {
+        $backend = $this->createBackendWithoutRetryDelay(['maximumRetries' => 3]);
+
+        $this->redis->expects($this->exactly(3))
+            ->method('get')
+            ->willReturnOnConsecutiveCalls(
+                $this->throwException(new \RedisException('LOADING Redis is loading the dataset in memory')),
+                $this->throwException(new \RedisException('LOADING Redis is loading the dataset in memory')),
+                'some data'
+            );
+
+        self::assertSame('some data', $backend->get('foo'));
+        self::assertSame([1, 2], $backend->retryDelays);
+    }
+
+    #[Test]
+    public function getThrowsLastExceptionIfMaximumRetriesAreExceeded(): void
+    {
+        $backend = $this->createBackendWithoutRetryDelay(['maximumRetries' => 2]);
+
+        $this->redis->expects($this->exactly(3))
+            ->method('get')
+            ->willThrowException(new \RedisException('LOADING Redis is loading the dataset in memory'));
+
+        $this->expectException(\RedisException::class);
+        try {
+            $backend->get('foo');
+        } finally {
+            self::assertSame([1, 2], $backend->retryDelays);
+        }
+    }
+
+    #[Test]
+    public function getDoesNotRetryIfRetryOnErrorIsDisabled(): void
+    {
+        $backend = $this->createBackendWithoutRetryDelay(['retryOnError' => false]);
+
+        $this->redis->expects($this->once())
+            ->method('get')
+            ->willThrowException(new \RedisException('LOADING Redis is loading the dataset in memory'));
+
+        $this->expectException(\RedisException::class);
+        $backend->get('foo');
+    }
+
+    #[Test]
+    public function hasRetriesOnRedisException(): void
+    {
+        $backend = $this->createBackendWithoutRetryDelay();
+
+        $this->redis->expects($this->exactly(2))
+            ->method('exists')
+            ->willReturnOnConsecutiveCalls(
+                $this->throwException(new \RedisException('LOADING Redis is loading the dataset in memory')),
+                1
+            );
+
+        self::assertTrue($backend->has('foo'));
+    }
+
+    #[Test]
+    public function setMaximumRetriesRejectsNegativeValues(): void
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->backend->setMaximumRetries(-1);
+    }
+
+    /**
+     * A backend that records the retry delays instead of sleeping
+     */
+    private function createBackendWithoutRetryDelay(array $options = []): RedisBackend
+    {
+        $backend = new class ($this->createMock(EnvironmentConfiguration::class), array_merge(['redis' => $this->redis], $options)) extends RedisBackend {
+            public array $retryDelays = [];
+
+            protected function waitBeforeRetry(int $retry): void
+            {
+                $this->retryDelays[] = $retry;
+            }
+        };
+        $cache = $this->createMock(FrontendInterface::class);
+        $cache->method('getIdentifier')->willReturn('Foo_Cache');
+        $backend->setCache($cache);
+        return $backend;
+    }
+
+    #[Test]
     public function findIdentifiersByTagInvokesRedis(): void
     {
         $this->redis->expects($this->once())

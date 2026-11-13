@@ -495,6 +495,15 @@ Options
 |                | E.g. Postgres supports up to 65535 parameters,     |           |        |         |
 |                | but SQLite only 999 for older versions.            |           |        |         |
 +----------------+----------------------------------------------------+-----------+--------+---------+
+| retryOnError   | Whether to retry reading (``get()`` and ``has()``) | No        | bool   | true    |
+|                | if the database can not be reached or the          |           |        |         |
+|                | connection was lost. Other errors are not retried. |           |        |         |
+|                |                                                    |           |        |         |
+|                | The n-th retry waits n² * 100ms.                   |           |        |         |
++----------------+----------------------------------------------------+-----------+--------+---------+
+| maximumRetries | How often to retry before giving up. 8 retries     | No        | int    | 8       |
+|                | wait about 20 seconds in total.                    |           |        |         |
++----------------+----------------------------------------------------+-----------+--------+---------+
 
 Neos\\Cache\\Backend\\RedisBackend
 ----------------------------------
@@ -588,6 +597,19 @@ Options
 |                  | lower batch size allows other   |           |           |           |
 |                  | calls to Redis to be processed  |           |           |           |
 |                  | between each batch.             |           |           |           |
++------------------+---------------------------------+-----------+-----------+-----------+
+| retryOnError     | Whether to retry reading        | No        | bool      | true      |
+|                  | (``get()`` and ``has()``) if    |           |           |           |
+|                  | Redis is not available, e.g.    |           |           |           |
+|                  | while it is still loading its   |           |           |           |
+|                  | dataset after a restart.        |           |           |           |
+|                  |                                 |           |           |           |
+|                  | The n-th retry waits            |           |           |           |
+|                  | n² * 100ms.                     |           |           |           |
++------------------+---------------------------------+-----------+-----------+-----------+
+| maximumRetries   | How often to retry before       | No        | integer   | 8         |
+|                  | giving up. 8 retries wait about |           |           |           |
+|                  | 20 seconds in total.            |           |           |           |
 +------------------+---------------------------------+-----------+-----------+-----------+
 
 Neos\\Cache\\Backend\\MemcachedBackend
