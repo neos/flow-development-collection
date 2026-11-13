@@ -75,6 +75,7 @@ abstract class AbstractFormViewHelper extends AbstractTagBasedViewHelper
      */
     protected function renderHiddenIdentityField($object, $name)
     {
+        /** @phpstan-ignore function.alreadyNarrowedType (annotations can be wrong) */
         if (!is_object($object) || $this->persistenceManager->isNewObject($object) || $name === null) {
             return '';
         }

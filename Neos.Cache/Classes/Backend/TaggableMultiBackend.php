@@ -24,6 +24,15 @@ use Throwable;
 class TaggableMultiBackend extends MultiBackend implements TaggableBackendInterface
 {
     /**
+     * @var array<int,TaggableBackendInterface>
+     */
+    protected array $backends = [];
+
+    /**
+     * @template T of TaggableBackendInterface
+     * @param class-string<T> $backendClassName
+     * @param array<mixed> $backendOptions
+     * @return T|null
      * @throws Throwable
      */
     protected function buildSubBackend(string $backendClassName, array $backendOptions): ?BackendInterface

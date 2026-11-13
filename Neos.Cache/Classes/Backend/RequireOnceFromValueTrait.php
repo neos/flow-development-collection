@@ -20,7 +20,7 @@ namespace Neos\Cache\Backend;
 trait RequireOnceFromValueTrait
 {
     /**
-     * @var array
+     * @var array<string,true>
      */
     protected $_requiredEntryIdentifiers = [];
 

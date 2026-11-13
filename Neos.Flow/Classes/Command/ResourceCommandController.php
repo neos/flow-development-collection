@@ -19,6 +19,7 @@ use Neos\Flow\Exception;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Package\PackageManager;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
+use Neos\Flow\Persistence\QueryResultInterface;
 use Neos\Flow\ResourceManagement\CollectionInterface;
 use Neos\Flow\ResourceManagement\PersistentResource;
 use Neos\Flow\ResourceManagement\Publishing\MessageCollector;
@@ -249,12 +250,14 @@ class ResourceCommandController extends CommandController
         if (count($brokenResources) > 0) {
             foreach ($brokenResources as $resource) {
                 if ($mediaPackagePresent) {
+                    /** @var QueryResultInterface<object> $assets the Asset class is not part of flow */
                     $assets = $assetRepository->findByResource($resource);
-                    if ($assets !== null) {
+                    if ($assets->count() !== 0) {
                         $relatedAssets[$resource] = $assets;
                     }
+                    /** @var QueryResultInterface<object> $thumbnails the Thumbnail class is not part of flow */
                     $thumbnails = $thumbnailRepository->findByResource($resource);
-                    if ($assets !== null) {
+                    if ($thumbnails->count() !== 0) {
                         $relatedThumbnails[$resource] = $thumbnails;
                     }
                 }

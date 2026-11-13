@@ -189,6 +189,7 @@ class UriTemplate
     protected static function encodeArrayVariable(array $variable, array $value, $operator, $separator, &$useQueryString)
     {
         $isAssociativeArray = self::isAssociative($variable);
+        /** @var array<string, string> $keyValuePairs */
         $keyValuePairs = [];
 
         foreach ($variable as $key => $var) {
@@ -218,8 +219,8 @@ class UriTemplate
                     $var = $value['value'] . '=' . $var;
                 }
             }
-
-            $keyValuePairs[$key] = $var;
+            /** @phpstan-ignore cast.string (Will be casted by implode or string concat later anyways) */
+            $keyValuePairs[$key] = (string)$var;
         }
 
         $expanded = '';

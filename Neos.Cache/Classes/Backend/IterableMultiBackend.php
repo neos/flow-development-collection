@@ -24,10 +24,20 @@ use Throwable;
 class IterableMultiBackend extends TaggableMultiBackend implements IterableBackendInterface
 {
     /**
+     * @var array<int,IterableBackendInterface&TaggableBackendInterface>
+     */
+    protected array $backends = [];
+
+    /**
+     * @template T of IterableBackendInterface&TaggableBackendInterface
+     * @param class-string<T> $backendClassName
+     * @param array<mixed> $backendOptions
+     * @return T|null
      * @throws Throwable
      */
     protected function buildSubBackend(string $backendClassName, array $backendOptions): ?BackendInterface
     {
+        /** @phpstan-ignore function.alreadyNarrowedType (Annotations can be wrong) */
         if (!is_subclass_of($backendClassName, IterableBackendInterface::class)) {
             $message = sprintf('Failed building sub backend %s for %s because it does not implement %s', $backendClassName, get_class($this), IterableBackendInterface::class);
             $throwable = new Exception($message);
@@ -37,6 +47,7 @@ class IterableMultiBackend extends TaggableMultiBackend implements IterableBacke
         }
         return parent::buildSubBackend($backendClassName, $backendOptions);
     }
+
 
     /**
      * @throws Throwable

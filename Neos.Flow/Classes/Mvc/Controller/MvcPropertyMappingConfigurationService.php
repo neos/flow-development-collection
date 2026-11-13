@@ -36,6 +36,8 @@ use Neos\Flow\Security\Exception\InvalidHashException;
  *
  * Note: It is crucially important that a private key is computed into the hash value! This is done inside the HashService.
  *
+ * @phpstan-type FormFieldArrayShape array<int|string, 1|array<int|string, mixed>>
+ *
  * @Flow\Scope("singleton")
  */
 class MvcPropertyMappingConfigurationService
@@ -56,6 +58,7 @@ class MvcPropertyMappingConfigurationService
      */
     public function generateTrustedPropertiesToken($formFieldNames, $fieldNamePrefix = '')
     {
+        /** @var FormFieldArrayShape $formFieldArray */
         $formFieldArray = [];
         foreach ($formFieldNames as $formField) {
             $formFieldParts = explode('[', $formField);
@@ -70,7 +73,6 @@ class MvcPropertyMappingConfigurationService
                 }
 
                 if ($i === count($formFieldParts) - 1) {
-                    /** @phpstan-ignore booleanAnd.rightAlwaysFalse (not sure, though) */
                     if (isset($currentPosition[$formFieldPart]) && is_array($currentPosition[$formFieldPart])) {
                         throw new InvalidArgumentForHashGenerationException('The form field "' . $formField . '" is declared as string, but it collides with a previous form field of the same name which declared the field as array. This is an inconsistency you need to fix inside your generated form. (Array overridden by String)', 1255072587);
                     }
@@ -92,7 +94,6 @@ class MvcPropertyMappingConfigurationService
             }
         }
         if ($fieldNamePrefix !== '') {
-            /** @phpstan-ignore nullCoalesce.offset (set by reference) */
             $formFieldArray = $formFieldArray[$fieldNamePrefix] ?? [];
         }
         return $this->serializeAndHashFormFieldArray($formFieldArray);
@@ -101,7 +102,7 @@ class MvcPropertyMappingConfigurationService
     /**
      * Serialize and hash the form field array
      *
-     * @param array<mixed> $formFieldArray form field array to be serialized and hashed
+     * @param FormFieldArrayShape $formFieldArray form field array to be serialized and hashed
      * @return string Hash
      */
     protected function serializeAndHashFormFieldArray($formFieldArray)

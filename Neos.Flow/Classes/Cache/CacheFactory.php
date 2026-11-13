@@ -82,8 +82,8 @@ class CacheFactory extends \Neos\Cache\CacheFactory
 
     /**
      * @param string $cacheIdentifier
-     * @param string $cacheObjectName
-     * @param string $backendObjectName
+     * @param class-string<FrontendInterface> $cacheObjectName
+     * @param class-string<BackendInterface> $backendObjectName
      * @param array<mixed> $backendOptions
      * @param bool $persistent
      * @return FrontendInterface
@@ -112,11 +112,12 @@ class CacheFactory extends \Neos\Cache\CacheFactory
     }
 
     /**
-     * @param string $backendObjectName
+     * @template T of BackendInterface
+     * @param class-string<T> $backendObjectName
      * @param array<string,mixed> $backendOptions
      * @param EnvironmentConfiguration $environmentConfiguration
      * @param boolean $persistent
-     * @return BackendInterface
+     * @return T
      * @throws InvalidBackendException
      */
     protected function instantiateBackend(string $backendObjectName, array $backendOptions, EnvironmentConfiguration $environmentConfiguration, bool $persistent = false): BackendInterface

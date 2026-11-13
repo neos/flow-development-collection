@@ -258,7 +258,7 @@ class ResourceTypeConverter extends AbstractTypeConverter
                 $resource = $this->resourceManager->importResourceFromContent(base64_decode($source['data']), $source['filename'], $collectionName, $givenResourceIdentity);
             } elseif ($hash !== null) {
                 // We proactively block file extensions before importing.
-                if (is_array($source) && isset($source['filename'])) {
+                if (isset($source['filename'])) {
                     $this->resourceManager->throwIfFileExtensionIsBlocked((string)$source['filename']);
                 }
                 $resource = $this->resourceManager->importResource($configuration?->getConfigurationValue(ResourceTypeConverter::class, self::CONFIGURATION_RESOURCE_LOAD_PATH) . '/' . $hash, $collectionName, $givenResourceIdentity);
@@ -267,7 +267,7 @@ class ResourceTypeConverter extends AbstractTypeConverter
                     $resource->setFilename($filename);
                 }
             }
-            if ($hash !== null && $resource?->getSha1() !== $hash) {
+            if ($hash !== null && $resource->getSha1() !== $hash) {
                 throw new Exception\InvalidResourceDataException('The source SHA1 did not match the SHA1 of the imported resource.', 1482248149);
             }
         }
