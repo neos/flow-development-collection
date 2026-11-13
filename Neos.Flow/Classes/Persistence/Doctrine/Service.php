@@ -637,6 +637,11 @@ class Service
         return ucfirst($this->entityManager->getConnection()->getDatabasePlatform()->getName());
     }
 
+    public function getExecutedMigrations(): ExecutedMigrationsList
+    {
+        return $this->getDependencyFactory()->getMetadataStorage()->getExecutedMigrations();
+    }
+
     /**
      * This serves a rather strange use case: renaming columns used in FK constraints.
      *
