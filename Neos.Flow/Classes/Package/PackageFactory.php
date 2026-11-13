@@ -50,6 +50,7 @@ class PackageFactory
 
         /** dynamic construction {@see GenericPackage::__construct} */
         $package = new $packageClassName($packageKey->value, $composerName, $absolutePackagePath, $autoloadConfiguration);
+        /** @phpstan-ignore instanceof.alwaysTrue (annotations can be wrong) */
         if (!$package instanceof PackageInterface) {
             throw new Exception\CorruptPackageException(sprintf('The package class of package "%s" does not implement \Neos\Flow\Package\PackageInterface. Check the file "%s".', $packageKey->value, $packageClassInformation['pathAndFilename']), 1427193370);
         }
