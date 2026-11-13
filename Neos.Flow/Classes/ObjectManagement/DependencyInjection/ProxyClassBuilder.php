@@ -53,11 +53,6 @@ class ProxyClassBuilder
     protected array $objectConfigurations = [];
 
     /**
-     * @param ReflectionService $reflectionService
-     * @param Compiler $compiler
-     * @param LoggerInterface $logger
-     * @param ConfigurationManager $configurationManager
-     * @param CacheManager $cacheManager
      * @param CompileTimeObjectManager<object> $objectManager
      */
     public function __construct(
@@ -89,7 +84,7 @@ class ProxyClassBuilder
             /** @var class-string $className */
             $className = $objectConfiguration->getClassName();
             if ($objectName !== $className
-                || $this->compiler->hasCacheEntryForClass($className) === true
+                || $this->compiler->hasCacheEntryForClass($className)
                 || $this->reflectionService->isClassAbstract($className)
             ) {
                 continue;
@@ -184,7 +179,7 @@ class ProxyClassBuilder
         if ($className == '') {
             return '';
         }
-        $forceSerializationCode = $forceSerializationCode === false ? ($this->reflectionService->getClassAnnotation($className, Flow\Proxy::class)?->forceSerializationCode ?? false) : true;
+        $forceSerializationCode = $forceSerializationCode === false ? ($this->reflectionService->getClassAnnotation($className, Flow\Proxy::class)->forceSerializationCode ?? false) : true;
         $scopeAnnotation = $this->reflectionService->getClassAnnotation($className, Flow\Scope::class);
         $transientProperties = $this->reflectionService->getPropertyNamesByAnnotation($className, Flow\Transient::class);
         $injectedProperties = $this->reflectionService->getPropertyNamesByAnnotation($className, Flow\Inject::class);
@@ -236,7 +231,6 @@ class ProxyClassBuilder
         $commands = [];
         $injectedProperties = [];
         foreach ($objectConfiguration->getProperties() as $propertyName => $propertyConfiguration) {
-            assert($propertyConfiguration instanceof ConfigurationProperty);
             if ($propertyConfiguration->getAutowiring() === Configuration::AUTOWIRING_MODE_OFF) {
                 continue;
             }
@@ -322,7 +316,6 @@ class ProxyClassBuilder
      * Builds code which injects an object which was specified by its object name
      *
      * @param Configuration $objectConfiguration Configuration of the object to inject into
-     * @param ConfigurationProperty $propertyConfiguration
      * @param string $propertyName Name of the property to inject
      * @param string $propertyObjectName Object name of the object to inject
      * @return string[] lines of PHP code
@@ -441,9 +434,7 @@ class ProxyClassBuilder
     /**
      * Builds code which calls the lifecycle initialization method, if any.
      *
-     * @param Configuration $objectConfiguration
      * @param int $cause a ObjectManagerInterface::INITIALIZATIONCAUSE_* constant which is the cause of the initialization command being called.
-     * @return string
      */
     protected function buildLifecycleInitializationCode(Configuration $objectConfiguration, int $cause): string
     {
@@ -463,9 +454,7 @@ class ProxyClassBuilder
     /**
      * Builds code which registers the lifecycle shutdown method, if any.
      *
-     * @param Configuration $objectConfiguration
      * @param int $cause a ObjectManagerInterface::INITIALIZATIONCAUSE_* constant which is the cause of the initialization command being called.
-     * @return string
      */
     protected function buildLifecycleShutdownCode(Configuration $objectConfiguration, int $cause): string
     {
@@ -483,9 +472,6 @@ class ProxyClassBuilder
     }
 
     /**
-     * @param string $className
-     * @param string $lifeCycleCode
-     * @param int $cause
      * @return string[]
      */
     protected function wrapLifeCycleChecksCode(string $className, string $lifeCycleCode, int $cause): array
@@ -549,7 +535,6 @@ class ProxyClassBuilder
     }
 
     /**
-     * @param string $customFactoryObjectName
      * @param array<int, ?ConfigurationArgument> $arguments
      * @throws InvalidConfigurationTypeException
      */
@@ -563,8 +548,6 @@ class ProxyClassBuilder
      * Compile the result of methods marked with CompileStatic into the proxy class
      *
      * @param class-string $className
-     * @param ProxyClass $proxyClass
-     * @return void
      * @throws ClassLoadingForReflectionFailedException
      * @throws InvalidClassException
      * @throws ObjectException
@@ -603,16 +586,14 @@ class ProxyClassBuilder
                 continue;
             }
             $propertyType = $this->reflectionService->getPropertyType($className, $propertyName);
-            if ($propertyType === null) {
-                $propertyType = $this->reflectionService->getPropertyTagValues($className, $propertyName, 'var')[0] ?? null;
-            }
+            $propertyType ??= $this->reflectionService->getPropertyTagValues($className, $propertyName, 'var')[0] ?? null;
             if ($propertyType === null) {
                 continue;
             }
 
             try {
                 $typeInformation = TypeHandling::parseType($propertyType);
-            } catch (\Throwable $throwable) {
+            } catch (\Throwable) {
                 // we will skip on unparsable types
                 continue;
             }

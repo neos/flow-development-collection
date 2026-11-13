@@ -52,23 +52,16 @@ class FlashMessageCookieStorage implements FlashMessageStorageInterface
 
     /**
      * @param HttpRequestInterface $request The current HTTP request for storages that persist the FlashMessages via HTTP
-     * @return FlashMessageContainer
      */
     public function load(HttpRequestInterface $request): FlashMessageContainer
     {
         if ($this->flashMessageContainer === null) {
             $this->flashMessageContainer = $this->restoreFlashMessageContainerFromCookie($request);
-            if ($this->flashMessageContainer === null) {
-                $this->flashMessageContainer = new FlashMessageContainer();
-            }
+            $this->flashMessageContainer ??= new FlashMessageContainer();
         }
         return $this->flashMessageContainer;
     }
 
-    /**
-     * @param HttpRequestInterface $request
-     * @return FlashMessageContainer|null
-     */
     private function restoreFlashMessageContainerFromCookie(HttpRequestInterface $request): ?FlashMessageContainer
     {
         $cookies = $request->getCookieParams();
@@ -86,7 +79,6 @@ class FlashMessageCookieStorage implements FlashMessageStorageInterface
 
     /**
      * @param HttpResponseInterface $response The current HTTP response for storages that persist the FlashMessages via HTTP
-     * @return HttpResponseInterface
      */
     public function persist(HttpResponseInterface $response): HttpResponseInterface
     {
@@ -106,7 +98,6 @@ class FlashMessageCookieStorage implements FlashMessageStorageInterface
     }
 
     /**
-     * @param Message $message
      * @return array<string,mixed>
      */
     private function serializeMessage(Message $message): array
@@ -123,7 +114,6 @@ class FlashMessageCookieStorage implements FlashMessageStorageInterface
 
     /**
      * @param array<mixed> $messageArray
-     * @return Message
      */
     private function deserializeMessage(array $messageArray): Message
     {

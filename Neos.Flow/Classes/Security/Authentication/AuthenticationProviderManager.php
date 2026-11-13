@@ -24,15 +24,14 @@ use Neos\Flow\Session\SessionManagerInterface;
 /**
  * The default authentication manager, which relies on Authentication Providers
  * to authenticate the tokens stored in the security context.
- *
- * @Flow\Scope("singleton")
  */
+#[Flow\Scope('singleton')]
 class AuthenticationProviderManager implements AuthenticationManagerInterface
 {
     /**
      * @var SessionManagerInterface
-     * @Flow\Inject
      */
+    #[Flow\Inject]
     protected $sessionManager;
 
     /**
@@ -43,9 +42,9 @@ class AuthenticationProviderManager implements AuthenticationManagerInterface
     /**
      * The security context of the current request
      *
-     * @Flow\Inject
      * @var Context
      */
+    #[Flow\Inject]
     protected $securityContext;
 
     /**
@@ -71,9 +70,6 @@ class AuthenticationProviderManager implements AuthenticationManagerInterface
      */
     protected $authenticationStrategy;
 
-    /**
-     * @param TokenAndProviderFactoryInterface $tokenAndProviderFactory
-     */
     public function __construct(TokenAndProviderFactoryInterface $tokenAndProviderFactory)
     {
         $this->tokenAndProviderFactory = $tokenAndProviderFactory;
@@ -83,29 +79,19 @@ class AuthenticationProviderManager implements AuthenticationManagerInterface
      * Inject the settings and does a fresh build of tokens based on the injected settings
      *
      * @param array<string,mixed> $settings The settings
-     * @return void
      * @throws Exception
      */
     public function injectSettings(array $settings): void
     {
         if (isset($settings['security']['authentication']['authenticationStrategy'])) {
             $authenticationStrategyName = $settings['security']['authentication']['authenticationStrategy'];
-            switch ($authenticationStrategyName) {
-                case 'allTokens':
-                    $this->authenticationStrategy = Context::AUTHENTICATE_ALL_TOKENS;
-                    break;
-                case 'oneToken':
-                    $this->authenticationStrategy = Context::AUTHENTICATE_ONE_TOKEN;
-                    break;
-                case 'atLeastOneToken':
-                    $this->authenticationStrategy = Context::AUTHENTICATE_AT_LEAST_ONE_TOKEN;
-                    break;
-                case 'anyToken':
-                    $this->authenticationStrategy = Context::AUTHENTICATE_ANY_TOKEN;
-                    break;
-                default:
-                    throw new Exception('Invalid setting "' . $authenticationStrategyName . '" for security.authentication.authenticationStrategy', 1291043022);
-            }
+            $this->authenticationStrategy = match ($authenticationStrategyName) {
+                'allTokens' => Context::AUTHENTICATE_ALL_TOKENS,
+                'oneToken' => Context::AUTHENTICATE_ONE_TOKEN,
+                'atLeastOneToken' => Context::AUTHENTICATE_AT_LEAST_ONE_TOKEN,
+                'anyToken' => Context::AUTHENTICATE_ANY_TOKEN,
+                default => throw new Exception('Invalid setting "' . $authenticationStrategyName . '" for security.authentication.authenticationStrategy', 1291043022),
+            };
         }
     }
 
@@ -127,7 +113,6 @@ class AuthenticationProviderManager implements AuthenticationManagerInterface
      * authentication will stop after the first authenticated token. The strategy
      * "atLeastOne" will try to authenticate at least one and as many tokens as possible.
      *
-     * @return void
      * @throws Exception
      * @throws AuthenticationRequiredException
      * @throws NoTokensAuthenticatedException
@@ -196,7 +181,6 @@ class AuthenticationProviderManager implements AuthenticationManagerInterface
      *
      * Will call authenticate() if not done before.
      *
-     * @return boolean
      * @throws Exception
      */
     public function isAuthenticated(): bool
@@ -204,25 +188,22 @@ class AuthenticationProviderManager implements AuthenticationManagerInterface
         if ($this->isAuthenticated === null) {
             try {
                 $this->authenticate();
-            } catch (AuthenticationRequiredException $exception) {
+            } catch (AuthenticationRequiredException) {
             }
         }
 
-        return $this->isAuthenticated !== null
-            ? $this->isAuthenticated
-            : false;
+        return $this->isAuthenticated ?? false;
     }
 
     /**
      * Logout all active authentication tokens
      *
-     * @return void
      * @throws Exception
      * @throws SessionNotStartedException
      */
     public function logout(): void
     {
-        if ($this->isAuthenticated() !== true) {
+        if (!$this->isAuthenticated()) {
             return;
         }
         $this->isAuthenticated = null;
@@ -241,9 +222,8 @@ class AuthenticationProviderManager implements AuthenticationManagerInterface
      * Signals that the specified token has been successfully authenticated.
      *
      * @param TokenInterface $token The token which has been authenticated
-     * @return void
-     * @Flow\Signal
      */
+    #[Flow\Signal]
     protected function emitAuthenticatedToken(TokenInterface $token): void
     {
     }
@@ -251,20 +231,16 @@ class AuthenticationProviderManager implements AuthenticationManagerInterface
     /**
      * Signals that all active authentication tokens have been invalidated.
      * Note: the session will be destroyed after this signal has been emitted.
-     *
-     * @return void
-     * @Flow\Signal
      */
+    #[Flow\Signal]
     protected function emitLoggedOut(): void
     {
     }
 
     /**
      * Signals that authentication commenced and at least one token was authenticated.
-     *
-     * @return void
-     * @Flow\Signal
      */
+    #[Flow\Signal]
     protected function emitSuccessfullyAuthenticated(): void
     {
     }

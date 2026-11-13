@@ -30,8 +30,6 @@ class InstallerScripts
      * Make sure required paths and files are available outside of Package
      * Run on every Composer install or update - must be configured in root manifest
      *
-     * @param Event $event
-     * @return void
      * @throws Exception\InvalidConfigurationException
      * @throws \Neos\Flow\Package\Exception
      * @throws \Neos\Utility\Exception\FilesException
@@ -71,8 +69,6 @@ class InstallerScripts
     /**
      * Calls actions and install scripts provided by installed packages.
      *
-     * @param PackageEvent $event
-     * @return void
      * @throws Exception\InvalidConfigurationException
      * @throws Exception\UnexpectedOperationException
      * @throws \Neos\Utility\Exception\FilesException
@@ -81,7 +77,7 @@ class InstallerScripts
     {
         $operation = $event->getOperation();
         if (!$operation instanceof InstallOperation && !$operation instanceof UpdateOperation) {
-            throw new Exception\UnexpectedOperationException('Handling of operation of type "' . get_class($operation) . '" not supported', 1348750840);
+            throw new Exception\UnexpectedOperationException('Handling of operation of type "' . $operation::class . '" not supported', 1348750840);
         }
         $package = ($operation instanceof InstallOperation) ? $operation->getPackage() : $operation->getTargetPackage();
         $packageExtraConfig = $package->getExtra();
@@ -106,7 +102,6 @@ class InstallerScripts
      * Copies any distribution files to their place if needed.
      *
      * @param string $installerResourcesDirectory Path to the installer directory that contains the Distribution/Essentials and/or Distribution/Defaults directories.
-     * @return void
      * @throws \Neos\Utility\Exception\FilesException
      */
     protected static function copyDistributionFiles(string $installerResourcesDirectory): void
@@ -130,9 +125,6 @@ class InstallerScripts
     /**
      * Calls a static method from it's string representation
      *
-     * @param string $staticMethodReference
-     * @param PackageEvent $event
-     * @return void
      * @throws Exception\InvalidConfigurationException
      */
     protected static function runPackageScripts(string $staticMethodReference, PackageEvent $event): void

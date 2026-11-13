@@ -15,9 +15,9 @@ use Neos\Utility\Files;
 final class MigrationFinder extends Finder
 {
     /**
-     * @Flow\Inject
      * @var PackageManager
      */
+    #[Flow\Inject]
     protected $packageManager;
 
     /**
@@ -31,8 +31,6 @@ final class MigrationFinder extends Finder
     }
 
     /**
-     * @param string $directory
-     * @param string|null $namespace
      * @return string[]
      */
     public function findMigrations(string $directory, ?string $namespace = null): array

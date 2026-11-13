@@ -13,9 +13,9 @@ use Neos\Flow\Log\Psr\Logger;
  * It is no dependency of Neos.Flow but a suggestion.
  * So IF you use the default logging Neos.Log needs to be installed.
  *
- * @Flow\Proxy(false)
  * @api
  */
+#[Flow\Proxy(false)]
 class PsrLoggerFactory implements PsrLoggerFactoryInterface
 {
     /**
@@ -42,8 +42,6 @@ class PsrLoggerFactory implements PsrLoggerFactoryInterface
      * Get the logger configured with given identifier.
      * This implementation treats the logger as singleton.
      *
-     * @param string $identifier
-     * @return \Psr\Log\LoggerInterface
      * @throws \Exception
      */
     public function get(string $identifier): \Psr\Log\LoggerInterface
@@ -60,8 +58,7 @@ class PsrLoggerFactory implements PsrLoggerFactoryInterface
             throw new \Exception('To use the default logging you have to have the "neos/flow-log" package installed. It seems you miss it, so install it via "composer require neos/flow-log".', 1515437383589);
         }
 
-        /** @phpstan-ignore method.notFound */
-        $logger = (new \ReflectionClass(Logger::class))->newLazyGhost(function ($object) use ($identifier) {
+        $logger = new \ReflectionClass(Logger::class)->newLazyGhost(function ($object) use ($identifier) {
             $backends = $this->instantiateBackends($this->configuration[$identifier]);
             $object->__construct($backends);
         });
@@ -74,7 +71,6 @@ class PsrLoggerFactory implements PsrLoggerFactoryInterface
      * Create a new instance of this PsrLoggerFactory
      *
      * @param array<mixed> $configuration
-     * @return PsrLoggerFactory
      * @api
      */
     public static function create(array $configuration): PsrLoggerFactory
@@ -104,9 +100,7 @@ class PsrLoggerFactory implements PsrLoggerFactoryInterface
     /**
      * Instantiate a backend based on configuration.
      *
-     * @param string $class
      * @param array<mixed> $options
-     * @return BackendInterface
      * @throws \Exception
      */
     protected function instantiateBackend(string $class, array $options = []): BackendInterface

@@ -1,6 +1,9 @@
 parameters:
     level: 8
     paths:
+        - Neos.Cache/Classes
+        - Neos.Eel/Classes
+        - Neos.Error.Messages/Classes
         - Neos.Flow/Classes
         - Neos.Flow.Log/Classes
         - Neos.FluidAdaptor/Classes

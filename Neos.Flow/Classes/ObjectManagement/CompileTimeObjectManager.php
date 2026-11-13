@@ -46,25 +46,16 @@ use Neos\Flow\Reflection\ReflectionService;
  *     f?: array{string, string},
  *     fa?: array<int, null|array{t:int, v:mixed}>
  * }
- * @Flow\Scope("singleton")
- * @Flow\Proxy(false)
  */
+#[Flow\Scope('singleton')]
+#[Flow\Proxy(false)]
 class CompileTimeObjectManager extends ObjectManager
 {
-    /**
-     * @var VariableFrontend|null
-     */
-    protected ?VariableFrontend $configurationCache;
+    protected ?VariableFrontend $configurationCache = null;
 
-    /**
-     * @var ReflectionService|null
-     */
-    protected ?ReflectionService $reflectionService;
+    protected ?ReflectionService $reflectionService = null;
 
-    /**
-     * @var ConfigurationManager|null
-     */
-    protected ?ConfigurationManager $configurationManager;
+    protected ?ConfigurationManager $configurationManager = null;
 
     /**
      * @var array<class-string,Configuration>
@@ -88,19 +79,11 @@ class CompileTimeObjectManager extends ObjectManager
      */
     protected array $cachedClassNamesByScope = [];
 
-    /**
-     * @param ReflectionService $reflectionService
-     * @return void
-     */
     public function injectReflectionService(ReflectionService $reflectionService): void
     {
         $this->reflectionService = $reflectionService;
     }
 
-    /**
-     * @param ConfigurationManager $configurationManager
-     * @return void
-     */
     public function injectConfigurationManager(ConfigurationManager $configurationManager): void
     {
         $this->configurationManager = $configurationManager;
@@ -108,9 +91,6 @@ class CompileTimeObjectManager extends ObjectManager
 
     /**
      * Injects the configuration cache of the Object Framework
-     *
-     * @param VariableFrontend $configurationCache
-     * @return void
      */
     public function injectConfigurationCache(VariableFrontend $configurationCache): void
     {
@@ -121,7 +101,6 @@ class CompileTimeObjectManager extends ObjectManager
      * Initializes the object configurations and some other parts of this Object Manager.
      *
      * @param array<string, PackageInterface&PackageKeyAwareInterface> $packages An array of active packages to consider
-     * @return void
      * @throws InvalidConfigurationTypeException
      * @throws InvalidObjectConfigurationException
      * @throws CacheException
@@ -180,7 +159,6 @@ class CompileTimeObjectManager extends ObjectManager
      *
      * @param string $objectName The object name
      * @param object $instance A prebuilt instance
-     * @return void
      * @throws UnknownObjectException
      * @throws WrongScopeException
      */
@@ -217,7 +195,7 @@ class CompileTimeObjectManager extends ObjectManager
                 if ($information[self::KEY_SCOPE] === $scope) {
                     if (isset($information[self::KEY_CLASS_NAME]) && $information[self::KEY_CLASS_NAME] !== '') {
                         $this->cachedClassNamesByScope[$scope][] = $information[self::KEY_CLASS_NAME];
-                    } elseif (is_string($objectName) && class_exists($objectName)) {
+                    } elseif (class_exists($objectName)) {
                         $this->cachedClassNamesByScope[$scope][] = $objectName;
                     }
                 }
@@ -306,6 +284,7 @@ class CompileTimeObjectManager extends ObjectManager
                 $this->logger->debug('The package "' . $packageKey . '" specified in the setting "Neos.Flow.object.includeClasses" was either excluded or is not loaded.');
                 continue;
             }
+            /** @phpstan-ignore function.alreadyNarrowedType (Annotations can be wrong) */
             if (!is_array($filterExpressions)) {
                 throw new InvalidConfigurationTypeException('The value given for setting "Neos.Flow.object.includeClasses.\'' . $packageKey . '\'" is  invalid. It should be an array of expressions. Check the syntax in the YAML file.', 1422357272);
             }
@@ -490,8 +469,6 @@ class CompileTimeObjectManager extends ObjectManager
     /**
      * Shuts down this Object Container by calling the shutdown methods of all
      * object instances which were configured to be shut down.
-     *
-     * @return void
      */
     public function shutdown(): void
     {

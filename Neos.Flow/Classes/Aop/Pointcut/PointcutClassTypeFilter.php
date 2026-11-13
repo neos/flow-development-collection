@@ -19,9 +19,8 @@ use Neos\Flow\Reflection\ReflectionService;
 
 /**
  * A class type filter which fires on class or interface names
- *
- * @Flow\Proxy(false)
  */
+#[Flow\Proxy(false)]
 class PointcutClassTypeFilter implements PointcutFilterInterface
 {
     /**
@@ -44,17 +43,19 @@ class PointcutClassTypeFilter implements PointcutFilterInterface
     /**
      * The constructor - initializes the class type filter with the class or interface name
      *
-     * @param class-string $interfaceOrClassName Interface or a class name to match against
+     * @param string $interfaceOrClassName Interface or a class name to match against
      * @throws Exception
      */
     public function __construct(string $interfaceOrClassName)
     {
-        $this->interfaceOrClassName = $interfaceOrClassName;
-        if (!interface_exists($this->interfaceOrClassName)) {
-            if (!class_exists($this->interfaceOrClassName)) {
-                throw new Exception('The specified interface / class "' . $this->interfaceOrClassName . '" for the pointcut class type filter does not exist.', 1172483343);
-            }
+        if (interface_exists($interfaceOrClassName)) {
+            $this->interfaceOrClassName = $interfaceOrClassName;
+            $this->isInterface = true;
+        } elseif (class_exists($interfaceOrClassName)) {
+            $this->interfaceOrClassName = $interfaceOrClassName;
             $this->isInterface = false;
+        } else {
+            throw new Exception('The specified interface / class "' . $interfaceOrClassName . '" for the pointcut class type filter does not exist.', 1172483343);
         }
     }
 
@@ -62,7 +63,6 @@ class PointcutClassTypeFilter implements PointcutFilterInterface
      * Injects the reflection service
      *
      * @param ReflectionService $reflectionService The reflection service
-     * @return void
      */
     public function injectReflectionService(ReflectionService $reflectionService): void
     {
@@ -106,9 +106,6 @@ class PointcutClassTypeFilter implements PointcutFilterInterface
 
     /**
      * This method is used to optimize the matching process.
-     *
-     * @param ClassNameIndex $classNameIndex
-     * @return ClassNameIndex
      */
     public function reduceTargetClassNames(ClassNameIndex $classNameIndex): ClassNameIndex
     {

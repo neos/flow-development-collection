@@ -24,7 +24,6 @@ interface PersistenceManagerInterface
      * Injects the Flow settings, called by Flow.
      *
      * @param array<string,mixed> $settings
-     * @return void
      * @api
      */
     public function injectSettings(array $settings): void;
@@ -36,8 +35,6 @@ interface PersistenceManagerInterface
      * allowObject() will be persisted. If other objects are in the queue, an exception will be
      * raised.
      *
-     * @param boolean $onlyAllowedObjects
-     * @return void
      * @api
      */
     public function persistAll(bool $onlyAllowedObjects = false): void;
@@ -47,8 +44,6 @@ interface PersistenceManagerInterface
      *
      * Managed instances become detached, any fetches will
      * return data directly from the persistence "backend".
-     *
-     * @return void
      */
     public function clearState(): void;
 
@@ -72,7 +67,6 @@ interface PersistenceManagerInterface
      * method.
      *
      * @param Aspect\PersistenceMagicInterface $object The new object to register
-     * @return void
      */
     public function registerNewObject(Aspect\PersistenceMagicInterface $object): void;
 
@@ -117,7 +111,6 @@ interface PersistenceManagerInterface
      * Adds an object to the persistence.
      *
      * @param object $object The object to add
-     * @return void
      * @api
      */
     public function add($object): void;
@@ -126,7 +119,6 @@ interface PersistenceManagerInterface
      * Removes an object to the persistence.
      *
      * @param object $object The object to remove
-     * @return void
      * @api
      */
     public function remove($object): void;
@@ -135,7 +127,6 @@ interface PersistenceManagerInterface
      * Update an object in the persistence.
      *
      * @param object $object The modified object
-     * @return void
      * @throws UnknownObjectException
      * @api
      */
@@ -165,8 +156,6 @@ interface PersistenceManagerInterface
      *
      * This is primarily used to inform the user if he tries to save
      * data in an unsafe request.
-     *
-     * @return boolean
      */
     public function hasUnpersistedChanges(): bool;
 }

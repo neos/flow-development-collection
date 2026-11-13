@@ -32,40 +32,39 @@ use Psr\Log\LoggerInterface;
  * This listener is outsourced from the PersistenceManager to avoid recursive dependencies when building
  * the EntityManager.
  *
- * @Flow\Scope("singleton")
  * @api
  */
+#[Flow\Scope('singleton')]
 class AllowedObjectsListener
 {
     /**
-     * @Flow\Inject
      * @var LoggerInterface
      */
+    #[Flow\Inject]
     protected $logger;
 
     /**
-     * @Flow\Inject
      * @var ThrowableStorageInterface
      */
+    #[Flow\Inject]
     protected $throwableStorage;
 
     /**
-     * @Flow\Inject
      * @var AllowedObjectsContainer
      */
+    #[Flow\Inject]
     protected $allowedObjects;
 
     /**
-     * @Flow\Inject(lazy=true)
      * @var PersistenceManagerInterface
      */
+    #[Flow\Inject(lazy: true)]
     protected $persistenceManager;
 
     /**
      * Doctrine onFlush listener that checks for only allowed objects and reconnects
      * if the database connection was closed.
      *
-     * @param OnFlushEventArgs $args
      * @throws PersistenceException
      */
     public function onFlush(OnFlushEventArgs $args): void
@@ -109,7 +108,7 @@ class AllowedObjectsListener
         try {
             $connection->executeQuery($connection->getDatabasePlatform()->getDummySelectSQL());
             return true;
-        } catch (ConnectionException $e) {
+        } catch (ConnectionException) {
             return false;
         }
     }
@@ -118,13 +117,12 @@ class AllowedObjectsListener
      * Checks if the given object is allowed and if not, throws an exception
      *
      * @param object $object
-     * @return void
      * @throws \Neos\Flow\Persistence\Exception
      */
     protected function throwExceptionIfObjectIsNotAllowed($object): void
     {
         if (!$this->allowedObjects->contains($object)) {
-            $message = 'Detected modified or new objects (' . get_class($object) . ', uuid:' . $this->persistenceManager->getIdentifierByObject($object) . ') to be persisted which is not allowed for "safe requests"' . chr(10) .
+            $message = 'Detected modified or new objects (' . $object::class . ', uuid:' . $this->persistenceManager->getIdentifierByObject($object) . ') to be persisted which is not allowed for "safe requests"' . chr(10) .
                 'According to the HTTP 1.1 specification, so called "safe request" (usually GET or HEAD requests)' . chr(10) .
                 'should not change your data on the server side and should be considered read-only. If you need to add,' . chr(10) .
                 'modify or remove data, you should use the respective request methods (POST, PUT, DELETE and PATCH).' . chr(10) . chr(10) .

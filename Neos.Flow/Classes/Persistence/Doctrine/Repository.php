@@ -35,9 +35,9 @@ use Neos\Flow\Persistence\RepositoryInterface;
 abstract class Repository extends EntityRepository implements RepositoryInterface
 {
     /**
-     * @Flow\Inject
      * @var PersistenceManagerInterface
      */
+    #[Flow\Inject]
     protected $persistenceManager;
 
     /**
@@ -68,7 +68,7 @@ abstract class Repository extends EntityRepository implements RepositoryInterfac
     {
         if ($classMetadata === null) {
             if (defined('static::ENTITY_CLASSNAME') === false) {
-                $objectType = preg_replace(['/\\\Repository\\\/', '/Repository$/'], ['\\Model\\', ''], get_class($this));
+                $objectType = preg_replace(['/\\\Repository\\\/', '/Repository$/'], ['\\Model\\', ''], static::class);
             } else {
                 $objectType = static::ENTITY_CLASSNAME;
             }
@@ -99,14 +99,13 @@ abstract class Repository extends EntityRepository implements RepositoryInterfac
      * Adds an object to this repository.
      *
      * @param T $object The object to add
-     * @return void
      * @throws IllegalObjectTypeException
      * @api
      */
     public function add($object): void
     {
         if (!($object instanceof $this->objectType)) {
-            throw new IllegalObjectTypeException('The value given to add() was ' . get_debug_type($object) . ' , however the ' . get_class($this) . ' can only store ' . $this->objectType . ' instances.', 1517408062);
+            throw new IllegalObjectTypeException('The value given to add() was ' . get_debug_type($object) . ' , however the ' . static::class . ' can only store ' . $this->objectType . ' instances.', 1517408062);
         }
         $this->entityManager->persist($object);
     }
@@ -115,14 +114,13 @@ abstract class Repository extends EntityRepository implements RepositoryInterfac
      * Removes an object from this repository.
      *
      * @param T $object The object to remove
-     * @return void
      * @throws IllegalObjectTypeException
      * @api
      */
     public function remove($object): void
     {
         if (!($object instanceof $this->objectType)) {
-            throw new IllegalObjectTypeException('The value given to remove() was ' . get_debug_type($object) . ' , however the ' . get_class($this) . ' can only handle ' . $this->objectType . ' instances.', 1517408067);
+            throw new IllegalObjectTypeException('The value given to remove() was ' . get_debug_type($object) . ' , however the ' . static::class . ' can only handle ' . $this->objectType . ' instances.', 1517408067);
         }
         $this->entityManager->remove($object);
     }
@@ -196,7 +194,6 @@ abstract class Repository extends EntityRepository implements RepositoryInterfac
     /**
      * Counts all objects of this repository
      *
-     * @return integer
      * @throws Exception\DatabaseConnectionException
      * @throws Exception\DatabaseConnectionException
      * @api
@@ -210,7 +207,6 @@ abstract class Repository extends EntityRepository implements RepositoryInterfac
      * Removes all objects of this repository as if remove() was called for
      * all of them.
      *
-     * @return void
      * @throws IllegalObjectTypeException
      * @todo maybe use DQL here, would be much more performant
      * @api
@@ -230,7 +226,6 @@ abstract class Repository extends EntityRepository implements RepositoryInterfac
      * )
      *
      * @param array<string,QueryInterface::ORDER_ASCENDING|QueryInterface::ORDER_DESCENDING> $defaultOrderings The property names to "order by" by default
-     * @return void
      * @api
      */
     public function setDefaultOrderings(array $defaultOrderings): void
@@ -242,7 +237,6 @@ abstract class Repository extends EntityRepository implements RepositoryInterfac
      * Schedules a modified object for persistence.
      *
      * @param T $object The modified object
-     * @return void
      * @throws IllegalObjectTypeException
      * @throws UnknownObjectException
      * @api
@@ -272,23 +266,23 @@ abstract class Repository extends EntityRepository implements RepositoryInterfac
     {
         $query = $this->createQuery();
         $caseSensitive = isset($arguments[1]) ? (bool)$arguments[1] : true;
-        $cacheResult = isset($arguments[2]) ? (bool)$arguments[2] : false;
+        $cacheResult = isset($arguments[2]) && (bool)$arguments[2];
 
-        if (isset($method[10]) && strpos($method, 'findOneBy') === 0) {
+        if (isset($method[10]) && str_starts_with($method, 'findOneBy')) {
             $propertyName = lcfirst(substr($method, 9));
             return $query->matching($query->equals($propertyName, $arguments[0], $caseSensitive))->execute($cacheResult)->getFirst();
         }
 
-        if (isset($method[8]) && strpos($method, 'countBy') === 0) {
+        if (isset($method[8]) && str_starts_with($method, 'countBy')) {
             $propertyName = lcfirst(substr($method, 7));
             return $query->matching($query->equals($propertyName, $arguments[0], $caseSensitive))->count();
         }
 
-        if (isset($method[7]) && strpos($method, 'findBy') === 0) {
+        if (isset($method[7]) && str_starts_with($method, 'findBy')) {
             $propertyName = lcfirst(substr($method, 6));
             return $query->matching($query->equals($propertyName, $arguments[0], $caseSensitive))->execute($cacheResult);
         }
 
-        trigger_error('Call to undefined method ' . get_class($this) . '::' . $method, E_USER_ERROR);
+        trigger_error('Call to undefined method ' . static::class . '::' . $method, E_USER_ERROR);
     }
 }

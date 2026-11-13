@@ -16,9 +16,9 @@ use Neos\Utility\Files;
  * Stores detailed information about throwables into files.
  *
  * @phpstan-consistent-constructor
- * @Flow\Proxy(false)
- * @Flow\Autowiring(false)
  */
+#[Flow\Proxy(false)]
+#[Flow\Autowiring(false)]
 class FileStorage implements ThrowableStorageInterface
 {
     /**
@@ -54,7 +54,6 @@ class FileStorage implements ThrowableStorageInterface
      * Factory method to get an instance.
      *
      * @param array{storagePath?: string, maximumThrowableDumpAge?: int, maximumThrowableDumpCount: ?int} $options
-     * @return ThrowableStorageInterface
      */
     public static function createWithOptions(array $options): ThrowableStorageInterface
     {
@@ -67,9 +66,6 @@ class FileStorage implements ThrowableStorageInterface
     /**
      * Create new instance.
      *
-     * @param string $storagePath
-     * @param int $maximumThrowableDumpAge
-     * @param int $maximumThrowableDumpCount
      * @see createWithOptions
      */
     public function __construct(string $storagePath, int $maximumThrowableDumpAge, int $maximumThrowableDumpCount)
@@ -83,6 +79,7 @@ class FileStorage implements ThrowableStorageInterface
             // exceptions that may occur before Scripts::initializeExceptionStorage() has finished.
 
             $output = '';
+            /** @phpstan-ignore instanceof.alwaysTrue (Bootstrap may not be fully initialized yet) */
             if (!(Bootstrap::$staticObjectManager instanceof ObjectManagerInterface)) {
                 return $output;
             }
@@ -100,13 +97,10 @@ class FileStorage implements ThrowableStorageInterface
             return $output;
         };
 
-        $this->backtraceRenderer = static function ($backtrace) {
-            return Debugger::getBacktraceCode($backtrace, false, true);
-        };
+        $this->backtraceRenderer = (static fn ($backtrace) => Debugger::getBacktraceCode($backtrace, false, true));
     }
 
     /**
-     * @param \Closure $requestInformationRenderer
      * @return $this|ThrowableStorageInterface
      */
     public function setRequestInformationRenderer(\Closure $requestInformationRenderer)
@@ -117,7 +111,6 @@ class FileStorage implements ThrowableStorageInterface
     }
 
     /**
-     * @param \Closure $backtraceRenderer
      * @return $this|ThrowableStorageInterface
      */
     public function setBacktraceRenderer(\Closure $backtraceRenderer)
@@ -135,7 +128,6 @@ class FileStorage implements ThrowableStorageInterface
      * The returned message follows this pattern:
      * Exception #<code> in <line> of <file>: <message> - See also: <dumpFilename>
      *
-     * @param \Throwable $throwable
      * @param array<mixed> $additionalData
      * @return string Informational message about the stored throwable
      */
@@ -176,13 +168,12 @@ class FileStorage implements ThrowableStorageInterface
     protected function generateUniqueReferenceCode()
     {
         $timestamp = $_SERVER['REQUEST_TIME'] ?? time();
-        return date('YmdHis', $timestamp) . substr(md5((string)rand()), 0, 6);
+        return date('YmdHis', $timestamp) . substr(md5((string)random_int(0, mt_getrandmax())), 0, 6);
     }
 
     /**
      * Get current error post mortem informations with support for error chaining
      *
-     * @param \Throwable $error
      * @param array<mixed> $additionalData
      * @return string
      */
@@ -207,13 +198,12 @@ class FileStorage implements ThrowableStorageInterface
 
         $postMortemInfo .= PHP_EOL . $this->renderRequestInfo();
         $postMortemInfo .= PHP_EOL;
-        $postMortemInfo .= empty($additionalData) ? '' : (new PlainTextFormatter($additionalData))->format();
+        $postMortemInfo .= empty($additionalData) ? '' : new PlainTextFormatter($additionalData)->format();
 
         return $postMortemInfo;
     }
 
     /**
-     * @param \Throwable $error
      * @return string
      */
     protected function getErrorLogMessage(\Throwable $error)

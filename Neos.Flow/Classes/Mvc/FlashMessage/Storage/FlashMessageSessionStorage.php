@@ -24,9 +24,9 @@ class FlashMessageSessionStorage implements FlashMessageStorageInterface
     public const DEFAULT_SESSION_KEY = 'Neos_Flow_FlashMessages';
 
     /**
-     * @Flow\Inject
      * @var SessionInterface
      */
+    #[Flow\Inject]
     protected $session;
 
     /**
@@ -55,22 +55,16 @@ class FlashMessageSessionStorage implements FlashMessageStorageInterface
 
     /**
      * @param HttpRequestInterface $_ Not used in this implementation
-     * @return FlashMessageContainer
      */
     public function load(HttpRequestInterface $_): FlashMessageContainer
     {
         if ($this->flashMessageContainer === null) {
             $this->flashMessageContainer = $this->restoreFlashMessageContainerFromSession();
-            if ($this->flashMessageContainer === null) {
-                $this->flashMessageContainer = new FlashMessageContainer();
-            }
+            $this->flashMessageContainer ??= new FlashMessageContainer();
         }
         return $this->flashMessageContainer;
     }
 
-    /**
-     * @return FlashMessageContainer|null
-     */
     private function restoreFlashMessageContainerFromSession(): ?FlashMessageContainer
     {
         if ($this->session->canBeResumed()) {
@@ -91,7 +85,6 @@ class FlashMessageSessionStorage implements FlashMessageStorageInterface
 
     /**
      * @param HttpResponseInterface $response Not used in this implementation
-     * @return HttpResponseInterface
      */
     public function persist(HttpResponseInterface $response): HttpResponseInterface
     {

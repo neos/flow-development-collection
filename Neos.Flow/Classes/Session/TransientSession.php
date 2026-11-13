@@ -91,7 +91,7 @@ class TransientSession implements SessionInterface
      */
     public function getId(): string
     {
-        if ($this->started !== true) {
+        if (!$this->started) {
             throw new Exception\SessionNotStartedException('The session has not been started yet.', 1218034659);
         }
         return $this->sessionId;
@@ -106,7 +106,7 @@ class TransientSession implements SessionInterface
      */
     public function getData(string $key): mixed
     {
-        if ($this->started !== true) {
+        if (!$this->started) {
             throw new Exception\SessionNotStartedException('The session has not been started yet.', 1218034660);
         }
         return $this->data[$key] ?? null;
@@ -122,12 +122,11 @@ class TransientSession implements SessionInterface
      *
      * @param string $key The key under which the data should be stored
      * @param mixed $data The data to be stored
-     * @return void
      * @throws Exception\SessionNotStartedException
      */
     public function putData(string $key, mixed $data): void
     {
-        if ($this->started !== true) {
+        if (!$this->started) {
             throw new Exception\SessionNotStartedException('The session has not been started yet.', 1218034661);
         }
         $this->data[$key] = $data;
@@ -140,7 +139,7 @@ class TransientSession implements SessionInterface
      */
     public function close(): void
     {
-        if ($this->started !== true) {
+        if (!$this->started) {
             throw new Exception\SessionNotStartedException('The session has not been started yet.', 1218034662);
         }
         $this->started = false;
@@ -150,12 +149,11 @@ class TransientSession implements SessionInterface
      * Explicitly destroys all session data
      *
      * @param string|null $reason A reason for destroying the session – used by the LoggingAspect
-     * @return void
      * @throws Exception\SessionNotStartedException
      */
     public function destroy(?string $reason = null): void
     {
-        if ($this->started !== true) {
+        if (!$this->started) {
             throw new Exception\SessionNotStartedException('The session has not been started yet.', 1218034663);
         }
         $this->data = [];
@@ -192,14 +190,13 @@ class TransientSession implements SessionInterface
      * recommended to use namespaced tags such as "Acme-Demo-MySpecialTag".
      *
      * @param string $tag The tag – must match be a valid cache frontend tag
-     * @return void
      * @throws Exception\SessionNotStartedException
      * @throws \InvalidArgumentException
      * @api
      */
     public function addTag(string $tag): void
     {
-        if ($this->started !== true) {
+        if (!$this->started) {
             throw new Exception\SessionNotStartedException('The session has not been started yet.', 1422551048);
         }
         $this->tags[$tag] = true;
@@ -209,13 +206,12 @@ class TransientSession implements SessionInterface
      * Removes the specified tag from this session.
      *
      * @param string $tag The tag – must match be a valid cache frontend tag
-     * @return void
      * @throws Exception\SessionNotStartedException
      * @api
      */
     public function removeTag(string $tag): void
     {
-        if ($this->started !== true) {
+        if (!$this->started) {
             throw new Exception\SessionNotStartedException('The session has not been started yet.', 1422551049);
         }
         if (isset($this->tags[$tag])) {
@@ -232,7 +228,7 @@ class TransientSession implements SessionInterface
      */
     public function getTags(): array
     {
-        if ($this->started !== true) {
+        if (!$this->started) {
             throw new Exception\SessionNotStartedException('The session has not been started yet.', 1422551050);
         }
         return array_keys($this->tags);

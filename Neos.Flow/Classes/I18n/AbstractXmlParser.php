@@ -16,9 +16,8 @@ use Neos\Flow\Annotations as Flow;
 
 /**
  * An abstract class for all concrete classes that parses any kind of XML data.
- *
- * @Flow\Scope("singleton")
  */
+#[Flow\Scope('singleton')]
 abstract class AbstractXmlParser
 {
     /**
@@ -38,16 +37,12 @@ abstract class AbstractXmlParser
      */
     public function getParsedData(string $sourcePath)
     {
-        if (!isset($this->parsedFiles[$sourcePath])) {
-            $this->parsedFiles[$sourcePath] = $this->parseXmlFile($sourcePath);
-        }
+        $this->parsedFiles[$sourcePath] ??= $this->parseXmlFile($sourcePath);
 
         return $this->parsedFiles[$sourcePath];
     }
 
     /**
-     * @param string $sourcePath
-     * @return \SimpleXMLElement
      * @throws Exception\InvalidXmlFileException
      */
     protected function getRootNode(string $sourcePath): \SimpleXMLElement

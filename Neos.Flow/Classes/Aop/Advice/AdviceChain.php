@@ -67,8 +67,6 @@ class AdviceChain
 
     /**
      * Re-initializes the index to start a new run through the advice chain
-     *
-     * @return void
      */
     public function rewind(): void
     {

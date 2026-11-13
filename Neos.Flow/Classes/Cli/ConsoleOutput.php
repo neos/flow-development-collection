@@ -76,8 +76,6 @@ class ConsoleOutput
 
     /**
      * Returns the desired maximum line length for console output.
-     *
-     * @return integer
      */
     public function getMaximumLineLength(): int
     {
@@ -91,7 +89,6 @@ class ConsoleOutput
      *
      * @param string $text Text to output
      * @param array<mixed> $arguments Optional arguments to use for sprintf
-     * @return void
      */
     public function output(string $text, array $arguments = []): void
     {
@@ -106,7 +103,6 @@ class ConsoleOutput
      *
      * @param string $text Text to output
      * @param array<mixed> $arguments Optional arguments to use for sprintf
-     * @return void
      * @see output()
      * @see outputLines()
      */
@@ -122,7 +118,6 @@ class ConsoleOutput
      * @param string $text Text to output
      * @param array<mixed> $arguments Optional arguments to use for sprintf
      * @param integer $leftPadding The number of spaces to use for indentation
-     * @return void
      * @see outputLine()
      */
     public function outputFormatted(string $text = '', array $arguments = [], int $leftPadding = 0): void
@@ -139,7 +134,6 @@ class ConsoleOutput
      *
      * @param array<mixed> $rows
      * @param ?array<mixed> $headers
-     * @param ?string $headerTitle
      */
     public function outputTable(array $rows, ?array $headers = null, ?string $headerTitle = null): void
     {
@@ -293,7 +287,6 @@ class ConsoleOutput
      * Starts the progress output
      *
      * @param integer|null $max Maximum steps. If NULL an indeterminate progress bar is rendered
-     * @return void
      */
     public function progressStart(?int $max = null): void
     {
@@ -304,7 +297,6 @@ class ConsoleOutput
      * Advances the progress output X steps
      *
      * @param integer $step Number of steps to advance
-     * @return void
      * @throws \LogicException
      */
     public function progressAdvance(int $step = 1): void
@@ -316,7 +308,6 @@ class ConsoleOutput
      * Sets the current progress
      *
      * @param integer $current The current progress
-     * @return void
      * @throws \LogicException
      */
     public function progressSet(int $current): void
@@ -326,42 +317,28 @@ class ConsoleOutput
 
     /**
      * Finishes the progress output
-     *
-     * @return void
      */
     public function progressFinish(): void
     {
         $this->getProgressBar()->finish();
     }
 
-    /**
-     * @param OutputInterface $output
-     */
     public function setOutput(OutputInterface $output): void
     {
         $this->output = $output;
     }
 
-    /**
-     * @return OutputInterface
-     */
     public function getOutput(): OutputInterface
     {
         return $this->output;
     }
 
-    /**
-     * @param InputInterface $input
-     */
     public function setInput(InputInterface $input): void
     {
         $this->input = $input;
     }
 
 
-    /**
-     * @return InputInterface
-     */
     public function getInput(): InputInterface
     {
         return $this->input;
@@ -369,8 +346,6 @@ class ConsoleOutput
 
     /**
      * Returns or initializes the symfony/console QuestionHelper
-     *
-     * @return QuestionHelper
      */
     public function getQuestionHelper(): QuestionHelper
     {
@@ -386,7 +361,6 @@ class ConsoleOutput
      * If question is an array, split it into multi-line string
      *
      * @param string|array<mixed> $question
-     * @return string
      */
     protected function combineQuestion($question): string
     {
@@ -399,8 +373,6 @@ class ConsoleOutput
 
     /**
      * Returns or initializes the symfony/console ProgressHelper
-     *
-     * @return ProgressBar
      */
     public function getProgressBar(): ProgressBar
     {
@@ -414,8 +386,6 @@ class ConsoleOutput
 
     /**
      * Returns or initializes the symfony/console Table
-     *
-     * @return Table
      */
     protected function getTable(): Table
     {

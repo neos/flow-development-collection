@@ -35,9 +35,6 @@ class PhpAnalyzer
      */
     protected $phpCode;
 
-    /**
-     * @param string $phpCode
-     */
     public function __construct(string $phpCode)
     {
         $this->phpCode = $phpCode;
@@ -82,7 +79,7 @@ class PhpAnalyzer
                 if (is_string($token)) {
                     break;
                 }
-                list($type, $value) = $token;
+                [$type, $value] = $token;
                 if (defined('T_NAME_QUALIFIED') && $type === T_NAME_QUALIFIED) {
                     return $value;
                 }
@@ -108,8 +105,6 @@ class PhpAnalyzer
     /**
      * Extracts the className of the given PHP code
      * Note: This only returns the class name without namespace, @see extractFullyQualifiedClassName()
-     *
-     * @return string|null
      */
     public function extractClassName(): ?string
     {
@@ -125,7 +120,7 @@ class PhpAnalyzer
                 if (is_string($token)) {
                     break;
                 }
-                list($type, $value) = $token;
+                [$type, $value] = $token;
                 if ($type === T_STRING) {
                     return $value;
                 }

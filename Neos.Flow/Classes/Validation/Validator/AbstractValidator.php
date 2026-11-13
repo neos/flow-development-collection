@@ -89,9 +89,7 @@ abstract class AbstractValidator implements ValidatorInterface
         // merge with default values
         $this->options = array_merge(
             array_map(
-                function ($value) {
-                    return $value[0];
-                },
+                fn ($value) => $value[0],
                 $this->supportedOptions
             ),
             $options
@@ -178,9 +176,7 @@ abstract class AbstractValidator implements ValidatorInterface
      */
     protected function addError($message, $code, array $arguments = [])
     {
-        if ($this->result === null) {
-            $this->result = new ErrorResult();
-        }
+        $this->result ??= new ErrorResult();
         $this->result->addError(new ValidationError($message, $code, $arguments));
     }
 

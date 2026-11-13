@@ -40,7 +40,6 @@ interface EntryPointInterface
      *
      * @param ServerRequestInterface $request The current request
      * @param ResponseInterface $response The current response
-     * @return ResponseInterface
      */
     public function startAuthentication(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface;
 }

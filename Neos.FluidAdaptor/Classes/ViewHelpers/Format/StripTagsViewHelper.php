@@ -54,7 +54,7 @@ class StripTagsViewHelper extends AbstractViewHelper
      */
     public function initializeArguments()
     {
-        $this->registerArgument('value', 'string', 'string to format', false, null);
+        $this->registerArgument('value', 'string', 'string to format', false);
     }
 
     /**
@@ -68,9 +68,7 @@ class StripTagsViewHelper extends AbstractViewHelper
     {
         $value = $this->arguments['value'];
 
-        if ($value === null) {
-            $value = $this->renderChildren();
-        }
+        $value ??= $this->renderChildren();
         if (is_object($value) && method_exists($value, '__toString')) {
             $value = $value->__toString();
         } elseif (!is_string($value)) {
@@ -85,8 +83,6 @@ class StripTagsViewHelper extends AbstractViewHelper
      * @param string $argumentsName
      * @param string $closureName
      * @param string $initializationPhpCode
-     * @param ViewHelperNode $node
-     * @param TemplateCompiler $compiler
      * @return string
      */
     public function compile($argumentsName, $closureName, &$initializationPhpCode, ViewHelperNode $node, TemplateCompiler $compiler)

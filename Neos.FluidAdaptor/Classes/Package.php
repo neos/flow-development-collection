@@ -48,7 +48,7 @@ class Package extends BasePackage
                     $templateFileMonitor = FileMonitor::createFileMonitorAtBoot('Fluid_TemplateFiles', $bootstrap);
                     $packageManager = $bootstrap->getEarlyInstance(PackageManager::class);
                     /** @var FlowPackageInterface $package */
-                    foreach ($packageManager->getFlowPackages() as $packageKey => $package) {
+                    foreach ($packageManager->getFlowPackages() as $package) {
                         foreach (['Templates', 'Partials', 'Layouts'] as $path) {
                             $templatesPath = $package->getResourcesPath() . 'Private/' . $path;
 

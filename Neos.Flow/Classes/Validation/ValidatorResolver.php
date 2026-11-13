@@ -28,9 +28,9 @@ use Neos\Utility\TypeHandling;
 /**
  * Validator resolver to automatically find a appropriate validator for a given subject
  *
- * @Flow\Scope("singleton")
  * @api
  */
+#[Flow\Scope('singleton')]
 class ValidatorResolver
 {
     /**
@@ -66,15 +66,15 @@ class ValidatorResolver
 		/ixS';
 
     /**
-     * @Flow\Inject
      * @var ObjectManagerInterface
      */
+    #[Flow\Inject]
     protected $objectManager;
 
     /**
-     * @Flow\Inject
      * @var ReflectionService
      */
+    #[Flow\Inject]
     protected $reflectionService;
 
     /**
@@ -103,8 +103,8 @@ class ValidatorResolver
 
         switch ($this->objectManager->getScope($validatorObjectName)) {
             case Configuration::SCOPE_PROTOTYPE:
-                /** @phpstan-ignore method.notFound */
-                $validator = (new \ReflectionClass($validatorObjectName))->newLazyGhost(
+                $validator = new \ReflectionClass($validatorObjectName)->newLazyGhost(
+                    /** @phpstan-ignore method.notFound (validators need a constructor but somehow it is not part of the interface) */
                     static fn ($object) => $object->__construct($validatorOptions)
                 );
                 break;
@@ -164,9 +164,7 @@ class ValidatorResolver
     {
         $validatorConjunctions = [];
 
-        if ($methodParameters === null) {
-            $methodParameters = $this->reflectionService->getMethodParameters($className, $methodName);
-        }
+        $methodParameters ??= $this->reflectionService->getMethodParameters($className, $methodName);
         if (count($methodParameters) === 0) {
             return $validatorConjunctions;
         }
@@ -178,7 +176,7 @@ class ValidatorResolver
             if (!array_key_exists('type', $methodParameter)) {
                 throw new Exception\InvalidTypeHintException('Missing type information, probably no @param annotation for parameter "$' . $parameterName . '" in ' . $className . '->' . $methodName . '()', 1281962564);
             }
-            if (strpos($methodParameter['type'], '\\') === false) {
+            if (!str_contains($methodParameter['type'], '\\')) {
                 $typeValidator = $this->createValidator($methodParameter['type']);
             } else {
                 $typeValidator = null;
@@ -193,13 +191,11 @@ class ValidatorResolver
         if ($methodValidateAnnotations === null) {
             /** @var Flow\Validate[] $validateAnnotations */
             $validateAnnotations = $this->reflectionService->getMethodAnnotations($className, $methodName, Flow\Validate::class);
-            $methodValidateAnnotations = array_map(function ($validateAnnotation) {
-                return [
-                    'type' => $validateAnnotation->type,
-                    'options' => $validateAnnotation->options,
-                    'argumentName' => $validateAnnotation->argumentName,
-                ];
-            }, $validateAnnotations);
+            $methodValidateAnnotations = array_map(fn ($validateAnnotation) => [
+                'type' => $validateAnnotation->type,
+                'options' => $validateAnnotation->options,
+                'argumentName' => $validateAnnotation->argumentName,
+            ], $validateAnnotations);
         }
 
         foreach ($methodValidateAnnotations as $annotationParameters) {
@@ -213,7 +209,7 @@ class ValidatorResolver
             }
             if (isset($validatorConjunctions[$annotationParameters['argumentName']])) {
                 $validatorConjunctions[$annotationParameters['argumentName']]->addValidator($newValidator);
-            } elseif (strpos($annotationParameters['argumentName'], '.') !== false) {
+            } elseif (str_contains($annotationParameters['argumentName'], '.')) {
                 $objectPath = explode('.', $annotationParameters['argumentName']);
                 $argumentName = array_shift($objectPath);
                 $validatorConjunctions[$argumentName]->addValidator($this->buildSubObjectValidator($objectPath, $newValidator));
@@ -400,7 +396,6 @@ class ValidatorResolver
      * If multiple validators have the same priority, which one will be added is not deterministic.
      *
      * @param string $targetClassName
-     * @param ConjunctionValidator $conjunctionValidator
      * @return void
      * @throws Exception\InvalidValidationConfigurationException
      * @throws Exception\NoSuchValidatorException
@@ -413,7 +408,7 @@ class ValidatorResolver
         $customValidator = $this->createValidator($possibleValidatorClassName);
         if ($customValidator !== null) {
             $conjunctionValidator->addValidator($customValidator);
-            $addedValidatorClassName = get_class($customValidator);
+            $addedValidatorClassName = $customValidator::class;
         }
 
         // find polytype validator for class
@@ -423,7 +418,7 @@ class ValidatorResolver
             /** @var PolyTypeObjectValidatorInterface $acceptablePolyTypeValidator */
             $acceptablePolyTypeValidator = $this->createValidator($validatorImplementationClassName);
             // skip custom validator already added above
-            if ($addedValidatorClassName === get_class($acceptablePolyTypeValidator)) {
+            if ($addedValidatorClassName === $acceptablePolyTypeValidator::class) {
                 continue;
             }
             if ($acceptablePolyTypeValidator->canValidate($targetClassName)) {
@@ -441,13 +436,12 @@ class ValidatorResolver
      *
      * @param ObjectManagerInterface $objectManager
      * @return list<class-string<PolyTypeObjectValidatorInterface>> Array of object validator class names
-     * @Flow\CompileStatic
      */
+    #[Flow\CompileStatic]
     public static function getPolyTypeObjectValidatorImplementationClassNames($objectManager)
     {
         $reflectionService = $objectManager->get(ReflectionService::class);
-        $result = $reflectionService->getAllImplementationClassNamesForInterface(Validator\PolyTypeObjectValidatorInterface::class);
-        return $result;
+        return $reflectionService->getAllImplementationClassNamesForInterface(Validator\PolyTypeObjectValidatorInterface::class);
     }
 
     /**
@@ -468,8 +462,8 @@ class ValidatorResolver
             return $validatorType;
         }
 
-        if (strpos($validatorType, ':') !== false) {
-            list($packageName, $packageValidatorType) = explode(':', $validatorType);
+        if (str_contains($validatorType, ':')) {
+            [$packageName, $packageValidatorType] = explode(':', $validatorType);
             $possibleClassName = sprintf('%s\Validation\Validator\%sValidator', str_replace('.', '\\', $packageName), $this->getValidatorType($packageValidatorType));
         } else {
             $possibleClassName = sprintf('Neos\Flow\Validation\Validator\%sValidator', $this->getValidatorType($validatorType));
@@ -487,8 +481,8 @@ class ValidatorResolver
      *
      * @param ObjectManagerInterface $objectManager
      * @return array<class-string<ValidatorInterface>,int> Array of class names implementing ValidatorInterface indexed by class name
-     * @Flow\CompileStatic
      */
+    #[Flow\CompileStatic]
     public static function getValidatorImplementationClassNames($objectManager)
     {
         $reflectionService = $objectManager->get(ReflectionService::class);
@@ -504,25 +498,13 @@ class ValidatorResolver
      */
     protected function getValidatorType($type)
     {
-        switch ($type) {
-            case 'int':
-                $type = 'Integer';
-                break;
-            case 'bool':
-                $type = 'Boolean';
-                break;
-            case 'double':
-                $type = 'Float';
-                break;
-            case 'numeric':
-                $type = 'Number';
-                break;
-            case 'mixed':
-                $type = 'Raw';
-                break;
-            default:
-                $type = ucfirst($type);
-        }
-        return $type;
+        return match ($type) {
+            'int' => 'Integer',
+            'bool' => 'Boolean',
+            'double' => 'Float',
+            'numeric' => 'Number',
+            'mixed' => 'Raw',
+            default => ucfirst($type),
+        };
     }
 }

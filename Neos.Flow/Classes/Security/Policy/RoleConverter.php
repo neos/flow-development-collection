@@ -22,9 +22,8 @@ use Neos\Flow\Validation\Error;
 
 /**
  * This converter transforms strings to role instances
- *
- * @Flow\Scope("singleton")
  */
+#[Flow\Scope('singleton')]
 class RoleConverter extends AbstractTypeConverter
 {
     /**
@@ -43,9 +42,9 @@ class RoleConverter extends AbstractTypeConverter
     protected $priority = 0;
 
     /**
-     * @Flow\Inject
      * @var PolicyService
      */
+    #[Flow\Inject]
     protected $policyService;
 
     /**
@@ -54,14 +53,13 @@ class RoleConverter extends AbstractTypeConverter
      * @param mixed $source
      * @param string $targetType
      * @param array<mixed> $convertedChildProperties
-     * @param PropertyMappingConfigurationInterface|null $configuration
      * @return object the target type
      */
     public function convertFrom($source, $targetType, array $convertedChildProperties = [], ?PropertyMappingConfigurationInterface $configuration = null)
     {
         try {
             $role = $this->policyService->getRole($source);
-        } catch (NoSuchRoleException $exception) {
+        } catch (NoSuchRoleException) {
             return new Error('Could not find a role with the identifier "%s".', 1397212327, [$source]);
         }
         return $role;

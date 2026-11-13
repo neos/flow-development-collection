@@ -58,8 +58,8 @@ use Neos\Flow\Validation\Error;
  *  );
  *
  * @api
- * @Flow\Scope("singleton")
  */
+#[Flow\Scope('singleton')]
 class DateTimeConverter extends AbstractTypeConverter
 {
     /**
@@ -117,7 +117,6 @@ class DateTimeConverter extends AbstractTypeConverter
      * @param string|integer|array<string,mixed> $source the string to be converted to a \DateTime object
      * @param string $targetType must be "DateTime"
      * @param array<string,mixed> $convertedChildProperties not used currently
-     * @param PropertyMappingConfigurationInterface|null $configuration
      * @return \DateTimeInterface|null|Error
      * @throws InvalidPropertyMappingConfigurationException
      * @throws TypeConverterException
@@ -158,7 +157,7 @@ class DateTimeConverter extends AbstractTypeConverter
         if (is_array($source) && isset($source['timezone']) && $source['timezone'] !== '') {
             try {
                 $timezone = new \DateTimeZone($source['timezone']);
-            } catch (\Exception $exception) {
+            } catch (\Exception) {
                 throw new TypeConverterException('The specified timezone "' . $source['timezone'] . '" is invalid.', 1308240974);
             }
             if (isset($source['timezone_type'])) {
@@ -172,6 +171,7 @@ class DateTimeConverter extends AbstractTypeConverter
         if ($date === false) {
             return new Error('The date "%s" was not recognized (for format "%s").', 1307719788, [$dateAsString, $dateFormat]);
         }
+        /** @phpstan-ignore function.alreadyNarrowedType (annotations can be wrong) */
         if (isset($source['hour'], $source['minute'], $source['second']) && is_array($source)) {
             $date = $this->overrideTime($date, $source);
         }
@@ -194,7 +194,6 @@ class DateTimeConverter extends AbstractTypeConverter
      * Determines the default date format to use for the conversion.
      * If no format is specified in the mapping configuration DEFAULT_DATE_FORMAT is used.
      *
-     * @param PropertyMappingConfigurationInterface|null $configuration
      * @return string
      * @throws InvalidPropertyMappingConfigurationException
      */
@@ -207,7 +206,7 @@ class DateTimeConverter extends AbstractTypeConverter
         if ($dateFormat === null) {
             return self::DEFAULT_DATE_FORMAT;
         } elseif (!is_string($dateFormat)) {
-            throw new InvalidPropertyMappingConfigurationException('CONFIGURATION_DATE_FORMAT must be of type string, "' . (is_object($dateFormat) ? get_class($dateFormat) : gettype($dateFormat)) . '" given', 1307719569);
+            throw new InvalidPropertyMappingConfigurationException('CONFIGURATION_DATE_FORMAT must be of type string, "' . (get_debug_type($dateFormat)) . '" given', 1307719569);
         }
         return $dateFormat;
     }
@@ -215,7 +214,6 @@ class DateTimeConverter extends AbstractTypeConverter
     /**
      * Overrides hour, minute & second of the given date with the values in the $source array
      *
-     * @param \DateTimeInterface $date
      * @param array<string,mixed> $source
      * @return \DateTimeInterface
      */

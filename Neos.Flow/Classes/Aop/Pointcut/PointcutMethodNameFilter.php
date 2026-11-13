@@ -21,9 +21,8 @@ use Psr\Log\LoggerInterface;
 
 /**
  * A little filter which filters for method names
- *
- * @Flow\Proxy(false)
  */
+#[Flow\Proxy(false)]
 class PointcutMethodNameFilter implements PointcutFilterInterface
 {
     public const PATTERN_MATCHVISIBILITYMODIFIER = '/^(|public|protected)$/';
@@ -75,7 +74,6 @@ class PointcutMethodNameFilter implements PointcutFilterInterface
      * Injects the reflection service
      *
      * @param ReflectionService $reflectionService The reflection service
-     * @return void
      */
     public function injectReflectionService(ReflectionService $reflectionService): void
     {
@@ -85,7 +83,6 @@ class PointcutMethodNameFilter implements PointcutFilterInterface
     /**
      * Injects the (system) logger based on PSR-3.
      *
-     * @param LoggerInterface $logger
      * @return void
      */
     public function injectLogger(LoggerInterface $logger)
@@ -169,8 +166,6 @@ class PointcutMethodNameFilter implements PointcutFilterInterface
 
     /**
      * Returns the method name filter expression
-     *
-     * @return string
      */
     public function getMethodNameFilterExpression(): string
     {
@@ -199,9 +194,6 @@ class PointcutMethodNameFilter implements PointcutFilterInterface
 
     /**
      * This method is used to optimize the matching process.
-     *
-     * @param ClassNameIndex $classNameIndex
-     * @return ClassNameIndex
      */
     public function reduceTargetClassNames(ClassNameIndex $classNameIndex): ClassNameIndex
     {

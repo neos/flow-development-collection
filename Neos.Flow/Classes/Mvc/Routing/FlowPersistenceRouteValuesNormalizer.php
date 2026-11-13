@@ -15,8 +15,8 @@ use Neos\Flow\Persistence\PersistenceManagerInterface;
  * property mapper {@see \Neos\Flow\Property\TypeConverter\PersistentObjectConverter} in the action controller
  *
  * @internal
- * @Flow\Scope("singleton")
  */
+#[Flow\Scope('singleton')]
 final readonly class FlowPersistenceRouteValuesNormalizer implements RouteValuesNormalizerInterface
 {
     public function __construct(

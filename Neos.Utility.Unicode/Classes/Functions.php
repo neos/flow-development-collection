@@ -158,7 +158,6 @@ abstract class Functions
      *
      * @see https://www.php.net/manual/en/function.pathinfo.php
      *
-     * @param string $path
      * @param integer|null $options Optional, one of PATHINFO_DIRNAME, PATHINFO_BASENAME, PATHINFO_EXTENSION or PATHINFO_FILENAME.
      * @return ($options is null ? array{dirname?: string, basename: string, extension?: string, filename: string} : string)
      * @api
@@ -184,9 +183,7 @@ abstract class Functions
             return false;
         }
 
-        $encodedUrl = preg_replace_callback('%[^:@/?#&=\.]+%usD', function ($matches) {
-            return urlencode($matches[0]);
-        }, $url);
+        $encodedUrl = preg_replace_callback('%[^:@/?#&=\.]+%usD', fn ($matches) => urlencode($matches[0]), $url);
         if ($encodedUrl === null) {
             return false;
         }
@@ -210,27 +207,17 @@ abstract class Functions
             unset($components['port']);
         }
 
-        switch ($component) {
-            case -1:
-                return $components;
-            case PHP_URL_SCHEME:
-                return $components['scheme'] ?? null;
-            case PHP_URL_HOST:
-                return $components['host'] ?? null;
-            case PHP_URL_PORT:
-                return $components['port'] ?? null;
-            case PHP_URL_USER:
-                return $components['user'] ?? null;
-            case PHP_URL_PASS:
-                return $components['pass'] ?? null;
-            case PHP_URL_PATH:
-                return $components['path'] ?? null;
-            case PHP_URL_QUERY:
-                return $components['query'] ?? null;
-            case PHP_URL_FRAGMENT:
-                return $components['fragment'] ?? null;
-            default:
-                throw new \InvalidArgumentException('Invalid component requested for URL parsing.', 1406280743);
-        }
+        return match ($component) {
+            -1 => $components,
+            PHP_URL_SCHEME => $components['scheme'] ?? null,
+            PHP_URL_HOST => $components['host'] ?? null,
+            PHP_URL_PORT => $components['port'] ?? null,
+            PHP_URL_USER => $components['user'] ?? null,
+            PHP_URL_PASS => $components['pass'] ?? null,
+            PHP_URL_PATH => $components['path'] ?? null,
+            PHP_URL_QUERY => $components['query'] ?? null,
+            PHP_URL_FRAGMENT => $components['fragment'] ?? null,
+            default => throw new \InvalidArgumentException('Invalid component requested for URL parsing.', 1406280743),
+        };
     }
 }

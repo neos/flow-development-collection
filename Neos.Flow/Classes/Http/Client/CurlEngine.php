@@ -57,7 +57,6 @@ class CurlEngine implements RequestEngineInterface
     /**
      * Sends the given HTTP request
      *
-     * @param RequestInterface $request
      * @return ResponseInterface The response or false
      * @throws Http\Exception
      * @throws CurlEngineException
@@ -150,11 +149,11 @@ class CurlEngine implements RequestEngineInterface
 
         try {
             $responseBody = $response->getBody()->getContents();
-            while (strpos($responseBody, 'HTTP/') === 0 || $response->getStatusCode() === 100) {
+            while (str_starts_with($responseBody, 'HTTP/') || $response->getStatusCode() === 100) {
                 $response = Message::parseResponse($responseBody);
                 $responseBody = $response->getBody()->getContents();
             }
-        } catch (\InvalidArgumentException $e) {
+        } catch (\InvalidArgumentException) {
         } finally {
             $response->getBody()->rewind();
         }

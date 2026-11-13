@@ -17,9 +17,8 @@ use Neos\Flow\Aop\Builder\ClassNameIndex;
 
 /**
  * The contract for an AOP Pointcut Filter class
- *
- * @Flow\Proxy(false)
  */
+#[Flow\Proxy(false)]
 interface PointcutFilterInterface
 {
     /**

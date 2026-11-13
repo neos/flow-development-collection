@@ -23,8 +23,8 @@ use Neos\Flow\Aop\Builder\ClassNameIndex;
  * doesn't match, the overall result is "no".
  *
  * @see \Neos\Flow\Aop\Pointcut\PointcutExpressionParser, \Neos\Flow\Aop\Pointcut\PointcutClassNameFilter, \Neos\Flow\Aop\Pointcut\PointcutMethodFilter
- * @Flow\Proxy(false)
  */
+#[Flow\Proxy(false)]
 class PointcutFilterComposite implements PointcutFilterInterface
 {
     /**
@@ -68,9 +68,7 @@ class PointcutFilterComposite implements PointcutFilterInterface
             switch ($operator) {
                 case '&&':
                     if ($currentFilterMatches === true && $filter->hasRuntimeEvaluationsDefinition()) {
-                        if (!isset($this->runtimeEvaluationsDefinition[$operator])) {
-                            $this->runtimeEvaluationsDefinition[$operator] = [];
-                        }
+                        $this->runtimeEvaluationsDefinition[$operator] ??= [];
                         $this->runtimeEvaluationsDefinition[$operator] = array_merge_recursive($this->runtimeEvaluationsDefinition[$operator], $currentRuntimeEvaluationsDefinition);
                     }
                     if ($this->earlyReturn && !$currentFilterMatches) {
@@ -80,9 +78,7 @@ class PointcutFilterComposite implements PointcutFilterInterface
                     break;
                 case '&&!':
                     if ($currentFilterMatches === true && $filter->hasRuntimeEvaluationsDefinition()) {
-                        if (!isset($this->runtimeEvaluationsDefinition[$operator])) {
-                            $this->runtimeEvaluationsDefinition[$operator] = [];
-                        }
+                        $this->runtimeEvaluationsDefinition[$operator] ??= [];
                         $this->runtimeEvaluationsDefinition[$operator] = array_merge_recursive($this->runtimeEvaluationsDefinition[$operator], $currentRuntimeEvaluationsDefinition);
                         $currentFilterMatches = false;
                     }
@@ -93,18 +89,14 @@ class PointcutFilterComposite implements PointcutFilterInterface
                     break;
                 case '||':
                     if ($currentFilterMatches === true && $filter->hasRuntimeEvaluationsDefinition()) {
-                        if (!isset($this->runtimeEvaluationsDefinition[$operator])) {
-                            $this->runtimeEvaluationsDefinition[$operator] = [];
-                        }
+                        $this->runtimeEvaluationsDefinition[$operator] ??= [];
                         $this->runtimeEvaluationsDefinition[$operator] = array_merge_recursive($this->runtimeEvaluationsDefinition[$operator], $currentRuntimeEvaluationsDefinition);
                     }
                     $matches = $matches || $currentFilterMatches;
                     break;
                 case '||!':
                     if ($currentFilterMatches === true && $filter->hasRuntimeEvaluationsDefinition()) {
-                        if (!isset($this->runtimeEvaluationsDefinition[$operator])) {
-                            $this->runtimeEvaluationsDefinition[$operator] = [];
-                        }
+                        $this->runtimeEvaluationsDefinition[$operator] ??= [];
                         $this->runtimeEvaluationsDefinition[$operator] = array_merge_recursive($this->runtimeEvaluationsDefinition[$operator], $currentRuntimeEvaluationsDefinition);
                         $currentFilterMatches = false;
                     }
@@ -121,7 +113,6 @@ class PointcutFilterComposite implements PointcutFilterInterface
      *
      * @param string $operator The operator for this filter
      * @param PointcutFilterInterface $filter A configured class filter
-     * @return void
      */
     public function addFilter($operator, PointcutFilterInterface $filter): void
     {
@@ -156,7 +147,6 @@ class PointcutFilterComposite implements PointcutFilterInterface
      * method this composite matches
      *
      * @param array<mixed> $runtimeEvaluations Runtime evaluations to be added
-     * @return void
      */
     public function setGlobalRuntimeEvaluationsDefinition(array $runtimeEvaluations): void
     {
@@ -191,7 +181,6 @@ class PointcutFilterComposite implements PointcutFilterInterface
     /**
      * This method is used to optimize the matching process.
      *
-     * @param ClassNameIndex $classNameIndex
      * @return ClassNameIndex
      */
     public function reduceTargetClassNames(ClassNameIndex $classNameIndex)
@@ -251,11 +240,11 @@ class PointcutFilterComposite implements PointcutFilterInterface
                 }
 
                 $currentSubConditionsCode = $this->buildRuntimeEvaluationsConditionCode($subOperator, $subCondition, $useGlobalObjects);
-                if ($negateCurrentSubCondition === true) {
+                if ($negateCurrentSubCondition) {
                     $currentSubConditionsCode = '(!' . $currentSubConditionsCode . ')';
                 }
 
-                $subConditionsCode .= ($isFirst === true ? '(' : ' ' . $subOperator . ' ') . $currentSubConditionsCode;
+                $subConditionsCode .= ($isFirst ? '(' : ' ' . $subOperator . ' ') . $currentSubConditionsCode;
                 $isFirst = false;
             }
             $subConditionsCode .= ')';
@@ -280,7 +269,7 @@ class PointcutFilterComposite implements PointcutFilterInterface
         if (count($conditionsCode) > 1) {
             $resultCode = '(' . $resultCode . ')';
         }
-        if ($negateCondition === true) {
+        if ($negateCondition) {
             $resultCode = '(!' . $resultCode . ')';
         }
 
@@ -314,13 +303,13 @@ class PointcutFilterComposite implements PointcutFilterInterface
                 $rightValue = $this->buildArgumentEvaluationAccessCode($argumentConstraint['value'][$i], $useGlobalObjects);
 
                 if ($argumentConstraint['operator'][$i] === 'in') {
-                    $argumentConstraintsConditionsCode .= ($isFirst === true ? '(' : ' && ') . '(' . $rightValue . ' instanceof \SplObjectStorage || ' . $rightValue . ' instanceof \Doctrine\Common\Collections\Collection ? ' . $leftValue . ' !== NULL && ' . $rightValue . '->contains(' . $leftValue . ') : in_array(' . $leftValue . ', ' . $rightValue . '))';
+                    $argumentConstraintsConditionsCode .= ($isFirst ? '(' : ' && ') . '(' . $rightValue . ' instanceof \SplObjectStorage || ' . $rightValue . ' instanceof \Doctrine\Common\Collections\Collection ? ' . $leftValue . ' !== NULL && ' . $rightValue . '->contains(' . $leftValue . ') : in_array(' . $leftValue . ', ' . $rightValue . '))';
                 } elseif ($argumentConstraint['operator'][$i] === 'contains') {
-                    $argumentConstraintsConditionsCode .= ($isFirst === true ? '(' : ' && ') . '(' . $leftValue . ' instanceof \SplObjectStorage || ' . $leftValue . ' instanceof \Doctrine\Common\Collections\Collection ? ' . $rightValue . ' !== NULL && ' . $leftValue . '->contains(' . $rightValue . ') : in_array(' . $rightValue . ', ' . $leftValue . '))';
+                    $argumentConstraintsConditionsCode .= ($isFirst ? '(' : ' && ') . '(' . $leftValue . ' instanceof \SplObjectStorage || ' . $leftValue . ' instanceof \Doctrine\Common\Collections\Collection ? ' . $rightValue . ' !== NULL && ' . $leftValue . '->contains(' . $rightValue . ') : in_array(' . $rightValue . ', ' . $leftValue . '))';
                 } elseif ($argumentConstraint['operator'][$i] === 'matches') {
-                    $argumentConstraintsConditionsCode .= ($isFirst === true ? '(' : ' && ') . '(!empty(array_intersect(' . $leftValue . ', ' . $rightValue . ')))';
+                    $argumentConstraintsConditionsCode .= ($isFirst ? '(' : ' && ') . '(!empty(array_intersect(' . $leftValue . ', ' . $rightValue . ')))';
                 } else {
-                    $argumentConstraintsConditionsCode .= ($isFirst === true ? '(' : ' && ') . $leftValue . ' ' . $argumentConstraint['operator'][$i] . ' ' . $rightValue;
+                    $argumentConstraintsConditionsCode .= ($isFirst ? '(' : ' && ') . $leftValue . ' ' . $argumentConstraint['operator'][$i] . ' ' . $rightValue;
                 }
 
                 $isFirst = false;
@@ -351,13 +340,13 @@ class PointcutFilterComposite implements PointcutFilterInterface
             $rightValue = $this->buildArgumentEvaluationAccessCode($constraint['rightValue'], $useGlobalObjects);
 
             if ($constraint['operator'] === 'in') {
-                $evaluateConditionsCode .= ($isFirst === true ? '(' : ' && ') . '(' . $rightValue . ' instanceof \SplObjectStorage || ' . $rightValue . ' instanceof \Doctrine\Common\Collections\Collection ? ' . $leftValue . ' !== NULL && ' . $rightValue . '->contains(' . $leftValue . ') : in_array(' . $leftValue . ', ' . $rightValue . '))';
+                $evaluateConditionsCode .= ($isFirst ? '(' : ' && ') . '(' . $rightValue . ' instanceof \SplObjectStorage || ' . $rightValue . ' instanceof \Doctrine\Common\Collections\Collection ? ' . $leftValue . ' !== NULL && ' . $rightValue . '->contains(' . $leftValue . ') : in_array(' . $leftValue . ', ' . $rightValue . '))';
             } elseif ($constraint['operator'] === 'contains') {
-                $evaluateConditionsCode .= ($isFirst === true ? '(' : ' && ') . '(' . $leftValue . ' instanceof \SplObjectStorage || ' . $leftValue . ' instanceof \Doctrine\Common\Collections\Collection ? ' . $rightValue . ' !== NULL && ' . $leftValue . '->contains(' . $rightValue . ') : in_array(' . $rightValue . ', ' . $leftValue . '))';
+                $evaluateConditionsCode .= ($isFirst ? '(' : ' && ') . '(' . $leftValue . ' instanceof \SplObjectStorage || ' . $leftValue . ' instanceof \Doctrine\Common\Collections\Collection ? ' . $rightValue . ' !== NULL && ' . $leftValue . '->contains(' . $rightValue . ') : in_array(' . $rightValue . ', ' . $leftValue . '))';
             } elseif ($constraint['operator'] === 'matches') {
-                $evaluateConditionsCode .= ($isFirst === true ? '(' : ' && ') . '(!empty(array_intersect(' . $leftValue . ', ' . $rightValue . ')))';
+                $evaluateConditionsCode .= ($isFirst ? '(' : ' && ') . '(!empty(array_intersect(' . $leftValue . ', ' . $rightValue . ')))';
             } else {
-                $evaluateConditionsCode .= ($isFirst === true ? '(' : ' && ') . $leftValue . ' ' . $constraint['operator'] . ' ' . $rightValue;
+                $evaluateConditionsCode .= ($isFirst ? '(' : ' && ') . $leftValue . ' ' . $constraint['operator'] . ' ' . $rightValue;
             }
 
             $isFirst = false;

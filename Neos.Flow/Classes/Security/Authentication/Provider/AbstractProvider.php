@@ -34,7 +34,6 @@ abstract class AbstractProvider implements AuthenticationProviderInterface
     /**
      * Factory method
      *
-     * @param string $name
      * @param array<mixed> $options
      * @return AuthenticationProviderInterface
      * @api

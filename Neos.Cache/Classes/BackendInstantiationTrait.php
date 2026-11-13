@@ -21,15 +21,16 @@ use Neos\Cache\Exception\InvalidBackendException;
 trait BackendInstantiationTrait
 {
     /**
-     * @param string $backendObjectName
-     * @param array $backendOptions
-     * @param EnvironmentConfiguration $environmentConfiguration
-     * @return BackendInterface
+     * @template T of BackendInterface
+     * @param class-string<T> $backendObjectName
+     * @param array<mixed> $backendOptions
+     * @return T
      * @throws InvalidBackendException
      */
     protected function instantiateBackend(string $backendObjectName, array $backendOptions, EnvironmentConfiguration $environmentConfiguration): BackendInterface
     {
         $backend = new $backendObjectName($environmentConfiguration, $backendOptions);
+        /** @phpstan-ignore instanceof.alwaysTrue (Annotations may be wrong) */
         if (!$backend instanceof BackendInterface) {
             throw new InvalidBackendException('"' . $backendObjectName . '" is not a valid cache backend object.', 1216304302);
         }

@@ -39,10 +39,9 @@ use Psr\Log\LoggerInterface;
  *      fa?: array<int, null|array{t:int, v:mixed}>,
  *      o?: list<string>
  * }
- *
- * @Flow\Scope("singleton")
- * @Flow\Proxy(false)
  */
+#[Flow\Scope('singleton')]
+#[Flow\Proxy(false)]
 class ObjectManager implements ObjectManagerInterface
 {
     use ObjectNameNormalization;
@@ -106,7 +105,6 @@ class ObjectManager implements ObjectManagerInterface
      * Sets the objects array
      *
      * @param array<class-string|string, ObjectRecordShape> $objects An array of object names and some information about each registered object (scope, lower cased name etc.)
-     * @return void
      */
     public function setObjects(array $objects): void
     {
@@ -123,8 +121,14 @@ class ObjectManager implements ObjectManagerInterface
         }
 
         $this->objects = $objects;
-        $this->objects[ObjectManagerInterface::class][self::KEY_INSTANCE] = $this;
-        $this->objects[get_class($this)][self::KEY_INSTANCE] = $this;
+        $this->objects[ObjectManagerInterface::class] = [
+            self::KEY_INSTANCE => $this,
+            self::KEY_SCOPE => ObjectConfiguration::SCOPE_SINGLETON
+        ];
+        $this->objects[static::class] = [
+            self::KEY_INSTANCE => $this,
+            self::KEY_SCOPE => ObjectConfiguration::SCOPE_SINGLETON
+        ];
     }
 
     /**
@@ -154,7 +158,6 @@ class ObjectManager implements ObjectManagerInterface
      * Returns false otherwise.
      *
      * @param string $objectName
-     * @return bool
      */
     public function has($objectName): bool
     {
@@ -166,12 +169,11 @@ class ObjectManager implements ObjectManagerInterface
      *
      * @param object $object The object to register the shutdown method for
      * @param string $shutdownLifecycleMethodName The method name of the shutdown method to be called
-     * @return void
      * @api
      */
     public function registerShutdownObject($object, $shutdownLifecycleMethodName): void
     {
-        if (str_starts_with(get_class($object), 'Neos\Flow\\')) {
+        if (str_starts_with($object::class, 'Neos\Flow\\')) {
             $this->internalShutdownObjects[$object] = $shutdownLifecycleMethodName;
         } else {
             $this->shutdownObjects[$object] = $shutdownLifecycleMethodName;
@@ -210,7 +212,7 @@ class ObjectManager implements ObjectManagerInterface
             }
 
             $instance = $this->buildObjectByFactory($objectName);
-            $this->registerInstance($objectName, get_class($instance), $instance);
+            $this->registerInstance($objectName, $instance::class, $instance);
             return $instance;
         }
 
@@ -253,16 +255,15 @@ class ObjectManager implements ObjectManagerInterface
      * are built right away.
      *
      * @param string $objectName Name of the object to instantiate
-     * @param class-string $className Name of the class implementing the object
-     * @return object The object, usually a lazy proxy
+     * @param class-string<T> $className Name of the class implementing the object
+     * @return T The object, usually a lazy proxy
+     * @template T of object
      * @throws Exception\CannotBuildObjectException
      * @throws \ReflectionException
      */
     protected function createLazyInstance(string $objectName, string $className): object
     {
-        $builder = function () use ($objectName, $className): object {
-            return $this->instantiateClass($className, $this->autowireConstructorArguments($objectName, $className, []));
-        };
+        $builder = (fn (): object => $this->instantiateClass($className, $this->autowireConstructorArguments($objectName, $className, [])));
         if ($this->hasInternalClassInAncestry($className)) {
             return $builder();
         }
@@ -291,7 +292,10 @@ class ObjectManager implements ObjectManagerInterface
         }
         $this->objects[$className][self::KEY_INSTANCE] = $instance;
         foreach ($this->objects[$className][self::KEY_OBJECTNAMES_PROVIDED] ?? [] as $providedObjectName) {
-            $this->objects[$providedObjectName][self::KEY_INSTANCE] = $instance;
+            $this->objects[$providedObjectName] = [
+                self::KEY_INSTANCE => $instance,
+                self::KEY_SCOPE => ObjectConfiguration::SCOPE_SINGLETON
+            ];
         }
     }
 
@@ -426,7 +430,6 @@ class ObjectManager implements ObjectManagerInterface
      *
      * @param string $objectName The object name
      * @param object $instance A prebuilt instance
-     * @return void
      * @throws Exception\WrongScopeException
      * @throws Exception\UnknownObjectException
      */
@@ -444,7 +447,7 @@ class ObjectManager implements ObjectManagerInterface
             throw new Exception\WrongScopeException('Cannot set instance of object "' . $objectName . '" because it is of scope prototype. Only session and singleton instances can be set.', 1265370540);
         }
 
-        $this->registerInstance($objectName, get_class($instance), $instance);
+        $this->registerInstance($objectName, $instance::class, $instance);
     }
 
     /**
@@ -481,7 +484,6 @@ class ObjectManager implements ObjectManagerInterface
      * this method should only be used in a setUp() method of a functional test case.
      *
      * @param string $objectName The object name
-     * @return void
      */
     public function forgetInstance($objectName): void
     {
@@ -513,7 +515,6 @@ class ObjectManager implements ObjectManagerInterface
      * Shuts down this Object Container by calling the shutdown methods of all
      * object instances which were configured to be shut down.
      *
-     * @return void
      * @throws Exception\CannotBuildObjectException
      * @throws Exception\UnknownObjectException
      * @throws InvalidConfigurationTypeException
@@ -586,17 +587,13 @@ class ObjectManager implements ObjectManagerInterface
         }
 
         if ($factory !== null) {
-            $builder = static function () use ($factory, $factoryMethodName, $factoryMethodArguments): object {
-                return $factory->$factoryMethodName(...$factoryMethodArguments);
-            };
+            $builder = (static fn (): object => $factory->$factoryMethodName(...$factoryMethodArguments));
         } else {
             if (!is_callable($factoryMethodName)) {
                 throw new \Exception($factoryMethodName . ' is not callable', 1744233428);
             }
 
-            $builder = static function () use ($factoryMethodName, $factoryMethodArguments): object {
-                return $factoryMethodName(...$factoryMethodArguments);
-            };
+            $builder = (static fn (): object => $factoryMethodName(...$factoryMethodArguments));
         }
 
         $className = $this->getClassNameByObjectName($objectName);
@@ -626,22 +623,24 @@ class ObjectManager implements ObjectManagerInterface
     }
 
     /**
-     * @param class-string $className
-     * @param \Closure(): object $builder Creates the actual instance once the proxy is used for the first time
+     * @param class-string<T> $className
+     * @param \Closure():T $builder Creates the actual instance once the proxy is used for the first time
+     * @return T
+     * @template T of object
      * @throws \ReflectionException
      */
     protected function buildLazyProxy(string $className, \Closure $builder): object
     {
-        /** @phpstan-ignore method.notFound */
-        return (new \ReflectionClass($className))->newLazyProxy($builder);
+        return new \ReflectionClass($className)->newLazyProxy($builder);
     }
 
     /**
      * Speed optimized alternative to ReflectionClass::newInstanceArgs()
      *
-     * @param string $className Name of the class to instantiate
+     * @param class-string<T> $className Name of the class to instantiate
      * @param array<mixed> $arguments Arguments to pass to the constructor
-     * @return object The object
+     * @return T The object
+     * @template T of object
      * @throws Exception\CannotBuildObjectException
      * @throws \Exception
      */
@@ -743,7 +742,6 @@ class ObjectManager implements ObjectManagerInterface
      * Executes the methods of the provided objects.
      *
      * @param \SplObjectStorage<object,mixed> $shutdownObjects
-     * @return void
      */
     protected function callShutdownMethods(\SplObjectStorage $shutdownObjects): void
     {

@@ -58,7 +58,6 @@ class CacheControlDirectives
      * Cache-Control header value.
      *
      * @param string $rawHeaderValue The value of a specification compliant Cache-Control header
-     * @return self
      */
     public static function fromRawHeader(string $rawHeaderValue): self
     {
@@ -71,7 +70,6 @@ class CacheControlDirectives
      *
      * @param string $name Name of the directive, for example "max-age"
      * @param string|null $value An optional value
-     * @return void
      * @api
      */
     public function setDirective(string $name, ?string $value = null): void
@@ -101,7 +99,6 @@ class CacheControlDirectives
      * Removes a special directive previously set for the Cache-Control header.
      *
      * @param string $name Name of the directive, for example "public"
-     * @return void
      */
     public function removeDirective(string $name): void
     {
@@ -162,7 +159,7 @@ class CacheControlDirectives
                 if (!isset($matches[1])) {
                     $value = null;
                 } else {
-                    $value = (isset($matches[2]) ? (int)$matches[2] : true);
+                    $value = (int)$matches[2];
                 }
                 break;
         }

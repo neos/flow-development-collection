@@ -18,9 +18,8 @@ use Neos\Flow\Security\Exception\NoAuthenticationProviderFoundException;
 
 /**
  * The authentication provider resolver. It resolves the class name of a authentication provider based on names.
- *
- * @Flow\Scope("singleton")
  */
+#[Flow\Scope('singleton')]
 class AuthenticationProviderResolver
 {
     /**

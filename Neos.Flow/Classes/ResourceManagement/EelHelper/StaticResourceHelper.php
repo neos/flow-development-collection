@@ -22,15 +22,15 @@ use Neos\Flow\ResourceManagement\ResourceManager;
 class StaticResourceHelper implements ProtectedContextAwareInterface
 {
     /**
-     * @Flow\Inject
      * @var ResourceManager
      */
+    #[Flow\Inject]
     protected $resourceManager;
 
     /**
-     * @Flow\Inject
      * @var I18nService
      */
+    #[Flow\Inject]
     protected $i18nService;
 
     /**
@@ -39,7 +39,6 @@ class StaticResourceHelper implements ProtectedContextAwareInterface
      * @param string $packageKey Package key where the resource is from.
      * @param string $pathAndFilename The path and filename of the resource. Has to start with "Public/..." as private resources do not have a uri.
      * @param bool $localize If enabled localizing of the resource is attempted by adding locales from the current locale-chain between filename and extension.
-     * @return string
      */
     public function uri(string $packageKey, string $pathAndFilename, bool $localize = false): string
     {
@@ -53,7 +52,6 @@ class StaticResourceHelper implements ProtectedContextAwareInterface
      * @param string $packageKey Package key where the resource is from.
      * @param string $pathAndFilename The path and filename of the resource. Starting with "Public/..." or "Private/..."
      * @param bool $localize If enabled localizing of the resource is attempted by adding locales from the current locale-chain between filename and extension.
-     * @return string
      */
     public function content(string $packageKey, string $pathAndFilename, bool $localize = false): string
     {
@@ -63,16 +61,11 @@ class StaticResourceHelper implements ProtectedContextAwareInterface
 
     /**
      * Get a resource://.. url for the given arguments and apply localization if needed
-     *
-     * @param string $packageKey
-     * @param string $pathAndFilename
-     * @param bool $localize
-     * @return string
      */
     protected function getLocalizedResourcePath(string $packageKey, string $pathAndFilename, bool $localize = false): string
     {
         $resourcePath = sprintf('resource://%s/%s', $packageKey, $pathAndFilename);
-        if ($localize === true) {
+        if ($localize) {
             $localizedResourcePathData = $this->i18nService->getLocalizedFilename($resourcePath);
             $resourcePath = $localizedResourcePathData[0];
         }
@@ -81,7 +74,6 @@ class StaticResourceHelper implements ProtectedContextAwareInterface
 
     /**
      * @param string $methodName
-     * @return bool
      */
     public function allowsCallOfMethod($methodName): bool
     {

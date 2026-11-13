@@ -20,8 +20,8 @@ use Neos\Flow\Annotations as Flow;
  * A container for the list of allowed objects to be persisted during this request.
  *
  * @extends \SplObjectStorage<object,mixed>
- * @Flow\Scope("singleton")
  */
+#[Flow\Scope('singleton')]
 final class AllowedObjectsContainer extends \SplObjectStorage
 {
     /**
@@ -31,8 +31,6 @@ final class AllowedObjectsContainer extends \SplObjectStorage
 
     /**
      * Set the internal flag to return true for `shouldCheck()` on the next invocation.
-     *
-     * @param bool $checkNext
      */
     public function checkNext(bool $checkNext = true): void
     {
@@ -42,8 +40,6 @@ final class AllowedObjectsContainer extends \SplObjectStorage
     /**
      * Returns true if allowed objects should be checked this time and resets the internal flag to false,
      * so the next call will return false unless `checkNext(true)` is called again.
-     *
-     * @return bool
      */
     public function shouldCheck(): bool
     {

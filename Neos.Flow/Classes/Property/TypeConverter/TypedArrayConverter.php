@@ -23,8 +23,8 @@ use Neos\Utility\TypeHandling;
  * the element type <T> of the target array using an available type converter.
  *
  * @api
- * @Flow\Scope("singleton")
  */
+#[Flow\Scope('singleton')]
 class TypedArrayConverter extends AbstractTypeConverter
 {
     /**
@@ -60,7 +60,6 @@ class TypedArrayConverter extends AbstractTypeConverter
      * @param array<mixed> $source An array of objects/simple types
      * @param string $targetType
      * @param array<string,mixed> $convertedChildProperties
-     * @param PropertyMappingConfigurationInterface|null $configuration
      * @return array<string,mixed>
      * @api
      */
@@ -85,7 +84,6 @@ class TypedArrayConverter extends AbstractTypeConverter
      *
      * @param string $targetType
      * @param string $propertyName
-     * @param PropertyMappingConfigurationInterface $configuration
      * @return ?string
      */
     public function getTypeOfChildProperty($targetType, $propertyName, PropertyMappingConfigurationInterface $configuration)

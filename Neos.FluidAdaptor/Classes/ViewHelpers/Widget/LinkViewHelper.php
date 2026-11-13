@@ -38,9 +38,9 @@ use Neos\FluidAdaptor\Core\Widget\WidgetContext;
 class LinkViewHelper extends AbstractTagBasedViewHelper
 {
     /**
-     * @Flow\Inject
      * @var HashService
      */
+    #[Flow\Inject]
     protected $hashService;
 
     /**

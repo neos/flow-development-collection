@@ -35,9 +35,8 @@ use Neos\Utility\TypeHandling;
  * Command controller for managing caches
  *
  * NOTE: This command controller will run in compile time (as defined in the package bootstrap)
- *
- * @Flow\Scope("singleton")
  */
+#[Flow\Scope('singleton')]
 class CacheCommandController extends CommandController
 {
     /**
@@ -71,7 +70,6 @@ class CacheCommandController extends CommandController
     protected $environment;
 
     /**
-     * @param CacheManager $cacheManager
      * @return void
      */
     public function injectCacheManager(CacheManager $cacheManager)
@@ -80,7 +78,6 @@ class CacheCommandController extends CommandController
     }
 
     /**
-     * @param LockManager $lockManager
      * @return void
      */
     public function injectLockManager(LockManager $lockManager)
@@ -89,7 +86,6 @@ class CacheCommandController extends CommandController
     }
 
     /**
-     * @param PackageManager $packageManager
      * @return void
      */
     public function injectPackageManager(PackageManager $packageManager)
@@ -98,7 +94,6 @@ class CacheCommandController extends CommandController
     }
 
     /**
-     * @param Bootstrap $bootstrap
      * @return void
      */
     public function injectBootstrap(Bootstrap $bootstrap)
@@ -107,7 +102,6 @@ class CacheCommandController extends CommandController
     }
 
     /**
-     * @param ObjectManagerInterface $objectManager
      * @return void
      */
     public function injectObjectManager(ObjectManagerInterface $objectManager)
@@ -116,7 +110,6 @@ class CacheCommandController extends CommandController
     }
 
     /**
-     * @param Environment $environment
      * @return void
      */
     public function injectEnvironment(Environment $environment)
@@ -287,7 +280,7 @@ class CacheCommandController extends CommandController
     {
         try {
             $cache = $this->cacheManager->getCache($cacheIdentifier);
-        } catch (NoSuchCacheException $exception) {
+        } catch (NoSuchCacheException) {
             $this->outputLine('<error>A Cache with id "%s" is not configured.</error>', [$cacheIdentifier]);
             $this->outputLine('Use the <i>neos.flow:cache:list</i> command to get a list of all configured Caches.');
             $this->quit(1);
@@ -322,7 +315,6 @@ class CacheCommandController extends CommandController
      * Invokes the setup() method on the configured CacheBackend (if it implements the WithSetupInterface)
      * which should setup and validate the backend (i.e. create required database tables, directories, ...)
      *
-     * @param string $cacheIdentifier
      * @return void
      * @see neos.flow:cache:list
      * @see neos.flow:cache:setupall
@@ -332,7 +324,7 @@ class CacheCommandController extends CommandController
     {
         try {
             $cache = $this->cacheManager->getCache($cacheIdentifier);
-        } catch (NoSuchCacheException $exception) {
+        } catch (NoSuchCacheException) {
             $this->outputLine('<error>A Cache with id "%s" is not configured.</error>', [$cacheIdentifier]);
             $this->outputLine('Use the <i>neos.flow:cache:list</i> command to get a list of all configured Caches.');
             $this->quit(1);
@@ -398,7 +390,6 @@ class CacheCommandController extends CommandController
      * the backend.
      *
      * @param string $cacheIdentifier If set, this command only applies to the given cache
-     * @return void
      * @throws NoSuchCacheException
      */
     public function collectGarbageCommand(?string $cacheIdentifier = null): void
@@ -425,10 +416,9 @@ class CacheCommandController extends CommandController
     /**
      * Call system function
      *
-     * @Flow\Internal
-     * @param integer $address
      * @return void
      */
+    #[Flow\Internal]
     public function sysCommand(int $address)
     {
         if ($address === 64738) {
@@ -446,7 +436,6 @@ class CacheCommandController extends CommandController
     /**
      * Outputs the given Result object in a human-readable way
      *
-     * @param Result $result
      * @return void
      */
     private function renderResult(Result $result)
@@ -490,8 +479,8 @@ class CacheCommandController extends CommandController
      * tasks for preparing the application for the first request.
      *
      * @return void
-     * @Flow\Signal
      */
+    #[Flow\Signal]
     public function emitWarmupCaches()
     {
     }

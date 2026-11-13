@@ -61,7 +61,6 @@ interface StorageInterface
     /**
      * Retrieve all Objects stored in this storage, filtered by the given collection name
      *
-     * @param CollectionInterface $collection
      * @return \Generator<StorageObject>
      * @api
      */

@@ -18,20 +18,18 @@ use Psr\Log\LoggerInterface;
 
 /**
  * An Xliff reader
- *
- * @Flow\Scope("singleton")
  */
+#[Flow\Scope('singleton')]
 class XliffReader
 {
     /**
-     * @Flow\Inject(name="Neos.Flow:I18nLogger")
      * @var LoggerInterface
      */
+    #[Flow\Inject(name: 'Neos.Flow:I18nLogger')]
     protected $i18nLogger;
 
     /**
      * @param string $sourcePath
-     * @param callable $iterator
      * @return void
      */
     public function readFiles($sourcePath, callable $iterator)
@@ -62,7 +60,6 @@ class XliffReader
     }
 
     /**
-     * @param \XMLReader $reader
      * @return boolean
      */
     protected function isFileNode(\XMLReader $reader)

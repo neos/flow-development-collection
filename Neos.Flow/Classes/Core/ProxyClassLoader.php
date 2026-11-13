@@ -19,10 +19,9 @@ use Neos\Flow\Utility\Environment;
 /**
  * Class loader for Flow proxy classes.
  * This will be asked before the composer loader.
- *
- * @Flow\Proxy(false)
- * @Flow\Scope("singleton")
  */
+#[Flow\Proxy(false)]
+#[Flow\Scope('singleton')]
 class ProxyClassLoader
 {
     /**
@@ -57,9 +56,6 @@ class ProxyClassLoader
      */
     protected $availableProxyClasses;
 
-    /**
-     * @param ApplicationContext $context
-     */
     public function __construct(ApplicationContext $context)
     {
         $this->initializeAvailableProxyClasses($context);
@@ -68,7 +64,6 @@ class ProxyClassLoader
     /**
      * Injects the cache for storing the renamed original classes
      *
-     * @param PhpFrontend $classesCache
      * @return void
      */
     public function injectClassesCache(PhpFrontend $classesCache)

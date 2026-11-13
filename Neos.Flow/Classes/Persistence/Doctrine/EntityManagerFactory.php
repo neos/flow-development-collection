@@ -31,27 +31,26 @@ use Psr\Log\LoggerInterface;
 
 /**
  * EntityManager factory for Doctrine integration
- *
- * @Flow\Scope("singleton")
  */
+#[Flow\Scope('singleton')]
 class EntityManagerFactory
 {
     /**
-     * @Flow\Inject
      * @var ObjectManagerInterface
      */
+    #[Flow\Inject]
     protected $objectManager;
 
     /**
-     * @Flow\Inject
      * @var ReflectionService
      */
+    #[Flow\Inject]
     protected $reflectionService;
 
     /**
-     * @Flow\Inject
      * @var Environment
      */
+    #[Flow\Inject]
     protected $environment;
 
     /**
@@ -118,7 +117,7 @@ class EntityManagerFactory
         $connection = DriverManager::getConnection($this->settings['backendOptions'], $config, $eventManager);
         try {
             $connection->connect();
-        } catch (ConnectionException $exception) {
+        } catch (ConnectionException) {
             $settings = $this->settings['backendOptions'];
             $settings['platform'] = $connection->getDriver()->getDatabasePlatform();
             $connection = DriverManager::getConnection($settings, $config, $eventManager);
@@ -132,21 +131,12 @@ class EntityManagerFactory
         return $entityManager;
     }
 
-    /**
-     * @param Connection $connection
-     * @param Configuration $config
-     * @param EventManager $eventManager
-     * @Flow\Signal
-     */
+    #[Flow\Signal]
     public function emitBeforeDoctrineEntityManagerCreation(Connection $connection, Configuration $config, EventManager $eventManager): void
     {
     }
 
-    /**
-     * @param Configuration $config
-     * @param EntityManager $entityManager
-     * @Flow\Signal
-     */
+    #[Flow\Signal]
     public function emitAfterDoctrineEntityManagerCreation(Configuration $config, EntityManager $entityManager): void
     {
     }
@@ -155,20 +145,19 @@ class EntityManagerFactory
      * The logger middleware needs to be set on the configuration applied to the Driver and Connection
      *
      * @param class-string $configuredSqlLogger
-     * @param Configuration $doctrineConfiguration
-     * @return Configuration
      * @throws InvalidConfigurationException
      */
     protected function enableSqlLogger(string $configuredSqlLogger, Configuration $doctrineConfiguration): Configuration
     {
         $sqlLoggerInstance = $this->objectManager->get($configuredSqlLogger);
         if (!$sqlLoggerInstance instanceof SqlLogger) {
-            throw new InvalidConfigurationException(sprintf('Neos.Flow.persistence.doctrine.sqlLogger must be \Neos\Flow\Persistence\Doctrine\Logging\SqlLogger, %s given.', get_class($sqlLoggerInstance)), 1426150388);
+            throw new InvalidConfigurationException(sprintf('Neos.Flow.persistence.doctrine.sqlLogger must be \Neos\Flow\Persistence\Doctrine\Logging\SqlLogger, %s given.', $sqlLoggerInstance::class), 1426150388);
         }
 
         $logger = $sqlLoggerInstance->logger;
+        /** @phpstan-ignore instanceof.alwaysTrue (annotations can be wrong) */
         if (!$logger instanceof LoggerInterface) {
-            throw new InvalidConfigurationException(sprintf('The SqlLogger needs to get a Psr LoggerInterface injected, got "%s"', get_class($logger)), 1720548075);
+            throw new InvalidConfigurationException(sprintf('The SqlLogger needs to get a Psr LoggerInterface injected, got "%s"', $logger::class), 1720548075);
         }
 
         return $doctrineConfiguration->setMiddlewares(array_merge($doctrineConfiguration->getMiddlewares(), [new Middleware($logger)]));

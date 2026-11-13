@@ -20,9 +20,9 @@ use Neos\Flow\I18n\Exception\InvalidArgumentException;
 /**
  * Parser for date and time.
  *
- * @Flow\Scope("singleton")
  * @api
  */
+#[Flow\Scope('singleton')]
 class DatetimeParser
 {
     /**
@@ -45,7 +45,6 @@ class DatetimeParser
     protected $datesReader;
 
     /**
-     * @param DatesReader $datesReader
      * @return void
      */
     public function injectDatesReader(DatesReader $datesReader)
@@ -79,7 +78,6 @@ class DatetimeParser
      * locale.
      *
      * @param string $dateToParse date to be parsed
-     * @param I18n\Locale $locale
      * @param string $formatLength One of: full, long, medium, short, or 'default' in order to use default length from CLDR
      * @param boolean $strictMode Work mode (strict when true, lenient when false)
      * @return mixed Array of parsed date elements, false on failure
@@ -96,7 +94,6 @@ class DatetimeParser
      * locale.
      *
      * @param string $timeToParse Time to be parsed
-     * @param I18n\Locale $locale
      * @param string $formatLength One of: full, long, medium, short, or 'default' in order to use default length from CLDR
      * @param boolean $strictMode Work mode (strict when true, lenient when false)
      * @return mixed Array of parsed time elements, false on failure
@@ -113,7 +110,6 @@ class DatetimeParser
      * particular locale.
      *
      * @param string $dateAndTimeToParse Date and time to be parsed
-     * @param I18n\Locale $locale
      * @param string $formatLength One of: full, long, medium, short, or 'default' in order to use default length from CLDR
      * @param boolean $strictMode Work mode (strict when true, lenient when false)
      * @return mixed Array of parsed date and time elements, false on failure
@@ -323,7 +319,7 @@ class DatetimeParser
                     $datetimeToParse = substr_replace($datetimeToParse, '', 0, $numberOfCharactersToRemove);
                 }
             }
-        } catch (Exception\InvalidParseStringException $exception) {
+        } catch (Exception\InvalidParseStringException) {
             // Method extractAndCheckNumber() throws exception when constraints in $datetimeToParse are not fulfilled
             return false;
         }
@@ -386,9 +382,7 @@ class DatetimeParser
                         }
                         // no break
                     case 'h':
-                        if (!isset($hour)) {
-                            $hour = $this->extractNumberAndGetPosition($datetimeToParse, $position);
-                        }
+                        $hour ??= $this->extractNumberAndGetPosition($datetimeToParse, $position);
                         if ($hour >= 1 && $hour <= 12) {
                             $numberOfCharactersToRemove = $position + strlen($hour);
                             if ((int)$hour === 12) {
@@ -400,9 +394,7 @@ class DatetimeParser
                         }
                         // no break
                     case 'H':
-                        if (!isset($hour)) {
-                            $hour = $this->extractNumberAndGetPosition($datetimeToParse, $position);
-                        }
+                        $hour ??= $this->extractNumberAndGetPosition($datetimeToParse, $position);
                         if ($hour >= 0 && $hour <= 23) {
                             $numberOfCharactersToRemove = $position + strlen((string)$hour);
                             $datetimeElements['hour'] = (int)$hour;
@@ -410,9 +402,7 @@ class DatetimeParser
                         }
                         // no break
                     case 'k':
-                        if (!isset($hour)) {
-                            $hour = $this->extractNumberAndGetPosition($datetimeToParse, $position);
-                        }
+                        $hour ??= $this->extractNumberAndGetPosition($datetimeToParse, $position);
                         if ($hour >= 1 && $hour <= 24) {
                             $numberOfCharactersToRemove = $position + strlen($hour);
                             if ((int)$hour === 24) {
@@ -426,11 +416,11 @@ class DatetimeParser
                         // no break
                     case 'a':
                         $dayPeriods = $localizedLiterals['dayPeriods']['format']['wide'];
-                        $positionOfDayPeriod = strpos($datetimeToParse, $dayPeriods['am']);
+                        $positionOfDayPeriod = strpos($datetimeToParse, (string) $dayPeriods['am']);
                         if ($positionOfDayPeriod !== false) {
                             $numberOfCharactersToRemove = $positionOfDayPeriod + strlen($dayPeriods['am']);
                         } else {
-                            $positionOfDayPeriod = strpos($datetimeToParse, $dayPeriods['pm']);
+                            $positionOfDayPeriod = strpos($datetimeToParse, (string) $dayPeriods['pm']);
                             if ($positionOfDayPeriod !== false) {
                                 $numberOfCharactersToRemove = $positionOfDayPeriod + strlen($dayPeriods['pm']);
                                 $timeIsPm = true;
@@ -476,12 +466,12 @@ class DatetimeParser
                                         $datetimeElements['month'] = (int)$month;
                                         break;
                                     }
-                                } catch (Exception\InvalidParseStringException $exception) {
+                                } catch (Exception\InvalidParseStringException) {
                                     // Try to match month's name by cases below
                                 }
                             case 3:
                                 foreach ($localizedLiterals['months'][$typeOfLiteral]['abbreviated'] as $monthId => $monthName) {
-                                    $positionOfMonthName = strpos($datetimeToParse, $monthName);
+                                    $positionOfMonthName = strpos($datetimeToParse, (string) $monthName);
                                     if ($positionOfMonthName !== false) {
                                         $numberOfCharactersToRemove = $positionOfMonthName + strlen($monthName);
                                         $datetimeElements['month'] = (int)$monthId;
@@ -495,7 +485,7 @@ class DatetimeParser
                                 // no break
                             case 4:
                                 foreach ($localizedLiterals['months'][$typeOfLiteral]['wide'] as $monthId => $monthName) {
-                                    $positionOfMonthName = strpos($datetimeToParse, $monthName);
+                                    $positionOfMonthName = strpos($datetimeToParse, (string) $monthName);
                                     if ($positionOfMonthName !== false) {
                                         $numberOfCharactersToRemove = $positionOfMonthName + strlen($monthName);
                                         $datetimeElements['month'] = (int)$monthId;
@@ -528,14 +518,14 @@ class DatetimeParser
                             $secondPattern = self::PATTERN_MATCH_LENIENT_TIMEZONE_ABBREVIATION;
                         }
 
-                        if (preg_match($firstPattern, $datetimeToParse, $matches) === 0) {
-                            if (preg_match($secondPattern, $datetimeToParse, $matches) === 0) {
-                                throw new Exception\InvalidParseStringException('Expected timezone identifier was not found.', 1280492312);
-                            }
+                        if (preg_match($firstPattern, $datetimeToParse, $matches)) {
+                            $timezone = $matches[0];
+                        } elseif (preg_match($secondPattern, $datetimeToParse, $matches)) {
+                            $timezone = $matches[0];
+                        } else {
+                            throw new Exception\InvalidParseStringException('Expected timezone identifier was not found.', 1280492312);
                         }
 
-                        /** @var string $timezone */
-                        $timezone = $matches[0] ?? null;
                         $numberOfCharactersToRemove = strpos($datetimeToParse, $timezone) + strlen($timezone);
                         $datetimeElements['timezone'] = $timezone;
                         break;
@@ -571,7 +561,7 @@ class DatetimeParser
                 if ($numberOfCharactersToRemove > 0) {
                     $datetimeToParse = substr_replace($datetimeToParse, '', 0, $numberOfCharactersToRemove);
                 }
-            } catch (Exception\InvalidParseStringException $exception) {
+            } catch (Exception\InvalidParseStringException) {
                 // Matching failed, but in lenient mode we ignore it and try to match next element
                 continue;
             }

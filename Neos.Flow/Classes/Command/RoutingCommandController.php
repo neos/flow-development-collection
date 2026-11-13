@@ -33,35 +33,32 @@ use Neos\Utility\Arrays;
 
 /**
  * Command controller for tasks related to routing
- *
- * @Flow\Scope("singleton")
  */
+#[Flow\Scope('singleton')]
 class RoutingCommandController extends CommandController
 {
     /**
-     * @Flow\Inject
      * @var RoutesProviderInterface
      */
+    #[Flow\Inject]
     protected $routesProvider;
 
     /**
-     * @Flow\Inject
      * @var ObjectManagerInterface
      */
+    #[Flow\Inject]
     protected $objectManager;
 
     /**
-     * @Flow\Inject
      * @var ServerRequestFactory
      */
+    #[Flow\Inject]
     protected $serverRequestFactory;
 
     /**
      * List the known routes
      *
      * This command displays a list of all currently registered routes.
-     *
-     * @return void
      */
     public function listCommand(): void
     {
@@ -87,7 +84,6 @@ class RoutingCommandController extends CommandController
      * This command displays the configuration of a route specified by index number.
      *
      * @param integer $index The index of the route as given by routing:list
-     * @return void
      * @throws StopCommandException
      */
     public function showCommand(int $index): void
@@ -124,7 +120,6 @@ class RoutingCommandController extends CommandController
      * @param string $controller Controller name, default is 'Standard'
      * @param string $action Action name, default is 'index'
      * @param string $format Requested Format name default is 'html'
-     * @return void
      * @throws StopCommandException | InvalidRoutePartValueException
      * @deprecated since 7.0 @see resolveCommand(). Will probably be removed with 8.0
      * @internal
@@ -135,7 +130,7 @@ class RoutingCommandController extends CommandController
         $package = $packageParts[0];
         $subpackage = $packageParts[1] ?? null;
 
-        $this->resolveCommand($package, $controller, $action, $format, $subpackage, null);
+        $this->resolveCommand($package, $controller, $action, $format, $subpackage);
     }
 
     /**
@@ -155,7 +150,6 @@ class RoutingCommandController extends CommandController
      * @param string|null $parameters Route parameters as JSON string. Make sure to specify this option as described in the description in order to prevent parsing issues
      * @param string|null $baseUri Base URI of the simulated request, default ist 'http://localhost'
      * @param bool|null $forceAbsoluteUri Whether or not to force the creation of an absolute URI
-     * @return void
      * @throws StopCommandException | InvalidRoutePartValueException
      */
     public function resolveCommand(string $package, ?string $controller = null, ?string $action = null, ?string $format = null, ?string $subpackage = null, ?string $additionalArguments = null, ?string $parameters = null, ?string $baseUri = null, ?bool $forceAbsoluteUri = null): void
@@ -239,7 +233,7 @@ class RoutingCommandController extends CommandController
      */
     public function routePathCommand(string $path, string $method = 'GET'): void
     {
-        $this->matchCommand('/' . ltrim($path, '/'), $method, null);
+        $this->matchCommand('/' . ltrim($path, '/'), $method);
     }
 
     /**
@@ -257,7 +251,7 @@ class RoutingCommandController extends CommandController
      */
     public function matchCommand(string $uri, ?string $method = null, ?string $parameters = null): void
     {
-        $method = $method ?? 'GET';
+        $method ??= 'GET';
         $requestUri = new Uri($uri);
         if (isset($requestUri->getPath()[0]) && $requestUri->getPath()[0] !== '/') {
             $this->outputLine('<error>The URI "%s" is not valid. The path has to start with a "/"</error>', [$requestUri]);
@@ -314,8 +308,6 @@ class RoutingCommandController extends CommandController
     }
 
     /**
-     * @param string|null $json
-     * @return RouteParameters
      * @throws StopCommandException
      */
     private function createRouteParametersFromJson(?string $json): RouteParameters
@@ -338,7 +330,6 @@ class RoutingCommandController extends CommandController
     /**
      * Parses the given JSON string as array
      *
-     * @param string|null $json
      * @return array<string, mixed>
      * @throws StopCommandException
      */
@@ -363,7 +354,6 @@ class RoutingCommandController extends CommandController
      * Outputs a (potentially multi-dimensional) array to the console
      *
      * @param array<string|int, mixed> $array
-     * @param int $indention
      */
     private function outputArray(array $array, int $indention): void
     {
@@ -375,7 +365,7 @@ class RoutingCommandController extends CommandController
                 return;
             }
             if (is_object($value)) {
-                $this->outputLine(' object (%s)', [get_class($value)]);
+                $this->outputLine(' object (%s)', [$value::class]);
             }
             $this->outputLine(' %s', [$value]);
         }
@@ -385,14 +375,10 @@ class RoutingCommandController extends CommandController
      * Outputs the controller object name that corresponds to the given package, subpackage and controller to the console
      *
      * If the corresponding class is not known to the ObjectManager, an error message is added
-     *
-     * @param string $package
-     * @param string|null $subpackage
-     * @param string|null $controller
      */
     private function outputControllerObjectName(string $package, ?string $subpackage, ?string $controller): void
     {
-        $possibleControllerObjectName = str_replace(['@package', '@subpackage', '@controller', '\\\\'], [str_replace('.', '\\', $package), $subpackage, $controller, '\\'], '@package\@subpackage\Controller\@controllerController');
+        $possibleControllerObjectName = str_replace(['@package', '@subpackage', '@controller', '\\\\'], [str_replace('.', '\\', $package), $subpackage ?? '', $controller ?? '', '\\'], '@package\@subpackage\Controller\@controllerController');
         $controllerObjectName = $this->objectManager->getCaseSensitiveObjectName($possibleControllerObjectName);
         if ($controllerObjectName === null) {
             $this->outputLine('<error>%s</error> (no corresponding class exists)', [$possibleControllerObjectName]);
@@ -404,8 +390,6 @@ class RoutingCommandController extends CommandController
 
     /**
      * Outputs route tags to the console, if there are any
-     *
-     * @param RouteTags|null $routeTags
      */
     private function outputRouteTags(?RouteTags $routeTags): void
     {

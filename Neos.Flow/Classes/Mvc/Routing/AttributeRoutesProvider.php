@@ -78,13 +78,7 @@ final class AttributeRoutesProvider implements RoutesProviderInterface
     {
         $routes = [];
         foreach (static::compileRoutesConfiguration($this->objectManager) as $className => $routesForClass) {
-            $includeClassName = false;
-            foreach ($this->classNames as $classNamePattern) {
-                if (fnmatch($classNamePattern, $className, FNM_NOESCAPE)) {
-                    $includeClassName = true;
-                    break;
-                }
-            }
+            $includeClassName = array_any($this->classNames, fn ($classNamePattern) => fnmatch($classNamePattern, $className, FNM_NOESCAPE));
             if (!$includeClassName) {
                 continue;
             }
@@ -93,14 +87,13 @@ final class AttributeRoutesProvider implements RoutesProviderInterface
         }
 
         $routes = array_map(
-            static fn (array $routeConfiguration): Route => Route::fromConfiguration($routeConfiguration),
+            Route::fromConfiguration(...),
             $routes
         );
         return Routes::create(...$routes);
     }
 
     /**
-     * @param ObjectManagerInterface $objectManager
      * @return array<string,array<int,array{
      *      name?: string,
      *      uriPattern: string,
@@ -173,7 +166,7 @@ final class AttributeRoutesProvider implements RoutesProviderInterface
                                 '@action' => $action,
                                 '@format' => 'html'
                             ], fn ($value) => $value !== null),
-                            $annotation->defaults ?? []
+                            $annotation->defaults
                         )
                     ];
                     $routesByClassName[$className][] = $configuration;

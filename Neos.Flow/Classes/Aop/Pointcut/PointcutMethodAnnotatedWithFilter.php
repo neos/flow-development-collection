@@ -19,9 +19,8 @@ use Psr\Log\LoggerInterface;
 
 /**
  * A method filter which fires on methods annotated with a certain annotation
- *
- * @Flow\Proxy(false)
  */
+#[Flow\Proxy(false)]
 class PointcutMethodAnnotatedWithFilter implements PointcutFilterInterface
 {
     /**
@@ -60,7 +59,6 @@ class PointcutMethodAnnotatedWithFilter implements PointcutFilterInterface
      * Injects the reflection service
      *
      * @param ReflectionService $reflectionService The reflection service
-     * @return void
      */
     public function injectReflectionService(ReflectionService $reflectionService): void
     {
@@ -70,7 +68,6 @@ class PointcutMethodAnnotatedWithFilter implements PointcutFilterInterface
     /**
      * Injects the (system) logger based on PSR-3.
      *
-     * @param LoggerInterface $logger
      * @return void
      */
     public function injectLogger(LoggerInterface $logger)
@@ -137,9 +134,6 @@ class PointcutMethodAnnotatedWithFilter implements PointcutFilterInterface
 
     /**
      * This method is used to optimize the matching process.
-     *
-     * @param ClassNameIndex $classNameIndex
-     * @return ClassNameIndex
      */
     public function reduceTargetClassNames(ClassNameIndex $classNameIndex): ClassNameIndex
     {

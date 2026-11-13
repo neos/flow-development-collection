@@ -56,9 +56,9 @@ class IdentifierViewHelper extends AbstractViewHelper
     protected $escapeChildren = false;
 
     /**
-     * @Flow\Inject
      * @var PersistenceManagerInterface
      */
+    #[Flow\Inject]
     protected $persistenceManager;
 
     /**
@@ -69,7 +69,7 @@ class IdentifierViewHelper extends AbstractViewHelper
      */
     public function initializeArguments()
     {
-        $this->registerArgument('value', 'object', 'the object to render the identifier for, or NULL if VH children should be used', false, null);
+        $this->registerArgument('value', 'object', 'the object to render the identifier for, or NULL if VH children should be used', false);
     }
 
     /**
@@ -83,9 +83,7 @@ class IdentifierViewHelper extends AbstractViewHelper
     {
         $value = $this->arguments['value'];
 
-        if ($value === null) {
-            $value = $this->renderChildren();
-        }
+        $value ??= $this->renderChildren();
         if ($value === null) {
             return null;
         }
@@ -101,8 +99,6 @@ class IdentifierViewHelper extends AbstractViewHelper
      * @param string $argumentsName
      * @param string $closureName
      * @param string $initializationPhpCode
-     * @param ViewHelperNode $node
-     * @param TemplateCompiler $compiler
      * @return string
      */
     public function compile($argumentsName, $closureName, &$initializationPhpCode, ViewHelperNode $node, TemplateCompiler $compiler)

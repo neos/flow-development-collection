@@ -46,9 +46,9 @@ use TYPO3Fluid\Fluid\Core\Parser\SyntaxTree\ViewHelperNode;
 class CsrfTokenViewHelper extends AbstractViewHelper
 {
     /**
-     * @Flow\Inject
      * @var Context
      */
+    #[Flow\Inject]
     protected $securityContext;
 
     /**
@@ -65,8 +65,6 @@ class CsrfTokenViewHelper extends AbstractViewHelper
      * @param string $argumentsName
      * @param string $closureName
      * @param string $initializationPhpCode
-     * @param ViewHelperNode $node
-     * @param TemplateCompiler $compiler
      * @return string
      */
     public function compile($argumentsName, $closureName, &$initializationPhpCode, ViewHelperNode $node, TemplateCompiler $compiler)

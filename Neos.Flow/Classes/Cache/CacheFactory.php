@@ -27,9 +27,9 @@ use Neos\Flow\Utility\Environment;
  * a certain cache backend. In a Flow context you should use the CacheManager to
  * get a Cache.
  *
- * @Flow\Scope("singleton")
  * @api
  */
+#[Flow\Scope('singleton')]
 class CacheFactory extends \Neos\Cache\CacheFactory
 {
     /**
@@ -49,11 +49,7 @@ class CacheFactory extends \Neos\Cache\CacheFactory
      */
     protected $environmentConfiguration;
 
-    /**
-     * @param EnvironmentConfiguration $environmentConfiguration
-     *
-     * @Flow\Autowiring (enabled=false)
-     */
+    #[Flow\Autowiring(enabled: false)]
     public function injectEnvironmentConfiguration(EnvironmentConfiguration $environmentConfiguration): void
     {
         $this->environmentConfiguration = $environmentConfiguration;
@@ -63,10 +59,8 @@ class CacheFactory extends \Neos\Cache\CacheFactory
      * Constructs this cache factory
      *
      * @param ApplicationContext $context The current Flow context
-     * @param Environment $environment
-     * @param string $applicationIdentifier
-     * @Flow\Autowiring(enabled=false)
      */
+    #[Flow\Autowiring(enabled: false)]
     public function __construct(ApplicationContext $context, Environment $environment, string $applicationIdentifier)
     {
         $this->context = $context;
@@ -81,12 +75,9 @@ class CacheFactory extends \Neos\Cache\CacheFactory
     }
 
     /**
-     * @param string $cacheIdentifier
-     * @param string $cacheObjectName
-     * @param string $backendObjectName
+     * @param class-string<FrontendInterface> $cacheObjectName
+     * @param class-string<BackendInterface> $backendObjectName
      * @param array<mixed> $backendOptions
-     * @param bool $persistent
-     * @return FrontendInterface
      */
     public function create(string $cacheIdentifier, string $cacheObjectName, string $backendObjectName, array $backendOptions = [], bool $persistent = false): FrontendInterface
     {
@@ -112,11 +103,10 @@ class CacheFactory extends \Neos\Cache\CacheFactory
     }
 
     /**
-     * @param string $backendObjectName
+     * @template T of BackendInterface
+     * @param class-string<T> $backendObjectName
      * @param array<string,mixed> $backendOptions
-     * @param EnvironmentConfiguration $environmentConfiguration
-     * @param boolean $persistent
-     * @return BackendInterface
+     * @return T
      * @throws InvalidBackendException
      */
     protected function instantiateBackend(string $backendObjectName, array $backendOptions, EnvironmentConfiguration $environmentConfiguration, bool $persistent = false): BackendInterface

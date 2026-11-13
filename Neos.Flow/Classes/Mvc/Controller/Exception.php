@@ -32,7 +32,6 @@ class Exception extends \Neos\Flow\Mvc\Exception
      * @param string $message
      * @param integer $code
      * @param \Exception $previousException
-     * @param ActionRequest $request
      * @see \Exception
      */
     public function __construct($message, $code, ?\Exception $previousException, ActionRequest $request)

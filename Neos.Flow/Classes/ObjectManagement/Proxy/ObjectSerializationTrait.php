@@ -22,20 +22,18 @@ use Neos\Utility\Arrays;
 
 /**
  * Methods used to serialize objects used by proxy classes.
+ *
+ * @phpstan-ignore trait.unused (the trait is used by generated proxy classes)
  */
 trait ObjectSerializationTrait
 {
     /**
      * Code to find and serialize entities on sleep
-     *
-     * @param array $transientProperties
-     * @param array $propertyVarTags
-     * @return array
      */
     private function Flow_serializeRelatedEntities(array $transientProperties, array $propertyVarTags): array
     {
         $propertiesToSerialize = [];
-        $reflectedClass = new \ReflectionClass(__CLASS__);
+        $reflectedClass = new \ReflectionClass(self::class);
         $allReflectedProperties = $reflectedClass->getProperties();
         foreach ($allReflectedProperties as $reflectionProperty) {
             $propertyName = $reflectionProperty->name;
@@ -71,7 +69,7 @@ trait ObjectSerializationTrait
                         $className = $reflectionProperty->getType()?->getName();
                     }
                     if (Bootstrap::$staticObjectManager->isRegistered($className) === false) {
-                        $className = Bootstrap::$staticObjectManager->getObjectNameByClassName(get_class($this->$propertyName));
+                        $className = Bootstrap::$staticObjectManager->getObjectNameByClassName($this->$propertyName::class);
                     }
                 }
                 if ($this->$propertyName instanceof DoctrineProxy || ($this->$propertyName instanceof PersistenceMagicInterface && !Bootstrap::$staticObjectManager->get(PersistenceManagerInterface::class)->isNewObject($this->$propertyName))) {
@@ -95,9 +93,6 @@ trait ObjectSerializationTrait
     /**
      * Serialize entities that are inside an array or SplObjectStorage
      *
-     * @param string $path
-     * @param mixed $propertyValue
-     * @param string $originalPropertyName
      * @return bool if an entity was found
      */
     private function Flow_searchForEntitiesAndStoreIdentifierArray(string $path, mixed $propertyValue, string $originalPropertyName): bool
@@ -133,8 +128,6 @@ trait ObjectSerializationTrait
     /**
      * Reconstitutes related entities to a deserialized object in __wakeup.
      * Used in __wakeup methods of proxy classes.
-     *
-     * @return void
      */
     private function Flow_setRelatedEntities(): void
     {

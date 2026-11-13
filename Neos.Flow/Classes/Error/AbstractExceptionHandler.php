@@ -61,18 +61,13 @@ abstract class AbstractExceptionHandler implements ExceptionHandlerInterface
      */
     protected $renderingOptions;
 
-    /**
-     * @param LoggerInterface $logger
-     * @return void
-     * @Flow\Autowiring(enabled=false)
-     */
+    #[Flow\Autowiring(enabled: false)]
     public function injectLogger(LoggerInterface $logger): void
     {
         $this->logger = $logger;
     }
 
     /**
-     * @param ThrowableStorageInterface $throwableStorage
      * @return void
      */
     public function injectThrowableStorage(ThrowableStorageInterface $throwableStorage)
@@ -142,9 +137,7 @@ abstract class AbstractExceptionHandler implements ExceptionHandlerInterface
     /**
      * Prepares a view for rendering the custom error page.
      *
-     * @param \Throwable $exception
      * @param array<string,mixed> $renderingOptions Rendering options as defined in the settings
-     * @return ViewInterface
      */
     protected function buildView(\Throwable $exception, array $renderingOptions): ViewInterface
     {
@@ -153,9 +146,7 @@ abstract class AbstractExceptionHandler implements ExceptionHandlerInterface
 
         $statusMessage = ResponseInformationHelper::getStatusMessageByCode($statusCode);
         $viewClassName = $renderingOptions['viewClassName'];
-        $viewOptions = array_filter($renderingOptions['viewOptions'], static function ($optionValue) {
-            return $optionValue !== null;
-        });
+        $viewOptions = array_filter($renderingOptions['viewOptions'], static fn ($optionValue) => $optionValue !== null);
         /** @var ViewInterface $view */
         $view = $viewClassName::createWithOptions($viewOptions);
 
@@ -191,7 +182,6 @@ abstract class AbstractExceptionHandler implements ExceptionHandlerInterface
     /**
      * Checks if custom rendering rules apply to the given $exception and returns those.
      *
-     * @param \Throwable $exception
      * @return array{
      *       viewClassName: string,
      *       viewOptions: array<mixed>,
@@ -216,7 +206,6 @@ abstract class AbstractExceptionHandler implements ExceptionHandlerInterface
     }
 
     /**
-     * @param \Throwable $exception
      * @return string|null name of the resolved renderingGroup or NULL if no group could be resolved
      */
     protected function resolveRenderingGroup(\Throwable $exception)
@@ -255,8 +244,6 @@ abstract class AbstractExceptionHandler implements ExceptionHandlerInterface
     /**
      * Formats and echoes the exception and its previous exceptions (if any) for the command line
      *
-     * @param \Throwable $exception
-     * @param bool $exceptionWasLogged
      * @return void
      */
     protected function echoExceptionCli(\Throwable $exception, bool $exceptionWasLogged)
@@ -279,11 +266,6 @@ abstract class AbstractExceptionHandler implements ExceptionHandlerInterface
         exit(1);
     }
 
-    /**
-     * @param \Throwable $exception
-     * @param string $exceptionMessage
-     * @return string
-     */
     protected function renderNestedExceptonsCli(\Throwable $exception, string &$exceptionMessage): string
     {
         if (!$exception->getPrevious()) {
@@ -300,9 +282,6 @@ abstract class AbstractExceptionHandler implements ExceptionHandlerInterface
 
     /**
      * Renders a single exception including message, code and affected file
-     *
-     * @param \Throwable $exception
-     * @return string
      */
     protected function renderSingleExceptionCli(\Throwable $exception): string
     {
@@ -313,7 +292,7 @@ abstract class AbstractExceptionHandler implements ExceptionHandlerInterface
         }
 
         $exceptionMessage .= PHP_EOL;
-        $exceptionMessage .= $this->renderExceptionDetailCli('Type', get_class($exception));
+        $exceptionMessage .= $this->renderExceptionDetailCli('Type', $exception::class);
         if ($exception->getCode()) {
             $exceptionMessage .= $this->renderExceptionDetailCli('Code', $exception->getCode());
         }
@@ -326,9 +305,6 @@ abstract class AbstractExceptionHandler implements ExceptionHandlerInterface
     /**
      * Renders the given $value word-wrapped and prefixed with $label
      *
-     * @param string $label
-     * @param string $value
-     * @return string
      *
      */
     protected function renderExceptionDetailCli(string $label, string $value): string
@@ -344,7 +320,6 @@ abstract class AbstractExceptionHandler implements ExceptionHandlerInterface
      * - If the string is empty or does not contain more than one sentence nor line breaks, the subject will be equal to the string and body will be an empty string
      * - Otherwise the subject is everything until the first line break or end of sentence, the body contains the rest
      *
-     * @param string $exceptionMessage
      * @return array{subject: string, body: string}
      */
     protected function splitExceptionMessage(string $exceptionMessage): array

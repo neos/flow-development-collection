@@ -21,9 +21,8 @@ use Neos\Flow\Session\SessionManagerInterface;
  * Command controller for managing sessions
  *
  * NOTE: This command controller will run in compile time (as defined in the package bootstrap)
- *
- * @Flow\Scope("singleton")
  */
+#[Flow\Scope('singleton')]
 class SessionCommandController extends CommandController
 {
     /**
@@ -37,7 +36,6 @@ class SessionCommandController extends CommandController
     protected $sessionManager;
 
     /**
-     * @param CacheManager $cacheManager
      * @return void
      */
     public function injectCacheManager(CacheManager $cacheManager)
@@ -46,7 +44,6 @@ class SessionCommandController extends CommandController
     }
 
     /**
-     * @param SessionManagerInterface $sessionManager
      * @return void
      */
     public function injectSessionManager(SessionManagerInterface $sessionManager)

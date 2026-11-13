@@ -30,9 +30,9 @@ use Neos\Flow\Exception as FlowException;
  * $context->isDevelopment() inside your custom code.
  *
  * @api
- * @Flow\Proxy(false)
  */
-class ApplicationContext
+#[Flow\Proxy(false)]
+class ApplicationContext implements \Stringable
 {
     /**
      * The (internal) context string; could be something like "Development" or "Development/MyLocalMacBook"
@@ -63,7 +63,6 @@ class ApplicationContext
     /**
      * Initialize the context object.
      *
-     * @param string $contextString
      * @throws FlowException if the parent context is none of "Development", "Production" or "Testing"
      */
     public function __construct(string $contextString)
@@ -91,7 +90,6 @@ class ApplicationContext
     /**
      * Returns the full context string, for example "Development", or "Production/LiveSystem"
      *
-     * @return string
      * @api
      */
     public function __toString(): string
@@ -102,7 +100,6 @@ class ApplicationContext
     /**
      * Returns true if this context is the Development context or a sub-context of it
      *
-     * @return boolean
      * @api
      */
     public function isDevelopment(): bool
@@ -113,10 +110,8 @@ class ApplicationContext
     /**
      * Returns true if this context is the Production context or a sub-context of it
      *
-     * @return boolean
      * @api
      */
-
     public function isProduction(): bool
     {
         return ($this->rootContextString === 'Production');
@@ -125,7 +120,6 @@ class ApplicationContext
     /**
      * Returns true if this context is the Testing context or a sub-context of it
      *
-     * @return boolean
      * @api
      */
     public function isTesting(): bool

@@ -17,10 +17,9 @@ use Neos\Flow\Aop\Exception;
 
 /**
  * A method interceptor build for constructors with advice.
- *
- * @Flow\Proxy(false)
- * @Flow\Scope("singleton")
  */
+#[Flow\Proxy(false)]
+#[Flow\Scope('singleton')]
 class AdvisedConstructorInterceptorBuilder extends AbstractMethodInterceptorBuilder
 {
     /**
@@ -29,13 +28,12 @@ class AdvisedConstructorInterceptorBuilder extends AbstractMethodInterceptorBuil
      * @param string $methodName Name of the method to build an interceptor for
      * @param array<string,mixed> $methodMetaInformation An array of method names and their meta information, including advices for the method (if any)
      * @param class-string $targetClassName Name of the target class to build the interceptor for
-     * @return void
      * @throws Exception
      */
     public function build(string $methodName, array $methodMetaInformation, string $targetClassName): void
     {
         if ($methodName !== '__construct') {
-            throw new Exception('The ' . __CLASS__ . ' can only build constructor interceptor code.', 1231789021);
+            throw new Exception('The ' . self::class . ' can only build constructor interceptor code.', 1231789021);
         }
 
         $declaringClassName = $methodMetaInformation[$methodName]['declaringClassName'];

@@ -23,8 +23,8 @@ use Neos\Flow\Security\Exception\InvalidPrivilegeTypeException;
 
 /**
  * A method privilege, able to restrict method calls based on pointcut expressions
- * @Flow\Proxy(false)
  */
+#[Flow\Proxy(false)]
 class MethodPrivilege extends AbstractPrivilege implements MethodPrivilegeInterface
 {
     /**
@@ -46,7 +46,6 @@ class MethodPrivilege extends AbstractPrivilege implements MethodPrivilegeInterf
      * This object is created very early so we can't rely on AOP for the property injection
      * This method also takes care of initializing caches and other dependencies.
      *
-     * @param ObjectManagerInterface $objectManager
      * @return void
      * @throws \Neos\Cache\Exception\NoSuchCacheException
      */
@@ -80,8 +79,6 @@ class MethodPrivilege extends AbstractPrivilege implements MethodPrivilegeInterf
     /**
      * Returns true, if this privilege covers the given subject (join point)
      *
-     * @param PrivilegeSubjectInterface $subject
-     * @return boolean
      * @throws InvalidPrivilegeTypeException
      * @throws \Neos\Flow\Exception
      * @throws \Neos\Cache\Exception\NoSuchCacheException
@@ -89,7 +86,7 @@ class MethodPrivilege extends AbstractPrivilege implements MethodPrivilegeInterf
     public function matchesSubject(PrivilegeSubjectInterface $subject): bool
     {
         if ($subject instanceof MethodPrivilegeSubject === false) {
-            throw new InvalidPrivilegeTypeException(sprintf('Privileges of type "%s" only support subjects of type "%s", but we got a subject of type: "%s".', MethodPrivilegeInterface::class, MethodPrivilegeSubject::class, get_class($subject)), 1416241148);
+            throw new InvalidPrivilegeTypeException(sprintf('Privileges of type "%s" only support subjects of type "%s", but we got a subject of type: "%s".', MethodPrivilegeInterface::class, MethodPrivilegeSubject::class, $subject::class), 1416241148);
         }
 
         $this->initialize();
@@ -116,7 +113,6 @@ class MethodPrivilege extends AbstractPrivilege implements MethodPrivilegeInterf
      *
      * @param string $className
      * @param string $methodName
-     * @return boolean
      * @throws \Neos\Cache\Exception\NoSuchCacheException
      */
     public function matchesMethod($className, $methodName): bool
@@ -134,7 +130,6 @@ class MethodPrivilege extends AbstractPrivilege implements MethodPrivilegeInterf
     /**
      * Returns the pointcut filter composite, matching all methods covered by this privilege
      *
-     * @return PointcutFilterComposite
      * @throws \Neos\Flow\Aop\Exception
      * @throws \Neos\Flow\Aop\Exception\InvalidPointcutExpressionException
      */

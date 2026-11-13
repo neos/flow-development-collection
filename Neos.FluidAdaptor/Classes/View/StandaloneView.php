@@ -37,18 +37,18 @@ class StandaloneView extends AbstractTemplateView
      * Source code of the Fluid template
      * @var string
      */
-    protected $templateSource = null;
+    protected $templateSource;
 
     /**
      * absolute path of the Fluid template
      * @var string
      */
-    protected $templatePathAndFilename = null;
+    protected $templatePathAndFilename;
 
     /**
      * @var \Neos\Flow\Utility\Environment
-     * @Flow\Inject
      */
+    #[Flow\Inject]
     protected $environment;
 
     /**
@@ -58,8 +58,8 @@ class StandaloneView extends AbstractTemplateView
 
     /**
      * @var Bootstrap
-     * @Flow\Inject
      */
+    #[Flow\Inject]
     protected $bootstrap;
 
     /**
@@ -79,6 +79,7 @@ class StandaloneView extends AbstractTemplateView
      * @param ?ActionRequest $request The current action request. If none is specified it will be created from the environment.
      * @param array<string,mixed> $options
      * @throws \Neos\FluidAdaptor\Exception
+     * @phpstan-ignore method.childParameterType (signature deviates from parent)
      */
     public function __construct(?ActionRequest $request = null, array $options = [])
     {
@@ -311,7 +312,7 @@ class StandaloneView extends AbstractTemplateView
             );
 
             return true;
-        } catch (InvalidTemplateResourceException $e) {
+        } catch (InvalidTemplateResourceException) {
             return false;
         }
     }

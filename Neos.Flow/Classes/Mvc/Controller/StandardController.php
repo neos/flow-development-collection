@@ -26,7 +26,6 @@ class StandardController extends ActionController
     /**
      * Overrides the standard resolveView method
      *
-     * @param ActionRequest $request
      * @return ViewInterface $view The view
      */
     protected function resolveView(ActionRequest $request)
@@ -43,6 +42,7 @@ class StandardController extends ActionController
      */
     public function indexAction()
     {
+        /** @phpstan-ignore instanceof.alwaysTrue (Annotations can be wrong)  */
         if (!$this->request instanceof ActionRequest) {
             return
                 "\nWelcome to Flow!\n\n" .

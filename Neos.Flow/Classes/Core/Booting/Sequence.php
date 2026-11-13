@@ -33,9 +33,6 @@ class Sequence
      */
     protected $steps = [];
 
-    /**
-     * @param string $identifier
-     */
     public function __construct(string $identifier)
     {
         $this->identifier = $identifier;
@@ -58,7 +55,6 @@ class Sequence
     /**
      * Removes all occurrences of the specified step from this sequence
      *
-     * @param string $stepIdentifier
      * @return void
      * @throws FlowException
      */
@@ -81,7 +77,6 @@ class Sequence
     /**
      * Executes all steps of this sequence
      *
-     * @param \Neos\Flow\Core\Bootstrap $bootstrap
      * @return void
      */
     public function invoke(Bootstrap $bootstrap)
@@ -98,15 +93,14 @@ class Sequence
      * to be executed after the given step.
      *
      * @param Step $step The step to invoke
-     * @param \Neos\Flow\Core\Bootstrap $bootstrap
      * @return void
      */
     protected function invokeStep(Step $step, Bootstrap $bootstrap)
     {
-        $bootstrap->getSignalSlotDispatcher()->dispatch(__CLASS__, 'beforeInvokeStep', [$step, $this->identifier]);
+        $bootstrap->getSignalSlotDispatcher()->dispatch(self::class, 'beforeInvokeStep', [$step, $this->identifier]);
         $identifier = $step->getIdentifier();
         $step($bootstrap);
-        $bootstrap->getSignalSlotDispatcher()->dispatch(__CLASS__, 'afterInvokeStep', [$step, $this->identifier]);
+        $bootstrap->getSignalSlotDispatcher()->dispatch(self::class, 'afterInvokeStep', [$step, $this->identifier]);
         if (isset($this->steps[$identifier])) {
             foreach ($this->steps[$identifier] as $followingStep) {
                 $this->invokeStep($followingStep, $bootstrap);

@@ -22,9 +22,8 @@ use Psr\Http\Message\ResponseInterface;
  * A basic but solid exception handler which catches everything which
  * falls through the other exception handlers and provides useful debugging
  * information.
- *
- * @Flow\Scope("singleton")
  */
+#[Flow\Scope('singleton')]
 class DebugExceptionHandler extends AbstractExceptionHandler
 {
     /**
@@ -95,8 +94,6 @@ EOD;
     /**
      * Returns the statically rendered exception message
      *
-     * @param integer $statusCode
-     * @param \Throwable $exception
      * @return void
      */
     protected function renderStatically(int $statusCode, \Throwable $exception)
@@ -121,7 +118,7 @@ EOD;
 
             $exceptionHeader .= '<table class="Flow-Debug-Exception-Meta"><tbody>';
             $exceptionHeader .= '<tr><th>Exception Code</th><td class="ExceptionProperty">' . $exception->getCode() . '</td></tr>';
-            $exceptionHeader .= '<tr><th>Exception Type</th><td class="ExceptionProperty">' . get_class($exception) . '</td></tr>';
+            $exceptionHeader .= '<tr><th>Exception Type</th><td class="ExceptionProperty">' . $exception::class . '</td></tr>';
             if ($exception instanceof WithReferenceCodeInterface) {
                 $exceptionHeader .= '<tr><th>Log Reference</th><td class="ExceptionProperty">' . $exception->getReferenceCode() . '</td></tr>';
             }
@@ -150,10 +147,11 @@ EOD;
         if (defined('FLOW_PATH_ROOT')) {
             $footer .= '<tr><th>Instance root</th><td class="ExceptionProperty">' . FLOW_PATH_ROOT . '</td></tr>';
         }
+        /** @phpstan-ignore instanceof.alwaysTrue (ObjectManager may not be fully setup yet) */
         if (Bootstrap::$staticObjectManager instanceof ObjectManagerInterface) {
             $bootstrap = Bootstrap::$staticObjectManager->get(Bootstrap::class);
             $footer .= '<tr><th>Application Context</th><td class="ExceptionProperty">' . $bootstrap->getContext() . '</td></tr>';
-            $footer .= '<tr><th>Request Handler</th><td class="ExceptionProperty">' . get_class($bootstrap->getActiveRequestHandler()) . '</td></tr>';
+            $footer .= '<tr><th>Request Handler</th><td class="ExceptionProperty">' . $bootstrap->getActiveRequestHandler()::class . '</td></tr>';
         }
         $footer .= '</tbody></table>';
         $footer .= '</div>';

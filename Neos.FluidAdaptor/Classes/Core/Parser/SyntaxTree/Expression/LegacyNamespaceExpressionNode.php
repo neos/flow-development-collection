@@ -30,7 +30,6 @@ class LegacyNamespaceExpressionNode extends AbstractExpressionNode implements Ex
     /**
      * Evaluates the expression stored in this node, in the context of $renderingcontext.
      *
-     * @param RenderingContextInterface $renderingContext
      * @param string $expression
      * @param array<int,mixed> $matches
      * @return mixed

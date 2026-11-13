@@ -67,7 +67,6 @@ class FileBackend extends AbstractBackend
      * the filename, however any valid stream URL is possible.
      *
      * @param string $logFileUrl URL pointing to the log file
-     * @return void
      * @api
      */
     public function setLogFileURL(string $logFileUrl): void
@@ -82,12 +81,11 @@ class FileBackend extends AbstractBackend
      * The default is to not create parent directories automatically.
      *
      * @param boolean $flag true if parent directories should be created
-     * @return void
      * @api
      */
     public function setCreateParentDirectories(bool $flag): void
     {
-        $this->createParentDirectories = ($flag === true);
+        $this->createParentDirectories = ($flag);
     }
 
     /**
@@ -95,7 +93,6 @@ class FileBackend extends AbstractBackend
      * is started.
      *
      * @param int $maximumLogFileSize Maximum size in bytes
-     * @return void
      * @api
      * @see setLogFilesToKeep()
      */
@@ -108,7 +105,6 @@ class FileBackend extends AbstractBackend
      * If a new log file is started, keep this number of old log files.
      *
      * @param int $logFilesToKeep Number of old log files to keep
-     * @return void
      * @api
      * @see setMaximumLogFileSize()
      */
@@ -121,20 +117,17 @@ class FileBackend extends AbstractBackend
      * If enabled, a hint about where the log message was created is added to the
      * log file.
      *
-     * @param boolean $flag
-     * @return void
      * @api
      */
     public function setLogMessageOrigin(bool $flag): void
     {
-        $this->logMessageOrigin = ($flag === true);
+        $this->logMessageOrigin = ($flag);
     }
 
     /**
      * Carries out all actions necessary to prepare the logging backend, such as opening
      * the log file or opening a database connection.
      *
-     * @return void
      * @throws CouldNotOpenResourceException
      * @throws FilesException
      * @api
@@ -187,8 +180,6 @@ class FileBackend extends AbstractBackend
     /**
      * Rotate the log file and make sure the configured number of files
      * is kept.
-     *
-     * @return void
      */
     protected function rotateLogFile(): void
     {
@@ -230,7 +221,6 @@ class FileBackend extends AbstractBackend
      * @param string|null $packageKey Key of the package triggering the log (determined automatically if not specified)
      * @param string|null $className Name of the class triggering the log (determined automatically if not specified)
      * @param string|null $methodName Name of the method triggering the log (determined automatically if not specified)
-     * @return void
      * @api
      */
     public function append(string $message, int $severity = LOG_INFO, $additionalData = null, ?string $packageKey = null, ?string $className = null, ?string $methodName = null): void
@@ -246,13 +236,13 @@ class FileBackend extends AbstractBackend
         }
         $ipAddress = ($this->logIpAddress === true) ? str_pad(($_SERVER['REMOTE_ADDR'] ?? ''), 15) . ' ' : '';
         $severityLabel = $this->severityLabels[$severity] ?? 'UNKNOWN  ';
-        $output = (new \DateTime())->format('y-m-d H:i:s') . $processId . ' ' . $ipAddress . $severityLabel . ' ' . str_pad((string)$packageKey, 20) . ' ' . $message;
+        $output = new \DateTime()->format('y-m-d H:i:s') . $processId . ' ' . $ipAddress . $severityLabel . ' ' . str_pad((string)$packageKey, 20) . ' ' . $message;
 
         if ($this->logMessageOrigin === true && ($className !== null || $methodName !== null)) {
             $output .= ' [logged in ' . $className . '::' . $methodName . '()]';
         }
         if (!empty($additionalData)) {
-            $output .= PHP_EOL . (new PlainTextFormatter($additionalData))->format();
+            $output .= PHP_EOL . new PlainTextFormatter($additionalData)->format();
         }
         if ($this->fileHandle !== false) {
             fwrite($this->fileHandle, $output . PHP_EOL);
@@ -266,7 +256,6 @@ class FileBackend extends AbstractBackend
      * Note: for this backend we do nothing here and rely on PHP to close the filehandle
      * when the request ends. This is to allow full logging until request end.
      *
-     * @return void
      * @api
      */
     public function close(): void

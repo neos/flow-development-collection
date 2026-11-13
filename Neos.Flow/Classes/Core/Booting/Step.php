@@ -33,7 +33,6 @@ class Step
     protected $callback;
 
     /**
-     * @param string $identifier
      * @param mixed $callback
      */
     public function __construct(string $identifier, $callback)
@@ -45,7 +44,6 @@ class Step
     /**
      * Invokes / executes this step
      *
-     * @param Bootstrap $bootstrap
      * @return void
      */
     public function __invoke(Bootstrap $bootstrap)
@@ -53,9 +51,6 @@ class Step
         call_user_func($this->callback, $bootstrap);
     }
 
-    /**
-     * @return string
-     */
     public function getIdentifier(): string
     {
         return $this->identifier;

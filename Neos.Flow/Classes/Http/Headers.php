@@ -18,11 +18,11 @@ use Neos\Flow\Annotations as Flow;
  * Container for HTTP header fields
  *
  * @deprecated Headers will be only accessed via request in the future, if this class stays, then as internal implementation detail.
- * @Flow\Proxy(false)
  * @implements \Iterator<string,mixed>
  * TODO: case-insensitive header name matching
  */
-class Headers implements \Iterator
+#[Flow\Proxy(false)]
+class Headers implements \Iterator, \Stringable
 {
     /**
      * @var array<string,mixed>
@@ -66,7 +66,7 @@ class Headers implements \Iterator
         }
 
         foreach ($server as $name => $value) {
-            if (strpos($name, 'HTTP_') === 0) {
+            if (str_starts_with($name, 'HTTP_')) {
                 $name = str_replace(' ', '-', ucwords(strtolower(str_replace('_', ' ', substr($name, 5)))));
                 $headerFields[$name] = $value;
             } elseif ($name === 'REDIRECT_REMOTE_AUTHORIZATION' && !isset($headerFields['Authorization'])) {
@@ -139,7 +139,6 @@ class Headers implements \Iterator
     /**
      * Get raw header values
      *
-     * @param string $name
      * @return string[]
      */
     public function getRaw(string $name): array
@@ -249,7 +248,6 @@ class Headers implements \Iterator
     /**
      * Sets a cookie
      *
-     * @param Cookie $cookie
      * @return void
      * @api
      */
@@ -267,7 +265,7 @@ class Headers implements \Iterator
      */
     public function getCookie($name)
     {
-        return isset($this->cookies[$name]) ? $this->cookies[$name] : null;
+        return $this->cookies[$name] ?? null;
     }
 
     /**
@@ -374,7 +372,7 @@ class Headers implements \Iterator
     {
         $cookiePairs = explode(';', $rawFieldValue);
         foreach ($cookiePairs as $cookiePair) {
-            if (strpos($cookiePair, '=') === false) {
+            if (!str_contains($cookiePair, '=')) {
                 continue;
             }
             [$name, $value] = explode('=', $cookiePair, 2);
@@ -429,10 +427,9 @@ class Headers implements \Iterator
     /**
      * Renders this headers object as string, with lines separated by "\r\n" as required by RFC 2616 sec 5.
      *
-     * @return string
      * @api
      */
-    public function __toString()
+    public function __toString(): string
     {
         $headers = '';
         foreach ($this->getAll() as $name => $values) {
@@ -451,33 +448,24 @@ class Headers implements \Iterator
         return $this->getRaw($this->key());
     }
 
-    /**
-     * @return void
-     */
     public function next(): void
     {
         next($this->fields);
     }
 
     /**
-     * @return mixed
+     * @return null|mixed
      */
     public function key(): mixed
     {
         return key($this->fields);
     }
 
-    /**
-     * @return bool
-     */
     public function valid(): bool
     {
         return !(key($this->fields) === null && current($this->fields) === false);
     }
 
-    /**
-     * @return void
-     */
     public function rewind(): void
     {
         reset($this->fields);

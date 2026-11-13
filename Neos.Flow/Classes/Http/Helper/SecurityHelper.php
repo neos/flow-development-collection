@@ -21,9 +21,6 @@ abstract class SecurityHelper
 {
     /**
      * Indicates if this request has been received through a secure channel.
-     *
-     * @param RequestInterface $request
-     * @return bool
      */
     public static function isSecureRequest(RequestInterface $request): bool
     {
@@ -34,9 +31,6 @@ abstract class SecurityHelper
     /**
      * Tells if the request method is "safe", that is, it is expected to not take any
      * other action than retrieval. This should the case with "GET" and "HEAD" requests.
-     *
-     * @param RequestInterface $request
-     * @return bool
      */
     public static function hasSafeMethod(RequestInterface $request): bool
     {

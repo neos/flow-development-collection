@@ -19,15 +19,14 @@ use Neos\Flow\Security\Authorization\InterceptorInterface;
 /**
  * This security interceptor invokes the authentication of the authentication tokens in the security context.
  * It is usally used by the firewall to define secured request that need proper authentication.
- *
- * @Flow\Scope("singleton")
  */
+#[Flow\Scope('singleton')]
 class RequireAuthentication implements InterceptorInterface
 {
     /**
      * @var AuthenticationManagerInterface
      */
-    protected $authenticationManager = null;
+    protected $authenticationManager;
 
     /**
      * Constructor.

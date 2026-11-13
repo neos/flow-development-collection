@@ -26,10 +26,9 @@ use Neos\Utility\ObjectAccess;
 /**
  * Builder for proxy classes which are used to implement Dependency Injection and
  * Aspect-Oriented Programming
- *
- * @Flow\Scope("singleton")
- * @Flow\Proxy(false)
  */
+#[Flow\Scope('singleton')]
+#[Flow\Proxy(false)]
 class Compiler
 {
     /**
@@ -99,11 +98,11 @@ class Compiler
         }
 
         $classReflection = new \ReflectionClass($fullClassName);
-        if ($classReflection->isInternal() === true) {
+        if ($classReflection->isInternal()) {
             return false;
         }
 
-        if (method_exists($classReflection, 'isEnum') && $classReflection->isEnum()) {
+        if ($classReflection->isEnum()) {
             return false;
         }
 
@@ -183,12 +182,9 @@ class Compiler
      */
     public function emitAfterCompile(array $compiledClasses): void
     {
-        $this->signalSlotDispatcher->dispatch(__CLASS__, 'afterCompile', [$compiledClasses]);
+        $this->signalSlotDispatcher->dispatch(self::class, 'afterCompile', [$compiledClasses]);
     }
 
-    /**
-     * @return string
-     */
     public function getStoredProxyClassMap(): string
     {
         return '<?php
@@ -206,7 +202,6 @@ return ' . var_export($this->storedProxyClasses, true) . ';';
      * @param string $className Short class name of the class to copy
      * @param string $pathAndFilename Full path and filename of the original class file
      * @param string $proxyClassCode The code that makes up the proxy class
-     * @return void
      *
      * @throws Exception If the original class filename doesn't match the actual class name inside the file.
      * @throws InvalidDataException
@@ -240,7 +235,6 @@ return ' . var_export($this->storedProxyClasses, true) . ';';
     /**
      * Removes the first opening php tag ("<?php") from the given $classCode if there is any
      *
-     * @param string $classCode
      * @return string the original class code without opening php tag
      */
     protected function stripOpeningPhpTag(string $classCode): string
@@ -256,7 +250,6 @@ return ' . var_export($this->storedProxyClasses, true) . ';';
     /**
      * Render the source (string) form of a PHP Attribute.
      * @param \ReflectionAttribute<object> $attribute
-     * @return string
      */
     public static function renderAttribute(\ReflectionAttribute $attribute): string
     {
@@ -326,15 +319,12 @@ return ' . var_export($this->storedProxyClasses, true) . ';';
 
     /**
      * Render the source (string) form of an Annotation instance.
-     *
-     * @param object $annotation
-     * @return string
      */
     public static function renderAnnotation(object $annotation): string
     {
-        $annotationAsString = '@\\' . get_class($annotation);
+        $annotationAsString = '@\\' . $annotation::class;
 
-        $optionDefaults = get_class_vars(get_class($annotation));
+        $optionDefaults = get_class_vars($annotation::class);
         $optionValues = get_object_vars($annotation);
         $optionsAsStrings = [];
         foreach ($optionValues as $optionName => $optionValue) {
@@ -367,13 +357,13 @@ return ' . var_export($this->storedProxyClasses, true) . ';';
      * Render an array value as string for an annotation.
      *
      * @param array<string, mixed> $optionValue
-     * @return string
      */
     protected static function renderOptionArrayValueAsString(array $optionValue): string
     {
         $values = [];
         foreach ($optionValue as $k => $v) {
             $value = '';
+            /** @phpstan-ignore function.alreadyNarrowedType (annotations can be wrong) */
             if (is_string($k)) {
                 $value .= '"' . $k . '"=';
             }
@@ -396,9 +386,6 @@ return ' . var_export($this->storedProxyClasses, true) . ';';
     /**
      * Appends ORIGINAL_CLASSNAME_SUFFIX to the original class name
      *
-     * @param string $classCode
-     * @param string $pathAndFilename
-     * @return string
      * @throws Exception
      */
     protected function replaceClassName(string $classCode, string $pathAndFilename): string

@@ -33,10 +33,9 @@ use Neos\Flow\Annotations as Flow;
  * @api
  * @see http://www.unicode.org/reports/tr35/
  * @see \Neos\Flow\I18n\Service
- *
- * @Flow\Proxy(false)
  */
-class Locale
+#[Flow\Proxy(false)]
+class Locale implements \Stringable
 {
     /**
      * Simplified pattern which matches (most) locale identifiers
@@ -53,7 +52,7 @@ class Locale
      * @see http://rfc.net/bcp47.html
      * @see http://en.wikipedia.org/wiki/ISO_639
      */
-    protected $language = null;
+    protected $language;
 
     /**
      * The script identifier - an ISO 15924 code according to BCP47
@@ -62,7 +61,7 @@ class Locale
      * @see http://rfc.net/bcp47.html
      * @see http://unicode.org/iso15924/iso15924-codes.html
      */
-    protected $script = null;
+    protected $script;
 
     /**
      * The region identifier - an ISO 3166-1-alpha-2 code or a UN M.49 three digit code
@@ -72,7 +71,7 @@ class Locale
      * @see http://www.iso.org/iso/country_codes/iso_3166_code_lists.htm
      * @see http://en.wikipedia.org/wiki/UN_M.49
      */
-    protected $region = null;
+    protected $region;
 
     /**
      * The optional variant identifier - one of the registered variants according to BCP47
@@ -80,7 +79,7 @@ class Locale
      * @var string
      * @see http://rfc.net/bcp47.html
      */
-    protected $variant = null;
+    protected $variant;
 
     /**
      * Constructs this locale object
@@ -158,7 +157,7 @@ class Locale
      * @return string The locale identifier (tag)
      * @api
      */
-    public function __toString()
+    public function __toString(): string
     {
         $localeIdentifier = $this->language;
 

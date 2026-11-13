@@ -45,7 +45,7 @@ class CachePool implements CacheItemPoolInterface
     /**
      * A list of items still to be persisted.
      *
-     * @var array
+     * @var array<int,CacheItemInterface>
      */
     protected $deferredItems = [];
 
@@ -68,8 +68,6 @@ class CachePool implements CacheItemPoolInterface
     /**
      * Returns a Cache Item representing the specified key.
      *
-     * @param string $key
-     * @return CacheItemInterface
      * @throws InvalidArgumentException
      */
     public function getItem(string $key): CacheItemInterface
@@ -91,21 +89,17 @@ class CachePool implements CacheItemPoolInterface
      * Returns a traversable set of cache items.
      *
      * @param string[] $keys
-     * @return array
+     * @return array<CacheItemInterface>
      * @throws InvalidArgumentException
      */
     public function getItems(array $keys = []): iterable
     {
-        return array_map(function ($key) {
-            return $this->getItem($key);
-        }, $keys);
+        return array_map($this->getItem(...), $keys);
     }
 
     /**
      * Confirms if the cache contains specified cache item.
      *
-     * @param string $key
-     * @return bool
      * @throws InvalidArgumentException
      */
     public function hasItem(string $key): bool
@@ -119,8 +113,6 @@ class CachePool implements CacheItemPoolInterface
 
     /**
      * Deletes all items in the pool.
-     *
-     * @return bool
      */
     public function clear(): bool
     {
@@ -131,8 +123,6 @@ class CachePool implements CacheItemPoolInterface
     /**
      * Removes the item from the pool.
      *
-     * @param string $key
-     * @return bool
      * @throws InvalidArgumentException
      */
     public function deleteItem(string $key): bool
@@ -148,14 +138,13 @@ class CachePool implements CacheItemPoolInterface
      * Removes multiple items from the pool.
      *
      * @param string[] $keys
-     * @return bool
      * @throws InvalidArgumentException
      */
     public function deleteItems(array $keys): bool
     {
         $deleted = true;
         foreach ($keys as $key) {
-            $deleted = $this->deleteItem($key) ? $deleted : false;
+            $deleted = $this->deleteItem($key) && $deleted;
         }
 
         return $deleted;
@@ -164,8 +153,6 @@ class CachePool implements CacheItemPoolInterface
     /**
      * Persists a cache item immediately.
      *
-     * @param CacheItemInterface $item
-     * @return bool
      * @throws \Neos\Cache\Exception
      */
     public function save(CacheItemInterface $item): bool
@@ -177,7 +164,7 @@ class CachePool implements CacheItemPoolInterface
         }
 
         if ($expiresAt instanceof \DateTimeInterface) {
-            $lifetime = $expiresAt->getTimestamp() - (new \DateTime())->getTimestamp();
+            $lifetime = $expiresAt->getTimestamp() - new \DateTime()->getTimestamp();
         }
 
         $this->backend->set($item->getKey(), serialize($item->get()), [], $lifetime);
@@ -186,9 +173,6 @@ class CachePool implements CacheItemPoolInterface
 
     /**
      * Sets a cache item to be persisted later.
-     *
-     * @param CacheItemInterface $item
-     * @return bool
      */
     public function saveDeferred(CacheItemInterface $item): bool
     {
@@ -199,7 +183,6 @@ class CachePool implements CacheItemPoolInterface
     /**
      * Persists any deferred cache items.
      *
-     * @return bool
      * @throws \Neos\Cache\Exception
      */
     public function commit(): bool
@@ -217,7 +200,6 @@ class CachePool implements CacheItemPoolInterface
      * Checks the validity of an entry identifier. Returns true if it's valid.
      *
      * @param string $identifier An identifier to be checked for validity
-     * @return boolean
      * @api
      */
     public function isValidEntryIdentifier($identifier): bool

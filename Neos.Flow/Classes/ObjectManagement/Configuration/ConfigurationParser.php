@@ -80,9 +80,7 @@ readonly class ConfigurationParser
     }
 
     /**
-     * @param Configuration $objectConfiguration
      * @param array<string, mixed> $optionValue
-     * @return Configuration
      * @throws ClassLoadingForReflectionFailedException
      * @throws InvalidClassException
      * @throws InvalidObjectConfigurationException
@@ -98,6 +96,7 @@ readonly class ConfigurationParser
             } elseif (array_key_exists('setting', $propertyValue)) {
                 $property = new ConfigurationProperty($propertyName, ['type' => ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'path' => $propertyValue['setting']], ConfigurationProperty::PROPERTY_TYPES_CONFIGURATION);
             } else {
+                /** @phpstan-ignore function.alreadyNarrowedType (Annotations can be wrong) */
                 throw new InvalidObjectConfigurationException('Invalid configuration syntax. Expecting "value", "object" or "setting" as value for property "' . $propertyName . '", instead found "' . (is_array($propertyValue) ? implode(', ', array_keys($propertyValue)) : $propertyValue) . '" (source: ' . $objectConfiguration->getConfigurationSourceHint() . ')', 1230563249);
             }
             $objectConfiguration->setProperty($property);
@@ -107,10 +106,8 @@ readonly class ConfigurationParser
     }
 
     /**
-     * @param Configuration $objectConfiguration
      * @param array<string, mixed> $rawConfigurationOptions
      * @param array<string, mixed> $optionValue
-     * @return Configuration
      * @throws ClassLoadingForReflectionFailedException
      * @throws InvalidClassException
      * @throws InvalidObjectConfigurationException
@@ -127,6 +124,7 @@ readonly class ConfigurationParser
             } elseif (array_key_exists('setting', $argumentValue)) {
                 $argument = new ConfigurationArgument($argumentIndex, $argumentValue['setting'], ConfigurationArgument::ARGUMENT_TYPES_SETTING);
             } else {
+                /** @phpstan-ignore function.alreadyNarrowedType (Annotations can be wrong) */
                 throw new InvalidObjectConfigurationException('Invalid configuration syntax. Expecting "value", "object" or "setting" as value for argument "' . $argumentName . '", instead found "' . (is_array($argumentValue) ? implode(', ', array_keys($argumentValue)) : $argumentValue) . '" (source: ' . $objectConfiguration->getConfigurationSourceHint() . ')', 1230563250);
             }
             if (isset($rawConfigurationOptions['factoryObjectName']) || isset($rawConfigurationOptions['factoryMethodName'])) {
@@ -176,11 +174,9 @@ readonly class ConfigurationParser
                 }
             }
 
-            if ($objectName === null) {
-                // This is a weird object configuration, we create a magic virtual object for it, throwing might be stricter,
-                // but this can happen in the real world. So safer for now. Also global Objects.yaml is problematic.
-                $objectName = 'Runtime.Virtual.Object:' . md5(json_encode($objectNameOrConfiguration, JSON_THROW_ON_ERROR));
-            }
+            // This is a weird object configuration, we create a magic virtual object for it, throwing might be stricter,
+            // but this can happen in the real world. So safer for now. Also global Objects.yaml is problematic.
+            $objectName ??= 'Runtime.Virtual.Object:' . md5(json_encode($objectNameOrConfiguration, JSON_THROW_ON_ERROR));
 
             $objectConfiguration = $this->parseConfigurationArray($objectName, $objectNameOrConfiguration, $parentObjectConfiguration->getConfigurationSourceHint() . ', argument "' . $argumentName . '"');
             $argument = new ConfigurationArgument((int)$argumentName, $objectConfiguration, ConfigurationArgument::ARGUMENT_TYPES_OBJECT);
@@ -241,16 +237,12 @@ readonly class ConfigurationParser
      */
     protected static function parseScope(string $value): int
     {
-        switch ($value) {
-            case 'singleton':
-                return Configuration::SCOPE_SINGLETON;
-            case 'prototype':
-                return Configuration::SCOPE_PROTOTYPE;
-            case 'session':
-                return Configuration::SCOPE_SESSION;
-            default:
-                throw new InvalidObjectConfigurationException('Invalid scope "' . $value . '"', 1167574991);
-        }
+        return match ($value) {
+            'singleton' => Configuration::SCOPE_SINGLETON,
+            'prototype' => Configuration::SCOPE_PROTOTYPE,
+            'session' => Configuration::SCOPE_SESSION,
+            default => throw new InvalidObjectConfigurationException('Invalid scope "' . $value . '"', 1167574991),
+        };
     }
 
     /**

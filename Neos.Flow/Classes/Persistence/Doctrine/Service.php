@@ -62,9 +62,8 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 /**
  * Service class for tasks related to Doctrine
- *
- * @Flow\Scope("singleton")
  */
+#[Flow\Scope('singleton')]
 class Service
 {
     public const DOCTRINE_MIGRATIONSTABLENAME = 'flow_doctrine_migrationstatus';
@@ -72,21 +71,21 @@ class Service
     public const DOCTRINE_MIGRATIONSNAMESPACE = 'Neos\Flow\Persistence\Doctrine\Migrations';
 
     /**
-     * @Flow\Inject(lazy = false)
      * @var EntityManagerInterface
      */
+    #[Flow\Inject(lazy: false)]
     protected $entityManager;
 
     /**
-     * @Flow\Inject
      * @var PackageManager
      */
+    #[Flow\Inject]
     protected $packageManager;
 
     /**
-     * @Flow\Inject
      * @var Environment
      */
+    #[Flow\Inject]
     protected $environment;
 
     /**
@@ -115,7 +114,6 @@ class Service
      * exist, this will throw an exception.
      *
      * @param string $outputPathAndFilename A file to write SQL to, instead of executing it
-     * @return void
      * @throws ToolsException
      */
     public function createSchema($outputPathAndFilename = null): void
@@ -136,7 +134,6 @@ class Service
      *
      * @param boolean $safeMode
      * @param string $outputPathAndFilename A file to write SQL to, instead of executing it
-     * @return void
      */
     public function updateSchema($safeMode = true, $outputPathAndFilename = null): void
     {
@@ -153,7 +150,6 @@ class Service
     /**
      * Compiles the Doctrine proxy class code using the Doctrine ProxyFactory.
      *
-     * @return void
      * @throws FilesException
      * @throws Exception
      */
@@ -194,10 +190,7 @@ class Service
     /**
      * Run DQL and return the result as-is.
      *
-     * @param string $dql
      * @param 1|2|3|4|5|6|string|null $hydrationMode
-     * @param int|null $firstResult
-     * @param int|null $maxResult
      * @return mixed
      */
     public function runDql(string $dql, int|string|null $hydrationMode = \Doctrine\ORM\Query::HYDRATE_OBJECT, ?int $firstResult = null, ?int $maxResult = null)
@@ -216,8 +209,6 @@ class Service
     /**
      * Return the configuration needed for Migrations.
      *
-     * @param string|null $overrideMigrationFolderName
-     * @return DependencyFactory
      * @throws DBALException
      * @throws FilesException
      */
@@ -251,7 +242,6 @@ class Service
      * Returns a formatted string of current database migration status.
      *
      * @param boolean $showMigrations
-     * @return string
      * @throws DBALException
      */
     public function getFormattedMigrationStatus($showMigrations = false, ?string $overrideMigrationFolderName = null): string
@@ -277,26 +267,17 @@ class Service
     }
 
     /**
-     * @param AvailableMigrationsList $availableMigrations
-     * @param ExecutedMigrationsList $executedMigrations
-     * @param Comparator $comparator
      * @return Version[]
      */
     private function getSortedVersions(AvailableMigrationsList $availableMigrations, ExecutedMigrationsList $executedMigrations, Comparator $comparator): array
     {
-        $availableVersions = array_map(static function (AvailableMigration $availableMigration): Version {
-            return $availableMigration->getVersion();
-        }, $availableMigrations->getItems());
+        $availableVersions = array_map(static fn (AvailableMigration $availableMigration): Version => $availableMigration->getVersion(), $availableMigrations->getItems());
 
-        $executedVersions = array_map(static function (ExecutedMigration $executedMigration): Version {
-            return $executedMigration->getVersion();
-        }, $executedMigrations->getItems());
+        $executedVersions = array_map(static fn (ExecutedMigration $executedMigration): Version => $executedMigration->getVersion(), $executedMigrations->getItems());
 
         $versions = array_unique(array_merge($availableVersions, $executedVersions));
 
-        uasort($versions, static function (Version $a, Version $b) use ($comparator): int {
-            return $comparator->compare($a, $b);
-        });
+        uasort($versions, $comparator->compare(...));
 
         return $versions;
     }
@@ -310,7 +291,6 @@ class Service
      * @param string|null $outputPathAndFilename A file to write SQL to, instead of executing it - implicitly enables dry-run
      * @param boolean $dryRun Whether to do a dry run or not
      * @param boolean $quiet Whether to do a quiet run or not
-     * @return string
      * @throws DBALException
      */
     public function executeMigrations(string $version = 'latest', ?string $outputPathAndFilename = null, $dryRun = false, $quiet = false, ?string $overrideMigrationFolderName = null): string
@@ -328,12 +308,12 @@ class Service
 
         try {
             $resolvedVersion = $dependencyFactory->getVersionAliasResolver()->resolveVersionAlias($version);
-        } catch (UnknownMigrationVersion $e) {
+        } catch (UnknownMigrationVersion) {
             return sprintf(
                 'Unknown version: %s',
                 OutputFormatter::escape($version)
             );
-        } catch (NoMigrationsToExecute | NoMigrationsFoundWithCriteria $e) {
+        } catch (NoMigrationsToExecute | NoMigrationsFoundWithCriteria) {
             $currentVersion = $dependencyFactory->getVersionAliasResolver()->resolveVersionAlias('current');
             return ($quiet === false ? $this->exitMessageForAlias($currentVersion, $version) : '');
         }
@@ -394,7 +374,7 @@ class Service
                 $versionAlias,
                 (string)$currentVersion
             );
-        } elseif (in_array($versionAlias, ['next', 'prev'], true) || strpos($versionAlias, 'current') === 0) {
+        } elseif (in_array($versionAlias, ['next', 'prev'], true) || str_starts_with($versionAlias, 'current')) {
             $message = sprintf(
                 'The version "%s" couldn\'t be reached, you are at version "%s"',
                 $versionAlias,
@@ -415,11 +395,8 @@ class Service
      * SQL statements will be written to the file in $path instead of executed.
      *
      * @param string $version The version to migrate to
-     * @param string $direction
      * @param string|null $outputPathAndFilename A file to write SQL to, instead of executing it
      * @param boolean $dryRun Whether to do a dry run or not
-     * @param string|null $overrideMigrationFolderName
-     * @return string
      * @throws DBALException
      * @throws FilesException
      */
@@ -474,9 +451,6 @@ class Service
      * as migrated or not.
      *
      * @param string $version The version to add or remove
-     * @param boolean $markAsMigrated
-     * @param string|null $overrideMigrationFolderName
-     * @return void
      * @throws DBALException
      * @throws FilesException
      */
@@ -505,12 +479,6 @@ class Service
     }
 
     /**
-     * @param OutputInterface $output
-     * @param Version $version
-     * @param bool $all
-     * @param ExecutedMigrationsList $executedMigrations
-     * @param bool $delete
-     * @param string|null $overrideMigrationFolderName
      * @throws DBALException
      * @throws FilesException
      */
@@ -520,7 +488,7 @@ class Service
 
         try {
             $availableMigration = $dependencyFactory->getMigrationRepository()->getMigration($version);
-        } catch (MigrationClassNotFound $e) {
+        } catch (MigrationClassNotFound) {
             $availableMigration = null;
         }
 
@@ -558,7 +526,7 @@ class Service
             $marked = true;
         }
 
-        if ($marked === true) {
+        if ($marked) {
             return;
         }
 
@@ -584,7 +552,6 @@ class Service
     /**
      * Returns the current migration status as an array.
      *
-     * @param string|null $overrideMigrationFolderName
      * @return array<string, int>
      * @throws DBALException
      * @throws FilesException
@@ -617,9 +584,6 @@ class Service
      *
      * Otherwise an empty migration skeleton is generated.
      *
-     * @param boolean $diffAgainstCurrent
-     * @param string|null $filterExpression
-     * @param string|null $overrideMigrationFolderName
      * @return array<int,mixed> Path to the new file
      * @throws DBALException
      * @throws FilesException
@@ -640,7 +604,7 @@ class Service
         $diffGenerator = $dependencyFactory->getDiffGenerator();
         try {
             $path = $diffGenerator->generate($fqcn, $filterExpression);
-        } catch (NoChangesDetected $exception) {
+        } catch (NoChangesDetected) {
             return ['No changes detected', false];
         }
 
@@ -650,7 +614,6 @@ class Service
     /**
      * Get a migration folder name based on current connection platform
      *
-     * @return string
      * @throws DBALException
      */
     public function getMigrationFolderName(): string
@@ -693,11 +656,7 @@ class Service
      *     $this->addSql($sql);
      * }
      *
-     * @param Schema $schema
-     * @param AbstractPlatform $platform
      * @param array<string> $tableNames
-     * @param string $search
-     * @param string $replace
      * @return array{drop: array<int,string>, add: array<int,string>}
      */
     public static function getForeignKeyHandlingSql(Schema $schema, AbstractPlatform $platform, array $tableNames, string $search, string $replace): array
@@ -735,9 +694,7 @@ class Service
                         );
                     }
 
-                    $identifierConstructorCallback = static function ($columnName) {
-                        return new Identifier($columnName);
-                    };
+                    $identifierConstructorCallback = (static fn ($columnName) => new Identifier($columnName));
                     $localColumns = array_map($identifierConstructorCallback, $localColumns);
                     $foreignColumns = array_map($identifierConstructorCallback, $foreignColumns);
 
@@ -756,7 +713,6 @@ class Service
     /**
      * Calls `ensureInitialized()` on the Metadata Storage and applies pending changes
      *
-     * @param string|null $overrideMigrationFolderName
      * @throws DBALException
      * @throws FilesException
      * @see MetadataStorage::ensureInitialized()

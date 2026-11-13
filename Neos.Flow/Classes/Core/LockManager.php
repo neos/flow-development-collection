@@ -17,9 +17,8 @@ use Neos\Flow\Annotations as Flow;
 /**
  * The Lock Manager controls the master lock of the whole site which is mainly
  * used to regenerate code caches in peace.
- *
- * @Flow\Scope("singleton")
  */
+#[Flow\Scope('singleton')]
 class LockManager
 {
     /**
@@ -67,8 +66,6 @@ class LockManager
 
     /**
      * Returns the absolute path to a directory that should contain the lock files
-     *
-     * @return string
      */
     protected function getLockPath(): string
     {
@@ -88,19 +85,18 @@ class LockManager
         }
         try {
             @unlink($this->lockFlagPathAndFilename);
-        } catch (\Throwable $e) {
+        } catch (\Throwable) {
             // PHP 8 apparently throws for unlink even with shutup operator, but we really don't care at this place. It's also the only way to handle this race-condition free.
         }
         try {
             @unlink($this->lockPathAndFilename);
-        } catch (\Throwable $e) {
+        } catch (\Throwable) {
         }
     }
 
     /**
      * Tells if the site is currently locked
      *
-     * @return boolean
      * @api
      */
     public function isSiteLocked(): bool
@@ -115,7 +111,7 @@ class LockManager
      */
     public function exitIfSiteLocked()
     {
-        if ($this->isSiteLocked() === true) {
+        if ($this->isSiteLocked()) {
             $this->doExit();
         }
     }
@@ -149,14 +145,14 @@ class LockManager
             fclose($this->lockResource);
             try {
                 @unlink($this->lockPathAndFilename);
-            } catch (\Throwable $e) {
+            } catch (\Throwable) {
                 // PHP 8 apparently throws for unlink even with shutup operator, but we really don't care at this place. It's also the only way to handle this race-condition free.
             }
         }
         if ($this->isSiteLocked()) {
             try {
                 @unlink($this->lockFlagPathAndFilename);
-            } catch (\Throwable $e) {
+            } catch (\Throwable) {
                 // PHP 8 apparently throws for unlink even with shutup operator, but we really don't care at this place. It's also the only way to handle this race-condition free.
             }
         }

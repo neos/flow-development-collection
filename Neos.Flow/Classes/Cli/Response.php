@@ -60,8 +60,6 @@ class Response
     /**
      * Sets the numerical exit code which should be returned when exiting this application.
      *
-     * @param integer $exitCode
-     * @return void
      * @api
      */
     public function setExitCode(int $exitCode): void
@@ -72,7 +70,6 @@ class Response
     /**
      * Gets the numerical exit code which should be returned when exiting this application.
      *
-     * @return integer
      * @api
      */
     public function getExitCode(): int
@@ -84,7 +81,6 @@ class Response
      * Overrides and sets the content of the response
      *
      * @param string $content The response content
-     * @return void
      * @api
      */
     public function setContent(string $content): void
@@ -96,7 +92,6 @@ class Response
      * Appends content to the already existing content.
      *
      * @param string $content More response content
-     * @return void
      * @api
      */
     public function appendContent(string $content): void
@@ -119,7 +114,6 @@ class Response
      * Sets color support / styled output to yes, no or auto detection
      *
      * @param boolean|null $colorSupport true, false or NULL (= autodetection)
-     * @return void
      */
     public function setColorSupport(bool|null $colorSupport): void
     {
@@ -149,7 +143,6 @@ class Response
      * Sets the desired output format.
      *
      * @param integer $outputFormat One of the OUTPUTFORMAT_* constants
-     * @return void
      */
     public function setOutputFormat(int $outputFormat): void
     {
@@ -169,7 +162,6 @@ class Response
     /**
      * Sends the response
      *
-     * @return void
      * @api
      */
     public function send(): void
@@ -189,7 +181,7 @@ class Response
         }
 
         $content = $this->getContent();
-        if ($this->hasColorSupport() === true) {
+        if ($this->hasColorSupport()) {
             $content =  preg_replace('|\<b>(((?!\</b>).)*)\</b>|', "\x1B[" . self::STYLE_BRIGHT . "m\$1\x1B[0m", $content) ?: '';
             $content =  preg_replace('|\<i>(((?!\</i>).)*)\</i>|', "\x1B[" . self::STYLE_ITALIC . "m\$1\x1B[0m", $content) ?: '';
             $content =  preg_replace('|\<u>(((?!\</u>).)*)\</u>|', "\x1B[" . self::STYLE_UNDERLINED . "m\$1\x1B[0m", $content) ?: '';

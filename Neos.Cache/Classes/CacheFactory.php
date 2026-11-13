@@ -35,8 +35,6 @@ class CacheFactory implements CacheFactoryInterface
 
     /**
      * Constructs this cache factory
-     *
-     * @param EnvironmentConfiguration $environmentConfiguration
      */
     public function __construct(EnvironmentConfiguration $environmentConfiguration)
     {
@@ -48,9 +46,9 @@ class CacheFactory implements CacheFactoryInterface
      * After creating the cache, it will be registered at the cache manager.
      *
      * @param string $cacheIdentifier The name / identifier of the cache to create
-     * @param class-string $cacheObjectName Object name of the cache frontend
-     * @param class-string $backendObjectName Object name of the cache backend
-     * @param array $backendOptions (optional) Array of backend options
+     * @param class-string<FrontendInterface> $cacheObjectName Object name of the cache frontend
+     * @param class-string<BackendInterface> $backendObjectName Object name of the cache backend
+     * @param array<string, mixed> $backendOptions (optional) Array of backend options
      * @return FrontendInterface The created cache frontend
      * @throws InvalidBackendException
      * @throws InvalidCacheException
@@ -58,11 +56,15 @@ class CacheFactory implements CacheFactoryInterface
      */
     public function create(string $cacheIdentifier, string $cacheObjectName, string $backendObjectName, array $backendOptions = []): FrontendInterface
     {
-        return (new \ReflectionClass($cacheObjectName))->newLazyProxy(function () use ($cacheIdentifier, $cacheObjectName, $backendObjectName, $backendOptions) {
-            return $this->buildInternal($cacheIdentifier, $cacheObjectName, $backendObjectName, $backendOptions);
-        });
+        return new \ReflectionClass($cacheObjectName)->newLazyProxy(fn () => $this->buildInternal($cacheIdentifier, $cacheObjectName, $backendObjectName, $backendOptions));
     }
 
+    /**
+     * @param class-string<FrontendInterface> $cacheObjectName
+     * @param class-string<BackendInterface> $backendObjectName
+     * @param array<string, mixed> $backendOptions
+     * @throws InvalidCacheException
+     */
     protected function buildInternal(string $cacheIdentifier, string $cacheObjectName, string $backendObjectName, array $backendOptions = []): FrontendInterface
     {
         try {
@@ -77,10 +79,6 @@ class CacheFactory implements CacheFactoryInterface
     }
 
     /**
-     * @param string $cacheIdentifier
-     * @param string $cacheObjectName
-     * @param BackendInterface $backend
-     * @return FrontendInterface
      * @throws InvalidCacheException
      */
     protected function instantiateCache(string $cacheIdentifier, string $cacheObjectName, BackendInterface $backend): FrontendInterface

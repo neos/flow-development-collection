@@ -22,9 +22,8 @@ use Neos\Flow\Property\PropertyMappingConfigurationInterface;
  *
  * Unpersisted changes to an object are not serialized, because only the persistence identifier is taken into account
  * as the serialized value.
- *
- * @Flow\Scope("singleton")
  */
+#[Flow\Scope('singleton')]
 class PersistentObjectSerializer extends AbstractTypeConverter
 {
     /**
@@ -43,9 +42,9 @@ class PersistentObjectSerializer extends AbstractTypeConverter
     protected $priority = 1;
 
     /**
-     * @Flow\Inject
      * @var PersistenceManagerInterface
      */
+    #[Flow\Inject]
     protected $persistenceManager;
 
     /**
@@ -54,7 +53,6 @@ class PersistentObjectSerializer extends AbstractTypeConverter
      * @param object $source
      * @param string $targetType
      * @param array<string,mixed> $convertedChildProperties
-     * @param PropertyMappingConfigurationInterface|null $configuration
      * @return mixed The identifier for the object if it is known, or NULL
      */
     public function convertFrom($source, $targetType, array $convertedChildProperties = [], ?PropertyMappingConfigurationInterface $configuration = null)

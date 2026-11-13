@@ -44,7 +44,7 @@ class SessionKeyValueStore
     public function initializeObject(): void
     {
         if (!$this->cache->getBackend() instanceof IterableBackendInterface) {
-            throw new InvalidBackendException(sprintf('The session storage cache must provide a backend implementing the IterableBackendInterface, but the given backend "%s" does not implement it.', get_class($this->cache->getBackend())), 1370964558);
+            throw new InvalidBackendException(sprintf('The session storage cache must provide a backend implementing the IterableBackendInterface, but the given backend "%s" does not implement it.', $this->cache->getBackend()::class), 1370964558);
         }
         $this->useIgBinary = extension_loaded('igbinary');
     }
@@ -63,7 +63,7 @@ class SessionKeyValueStore
             return null;
         }
         $this->writeDebounceHashes[$storageIdentifier->value][$key] = md5($serializedResult);
-        return ($this->useIgBinary === true) ? igbinary_unserialize($serializedResult) : unserialize($serializedResult);
+        return ($this->useIgBinary) ? igbinary_unserialize($serializedResult) : unserialize($serializedResult);
     }
 
     /**
@@ -73,7 +73,7 @@ class SessionKeyValueStore
     public function store(StorageIdentifier $storageIdentifier, string $key, mixed $value): void
     {
         $entryIdentifier = $this->createEntryIdentifier($storageIdentifier, $key);
-        $serializedValue = ($this->useIgBinary === true) ? igbinary_serialize($value) : serialize($value);
+        $serializedValue = ($this->useIgBinary) ? igbinary_serialize($value) : serialize($value);
         if (is_null($serializedValue)) {
             throw new \Exception('Failed to serialize value', 1743874462);
         }

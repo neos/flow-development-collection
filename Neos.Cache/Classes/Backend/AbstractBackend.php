@@ -29,18 +29,18 @@ abstract class AbstractBackend implements BackendInterface
 
     /**
      * Reference to the cache frontend which uses this backend
-     * @var FrontendInterface
+     * @var ?FrontendInterface
      */
     protected $cache;
 
     /**
-     * @var string
+     * @var ?string
      */
     protected $cacheIdentifier;
 
     /**
-     * A prefix to seperate stored by appliaction context and cache
-     * @var string
+     * A prefix to separate stored by application context and cache
+     * @var ?string
      */
     protected $identifierPrefix;
 
@@ -51,30 +51,25 @@ abstract class AbstractBackend implements BackendInterface
     protected $defaultLifetime = 3600;
 
     /**
-     * @var EnvironmentConfiguration
+     * @var ?EnvironmentConfiguration
      */
     protected $environmentConfiguration;
 
     /**
      * Constructs this backend
      *
-     * @param EnvironmentConfiguration $environmentConfiguration
-     * @param array $options Configuration options - depends on the actual backend
+     * @param ?EnvironmentConfiguration $environmentConfiguration @todo is this ever null and does that even make sense?
+     * @param array<mixed> $options Configuration options - depends on the actual backend
      * @api
      */
     public function __construct(?EnvironmentConfiguration $environmentConfiguration = null, array $options = [])
     {
         $this->environmentConfiguration = $environmentConfiguration;
-
-        if (is_array($options) || $options instanceof \Iterator) {
-            $this->setProperties($options);
-        }
+        $this->setProperties($options);
     }
 
     /**
-     * @param array $properties
-     * @param boolean $throwExceptionIfPropertyNotSettable
-     * @return void
+     * @param array<mixed> $properties
      * @throws \InvalidArgumentException
      */
     protected function setProperties(array $properties, bool $throwExceptionIfPropertyNotSettable = true): void
@@ -86,15 +81,13 @@ abstract class AbstractBackend implements BackendInterface
             }
 
             if ($throwExceptionIfPropertyNotSettable) {
-                throw new \InvalidArgumentException('Invalid cache backend option "' . $propertyName . '" for backend of type "' . get_class($this) . '"', 1231267498);
+                throw new \InvalidArgumentException('Invalid cache backend option "' . $propertyName . '" for backend of type "' . static::class . '"', 1231267498);
             }
         }
     }
 
     /**
-     * @param string $propertyName
      * @param mixed $propertyValue
-     * @return boolean
      */
     protected function setProperty(string $propertyName, $propertyValue): bool
     {
@@ -111,7 +104,6 @@ abstract class AbstractBackend implements BackendInterface
      * Sets a reference to the cache frontend which uses this backend
      *
      * @param FrontendInterface $cache The frontend for this backend
-     * @return void
      * @api
      */
     public function setCache(FrontendInterface $cache): void
@@ -126,7 +118,6 @@ abstract class AbstractBackend implements BackendInterface
      * Sets the default lifetime for this cache backend
      *
      * @param integer|string $defaultLifetime Default lifetime of this cache backend in seconds. 0 means unlimited lifetime.
-     * @return void
      * @throws \InvalidArgumentException
      * @api
      */
@@ -151,9 +142,7 @@ abstract class AbstractBackend implements BackendInterface
             return new \DateTime(self::DATETIME_EXPIRYTIME_UNLIMITED, new \DateTimeZone('UTC'));
         }
 
-        if ($lifetime === null) {
-            $lifetime = $this->defaultLifetime;
-        }
+        $lifetime ??= $this->defaultLifetime;
         return new \DateTime('now +' . $lifetime . ' seconds', new \DateTimeZone('UTC'));
     }
 

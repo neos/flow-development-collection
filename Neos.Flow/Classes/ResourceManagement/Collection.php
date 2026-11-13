@@ -46,9 +46,9 @@ class Collection implements CollectionInterface
     protected $pathPatterns;
 
     /**
-     * @Flow\Inject
      * @var ResourceRepository
      */
+    #[Flow\Inject]
     protected $resourceRepository;
 
     /**

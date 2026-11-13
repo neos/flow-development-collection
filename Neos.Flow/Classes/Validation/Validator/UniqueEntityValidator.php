@@ -27,15 +27,15 @@ use Neos\Utility\ObjectAccess;
 class UniqueEntityValidator extends AbstractValidator
 {
     /**
-     * @Flow\Inject
      * @var ReflectionService
      */
+    #[Flow\Inject]
     protected $reflectionService;
 
     /**
-     * @Flow\Inject
      * @var PersistenceManagerInterface
      */
+    #[Flow\Inject]
     protected $persistenceManager;
 
     /**
@@ -80,7 +80,7 @@ class UniqueEntityValidator extends AbstractValidator
             throw new InvalidValidationOptionsException('The object supplied for the UniqueEntityValidator must have at least one identity property.', 1358459831);
         }
 
-        $identifierProperties = $this->reflectionService->getPropertyNamesByAnnotation($classSchema->getClassName(), 'Doctrine\ORM\Mapping\Id');
+        $identifierProperties = $this->reflectionService->getPropertyNamesByAnnotation($classSchema->getClassName(), \Doctrine\ORM\Mapping\Id::class);
         if (count($identifierProperties) > 1) {
             throw new InvalidValidationOptionsException('The object supplied for the UniqueEntityValidator must only have one identifier property @ORM\Id.', 1358501745);
         }

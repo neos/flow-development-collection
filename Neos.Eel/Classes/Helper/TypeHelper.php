@@ -17,9 +17,8 @@ use Neos\Flow\Annotations as Flow;
 
 /**
  * Type helper for Eel contexts
- *
- * @Flow\Proxy(false)
  */
+#[Flow\Proxy(false)]
 class TypeHelper implements ProtectedContextAwareInterface
 {
     /**
@@ -48,8 +47,8 @@ class TypeHelper implements ProtectedContextAwareInterface
     /**
      * Get the class name of the given variable or NULL if it wasn't an object
      *
-     * @param object $variable
-     * @return string|NULL
+     * @param mixed $variable
+     * @return class-string|NULL
      */
     public function className($variable)
     {
@@ -57,7 +56,7 @@ class TypeHelper implements ProtectedContextAwareInterface
             return null;
         }
 
-        return get_class($variable);
+        return $variable::class;
     }
 
     /**

@@ -21,9 +21,8 @@ use Neos\Utility\Files;
  *
  * CldrRepository manages CldrModel instances across the framework, so there is
  * only one instance of CldrModel for every unique CLDR data file or file group.
- *
- * @Flow\Scope("singleton")
  */
+#[Flow\Scope('singleton')]
 class CldrRepository
 {
     /**
@@ -65,7 +64,6 @@ class CldrRepository
     protected $models = [];
 
     /**
-     * @param I18n\Service $localizationService
      * @return void
      */
     public function injectLocalizationService(I18n\Service $localizationService)
@@ -147,7 +145,7 @@ class CldrRepository
      */
     protected function findLocaleChain(I18n\Locale $locale, $directoryPath)
     {
-        $filesInHierarchy = [Files::concatenatePaths([$directoryPath, (string)$locale . '.xml'])];
+        $filesInHierarchy = [Files::concatenatePaths([$directoryPath, $locale . '.xml'])];
 
         $localeIdentifier = (string)$locale;
         while ($localeIdentifier = substr($localeIdentifier, 0, (int)strrpos($localeIdentifier, '_'))) {

@@ -37,10 +37,8 @@ class CompilingEvaluator implements EelEvaluatorInterface
 
     /**
      * TODO: As soon as we support PSR-16 (Simple Cache) this could be replaced by a simple cache.
-     *
-     * @param StringFrontend $expressionCache
      */
-    public function injectExpressionCache(StringFrontend $expressionCache)
+    public function injectExpressionCache(StringFrontend $expressionCache): void
     {
         $this->expressionCache = $expressionCache;
     }
@@ -49,7 +47,6 @@ class CompilingEvaluator implements EelEvaluatorInterface
      * Evaluate an expression under a given context
      *
      * @param string $expression
-     * @param Context $context
      * @return mixed
      */
     public function evaluate($expression, Context $context)
@@ -73,8 +70,6 @@ class CompilingEvaluator implements EelEvaluatorInterface
     }
 
     /**
-     * @param \closure $expressionFunction
-     * @param Context $context
      * @return mixed
      */
     protected function evaluateAndUnwrap(\closure $expressionFunction, Context $context)

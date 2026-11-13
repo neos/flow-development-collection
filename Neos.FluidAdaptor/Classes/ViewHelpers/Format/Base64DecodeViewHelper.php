@@ -61,7 +61,7 @@ class Base64DecodeViewHelper extends AbstractViewHelper
      */
     public function initializeArguments()
     {
-        $this->registerArgument('value', 'string', 'string to format', false, null);
+        $this->registerArgument('value', 'string', 'string to format', false);
     }
 
     /**
@@ -73,9 +73,7 @@ class Base64DecodeViewHelper extends AbstractViewHelper
     public function render()
     {
         $value = $this->arguments['value'];
-        if ($value === null) {
-            $value = $this->renderChildren();
-        }
+        $value ??= $this->renderChildren();
         if (is_object($value) && method_exists($value, '__toString')) {
             $value = $value->__toString();
         } elseif (!is_string($value)) {
@@ -92,8 +90,6 @@ class Base64DecodeViewHelper extends AbstractViewHelper
      * @param string $argumentsName
      * @param string $closureName
      * @param string $initializationPhpCode
-     * @param ViewHelperNode $node
-     * @param TemplateCompiler $compiler
      * @return string
      * @see \Neos\FluidAdaptor\Core\Parser\TemplateProcessor\NamespaceDetectionTemplateProcessor::protectCDataSectionsFromParser
      */

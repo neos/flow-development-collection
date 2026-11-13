@@ -26,10 +26,10 @@ use Neos\Utility\Files;
  * General purpose central core hyper Flow bootstrap class
  *
  * @api
- * @Flow\Proxy(false)
- * @Flow\Scope("singleton")
- * @Flow\Autowiring(false)
  */
+#[Flow\Proxy(false)]
+#[Flow\Scope('singleton')]
+#[Flow\Autowiring(false)]
 class Bootstrap
 {
     public const RUNLEVEL_COMPILETIME = 'Compiletime';
@@ -81,10 +81,10 @@ class Bootstrap
     public function __construct(string $context, ?\Composer\Autoload\ClassLoader $composerAutoloader = null)
     {
         // Load the composer autoloader first if not provided
-        $composerAutoloader = $composerAutoloader ?? require(__DIR__ . '/../../../../Libraries/autoload.php');
+        $composerAutoloader ??= require(__DIR__ . '/../../../../Libraries/autoload.php');
 
         $this->context = new ApplicationContext($context);
-        $this->earlyInstances[__CLASS__] = $this;
+        $this->earlyInstances[self::class] = $this;
         $this->earlyInstances[\Composer\Autoload\ClassLoader::class] = $composerAutoloader;
 
         $this->defineConstants();
@@ -149,13 +149,12 @@ class Bootstrap
      * All registered request handlers will be queried if they can handle a request
      * when the bootstrap's run() method is called.
      *
-     * @param RequestHandlerInterface $requestHandler
      * @return void
      * @api
      */
     public function registerRequestHandler(RequestHandlerInterface $requestHandler)
     {
-        $this->requestHandlers[get_class($requestHandler)] = $requestHandler;
+        $this->requestHandlers[$requestHandler::class] = $requestHandler;
     }
 
     /**
@@ -173,8 +172,6 @@ class Bootstrap
 
     /**
      * Returns the request handler (if any) which is currently handling the request.
-     *
-     * @return RequestHandlerInterface
      */
     public function getActiveRequestHandler(): RequestHandlerInterface
     {
@@ -190,7 +187,6 @@ class Bootstrap
      * test case can then set the active request handler to one which simulates, for
      * example, an HTTP request.
      *
-     * @param RequestHandlerInterface $requestHandler
      * @return void
      */
     public function setActiveRequestHandler(RequestHandlerInterface $requestHandler)
@@ -216,7 +212,6 @@ class Bootstrap
      * Tells if the given command controller is registered for compiletime or not.
      *
      * @param string $commandIdentifier Package key, controller name and command name separated by colon, e.g. "neos.flow:cache:flush"
-     * @return boolean
      * @api
      */
     public function isCompiletimeCommand(string $commandIdentifier): bool
@@ -233,13 +228,13 @@ class Bootstrap
         $shortControllerIdentifier = implode(':', $commandIdentifierParts);
 
         foreach ($this->compiletimeCommands as $fullControllerIdentifier => $isCompiletimeCommandController) {
-            list($packageKey, $controllerName, $commandName) = explode(':', $fullControllerIdentifier);
+            [$packageKey, $controllerName, $commandName] = explode(':', $fullControllerIdentifier);
             $packageKeyParts = explode('.', $packageKey);
             $packageKeyPartsCount = count($packageKeyParts);
             for ($offset = 0; $offset < $packageKeyPartsCount; $offset++) {
                 $possibleCommandControllerIdentifier = implode('.', array_slice($packageKeyParts, $offset)) . ':' . $controllerName;
 
-                if (substr($fullControllerIdentifier, -2, 2) === ':*') {
+                if (str_ends_with($fullControllerIdentifier, ':*')) {
                     if ($possibleCommandControllerIdentifier === $shortControllerIdentifier) {
                         return true;
                     }
@@ -258,8 +253,6 @@ class Bootstrap
      * Builds a boot sequence with the minimum modules necessary for both, compiletime
      * and runtime.
      *
-     * @param string $identifier
-     * @return Sequence
      * @api
      */
     public function buildEssentialsSequence(string $identifier): Sequence
@@ -290,7 +283,6 @@ class Bootstrap
      * Builds a boot sequence starting all modules necessary for the compiletime state.
      * This includes all of the "essentials" sequence.
      *
-     * @return Sequence
      * @api
      */
     public function buildCompiletimeSequence(): Sequence
@@ -310,7 +302,6 @@ class Bootstrap
      * Builds a boot sequence starting all modules necessary for the runtime state.
      * This includes all of the "essentials" sequence.
      *
-     * @return Sequence
      * @api
      */
     public function buildRuntimeSequence(): Sequence
@@ -347,7 +338,6 @@ class Bootstrap
     /**
      * Returns the signal slot dispatcher instance
      *
-     * @return Dispatcher
      * @api
      */
     public function getSignalSlotDispatcher(): Dispatcher
@@ -386,7 +376,6 @@ class Bootstrap
     /**
      * Returns the object manager instance
      *
-     * @return ObjectManagerInterface
      * @throws FlowException
      */
     public function getObjectManager(): ObjectManagerInterface
@@ -433,34 +422,33 @@ class Bootstrap
      * Emits a signal that the compile run was finished.
      *
      * @return void
-     * @Flow\Signal
      */
+    #[Flow\Signal]
     protected function emitFinishedCompiletimeRun()
     {
-        $this->getSignalSlotDispatcher()->dispatch(__CLASS__, 'finishedCompiletimeRun', []);
+        $this->getSignalSlotDispatcher()->dispatch(self::class, 'finishedCompiletimeRun', []);
     }
 
     /**
      * Emits a signal that the runtime run was finished.
      *
      * @return void
-     * @Flow\Signal
      */
+    #[Flow\Signal]
     protected function emitFinishedRuntimeRun()
     {
-        $this->getSignalSlotDispatcher()->dispatch(__CLASS__, 'finishedRuntimeRun', []);
+        $this->getSignalSlotDispatcher()->dispatch(self::class, 'finishedRuntimeRun', []);
     }
 
     /**
      * Emits a signal that the bootstrap finished and is shutting down.
      *
-     * @param string $runLevel
      * @return void
-     * @Flow\Signal
      */
+    #[Flow\Signal]
     protected function emitBootstrapShuttingDown(string $runLevel)
     {
-        $this->getSignalSlotDispatcher()->dispatch(__CLASS__, 'bootstrapShuttingDown', [$runLevel]);
+        $this->getSignalSlotDispatcher()->dispatch(self::class, 'bootstrapShuttingDown', [$runLevel]);
     }
 
     /**
@@ -583,7 +571,7 @@ class Bootstrap
             http_response_code(500);
             exit(1);
         }
-        $method = new \ReflectionMethod(__CLASS__, __FUNCTION__);
+        $method = new \ReflectionMethod(self::class, __FUNCTION__);
         if ($method->getDocComment() === false || $method->getDocComment() === '') {
             echo('Reflection of doc comments is not supported by your PHP setup. Please check if you have installed an accelerator which removes doc comments.' . PHP_EOL);
             http_response_code(500);
@@ -630,7 +618,6 @@ class Bootstrap
      * - $_SERVER[$variableName] (this is an alternative to set FLOW_* environment variables if passing environment variables is not possible)
      * - $_SERVER[REDIRECT_ . $variableName] (again for php cgi environments)
      *
-     * @param string $variableName
      * @return string|null NULL if this variable was not set at all.
      */
     public static function getEnvironmentConfigurationSetting(string $variableName)
@@ -647,14 +634,6 @@ class Bootstrap
             return $variableValue;
         }
 
-        if (isset($_SERVER[$variableName])) {
-            return $_SERVER[$variableName];
-        }
-
-        if (isset($_SERVER[$redirectVariableName])) {
-            return $_SERVER[$redirectVariableName];
-        }
-
-        return null;
+        return $_SERVER[$variableName] ?? $_SERVER[$redirectVariableName] ?? null;
     }
 }

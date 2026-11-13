@@ -16,21 +16,20 @@ use Neos\Flow\Annotations as Flow;
 
 /**
  * A factory for conveniently creating new accounts
- *
- * @Flow\Scope("singleton")
  */
+#[Flow\Scope('singleton')]
 class AccountFactory
 {
     /**
      * @var Cryptography\HashService
-     * @Flow\Inject
      */
+    #[Flow\Inject]
     protected $hashService;
 
     /**
      * @var Policy\PolicyService
-     * @Flow\Inject
      */
+    #[Flow\Inject]
     protected $policyService;
 
     /**

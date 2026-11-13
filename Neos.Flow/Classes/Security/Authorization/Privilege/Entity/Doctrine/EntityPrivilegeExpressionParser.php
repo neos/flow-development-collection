@@ -30,9 +30,7 @@ class EntityPrivilegeExpressionParser extends CompilingEelParser
      */
     public function NotExpression_exp(&$result, $sub)
     {
-        if (!isset($result['code'])) {
-            $result['code'] = '$context';
-        }
+        $result['code'] ??= '$context';
         $result['code'] .= '->callAndWrap(\'notExpression\', array(' . $this->unwrapExpression($sub['code']) . '))';
     }
 
@@ -67,34 +65,21 @@ class EntityPrivilegeExpressionParser extends CompilingEelParser
         $lval = $result['code'];
         $rval = $sub['code'];
 
-        if (strpos($lval, '$context->callAndWrap(\'property\'') === false) {
+        if (!str_contains($lval, '$context->callAndWrap(\'property\'')) {
             $temp = $rval;
             $rval = $lval;
             $lval = $temp;
         }
 
-        switch ($result['comp']) {
-            case '==':
-                $compMethod = 'equals';
-                break;
-            case '!=':
-                $compMethod = 'notEquals';
-                break;
-            case '<':
-                $compMethod = 'lessThan';
-                break;
-            case '<=':
-                $compMethod = 'lessOrEqual';
-                break;
-            case '>':
-                $compMethod = 'greaterThan';
-                break;
-            case '>=':
-                $compMethod = 'greaterOrEqual';
-                break;
-            default:
-                throw new ParserException('Unexpected comparison operator "' . $result['comp'] . '"', 1344512571);
-        }
+        $compMethod = match ($result['comp']) {
+            '==' => 'equals',
+            '!=' => 'notEquals',
+            '<' => 'lessThan',
+            '<=' => 'lessOrEqual',
+            '>' => 'greaterThan',
+            '>=' => 'greaterOrEqual',
+            default => throw new ParserException('Unexpected comparison operator "' . $result['comp'] . '"', 1344512571),
+        };
 
         $result['code'] = $lval . '->callAndWrap(\'' . $compMethod . '\', array(' . $this->unwrapExpression($rval) . '))';
     }

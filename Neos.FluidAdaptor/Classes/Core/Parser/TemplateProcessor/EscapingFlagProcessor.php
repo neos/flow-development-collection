@@ -29,7 +29,6 @@ class EscapingFlagProcessor implements TemplateProcessorInterface
     public static string $SCAN_PATTERN_ESCAPINGMODIFIER = '/{escapingEnabled\s*=\s*(?P<enabled>true|false)\s*}/i';
 
     /**
-     * @param RenderingContextInterface $renderingContext
      * @return void
      */
     public function setRenderingContext(RenderingContextInterface $renderingContext)
@@ -58,8 +57,7 @@ class EscapingFlagProcessor implements TemplateProcessorInterface
         if (strtolower($matches[0]['enabled']) === 'false') {
             $this->renderingContext->getTemplateParser()->setEscapingEnabled(false);
         }
-        $templateSource = preg_replace(self::$SCAN_PATTERN_ESCAPINGMODIFIER, '', $templateSource) ?: '';
 
-        return $templateSource;
+        return preg_replace(self::$SCAN_PATTERN_ESCAPINGMODIFIER, '', $templateSource) ?: '';
     }
 }

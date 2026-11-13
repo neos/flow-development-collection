@@ -62,14 +62,14 @@ class FileSystemSymlinkTarget extends FileSystemTarget
     protected function publishFile($sourceStream, $relativeTargetPathAndFilename)
     {
         $extension = strtolower(pathinfo($relativeTargetPathAndFilename, PATHINFO_EXTENSION));
-        if ($extension !== '' && array_key_exists($extension, $this->excludedExtensions) && $this->excludedExtensions[$extension] === true) {
+        if ($extension !== '' && array_key_exists($extension, $this->excludedExtensions) && $this->excludedExtensions[$extension]) {
             throw new TargetException(sprintf('Could not publish resource into publishing target "%s" because the filename extension "%s" is excluded.', $this->name, $extension), 1447152230);
         }
 
         $streamMetaData = stream_get_meta_data($sourceStream);
 
-        if ($streamMetaData['wrapper_type'] !== 'plainfile' || $streamMetaData['stream_type'] !== 'STDIO') {
-            throw new TargetException(sprintf('Could not publish stream "%s" into resource publishing target "%s" because the source is not a local file.', $streamMetaData['uri'], $this->name), 1416242392);
+        if ($streamMetaData['wrapper_type'] !== 'plainfile' || $streamMetaData['stream_type'] !== 'STDIO' || !array_key_exists('uri', $streamMetaData)) {
+            throw new TargetException(sprintf('Could not publish stream "%s" into resource publishing target "%s" because the source is not a local file.', $streamMetaData['uri'] ?? '--uri-key-missing--', $this->name), 1416242392);
         }
 
         $sourcePathAndFilename = $streamMetaData['uri'];

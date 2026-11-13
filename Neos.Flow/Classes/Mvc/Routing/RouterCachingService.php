@@ -29,43 +29,41 @@ use Psr\Log\LoggerInterface;
 
 /**
  * Caching of findMatchResults() and resolve() calls on the web Router.
- *
- * @Flow\Scope("singleton")
  */
+#[Flow\Scope('singleton')]
 class RouterCachingService
 {
     /**
      * @var VariableFrontend
-     * @Flow\Inject
      */
+    #[Flow\Inject]
     protected $routeCache;
 
     /**
      * @var VariableFrontend
-     * @Flow\Inject
      */
+    #[Flow\Inject]
     protected $resolveCache;
 
     /**
      * @var PersistenceManagerInterface
-     * @Flow\Inject
      */
+    #[Flow\Inject]
     protected $persistenceManager;
 
     /**
      * @var LoggerInterface
-     * @Flow\Inject(name="Neos.Flow:SystemLogger")
      */
+    #[Flow\Inject(name: 'Neos.Flow:SystemLogger')]
     protected $logger;
 
     /**
-     * @Flow\Inject
      * @var ObjectManagerInterface
      */
+    #[Flow\Inject]
     protected $objectManager;
 
     /**
-     * @Flow\InjectConfiguration("mvc.routes")
      * @phpstan-var array<string,bool|array{
      *     position?: string,
      *     variables?: array<string,mixed>,
@@ -74,11 +72,9 @@ class RouterCachingService
      * }> indexed by package key
      * @var array
      */
+    #[Flow\InjectConfiguration('mvc.routes')]
     protected $routingSettings;
 
-    /**
-     * @param LoggerInterface $logger
-     */
     public function injectLogger(LoggerInterface $logger): void
     {
         $this->logger = $logger;
@@ -99,7 +95,6 @@ class RouterCachingService
     /**
      * Checks the cache for the given RouteContext and returns the result or false if no matching ache entry was found
      *
-     * @param RouteContext $routeContext
      * @return array<mixed>|false the cached route values or false if no cache entry was found
      */
     public function getCachedMatchResults(RouteContext $routeContext)
@@ -115,10 +110,7 @@ class RouterCachingService
     /**
      * Stores the $matchResults in the cache
      *
-     * @param RouteContext $routeContext
      * @param array<mixed> $matchResults
-     * @param RouteTags|null $matchedTags
-     * @param RouteLifetime|null $matchedLifetime
      * @return void
      */
     public function storeMatchResults(RouteContext $routeContext, array $matchResults, ?RouteTags $matchedTags = null, ?RouteLifetime $matchedLifetime = null)
@@ -138,7 +130,6 @@ class RouterCachingService
     /**
      * Checks the cache for the given ResolveContext and returns the cached UriConstraints if a cache entry is found
      *
-     * @param ResolveContext $resolveContext
      * @return UriConstraints|false the cached URI or false if no cache entry was found
      */
     public function getCachedResolvedUriConstraints(ResolveContext $resolveContext)
@@ -153,10 +144,6 @@ class RouterCachingService
     /**
      * Stores the resolved UriConstraints in the cache together with the $routeValues
      *
-     * @param ResolveContext $resolveContext
-     * @param UriConstraints $uriConstraints
-     * @param RouteTags|null $resolvedTags
-     * @param RouteLifetime|null $resolvedLifetime
      * @return void
      */
     public function storeResolvedUriConstraints(ResolveContext $resolveContext, UriConstraints $uriConstraints, ?RouteTags $resolvedTags = null, ?RouteLifetime $resolvedLifetime = null)
@@ -255,12 +242,7 @@ class RouterCachingService
         if (!is_array($subject)) {
             return false;
         }
-        foreach ($subject as $value) {
-            if ($this->containsObject($value)) {
-                return true;
-            }
-        }
-        return false;
+        return array_any($subject, fn ($value) => $this->containsObject($value));
     }
 
     /**
@@ -295,7 +277,6 @@ class RouterCachingService
     /**
      * Generates the Resolve cache identifier for the given Request
      *
-     * @param ResolveContext $resolveContext
      * @param array<mixed> $routeValues
      * @return string
      */

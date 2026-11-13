@@ -29,21 +29,21 @@ use Neos\Utility\Arrays;
 class UriBuilder
 {
     /**
-     * @Flow\Inject
      * @var \Neos\Flow\Mvc\Routing\RouterInterface
      */
+    #[Flow\Inject]
     protected $router;
 
     /**
-     * @Flow\Inject
      * @var \Neos\Flow\Utility\Environment
      */
+    #[Flow\Inject]
     protected $environment;
 
     /**
-     * @Flow\Inject
      * @var BaseUriProvider
      */
+    #[Flow\Inject]
     protected $baseUriProvider;
 
     /**
@@ -87,12 +87,11 @@ class UriBuilder
     /**
      * @var string|null
      */
-    protected $format = null;
+    protected $format;
 
     /**
      * Sets the current request and resets the UriBuilder
      *
-     * @param ActionRequest $request
      * @return void
      * @api
      * @see reset()
@@ -332,12 +331,11 @@ class UriBuilder
      * )
      *
      * @param array<mixed> $arguments arguments
-     * @param ActionRequest $currentRequest
      * @return array<mixed> arguments with namespace
      */
     protected function addNamespaceToArguments(array $arguments, ActionRequest $currentRequest)
     {
-        while ($currentRequest instanceof ActionRequest && !$currentRequest->isMainRequest()) {
+        while (!$currentRequest->isMainRequest()) {
             $argumentNamespace = $currentRequest->getArgumentNamespace();
             if ($argumentNamespace !== '') {
                 $arguments = [$argumentNamespace => $arguments];
@@ -398,7 +396,7 @@ class UriBuilder
         if ($this->request !== $this->request->getMainRequest()) {
             $subRequest = $this->request;
             while ($subRequest instanceof ActionRequest) {
-                $requestArguments = (array)$subRequest->getArguments();
+                $requestArguments = $subRequest->getArguments();
 
                 // Reset arguments for the request that is bound to this UriBuilder instance
                 if ($subRequest === $this->request) {
@@ -469,14 +467,11 @@ class UriBuilder
     /**
      * Get the path of the argument namespaces of all parent requests.
      * Example: mainrequest.subrequest.subsubrequest
-     *
-     * @param ActionRequest $request
-     * @return string
      */
     protected function getRequestNamespacePath(ActionRequest $request): string
     {
         $namespaceParts = [];
-        while ($request !== null && $request->isMainRequest() === false) {
+        while (!$request->isMainRequest()) {
             $namespaceParts[] = $request->getArgumentNamespace();
             $request = $request->getParentRequest();
         }

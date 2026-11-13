@@ -64,15 +64,15 @@ class RenderingContext extends FluidRenderingContext implements FlowAwareRenderi
     protected $objectManager;
 
     /**
-     * @Flow\Inject
      * @var ViewHelperResolver
      */
+    #[Flow\Inject]
     protected $viewHelperResolver;
 
     /**
-     * @Flow\Inject
      * @var CacheAdaptor
      */
+    #[Flow\Inject]
     protected $cache;
 
     /**
@@ -100,7 +100,6 @@ class RenderingContext extends FluidRenderingContext implements FlowAwareRenderi
     }
 
     /**
-     * @param ObjectManagerInterface $objectManager
      * @return void
      */
     public function injectObjectManager(ObjectManagerInterface $objectManager)
@@ -123,12 +122,13 @@ class RenderingContext extends FluidRenderingContext implements FlowAwareRenderi
     {
         $this->controllerContext = $controllerContext;
         $request = $controllerContext->getRequest();
+        /** @phpstan-ignore instanceof.alwaysTrue (annotations can be wrong) */
         if (!$this->templatePaths instanceof TemplatePaths || !$request instanceof ActionRequest) {
             return;
         }
 
         $this->templatePaths->setPatternReplacementVariables([
-            'packageKey' => (string)$request->getControllerPackageKey(),
+            'packageKey' => $request->getControllerPackageKey(),
             'subPackageKey' => (string)$request->getControllerSubpackageKey(),
             'controllerName' => $request->getControllerName(),
             'action' => $request->getControllerActionName(),

@@ -20,9 +20,9 @@ use Neos\Flow\ObjectManagement\ObjectManagerInterface;
  * and passing them the method arguments which were originally passed to the
  * signal method.
  *
- * @Flow\Scope("singleton")
  * @api
  */
+#[Flow\Scope('singleton')]
 class Dispatcher
 {
     protected ?ObjectManagerInterface $objectManager = null;
@@ -43,9 +43,6 @@ class Dispatcher
 
     /**
      * Injects the object manager
-     *
-     * @param ObjectManagerInterface $objectManager
-     * @return void
      */
     public function injectObjectManager(ObjectManagerInterface $objectManager): void
     {
@@ -65,7 +62,6 @@ class Dispatcher
      * @param mixed $slotClassNameOrObject Name of the class containing the slot or the instantiated class or a Closure object
      * @param string $slotMethodName Name of the method to be used as a slot. If $slotClassNameOrObject is a Closure object, this parameter is ignored
      * @param boolean $passSignalInformation If set to true, the last argument passed to the slot will be information about the signal (EmitterClassName::signalName)
-     * @return void
      * @throws \InvalidArgumentException
      * @api
      * @see wire()
@@ -86,7 +82,6 @@ class Dispatcher
      * @param string $signalName Name of the signal
      * @param mixed $slotClassNameOrObject Name of the class containing the slot or the instantiated class or a Closure object
      * @param string $slotMethodName Name of the method to be used as a slot. If $slotClassNameOrObject is a Closure object, this parameter is ignored
-     * @return void
      * @throws \InvalidArgumentException
      * @api
      * @see connect()
@@ -99,19 +94,14 @@ class Dispatcher
 
     /**
      * @param class-string $signalClassName
-     * @param string $signalName
      * @param mixed $slotClassNameOrObject
-     * @param string $slotMethodName
-     * @param bool $passSignalInformation
-     * @param bool $useSignalInformationObject
-     * @return void
      */
     private function connectSignalToSlot(string $signalClassName, string $signalName, $slotClassNameOrObject, string $slotMethodName, bool $passSignalInformation, bool $useSignalInformationObject): void
     {
         $class = null;
         $object = null;
 
-        if (strpos($signalName, 'emit') === 0) {
+        if (str_starts_with($signalName, 'emit')) {
             $possibleSignalName = lcfirst(substr($signalName, strlen('emit')));
             throw new \InvalidArgumentException('The signal should not be connected with the method name ("' . $signalName . '"). Try "' . $possibleSignalName . '" for the signal name.', 1314016630);
         }
@@ -142,7 +132,6 @@ class Dispatcher
      * @param string $signalClassName Name of the class containing the signal
      * @param string $signalName Name of the signal
      * @param array<mixed> $signalArguments arguments passed to the signal method
-     * @return void
      * @throws Exception\InvalidSlotException if the slot is not valid
      * @api
      */
@@ -156,7 +145,7 @@ class Dispatcher
             $finalSignalArguments = array_values($signalArguments);
             if (isset($slotInformation['object'])) {
                 $object = $slotInformation['object'];
-            } elseif (strpos($slotInformation['method'], '::') === 0) {
+            } elseif (str_starts_with($slotInformation['method'], '::')) {
                 if ($this->objectManager === null) {
                     if (is_callable($slotInformation['class'] . $slotInformation['method'])) {
                         $object = $slotInformation['class'];
@@ -183,7 +172,7 @@ class Dispatcher
                 $object = $this->objectManager->get($slotInformation['class']);
             }
             if (is_object($object) && !method_exists($object, $slotInformation['method'])) {
-                throw new Exception\InvalidSlotException('The slot method ' . get_class($object) . '->' . $slotInformation['method'] . '() does not exist.', 1245673368);
+                throw new Exception\InvalidSlotException('The slot method ' . $object::class . '->' . $slotInformation['method'] . '() does not exist.', 1245673368);
             }
 
             $callable = [$object, $slotInformation['method']];

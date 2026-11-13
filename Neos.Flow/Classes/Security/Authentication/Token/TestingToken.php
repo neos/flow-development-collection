@@ -36,7 +36,7 @@ class TestingToken extends AbstractToken implements SessionlessTokenInterface
      *
      * @return string The username credential
      */
-    public function __toString()
+    public function __toString(): string
     {
         return 'Testing token';
     }

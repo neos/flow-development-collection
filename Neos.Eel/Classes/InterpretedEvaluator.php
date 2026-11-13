@@ -24,7 +24,6 @@ class InterpretedEvaluator implements EelEvaluatorInterface
      * Evaluate an expression under a given context
      *
      * @param string $expression
-     * @param Context $context
      * @return mixed
      * @throws ParserException
      */

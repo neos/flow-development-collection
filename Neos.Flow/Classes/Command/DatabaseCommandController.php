@@ -22,15 +22,14 @@ use Neos\Flow\Mvc\Exception\StopActionException;
 
 /**
  * Command controller for tasks related to database handling
- *
- * @Flow\Scope("singleton")
  */
+#[Flow\Scope('singleton')]
 class DatabaseCommandController extends CommandController
 {
     /**
-     * @Flow\InjectConfiguration(path="persistence")
      * @var array<string, mixed>
      */
+    #[Flow\InjectConfiguration(path: 'persistence')]
     protected $persistenceSettings = [];
 
     /**
@@ -116,7 +115,6 @@ class DatabaseCommandController extends CommandController
      * @param string $characterSet Character set to convert to
      * @param string $collation Collation to set, must be compatible with the character set
      * @param string $outputPathAndFilename
-     * @param boolean $verbose
      * @return void
      * @throws ConnectionException
      * @throws DBALException

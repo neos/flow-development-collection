@@ -19,9 +19,6 @@ use Neos\Flow\Annotations as Flow;
 class SessionMetaData
 {
     /**
-     * @param SessionIdentifier $sessionIdentifier
-     * @param StorageIdentifier $storageIdentifier
-     * @param int $lastActivityTimestamp
      * @param string[] $tags
      */
     #[Flow\Autowiring(false)]
@@ -48,9 +45,7 @@ class SessionMetaData
 
     /**
      * Create session metadata from classic cache format for backwards compatibility
-     * @param string $sessionIdentifier
      * @param array{'storageIdentifier': string, 'lastActivityTimestamp': int, 'tags': string[]} $data
-     * @return self
      * @deprecated this will be removed with Flow 10
      */
     public static function createFromSessionIdentifierStringAndOldArrayCacheFormat(string $sessionIdentifier, array $data): self

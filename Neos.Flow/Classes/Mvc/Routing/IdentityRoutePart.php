@@ -36,21 +36,21 @@ use Neos\Utility\ObjectAccess;
 class IdentityRoutePart extends DynamicRoutePart
 {
     /**
-     * @Flow\Inject
      * @var PersistenceManagerInterface
      */
+    #[Flow\Inject]
     protected $persistenceManager;
 
     /**
-     * @Flow\Inject
      * @var ReflectionService
      */
+    #[Flow\Inject]
     protected $reflectionService;
 
     /**
-     * @Flow\Inject
      * @var ObjectPathMappingRepository
      */
+    #[Flow\Inject]
     protected $objectPathMappingRepository;
 
     /**
@@ -65,7 +65,7 @@ class IdentityRoutePart extends DynamicRoutePart
      *
      * @var string
      */
-    protected $uriPattern = null;
+    protected $uriPattern;
 
     /**
      * @param class-string $objectType
@@ -186,7 +186,7 @@ class IdentityRoutePart extends DynamicRoutePart
         }
         $matches = [];
         preg_match('/^' . $regexPattern . '/', trim($routePath, '/'), $matches);
-        return isset($matches[0]) ? $matches[0] : '';
+        return $matches[0] ?? '';
     }
 
     /**
@@ -284,7 +284,7 @@ class IdentityRoutePart extends DynamicRoutePart
                         $dateFormat = isset($dynamicPathSegmentParts[1]) ? trim($dynamicPathSegmentParts[1]) : 'Y-m-d';
                         $pathSegment .= $this->rewriteForUri($dynamicPathSegment->format($dateFormat));
                     } else {
-                        throw new InvalidUriPatternException(sprintf('Invalid uriPattern "%s" for route part "%s". Property "%s" must be of type string or \DateTime. "%s" given.', $this->getUriPattern(), $this->getName(), $propertyPath, get_class($dynamicPathSegment)), 1316442409);
+                        throw new InvalidUriPatternException(sprintf('Invalid uriPattern "%s" for route part "%s". Property "%s" must be of type string or \DateTime. "%s" given.', $this->getUriPattern(), $this->getName(), $propertyPath, $dynamicPathSegment::class), 1316442409);
                     }
                 } else {
                     $pathSegment .= $this->rewriteForUri((string)$dynamicPathSegment);
@@ -316,7 +316,6 @@ class IdentityRoutePart extends DynamicRoutePart
      * Transforms the given string into a URI compatible format without special characters.
      * In the long term this should be done with proper transliteration
      *
-     * @param string $value
      * @return string
      * @todo use transliteration of the I18n sub package
      */
@@ -339,8 +338,7 @@ class IdentityRoutePart extends DynamicRoutePart
         $value = preg_replace('/[^-a-z0-9.\\' . $spaceCharacter . ']/i', '', $value) ?: '';
 
         $value = preg_replace('/\\' . $spaceCharacter . '{2,}/', $spaceCharacter, $value) ?: '';
-        $value = trim($value, $spaceCharacter) ?: '';
 
-        return $value;
+        return trim($value, $spaceCharacter) ?: '';
     }
 }

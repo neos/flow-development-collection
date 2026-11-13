@@ -20,15 +20,15 @@ use Psr\Http\Server\RequestHandlerInterface;
 class RequestBodyParsingMiddleware implements MiddlewareInterface
 {
     /**
-     * @Flow\Inject
      * @var PropertyMapper
      */
+    #[Flow\Inject]
     protected $propertyMapper;
 
     /**
-     * @Flow\Inject
      * @var ObjectManagerInterface
      */
+    #[Flow\Inject]
     protected $objectManager;
 
     /**
@@ -46,7 +46,6 @@ class RequestBodyParsingMiddleware implements MiddlewareInterface
     /**
      * Parses the request body according to the media type.
      *
-     * @param ServerRequestInterface $httpRequest
      * @return null|array<mixed>
      */
     protected function parseRequestBody(ServerRequestInterface $httpRequest)

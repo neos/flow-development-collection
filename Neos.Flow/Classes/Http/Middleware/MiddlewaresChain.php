@@ -48,8 +48,6 @@ final class MiddlewaresChain implements RequestHandlerInterface
      * $middlewaresChain->onStep(function(ServerRequestInterface $request) {
      *   // $request contains the latest instance of the server request
      * });
-     *
-     * @param \Closure $callback
      */
     public function onStep(\Closure $callback): void
     {

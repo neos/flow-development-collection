@@ -20,9 +20,9 @@ use Neos\Flow\I18n\Locale;
 /**
  * Formatter for numbers.
  *
- * @Flow\Scope("singleton")
  * @api
  */
+#[Flow\Scope('singleton')]
 class NumberFormatter implements FormatterInterface
 {
     /**
@@ -36,7 +36,6 @@ class NumberFormatter implements FormatterInterface
     protected $currencyReader;
 
     /**
-     * @param NumbersReader $numbersReader
      * @return void
      */
     public function injectNumbersReader(NumbersReader $numbersReader)
@@ -46,7 +45,6 @@ class NumberFormatter implements FormatterInterface
 
 
     /**
-     * @param CurrencyReader $currencyReader
      * @return void
      */
     public function injectCurrencyReader(CurrencyReader $currencyReader)
@@ -72,12 +70,10 @@ class NumberFormatter implements FormatterInterface
             $formatType = NumbersReader::FORMAT_TYPE_DECIMAL;
         }
 
-        switch ($formatType) {
-            case NumbersReader::FORMAT_TYPE_PERCENT:
-                return $this->formatPercentNumber($value, $locale, NumbersReader::FORMAT_LENGTH_DEFAULT);
-            default:
-                return $this->formatDecimalNumber($value, $locale, NumbersReader::FORMAT_LENGTH_DEFAULT);
-        }
+        return match ($formatType) {
+            NumbersReader::FORMAT_TYPE_PERCENT => $this->formatPercentNumber($value, $locale, NumbersReader::FORMAT_LENGTH_DEFAULT),
+            default => $this->formatDecimalNumber($value, $locale, NumbersReader::FORMAT_LENGTH_DEFAULT),
+        };
     }
 
     /**
@@ -108,7 +104,6 @@ class NumberFormatter implements FormatterInterface
      * But it's defined in the specification, so we support it here.
      *
      * @param mixed $number Float or int, can be negative, can be NaN or infinite
-     * @param Locale $locale
      * @param string $formatLength One of NumbersReader FORMAT_LENGTH constants
      * @return string Formatted number. Will return string-casted version of $number if there is no pattern for given $locale / $formatLength
      * @api
@@ -127,7 +122,6 @@ class NumberFormatter implements FormatterInterface
      * But it's defined in the specification, so we support it here.
      *
      * @param mixed $number Float or int, can be negative, can be NaN or infinite
-     * @param Locale $locale
      * @param string $formatLength One of NumbersReader FORMAT_LENGTH constants
      * @return string Formatted number. Will return string-casted version of $number if there is no pattern for given $locale / $formatLength
      * @api
@@ -148,7 +142,6 @@ class NumberFormatter implements FormatterInterface
      * But it's defined in the specification, so we support it here.
      *
      * @param mixed $number Float or int, can be negative, can be NaN or infinite
-     * @param Locale $locale
      * @param string $currency Currency symbol (or name)
      * @param string $formatLength One of NumbersReader FORMAT_LENGTH constants
      * @param string $currencyCode The ISO 4217 currency code of the currency to format. Used to set decimal places and rounding.
@@ -209,7 +202,7 @@ class NumberFormatter implements FormatterInterface
         $number = abs($number * $parsedFormat['multiplier']);
 
         if ($parsedFormat['rounding'] > 0) {
-            $number = round($number / $parsedFormat['rounding'], 0, \PHP_ROUND_HALF_EVEN) * $parsedFormat['rounding'];
+            $number = round($number / $parsedFormat['rounding'], 0, \RoundingMode::HalfEven) * $parsedFormat['rounding'];
         }
 
         if ($parsedFormat['maxDecimalDigits'] >= 0) {

@@ -18,15 +18,14 @@ use Neos\Flow\Annotations as Flow;
 
 /**
  * Connection factory for Doctrine connection class
- *
- * @Flow\Scope("singleton")
  */
+#[Flow\Scope('singleton')]
 final class ConnectionFactory
 {
     /**
-     * @Flow\Inject
      * @var EntityManagerInterface
      */
+    #[Flow\Inject]
     protected $entityManager;
 
     /**
@@ -35,8 +34,6 @@ final class ConnectionFactory
      *
      * This ensure, that configured database and similar settings
      * from Neos.Flow.persistence.doctrine is registered as expected
-     *
-     * @return Connection
      */
     public function create(): Connection
     {

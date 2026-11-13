@@ -78,9 +78,7 @@ class TemplateVariableContainer extends StandardVariableProvider
         }
         // end copy of parent method
 
-        if ($subject === null) {
-            $subject = $this->getBooleanValue($path);
-        }
+        $subject ??= $this->getBooleanValue($path);
 
         // we might still have a TemplateObjectAccessInterface instance
         if ($subject instanceof TemplateObjectAccessInterface) {
@@ -90,13 +88,9 @@ class TemplateVariableContainer extends StandardVariableProvider
         return $subject;
     }
 
-    /**
-     * @param string $propertyPath
-     * @return string
-     */
     protected function resolveSubVariableReferences(string $propertyPath): string
     {
-        if (strpos($propertyPath, '{') !== false) {
+        if (str_contains($propertyPath, '{')) {
             // NOTE: This is an inclusion of https://github.com/TYPO3/Fluid/pull/472 to allow multiple nested variables
             preg_match_all('/(\{.*?\})/', $propertyPath, $matches);
             foreach ($matches[1] as $match) {

@@ -166,6 +166,6 @@ class PackageOrderResolver
      */
     protected function packageRequirementIsComposerPackage($requirement)
     {
-        return (strpos($requirement, '/') !== false);
+        return (str_contains($requirement, '/'));
     }
 }

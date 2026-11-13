@@ -37,19 +37,24 @@ class ChildrenOperation extends AbstractOperation
      * {@inheritdoc}
      *
      * @param FlowQuery $flowQuery the FlowQuery object
-     * @param array $arguments the filter expression to use (in index 0)
+     * @param array<mixed> $arguments the filter expression to use (in index 0)
      * @return void
      * @throws FizzleException
      */
     public function evaluate(FlowQuery $flowQuery, array $arguments)
     {
-        if (count($flowQuery->getContext()) === 0) {
+        $context = $flowQuery->getContext();
+        $context = $context instanceof \Traversable ? iterator_to_array($context) : $context;
+        if (count($context) === 0) {
             return;
         }
 
         if (!isset($arguments[0]) || empty($arguments[0])) {
             if ($flowQuery->peekOperationName() === 'filter') {
                 $filterOperation = $flowQuery->popOperation();
+                if ($filterOperation === null) {
+                    throw new FizzleException('Could not resolve filter operation', 1744532569);
+                }
                 if (count($filterOperation['arguments']) === 0 || empty($filterOperation['arguments'][0])) {
                     throw new FizzleException('Filter() needs arguments if it follows an empty children(): children().filter()', 1332489382);
                 }
@@ -87,7 +92,6 @@ class ChildrenOperation extends AbstractOperation
      * Evaluate the property name filter by traversing to the child object. We only support
      * nested objects right now
      *
-     * @param FlowQuery $query
      * @param string $propertyNameFilter
      * @return void
      */
@@ -98,7 +102,7 @@ class ChildrenOperation extends AbstractOperation
         foreach ($query->getContext() as $element) {
             $subProperty = ObjectAccess::getPropertyPath($element, $propertyNameFilter);
             if (is_object($subProperty) || is_array($subProperty)) {
-                if (is_array($subProperty) || $subProperty instanceof \Traversable) {
+                if (is_iterable($subProperty)) {
                     foreach ($subProperty as $childElement) {
                         if (!isset($resultObjectHashes[spl_object_hash($childElement)])) {
                             $resultObjectHashes[spl_object_hash($childElement)] = true;

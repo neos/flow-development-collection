@@ -48,9 +48,9 @@ use Neos\Flow\I18n\AbstractXmlParser;
  *   )
  * )
  *
- * @Flow\Scope("singleton")
  * @see http://www.unicode.org/reports/tr35/#Inheritance_and_Validity [1]
  */
+#[Flow\Scope('singleton')]
 class CldrParser extends AbstractXmlParser
 {
     /**
@@ -92,7 +92,7 @@ class CldrParser extends AbstractXmlParser
             if ($childAttributes !== null && count($childAttributes) > 0) {
                 $parsedAttributes = '';
                 foreach ($childAttributes as $attributeName => $attributeValue) {
-                    if ($this->isDistinguishingAttribute((string)$attributeName)) {
+                    if ($this->isDistinguishingAttribute($attributeName)) {
                         $parsedAttributes .= '[@' . $attributeName . '="' . $attributeValue . '"]';
                     }
                 }
@@ -100,10 +100,8 @@ class CldrParser extends AbstractXmlParser
                 $nameOfChild .= $parsedAttributes;
             }
 
-            if (!isset($parsedNode[$nameOfChild])) {
-                // We accept only first child when they are non distinguishable (i.e. they differs only by non-distinguishing attributes)
-                $parsedNode[$nameOfChild] = $parsedChild;
-            }
+            // We accept only first child when they are non distinguishable (i.e. they differs only by non-distinguishing attributes)
+            $parsedNode[$nameOfChild] ??= $parsedChild;
         }
 
         return $parsedNode;

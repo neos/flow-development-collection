@@ -21,7 +21,6 @@ interface AuthenticationProviderInterface
     /**
      * Constructs an instance with the given name and options.
      *
-     * @param string $name
      * @param array<mixed> $options
      * @return self
      */

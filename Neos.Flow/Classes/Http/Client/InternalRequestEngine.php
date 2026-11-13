@@ -43,70 +43,68 @@ use Psr\Http\Message\StreamFactoryInterface;
 class InternalRequestEngine implements RequestEngineInterface
 {
     /**
-     * @Flow\Inject(lazy = false)
      * @var Bootstrap
      */
+    #[Flow\Inject(lazy: false)]
     protected $bootstrap;
 
     /**
-     * @Flow\Inject(lazy = false)
      * @var Dispatcher
      */
+    #[Flow\Inject(lazy: false)]
     protected $dispatcher;
 
     /**
-     * @Flow\Inject(lazy = false)
      * @var RouterInterface
      */
+    #[Flow\Inject(lazy: false)]
     protected $router;
 
     /**
-     * @Flow\Inject(lazy = false)
      * @var Context
      */
+    #[Flow\Inject(lazy: false)]
     protected $securityContext;
 
     /**
-     * @Flow\Inject
      * @var ConfigurationManager
      */
+    #[Flow\Inject]
     protected $configurationManager;
 
     /**
-     * @Flow\Inject
      * @var ValidatorResolver
      */
+    #[Flow\Inject]
     protected $validatorResolver;
 
     /**
-     * @Flow\Inject
      * @var PersistenceManagerInterface
      */
+    #[Flow\Inject]
     protected $persistenceManager;
 
     /**
-     * @Flow\Inject
      * @var ServerRequestFactoryInterface
      */
+    #[Flow\Inject]
     protected $serverRequestFactory;
 
     /**
-     * @Flow\Inject
      * @var ResponseFactoryInterface
      */
+    #[Flow\Inject]
     protected $responseFactory;
 
     /**
-     * @Flow\Inject
      * @var StreamFactoryInterface
      */
+    #[Flow\Inject]
     protected $contentFactory;
 
     /**
      * Sends the given HTTP request
      *
-     * @param RequestInterface $httpRequest
-     * @return ResponseInterface
      * @throws FlowException
      * @throws Http\Exception
      */
@@ -164,8 +162,6 @@ class InternalRequestEngine implements RequestEngineInterface
 
     /**
      * Returns the router used by this internal request engine
-     *
-     * @return RouterInterface
      */
     public function getRouter(): RouterInterface
     {
@@ -176,8 +172,6 @@ class InternalRequestEngine implements RequestEngineInterface
      * Prepare a response in case an error occurred.
      *
      * @param \Throwable $exception
-     * @param ResponseInterface $response
-     * @return ResponseInterface
      */
     protected function prepareErrorResponse($exception, ResponseInterface $response): ResponseInterface
     {

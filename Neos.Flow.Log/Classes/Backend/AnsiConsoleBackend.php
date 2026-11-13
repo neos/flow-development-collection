@@ -55,7 +55,6 @@ class AnsiConsoleBackend extends ConsoleBackend
      *
      * Initializes tag formats.
      *
-     * @return void
      * @throws CouldNotOpenResourceException
      */
     public function open(): void
@@ -77,7 +76,6 @@ class AnsiConsoleBackend extends ConsoleBackend
      * Appends the given message along with the additional information into the log.
      *
      * @param array<mixed>|null $additionalData
-     * @return void
      */
     public function append(string $message, int $severity = LOG_INFO, $additionalData = null, ?string $packageKey = null, ?string $className = null, ?string $methodName = null): void
     {
@@ -108,7 +106,7 @@ class AnsiConsoleBackend extends ConsoleBackend
         do {
             $lastOutput = $output;
             $output = preg_replace_callback('|(<([^>]+?)>(.*?)</\2>)|s', function ($matches) use ($tagFormats, $disableAnsi) {
-                $format = isset($tagFormats[$matches[2]]) ? $tagFormats[$matches[2]] : '|';
+                $format = $tagFormats[$matches[2]] ?? '|';
                 if ($disableAnsi) {
                     return $matches[3];
                 } else {

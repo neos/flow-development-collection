@@ -35,46 +35,43 @@ use Psr\Log\LoggerInterface;
 /**
  * Flow's Doctrine PersistenceManager
  *
- * @Flow\Scope("singleton")
  * @api
  */
+#[Flow\Scope('singleton')]
 class PersistenceManager extends AbstractPersistenceManager
 {
     /**
-     * @Flow\Inject(name="Neos.Flow:SystemLogger")
      * @var LoggerInterface
      */
+    #[Flow\Inject(name: 'Neos.Flow:SystemLogger')]
     protected $logger;
 
     /**
-     * @Flow\Inject
      * @var ThrowableStorageInterface
      */
+    #[Flow\Inject]
     protected $throwableStorage;
 
     /**
-     * @Flow\Inject
      * @var EntityManagerInterface
      */
+    #[Flow\Inject]
     protected $entityManager;
 
     /**
-     * @Flow\Inject
      * @var ValidatorResolver
      */
+    #[Flow\Inject]
     protected $validatorResolver;
 
     /**
-     * @Flow\Inject
      * @var ReflectionService
      */
+    #[Flow\Inject]
     protected $reflectionService;
 
     /**
      * Injects the (system) logger based on PSR-3.
-     *
-     * @param LoggerInterface $logger
-     * @return void
      */
     public function injectLogger(LoggerInterface $logger): void
     {
@@ -86,12 +83,11 @@ class PersistenceManager extends AbstractPersistenceManager
      * session into the backend
      *
      * @param boolean $onlyAllowedObjects If true an exception will be thrown if there are scheduled updates/deletes or insertions for objects that are not "allowed" (see AbstractPersistenceManager::allowObject()). Deprecated: Use `persistAllowedObjects()` instead.
-     * @return void
      * @api
      */
     public function persistAll(bool $onlyAllowedObjects = false): void
     {
-        if ($onlyAllowedObjects === true) {
+        if ($onlyAllowedObjects) {
             $this->persistAllowedObjects();
             return;
         }
@@ -111,7 +107,6 @@ class PersistenceManager extends AbstractPersistenceManager
      * An exception will be thrown if there are scheduled updates/deletes or
      * insertions for objects that are not "allowed" (see AbstractPersistenceManager::allowObject())
      *
-     * @return void
      * @throws PersistenceException
      * @api
      */
@@ -133,8 +128,6 @@ class PersistenceManager extends AbstractPersistenceManager
      *
      * Managed instances become detached, any fetches will
      * return data directly from the persistence "backend".
-     *
-     * @return void
      */
     public function clearState(): void
     {
@@ -183,7 +176,7 @@ class PersistenceManager extends AbstractPersistenceManager
         if ($this->entityManager->contains($object)) {
             try {
                 return current($this->entityManager->getUnitOfWork()->getEntityIdentifier($object));
-            } catch (ORMException $exception) {
+            } catch (ORMException) {
             }
         }
         return null;
@@ -211,7 +204,7 @@ class PersistenceManager extends AbstractPersistenceManager
             /** @phpstan-ignore return.type */
             return $this->newObjects[$identifier];
         }
-        if ($useLazyLoading === true) {
+        if ($useLazyLoading) {
             return $this->entityManager->getReference($objectType, $identifier);
         }
 
@@ -234,7 +227,6 @@ class PersistenceManager extends AbstractPersistenceManager
      * Adds an object to the persistence.
      *
      * @param object $object The object to add
-     * @return void
      * @throws KnownObjectException if the given $object is not new
      * @throws PersistenceException if another error occurs
      * @throws PropertyNotAccessibleException
@@ -243,13 +235,13 @@ class PersistenceManager extends AbstractPersistenceManager
     public function add($object): void
     {
         if (!$this->isNewObject($object)) {
-            throw new KnownObjectException('The object of type "' . get_class($object) . '" (identifier: "' . $this->getIdentifierByObject($object) . '") which was passed to EntityManager->add() is not a new object. Check the code which adds this entity to the repository and make sure that only objects are added which were not persisted before. Alternatively use update() for updating existing objects."', 1337934295);
+            throw new KnownObjectException('The object of type "' . $object::class . '" (identifier: "' . $this->getIdentifierByObject($object) . '") which was passed to EntityManager->add() is not a new object. Check the code which adds this entity to the repository and make sure that only objects are added which were not persisted before. Alternatively use update() for updating existing objects."', 1337934295);
         }
 
         try {
             $this->entityManager->persist($object);
         } catch (\Exception $exception) {
-            throw new PersistenceException('Could not add object of type "' . get_class($object) . '"', 1337934455, $exception);
+            throw new PersistenceException('Could not add object of type "' . $object::class . '"', 1337934455, $exception);
         }
     }
 
@@ -257,7 +249,6 @@ class PersistenceManager extends AbstractPersistenceManager
      * Removes an object to the persistence.
      *
      * @param object $object The object to remove
-     * @return void
      * @api
      */
     public function remove($object): void
@@ -269,7 +260,6 @@ class PersistenceManager extends AbstractPersistenceManager
      * Update an object in the persistence.
      *
      * @param object $object The modified object
-     * @return void
      * @throws UnknownObjectException if the given $object is new
      * @throws PersistenceException if another error occurs
      * @throws PropertyNotAccessibleException
@@ -278,12 +268,12 @@ class PersistenceManager extends AbstractPersistenceManager
     public function update($object): void
     {
         if ($this->isNewObject($object)) {
-            throw new UnknownObjectException('The object of type "' . get_class($object) . '" (identifier: "' . $this->getIdentifierByObject($object) . '") which was passed to EntityManager->update() is not a previously persisted object. Check the code which updates this entity and make sure that only objects are updated which were persisted before. Alternatively use add() for persisting new objects."', 1313663277);
+            throw new UnknownObjectException('The object of type "' . $object::class . '" (identifier: "' . $this->getIdentifierByObject($object) . '") which was passed to EntityManager->update() is not a previously persisted object. Check the code which updates this entity and make sure that only objects are updated which were persisted before. Alternatively use add() for persisting new objects."', 1313663277);
         }
         try {
             $this->entityManager->persist($object);
         } catch (\Exception $exception) {
-            throw new PersistenceException('Could not merge object of type "' . get_class($object) . '"', 1297778180, $exception);
+            throw new PersistenceException('Could not merge object of type "' . $object::class . '"', 1297778180, $exception);
         }
     }
 
@@ -302,7 +292,6 @@ class PersistenceManager extends AbstractPersistenceManager
     /**
      * Called from functional tests, creates/updates database tables and compiles proxies.
      *
-     * @return boolean
      * @throws ToolsException
      */
     public function compile(): bool
@@ -330,8 +319,6 @@ class PersistenceManager extends AbstractPersistenceManager
 
     /**
      * Called after a functional test in Flow, dumps everything in the database.
-     *
-     * @return void
      */
     public function tearDown(): void
     {
@@ -350,10 +337,8 @@ class PersistenceManager extends AbstractPersistenceManager
 
     /**
      * Signals that all persistAll() has been executed successfully.
-     *
-     * @Flow\Signal
-     * @return void
      */
+    #[Flow\Signal]
     protected function emitAllObjectsPersisted(): void
     {
     }
@@ -363,8 +348,6 @@ class PersistenceManager extends AbstractPersistenceManager
      *
      * This is primarily used to inform the user if he tries to save
      * data in an unsafe request.
-     *
-     * @return boolean
      */
     public function hasUnpersistedChanges(): bool
     {

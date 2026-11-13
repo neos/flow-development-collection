@@ -21,9 +21,8 @@ use Neos\Flow\Aop\Exception\CircularPointcutReferenceException;
  * code associated with the pointcut (ie. advices) should be executed. This set of
  * join points is defined by a pointcut expression which is matched against class
  * and method signatures.
- *
- * @Flow\Proxy(false)
  */
+#[Flow\Proxy(false)]
 class Pointcut implements PointcutFilterInterface
 {
     public const MAXIMUM_RECURSIONS = 99;
@@ -56,7 +55,7 @@ class Pointcut implements PointcutFilterInterface
      * An identifier which is used to detect circular references between pointcuts
      * @var mixed
      */
-    protected $pointcutQueryIdentifier = null;
+    protected $pointcutQueryIdentifier;
 
     /**
      * Counts how often this pointcut's matches() method has been called during one query
@@ -68,7 +67,6 @@ class Pointcut implements PointcutFilterInterface
      * The constructor
      *
      * @param string $pointcutExpression A pointcut expression which configures the pointcut
-     * @param PointcutFilterComposite $pointcutFilterComposite
      * @param class-string $aspectClassName The name of the aspect class where the pointcut was declared (either explicitly or from an advice's pointcut expression)
      * @param ?string $pointcutMethodName (optional) If the pointcut is created from a pointcut declaration, the name of the method declaring the pointcut must be passed
      */
@@ -169,9 +167,6 @@ class Pointcut implements PointcutFilterInterface
 
     /**
      * This method is used to optimize the matching process.
-     *
-     * @param ClassNameIndex $classNameIndex
-     * @return ClassNameIndex
      */
     public function reduceTargetClassNames(ClassNameIndex $classNameIndex): ClassNameIndex
     {

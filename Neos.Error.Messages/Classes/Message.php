@@ -17,7 +17,7 @@ namespace Neos\Error\Messages;
  *
  * @api
  */
-class Message
+class Message implements \Stringable
 {
     public const SEVERITY_NOTICE = 'Notice';
     public const SEVERITY_WARNING = 'Warning';
@@ -44,7 +44,7 @@ class Message
 
     /**
      * The message arguments. Will be replaced in the message body.
-     * @var array
+     * @var array<mixed>
      */
     protected $arguments = [];
 
@@ -59,7 +59,7 @@ class Message
      *
      * @param string $message An english error message which is used if no other error message can be resolved
      * @param integer|null $code A unique error code
-     * @param array $arguments Array of arguments to be replaced in message
+     * @param array<mixed> $arguments Array of arguments to be replaced in message
      * @param string $title optional title for the message
      * @api
      */
@@ -83,7 +83,6 @@ class Message
     }
 
     /**
-     * @return bool
      * @api
      */
     public function hasCode(): bool
@@ -103,7 +102,7 @@ class Message
     }
 
     /**
-     * @return array
+     * @return array<mixed>
      * @api
      */
     public function getArguments(): array
@@ -112,7 +111,6 @@ class Message
     }
 
     /**
-     * @return bool
      * @api
      */
     public function hasTitle(): bool
@@ -121,7 +119,6 @@ class Message
     }
 
     /**
-     * @return string
      * @api
      */
     public function getTitle(): string
@@ -130,7 +127,6 @@ class Message
     }
 
     /**
-     * @return string
      * @api
      */
     public function getSeverity(): string
@@ -138,9 +134,6 @@ class Message
         return $this->severity;
     }
 
-    /**
-     * @return string
-     */
     public function render(): string
     {
         if ($this->arguments !== []) {
@@ -153,7 +146,6 @@ class Message
     /**
      * Converts this error into a string
      *
-     * @return string
      * @api
      */
     public function __toString(): string

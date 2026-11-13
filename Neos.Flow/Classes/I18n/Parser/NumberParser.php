@@ -23,11 +23,11 @@ use Neos\Flow\I18n\Utility;
  * This parser does not support full syntax of number formats as defined in
  * CLDR. It uses parsed formats from NumbersReader class.
  *
- * @Flow\Scope("singleton")
  * @see NumbersReader
  * @api
  * @todo Currency support
  */
+#[Flow\Scope('singleton')]
 class NumberParser
 {
     /**
@@ -47,7 +47,6 @@ class NumberParser
     protected $numbersReader;
 
     /**
-     * @param NumbersReader $numbersReader
      * @return void
      */
     public function injectNumbersReader(NumbersReader $numbersReader)
@@ -189,7 +188,7 @@ class NumberParser
             }
         }
 
-        $positionOfDecimalSeparator = strpos($numberToParse, $localizedSymbols['decimal']);
+        $positionOfDecimalSeparator = strpos($numberToParse, (string) $localizedSymbols['decimal']);
         if ($positionOfDecimalSeparator === false) {
             $numberToParse = str_replace($localizedSymbols['group'], '', $numberToParse);
 

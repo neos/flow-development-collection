@@ -19,15 +19,13 @@ use Neos\Flow\Annotations as Flow;
 
 /**
  * A walker to transform a select query into a count query.
- *
- * @Flow\Proxy(false)
  */
+#[Flow\Proxy(false)]
 class CountWalker extends TreeWalkerAdapter
 {
     /**
      * Walks down a SelectStatement AST node, modifying it to retrieve a COUNT
      *
-     * @param SelectStatement $AST
      * @return void
      */
     public function walkSelectStatement(SelectStatement $AST)

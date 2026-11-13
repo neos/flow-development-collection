@@ -32,12 +32,11 @@ class BearerToken extends AbstractToken implements SessionlessTokenInterface
     /**
      * The password credentials
      * @var array{bearer: string}
-     * @Flow\Transient
      */
+    #[Flow\Transient]
     protected $credentials = ['bearer' => ''];
 
     /**
-     * @param ActionRequest $actionRequest
      * @throws AuthenticationRequiredException
      * @throws InvalidAuthenticationStatusException
      */
@@ -53,7 +52,7 @@ class BearerToken extends AbstractToken implements SessionlessTokenInterface
         $this->setAuthenticationStatus(TokenInterface::NO_CREDENTIALS_GIVEN);
 
         foreach ($httpRequest->getHeader('Authorization') as $authorizationHeader) {
-            if (strpos($authorizationHeader, 'Bearer ') === 0) {
+            if (str_starts_with($authorizationHeader, 'Bearer ')) {
                 $this->credentials['bearer'] = substr($authorizationHeader, strlen('Bearer '));
                 $this->setAuthenticationStatus(TokenInterface::AUTHENTICATION_NEEDED);
                 return;
@@ -61,9 +60,6 @@ class BearerToken extends AbstractToken implements SessionlessTokenInterface
         }
     }
 
-    /**
-     * @return string
-     */
     public function getBearer(): string
     {
         return $this->credentials['bearer'];
@@ -71,10 +67,8 @@ class BearerToken extends AbstractToken implements SessionlessTokenInterface
 
     /**
      * Returns a string representation of the token for logging purposes.
-     *
-     * @return string
      */
-    public function __toString()
+    public function __toString(): string
     {
         return 'Bearer token';
     }

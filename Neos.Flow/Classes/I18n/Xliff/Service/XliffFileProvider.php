@@ -25,33 +25,33 @@ use Neos\Utility\Files;
 /**
  * A provider service for XLIFF file objects within the application
  *
- * @Flow\Scope("singleton")
  * @phpstan-import-type XliffRecord from FileAdapter
  */
+#[Flow\Scope('singleton')]
 class XliffFileProvider
 {
     /**
-     * @Flow\Inject
      * @var PackageManager
      */
+    #[Flow\Inject]
     protected $packageManager;
 
     /**
-     * @Flow\Inject
      * @var I18n\Service
      */
+    #[Flow\Inject]
     protected $localizationService;
 
     /**
-     * @Flow\Inject
      * @var XliffReader
      */
+    #[Flow\Inject]
     protected $xliffReader;
 
     /**
-     * @Flow\InjectConfiguration(path="i18n.globalTranslationPath")
      * @var string
      */
+    #[Flow\InjectConfiguration(path: 'i18n.globalTranslationPath')]
     protected $globalTranslationPath;
 
     /**
@@ -74,7 +74,6 @@ class XliffFileProvider
     /**
      * Injects the Flow_I18n_XmlModelCache cache
      *
-     * @param VariableFrontend $cache
      * @return void
      */
     public function injectCache(VariableFrontend $cache)
@@ -95,7 +94,6 @@ class XliffFileProvider
 
     /**
      * @param string $fileId
-     * @param Locale $locale
      * @return XliffRecord
      * @todo Add XLIFF 2.0 support
      */
@@ -127,10 +125,7 @@ class XliffFileProvider
     }
 
     /**
-     * @param string $translationPath
      * @param array{fileIdentifier: string, sourceLocale?: Locale, translationUnits?: array<string,array<int,array{source: string, target: string}>>} $parsedData
-     * @param string $fileId
-     * @param string $defaultPackageName
      * @return void
      */
     protected function readDirectoryRecursively(string $translationPath, array & $parsedData, string $fileId, string $defaultPackageName = 'Neos.Flow')
@@ -163,6 +158,7 @@ class XliffFileProvider
                 $xliffParser = $this->getParser($documentVersion);
                 if ($xliffParser) {
                     $fileData = $xliffParser->getFileDataFromDocument($filePath, $relevantOffset);
+                    /** @phpstan-ignore parameterByRef.type (array merge gets two arrays of correct shape) */
                     $parsedData = Arrays::arrayMergeRecursiveOverrule($parsedData, $fileData ?: []);
                 }
             }
@@ -171,7 +167,6 @@ class XliffFileProvider
 
     /**
      * @param string $fileId
-     * @param Locale $locale
      * @return FileAdapter
      */
     public function getFile($fileId, Locale $locale)
@@ -185,11 +180,9 @@ class XliffFileProvider
      */
     public function getParser($documentVersion)
     {
-        switch ($documentVersion) {
-            case '1.2':
-                return new V12XliffParser();
-            default:
-                return null;
-        }
+        return match ($documentVersion) {
+            '1.2' => new V12XliffParser(),
+            default => null,
+        };
     }
 }

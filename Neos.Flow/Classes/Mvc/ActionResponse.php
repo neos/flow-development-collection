@@ -71,8 +71,8 @@ use Psr\Http\Message\UriInterface;
  * ```
  *
  * @deprecated with Flow 9
- * @Flow\Proxy(false)
  */
+#[Flow\Proxy(false)]
 final class ActionResponse
 {
     /**
@@ -122,7 +122,6 @@ final class ActionResponse
 
     /**
      * @param string|StreamInterface $content
-     * @return void
      * @deprecated please use {@see ResponseInterface::withBody()} in combination with {@see \GuzzleHttp\Psr7\Utils::streamFor} instead
      */
     public function setContent($content): void
@@ -137,8 +136,6 @@ final class ActionResponse
     /**
      * Set content mime type for this response.
      *
-     * @param string $contentType
-     * @return void
      * @deprecated please use {@see ResponseInterface::withHeader()} with "Content-Type" instead.
      */
     public function setContentType(string $contentType): void
@@ -149,9 +146,6 @@ final class ActionResponse
     /**
      * Set a redirect URI and according status for this response.
      *
-     * @param UriInterface $uri
-     * @param int $statusCode
-     * @return void
      * @deprecated please use {@see ResponseInterface::withStatus()} and {@see ResponseInterface::withHeader()} with "Header" instead.
      */
     public function setRedirectUri(UriInterface $uri, int $statusCode = 303): void
@@ -164,8 +158,6 @@ final class ActionResponse
      * Set the status code for this response as HTTP status code.
      * Other codes than HTTP status may end in unpredictable results.
      *
-     * @param int $statusCode
-     * @return void
      * @deprecated please use {@see ResponseInterface::withStatus()} instead.
      */
     public function setStatusCode(int $statusCode): void
@@ -206,7 +198,6 @@ final class ActionResponse
      *
      * @param string $headerName The name of the header to set
      * @param array<mixed>|string|\DateTime $headerValue An array of values or a single value for the specified header field
-     * @return void
      */
     public function setHttpHeader(string $headerName, $headerValue): void
     {
@@ -226,7 +217,6 @@ final class ActionResponse
      *
      * @param string $headerName The name of the header to set
      * @param array<mixed>|string|\DateTime $headerValue An array of values or a single value for the specified header field
-     * @return void
      */
     public function addHttpHeader(string $headerName, $headerValue): void
     {
@@ -253,9 +243,6 @@ final class ActionResponse
         return count($this->headers[$headerName]) > 1 ? $this->headers[$headerName] : reset($this->headers[$headerName]);
     }
 
-    /**
-     * @return string
-     */
     public function getContent(): string
     {
         $content = $this->content->getContents();
@@ -271,9 +258,6 @@ final class ActionResponse
         return $this->redirectUri;
     }
 
-    /**
-     * @return int
-     */
     public function getStatusCode(): int
     {
         return $this->statusCode ?? 200;
@@ -287,9 +271,6 @@ final class ActionResponse
         return !empty($this->contentType);
     }
 
-    /**
-     * @return string
-     */
     public function getContentType(): string
     {
         return $this->contentType ?? '';
@@ -298,18 +279,12 @@ final class ActionResponse
     /**
      * Unsafe. Please avoid the use of this escape hatch as the behaviour is partly unspecified
      * https://github.com/neos/flow-development-collection/issues/2492
-     *
-     * @param ResponseInterface $response
      */
     public function replaceHttpResponse(ResponseInterface $response): void
     {
         $this->httpResponse = $response;
     }
 
-    /**
-     * @param ActionResponse $actionResponse
-     * @return ActionResponse
-     */
     public function mergeIntoParentResponse(ActionResponse $actionResponse): ActionResponse
     {
         if ($this->hasContent()) {
@@ -348,8 +323,6 @@ final class ActionResponse
      *
      * Possibly unsafe when used in combination with {@see self::replaceHttpResponse()}
      * https://github.com/neos/flow-development-collection/issues/2492
-     *
-     * @return ResponseInterface
      */
     public function buildHttpResponse(): ResponseInterface
     {
@@ -383,8 +356,6 @@ final class ActionResponse
 
     /**
      * Does this action response have content?
-     *
-     * @return bool
      */
     private function hasContent(): bool
     {

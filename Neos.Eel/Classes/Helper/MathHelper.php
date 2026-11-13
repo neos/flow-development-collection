@@ -22,9 +22,8 @@ use Neos\Flow\Annotations as Flow;
  *
  * See https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Math for a documentation and
  * specification of the JavaScript implementation.
- *
- * @Flow\Proxy(false)
  */
+#[Flow\Proxy(false)]
 class MathHelper implements ProtectedContextAwareInterface
 {
     /**
@@ -92,7 +91,7 @@ class MathHelper implements ProtectedContextAwareInterface
     }
 
     /**
-     * @param float $x A number
+     * @param mixed $x A number
      * @return float The absolute value of the given value
      */
     public function abs($x = NAN)
@@ -176,7 +175,7 @@ class MathHelper implements ProtectedContextAwareInterface
      */
     public function cbrt($x)
     {
-        $y = pow(abs($x), 1 / 3);
+        $y = abs($x) ** (1 / 3);
         return $x < 0 ? -$y : $y;
     }
 
@@ -244,7 +243,7 @@ class MathHelper implements ProtectedContextAwareInterface
      */
     public function isFinite($x)
     {
-        return is_numeric($x) && is_finite($x);
+        return is_numeric($x) && is_finite((float)$x);
     }
 
     /**
@@ -257,7 +256,7 @@ class MathHelper implements ProtectedContextAwareInterface
      */
     public function isInfinite($x)
     {
-        return is_numeric($x) && is_infinite($x);
+        return is_numeric($x) && is_infinite((float)$x);
     }
 
     /**
@@ -270,7 +269,7 @@ class MathHelper implements ProtectedContextAwareInterface
      */
     public function isNaN($x)
     {
-        return !is_numeric($x) || is_nan($x);
+        return !is_numeric($x) || is_nan((float)$x);
     }
 
     /**
@@ -364,7 +363,7 @@ class MathHelper implements ProtectedContextAwareInterface
      */
     public function pow($x, $y)
     {
-        return pow($x, $y);
+        return $x ** $y;
     }
 
     /**
@@ -403,7 +402,7 @@ class MathHelper implements ProtectedContextAwareInterface
      * Negative values are also supported (-1 rounds to full 10ths).
      *
      * @param mixed $subject The value to round
-     * @param integer $precision The precision (digits after decimal point) to use, defaults to 0
+     * @param mixed $precision The precision (digits after decimal point) to use, defaults to 0
      * @return float The rounded value
      */
     public function round($subject, $precision = 0)
@@ -421,7 +420,7 @@ class MathHelper implements ProtectedContextAwareInterface
     /**
      * Get the sign of the given number, indicating whether the number is positive, negative or zero
      *
-     * @param integer|float $x The value
+     * @param mixed $x The value
      * @return integer|float -1, 0, 1 depending on the sign or NAN if the given value was not numeric
      */
     public function sign($x)

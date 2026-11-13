@@ -26,10 +26,10 @@ use Neos\Flow\Persistence\Repository;
  * Note that this repository is not part of the public API and must not be used in client code. Please use the API
  * provided by ResourceManager instead.
  *
- * @Flow\Scope("singleton")
  * @extends Repository<PersistentResource>
  * @see ResourceManager
  */
+#[Flow\Scope('singleton')]
 class ResourceRepository extends Repository
 {
     /**
@@ -38,15 +38,15 @@ class ResourceRepository extends Repository
     public const ENTITY_CLASSNAME = PersistentResource::class;
 
     /**
-     * @Flow\Inject
      * @var EntityManagerInterface
      */
+    #[Flow\Inject]
     protected $entityManager;
 
     /**
-     * @Flow\Inject
      * @var PersistenceManagerInterface
      */
+    #[Flow\Inject]
     protected $persistenceManager;
 
     /**
@@ -92,7 +92,6 @@ class ResourceRepository extends Repository
      * Removes a PersistentResource object from this repository
      *
      * @param object $object
-     * @return void
      */
     public function remove($object): void
     {
@@ -243,11 +242,6 @@ class ResourceRepository extends Repository
 
     /**
      * Counts all resources with the same SHA1 hash and collection
-     *
-     * @param string $sha1Hash
-     * @param string $collectionName
-     *
-     * @return int
      */
     public function countBySha1AndCollectionName(string $sha1Hash, string $collectionName): int
     {

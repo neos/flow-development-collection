@@ -51,9 +51,9 @@ abstract class AbstractController implements ControllerInterface
     protected $uriBuilder;
 
     /**
-     * @Flow\Inject
      * @var ValidatorResolver
      */
+    #[Flow\Inject]
     protected $validatorResolver;
 
     /**
@@ -94,9 +94,9 @@ abstract class AbstractController implements ControllerInterface
     protected $controllerContext;
 
     /**
-     * @Flow\Inject
      * @var RouteValuesNormalizerInterface
      */
+    #[Flow\Inject]
     protected $routeValuesNormalizer;
 
     /**
@@ -119,8 +119,6 @@ abstract class AbstractController implements ControllerInterface
      *
      * This method should be called by the concrete processRequest() method.
      *
-     * @param ActionRequest $request
-     * @param ActionResponse $response
      * @return void
      */
     protected function initializeController(ActionRequest $request, ActionResponse $response)
@@ -174,6 +172,7 @@ abstract class AbstractController implements ControllerInterface
      */
     public function addFlashMessage($messageBody, $messageTitle = '', $severity = Error\Message::SEVERITY_OK, array $messageArguments = [], $messageCode = null)
     {
+        /** @phpstan-ignore function.alreadyNarrowedType (Annotations can be wrong) */
         if (!is_string($messageBody)) {
             throw new \InvalidArgumentException('The message body must be of type string, "' . gettype($messageBody) . '" given.', 1243258395);
         }
@@ -203,7 +202,6 @@ abstract class AbstractController implements ControllerInterface
      * @param string|null $controllerName Unqualified object name of the controller to forward to. If not specified, the current controller is used.
      * @param string|null $packageKey Key of the package containing the controller to forward to. May also contain the sub package, concatenated with backslash (Vendor.Foo\Bar\Baz). If not specified, the current package is assumed.
      * @param array<string, mixed> $arguments Arguments to pass to the target action
-     * @return never
      * @throws ForwardException
      * @throws InvalidActionNameException
      * @throws InvalidArgumentNameException
@@ -276,7 +274,6 @@ abstract class AbstractController implements ControllerInterface
      * @param integer $delay (optional) The delay in seconds. Default is no delay.
      * @param integer $statusCode (optional) The HTTP status code for the redirect. Default is "303 See Other"
      * @param string|null $format The format to use for the redirect URI
-     * @return never
      * @throws StopActionException
      * @throws \Neos\Flow\Http\Exception
      * @throws MissingActionNameException
@@ -285,7 +282,7 @@ abstract class AbstractController implements ControllerInterface
      */
     protected function redirect(string $actionName, ?string $controllerName = null, ?string $packageKey = null, array $arguments = [], int $delay = 0, int $statusCode = 303, ?string $format = null): never
     {
-        if ($packageKey !== null && str_contains($packageKey, '\\') !== false) {
+        if ($packageKey !== null && str_contains($packageKey, '\\')) {
             [$packageKey, $subpackageKey] = explode('\\', $packageKey, 2);
         } else {
             $subpackageKey = null;
@@ -309,7 +306,6 @@ abstract class AbstractController implements ControllerInterface
      * @param ActionRequest $request The request to redirect to
      * @param integer $delay (optional) The delay in seconds. Default is no delay.
      * @param integer $statusCode (optional) The HTTP status code for the redirect. Default is "303 See Other"
-     * @return never
      * @throws MissingActionNameException
      * @throws StopActionException
      * @throws \Neos\Flow\Http\Exception
@@ -369,13 +365,11 @@ abstract class AbstractController implements ControllerInterface
     {
         $httpResponse = $this->response->buildHttpResponse();
         $httpResponse = $httpResponse->withStatus($statusCode);
-        if ($content === null) {
-            $content = sprintf(
-                '%s %s',
-                $statusCode,
-                $statusMessage ?? ResponseInformationHelper::getStatusMessageByCode($statusCode)
-            );
-        }
+        $content ??= sprintf(
+            '%s %s',
+            $statusCode,
+            $statusMessage ?? ResponseInformationHelper::getStatusMessageByCode($statusCode)
+        );
         $httpResponse = $httpResponse->withBody(Utils::streamFor($content));
         throw StopActionException::createForResponse($httpResponse, $content);
     }
@@ -383,7 +377,6 @@ abstract class AbstractController implements ControllerInterface
     /**
      * Maps arguments delivered by the request object to the local controller arguments.
      *
-     * @param ActionRequest $request
      * @return void
      * @throws RequiredArgumentMissingException
      * @throws NoSuchArgumentException

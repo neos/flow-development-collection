@@ -17,9 +17,8 @@ use Psr\Http\Message\UriInterface;
 
 /**
  * Simple DTO wrapping the values required for a Router::resolve() call
- *
- * @Flow\Proxy(false)
  */
+#[Flow\Proxy(false)]
 final class ResolveContext
 {
     /**
@@ -60,7 +59,6 @@ final class ResolveContext
      * @param array<mixed> $routeValues Route values to build the URI, for example ['@action' => 'index', 'someArgument' => 'foo', ...]
      * @param bool $forceAbsoluteUri Whether or not an absolute URI is to be returned
      * @param string $uriPathPrefix A prefix to be prepended to any resolved URI. Not allowed to start with "/".
-     * @param RouteParameters $parameters
      */
     public function __construct(UriInterface $baseUri, array $routeValues, bool $forceAbsoluteUri, string $uriPathPrefix, RouteParameters $parameters)
     {
@@ -70,14 +68,11 @@ final class ResolveContext
         $this->uriPathPrefix = $uriPathPrefix;
         $this->parameters = $parameters;
 
-        if (strpos($this->uriPathPrefix, '/') === 0) {
+        if (str_starts_with($this->uriPathPrefix, '/')) {
             throw new \InvalidArgumentException('UriPathPrefix "' . $uriPathPrefix . '" is not allowed to start with "/".', 1570187176);
         }
     }
 
-    /**
-     * @return UriInterface
-     */
     public function getBaseUri(): UriInterface
     {
         return $this->baseUri;
@@ -91,25 +86,16 @@ final class ResolveContext
         return $this->routeValues;
     }
 
-    /**
-     * @return bool
-     */
     public function isForceAbsoluteUri(): bool
     {
         return $this->forceAbsoluteUri;
     }
 
-    /**
-     * @return string
-     */
     public function getUriPathPrefix(): string
     {
         return $this->uriPathPrefix;
     }
 
-    /**
-     * @return RouteParameters
-     */
     public function getParameters(): RouteParameters
     {
         return $this->parameters;

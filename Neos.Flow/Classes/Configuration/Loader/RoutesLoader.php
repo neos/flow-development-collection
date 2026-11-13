@@ -51,10 +51,8 @@ class RoutesLoader implements LoaderInterface
 {
     /**
      * The maximum number of recursions when merging subroute configurations.
-     *
-     * @var integer
      */
-    private const MAXIMUM_SUBROUTE_RECURSIONS = 99;
+    private const int MAXIMUM_SUBROUTE_RECURSIONS = 99;
 
     /**
      * @var YamlSource
@@ -74,7 +72,6 @@ class RoutesLoader implements LoaderInterface
 
     /**
      * @param array<PackageInterface> $packages
-     * @param ApplicationContext $context
      * @return array<int,array<mixed>>
      * @throws ConfigurationException | InvalidConfigurationException | InvalidConfigurationTypeException | ParseErrorException | RecursionException
      */
@@ -104,7 +101,7 @@ class RoutesLoader implements LoaderInterface
      */
     protected function includeSubRoutesFromSettings(array $routeDefinitions, array $routeSettings): array
     {
-        $sortedRouteSettings = (new PositionalArraySorter($routeSettings))->toArray();
+        $sortedRouteSettings = new PositionalArraySorter($routeSettings)->toArray();
         foreach ($sortedRouteSettings as $configurationKey => $routeFromSettings) {
             if ($routeFromSettings === false) {
                 continue;
@@ -141,7 +138,6 @@ class RoutesLoader implements LoaderInterface
      * Loads specified sub routes and builds composite routes.
      *
      * @param PackageInterface[] $packages
-     * @param ApplicationContext $context
      * @param array<mixed> $routesConfiguration
      * @param int $subRoutesRecursionLevel Counts how many SubRoutes have been loaded. If this number exceeds MAXIMUM_SUBROUTE_RECURSIONS, an exception is thrown
      * @return array<int,array<mixed>>

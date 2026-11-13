@@ -23,27 +23,25 @@ use Neos\Flow\Security\RequestPatternResolver;
 use Neos\Utility\PositionalArraySorter;
 use Psr\Http\Message\ResponseInterface as HttpResponseInterface;
 
-/**
- * @Flow\Scope("singleton")
- */
+#[Flow\Scope('singleton')]
 class FlashMessageService
 {
     /**
-     * @Flow\Inject
      * @var ObjectManagerInterface
      */
+    #[Flow\Inject]
     protected $objectManager;
 
     /**
-     * @Flow\Inject
      * @var RequestPatternResolver
      */
+    #[Flow\Inject]
     protected $requestPatternResolver;
 
     /**
-     * @Flow\InjectConfiguration(path="mvc.flashMessages.containers")
      * @var array<mixed>
      */
+    #[Flow\InjectConfiguration(path: 'mvc.flashMessages.containers')]
     protected $flashMessageContainerConfiguration;
 
     /**
@@ -55,13 +53,10 @@ class FlashMessageService
 
     /**
      * Persist all FlashMessageContainers that have been instantiated during the current request cycle
-     *
-     * @param HttpResponseInterface $response
-     * @return HttpResponseInterface
      */
     public function persistFlashMessages(HttpResponseInterface $response): HttpResponseInterface
     {
-        foreach ($this->instantiatedStorages as $containerName => $flashMessageStorage) {
+        foreach ($this->instantiatedStorages as $flashMessageStorage) {
             $response = $flashMessageStorage->persist($response);
         }
         return $response;
@@ -70,8 +65,6 @@ class FlashMessageService
     /**
      * Load the FlashMessageContainer for the given request
      *
-     * @param ActionRequest $request
-     * @return FlashMessageContainer
      * @throws InvalidFlashMessageConfigurationException
      * @throws InvalidRequestPatternException|NoRequestPatternFoundException
      */
@@ -82,14 +75,12 @@ class FlashMessageService
     }
 
     /**
-     * @param ActionRequest $request
-     * @return FlashMessageStorageInterface
      * @throws InvalidFlashMessageConfigurationException
      * @throws InvalidRequestPatternException|NoRequestPatternFoundException
      */
     private function getStorageByRequest(ActionRequest $request): FlashMessageStorageInterface
     {
-        $sortedContainerConfiguration = (new PositionalArraySorter($this->flashMessageContainerConfiguration))->toArray();
+        $sortedContainerConfiguration = new PositionalArraySorter($this->flashMessageContainerConfiguration)->toArray();
         foreach ($sortedContainerConfiguration as $containerName => $containerConfiguration) {
             if (isset($this->instantiatedStorages[$containerName])) {
                 return $this->instantiatedStorages[$containerName];

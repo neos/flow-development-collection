@@ -64,15 +64,15 @@ use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
 class ResourceViewHelper extends AbstractViewHelper
 {
     /**
-     * @Flow\Inject
      * @var ResourceManager
      */
+    #[Flow\Inject]
     protected $resourceManager;
 
     /**
-     * @Flow\Inject
      * @var Service
      */
+    #[Flow\Inject]
     protected $i18nService;
 
     /**
@@ -82,9 +82,9 @@ class ResourceViewHelper extends AbstractViewHelper
      */
     public function initializeArguments()
     {
-        $this->registerArgument('path', 'string', 'Location of the resource, can be either a path relative to the Public resource directory of the package or a resource://... URI', false, null);
-        $this->registerArgument('package', 'string', 'Target package key. If not set, the current package key will be used', false, null);
-        $this->registerArgument('resource', PersistentResource::class, 'If specified, this resource object is used instead of the path and package information', false, null);
+        $this->registerArgument('path', 'string', 'Location of the resource, can be either a path relative to the Public resource directory of the package or a resource://... URI', false);
+        $this->registerArgument('package', 'string', 'Target package key. If not set, the current package key will be used', false);
+        $this->registerArgument('resource', PersistentResource::class, 'If specified, this resource object is used instead of the path and package information', false);
         $this->registerArgument('localize', 'bool', 'Whether resource localization should be attempted or not.', false, true);
     }
 
@@ -102,7 +102,6 @@ class ResourceViewHelper extends AbstractViewHelper
 
     /**
      * @param array<string,mixed> $arguments
-     * @param \Closure $renderChildrenClosure
      * @param FlowAwareRenderingContextInterface&RenderingContextInterface $renderingContext
      * @return string
      * @throws InvalidVariableException
@@ -132,10 +131,10 @@ class ResourceViewHelper extends AbstractViewHelper
             $controllerContext = $renderingContext->getControllerContext();
             $package = $controllerContext->getRequest()->getControllerPackageKey();
         }
-        if (strpos($path, 'resource://') === 0) {
+        if (str_starts_with($path, 'resource://')) {
             try {
-                list($package, $path) = $resourceManager->getPackageAndPathByPublicPath($path);
-            } catch (Exception $exception) {
+                [$package, $path] = $resourceManager->getPackageAndPathByPublicPath($path);
+            } catch (Exception) {
                 throw new InvalidVariableException(sprintf('The specified path "%s" does not point to a public resource.', $path), 1386458851);
             }
         }
@@ -151,8 +150,6 @@ class ResourceViewHelper extends AbstractViewHelper
                 $path = $matches[2];
             }
         }
-
-        $uri = $resourceManager->getPublicPackageResourceUri($package, $path);
-        return $uri;
+        return $resourceManager->getPublicPackageResourceUri($package, $path);
     }
 }

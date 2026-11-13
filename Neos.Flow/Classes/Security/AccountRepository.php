@@ -21,8 +21,8 @@ use Neos\Flow\Security\Context as SecurityContext;
 /**
  * The repository for accounts
  * @extends Repository<Account>
- * @Flow\Scope("singleton")
  */
+#[Flow\Scope('singleton')]
 class AccountRepository extends Repository
 {
     /**
@@ -38,16 +38,15 @@ class AccountRepository extends Repository
     /**
      * Note: This is not required to be "the" SecurityContext of the current session, but any SecurityContext actually.
      *
-     * @Flow\Inject
      * @var SecurityContext
      */
+    #[Flow\Inject]
     protected $securityContext;
 
     /**
      * Removes an account
      *
      * @param object $object The account to remove
-     * @return void
      * @throws IllegalObjectTypeException
      */
     public function remove($object): void

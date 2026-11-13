@@ -36,9 +36,9 @@ use Psr\Log\LoggerInterface;
 class FileAdapter
 {
     /**
-     * @Flow\Inject(name="Neos.Flow:I18nLogger")
      * @var LoggerInterface
      */
+    #[Flow\Inject(name: 'Neos.Flow:I18nLogger')]
     protected $i18nLogger;
 
     /**
@@ -54,14 +54,11 @@ class FileAdapter
 
     /**
      * @param XliffRecord $fileData
-     * @param Locale $requestedLocale
      */
     public function __construct(array $fileData, Locale $requestedLocale)
     {
         $this->fileData = $fileData;
-        if (!isset($this->fileData['translationUnits'])) {
-            $this->fileData['translationUnits'] = [];
-        }
+        $this->fileData['translationUnits'] ??= [];
         $this->requestedLocale = $requestedLocale;
     }
 

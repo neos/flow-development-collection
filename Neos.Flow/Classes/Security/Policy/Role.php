@@ -21,9 +21,9 @@ use Neos\Flow\Security\Authorization\Privilege\PrivilegeInterface;
 /**
  * A role. These roles can be structured in a tree.
  */
-class Role
+class Role implements \Stringable
 {
-    private const ROLE_IDENTIFIER_PATTERN = '/^(\w+(?:\.\w+)*)\:(\w+)$/';   // Vendor(.Package)?:RoleName
+    private const string ROLE_IDENTIFIER_PATTERN = '/^(\w+(?:\.\w+)*)\:(\w+)$/';   // Vendor(.Package)?:RoleName
 
     /**
      * The identifier of this role
@@ -68,9 +68,9 @@ class Role
     protected $description;
 
     /**
-     * @Flow\Transient
      * @var Role[]
      */
+    #[Flow\Transient]
     protected $parentRoles;
 
     /**
@@ -99,8 +99,6 @@ class Role
 
     /**
      * Returns the fully qualified identifier of this role
-     *
-     * @return string
      */
     public function getIdentifier(): string
     {
@@ -109,8 +107,6 @@ class Role
 
     /**
      * The key of the package that defines this role.
-     *
-     * @return string
      */
     public function getPackageKey(): string
     {
@@ -119,18 +115,12 @@ class Role
 
     /**
      * The name of this role, being the identifier without the package key.
-     *
-     * @return string
      */
     public function getName(): string
     {
         return $this->name;
     }
 
-    /**
-     * @param bool $abstract
-     * @return void
-     */
     public function setAbstract(bool $abstract): void
     {
         $this->abstract = $abstract;
@@ -138,8 +128,6 @@ class Role
 
     /**
      * Whether or not this role is "abstract", meaning it can't be assigned to accounts directly but only serves as a "template role" for other roles to inherit from
-     *
-     * @return bool
      */
     public function isAbstract(): bool
     {
@@ -150,7 +138,6 @@ class Role
      * Assign parent roles to this role.
      *
      * @param Role[] $parentRoles indexed by role identifier
-     * @return void
      */
     public function setParentRoles(array $parentRoles): void
     {
@@ -187,9 +174,6 @@ class Role
 
     /**
      * Add a (direct) parent role to this role.
-     *
-     * @param Role $parentRole
-     * @return void
      */
     public function addParentRole(Role $parentRole): void
     {
@@ -201,9 +185,6 @@ class Role
 
     /**
      * Returns true if the given role is a directly assigned parent of this role.
-     *
-     * @param Role $role
-     * @return bool
      */
     public function hasParentRole(Role $role): bool
     {
@@ -214,7 +195,6 @@ class Role
      * Assign privileges to this role.
      *
      * @param PrivilegeInterface[] $privileges
-     * @return void
      */
     public function setPrivileges(array $privileges): void
     {
@@ -247,7 +227,6 @@ class Role
     }
 
     /**
-     * @param string $privilegeTargetIdentifier
      * @param array<PrivilegeParameterInterface> $privilegeParameters
      * @return PrivilegeInterface|null the matching privilege or NULL if no privilege exists for the given constraints
      */
@@ -267,9 +246,6 @@ class Role
 
     /**
      * Add a privilege to this role.
-     *
-     * @param PrivilegeInterface $privilege
-     * @return void
      */
     public function addPrivilege(PrivilegeInterface $privilege): void
     {
@@ -281,22 +257,16 @@ class Role
      *
      * @return string the string representation of this role
      */
-    public function __toString()
+    public function __toString(): string
     {
         return $this->identifier;
     }
 
-    /**
-     * @return string
-     */
     public function getLabel(): string
     {
         return $this->label;
     }
 
-    /**
-     * @return string
-     */
     public function getDescription(): string
     {
         return $this->description;

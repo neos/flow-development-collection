@@ -72,7 +72,6 @@ class TemplatePaths extends \TYPO3Fluid\Fluid\View\TemplatePaths
     }
 
     /**
-     * @param PackageManager $packageManager
      * @return void
      */
     public function injectPackageManager(PackageManager $packageManager)
@@ -80,16 +79,12 @@ class TemplatePaths extends \TYPO3Fluid\Fluid\View\TemplatePaths
         $this->packageManager = $packageManager;
     }
 
-    /**
-     * @return string
-     */
     public function getTemplateRootPathPattern(): string
     {
         return $this->templateRootPathPattern;
     }
 
     /**
-     * @param string $templateRootPathPattern
      * @return void
      */
     public function setTemplateRootPathPattern(string $templateRootPathPattern)
@@ -98,7 +93,6 @@ class TemplatePaths extends \TYPO3Fluid\Fluid\View\TemplatePaths
     }
 
     /**
-     * @param string $layoutRootPathPattern
      * @return void
      */
     public function setLayoutRootPathPattern(string $layoutRootPathPattern)
@@ -107,7 +101,6 @@ class TemplatePaths extends \TYPO3Fluid\Fluid\View\TemplatePaths
     }
 
     /**
-     * @param string $partialRootPathPattern
      * @return void
      */
     public function setPartialRootPathPattern(string $partialRootPathPattern)
@@ -247,7 +240,7 @@ class TemplatePaths extends \TYPO3Fluid\Fluid\View\TemplatePaths
             $paths = $this->expandGenericPathPattern($this->options['templatePathAndFilenamePattern'], array_merge($this->patternReplacementVariables, [
                 'controllerName' => $controller,
                 'action' => $action,
-                'format' => ($format !== null ? $format : $this->patternReplacementVariables['format'])
+                'format' => ($format ?? $this->patternReplacementVariables['format'])
             ]), false, false);
         }
 
@@ -257,7 +250,7 @@ class TemplatePaths extends \TYPO3Fluid\Fluid\View\TemplatePaths
                     return $path;
                 }
             }
-        } catch (\Neos\Flow\ResourceManagement\Exception $resourceException) {/* ignoring to throw the exception below */
+        } catch (\Neos\Flow\ResourceManagement\Exception) {/* ignoring to throw the exception below */
         }
 
 
@@ -311,8 +304,8 @@ class TemplatePaths extends \TYPO3Fluid\Fluid\View\TemplatePaths
             'partial' => $partialName,
         ]);
 
-        if (strpos($partialName, ':') !== false) {
-            list($packageKey, $actualPartialName) = explode(':', $partialName);
+        if (str_contains($partialName, ':')) {
+            [$packageKey, $actualPartialName] = explode(':', $partialName);
             /** @var FlowPackageInterface $package */
             $package = $this->packageManager->getPackage($packageKey);
             $patternReplacementVariables['package'] = $packageKey;
@@ -340,7 +333,7 @@ class TemplatePaths extends \TYPO3Fluid\Fluid\View\TemplatePaths
         if ($this->packageManager === null) {
             return '';
         }
-        if (strpos($packageName, '/') !== false) {
+        if (str_contains($packageName, '/')) {
             $packageName = $this->packageManager->getPackageKeyFromComposerName($packageName);
         }
 
@@ -415,9 +408,9 @@ class TemplatePaths extends \TYPO3Fluid\Fluid\View\TemplatePaths
         $paths = $this->expandPatterns($paths, '@partialRoot', isset($patternReplacementVariables['partialRoot']) ? [$patternReplacementVariables['partialRoot']] : $this->getPartialRootPaths());
         $paths = $this->expandPatterns($paths, '@layoutRoot', isset($patternReplacementVariables['layoutRoot']) ? [$patternReplacementVariables['layoutRoot']] : $this->getLayoutRootPaths());
 
-        $subPackageKey = isset($patternReplacementVariables['subPackageKey']) ? $patternReplacementVariables['subPackageKey'] : '';
-        $controllerName = isset($patternReplacementVariables['controllerName']) ? $patternReplacementVariables['controllerName'] : '';
-        $format = isset($patternReplacementVariables['format']) ? $patternReplacementVariables['format'] : '';
+        $subPackageKey = $patternReplacementVariables['subPackageKey'] ?? '';
+        $controllerName = $patternReplacementVariables['controllerName'] ?? '';
+        $format = $patternReplacementVariables['format'] ?? '';
         unset($patternReplacementVariables['subPackageKey']);
         unset($patternReplacementVariables['controllerName']);
         unset($patternReplacementVariables['format']);
@@ -456,17 +449,13 @@ class TemplatePaths extends \TYPO3Fluid\Fluid\View\TemplatePaths
 
     /**
      * @param array<string> $paths
-     * @param string $controllerName
-     * @param string $subPackageKey
-     * @param bool $bubbleControllerAndSubpackage
      * @return array<string>
      */
     protected function expandSubPackageAndController(array $paths, string $controllerName, string $subPackageKey = '', bool $bubbleControllerAndSubpackage = false): array
     {
         if ($bubbleControllerAndSubpackage === false) {
             $paths = $this->expandPatterns($paths, '@subpackage', [$subPackageKey]);
-            $paths = $this->expandPatterns($paths, '@controller', [$controllerName]);
-            return $paths;
+            return $this->expandPatterns($paths, '@controller', [$controllerName]);
         }
 
         $numberOfPathsBeforeSubpackageExpansion = count($paths);
@@ -481,9 +470,8 @@ class TemplatePaths extends \TYPO3Fluid\Fluid\View\TemplatePaths
         for ($i = ($numberOfPathsBeforeSubpackageExpansion - 1) * ($numberOfSubpackageParts + 1); $i >= 0; $i -= ($numberOfSubpackageParts + 1)) {
             array_splice($paths, $i, 0, str_replace('@controller', $controllerName, $paths[$i]));
         }
-        $paths = $this->expandPatterns($paths, '@controller', ['']);
 
-        return $paths;
+        return $this->expandPatterns($paths, '@controller', ['']);
     }
 
     /**
@@ -491,7 +479,6 @@ class TemplatePaths extends \TYPO3Fluid\Fluid\View\TemplatePaths
      * replacing occurrences of $search.
      *
      * @param array<string> $patterns
-     * @param string $search
      * @param array<string> $replacements
      * @return array<int,string>
      */

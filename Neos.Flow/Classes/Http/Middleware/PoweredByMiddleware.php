@@ -19,9 +19,9 @@ use Psr\Http\Server\RequestHandlerInterface;
 class PoweredByMiddleware implements MiddlewareInterface
 {
     /**
-     * @Flow\Inject
      * @var ObjectManagerInterface
      */
+    #[Flow\Inject]
     protected $objectManager;
 
     /**
@@ -68,11 +68,9 @@ class PoweredByMiddleware implements MiddlewareInterface
      * Generate an application information header for the response based on settings and package versions.
      * Will statically compile in production for performance benefits.
      *
-     * @param ObjectManagerInterface $objectManager
-     * @return string
      * @throws \Neos\Flow\Configuration\Exception\InvalidConfigurationTypeException
-     * @Flow\CompileStatic
      */
+    #[Flow\CompileStatic]
     public static function prepareApplicationToken(ObjectManagerInterface $objectManager): string
     {
         $configurationManager = $objectManager->get(ConfigurationManager::class);

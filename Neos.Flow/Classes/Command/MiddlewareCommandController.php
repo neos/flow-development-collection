@@ -22,9 +22,9 @@ use Neos\Utility\PositionalArraySorter;
 final class MiddlewareCommandController extends CommandController
 {
     /**
-     * @Flow\InjectConfiguration(path="http.middlewares")
      * @var array<string, array{middleware:string}>
      */
+    #[Flow\InjectConfiguration(path: 'http.middlewares')]
     protected $chainConfiguration;
 
     /**

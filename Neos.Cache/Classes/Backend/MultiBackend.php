@@ -31,7 +31,13 @@ class MultiBackend extends AbstractBackend
 {
     use BackendInstantiationTrait;
 
+    /**
+     * @var array<mixed>
+     */
     protected array $backendConfigurations = [];
+    /**
+     * @var array<int,BackendInterface>
+     */
     protected array $backends = [];
     protected bool $setInAllBackends = true;
     protected bool $debug = false;
@@ -46,13 +52,12 @@ class MultiBackend extends AbstractBackend
     {
         parent::__construct($environmentConfiguration, $options);
 
+        /** @phpstan-ignore instanceof.alwaysTrue (somethow those checks are needed during testing) */
         if ($this->logErrors && class_exists(Bootstrap::class) && Bootstrap::$staticObjectManager instanceof ObjectManagerInterface) {
             try {
                 $logger = Bootstrap::$staticObjectManager->get(LoggerInterface::class);
-                assert($logger instanceof LoggerInterface);
                 $this->logger = $logger;
                 $throwableStorage = Bootstrap::$staticObjectManager->get(ThrowableStorageInterface::class);
-                assert($throwableStorage instanceof ThrowableStorageInterface);
                 $this->throwableStorage = $throwableStorage;
             } catch (UnknownObjectException) {
                 // Logging might not be available during compile time
@@ -65,12 +70,14 @@ class MultiBackend extends AbstractBackend
      */
     protected function prepareBackends(): void
     {
-        if ($this->initialized === true) {
+        if ($this->initialized) {
             return;
         }
         foreach ($this->backendConfigurations as $backendConfiguration) {
+            /** @var class-string<BackendInterface> $backendClassName */
+            $backendClassName = $backendConfiguration['backend'];
             $backendOptions = $backendConfiguration['backendOptions'] ?? [];
-            $backend = $this->buildSubBackend($backendConfiguration['backend'], $backendOptions);
+            $backend = $this->buildSubBackend($backendClassName, $backendOptions);
             if ($backend !== null) {
                 $this->backends[] = $backend;
             }
@@ -79,15 +86,21 @@ class MultiBackend extends AbstractBackend
     }
 
     /**
+     * @template T of BackendInterface
+     * @param class-string<T> $backendClassName
+     * @param array<mixed> $backendOptions
+     * @return T|null
      * @throws Throwable
      */
     protected function buildSubBackend(string $backendClassName, array $backendOptions): ?BackendInterface
     {
         try {
+            /** @phpstan-ignore argument.type (the possible type errors are handled below) */
             $backend = $this->instantiateBackend($backendClassName, $backendOptions, $this->environmentConfiguration);
+            /** @phpstan-ignore argument.type (the possible type errors are handled below) */
             $backend->setCache($this->cache);
         } catch (Throwable $throwable) {
-            $this->logger?->error('Failed creating sub backend ' . $backendClassName . ' for ' . get_class($this) . ': ' . $this->throwableStorage?->logThrowable($throwable), LogEnvironment::fromMethodName(__METHOD__));
+            $this->logger?->error('Failed creating sub backend ' . $backendClassName . ' for ' . static::class . ': ' . $this->throwableStorage?->logThrowable($throwable), LogEnvironment::fromMethodName(__METHOD__));
             $this->handleError($throwable);
             $backend = null;
         }
@@ -96,6 +109,7 @@ class MultiBackend extends AbstractBackend
 
     /**
      * @throws Throwable
+     * @param array<string> $tags
      */
     public function set(string $entryIdentifier, string $data, array $tags = [], ?int $lifetime = null): void
     {
@@ -104,7 +118,7 @@ class MultiBackend extends AbstractBackend
             try {
                 $backend->set($entryIdentifier, $data, $tags, $lifetime);
             } catch (Throwable $throwable) {
-                $this->logger?->error('Failed setting cache entry using backend ' . get_class($backend) . ' in ' . get_class($this) . ': ' . $this->throwableStorage?->logThrowable($throwable), LogEnvironment::fromMethodName(__METHOD__));
+                $this->logger?->error('Failed setting cache entry using backend ' . $backend::class . ' in ' . static::class . ': ' . $this->throwableStorage?->logThrowable($throwable), LogEnvironment::fromMethodName(__METHOD__));
                 $this->handleError($throwable);
                 $this->removeUnhealthyBackend($backend);
                 if (!$this->setInAllBackends) {
@@ -124,7 +138,7 @@ class MultiBackend extends AbstractBackend
             try {
                 return $backend->get($entryIdentifier);
             } catch (Throwable $throwable) {
-                $this->logger?->error('Failed retrieving cache entry using backend ' . get_class($backend) . ' in ' . get_class($this) . ': ' . $this->throwableStorage?->logThrowable($throwable), LogEnvironment::fromMethodName(__METHOD__));
+                $this->logger?->error('Failed retrieving cache entry using backend ' . $backend::class . ' in ' . static::class . ': ' . $this->throwableStorage?->logThrowable($throwable), LogEnvironment::fromMethodName(__METHOD__));
                 $this->handleError($throwable);
                 $this->removeUnhealthyBackend($backend);
             }
@@ -142,7 +156,7 @@ class MultiBackend extends AbstractBackend
             try {
                 return $backend->has($entryIdentifier);
             } catch (Throwable $throwable) {
-                $this->logger?->error('Failed checking if cache entry exists using backend ' . get_class($backend) . ' in ' . get_class($this) . ': ' . $this->throwableStorage?->logThrowable($throwable), LogEnvironment::fromMethodName(__METHOD__));
+                $this->logger?->error('Failed checking if cache entry exists using backend ' . $backend::class . ' in ' . static::class . ': ' . $this->throwableStorage?->logThrowable($throwable), LogEnvironment::fromMethodName(__METHOD__));
                 $this->handleError($throwable);
                 $this->removeUnhealthyBackend($backend);
             }
@@ -161,7 +175,7 @@ class MultiBackend extends AbstractBackend
             try {
                 $result = $result || $backend->remove($entryIdentifier);
             } catch (Throwable $throwable) {
-                $this->logger?->error('Failed removing cache entry using backend ' . get_class($backend) . ' in ' . get_class($this) . ': ' . $this->throwableStorage?->logThrowable($throwable), LogEnvironment::fromMethodName(__METHOD__));
+                $this->logger?->error('Failed removing cache entry using backend ' . $backend::class . ' in ' . static::class . ': ' . $this->throwableStorage?->logThrowable($throwable), LogEnvironment::fromMethodName(__METHOD__));
                 $this->handleError($throwable);
                 $this->removeUnhealthyBackend($backend);
             }
@@ -179,7 +193,7 @@ class MultiBackend extends AbstractBackend
             try {
                 $backend->flush();
             } catch (Throwable $throwable) {
-                $this->logger?->error('Failed flushing cache using backend ' . get_class($backend) . ' in ' . get_class($this) . ': ' . $this->throwableStorage?->logThrowable($throwable), LogEnvironment::fromMethodName(__METHOD__));
+                $this->logger?->error('Failed flushing cache using backend ' . $backend::class . ' in ' . static::class . ': ' . $this->throwableStorage?->logThrowable($throwable), LogEnvironment::fromMethodName(__METHOD__));
                 $this->handleError($throwable);
                 $this->removeUnhealthyBackend($backend);
             }
@@ -196,7 +210,7 @@ class MultiBackend extends AbstractBackend
             try {
                 $backend->collectGarbage();
             } catch (Throwable $throwable) {
-                $this->logger?->error('Failed collecting garbage using cache backend ' . get_class($backend) . ' in ' . get_class($this) . ': ' . $this->throwableStorage?->logThrowable($throwable), LogEnvironment::fromMethodName(__METHOD__));
+                $this->logger?->error('Failed collecting garbage using cache backend ' . $backend::class . ' in ' . static::class . ': ' . $this->throwableStorage?->logThrowable($throwable), LogEnvironment::fromMethodName(__METHOD__));
                 $this->handleError($throwable);
                 $this->removeUnhealthyBackend($backend);
             }
@@ -205,6 +219,7 @@ class MultiBackend extends AbstractBackend
 
     /**
      * This setter is used by AbstractBackend::setProperties()
+     * @param array<mixed> $backendConfigurations
      */
     protected function setBackendConfigurations(array $backendConfigurations): void
     {
@@ -261,7 +276,7 @@ class MultiBackend extends AbstractBackend
         $i = array_search($unhealthyBackend, $this->backends, true);
         if ($i !== false) {
             unset($this->backends[$i]);
-            $this->logger?->warning(sprintf('Removing unhealthy cache backend %s from backends used by %s', get_class($unhealthyBackend), get_class($this)), LogEnvironment::fromMethodName(__METHOD__));
+            $this->logger?->warning(sprintf('Removing unhealthy cache backend %s from backends used by %s', $unhealthyBackend::class, static::class), LogEnvironment::fromMethodName(__METHOD__));
         }
     }
 }

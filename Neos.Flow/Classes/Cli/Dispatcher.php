@@ -10,9 +10,8 @@ use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 
 /**
  * A command dispatcher.
- *
- * @Flow\Scope("singleton")
  */
+#[Flow\Scope('singleton')]
 class Dispatcher
 {
     public function __construct(
@@ -24,9 +23,6 @@ class Dispatcher
     /**
      * Try processing the request until it is successfully marked "dispatched"
      *
-     * @param Request $request
-     * @param Response $response
-     * @return Response
      * @throws InfiniteLoopException
      * @throws InvalidCommandControllerException
      */
@@ -43,7 +39,7 @@ class Dispatcher
                 $this->emitBeforeControllerInvocation($request, $response, $controller);
                 $controller->processRequest($request, $response);
                 $this->emitAfterControllerInvocation($request, $response, $controller);
-            } catch (StopCommandException $exception) {
+            } catch (StopCommandException) {
                 $this->emitAfterControllerInvocation($request, $response, $controller);
             }
         }
@@ -54,12 +50,9 @@ class Dispatcher
     /**
      * This signal is emitted directly before the request is been dispatched to a controller.
      *
-     * @param Request $request
-     * @param Response $response
-     * @param CommandControllerInterface $controller
      * @return void
-     * @Flow\Signal
      */
+    #[Flow\Signal]
     protected function emitBeforeControllerInvocation(Request $request, Response $response, CommandControllerInterface $controller)
     {
     }
@@ -68,12 +61,9 @@ class Dispatcher
      * This signal is emitted directly after the request has been dispatched to a controller and the controller
      * returned control back to the dispatcher.
      *
-     * @param Request $request
-     * @param Response $response
-     * @param CommandControllerInterface $controller
      * @return void
-     * @Flow\Signal
      */
+    #[Flow\Signal]
     protected function emitAfterControllerInvocation(Request $request, Response $response, CommandControllerInterface $controller)
     {
     }
@@ -83,7 +73,6 @@ class Dispatcher
      * If no controller can be found, an instance of NotFoundControllerInterface is returned.
      *
      * @param Request $request The request to dispatch
-     * @return CommandControllerInterface
      * @throws InvalidCommandControllerException
      */
     protected function resolveController(Request $request): CommandControllerInterface
@@ -95,6 +84,7 @@ class Dispatcher
         }
 
         $controller = $this->objectManager->get($controllerObjectName);
+        /** @phpstan-ignore instanceof.alwaysTrue (Annotations can be wrong) */
         if (!$controller instanceof CommandControllerInterface) {
             throw new InvalidCommandControllerException('Invalid controller "' . $request->getControllerObjectName() . '". The controller must be a valid request handling controller, ' . get_debug_type($controller) . ' given.', 1565878098);
         }

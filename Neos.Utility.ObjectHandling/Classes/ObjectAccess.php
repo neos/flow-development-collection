@@ -68,18 +68,18 @@ abstract class ObjectAccess
      */
     public static function getProperty($subject, $propertyName, bool $forceDirectAccess = false)
     {
-        /** @phpstan-ignore booleanAnd.alwaysFalse (annotations may be wrong) */
+        /** @phpstan-ignore function.alreadyNarrowedType,booleanAnd.alwaysFalse (annotations may be wrong) */
         if (!is_object($subject) && !is_array($subject)) {
             throw new \InvalidArgumentException('$subject must be an object or array, ' . gettype($subject) . ' given.', 1237301367);
         }
-        /** @phpstan-ignore booleanAnd.alwaysFalse (annotations may be wrong) */
+        /** @phpstan-ignore function.alreadyNarrowedType,booleanAnd.alwaysFalse (annotations may be wrong) */
         if (!is_string($propertyName) && !is_int($propertyName)) {
             throw new \InvalidArgumentException('Given property name/index is not of type string or integer.', 1231178303);
         }
 
         $propertyExists = false;
         $propertyValue = self::getPropertyInternal($subject, $propertyName, $forceDirectAccess, $propertyExists);
-        if ($propertyExists === true) {
+        if ($propertyExists) {
             return $propertyValue;
         }
         throw new PropertyNotAccessibleException('The property "' . $propertyName . '" on the subject was not accessible.', 1263391473);
@@ -121,18 +121,16 @@ abstract class ObjectAccess
         $propertyExists = true;
         $className = TypeHandling::getTypeForValue($subject);
 
-        if ($forceDirectAccess === true) {
+        if ($forceDirectAccess) {
             // try actual class property first
             if (property_exists($className, $propertyName)) {
                 $propertyReflection = new \ReflectionProperty($className, $propertyName);
-                $propertyReflection->setAccessible(true);
                 return $propertyReflection->getValue($subject);
             }
             // then see if it's a Flow proxy and try to get the parent class property
             $className = get_parent_class($className);
             if ($subject instanceof ProxyInterface && $className !== false && property_exists($className, $propertyName)) {
                 $propertyReflection = new \ReflectionProperty($className, $propertyName);
-                $propertyReflection->setAccessible(true);
                 return $propertyReflection->getValue($subject);
             }
             // then try to get the property directly
@@ -170,9 +168,7 @@ abstract class ObjectAccess
     }
 
     /**
-     * @param string $cacheIdentifier
      * @param mixed $subject
-     * @param string $propertyName
      * @return void
      */
     protected static function initializePropertyGetterCache(string $cacheIdentifier, $subject, string $propertyName)
@@ -206,7 +202,6 @@ abstract class ObjectAccess
      * For arrays the keys are checked likewise.
      *
      * @param mixed $subject An object or array
-     * @param string $propertyPath
      * @return mixed Value of the property
      */
     public static function getPropertyPath($subject, string $propertyPath)
@@ -215,7 +210,7 @@ abstract class ObjectAccess
         foreach ($propertyPathSegments as $pathSegment) {
             $propertyExists = false;
             $propertyValue = self::getPropertyInternal($subject, $pathSegment, false, $propertyExists);
-            if ($propertyExists !== true && (is_array($subject) || $subject instanceof \ArrayAccess) && isset($subject[$pathSegment])) {
+            if (!$propertyExists && (is_array($subject) || $subject instanceof \ArrayAccess) && isset($subject[$pathSegment])) {
                 $subject = $subject[$pathSegment];
             } else {
                 $subject = $propertyValue;
@@ -248,7 +243,7 @@ abstract class ObjectAccess
      */
     public static function setProperty(&$subject, $propertyName, $propertyValue, bool $forceDirectAccess = false): bool
     {
-        /** @phpstan-ignore booleanAnd.alwaysFalse (annotations may be wrong) */
+        /** @phpstan-ignore function.alreadyNarrowedType,booleanAnd.alwaysFalse (annotations may be wrong) */
         if (!is_string($propertyName) && !is_int($propertyName)) {
             throw new \InvalidArgumentException('Given property name/index is not of type string or integer.', 1231178878);
         }
@@ -258,22 +253,21 @@ abstract class ObjectAccess
             return true;
         }
 
+        /** @phpstan-ignore function.alreadyNarrowedType (annotations may be wrong) */
         if (!is_object($subject)) {
             throw new \InvalidArgumentException('subject must be an object or array, ' . gettype($subject) . ' given.', 1237301368);
         }
 
-        if ($forceDirectAccess === true) {
+        if ($forceDirectAccess) {
             if (!is_string($propertyName)) {
                 throw new \InvalidArgumentException('Given property name is not of type string.', 1648244846);
             }
             $className = TypeHandling::getTypeForValue($subject);
             if (property_exists($className, $propertyName)) {
                 $propertyReflection = new \ReflectionProperty($className, $propertyName);
-                $propertyReflection->setAccessible(true);
                 $propertyReflection->setValue($subject, $propertyValue);
             } elseif ($subject instanceof ProxyInterface && property_exists(get_parent_class($className) ?: $className, $propertyName)) {
                 $propertyReflection = new \ReflectionProperty(get_parent_class($className) ?: $className, $propertyName);
-                $propertyReflection->setAccessible(true);
                 $propertyReflection->setValue($subject, $propertyValue);
             } else {
                 $subject->$propertyName = $propertyValue;
@@ -305,6 +299,7 @@ abstract class ObjectAccess
      */
     public static function getGettablePropertyNames($object): array
     {
+        /** @phpstan-ignore function.alreadyNarrowedType (annotations may be wrong) */
         if (!is_object($object)) {
             throw new \InvalidArgumentException('$object must be an object, ' . gettype($object) . ' given.', 1237301369);
         }
@@ -321,7 +316,7 @@ abstract class ObjectAccess
             foreach (get_class_methods($object) as $methodName) {
                 if (is_callable([$object, $methodName])) {
                     $methodNameLength = strlen($methodName);
-                    if ($methodNameLength > 2 && substr($methodName, 0, 2) === 'is') {
+                    if ($methodNameLength > 2 && str_starts_with($methodName, 'is')) {
                         $declaredPropertyNames[] = lcfirst(substr($methodName, 2));
                     } elseif ($methodNameLength > 3 && (($methodNamePrefix = substr($methodName, 0, 3)) === 'get' || $methodNamePrefix === 'has')) {
                         $declaredPropertyNames[] = lcfirst(substr($methodName, 3));
@@ -351,6 +346,7 @@ abstract class ObjectAccess
      */
     public static function getSettablePropertyNames($object): array
     {
+        /** @phpstan-ignore function.alreadyNarrowedType (annotations may be wrong) */
         if (!is_object($object)) {
             throw new \InvalidArgumentException('$object must be an object, ' . gettype($object) . ' given.', 1264022994);
         }
@@ -362,7 +358,7 @@ abstract class ObjectAccess
         }
 
         foreach (get_class_methods($object) as $methodName) {
-            if (substr($methodName, 0, 3) === 'set' && strlen($methodName) > 3 && is_callable([$object, $methodName])) {
+            if (str_starts_with($methodName, 'set') && strlen($methodName) > 3 && is_callable([$object, $methodName])) {
                 $declaredPropertyNames[] = lcfirst(substr($methodName, 3));
             }
         }
@@ -377,11 +373,11 @@ abstract class ObjectAccess
      *
      * @param object $object Object containing the property
      * @param string $propertyName Name of the property to check
-     * @return boolean
      * @throws \InvalidArgumentException
      */
     public static function isPropertySettable($object, string $propertyName): bool
     {
+        /** @phpstan-ignore function.alreadyNarrowedType (annotations may be wrong) */
         if (!is_object($object)) {
             throw new \InvalidArgumentException('$object must be an object, ' . gettype($object) . ' given.', 1259828920);
         }
@@ -399,11 +395,11 @@ abstract class ObjectAccess
      *
      * @param object $object Object containing the property
      * @param string $propertyName Name of the property to check
-     * @return boolean
      * @throws \InvalidArgumentException
      */
     public static function isPropertyGettable($object, string $propertyName): bool
     {
+        /** @phpstan-ignore function.alreadyNarrowedType (annotations may be wrong) */
         if (!is_object($object)) {
             throw new \InvalidArgumentException('$object must be an object, ' . gettype($object) . ' given.', 1259828921);
         }
@@ -429,6 +425,7 @@ abstract class ObjectAccess
      */
     public static function getGettableProperties($object): array
     {
+        /** @phpstan-ignore function.alreadyNarrowedType (annotations may be wrong) */
         if (!is_object($object)) {
             throw new \InvalidArgumentException('$object must be an object, ' . gettype($object) . ' given.', 1237301370);
         }
@@ -436,7 +433,7 @@ abstract class ObjectAccess
         foreach (self::getGettablePropertyNames($object) as $propertyName) {
             $propertyExists = false;
             $propertyValue = self::getPropertyInternal($object, $propertyName, false, $propertyExists);
-            if ($propertyExists === true) {
+            if ($propertyExists) {
                 $properties[$propertyName] = $propertyValue;
             }
         }

@@ -18,9 +18,8 @@ use Neos\Flow\Annotations as Flow;
 
 /**
  * A utility class for dealing with IP addresses.
- *
- * @Flow\Scope("singleton")
  */
+#[Flow\Scope('singleton')]
 class Ip
 {
     /**
@@ -43,7 +42,7 @@ class Ip
      */
     public static function cidrMatch(string $ip, string $range): bool
     {
-        if (strpos($range, '/') === false) {
+        if (!str_contains($range, '/')) {
             $bits = null;
             $subnet = $range;
         } else {

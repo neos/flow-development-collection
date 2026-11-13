@@ -63,7 +63,7 @@ class DebugViewHelper extends AbstractViewHelper
      */
     public function initializeArguments()
     {
-        $this->registerArgument('title', 'string', 'The title', false, null);
+        $this->registerArgument('title', 'string', 'The title', false);
         $this->registerArgument('typeOnly', 'boolean', 'Whether only the type should be returned instead of the whole chain.', false, false);
     }
 
@@ -76,7 +76,7 @@ class DebugViewHelper extends AbstractViewHelper
     {
         $expressionToExamine = $this->renderChildren();
         if ($this->arguments['typeOnly'] === true && $expressionToExamine !== null) {
-            $expressionToExamine = (is_object($expressionToExamine) ? get_class($expressionToExamine) : gettype($expressionToExamine));
+            $expressionToExamine = (get_debug_type($expressionToExamine));
         }
 
         return \Neos\Flow\var_dump($expressionToExamine, $this->arguments['title'], true) ?: '';

@@ -47,7 +47,6 @@ final class UriHelper
      *
      * @param UriInterface $baseUri The base URI to start from
      * @param UriInterface $uri The URI in question
-     * @return string
      */
     public static function getRelativePath(UriInterface $baseUri, UriInterface $uri): string
     {
@@ -94,10 +93,6 @@ final class UriHelper
         return self::uriWithQueryParameters($uri, $mergedQueryParameters);
     }
 
-    /**
-     * @param string $scheme
-     * @return int|null
-     */
     public static function getDefaultPortForScheme(string $scheme): ?int
     {
         return self::$defaultPortsByScheme[strtolower($scheme)] ?? null;

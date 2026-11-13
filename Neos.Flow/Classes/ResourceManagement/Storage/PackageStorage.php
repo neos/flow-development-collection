@@ -25,9 +25,9 @@ use Neos\Utility\Unicode\Functions as UnicodeFunctions;
 class PackageStorage extends FileSystemStorage
 {
     /**
-     * @Flow\Inject
      * @var PackageManager
      */
+    #[Flow\Inject]
     protected $packageManager;
 
     /**
@@ -60,8 +60,8 @@ class PackageStorage extends FileSystemStorage
     {
         $directories = [];
 
-        if (strpos($pattern, '/') !== false) {
-            list($packageKeyPattern, $directoryPattern) = explode('/', $pattern, 2);
+        if (str_contains($pattern, '/')) {
+            [$packageKeyPattern, $directoryPattern] = explode('/', $pattern, 2);
         } else {
             $packageKeyPattern = $pattern;
             $directoryPattern = '*';
@@ -93,7 +93,6 @@ class PackageStorage extends FileSystemStorage
      * Create a storage object for the given static resource path.
      *
      * @param string $resourcePathAndFilename
-     * @param FlowPackageInterface $resourcePackage
      * @return StorageObject
      */
     protected function createStorageObject($resourcePathAndFilename, FlowPackageInterface $resourcePackage)
@@ -111,9 +110,7 @@ class PackageStorage extends FileSystemStorage
             $object->setFileSize($fileSize);
         }
         $object->setRelativePublicationPath($this->prepareRelativePublicationPath($pathInfo['dirname'] ?? '', $resourcePackage->getPackageKey(), $resourcePackage->getResourcesPath()));
-        $object->setStream(function () use ($resourcePathAndFilename) {
-            return fopen($resourcePathAndFilename, 'r');
-        });
+        $object->setStream(fn () => fopen($resourcePathAndFilename, 'r'));
 
         return $object;
     }

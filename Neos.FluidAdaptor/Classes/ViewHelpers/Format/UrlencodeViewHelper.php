@@ -54,7 +54,7 @@ class UrlencodeViewHelper extends AbstractViewHelper
      */
     public function initializeArguments()
     {
-        $this->registerArgument('value', 'string', 'string to format', false, null);
+        $this->registerArgument('value', 'string', 'string to format', false);
     }
 
     /**
@@ -74,8 +74,6 @@ class UrlencodeViewHelper extends AbstractViewHelper
      * Applies rawurlencode() on the specified value.
      *
      * @param array<string,mixed> $arguments
-     * @param \Closure $renderChildrenClosure
-     * @param RenderingContextInterface $renderingContext
      * @return string|mixed
      * @throws \Neos\FluidAdaptor\Core\ViewHelper\Exception
      */
@@ -83,9 +81,7 @@ class UrlencodeViewHelper extends AbstractViewHelper
     {
         $value = $arguments['value'];
 
-        if ($value === null) {
-            $value = $renderChildrenClosure();
-        }
+        $value ??= $renderChildrenClosure();
         if (is_object($value) && method_exists($value, '__toString')) {
             $value = $value->__toString();
         } elseif (!is_string($value)) {

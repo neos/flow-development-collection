@@ -86,7 +86,6 @@ class TextIterator implements \Iterator
     /**
      * Constructs the TextIterator
      *
-     * @param string $subject
      * @param integer $iteratorType The type of iterator
      * @throws Exception
      */
@@ -119,8 +118,6 @@ class TextIterator implements \Iterator
 
     /**
      * Advances the iterator to the next element
-     *
-     * @return void
      */
     public function next(): void
     {
@@ -154,8 +151,6 @@ class TextIterator implements \Iterator
 
     /**
      * Sets the iterator back to the first element
-     *
-     * @return void
      */
     public function rewind(): void
     {

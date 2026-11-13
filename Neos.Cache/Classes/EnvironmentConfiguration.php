@@ -45,10 +45,6 @@ class EnvironmentConfiguration
 
     /**
      * EnvironmentConfiguration constructor.
-     *
-     * @param string $applicationIdentifier
-     * @param string $fileCacheBasePath
-     * @param integer $maximumPathLength
      */
     public function __construct(string $applicationIdentifier, string $fileCacheBasePath, int $maximumPathLength = PHP_MAXPATHLEN)
     {
@@ -57,25 +53,16 @@ class EnvironmentConfiguration
         $this->maximumPathLength = $maximumPathLength;
     }
 
-    /**
-     * @return int
-     */
     public function getMaximumPathLength(): int
     {
         return $this->maximumPathLength;
     }
 
-    /**
-     * @return string
-     */
     public function getFileCacheBasePath(): string
     {
         return $this->fileCacheBasePath;
     }
 
-    /**
-     * @return string
-     */
     public function getApplicationIdentifier(): string
     {
         return $this->applicationIdentifier;

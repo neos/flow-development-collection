@@ -18,15 +18,14 @@ use Neos\Flow\Property\PropertyMapper;
 
 /**
  * Command controller for listing active type converters
- *
- * @Flow\Scope("singleton")
  */
+#[Flow\Scope('singleton')]
 class TypeConverterCommandController extends CommandController
 {
     /**
-     * @Flow\Inject
      * @var PropertyMapper
      */
+    #[Flow\Inject]
     protected $propertyMapper;
 
     /**

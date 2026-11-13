@@ -19,9 +19,8 @@ use Neos\Flow\Reflection\ReflectionService;
 
 /**
  * A simple class filter which fires on class names defined by a regular expression
- *
- * @Flow\Proxy(false)
  */
+#[Flow\Proxy(false)]
 class PointcutClassNameFilter implements PointcutFilterInterface
 {
     /**
@@ -55,7 +54,6 @@ class PointcutClassNameFilter implements PointcutFilterInterface
      * Injects the reflection service
      *
      * @param ReflectionService $reflectionService The reflection service
-     * @return void
      */
     public function injectReflectionService(ReflectionService $reflectionService): void
     {
@@ -107,9 +105,6 @@ class PointcutClassNameFilter implements PointcutFilterInterface
 
     /**
      * This method is used to optimize the matching process.
-     *
-     * @param ClassNameIndex $classNameIndex
-     * @return ClassNameIndex
      */
     public function reduceTargetClassNames(ClassNameIndex $classNameIndex): ClassNameIndex
     {

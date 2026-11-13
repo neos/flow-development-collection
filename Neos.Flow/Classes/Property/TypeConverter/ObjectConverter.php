@@ -36,8 +36,8 @@ use Neos\Utility\TypeHandling;
  * the respective values. For the mechanics used to set the values see ObjectAccess::setProperty().
  *
  * @api
- * @Flow\Scope("singleton")
  */
+#[Flow\Scope('singleton')]
 class ObjectConverter extends AbstractTypeConverter
 {
     /**
@@ -66,15 +66,15 @@ class ObjectConverter extends AbstractTypeConverter
     protected $priority = 0;
 
     /**
-     * @Flow\Inject
      * @var ObjectManagerInterface
      */
+    #[Flow\Inject]
     protected $objectManager;
 
     /**
-     * @Flow\Inject
      * @var ReflectionService
      */
+    #[Flow\Inject]
     protected $reflectionService;
 
     /**
@@ -130,7 +130,6 @@ class ObjectConverter extends AbstractTypeConverter
      *
      * @param class-string $targetType
      * @param string $propertyName
-     * @param PropertyMappingConfigurationInterface $configuration
      * @return string|null
      * @throws InvalidTargetException
      */
@@ -189,7 +188,6 @@ class ObjectConverter extends AbstractTypeConverter
      * @param mixed $source
      * @param string $targetType
      * @param array<string,mixed> $convertedChildProperties
-     * @param PropertyMappingConfigurationInterface|null $configuration
      * @return object the target type
      * @throws InvalidTargetException
      * @throws InvalidDataTypeException
@@ -200,12 +198,11 @@ class ObjectConverter extends AbstractTypeConverter
         $object = $this->buildObject($convertedChildProperties, $targetType);
         foreach ($convertedChildProperties as $propertyName => $propertyValue) {
             $result = ObjectAccess::setProperty($object, $propertyName, $propertyValue);
-            /** @var object $object */
             if ($result === false) {
                 $exceptionMessage = sprintf(
                     'Property "%s" having a value of type "%s" could not be set in target object of type "%s". Make sure that the property is accessible properly, for example via an appropriate setter method.',
                     $propertyName,
-                    (is_object($propertyValue) ? get_class($propertyValue) : gettype($propertyValue)),
+                    (get_debug_type($propertyValue)),
                     $targetType
                 );
                 throw new InvalidTargetException($exceptionMessage, 1304538165);
@@ -220,7 +217,6 @@ class ObjectConverter extends AbstractTypeConverter
      *
      * @param mixed $source
      * @param string $originalTargetType
-     * @param PropertyMappingConfigurationInterface|null $configuration
      * @return string
      * @throws InvalidDataTypeException
      * @throws InvalidPropertyMappingConfigurationException

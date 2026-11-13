@@ -191,7 +191,6 @@ final readonly class ValueAccessor
 
     /**
      * @param string $message
-     * @return \UnexpectedValueException
      */
     private function createTypeError($message): \UnexpectedValueException
     {

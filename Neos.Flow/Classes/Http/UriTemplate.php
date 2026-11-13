@@ -18,8 +18,8 @@ use Neos\Flow\Annotations as Flow;
  * Represents a URI Template as per http://tools.ietf.org/html/rfc6570
  *
  * @api
- * @Flow\Proxy(false)
  */
+#[Flow\Proxy(false)]
 class UriTemplate
 {
     /**
@@ -53,7 +53,7 @@ class UriTemplate
      */
     public static function expand($template, array $variables)
     {
-        if (strpos($template, '{') === false) {
+        if (!str_contains($template, '{')) {
             return $template;
         }
 
@@ -158,11 +158,11 @@ class UriTemplate
                 $configuration['value'] = substr($expressionPart, 0, $colonPosition);
                 $configuration['modifier'] = ':';
                 $configuration['position'] = (int)substr($expressionPart, $colonPosition + 1);
-            } elseif (substr($expressionPart, -1) === '*') {
+            } elseif (str_ends_with($expressionPart, '*')) {
                 $configuration['modifier'] = '*';
                 $configuration['value'] = substr($expressionPart, 0, -1);
             } else {
-                $configuration['value'] = (string)$expressionPart;
+                $configuration['value'] = $expressionPart;
                 $configuration['modifier'] = '';
             }
 
@@ -189,6 +189,7 @@ class UriTemplate
     protected static function encodeArrayVariable(array $variable, array $value, $operator, $separator, &$useQueryString)
     {
         $isAssociativeArray = self::isAssociative($variable);
+        /** @var array<string, string> $keyValuePairs */
         $keyValuePairs = [];
 
         foreach ($variable as $key => $var) {
@@ -218,8 +219,8 @@ class UriTemplate
                     $var = $value['value'] . '=' . $var;
                 }
             }
-
-            $keyValuePairs[$key] = $var;
+            /** @phpstan-ignore cast.string (Will be casted by implode or string concat later anyways) */
+            $keyValuePairs[$key] = (string)$var;
         }
 
         $expanded = '';
@@ -253,7 +254,7 @@ class UriTemplate
      */
     protected static function isAssociative(array $array)
     {
-        return count(array_filter(array_keys($array), 'is_string')) > 0;
+        return count(array_filter(array_keys($array), is_string(...))) > 0;
     }
 
     /**

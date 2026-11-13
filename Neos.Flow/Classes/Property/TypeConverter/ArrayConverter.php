@@ -32,8 +32,8 @@ use Neos\Flow\ResourceManagement\PersistentResource;
  *   CONFIGURATION_RESOURCE_SAVE_PATH must be set as well.
  *
  * @api
- * @Flow\Scope("singleton")
  */
+#[Flow\Scope('singleton')]
 class ArrayConverter extends AbstractTypeConverter
 {
     /**
@@ -114,7 +114,6 @@ class ArrayConverter extends AbstractTypeConverter
      * @param mixed $source
      * @param string $targetType
      * @param array<string,mixed> $convertedChildProperties
-     * @param PropertyMappingConfigurationInterface|null $configuration
      * @return array<mixed>
      * @throws InvalidPropertyMappingConfigurationException
      * @throws InvalidSourceException
@@ -133,14 +132,11 @@ class ArrayConverter extends AbstractTypeConverter
             }
 
             $stringFormat = $this->getStringFormat($configuration);
-            switch ($stringFormat) {
-                case self::STRING_FORMAT_CSV:
-                    return explode($this->getStringDelimiter($configuration), $source);
-                case self::STRING_FORMAT_JSON:
-                    return json_decode($source, true);
-                default:
-                    throw new InvalidPropertyMappingConfigurationException(sprintf('Conversion from string to array failed due to invalid string format setting "%s"', $stringFormat), 1404903208);
-            }
+            return match ($stringFormat) {
+                self::STRING_FORMAT_CSV => explode($this->getStringDelimiter($configuration), $source),
+                self::STRING_FORMAT_JSON => json_decode($source, true),
+                default => throw new InvalidPropertyMappingConfigurationException(sprintf('Conversion from string to array failed due to invalid string format setting "%s"', $stringFormat), 1404903208),
+            };
         }
 
         if ($source instanceof PersistentResource) {
@@ -191,7 +187,6 @@ class ArrayConverter extends AbstractTypeConverter
     }
 
     /**
-     * @param PropertyMappingConfigurationInterface|null $configuration
      * @return non-empty-string
      * @throws InvalidPropertyMappingConfigurationException
      */
@@ -205,7 +200,7 @@ class ArrayConverter extends AbstractTypeConverter
         if ($stringDelimiter === null) {
             return self::DEFAULT_STRING_DELIMITER;
         } elseif (!is_string($stringDelimiter)) {
-            throw new InvalidPropertyMappingConfigurationException(sprintf('CONFIGURATION_STRING_DELIMITER must be of type string, "%s" given', (is_object($stringDelimiter) ? get_class($stringDelimiter) : gettype($stringDelimiter))), 1368433339);
+            throw new InvalidPropertyMappingConfigurationException(sprintf('CONFIGURATION_STRING_DELIMITER must be of type string, "%s" given', (get_debug_type($stringDelimiter))), 1368433339);
         } elseif ($stringDelimiter === '') {
             throw new InvalidPropertyMappingConfigurationException('CONFIGURATION_STRING_DELIMITER must not be empty', 1744060278);
         }
@@ -214,7 +209,6 @@ class ArrayConverter extends AbstractTypeConverter
     }
 
     /**
-     * @param PropertyMappingConfigurationInterface|null $configuration
      * @return string
      * @throws InvalidPropertyMappingConfigurationException
      */
@@ -228,14 +222,13 @@ class ArrayConverter extends AbstractTypeConverter
         if ($stringFormat === null) {
             return self::DEFAULT_STRING_FORMAT;
         } elseif (!is_string($stringFormat)) {
-            throw new InvalidPropertyMappingConfigurationException(sprintf('CONFIGURATION_STRING_FORMAT must be of type string, "%s" given', (is_object($stringFormat) ? get_class($stringFormat) : gettype($stringFormat))), 1404227443);
+            throw new InvalidPropertyMappingConfigurationException(sprintf('CONFIGURATION_STRING_FORMAT must be of type string, "%s" given', (get_debug_type($stringFormat))), 1404227443);
         }
 
         return $stringFormat;
     }
 
     /**
-     * @param PropertyMappingConfigurationInterface|null $configuration
      * @return string
      * @throws InvalidPropertyMappingConfigurationException
      */
@@ -249,7 +242,7 @@ class ArrayConverter extends AbstractTypeConverter
         if ($exportType === null) {
             return self::DEFAULT_RESOURCE_EXPORT_TYPE;
         } elseif (!is_string($exportType)) {
-            throw new InvalidPropertyMappingConfigurationException(sprintf('RESOURCE_EXPORT_TYPE must be of type string, "%s" given', (is_object($exportType) ? get_class($exportType) : gettype($exportType))), 1404313373);
+            throw new InvalidPropertyMappingConfigurationException(sprintf('RESOURCE_EXPORT_TYPE must be of type string, "%s" given', (get_debug_type($exportType))), 1404313373);
         }
 
         return $exportType;

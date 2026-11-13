@@ -31,7 +31,6 @@ interface RepositoryInterface
      * Adds an object to this repository.
      *
      * @param T $object The object to add
-     * @return void
      * @api
      */
     public function add($object): void;
@@ -40,7 +39,6 @@ interface RepositoryInterface
      * Removes an object from this repository.
      *
      * @param T $object The object to remove
-     * @return void
      * @api
      */
     public function remove($object): void;
@@ -73,7 +71,6 @@ interface RepositoryInterface
     /**
      * Counts all objects of this repository
      *
-     * @return integer
      * @api
      */
     public function countAll(): int;
@@ -82,7 +79,6 @@ interface RepositoryInterface
      * Removes all objects of this repository as if remove() was called for
      * all of them.
      *
-     * @return void
      * @api
      */
     public function removeAll(): void;
@@ -95,7 +91,6 @@ interface RepositoryInterface
      * )
      *
      * @param array<string,QueryInterface::ORDER_ASCENDING|QueryInterface::ORDER_DESCENDING> $defaultOrderings The property names to "order by" by default
-     * @return void
      * @api
      */
     public function setDefaultOrderings(array $defaultOrderings): void;
@@ -104,7 +99,6 @@ interface RepositoryInterface
      * Schedules a modified object for persistence.
      *
      * @param T $object The modified object
-     * @return void
      * @api
      */
     public function update($object): void;

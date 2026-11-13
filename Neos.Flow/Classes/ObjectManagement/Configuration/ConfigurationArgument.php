@@ -16,14 +16,13 @@ use Neos\Flow\Annotations as Flow;
 
 /**
  * Injection (constructor-) argument as used in a Object Configuration
- *
- * @Flow\Proxy(false)
  */
+#[Flow\Proxy(false)]
 final readonly class ConfigurationArgument
 {
-    public const ARGUMENT_TYPES_STRAIGHTVALUE = 0;
-    public const ARGUMENT_TYPES_OBJECT = 1;
-    public const ARGUMENT_TYPES_SETTING = 2;
+    public const int ARGUMENT_TYPES_STRAIGHTVALUE = 0;
+    public const int ARGUMENT_TYPES_OBJECT = 1;
+    public const int ARGUMENT_TYPES_SETTING = 2;
 
     /**
      * Constructor - sets the index, value and type of the argument

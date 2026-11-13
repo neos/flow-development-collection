@@ -27,15 +27,15 @@ use Neos\Utility\Arrays;
 class KickstartCommandController extends CommandController
 {
     /**
-     * @Flow\Inject
      * @var PackageManager
      */
+    #[Flow\Inject]
     protected $packageManager;
 
     /**
-     * @Flow\Inject
      * @var \Neos\Kickstarter\Service\GeneratorService
      */
+    #[Flow\Inject]
     protected $generatorService;
 
     /**
@@ -107,8 +107,8 @@ class KickstartCommandController extends CommandController
     public function actionControllerCommand($packageKey, $controllerName, $generateActions = false, $generateTemplates = true, $generateFusion = false, $generateRelated = false, $force = false)
     {
         $subpackageName = '';
-        if (strpos($packageKey, '/') !== false) {
-            list($packageKey, $subpackageName) = explode('/', $packageKey, 2);
+        if (str_contains($packageKey, '/')) {
+            [$packageKey, $subpackageName] = explode('/', $packageKey, 2);
         }
         $this->validatePackageKey($packageKey);
         if (!$this->packageManager->isPackageAvailable($packageKey)) {
@@ -182,7 +182,7 @@ class KickstartCommandController extends CommandController
 
         $this->outputLine(implode(PHP_EOL, $generatedFiles));
 
-        if ($generatedModels === true) {
+        if ($generatedModels) {
             $this->outputLine('As new models were generated, don\'t forget to update the database schema with the respective doctrine:* commands.');
         }
     }
@@ -240,14 +240,15 @@ class KickstartCommandController extends CommandController
         $fieldsArguments = $this->request->getExceedingArguments();
         $fieldDefinitions = [];
         foreach ($fieldsArguments as $fieldArgument) {
-            list($fieldName, $fieldType) = explode(':', $fieldArgument, 2);
+            [$fieldName, $fieldType] = explode(':', $fieldArgument, 2);
 
             $fieldDefinitions[$fieldName] = ['type' => $fieldType];
-            if (strpos($fieldType, 'array') !== false) {
+            if (str_contains($fieldType, 'array')) {
                 $fieldDefinitions[$fieldName]['typeHint'] = 'array';
-            } elseif (strpos($fieldType, '\\') !== false) {
-                if (strpos($fieldType, '<') !== false) {
-                    $fieldDefinitions[$fieldName]['typeHint'] = substr($fieldType, 0, strpos($fieldType, '<'));
+            } elseif (str_contains($fieldType, '\\')) {
+                $ltPos = strpos($fieldType, '<');
+                if ($ltPos !== false) {
+                    $fieldDefinitions[$fieldName]['typeHint'] = substr($fieldType, 0, $ltPos);
                 } else {
                     $fieldDefinitions[$fieldName]['typeHint'] = $fieldType;
                 }

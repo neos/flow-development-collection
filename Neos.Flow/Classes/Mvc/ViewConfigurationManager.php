@@ -30,8 +30,8 @@ use Neos\Flow\Configuration\ConfigurationManager;
  *     viewObjectName?: string,
  *     options?: array<string,mixed>
  * }
- * @Flow\Scope("singleton")
  */
+#[Flow\Scope('singleton')]
 class ViewConfigurationManager
 {
     public function __construct(
@@ -48,7 +48,6 @@ class ViewConfigurationManager
      * a different class that will be used to create the view and
      * an array of options that will be set on the view object.
      *
-     * @param ActionRequest $request
      * @return ViewConfigurationShape
      */
     public function getViewConfiguration(ActionRequest $request)
@@ -91,7 +90,6 @@ class ViewConfigurationManager
      * Create a complete cache identifier for the given
      * request that conforms to cache identifier syntax
      *
-     * @param ActionRequest $request
      * @return string
      */
     protected function createCacheIdentifier(ActionRequest $request)

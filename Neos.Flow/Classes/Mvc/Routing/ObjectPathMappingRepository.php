@@ -21,8 +21,8 @@ use Neos\Flow\Persistence\Repository;
  * Repository for object path mapping objects
  * @see \Neos\Flow\Mvc\Routing\ObjectPathMapping
  * @extends Repository<ObjectPathMapping>
- * @Flow\Scope("singleton")
  */
+#[Flow\Scope('singleton')]
 class ObjectPathMappingRepository extends Repository
 {
     /**
@@ -33,9 +33,9 @@ class ObjectPathMappingRepository extends Repository
     /**
      * Doctrine's Entity Manager.
      *
-     * @Flow\Inject
      * @var EntityManagerInterface
      */
+    #[Flow\Inject]
     protected $entityManager;
 
     /**

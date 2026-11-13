@@ -41,7 +41,6 @@ class ComposerUtility
     /**
      * Returns contents of Composer manifest - or part there of.
      *
-     * @param string $manifestPath
      * @param ?string $configurationPath Optional. Only return the part of the manifest indexed by configurationPath
      * @return mixed
      */
@@ -72,8 +71,8 @@ class ComposerUtility
 
         $json = file_get_contents(FLOW_PATH_ROOT . 'composer.lock') ?: '';
         $composerLock = json_decode($json, true, flags: JSON_THROW_ON_ERROR);
-        $composerPackageVersions = isset($composerLock['packages']) ? $composerLock['packages'] : [];
-        $composerPackageDevVersions = isset($composerLock['packages-dev']) ? $composerLock['packages-dev'] : [];
+        $composerPackageVersions = $composerLock['packages'] ?? [];
+        $composerPackageDevVersions = $composerLock['packages-dev'] ?? [];
         self::$composerLockCache = array_merge($composerPackageVersions, $composerPackageDevVersions);
 
         return self::$composerLockCache;
@@ -82,7 +81,6 @@ class ComposerUtility
     /**
      * Read the content of composer.json in the given path
      *
-     * @param string $manifestPath
      * @return array<string,mixed>
      * @throws Exception\MissingPackageManifestException
      */
@@ -109,26 +107,15 @@ class ComposerUtility
 
     /**
      * Checks if the given (composer) package type is a type native to the neos project.
-     *
-     * @param string $packageType
-     * @return boolean
      */
     public static function isFlowPackageType(string $packageType): bool
     {
-        foreach (['typo3-flow-', 'neos-'] as $allowedPackageTypePrefix) {
-            if (strpos($packageType, $allowedPackageTypePrefix) === 0) {
-                return true;
-            }
-        }
-
-        return false;
+        return array_any(['typo3-flow-', 'neos-'], fn ($allowedPackageTypePrefix) => str_starts_with($packageType, $allowedPackageTypePrefix));
     }
 
     /**
      * Write a composer manifest for the package.
      *
-     * @param string $manifestPath
-     * @param FlowPackageKey $packageKey
      * @param array<string,mixed> $composerManifestData
      * @return array<string,mixed> the manifest data written
      */

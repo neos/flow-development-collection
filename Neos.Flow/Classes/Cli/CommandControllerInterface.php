@@ -15,7 +15,6 @@ interface CommandControllerInterface
      *
      * @param Request $request The request object
      * @param Response $response The response, modified by the controller
-     * @return void
      * @throws StopCommandException
      */
     public function processRequest(Request $request, Response $response): void;

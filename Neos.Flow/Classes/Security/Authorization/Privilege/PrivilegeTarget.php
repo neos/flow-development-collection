@@ -54,11 +54,7 @@ class PrivilegeTarget
     protected $label;
 
     /**
-     * @param string $identifier
-     * @param string $privilegeClassName
-     * @param string $matcher
      * @param Parameter\PrivilegeParameterDefinition[] $parameterDefinitions
-     * @param string $label
      */
     public function __construct(string $identifier, string $privilegeClassName, string $matcher, array $parameterDefinitions = [], string $label = '')
     {
@@ -71,34 +67,22 @@ class PrivilegeTarget
 
     /**
      * This object is created very early so we can't rely on AOP for the property injection
-     *
-     * @param ObjectManagerInterface $objectManager
-     * @return void
      */
     public function injectObjectManager(ObjectManagerInterface $objectManager): void
     {
         $this->objectManager = $objectManager;
     }
 
-    /**
-     * @return string
-     */
     public function getIdentifier(): string
     {
         return $this->identifier;
     }
 
-    /**
-     * @return string
-     */
     public function getPrivilegeClassName(): string
     {
         return $this->privilegeClassName;
     }
 
-    /**
-     * @return string
-     */
     public function getMatcher(): string
     {
         return $this->matcher;
@@ -112,9 +96,6 @@ class PrivilegeTarget
         return $this->parameterDefinitions;
     }
 
-    /**
-     * @return bool
-     */
     public function hasParameters(): bool
     {
         return $this->parameterDefinitions !== [];
@@ -123,7 +104,6 @@ class PrivilegeTarget
     /**
      * @param string $permission one of "GRANT", "DENY" or "ABSTAIN"
      * @param array<string,mixed> $parameters Optional key/value array with parameter names and -values
-     * @return PrivilegeInterface
      * @throws SecurityException
      */
     public function createPrivilege(string $permission, array $parameters = []): PrivilegeInterface
@@ -136,16 +116,13 @@ class PrivilegeTarget
         $privilegeParameters = array_map($this->createParameterMapper($parameters), $this->parameterDefinitions);
         $privilege = new $this->privilegeClassName($this, $this->matcher, $permission, $privilegeParameters);
         if (!$privilege instanceof PrivilegeInterface) {
-            throw new SecurityException(sprintf('Expected instance of PrivilegeInterface, got "%s"', get_class($privilege)), 1395869340);
+            throw new SecurityException(sprintf('Expected instance of PrivilegeInterface, got "%s"', $privilege::class), 1395869340);
         }
         $privilege->injectObjectManager($this->objectManager);
 
         return $privilege;
     }
 
-    /**
-     * @return string
-     */
     public function getLabel(): string
     {
         return $this->label;
@@ -153,19 +130,14 @@ class PrivilegeTarget
 
     /**
      * @param array<string,mixed> $parameters
-     * @return \Closure
      */
     protected function createParameterMapper(array $parameters): \Closure
     {
-        return function (PrivilegeParameterDefinition $parameterDefinition) use ($parameters) {
-            return $this->createParameter($parameterDefinition, $parameters);
-        };
+        return fn (PrivilegeParameterDefinition $parameterDefinition) => $this->createParameter($parameterDefinition, $parameters);
     }
 
     /**
-     * @param PrivilegeParameterDefinition $parameterDefinition
      * @param array<string,mixed> $parameters
-     * @return PrivilegeParameterInterface
      * @throws SecurityException
      */
     protected function createParameter(PrivilegeParameterDefinition $parameterDefinition, array $parameters): PrivilegeParameterInterface

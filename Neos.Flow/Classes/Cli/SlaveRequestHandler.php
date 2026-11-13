@@ -24,11 +24,11 @@ use Psr\Log\LoggerInterface;
  * A special request handler which handles "slave" command requests as used by
  * the interactive shell.
  *
- * @Flow\Proxy(false)
- * @Flow\Scope("singleton")
  *
  * @deprecated  This will probably move to a separate package and be renamed in a future version, you should not rely on it.
  */
+#[Flow\Proxy(false)]
+#[Flow\Scope('singleton')]
 class SlaveRequestHandler implements RequestHandlerInterface
 {
     /**
@@ -38,8 +38,6 @@ class SlaveRequestHandler implements RequestHandlerInterface
 
     /**
      * Constructor
-     *
-     * @param Bootstrap $bootstrap
      */
     public function __construct(Bootstrap $bootstrap)
     {
@@ -121,11 +119,11 @@ class SlaveRequestHandler implements RequestHandlerInterface
      * Emits a signal that a CLI slave request was dispatched.
      *
      * @return void
-     * @Flow\Signal
      */
+    #[Flow\Signal]
     protected function emitDispatchedCommandLineSlaveRequest()
     {
-        $this->bootstrap->getSignalSlotDispatcher()->dispatch(__CLASS__, 'dispatchedCommandLineSlaveRequest', []);
+        $this->bootstrap->getSignalSlotDispatcher()->dispatch(self::class, 'dispatchedCommandLineSlaveRequest', []);
     }
 
     /**
@@ -135,7 +133,7 @@ class SlaveRequestHandler implements RequestHandlerInterface
      * @param \Exception $exception
      * @return void
      */
-    protected function handleException(\Exception $exception)
+    protected function handleException(\Throwable $exception)
     {
         $response = new Response();
 

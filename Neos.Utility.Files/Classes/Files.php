@@ -25,12 +25,11 @@ abstract class Files
      * It's needed to compare paths (especially on windows).
      *
      * @param string $path Path which should transformed to the Unix Style.
-     * @return string
      * @api
      */
     public static function getUnixStylePath(string $path): string
     {
-        if (strpos($path, ':') === false) {
+        if (!str_contains($path, ':')) {
             return str_replace(['//', '\\'], '/', $path);
         }
         return preg_replace('/^([a-z]{2,}):\//', '$1://', str_replace(['//', '\\'], '/', $path)) ?: '';
@@ -39,8 +38,6 @@ abstract class Files
     /**
      * Makes sure path has a trailing slash
      *
-     * @param string $path
-     * @return string
      * @api
      */
     public static function getNormalizedPath(string $path): string
@@ -93,10 +90,7 @@ abstract class Files
     }
 
     /**
-     * @param string $path
      * @param string $suffix
-     * @param boolean $returnRealPath
-     * @param boolean $returnDotFiles
      * @return \Generator
      * @throws FilesException
      */
@@ -122,7 +116,7 @@ abstract class Files
                     $pathAndFilename = self::concatenatePaths([$currentDirectory, $filename]);
                     if (is_dir($pathAndFilename)) {
                         array_push($directories, self::getNormalizedPath($pathAndFilename));
-                    } elseif ($suffix === null || strpos(strrev($filename), strrev($suffix)) === 0) {
+                    } elseif ($suffix === null || str_starts_with(strrev($filename), strrev($suffix))) {
                         if ($returnRealPath) {
                             $nonRealPathAndFilename = $pathAndFilename;
                             $pathAndFilename = realpath($pathAndFilename);
@@ -155,7 +149,7 @@ abstract class Files
         }
 
         if (self::is_link($path)) {
-            if (self::unlink($path) !== true) {
+            if (!self::unlink($path)) {
                 throw new FilesException('Could not unlink symbolic link "' . $path . '".', 1323697654);
             }
         } else {
@@ -165,7 +159,7 @@ abstract class Files
                     continue;
                 }
                 if (!$fileInfo->isDir()) {
-                    if (self::unlink($fileInfo->getPathname()) !== true) {
+                    if (!self::unlink($fileInfo->getPathname())) {
                         throw new FilesException('Could not unlink file "' . $fileInfo->getPathname() . '".', 1169047619);
                     }
                 } elseif (!$directoryIterator->isDot()) {
@@ -192,7 +186,7 @@ abstract class Files
     {
         if ($basePath !== null) {
             $basePath = rtrim($basePath, '/');
-            if (strpos($path, $basePath) !== 0) {
+            if (!str_starts_with($path, $basePath)) {
                 throw new FilesException(sprintf('Could not remove empty directories on path because the given base path "%s" is not a parent path of "%s".', $basePath, $path), 1323962907);
             }
         }
@@ -203,7 +197,7 @@ abstract class Files
             if (file_exists($path . '/.DS_Store')) {
                 try {
                     @unlink($path . '/.DS_Store');
-                } catch (\Throwable $e) {
+                } catch (\Throwable) {
                     // PHP 8 apparently throws for unlink even with shutup operator, but we really don't care at this place. It's also the only way to handle this race-condition free.
                 }
             }
@@ -211,7 +205,7 @@ abstract class Files
                 if (@rmdir($path) === false) {
                     throw new FilesException(sprintf('Could not remove directory "%s".', $path), 1634928640);
                 }
-            } catch (\Throwable $e) {
+            } catch (\Throwable) {
                 // PHP 8 throws for rmdir even with a shutup operator set. To ensure the loop gets correctly ended in PHP 8 and below, an additional FilesException is used.
                 break;
             }
@@ -233,16 +227,16 @@ abstract class Files
     public static function removeDirectoryRecursively(string $path)
     {
         if (self::is_link($path)) {
-            if (self::unlink($path) !== true) {
+            if (!self::unlink($path)) {
                 throw new FilesException('Could not unlink symbolic link "' . $path . '".', 1316000297);
             }
         } else {
             self::emptyDirectoryRecursively($path);
             try {
-                if (rmdir($path) !== true) {
+                if (!rmdir($path)) {
                     throw new FilesException('Could not remove directory "' . $path . '".', 1316000298);
                 }
-            } catch (\Exception $exception) {
+            } catch (\Exception) {
                 throw new FilesException('Could not remove directory "' . $path . '".', 1323961907);
             }
         }
@@ -260,7 +254,7 @@ abstract class Files
      */
     public static function createDirectoryRecursively(string $path)
     {
-        if (substr($path, -2) === '/.') {
+        if (str_ends_with($path, '/.')) {
             $path = substr($path, 0, -1);
         }
         if ($path === '') {
@@ -290,10 +284,6 @@ abstract class Files
      * If $copyDotFiles is true, this will copy files whose name begin with
      * a dot. It defaults to false.
      *
-     * @param string $sourceDirectory
-     * @param string $targetDirectory
-     * @param boolean $keepExistingFiles
-     * @param boolean $copyDotFiles
      * @return void
      * @throws FilesException
      * @api
@@ -340,7 +330,7 @@ abstract class Files
             } else {
                 $content = file_get_contents($pathAndFilename, $useIncludePath, $context, $offset);
             }
-        } catch (ErrorException $ignoredException) {
+        } catch (ErrorException) {
             $content = false;
         }
         return $content;
@@ -351,28 +341,19 @@ abstract class Files
      * constant.
      *
      * @param integer $errorCode One of the UPLOAD_ERR_ constants
-     * @return string
      */
     public static function getUploadErrorMessage(int $errorCode): string
     {
-        switch ($errorCode) {
-            case \UPLOAD_ERR_INI_SIZE:
-                return 'The uploaded file exceeds the upload_max_filesize directive in php.ini';
-            case \UPLOAD_ERR_FORM_SIZE:
-                return 'The uploaded file exceeds the MAX_FILE_SIZE directive that was specified in the HTML form';
-            case \UPLOAD_ERR_PARTIAL:
-                return 'The uploaded file was only partially uploaded';
-            case \UPLOAD_ERR_NO_FILE:
-                return 'No file was uploaded';
-            case \UPLOAD_ERR_NO_TMP_DIR:
-                return 'Missing a temporary folder';
-            case \UPLOAD_ERR_CANT_WRITE:
-                return 'Failed to write file to disk';
-            case \UPLOAD_ERR_EXTENSION:
-                return 'File upload stopped by extension';
-            default:
-                return 'Unknown upload error';
-        }
+        return match ($errorCode) {
+            \UPLOAD_ERR_INI_SIZE => 'The uploaded file exceeds the upload_max_filesize directive in php.ini',
+            \UPLOAD_ERR_FORM_SIZE => 'The uploaded file exceeds the MAX_FILE_SIZE directive that was specified in the HTML form',
+            \UPLOAD_ERR_PARTIAL => 'The uploaded file was only partially uploaded',
+            \UPLOAD_ERR_NO_FILE => 'No file was uploaded',
+            \UPLOAD_ERR_NO_TMP_DIR => 'Missing a temporary folder',
+            \UPLOAD_ERR_CANT_WRITE => 'Failed to write file to disk',
+            \UPLOAD_ERR_EXTENSION => 'File upload stopped by extension',
+            default => 'Unknown upload error',
+        };
     }
 
     /**
@@ -425,14 +406,14 @@ abstract class Files
                 }
                 return true;
             }
-        } catch (\Exception $exception) {
+        } catch (\Exception) {
             clearstatcache();
             return !file_exists($pathAndFilename);
         }
 
         try {
             return rmdir($pathAndFilename);
-        } catch (\Exception $exception) {
+        } catch (\Exception) {
             return false;
         }
     }
@@ -455,36 +436,30 @@ abstract class Files
      */
     public static function bytesToSizeString($bytes, ?int $decimals = null, ?string $decimalSeparator = null, ?string $thousandsSeparator = null): string
     {
-        /** @phpstan-ignore booleanAnd.alwaysFalse (annotations may be wrong) */
+        /** @phpstan-ignore booleanAnd.alwaysFalse,function.alreadyNarrowedType (annotations may be wrong) */
         if (!is_int($bytes) && !is_float($bytes)) {
+            /** @phpstan-ignore function.alreadyNarrowedType (annotations may be wrong) */
             if (is_numeric($bytes)) {
                 $bytes = (float)$bytes;
-                /** @phpstan-ignore else.unreachable (annotations may be wrong) */
             } else {
                 $bytes = 0;
             }
         }
 
         // FIXME: The defaults should again be in the function declaration and nulls not allowed. This is a breaking change though.
-        if ($decimals === null) {
-            $decimals = 0;
-        }
-        if ($decimalSeparator === null) {
-            $decimalSeparator = '.';
-        }
-        if ($thousandsSeparator === null) {
-            $thousandsSeparator = ',';
-        }
+        $decimals ??= 0;
+        $decimalSeparator ??= '.';
+        $thousandsSeparator ??= ',';
 
         $bytes = max($bytes, 0);
         $pow = floor(($bytes ? log($bytes) : 0) / log(1024));
         $pow = min($pow, count(self::$sizeUnits) - 1);
-        $bytes /= pow(2, (10 * $pow));
+        $bytes /= 2 ** (10 * $pow);
 
         return sprintf(
             '%s %s',
             number_format(round($bytes, 4 * $decimals), $decimals, $decimalSeparator, $thousandsSeparator),
-            self::$sizeUnits[$pow]
+            self::$sizeUnits[(int)$pow]
         );
     }
 
@@ -503,7 +478,7 @@ abstract class Files
         }
         $size = (float)$matches['size'];
         if (empty($matches['unit'])) {
-            return (float)round($size);
+            return round($size);
         }
         $unit = strtoupper(trim($matches['unit']));
         if ($unit !== 'B' && strlen($unit) === 1) {
@@ -513,7 +488,7 @@ abstract class Files
         if ($pow === false) {
             throw new FilesException(sprintf('Unknown file size unit "%s"', $matches['unit']), 1417695299);
         }
-        return $size * pow(2, (10 * (int)$pow));
+        return $size * 2 ** (10 * (int)$pow);
     }
 
     /**
@@ -522,7 +497,6 @@ abstract class Files
      *
      * @param string $target The absolute target where the symlink should point to relatively
      * @param string $link The absolute path to the link where the symlink will be created
-     * @return boolean
      * @throws FilesException
      */
     public static function createRelativeSymlink(string $target, string $link): bool
@@ -554,7 +528,6 @@ abstract class Files
      *
      * @param string $from An absolute path to base on
      * @param string $to An absolute path to find the relative representation onto $from
-     * @return string
      */
     public static function getRelativePath(string $from, string $to): string
     {

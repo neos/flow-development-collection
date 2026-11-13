@@ -83,13 +83,13 @@ class TranslateViewHelper extends ViewHelper\AbstractViewHelper
      */
     public function initializeArguments()
     {
-        $this->registerArgument('id', 'string', 'Id to use for finding translation (trans-unit id in XLIFF)', false, null);
-        $this->registerArgument('value', 'string', 'If $key is not specified or could not be resolved, this value is used. If this argument is not set, child nodes will be used to render the default', false, null);
+        $this->registerArgument('id', 'string', 'Id to use for finding translation (trans-unit id in XLIFF)', false);
+        $this->registerArgument('value', 'string', 'If $key is not specified or could not be resolved, this value is used. If this argument is not set, child nodes will be used to render the default', false);
         $this->registerArgument('arguments', 'array', 'Numerically indexed array of values to be inserted into placeholders', false, []);
         $this->registerArgument('source', 'string', 'Name of file with translations (use / as a directory separator)', false, 'Main');
-        $this->registerArgument('package', 'string', 'Target package key. If not set, the current package key will be used', false, null);
-        $this->registerArgument('quantity', 'mixed', 'A number to find plural form for (float or int), NULL to not use plural forms', false, null);
-        $this->registerArgument('locale', 'string', 'An identifier of locale to use (NULL for use the default locale)', false, null);
+        $this->registerArgument('package', 'string', 'Target package key. If not set, the current package key will be used', false);
+        $this->registerArgument('quantity', 'mixed', 'A number to find plural form for (float or int), NULL to not use plural forms', false);
+        $this->registerArgument('locale', 'string', 'An identifier of locale to use (NULL for use the default locale)', false);
     }
 
 
@@ -115,7 +115,7 @@ class TranslateViewHelper extends ViewHelper\AbstractViewHelper
         if ($locale !== null) {
             try {
                 $localeObject = new Locale($locale);
-            } catch (InvalidLocaleIdentifierException $e) {
+            } catch (InvalidLocaleIdentifierException) {
                 throw new ViewHelperException(sprintf('"%s" is not a valid locale identifier.', $locale), 1279815885);
             }
         }
@@ -146,7 +146,6 @@ class TranslateViewHelper extends ViewHelper\AbstractViewHelper
     }
 
     /**
-     * @param Translator $translator
      * @return void
      */
     public function injectTranslator(Translator $translator)

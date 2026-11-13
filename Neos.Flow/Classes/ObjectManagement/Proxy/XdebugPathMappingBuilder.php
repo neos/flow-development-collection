@@ -17,15 +17,13 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Cache\CacheManager;
 use Neos\Utility\Files;
 
-/**
- * @Flow\Scope("singleton")
- */
+#[Flow\Scope('singleton')]
 class XdebugPathMappingBuilder
 {
     /**
-     * @Flow\Inject
      * @var CacheManager
      */
+    #[Flow\Inject]
     protected $cacheManager;
 
     /**
@@ -35,7 +33,6 @@ class XdebugPathMappingBuilder
 
     /**
      * @param array<string, mixed> $settings
-     * @return void
      */
     public function injectSettings(array $settings): void
     {
@@ -49,8 +46,6 @@ class XdebugPathMappingBuilder
 
     /**
      * @param array<string, array{path: string, proxyClassIdentifier: string}> $compiledClasses
-     * @param string $flowContextName
-     * @return void
      */
     public function buildFromCompiledClasses(array $compiledClasses, string $flowContextName): void
     {

@@ -78,25 +78,16 @@ abstract class TypeHandling
      */
     public static function normalizeType(string $type): string
     {
-        switch ($type) {
-            case 'int':
-                $type = 'integer';
-                break;
-            case 'bool':
-                $type = 'boolean';
-                break;
-            case 'double':
-                $type = 'float';
-                break;
-        }
-        return $type;
+        return match ($type) {
+            'int' => 'integer',
+            'bool' => 'boolean',
+            'double' => 'float',
+            default => $type,
+        };
     }
 
     /**
      * Returns true if the $type is a literal.
-     *
-     * @param string $type
-     * @return boolean
      */
     public static function isLiteral(string $type): bool
     {
@@ -105,9 +96,6 @@ abstract class TypeHandling
 
     /**
      * Returns true if the $type is a simple type.
-     *
-     * @param string $type
-     * @return boolean
      */
     public static function isSimpleType(string $type): bool
     {
@@ -118,7 +106,6 @@ abstract class TypeHandling
      * Returns true if the $type is a collection type.
      *
      * @param string|class-string<object> $type
-     * @return boolean
      */
     public static function isCollectionType(string $type): bool
     {
@@ -126,11 +113,11 @@ abstract class TypeHandling
             return true;
         }
 
-        if (class_exists($type) === true || interface_exists($type) === true) {
+        if (class_exists($type) || interface_exists($type)) {
             foreach (self::$collectionTypes as $collectionType) {
                 if (class_exists($collectionType) || interface_exists($collectionType)) {
                     /** @var class-string<\Traversable<mixed>> $collectionType */
-                    if (is_subclass_of($type, $collectionType) === true) {
+                    if (is_subclass_of($type, $collectionType)) {
                         return true;
                     }
                 }
@@ -142,9 +129,6 @@ abstract class TypeHandling
 
     /**
      * Returns true if the $type is a union type.
-     *
-     * @param string $type
-     * @return boolean
      */
     public static function isUnionType(string $type): bool
     {
@@ -153,9 +137,6 @@ abstract class TypeHandling
 
     /**
      * Returns true if the $type is an intersection type.
-     *
-     * @param string $type
-     * @return boolean
      */
     public static function isIntersectionType(string $type): bool
     {
@@ -166,15 +147,15 @@ abstract class TypeHandling
      * Parses a composite type like "\Foo\Collection<\Bar\Entity>" into "\Foo\Collection"
      * Note: If the given type does not specify an element type it is not changed
      *
-     * @param string $type
      * @return string The original type without its element type (if any)
      */
     public static function truncateElementType(string $type): string
     {
-        if (strpos($type, '<') === false) {
+        $ltPos = strpos($type, '<');
+        if ($ltPos === false) {
             return $type;
         }
-        return substr($type, 0, strpos($type, '<'));
+        return substr($type, 0, $ltPos);
     }
 
     /**
@@ -207,7 +188,7 @@ abstract class TypeHandling
                     return $type;
                 }
             }
-            return get_class($value);
+            return $value::class;
         }
         return gettype($value);
     }

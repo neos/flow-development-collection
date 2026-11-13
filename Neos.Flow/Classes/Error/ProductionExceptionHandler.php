@@ -18,9 +18,8 @@ use Psr\Http\Message\ResponseInterface;
 
 /**
  * A quite exception handler which catches but ignores any exception.
- *
- * @Flow\Scope("singleton")
  */
+#[Flow\Scope('singleton')]
 class ProductionExceptionHandler extends AbstractExceptionHandler
 {
     /**
@@ -67,9 +66,7 @@ class ProductionExceptionHandler extends AbstractExceptionHandler
     /**
      * Returns the statically rendered exception message
      *
-     * @param integer $statusCode
      * @param string $referenceCode
-     * @return string
      */
     protected function renderStatically(int $statusCode, ?string $referenceCode): string
     {

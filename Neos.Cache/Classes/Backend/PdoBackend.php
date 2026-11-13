@@ -49,7 +49,7 @@ class PdoBackend extends IndependentAbstractBackend implements TaggableBackendIn
     protected $password;
 
     /**
-     * @var array
+     * @var array<mixed>
      */
     protected $driverOptions = [];
 
@@ -84,7 +84,7 @@ class PdoBackend extends IndependentAbstractBackend implements TaggableBackendIn
     protected $batchSize = 999;
 
     /**
-     * @var \ArrayIterator|null
+     * @var \ArrayIterator<string,mixed>|null
      */
     protected $cacheEntriesIterator;
 
@@ -92,7 +92,6 @@ class PdoBackend extends IndependentAbstractBackend implements TaggableBackendIn
      * Sets the DSN to use
      *
      * @param string $DSN The DSN to use for connecting to the DB
-     * @return void
      * @api
      */
     protected function setDataSourceName(string $DSN): void
@@ -104,7 +103,6 @@ class PdoBackend extends IndependentAbstractBackend implements TaggableBackendIn
      * Sets the username to use
      *
      * @param string $username The username to use for connecting to the DB
-     * @return void
      * @api
      */
     protected function setUsername(string $username): void
@@ -116,7 +114,6 @@ class PdoBackend extends IndependentAbstractBackend implements TaggableBackendIn
      * Sets the password to use
      *
      * @param string $password The password to use for connecting to the DB
-     * @return void
      * @api
      */
     protected function setPassword(string $password): void
@@ -127,8 +124,7 @@ class PdoBackend extends IndependentAbstractBackend implements TaggableBackendIn
     /**
      * Sets the driverOptions to use
      *
-     * @param array $driverOptions The options to use for connecting to the DB
-     * @return void
+     * @param array<mixed> $driverOptions The options to use for connecting to the DB
      * @api
      */
     protected function setDriverOptions(array $driverOptions): void
@@ -139,8 +135,6 @@ class PdoBackend extends IndependentAbstractBackend implements TaggableBackendIn
     /**
      * Sets the name of the "cache" table
      *
-     * @param string $cacheTableName
-     * @return void
      * @api
      */
     protected function setCacheTableName(string $cacheTableName): void
@@ -151,8 +145,6 @@ class PdoBackend extends IndependentAbstractBackend implements TaggableBackendIn
     /**
      * Sets the name of the "tags" table
      *
-     * @param string $tagsTableName
-     * @return void
      * @api
      */
     protected function setTagsTableName(string $tagsTableName): void
@@ -175,9 +167,8 @@ class PdoBackend extends IndependentAbstractBackend implements TaggableBackendIn
      *
      * @param string $entryIdentifier An identifier for this specific cache entry
      * @param string $data The data to be stored
-     * @param array $tags Tags to associate with this cache entry
+     * @param array<string> $tags Tags to associate with this cache entry
      * @param int|null $lifetime Lifetime of this cache entry in seconds. If NULL is specified, the default lifetime is used. "0" means unlimited lifetime.
-     * @return void
      * @throws Exception if no cache frontend has been set.
      * @throws \InvalidArgumentException if the identifier is not valid
      * @throws FilesException
@@ -191,7 +182,7 @@ class PdoBackend extends IndependentAbstractBackend implements TaggableBackendIn
             throw new Exception('No cache frontend has been set yet via setCache().', 1259515600);
         }
 
-        $lifetime = ($lifetime === null) ? $this->defaultLifetime : $lifetime;
+        $lifetime ??= $this->defaultLifetime;
 
         $this->databaseHandle->beginTransaction();
         try {
@@ -319,7 +310,6 @@ class PdoBackend extends IndependentAbstractBackend implements TaggableBackendIn
     /**
      * Removes all cache entries of this cache.
      *
-     * @return void
      * @throws \Exception
      * @api
      */
@@ -353,7 +343,6 @@ class PdoBackend extends IndependentAbstractBackend implements TaggableBackendIn
      * Removes all cache entries of this cache which are tagged by the specified tag.
      *
      * @param string $tag The tag the entries must have
-     * @return integer
      * @throws \Exception
      * @api
      */
@@ -461,7 +450,6 @@ class PdoBackend extends IndependentAbstractBackend implements TaggableBackendIn
     /**
      * Does garbage collection
      *
-     * @return void
      * @throws Exception
      * @api
      */
@@ -488,8 +476,6 @@ class PdoBackend extends IndependentAbstractBackend implements TaggableBackendIn
 
     /**
      * Returns an SQL statement that evaluates to true if the entry is not expired.
-     *
-     * @return string
      */
     protected function getNotExpiredStatement(): string
     {
@@ -537,7 +523,6 @@ class PdoBackend extends IndependentAbstractBackend implements TaggableBackendIn
     /**
      * Creates the tables needed for the cache backend.
      *
-     * @return void
      * @throws Exception if something goes wrong
      */
     protected function createCacheTables(): void
@@ -554,7 +539,6 @@ class PdoBackend extends IndependentAbstractBackend implements TaggableBackendIn
      * Returns the data of the current cache entry pointed to by the cache entry
      * iterator.
      *
-     * @return mixed
      * @api
      */
     public function current(): mixed
@@ -568,7 +552,6 @@ class PdoBackend extends IndependentAbstractBackend implements TaggableBackendIn
     /**
      * Move forward to the next cache entry.
      *
-     * @return void
      * @api
      */
     public function next(): void
@@ -583,7 +566,6 @@ class PdoBackend extends IndependentAbstractBackend implements TaggableBackendIn
      * Returns the identifier of the current cache entry pointed to by the cache
      * entry iterator.
      *
-     * @return string
      * @api
      */
     public function key(): string
@@ -612,14 +594,14 @@ class PdoBackend extends IndependentAbstractBackend implements TaggableBackendIn
      * Rewinds the cache entry iterator to the first element
      * and fetches cacheEntries.
      *
-     * @return void
      * @api
+     * @phpstan-assert \ArrayIterator<string,mixed> $this->cacheEntriesIterator
      */
     public function rewind(): void
     {
         try {
             $this->connect();
-        } catch (Exception $e) {
+        } catch (Exception) {
             return;
         }
 
@@ -642,12 +624,12 @@ class PdoBackend extends IndependentAbstractBackend implements TaggableBackendIn
         $this->cacheEntriesIterator = new \ArrayIterator($cacheEntries);
     }
 
-    /**
-     * @return string
-     */
     protected function context(): string
     {
         if ($this->context === null) {
+            if ($this->environmentConfiguration === null) {
+                throw new \RuntimeException('Environment configuration not set', 1744534618);
+            }
             $this->context = md5($this->environmentConfiguration->getApplicationIdentifier());
         }
         return $this->context;
@@ -656,7 +638,6 @@ class PdoBackend extends IndependentAbstractBackend implements TaggableBackendIn
     /**
      * Connects to the configured PDO database and adds/updates table schema if required
      *
-     * @return Result
      * @api
      */
     public function setup(): Result
@@ -688,7 +669,6 @@ class PdoBackend extends IndependentAbstractBackend implements TaggableBackendIn
     /**
      * Validates that configured database is accessible and schema up to date
      *
-     * @return Result
      * @api
      */
     public function getStatus(): Result
@@ -713,15 +693,12 @@ class PdoBackend extends IndependentAbstractBackend implements TaggableBackendIn
 
     /**
      * Returns true if the given $tableName exists, otherwise false
-     *
-     * @param string $tableName
-     * @return bool
      */
     private function tableExists(string $tableName): bool
     {
         try {
             $this->databaseHandle->prepare('SELECT 1 FROM "' . $tableName . '" LIMIT 1')->execute();
-        } catch (\PDOException $exception) {
+        } catch (\PDOException) {
             return false;
         }
         return true;

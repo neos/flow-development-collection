@@ -17,9 +17,8 @@ use Neos\Flow\Annotations as Flow;
 
 /**
  * JSON helpers for Eel contexts
- *
- * @Flow\Proxy(false)
  */
+#[Flow\Proxy(false)]
 class JsonHelper implements ProtectedContextAwareInterface
 {
     /**
@@ -30,13 +29,13 @@ class JsonHelper implements ProtectedContextAwareInterface
      * Json.stringify(value, ['JSON_UNESCAPED_UNICODE', 'JSON_FORCE_OBJECT'])
      *
      * @param mixed $value
-     * @param array $options Array of option constant names as strings
-     * @return string
+     * @param array<int> $options Array of option constant names as strings
      */
     public function stringify($value, array $options = []): string
     {
-        $optionSum = array_sum(array_map('constant', $options));
-        return json_encode($value, $optionSum);
+        /** @phpstan-ignore argument.type ("constant" is callable) */
+        $optionSum = array_sum(array_map(constant(...), $options));
+        return json_encode($value, $optionSum | JSON_THROW_ON_ERROR);
     }
 
     /**

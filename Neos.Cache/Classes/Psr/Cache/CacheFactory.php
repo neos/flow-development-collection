@@ -35,8 +35,6 @@ class CacheFactory
 
     /**
      * Constructs this cache factory
-     *
-     * @param EnvironmentConfiguration $environmentConfiguration
      */
     public function __construct(EnvironmentConfiguration $environmentConfiguration)
     {
@@ -48,9 +46,8 @@ class CacheFactory
      * The identifier uniquely identifiers the specific cache, so that entries inside are unique.
      *
      * @param string $cacheIdentifier The name / identifier of the cache to create.
-     * @param string $backendObjectName Object name of the cache backend
-     * @param array $backendOptions (optional) Array of backend options
-     * @return CacheItemPoolInterface
+     * @param class-string<BackendInterface> $backendObjectName Object name of the cache backend
+     * @param array<mixed> $backendOptions (optional) Array of backend options
      * @throws InvalidBackendException
      */
     public function create($cacheIdentifier, $backendObjectName, array $backendOptions = []): CacheItemPoolInterface
@@ -67,7 +64,6 @@ class CacheFactory
     /**
      * @param string $cacheIdentifier
      * @param BackendInterface $backend
-     * @return CacheItemPoolInterface
      */
     protected function instantiateCache($cacheIdentifier, $backend): CacheItemPoolInterface
     {

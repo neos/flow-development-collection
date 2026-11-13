@@ -19,6 +19,7 @@ use Neos\Cache\Backend\IterableBackendInterface;
 /**
  * An iterator for cache entries
  *
+ * @implements \Iterator<string,mixed>
  * @api
  */
 class CacheEntryIterator implements \Iterator
@@ -50,7 +51,6 @@ class CacheEntryIterator implements \Iterator
      * Returns the data of the current cache entry pointed to by the cache entry
      * iterator.
      *
-     * @return mixed
      * @api
      */
     public function current(): mixed
@@ -61,7 +61,6 @@ class CacheEntryIterator implements \Iterator
     /**
      * Move forward to the next cache entry
      *
-     * @return void
      * @api
      */
     public function next(): void
@@ -73,7 +72,6 @@ class CacheEntryIterator implements \Iterator
      * Returns the identifier of the current cache entry pointed to by the cache
      * entry iterator.
      *
-     * @return string
      * @api
      */
     public function key(): string
@@ -95,7 +93,6 @@ class CacheEntryIterator implements \Iterator
     /**
      * Rewind the cache entry iterator to the first element
      *
-     * @return void
      * @api
      */
     public function rewind(): void

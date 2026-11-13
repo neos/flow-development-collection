@@ -52,7 +52,6 @@ class RestController extends ActionController
     /**
      * Determines the action method and assures that the method exists.
      *
-     * @param ActionRequest $request
      * @return string The action method name
      * @throws NoSuchActionException if the action specified in the request object does not exist (and if there's no default action either).
      * @throws StopActionException

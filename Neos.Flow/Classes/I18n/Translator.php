@@ -34,12 +34,12 @@ use Neos\Flow\I18n;
  * Actual translating is done by injected TranslationProvider instance, so
  * storage format depends on concrete implementation.
  *
- * @Flow\Scope("singleton")
  * @api
  * @see FormatResolver
  * @see TranslationProvider\TranslationProviderInterface
  * @see Cldr\Reader\PluralsReader
  */
+#[Flow\Scope('singleton')]
 class Translator
 {
     /**
@@ -63,7 +63,6 @@ class Translator
     protected $pluralsReader;
 
     /**
-     * @param I18n\Service $localizationService
      * @return void
      */
     public function injectLocalizationService(I18n\Service $localizationService)
@@ -72,7 +71,6 @@ class Translator
     }
 
     /**
-     * @param TranslationProvider\TranslationProviderInterface $translationProvider
      * @return void
      */
     public function injectTranslationProvider(TranslationProvider\TranslationProviderInterface $translationProvider)
@@ -81,7 +79,6 @@ class Translator
     }
 
     /**
-     * @param FormatResolver $formatResolver
      * @return void
      */
     public function injectFormatResolver(FormatResolver $formatResolver)
@@ -90,7 +87,6 @@ class Translator
     }
 
     /**
-     * @param Cldr\Reader\PluralsReader $pluralsReader
      * @return void
      */
     public function injectPluralsReader(Cldr\Reader\PluralsReader $pluralsReader)
@@ -126,9 +122,7 @@ class Translator
      */
     public function translateByOriginalLabel($originalLabel, array $arguments = [], $quantity = null, ?Locale $locale = null, string $sourceName = 'Main', string $packageKey = 'Neos.Flow')
     {
-        if ($locale === null) {
-            $locale = $this->localizationService->getConfiguration()->getCurrentLocale();
-        }
+        $locale ??= $this->localizationService->getConfiguration()->getCurrentLocale();
 
         foreach ($this->localizationService->getLocaleChain($locale) as $localeInChain) {
             $translatedMessage = $this->translationProvider->getTranslationByOriginalLabel(
@@ -184,9 +178,7 @@ class Translator
      */
     public function translateById($labelId, array $arguments = [], $quantity = null, ?Locale $locale = null, $sourceName = 'Main', $packageKey = 'Neos.Flow')
     {
-        if ($locale === null) {
-            $locale = $this->localizationService->getConfiguration()->getCurrentLocale();
-        }
+        $locale ??= $this->localizationService->getConfiguration()->getCurrentLocale();
 
         foreach ($this->localizationService->getLocaleChain($locale) as $localeInChain) {
             $translatedMessage = $this->translationProvider->getTranslationById(
@@ -221,7 +213,6 @@ class Translator
      * In all other cases, NULL is returned.
      *
      * @param mixed $quantity
-     * @param Locale $locale
      * @return string|null
      */
     protected function getPluralForm($quantity, Locale $locale)

@@ -33,18 +33,14 @@ use Psr\Log\LoggerInterface;
  * Object Configuration Builder which can build object configuration objects
  * from information collected by reflection combined with arrays of configuration
  * options as defined in an Objects.yaml file.
- *
- * @Flow\Scope("singleton")
- * @Flow\Proxy(false)
  */
+#[Flow\Scope('singleton')]
+#[Flow\Proxy(false)]
 readonly class ConfigurationBuilder
 {
     use ObjectNameNormalization;
 
     /**
-     * @param ReflectionService $reflectionService
-     * @param ConfigurationParser $configurationParser
-     * @param LoggerInterface $logger
      * @param array<string> $excludeClassesFromConstructorAutowiring An array of object names for which constructor injection autowiring should be disabled
      * Note that the object names are regular expressions.
      */
@@ -138,7 +134,7 @@ readonly class ConfigurationBuilder
                     $rawObjectConfiguration = $this->enhanceRawConfigurationWithAnnotationOptions($rawObjectConfiguration['className'], $rawObjectConfiguration);
                 }
                 // Virtual objects are determined by a colon ":" in the name (e.g. "Some.Package:Some.Virtual.Object")
-                $isVirtualObject = str_contains($objectName, ':') !== false;
+                $isVirtualObject = str_contains($objectName, ':');
                 if ($isVirtualObject && empty($rawObjectConfiguration['className'])) {
                     throw new InvalidObjectConfigurationException(sprintf('Missing className for virtual object configuration "%s" of package %s. Please check your Objects.yaml.', $objectName, $packageKey), 1585758850);
                 }
@@ -188,9 +184,8 @@ readonly class ConfigurationBuilder
 
         $objectConfigurations = $this->autowireArguments($objectConfigurations);
         $objectConfigurations = $this->autowireProperties($objectConfigurations);
-        $objectConfigurations = $this->wireFactoryArguments($objectConfigurations);
 
-        return $objectConfigurations;
+        return $this->wireFactoryArguments($objectConfigurations);
     }
 
     /**
@@ -335,7 +330,7 @@ readonly class ConfigurationBuilder
             }
         }
 
-        /** @var Flow\Autowiring $autowiringAnnotation */
+        /** @var Flow\Autowiring|null $autowiringAnnotation */
         $autowiringAnnotation = $this->reflectionService->getMethodAnnotation($className, '__construct', Flow\Autowiring::class);
         if ($autowiringAnnotation !== null && $autowiringAnnotation->enabled === false) {
             return $processedObjectNames;
@@ -414,8 +409,10 @@ readonly class ConfigurationBuilder
             }
 
             try {
+                /** @var list<non-falsy-string>|null $classMethodNames */
+                /** @phpstan-ignore varTag.nativeType (this can actually be null) */
                 $classMethodNames = get_class_methods($className);
-            } catch (\TypeError $error) {
+            } catch (\TypeError) {
                 throw new UnknownClassException(sprintf('The class "%s" defined in the object configuration for object "%s", defined in package: %s, does not exist.', $className, $objectConfiguration->getObjectName(), $objectConfiguration->getPackageKey()), 1352371372);
             }
             if (!is_array($classMethodNames)) {
@@ -428,7 +425,7 @@ readonly class ConfigurationBuilder
                 if (isset($methodName[6]) && str_starts_with($methodName, 'inject') && $methodName[6] === strtoupper($methodName[6])) {
                     $propertyName = lcfirst(substr($methodName, 6));
 
-                    /** @var Flow\Autowiring $autowiringAnnotation */
+                    /** @var Flow\Autowiring|null $autowiringAnnotation */
                     $autowiringAnnotation = $this->reflectionService->getMethodAnnotation($className, $methodName, Flow\Autowiring::class);
                     if ($autowiringAnnotation !== null && $autowiringAnnotation->enabled === false) {
                         continue;
@@ -473,9 +470,7 @@ readonly class ConfigurationBuilder
                             $enableLazyInjection = false; # See:  https://github.com/neos/flow-development-collection/issues/2114
                         }
                     }
-                    if ($objectName === null) {
-                        $objectName = trim(implode('', $this->reflectionService->getPropertyTagValues($className, $propertyName, 'var')), ' \\');
-                    }
+                    $objectName ??= trim(implode('', $this->reflectionService->getPropertyTagValues($className, $propertyName, 'var')), ' \\');
                     $configurationProperty = new ConfigurationProperty($propertyName, $this->normalizeObjectName($objectName), ConfigurationProperty::PROPERTY_TYPES_OBJECT, null, $enableLazyInjection);
                     $properties[$propertyName] = $configurationProperty;
                 }

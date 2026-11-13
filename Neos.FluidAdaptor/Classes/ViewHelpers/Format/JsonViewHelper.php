@@ -60,7 +60,7 @@ class JsonViewHelper extends AbstractViewHelper
      */
     public function initializeArguments()
     {
-        $this->registerArgument('value', 'mixed', 'The incoming data to convert, or NULL if VH children should be used', false, null);
+        $this->registerArgument('value', 'mixed', 'The incoming data to convert, or NULL if VH children should be used', false);
         $this->registerArgument('forceObject', 'boolean', 'Outputs an JSON object rather than an array', false, false);
     }
 
@@ -79,9 +79,7 @@ class JsonViewHelper extends AbstractViewHelper
     {
         $value = $this->arguments['value'];
 
-        if ($value === null) {
-            $value = $this->renderChildren();
-        }
+        $value ??= $this->renderChildren();
         $options = JSON_HEX_TAG;
         if ($this->arguments['forceObject'] !== false) {
             $options = $options | JSON_FORCE_OBJECT;
@@ -94,8 +92,6 @@ class JsonViewHelper extends AbstractViewHelper
      * @param string $argumentsName
      * @param string $closureName
      * @param string $initializationPhpCode
-     * @param ViewHelperNode $node
-     * @param TemplateCompiler $compiler
      * @return string
      */
     public function compile($argumentsName, $closureName, &$initializationPhpCode, ViewHelperNode $node, TemplateCompiler $compiler)

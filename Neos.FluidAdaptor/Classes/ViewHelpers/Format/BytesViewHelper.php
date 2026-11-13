@@ -66,13 +66,12 @@ class BytesViewHelper extends AbstractLocaleAwareViewHelper
     protected const SIZE_UNITS = ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
 
     /**
-     * @Flow\Inject
      * @var NumberFormatter
      */
+    #[Flow\Inject]
     protected $numberFormatter;
 
     /**
-     * @param float $bytes
      * @return array{0: float, 1: string}
      */
     protected static function maximizeUnit(float $bytes): array
@@ -96,7 +95,7 @@ class BytesViewHelper extends AbstractLocaleAwareViewHelper
      */
     public function initializeArguments()
     {
-        $this->registerArgument('value', 'integer', 'The incoming data to convert, or NULL if VH children should be used', false, null);
+        $this->registerArgument('value', 'integer', 'The incoming data to convert, or NULL if VH children should be used', false);
         $this->registerArgument('decimals', 'integer', 'The number of digits after the decimal point', false, 0);
         $this->registerArgument('decimalSeparator', 'string', 'The decimal point character', false, '.');
         $this->registerArgument('thousandsSeparator', 'string', 'The character for grouping the thousand digits', false, ',');

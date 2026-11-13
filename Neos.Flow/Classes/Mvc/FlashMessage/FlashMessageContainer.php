@@ -30,7 +30,6 @@ class FlashMessageContainer
     /**
      * Add a flash message object.
      *
-     * @param Message $message
      * @return void
      * @api
      */
@@ -42,7 +41,6 @@ class FlashMessageContainer
     /**
      * Whether there are any messages in the FlashMessageContainer
      *
-     * @return bool
      * @api
      */
     public function hasMessages(): bool

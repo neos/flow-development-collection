@@ -21,9 +21,8 @@ use Neos\Flow\Security\Policy\Role;
 
 /**
  * An access decision voter manager
- *
- * @Flow\Scope("singleton")
  */
+#[Flow\Scope('singleton')]
 class PrivilegeManager implements PrivilegeManagerInterface
 {
     /**
@@ -39,9 +38,9 @@ class PrivilegeManager implements PrivilegeManagerInterface
     /**
      * If set to true access will be granted for objects where all voters abstain from decision.
      *
-     * @Flow\InjectConfiguration("security.authorization.allowAccessIfAllVotersAbstain")
      * @var boolean
      */
+    #[Flow\InjectConfiguration('security.authorization.allowAccessIfAllVotersAbstain')]
     protected $allowAccessIfAllAbstain = false;
 
     /**
@@ -131,9 +130,7 @@ class PrivilegeManager implements PrivilegeManagerInterface
      */
     public function isPrivilegeTargetGrantedForRoles(array $roles, $privilegeTargetIdentifier, array $privilegeParameters = [])
     {
-        $privilegeMapper = function (Role $role) use ($privilegeTargetIdentifier, $privilegeParameters) {
-            return $role->getPrivilegeForTarget($privilegeTargetIdentifier, $privilegeParameters);
-        };
+        $privilegeMapper = (fn (Role $role) => $role->getPrivilegeForTarget($privilegeTargetIdentifier, $privilegeParameters));
 
         $privileges = array_map($privilegeMapper, $roles);
         $result = array_reduce($privileges, [$this, 'applyPrivilegeToResult'], new PrivilegePermissionResult());
@@ -143,42 +140,28 @@ class PrivilegeManager implements PrivilegeManagerInterface
         }
 
         $privilegeFound = $privileges !== [];
-        if ($result->getDenies() === 0 && $result->getGrants() === 0 && $privilegeFound === true && $this->allowAccessIfAllAbstain === true) {
+        if ($result->getDenies() === 0 && $result->getGrants() === 0 && $privilegeFound && $this->allowAccessIfAllAbstain === true) {
             return true;
         }
 
         return false;
     }
 
-    /**
-     * @param PrivilegePermissionResult $result
-     * @param PrivilegeInterface|null $privilege
-     * @return PrivilegePermissionResult
-     */
     protected function applyPrivilegeToResult(PrivilegePermissionResult $result, ?PrivilegeInterface $privilege = null): PrivilegePermissionResult
     {
         return $result->withPrivilege($privilege);
     }
 
-    /**
-     * @param string $privilegeType
-     * @return \Closure
-     */
     protected function getPrivilegeByTypeReducer(string $privilegeType): \Closure
     {
-        return function (array $availablePrivileges, Role $role) use ($privilegeType) {
-            return array_merge($availablePrivileges, $role->getPrivilegesByType($privilegeType));
-        };
+        return fn (array $availablePrivileges, Role $role) => array_merge($availablePrivileges, $role->getPrivilegesByType($privilegeType));
     }
 
     /**
      * @param mixed $subject
-     * @return \Closure
      */
     protected function getPrivilegeSubjectFilter($subject): \Closure
     {
-        return function (PrivilegeInterface $privilege) use ($subject) {
-            return $privilege->matchesSubject($subject);
-        };
+        return fn (PrivilegeInterface $privilege) => $privilege->matchesSubject($subject);
     }
 }

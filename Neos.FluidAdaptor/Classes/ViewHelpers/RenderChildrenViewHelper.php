@@ -65,7 +65,6 @@ class RenderChildrenViewHelper extends AbstractViewHelper
     }
 
     /**
-     * @return string
      * @throws RenderingContextNotFoundException
      * @throws WidgetContextNotFoundException
      */
@@ -84,7 +83,6 @@ class RenderChildrenViewHelper extends AbstractViewHelper
     /**
      * Get the widget rendering context, or throw an exception if it cannot be found.
      *
-     * @return RenderingContextInterface
      * @throws RenderingContextNotFoundException
      * @throws WidgetContextNotFoundException
      */
@@ -98,7 +96,6 @@ class RenderChildrenViewHelper extends AbstractViewHelper
     }
 
     /**
-     * @return ?RootNode
      * @throws WidgetContextNotFoundException
      */
     protected function getWidgetChildNodes(): ?RootNode
@@ -107,7 +104,6 @@ class RenderChildrenViewHelper extends AbstractViewHelper
     }
 
     /**
-     * @return WidgetContext
      * @throws WidgetContextNotFoundException
      */
     protected function getWidgetContext(): WidgetContext
@@ -125,7 +121,6 @@ class RenderChildrenViewHelper extends AbstractViewHelper
      * Add the given arguments to the TemplateVariableContainer of the widget.
      *
      * @param array<string,mixed> $arguments
-     * @return void
      * @throws RenderingContextNotFoundException
      * @throws WidgetContextNotFoundException
      */
@@ -141,7 +136,6 @@ class RenderChildrenViewHelper extends AbstractViewHelper
      * Remove the given arguments from the TemplateVariableContainer of the widget.
      *
      * @param array<string,mixed> $arguments
-     * @return void
      * @throws RenderingContextNotFoundException
      * @throws WidgetContextNotFoundException
      */

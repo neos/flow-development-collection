@@ -19,9 +19,8 @@ use Neos\Flow\Annotations as Flow;
  *
  * RouteLifetime can be set by Route Part handlers via the ResolveResult/MatchResult return values
  * The lifetime will be set for the corresponding cache entries. The lowest lifetime is used if multiple are defined.
- *
- * @Flow\Proxy(false)
  */
+#[Flow\Proxy(false)]
 final class RouteLifetime
 {
     /**
@@ -40,8 +39,6 @@ final class RouteLifetime
 
     /**
      * Creates an empty instance without a specific lifetime
-     *
-     * @return RouteLifetime
      */
     public static function createUndefined(): self
     {
@@ -50,8 +47,6 @@ final class RouteLifetime
 
     /**
      * Creates an instance without an infinite lifetime
-     *
-     * @return RouteLifetime
      */
     public static function createInfinite(): self
     {
@@ -60,8 +55,6 @@ final class RouteLifetime
 
     /**
      * Creates an instance without lifetime specified in seconds
-     *
-     * @return RouteLifetime
      */
     public static function createSeconds(int $value): self
     {
@@ -75,7 +68,6 @@ final class RouteLifetime
      * Creates an instance with a specific lifetime
      *
      * @param int $value Lifetime value in s with 0 meaning infinite
-     * @return RouteLifetime
      */
     public static function fromInt(int $value): self
     {
@@ -88,9 +80,6 @@ final class RouteLifetime
     /**
      * Merges two instances of this class combining results by using the lowest lifetime
      * while respecting the special meaning of 0 = infinite and null = undefined
-     *
-     * @param RouteLifetime $lifetime
-     * @return RouteLifetime
      */
     public function merge(RouteLifetime $lifetime): self
     {

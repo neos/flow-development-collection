@@ -41,7 +41,6 @@ class ResourceUriNode extends ViewHelperNode
     protected $viewHelperClassName = ResourceViewHelper::class;
 
     /**
-     * @param ViewHelperResolver $viewHelperResolver
      * @return void
      */
     public function injectViewHelperResolver(ViewHelperResolver $viewHelperResolver)

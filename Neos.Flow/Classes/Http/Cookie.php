@@ -20,9 +20,9 @@ use Neos\Flow\Annotations as Flow;
  * @phpstan-consistent-constructor
  * @api
  * @see http://tools.ietf.org/html/rfc6265
- * @Flow\Proxy(false)
  */
-class Cookie
+#[Flow\Proxy(false)]
+class Cookie implements \Stringable
 {
     /**
      * A token as per RFC 2616, Section 2.2
@@ -78,7 +78,7 @@ class Cookie
     protected $domain;
 
     /**
-     * @var string
+     * @var ?string
      */
     protected $path;
 
@@ -117,7 +117,7 @@ class Cookie
      * @param int|\DateTimeInterface $expires Date and time after which this cookie expires.
      * @param ?int $maximumAge Number of seconds until the cookie expires.
      * @param ?string $domain The host to which the user agent will send this cookie
-     * @param string $path The path describing the scope of this cookie
+     * @param ?string $path The path describing the scope of this cookie
      * @param boolean $secure If this cookie should only be sent through a "secure" channel by the user agent
      * @param boolean $httpOnly If this cookie should only be used through the HTTP protocol
      * @param string $sameSite If this cookie should restricted to a first-party or top-level navigation or third-party context
@@ -132,10 +132,11 @@ class Cookie
         if ($expires instanceof \DateTimeInterface) {
             $expires = $expires->getTimestamp();
         }
+        /** @phpstan-ignore function.alreadyNarrowedType (Annotations can be wrong) */
         if (!is_int($expires)) {
             throw new \InvalidArgumentException('The parameter "expires" passed to the Cookie constructor must be a unix timestamp or a DateTimeInterface object.', 1345108785);
         }
-        /** @phpstan-ignore booleanAnd.alwaysFalse (until $maximumAge is typed ?int in php) */
+        /** @phpstan-ignore booleanAnd.alwaysFalse,function.alreadyNarrowedType (until $maximumAge is typed ?int in php) */
         if ($maximumAge !== null && !is_int($maximumAge)) {
             throw new \InvalidArgumentException('The parameter "maximumAge" passed to the Cookie constructor must be an integer value.', 1345108786);
         }
@@ -146,7 +147,7 @@ class Cookie
             throw new \InvalidArgumentException('The parameter "path" passed to the Cookie constructor must be a valid path as per RFC 6265, Section 4.1.1.', 1345123078);
         }
 
-        $sameSite = $sameSite ?? self::SAMESITE_LAX;
+        $sameSite ??= self::SAMESITE_LAX;
         if (!\in_array($sameSite, [self::SAMESITE_LAX, self::SAMESITE_STRICT, self::SAMESITE_NONE], true)) {
             throw new \InvalidArgumentException('The parameter "sameSite" passed to the Cookie constructor must be a valid samesite value. Possible values are "none", "strict" and "lax"', 1584955500);
         }
@@ -178,9 +179,9 @@ class Cookie
     {
         $nameValueAndUnparsedAttributes = explode(';', $header, 2);
         $expectedNameValuePair = $nameValueAndUnparsedAttributes[0];
-        $unparsedAttributes = isset($nameValueAndUnparsedAttributes[1]) ? $nameValueAndUnparsedAttributes[1] : '';
+        $unparsedAttributes = $nameValueAndUnparsedAttributes[1] ?? '';
 
-        if (strpos($expectedNameValuePair, '=') === false) {
+        if (!str_contains($expectedNameValuePair, '=')) {
             return null;
         }
         $cookieNameAndValue = explode('=', $expectedNameValuePair, 2);
@@ -207,7 +208,7 @@ class Cookie
                     case 'EXPIRES':
                         try {
                             $expiresAttribute = new \DateTime($attributeValue);
-                        } catch (\Exception $exception) {
+                        } catch (\Exception) {
                             // as of RFC 6265 Section 5.2.1, a non parsable Expires date should result into
                             // ignoring, but since the Cookie constructor relies on it, we'll
                             // assume a Session cookie with an expiry date of 0.
@@ -225,7 +226,7 @@ class Cookie
                         }
                         break;
                     case 'PATH':
-                        if ($attributeValue === '' || substr($attributeValue, 0, 1) !== '/') {
+                        if ($attributeValue === '' || !str_starts_with($attributeValue, '/')) {
                             $pathAttribute = '/';
                         } else {
                             $pathAttribute = $attributeValue;
@@ -249,7 +250,7 @@ class Cookie
             }
         }
 
-        $cookie = new static(
+        return new static(
             $cookieName,
             $cookieValue,
             $expiresAttribute,
@@ -260,8 +261,6 @@ class Cookie
             $httpOnlyAttribute,
             $sameSite
         );
-
-        return $cookie;
     }
 
     /**
@@ -342,7 +341,7 @@ class Cookie
     /**
      * Returns the path this cookie is valid for.
      *
-     * @return string The path
+     * @return ?string The path
      * @api
      */
     public function getPath()
@@ -413,10 +412,8 @@ class Cookie
 
     /**
      * Renders the field value suitable for a HTTP "Set-Cookie" header.
-     *
-     * @return string
      */
-    public function __toString()
+    public function __toString(): string
     {
         if ($this->value === false) {
             $value = 0;

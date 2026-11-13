@@ -70,21 +70,21 @@ class FileMonitor
      *
      * @var array<string,int>|null
      */
-    protected $changedFiles = null;
+    protected $changedFiles;
 
     /**
      * The changed paths for this monitor
      *
      * @var array<string,int>|null
      */
-    protected $changedPaths = null;
+    protected $changedPaths;
 
     /**
      * Array of directories and files that were cached on the last run.
      *
      * @var array<string,array<string,int>>|null
      */
-    protected $directoriesAndFiles = null;
+    protected $directoriesAndFiles;
 
     /**
      * Constructs this file monitor
@@ -101,7 +101,6 @@ class FileMonitor
      * Helper method to create a FileMonitor instance during boot sequence as injections have to be done manually.
      *
      * @param string $identifier
-     * @param Bootstrap $bootstrap
      * @return FileMonitor
      */
     public static function createFileMonitorAtBoot($identifier, Bootstrap $bootstrap)
@@ -153,7 +152,6 @@ class FileMonitor
     /**
      * Injects the (system) logger based on PSR-3.
      *
-     * @param LoggerInterface $logger
      * @return void
      */
     public function injectLogger(LoggerInterface $logger)
@@ -164,7 +162,6 @@ class FileMonitor
     /**
      * Injects the Flow_Monitor cache
      *
-     * @param StringFrontend $cache
      * @return void
      */
     public function injectCache(StringFrontend $cache)
@@ -289,7 +286,7 @@ class FileMonitor
         $currentDirectoryChanged = false;
         try {
             $currentSubDirectoriesAndFiles = $this->readMonitoredDirectoryRecursively($path, $filenamePattern);
-        } catch (\Exception $exception) {
+        } catch (\Exception) {
             $currentSubDirectoriesAndFiles = [];
             $this->changedPaths[$path] = ChangeDetectionStrategyInterface::STATUS_DELETED;
         }

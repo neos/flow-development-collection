@@ -172,8 +172,8 @@ class JsonView extends AbstractView
 
     /**
      * @var PersistenceManagerInterface
-     * @Flow\Inject
      */
+    #[Flow\Inject]
     protected $persistenceManager;
 
     /**

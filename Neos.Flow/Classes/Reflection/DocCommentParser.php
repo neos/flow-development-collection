@@ -16,9 +16,8 @@ use Neos\Flow\Annotations as Flow;
 
 /**
  * A little parser which creates tag objects from doc comments
- *
- * @Flow\Scope("singleton")
  */
+#[Flow\Scope('singleton')]
 class DocCommentParser
 {
     /**
@@ -49,7 +48,7 @@ class DocCommentParser
         $lines = explode(chr(10), $docComment);
         foreach ($lines as $line) {
             $line = trim(preg_replace('/\*\/$/', '', $line) ?: '');
-            if ($line !== '' && strpos($line, '* @') !== false) {
+            if ($line !== '' && str_contains($line, '* @')) {
                 $this->parseTag(substr($line, strpos($line, '@') ?: 0));
             } elseif (count($this->tags) === 0) {
                 $this->description .= preg_replace('/\s*\\/?[\\\\*]*\s?(.*)$/', '$1', $line) . chr(10);

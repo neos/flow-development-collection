@@ -28,21 +28,21 @@ use Psr\Log\LoggerInterface;
 class SecurityEntryPointMiddleware implements MiddlewareInterface
 {
     /**
-     * @Flow\Inject(lazy=false)
      * @var Context
      */
+    #[Flow\Inject(lazy: false)]
     protected $securityContext;
 
     /**
-     * @Flow\Inject(name="Neos.Flow:SecurityLogger")
      * @var LoggerInterface
      */
+    #[Flow\Inject(name: 'Neos.Flow:SecurityLogger')]
     protected $securityLogger;
 
     /**
-     * @Flow\Inject(lazy=false)
      * @var ActionRequestFactory
      */
+    #[Flow\Inject(lazy: false)]
     protected $actionRequestFactory;
 
     /**
@@ -57,9 +57,7 @@ class SecurityEntryPointMiddleware implements MiddlewareInterface
         try {
             return $next->handle($request->withAttribute(ServerRequestAttributes::ACTION_REQUEST, $actionRequest));
         } catch (AuthenticationRequiredException $authenticationException) {
-            $tokensWithEntryPoint = array_filter($this->securityContext->getAuthenticationTokens(), static function (TokenInterface $token) {
-                return $token->getAuthenticationEntryPoint() !== null;
-            });
+            $tokensWithEntryPoint = array_filter($this->securityContext->getAuthenticationTokens(), static fn (TokenInterface $token) => $token->getAuthenticationEntryPoint() !== null);
 
             if ($tokensWithEntryPoint === []) {
                 $this->securityLogger->notice('No authentication entry point found for active tokens, therefore cannot authenticate or redirect to authentication automatically.');
@@ -74,7 +72,7 @@ class SecurityEntryPointMiddleware implements MiddlewareInterface
 
                 $entryPoint = $token->getAuthenticationEntryPoint();
                 assert($entryPoint instanceof EntryPointInterface);
-                $this->securityLogger->debug(sprintf('Starting authentication with entry point of type "%s"', \get_class($entryPoint)), LogEnvironment::fromMethodName(__METHOD__));
+                $this->securityLogger->debug(sprintf('Starting authentication with entry point of type "%s"', $entryPoint::class), LogEnvironment::fromMethodName(__METHOD__));
 
                 // Only store the intercepted request if it is a GET request (otherwise it can't be resumed properly)
                 // We also don't store the request for "sessionless authentications" because that would implicitly start a session
@@ -92,8 +90,6 @@ class SecurityEntryPointMiddleware implements MiddlewareInterface
 
     /**
      * Build a base HTTP Response in case of a missing authentication exception
-     *
-     * @return ResponseInterface
      */
     protected function buildHttpResponse(): ResponseInterface
     {

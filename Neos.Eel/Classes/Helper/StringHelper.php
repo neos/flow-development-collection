@@ -20,9 +20,8 @@ use Neos\Utility\Unicode\TextIterator;
 
 /**
  * String helpers for Eel contexts
- *
- * @Flow\Proxy(false)
  */
+#[Flow\Proxy(false)]
 class StringHelper implements ProtectedContextAwareInterface
 {
     /**
@@ -45,9 +44,7 @@ class StringHelper implements ProtectedContextAwareInterface
     {
         $string = (string)$string;
 
-        if ($length === null) {
-            $length = mb_strlen($string, 'UTF-8');
-        }
+        $length ??= mb_strlen($string, 'UTF-8');
         $length = max(0, $length);
         return mb_substr($string, $start, $length, 'UTF-8');
     }
@@ -71,9 +68,7 @@ class StringHelper implements ProtectedContextAwareInterface
     {
         $string = (string)$string;
 
-        if ($end === null) {
-            $end = mb_strlen($string, 'UTF-8');
-        }
+        $end ??= mb_strlen($string, 'UTF-8');
         $start = max(0, $start);
         $end = max(0, $end);
         if ($start > $end) {
@@ -121,7 +116,7 @@ class StringHelper implements ProtectedContextAwareInterface
         $string = (string)$string;
         $search = (string)$search;
 
-        $position = $position ?? mb_strlen($string, 'UTF-8');
+        $position ??= mb_strlen($string, 'UTF-8');
         $position = $position - mb_strlen($search, 'UTF-8');
         return mb_strrpos($string, $search, 0, 'UTF-8') === $position;
     }
@@ -136,7 +131,7 @@ class StringHelper implements ProtectedContextAwareInterface
      * This is a wrapper for the chr() PHP function.
      * @see ord()
      *
-     * @param int $value An integer between 0 and 255
+     * @param int<0, 255> $value An integer between 0 and 255
      * @return string A single-character string containing the specified byte
      */
     public function chr($value)
@@ -186,7 +181,7 @@ class StringHelper implements ProtectedContextAwareInterface
         if ($index === false) {
             return -1;
         }
-        return (int)$index;
+        return $index;
     }
 
     /**
@@ -206,9 +201,7 @@ class StringHelper implements ProtectedContextAwareInterface
         $string = (string)$string;
 
         $length = mb_strlen($string, 'UTF-8');
-        if ($toIndex === null) {
-            $toIndex = $length;
-        }
+        $toIndex ??= $length;
         $toIndex = max(0, $toIndex);
         if ($search === '') {
             return min($length, $toIndex);
@@ -218,7 +211,7 @@ class StringHelper implements ProtectedContextAwareInterface
         if ($index === false) {
             return -1;
         }
-        return (int)$index;
+        return $index;
     }
 
     /**
@@ -231,7 +224,7 @@ class StringHelper implements ProtectedContextAwareInterface
      *
      * @param string $string The input string
      * @param string $pattern A PREG pattern
-     * @return array|null The matches as array or NULL if not matched
+     * @return array<mixed>|null The matches as array or NULL if not matched
      * @throws EvaluationException
      */
     public function pregMatch($string, $pattern)
@@ -256,7 +249,7 @@ class StringHelper implements ProtectedContextAwareInterface
      *
      * @param string $string The input string
      * @param string $pattern A PREG pattern
-     * @return array|null The matches as array or NULL if not matched
+     * @return array<mixed>|null The matches as array or NULL if not matched
      * @throws EvaluationException
      */
     public function pregMatchAll($string, $pattern)
@@ -283,14 +276,12 @@ class StringHelper implements ProtectedContextAwareInterface
      * @param string $string The input string
      * @param string $pattern A PREG pattern
      * @param string $replace A replacement string, can contain references to capture groups with "\\n" or "$n"
-     * @param integer $limit The maximum possible replacements for each pattern in each subject string. Defaults to -1 (no limit).
-     * @return string The string with all occurrences replaced
+     * @param ?integer $limit The maximum possible replacements for each pattern in each subject string. Defaults to -1 (no limit).
+     * @return string|null The string with all occurrences replaced
      */
     public function pregReplace($string, $pattern, $replace, $limit = -1)
     {
-        if ($limit === null) {
-            $limit = -1;
-        }
+        $limit ??= -1;
         return preg_replace($pattern, $replace, (string)$string, $limit);
     }
 
@@ -305,11 +296,11 @@ class StringHelper implements ProtectedContextAwareInterface
      * @param string $string The input string
      * @param string $pattern A PREG pattern
      * @param integer $limit The maximum amount of items to return, in contrast to split() this will return all remaining characters in the last item (see example)
-     * @return array An array of the splitted parts, excluding the matched pattern
+     * @return array<string> An array of the splitted parts, excluding the matched pattern
      */
     public function pregSplit($string, $pattern, $limit = -1)
     {
-        return preg_split($pattern, (string)$string, (int)$limit);
+        return preg_split($pattern, (string)$string, (int)$limit) ?: [];
     }
 
     /**
@@ -322,10 +313,10 @@ class StringHelper implements ProtectedContextAwareInterface
      *
      * Note: this method does not perform regular expression matching, @see pregReplace().
      *
-     * @param array|string|null $string The input string
-     * @param array|string|null $search A search string
-     * @param array|string|null $replace A replacement string
-     * @return array|string|string[] The string with all occurrences replaced
+     * @param array<mixed>|string|null $string The input string
+     * @param array<mixed>|string|null $search A search string
+     * @param array<mixed>|string|null $replace A replacement string
+     * @return array<mixed>|string|string[] The string with all occurrences replaced
      */
     public function replace($string, $search, $replace)
     {
@@ -350,7 +341,7 @@ class StringHelper implements ProtectedContextAwareInterface
      * @param string $string The string to split
      * @param string|null $separator The separator where the string should be splitted
      * @param int|null $limit The maximum amount of items to split (exceeding items will be discarded)
-     * @return array An array of the splitted parts, excluding the separators
+     * @return array<string> An array of the split parts, excluding the separators
      */
     public function split($string, $separator = null, $limit = null)
     {
@@ -390,7 +381,7 @@ class StringHelper implements ProtectedContextAwareInterface
      */
     public function startsWith($string, $search, $position = null)
     {
-        $position = $position ?? 0;
+        $position ??= 0;
         return mb_strpos((string)$string, (string)$search, 0, 'UTF-8') === $position;
     }
 
@@ -592,7 +583,7 @@ class StringHelper implements ProtectedContextAwareInterface
      */
     public function htmlSpecialChars($string, $preserveEntities = false)
     {
-        return htmlspecialchars((string)$string, ENT_NOQUOTES | ENT_HTML401, ini_get("default_charset"), !$preserveEntities);
+        return htmlspecialchars((string)$string, ENT_NOQUOTES | ENT_HTML401, ini_get("default_charset") ?: null, !$preserveEntities);
     }
 
     /**
@@ -712,9 +703,9 @@ class StringHelper implements ProtectedContextAwareInterface
     {
         $unicodeString = (string)$unicodeString;
 
-        $unicodeString = preg_replace('/[[:punct:][:digit:]]/', '', $unicodeString);
+        $unicodeString = preg_replace('/[[:punct:][:digit:]]/', '', $unicodeString) ?: '';
 
-        return count(preg_split('/[[:space:]]+/', $unicodeString, 0, PREG_SPLIT_NO_EMPTY));
+        return count(preg_split('/[[:space:]]+/', $unicodeString, 0, PREG_SPLIT_NO_EMPTY) ?: []);
     }
 
     /**
@@ -747,7 +738,7 @@ class StringHelper implements ProtectedContextAwareInterface
      * @see https://php.net/manual/en/function.vsprintf.php
      *
      * @param string $format A formatting string containing directives
-     * @param array $args An array of values to be inserted according to the formatting string $format
+     * @param array<mixed> $args An array of values to be inserted according to the formatting string $format
      * @return string A string produced according to the formatting string $format
      */
     public function format($format, array $args)

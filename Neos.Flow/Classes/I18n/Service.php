@@ -22,9 +22,9 @@ use Neos\Utility\Files;
  * A Service which provides further information about a given locale
  * and the current state of the i18n and L10n components.
  *
- * @Flow\Scope("singleton")
  * @api
  */
+#[Flow\Scope('singleton')]
 class Service
 {
     /**
@@ -33,24 +33,24 @@ class Service
     protected $settings;
 
     /**
-     * @Flow\Inject
      * @var PackageManager
      */
+    #[Flow\Inject]
     protected $packageManager;
 
     /**
      * A collection of Locale objects representing currently installed locales,
      * in a hierarchical manner.
      *
-     * @Flow\Inject(lazy=false)
      * @var LocaleCollection
      */
+    #[Flow\Inject(lazy: false)]
     protected $localeCollection;
 
     /**
-     * @Flow\Inject(lazy=false)
      * @var VariableFrontend
      */
+    #[Flow\Inject(lazy: false)]
     protected $cache;
 
     /**
@@ -129,12 +129,10 @@ class Service
      */
     public function getLocalizedFilename($pathAndFilename, ?Locale $locale = null, $strict = false)
     {
-        if ($locale === null) {
-            $locale = $this->configuration->getCurrentLocale();
-        }
+        $locale ??= $this->configuration->getCurrentLocale();
 
         $filename = basename($pathAndFilename);
-        if ((strpos($filename, '.')) !== false) {
+        if (str_contains($filename, '.')) {
             $dotPosition = strrpos($pathAndFilename, '.') ?: 0;
             $pathAndFilenameWithoutExtension = substr($pathAndFilename, 0, $dotPosition);
             $extension = substr($pathAndFilename, $dotPosition);
@@ -144,7 +142,7 @@ class Service
         }
 
         if ($strict === true) {
-            $possibleLocalizedFilename = $pathAndFilenameWithoutExtension . '.' . (string)$locale . $extension;
+            $possibleLocalizedFilename = $pathAndFilenameWithoutExtension . '.' . $locale . $extension;
             if (file_exists($possibleLocalizedFilename)) {
                 return [$possibleLocalizedFilename, $locale];
             }
@@ -182,9 +180,7 @@ class Service
      */
     public function getXliffFilenameAndPath($path, $sourceName, ?Locale $locale = null)
     {
-        if ($locale === null) {
-            $locale = $this->configuration->getCurrentLocale();
-        }
+        $locale ??= $this->configuration->getCurrentLocale();
 
         foreach ($this->getLocaleChain($locale) as $localeIdentifier => $locale) {
             $possibleXliffFilename = Files::concatenatePaths([$path, $localeIdentifier, $sourceName . '.xlf']);
@@ -198,7 +194,6 @@ class Service
     /**
      * Build a chain of locale objects according to the fallback rule and
      * the available locales.
-     * @param Locale $locale
      * @return array<string,Locale>
      */
     public function getLocaleChain(Locale $locale)

@@ -28,16 +28,13 @@ interface FlashMessageStorageInterface
      * @api
      */
     // public function __construct(array $options = []);
-
     /**
      * @param HttpRequestInterface $request The current HTTP request for storages that persist the FlashMessages via HTTP
-     * @return FlashMessageContainer
      */
     public function load(HttpRequestInterface $request): FlashMessageContainer;
 
     /**
      * @param HttpResponseInterface $response The current HTTP response for storages that persist the FlashMessages via HTTP
-     * @return HttpResponseInterface
      */
     public function persist(HttpResponseInterface $response): HttpResponseInterface;
 }

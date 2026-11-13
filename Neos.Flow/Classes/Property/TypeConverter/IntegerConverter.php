@@ -24,8 +24,8 @@ use Neos\Flow\Property\PropertyMappingConfigurationInterface;
  * * If the source is a DateTime instance, the UNIX timestamp is returned
  *
  * @api
- * @Flow\Scope("singleton")
  */
+#[Flow\Scope('singleton')]
 class IntegerConverter extends AbstractTypeConverter
 {
     /**
@@ -49,7 +49,6 @@ class IntegerConverter extends AbstractTypeConverter
      * @param int|string|\DateTimeInterface|null $source
      * @param string $targetType
      * @param array<string,mixed> $convertedChildProperties
-     * @param PropertyMappingConfigurationInterface|null $configuration
      * @return integer|null|Error
      * @api
      */

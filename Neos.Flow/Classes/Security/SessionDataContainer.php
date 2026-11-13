@@ -8,9 +8,9 @@ use Neos\Flow\Security\Authentication\Token\SessionlessTokenInterface;
 use Neos\Flow\Security\Authentication\TokenInterface;
 
 /**
- * @Flow\Scope("session")
  * @internal
  */
+#[Flow\Scope('session')]
 class SessionDataContainer
 {
     /**
@@ -54,7 +54,7 @@ class SessionDataContainer
     {
         foreach ($securityTokens as $token) {
             if ($token instanceof SessionlessTokenInterface) {
-                throw new \InvalidArgumentException(sprintf('Tokens implementing the SessionlessTokenInterface must not be stored in the session. Got: %s', get_class($token)), 1562670555);
+                throw new \InvalidArgumentException(sprintf('Tokens implementing the SessionlessTokenInterface must not be stored in the session. Got: %s', $token::class), 1562670555);
             }
         }
         $this->securityTokens = $securityTokens;
@@ -108,6 +108,6 @@ class SessionDataContainer
     {
         $this->setSecurityTokens([]);
         $this->setCsrfProtectionTokens([]);
-        $this->setInterceptedRequest(null);
+        $this->setInterceptedRequest();
     }
 }

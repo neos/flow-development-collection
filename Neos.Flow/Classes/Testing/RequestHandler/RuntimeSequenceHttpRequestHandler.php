@@ -21,17 +21,13 @@ use Psr\Http\Message\ServerRequestInterface;
  * For that reason it features a setRequest() method which is used by the FunctionalTestCase
  * for setting the current HTTP request. That way, the request handler acts pretty much
  * like the Http\RequestHandler from a client code perspective.
- *
- * @Flow\Scope("singleton")
- * @Flow\Proxy(false)
  */
+#[Flow\Scope('singleton')]
+#[Flow\Proxy(false)]
 class RuntimeSequenceHttpRequestHandler extends RuntimeSequenceInvokingRequestHandler implements HttpRequestHandlerInterface
 {
     private ServerRequestInterface|null $httpRequest = null;
 
-    /**
-     * @param ServerRequestInterface $request
-     */
     public function setHttpRequest(ServerRequestInterface $request): void
     {
         $this->httpRequest = $request;
@@ -39,14 +35,10 @@ class RuntimeSequenceHttpRequestHandler extends RuntimeSequenceInvokingRequestHa
 
     /**
      * Returns the currently processed HTTP request
-     *
-     * @return ServerRequestInterface
      */
     public function getHttpRequest(): ServerRequestInterface
     {
-        if ($this->httpRequest === null) {
-            $this->httpRequest = ServerRequest::fromGlobals();
-        }
+        $this->httpRequest ??= ServerRequest::fromGlobals();
 
         return $this->httpRequest;
     }

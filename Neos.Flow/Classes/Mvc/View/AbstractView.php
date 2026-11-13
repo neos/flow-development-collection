@@ -79,7 +79,7 @@ abstract class AbstractView implements ViewInterface
     {
         // check for options given but not supported
         if (($unsupportedOptions = array_diff_key($options, $this->supportedOptions)) !== []) {
-            throw new Exception(sprintf('The view options "%s" you\'re trying to set don\'t exist in class "%s".', implode(',', array_keys($unsupportedOptions)), get_class($this)), 1359625876);
+            throw new Exception(sprintf('The view options "%s" you\'re trying to set don\'t exist in class "%s".', implode(',', array_keys($unsupportedOptions)), static::class), 1359625876);
         }
 
         // check for required options being set
@@ -96,9 +96,7 @@ abstract class AbstractView implements ViewInterface
         // merge with default values
         $this->options = array_merge(
             array_map(
-                function ($value) {
-                    return $value[0];
-                },
+                fn ($value) => $value[0],
                 $this->supportedOptions
             ),
             $options
@@ -115,7 +113,7 @@ abstract class AbstractView implements ViewInterface
     public function getOption($optionName)
     {
         if (!array_key_exists($optionName, $this->supportedOptions)) {
-            throw new Exception(sprintf('The view option "%s" you\'re trying to get doesn\'t exist in class "%s".', $optionName, get_class($this)), 1359625878);
+            throw new Exception(sprintf('The view option "%s" you\'re trying to get doesn\'t exist in class "%s".', $optionName, static::class), 1359625878);
         }
 
         return $this->options[$optionName];
@@ -132,7 +130,7 @@ abstract class AbstractView implements ViewInterface
     public function setOption($optionName, $value)
     {
         if (!array_key_exists($optionName, $this->supportedOptions)) {
-            throw new Exception(sprintf('The view option "%s" you\'re trying to set doesn\'t exist in class "%s".', $optionName, get_class($this)), 1359625879);
+            throw new Exception(sprintf('The view option "%s" you\'re trying to set doesn\'t exist in class "%s".', $optionName, static::class), 1359625879);
         }
 
         $this->options[$optionName] = $value;

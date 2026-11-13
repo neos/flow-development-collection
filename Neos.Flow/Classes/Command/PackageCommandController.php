@@ -21,9 +21,8 @@ use Neos\Flow\Package\PackageManager;
 
 /**
  * Package command controller to handle packages from CLI
- *
- * @Flow\Scope("singleton")
  */
+#[Flow\Scope('singleton')]
 class PackageCommandController extends CommandController
 {
     /**
@@ -32,7 +31,6 @@ class PackageCommandController extends CommandController
     protected $packageManager;
 
     /**
-     * @param PackageManager $packageManager
      * @return void
      */
     public function injectPackageManager(PackageManager $packageManager)
@@ -46,12 +44,12 @@ class PackageCommandController extends CommandController
      * This command creates a new package which contains only the mandatory
      * directories and files.
      *
-     * @Flow\FlushesCaches
      * @param string $packageKey The package key of the package to create
      * @param string $packageType The package type of the package to create
      * @return void
      * @see neos.kickstarter:kickstart:package
      */
+    #[Flow\FlushesCaches]
     public function createCommand(string $packageKey, string $packageType = PackageInterface::DEFAULT_COMPOSER_TYPE)
     {
         if (!$this->packageManager->isPackageKeyValid($packageKey)) {
@@ -67,7 +65,7 @@ class PackageCommandController extends CommandController
             $this->outputLine('The package must be a Flow package, but "%s" is not a valid Flow package type.', [$packageType]);
             $this->quit(1);
         }
-        $package = $this->packageManager->createPackage($packageKey, ['type' => $packageType], null);
+        $package = $this->packageManager->createPackage($packageKey, ['type' => $packageType]);
         $this->outputLine('Created new package "' . $packageKey . '" at "' . $package->getPackagePath() . '".');
     }
 

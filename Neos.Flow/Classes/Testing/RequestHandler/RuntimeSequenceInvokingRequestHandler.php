@@ -19,18 +19,15 @@ use Neos\Flow\Core\RequestHandlerInterface;
  *
  * As this request handler will be the "active" request handler returned by
  * the bootstrap's getActiveRequestHandler() method.
- *
- * @Flow\Scope("singleton")
- * @Flow\Proxy(false)
  */
+#[Flow\Scope('singleton')]
+#[Flow\Proxy(false)]
 class RuntimeSequenceInvokingRequestHandler implements RequestHandlerInterface
 {
     protected Bootstrap $bootstrap;
 
     /**
      * Constructor
-     *
-     * @param \Neos\Flow\Core\Bootstrap $bootstrap
      */
     public function __construct(Bootstrap $bootstrap)
     {
@@ -63,8 +60,6 @@ class RuntimeSequenceInvokingRequestHandler implements RequestHandlerInterface
 
     /**
      * Handles a command line request
-     *
-     * @return void
      */
     public function handleRequest(): void
     {

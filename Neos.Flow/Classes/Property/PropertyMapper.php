@@ -27,21 +27,21 @@ use Neos\Utility\TypeHandling;
  * The Property Mapper transforms simple types (arrays, strings, integers, floats, booleans) to objects or other simple types.
  * It is used most prominently to map incoming HTTP arguments to objects.
  *
- * @Flow\Scope("singleton")
  * @api
  */
+#[Flow\Scope('singleton')]
 class PropertyMapper
 {
     /**
-     * @Flow\Inject
      * @var ObjectManagerInterface
      */
+    #[Flow\Inject]
     protected $objectManager;
 
     /**
-     * @Flow\Inject
      * @var VariableFrontend
      */
+    #[Flow\Inject]
     protected $cache;
 
     /**
@@ -87,8 +87,8 @@ class PropertyMapper
      *
      * @param ObjectManagerInterface $objectManager
      * @return array<class-string<TypeConverterInterface>> Array of type converter implementations
-     * @Flow\CompileStatic
      */
+    #[Flow\CompileStatic]
     public static function getTypeConverterImplementationClassNames($objectManager)
     {
         $reflectionService = $objectManager->get(ReflectionService::class);
@@ -107,14 +107,11 @@ class PropertyMapper
      * @return mixed an instance of $targetType
      * @throws Exception
      * @throws SecurityException
-     * @phpstan-assert Result $this->getMessages()
      * @api
      */
     public function convert($source, string $targetType, ?PropertyMappingConfigurationInterface $configuration = null)
     {
-        if ($configuration === null) {
-            $configuration = $this->buildPropertyMappingConfiguration();
-        }
+        $configuration ??= $this->buildPropertyMappingConfiguration();
 
         $currentPropertyPath = [];
         $this->messages = new Result();
@@ -128,7 +125,6 @@ class PropertyMapper
         } catch (SecurityException $exception) { /** @phpstan-ignore catch.neverThrown (AOP I guess) */
             throw $exception;
         } catch (\Exception $exception) {
-            /** @phpstan-ignore greater.alwaysFalse (Not sure about this tbh) */
             throw new PropertyException('Could not convert target type "' . $targetType . '"' . (count($currentPropertyPath) > 0 ? ', at property path "' . implode('.', $currentPropertyPath) . '"' : '') . ': ' . $exception->getMessage(), 1297759968, $exception);
         }
     }
@@ -171,9 +167,7 @@ class PropertyMapper
             }
         }
 
-        if ($source === null) {
-            $source = '';
-        }
+        $source ??= '';
 
         $typeConverter = $this->findTypeConverter($source, $targetType, $configuration);
         $targetType = $typeConverter->getTargetTypeForSource($source, $targetType, $configuration);
@@ -220,7 +214,6 @@ class PropertyMapper
      *
      * @param mixed $source
      * @param string $targetType
-     * @param PropertyMappingConfigurationInterface $configuration
      * @return TypeConverterInterface Type Converter which should be used to convert between $source and $targetType.
      * @throws Exception\TypeConverterException
      * @throws Exception\InvalidTargetException
@@ -230,7 +223,7 @@ class PropertyMapper
         if ($configuration->getTypeConverter() !== null) {
             return $configuration->getTypeConverter();
         }
-
+        /** @phpstan-ignore function.alreadyNarrowedType (annotations can be wrong) */
         if (!is_string($targetType)) {
             throw new Exception\InvalidTargetException('The target type was no string, but of type "' . gettype($targetType) . '"', 1297941727);
         }
@@ -382,7 +375,7 @@ class PropertyMapper
         } elseif (is_bool($source)) {
             return ['boolean'];
         } elseif (is_object($source)) {
-            $class = get_class($source);
+            $class = $source::class;
             $parentClasses = class_parents($class);
             $interfaces = class_implements($class);
 
@@ -409,7 +402,7 @@ class PropertyMapper
                 $normalizedSourceType = TypeHandling::normalizeType($supportedSourceType);
                 $normalizedTargetType = TypeHandling::normalizeType($typeConverter->getSupportedTargetType());
                 if (isset($typeConverterMap[$normalizedSourceType][$normalizedTargetType][$typeConverter->getPriority()])) {
-                    throw new Exception\DuplicateTypeConverterException('There exist at least two converters which handle the conversion from "' . $supportedSourceType . '" to "' . $normalizedTargetType . '" with priority "' . $typeConverter->getPriority() . '": ' . $typeConverterMap[$supportedSourceType][$normalizedTargetType][$typeConverter->getPriority()] . ' and ' . get_class($typeConverter), 1297951378);
+                    throw new Exception\DuplicateTypeConverterException('There exist at least two converters which handle the conversion from "' . $supportedSourceType . '" to "' . $normalizedTargetType . '" with priority "' . $typeConverter->getPriority() . '": ' . $typeConverterMap[$supportedSourceType][$normalizedTargetType][$typeConverter->getPriority()] . ' and ' . $typeConverter::class, 1297951378);
                 }
                 $typeConverterMap[$normalizedSourceType][$normalizedTargetType][$typeConverter->getPriority()] = $typeConverterClassName;
             }

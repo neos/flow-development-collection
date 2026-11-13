@@ -8,9 +8,9 @@ use Traversable;
 
 /**
  * @internal
- * @Flow\Proxy(false)
  * @implements \IteratorAggregate<int, Route>
  */
+#[Flow\Proxy(false)]
 final class Routes implements \IteratorAggregate
 {
     /**
@@ -33,7 +33,7 @@ final class Routes implements \IteratorAggregate
                 }
                 $routesWithHttpMethodConstraints[$uriPattern] = true;
             } else {
-                if (isset($routesWithHttpMethodConstraints[$uriPattern]) && $routesWithHttpMethodConstraints[$uriPattern] === true) {
+                if (isset($routesWithHttpMethodConstraints[$uriPattern]) && $routesWithHttpMethodConstraints[$uriPattern]) {
                     throw new InvalidRouteSetupException(sprintf('There are multiple routes with the uriPattern "%s" and "httpMethods" option set. Please specify accepted HTTP methods for all of these, or adjust the uriPattern', $uriPattern), 1365678432);
                 }
                 $routesWithHttpMethodConstraints[$uriPattern] = false;

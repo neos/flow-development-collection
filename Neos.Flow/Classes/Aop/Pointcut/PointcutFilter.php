@@ -19,9 +19,8 @@ use Neos\Flow\Aop\Exception\UnknownPointcutException;
 
 /**
  * A filter which refers to another pointcut.
- *
- * @Flow\Proxy(false)
  */
+#[Flow\Proxy(false)]
 class PointcutFilter implements PointcutFilterInterface
 {
     /**
@@ -62,9 +61,6 @@ class PointcutFilter implements PointcutFilterInterface
 
     /**
      * Injects the AOP Proxy Class Builder
-     *
-     * @param ProxyClassBuilder $proxyClassBuilder
-     * @return void
      */
     public function injectProxyClassBuilder(ProxyClassBuilder $proxyClassBuilder): void
     {
@@ -83,9 +79,7 @@ class PointcutFilter implements PointcutFilterInterface
      */
     public function matches($className, $methodName, $methodDeclaringClassName, $pointcutQueryIdentifier): bool
     {
-        if ($this->pointcut === null) {
-            $this->pointcut = $this->proxyClassBuilder->findPointcut($this->aspectClassName, $this->pointcutMethodName) ?: null;
-        }
+        $this->pointcut ??= $this->proxyClassBuilder->findPointcut($this->aspectClassName, $this->pointcutMethodName) ?: null;
         if ($this->pointcut === null) {
             throw new UnknownPointcutException('No pointcut "' . $this->pointcutMethodName . '" found in aspect class "' . $this->aspectClassName . '" .', 1172223694);
         }
@@ -109,9 +103,7 @@ class PointcutFilter implements PointcutFilterInterface
      */
     public function getRuntimeEvaluationsDefinition(): array
     {
-        if ($this->pointcut === null) {
-            $this->pointcut = $this->proxyClassBuilder->findPointcut($this->aspectClassName, $this->pointcutMethodName) ?: null;
-        }
+        $this->pointcut ??= $this->proxyClassBuilder->findPointcut($this->aspectClassName, $this->pointcutMethodName) ?: null;
         if ($this->pointcut === null) {
             return [];
         }
@@ -121,15 +113,10 @@ class PointcutFilter implements PointcutFilterInterface
 
     /**
      * This method is used to optimize the matching process.
-     *
-     * @param ClassNameIndex $classNameIndex
-     * @return ClassNameIndex
      */
     public function reduceTargetClassNames(ClassNameIndex $classNameIndex): ClassNameIndex
     {
-        if ($this->pointcut === null) {
-            $this->pointcut = $this->proxyClassBuilder->findPointcut($this->aspectClassName, $this->pointcutMethodName) ?: null;
-        }
+        $this->pointcut ??= $this->proxyClassBuilder->findPointcut($this->aspectClassName, $this->pointcutMethodName) ?: null;
         if ($this->pointcut === null) {
             return $classNameIndex;
         }

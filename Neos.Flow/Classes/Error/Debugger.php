@@ -121,10 +121,6 @@ class Debugger
      * Renders a dump of the given variable
      *
      * @param mixed $variable
-     * @param integer $level
-     * @param boolean $plaintext
-     * @param boolean $ansiColors
-     * @return string
      */
     public static function renderDump($variable, int $level, bool $plaintext = false, bool $ansiColors = false): string
     {
@@ -159,19 +155,15 @@ class Debugger
      * Renders a dump of the given array
      *
      * @param iterable<mixed> $array
-     * @param integer $level
-     * @param boolean $plaintext
-     * @param boolean $ansiColors
-     * @return string
      */
     protected static function renderArrayDump(iterable $array, int $level, bool $plaintext = false, bool $ansiColors = false): string
     {
         if (is_array($array)) {
             $dump = 'array' . (count($array) ? '(' . count($array) . ')' : '(empty)');
         } elseif ($array instanceof \Countable) {
-            $dump = get_class($array) . (count($array) ? '(' . count($array) . ')' : '(empty)');
+            $dump = $array::class . (count($array) ? '(' . count($array) . ')' : '(empty)');
         } else {
-            $dump = get_class($array);
+            $dump = $array::class;
         }
         foreach ($array as $key => $value) {
             $dump .= chr(10) . str_repeat(' ', $level) . self::renderDump($key, 0, $plaintext, $ansiColors) . ' => ';
@@ -185,11 +177,6 @@ class Debugger
      * Renders a dump of the given object
      *
      * @param object $object
-     * @param integer $level
-     * @param boolean $renderProperties
-     * @param boolean $plaintext
-     * @param boolean $ansiColors
-     * @return string
      */
     protected static function renderObjectDump($object, int $level, bool $renderProperties = true, bool $plaintext = false, bool $ansiColors = false): string
     {
@@ -204,17 +191,17 @@ class Debugger
         // Objects returned from Doctrine's Debug::export function are stdClass with special properties:
         try {
             $objectIdentifier = ObjectAccess::getProperty($object, 'Persistence_Object_Identifier', true);
-        } catch (\Neos\Utility\Exception\PropertyNotAccessibleException $exception) {
+        } catch (\Neos\Utility\Exception\PropertyNotAccessibleException) {
             $objectIdentifier = spl_object_hash($object);
         }
-        $className = ($object instanceof \stdClass && isset($object->__CLASS__)) ? $object->__CLASS__ : get_class($object);
+        $className = ($object instanceof \stdClass && isset($object->__CLASS__)) ? $object->__CLASS__ : $object::class;
         if (isset(self::$renderedObjects[$objectIdentifier]) || preg_match(self::getIgnoredClassesRegex(), $className) !== 0) {
             $renderProperties = false;
         }
         self::$renderedObjects[$objectIdentifier] = true;
 
         if (self::$objectManager !== null) {
-            $objectName = self::$objectManager->getObjectNameByClassName(get_class($object));
+            $objectName = self::$objectManager->getObjectNameByClassName($object::class);
             if ($objectName !== false) {
                 switch (self::$objectManager->getScope($objectName)) {
                     case Configuration::SCOPE_PROTOTYPE:
@@ -232,7 +219,7 @@ class Debugger
             }
         }
 
-        if ($renderProperties === true && !$plaintext) {
+        if ($renderProperties && !$plaintext) {
             if ($scope === '') {
                 $scope = 'prototype';
             }
@@ -272,7 +259,7 @@ class Debugger
             }
         }
 
-        if ($renderProperties === true) {
+        if ($renderProperties) {
             if ($object instanceof \SplObjectStorage) {
                 $dump .= ' (' . (count($object) ?: 'empty') . ')';
                 foreach ($object as $value) {
@@ -292,7 +279,6 @@ class Debugger
                     }
                     $dump .= chr(10);
                     $dump .= str_repeat(' ', $level) . ($plaintext ? '' : '<span class="debug-property">') . self::ansiEscapeWrap($property->getName(), '36', $ansiColors) . ($plaintext ? '' : '</span>') . ' => ';
-                    $property->setAccessible(true);
                     if ($property->isInitialized($object) === false) {
                         $value = null;
                     } else {
@@ -323,7 +309,6 @@ class Debugger
      *
      * @param array<int,array<string,mixed>> $trace The trace
      * @param boolean $includeCode Include code snippet
-     * @param boolean $plaintext
      * @return string Backtrace information
      */
     public static function getBacktraceCode(array $trace, bool $includeCode = true, bool $plaintext = false): string
@@ -332,7 +317,7 @@ class Debugger
             return static::getBacktraceCodePlaintext($trace, $includeCode);
         }
         $backtraceCode = '<ol class="Flow-Debug-Backtrace" reversed>';
-        foreach ($trace as $index => $step) {
+        foreach ($trace as $step) {
             $backtraceCode .= '<li class="Flow-Debug-Backtrace-Step">';
             $class = isset($step['class']) ? $step['class'] . '<span class="color-muted">::</span>' : '';
 
@@ -373,7 +358,7 @@ class Debugger
                 } elseif (is_numeric($argument)) {
                     $arguments .= (string)$argument;
                 } elseif (is_bool($argument)) {
-                    $arguments .= ($argument === true ? 'true' : 'false');
+                    $arguments .= ($argument ? 'true' : 'false');
                 } elseif (is_array($argument)) {
                     $arguments .= sprintf(
                         '<em title="%s">array|%d|</em>',
@@ -383,7 +368,7 @@ class Debugger
                 } else {
                     $arguments .= '<em>' . get_debug_type($argument) . '</em>';
                 }
-            } catch (\Throwable $_) {
+            } catch (\Throwable) {
                 $arguments .= '<em>' . get_debug_type($argument) . '</em>';
             }
 
@@ -395,8 +380,6 @@ class Debugger
 
     /**
      * @param array<int,array<string,mixed>> $trace
-     * @param bool $includeCode
-     * @return string
      */
     protected static function getBacktraceCodePlaintext(array $trace, bool $includeCode = true): string
     {
@@ -444,13 +427,13 @@ class Debugger
                 } elseif (is_numeric($argument)) {
                     $arguments .= (string)$argument;
                 } elseif (is_bool($argument)) {
-                    $arguments .= ($argument === true ? 'true' : 'false');
+                    $arguments .= ($argument ? 'true' : 'false');
                 } elseif (is_array($argument)) {
                     $arguments .= 'array|' . count($argument) . '|';
                 } else {
                     $arguments .= get_debug_type($argument);
                 }
-            } catch (\Throwable $_) {
+            } catch (\Throwable) {
                 $arguments .= get_debug_type($argument);
             }
         }
@@ -463,7 +446,6 @@ class Debugger
      *
      * @param string $filePathAndName Absolute path and filename of the PHP file
      * @param integer $lineNumber Line number defining the center of the code snippet
-     * @param boolean $plaintext
      * @return string The code snippet
      */
     public static function getCodeSnippet(string $filePathAndName, int $lineNumber, bool $plaintext = false): string
@@ -519,12 +501,12 @@ class Debugger
             return self::getObjectShortName($object) . '|' . self::truncateObjectOutput(json_encode($publicProperties, JSON_THROW_ON_ERROR, 1)) . '|';
         }
 
-        return get_class($object);
+        return $object::class;
     }
 
     protected static function getObjectShortName(object $object): string
     {
-        $classNameParts = explode('\\', get_class($object));
+        $classNameParts = explode('\\', $object::class);
         return array_pop($classNameParts);
     }
 
@@ -558,7 +540,6 @@ class Debugger
     }
 
     /**
-     * @param string $file
      * @return array{short: string, proxy: string}
      */
     public static function findProxyAndShortFilePath(string $file): array
@@ -603,8 +584,6 @@ class Debugger
      * Tries to load the 'Neos.Flow.error.debugger.ignoredClasses' setting
      * to build a regular expression that can be used to filter ignored class names
      * If settings can't be loaded it uses self::$ignoredClassesFallback.
-     *
-     * @return string
      */
     public static function getIgnoredClassesRegex(): string
     {
@@ -638,8 +617,6 @@ class Debugger
      * Tries to load the 'Neos.Flow.error.debugger.recursionLimit' setting
      * to determine the maximal recursions-level fgor the debugger.
      * If settings can't be loaded it uses self::$ignoredClassesFallback.
-     *
-     * @return integer
      */
     public static function getRecursionLimit(): int
     {
@@ -678,6 +655,7 @@ use Neos\Flow\Error\Debugger;
 function var_dump($variable, ?string $title = null, bool $return = false, ?bool $plaintext = null)
 {
     if ($plaintext === null) {
+        /** @phpstan-ignore identical.alwaysTrue (FLOW_SAPITYPE can also be "Web") */
         $plaintext = (FLOW_SAPITYPE === 'CLI');
         /** @phpstan-ignore booleanAnd.leftAlwaysTrue (no, this can be false) */
         $ansiColors = $plaintext && DIRECTORY_SEPARATOR === '/';
@@ -685,9 +663,7 @@ function var_dump($variable, ?string $title = null, bool $return = false, ?bool 
         $ansiColors = false;
     }
 
-    if ($title === null) {
-        $title = 'Flow Variable Dump';
-    }
+    $title ??= 'Flow Variable Dump';
     if ($ansiColors) {
         $title = "\x1B[1m" . $title . "\x1B[0m";
     }
@@ -713,7 +689,7 @@ function var_dump($variable, ?string $title = null, bool $return = false, ?bool 
 		';
     }
 
-    if ($return === true) {
+    if ($return) {
         return $output;
     }
     echo $output;

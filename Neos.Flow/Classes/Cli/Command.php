@@ -80,9 +80,6 @@ class Command
         $this->reflectionService = $reflectionService;
     }
 
-    /**
-     * @param ObjectManagerInterface $objectManager
-     */
     public function injectObjectManager(ObjectManagerInterface $objectManager): void
     {
         $this->objectManager = $objectManager;
@@ -96,9 +93,6 @@ class Command
         return $this->controllerClassName;
     }
 
-    /**
-     * @return string
-     */
     public function getControllerCommandName(): string
     {
         return $this->controllerCommandName;
@@ -165,8 +159,6 @@ class Command
 
     /**
      * Returns true if this command expects required and/or optional arguments, otherwise false
-     *
-     * @return boolean
      */
     public function hasArguments(): bool
     {
@@ -210,8 +202,6 @@ class Command
      * Tells if this command is internal and thus should not be exposed through help texts, user documentation etc.
      * Internal commands are still accessible through the regular command line interface, but should not be used
      * by users.
-     *
-     * @return boolean
      */
     public function isInternal(): bool
     {
@@ -222,8 +212,6 @@ class Command
      * Tells if this command is deprecated and thus should be marked as such in help texts, user documentation etc.
      * Deprecated commands are still accessible through the regular command line interface, but should not be used
      * by users anymore.
-     *
-     * @return boolean
      */
     public function isDeprecated(): bool
     {
@@ -234,8 +222,6 @@ class Command
      * Tells if this command flushes all caches and thus needs special attention in the interactive shell.
      *
      * Note that neither this method nor the @Flow\FlushesCaches annotation is currently part of the official API.
-     *
-     * @return boolean
      */
     public function isFlushingCaches(): bool
     {
@@ -264,9 +250,6 @@ class Command
         return $relatedCommandIdentifiers;
     }
 
-    /**
-     * @return MethodReflection
-     */
     protected function getCommandMethodReflection(): MethodReflection
     {
         if ($this->commandMethodReflection === null) {

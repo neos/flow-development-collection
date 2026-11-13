@@ -18,9 +18,9 @@ use Neos\Flow\I18n;
 /**
  * The Detector class provides methods for automatic locale detection
  *
- * @Flow\Scope("singleton")
  * @api
  */
+#[Flow\Scope('singleton')]
 class Detector
 {
     /**
@@ -37,7 +37,6 @@ class Detector
     protected $localeCollection;
 
     /**
-     * @param I18n\Service $localizationService
      * @return void
      */
     public function injectLocalizationService(I18n\Service $localizationService)
@@ -46,7 +45,6 @@ class Detector
     }
 
     /**
-     * @param LocaleCollection $localeCollection
      * @return void
      */
     public function injectLocaleCollection(LocaleCollection $localeCollection)
@@ -78,7 +76,7 @@ class Detector
 
             try {
                 $locale = new Locale($languageIdentifier);
-            } catch (Exception\InvalidLocaleIdentifierException $exception) {
+            } catch (Exception\InvalidLocaleIdentifierException) {
                 continue;
             }
 
@@ -105,7 +103,7 @@ class Detector
     {
         try {
             return $this->detectLocaleFromTemplateLocale(new Locale($localeIdentifier));
-        } catch (Exception\InvalidLocaleIdentifierException $exception) {
+        } catch (Exception\InvalidLocaleIdentifierException) {
             return $this->localizationService->getConfiguration()->getDefaultLocale();
         }
     }

@@ -16,15 +16,14 @@ use Neos\Flow\Annotations as Flow;
 
 /**
  * An access decision manager that can be overridden for tests
- *
- * @Flow\Scope("singleton")
  */
+#[Flow\Scope('singleton')]
 class TestingPrivilegeManager extends PrivilegeManager
 {
     /**
      * @var boolean|null
      */
-    protected $overrideDecision = null;
+    protected $overrideDecision;
 
     /**
      * Returns true, if the given privilege type is granted for the given subject based

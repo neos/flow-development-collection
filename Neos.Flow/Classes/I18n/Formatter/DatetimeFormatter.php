@@ -25,9 +25,9 @@ use Neos\Flow\I18n\Locale;
  * - rules for displaying timezone names are simplified
  * - some less frequently used format characters are not supported
  *
- * @Flow\Scope("singleton")
  * @api
  */
+#[Flow\Scope('singleton')]
 class DatetimeFormatter implements FormatterInterface
 {
     /**
@@ -36,7 +36,6 @@ class DatetimeFormatter implements FormatterInterface
     protected $datesReader;
 
     /**
-     * @param DatesReader $datesReader
      * @return void
      */
     public function injectDatesReader(DatesReader $datesReader)
@@ -69,14 +68,11 @@ class DatetimeFormatter implements FormatterInterface
             $formatLength = DatesReader::FORMAT_LENGTH_DEFAULT;
         }
 
-        switch ($formatType) {
-            case DatesReader::FORMAT_TYPE_DATE:
-                return $this->formatDate($value, $locale, $formatLength);
-            case DatesReader::FORMAT_TYPE_TIME:
-                return $this->formatTime($value, $locale, $formatLength);
-            default:
-                return $this->formatDateTime($value, $locale, $formatLength);
-        }
+        return match ($formatType) {
+            DatesReader::FORMAT_TYPE_DATE => $this->formatDate($value, $locale, $formatLength),
+            DatesReader::FORMAT_TYPE_TIME => $this->formatTime($value, $locale, $formatLength),
+            default => $this->formatDateTime($value, $locale, $formatLength),
+        };
     }
 
     /**
@@ -105,7 +101,6 @@ class DatetimeFormatter implements FormatterInterface
      * locale.
      *
      * @param \DateTimeInterface $date PHP object representing particular point in time
-     * @param Locale $locale
      * @param string $formatLength One of DatesReader FORMAT_LENGTH constants
      * @return string Formatted date
      * @api
@@ -121,7 +116,6 @@ class DatetimeFormatter implements FormatterInterface
      * locale.
      *
      * @param \DateTimeInterface $time PHP object representing particular point in time
-     * @param Locale $locale
      * @param string $formatLength One of DatesReader FORMAT_LENGTH constants
      * @return string Formatted time
      * @api
@@ -140,7 +134,6 @@ class DatetimeFormatter implements FormatterInterface
      * from CLDR is used to place date and time in correct order.
      *
      * @param \DateTimeInterface $dateTime PHP object representing particular point in time
-     * @param Locale $locale
      * @param string $formatLength One of DatesReader FORMAT_LENGTH constants
      * @return string Formatted date and time
      * @api

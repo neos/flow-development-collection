@@ -43,8 +43,6 @@ class TextIteratorElement
      *
      * @param string $value The value of the element
      * @param integer $offset The offset in the original string
-     * @param integer $length
-     * @param boolean $boundary
      */
     public function __construct(string $value, int $offset, int $length = 0, bool $boundary = false)
     {

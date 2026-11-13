@@ -73,21 +73,21 @@ class Browser implements ClientInterface
     protected $automaticRequestHeaders;
 
     /**
-     * @Flow\Inject
      * @var RequestEngineInterface
      */
+    #[Flow\Inject]
     protected $requestEngine;
 
     /**
-     * @Flow\Inject
      * @var ServerRequestFactoryInterface
      */
+    #[Flow\Inject]
     protected $serverRequestFactory;
 
     /**
-     * @Flow\Inject
      * @var StreamFactoryInterface
      */
+    #[Flow\Inject]
     protected $contentStreamFactory;
 
     /**
@@ -101,7 +101,6 @@ class Browser implements ClientInterface
     /**
      * Inject the request engine
      *
-     * @param RequestEngineInterface $requestEngine
      * @return void
      */
     public function setRequestEngine(RequestEngineInterface $requestEngine)
@@ -172,9 +171,9 @@ class Browser implements ClientInterface
         $location = $response->getHeaderLine('Location');
         if ($this->followRedirects && !empty($location) && $response->getStatusCode() >= 300 && $response->getStatusCode() <= 399) {
             $location = urldecode($location);
-            if (strpos($location, '/') === 0) {
+            if (str_starts_with($location, '/')) {
                 // Location header is a host-absolute URL; so we need to prepend the hostname to create a full URL.
-                $location = (string)RequestInformationHelper::generateBaseUri($request) . ltrim($location, '/');
+                $location = RequestInformationHelper::generateBaseUri($request) . ltrim($location, '/');
             }
 
             if (in_array($location, $this->redirectionStack, true) || count($this->redirectionStack) >= $this->maximumRedirections) {
@@ -202,8 +201,6 @@ class Browser implements ClientInterface
     /**
      * Sends a prepared request and returns the respective response.
      *
-     * @param RequestInterface $request
-     * @return ResponseInterface
      * @throws \Psr\Http\Client\ClientExceptionInterface
      * @api
      */
@@ -288,7 +285,6 @@ class Browser implements ClientInterface
     /**
      * Submit a form
      *
-     * @param \Symfony\Component\DomCrawler\Form $form
      * @return ResponseInterface
      * @api
      */

@@ -8,9 +8,7 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Configuration\ConfigurationManager;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 
-/**
- * @Flow\Scope("singleton")
- */
+#[Flow\Scope('singleton')]
 final class ConfigurationRoutesProvider implements RoutesProviderInterface
 {
     public function __construct(
@@ -33,8 +31,7 @@ final class ConfigurationRoutesProvider implements RoutesProviderInterface
                     $routes[] = $route;
                 }
             } else {
-                /** @phpstan-ignore method.notFound */
-                $routes[] = (new \ReflectionClass(Route::class))->newLazyProxy(static fn () => Route::fromConfiguration($routeConfiguration));
+                $routes[] = new \ReflectionClass(Route::class)->newLazyProxy(static fn () => Route::fromConfiguration($routeConfiguration));
             }
         }
         return Routes::create(...$routes);

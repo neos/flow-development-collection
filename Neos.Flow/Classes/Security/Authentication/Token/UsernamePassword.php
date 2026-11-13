@@ -22,14 +22,14 @@ use Neos\Utility\ObjectAccess;
  */
 class UsernamePassword extends AbstractToken implements UsernamePasswordTokenInterface
 {
-    private const DEFAULT_USERNAME_POST_FIELD = '__authentication.Neos.Flow.Security.Authentication.Token.UsernamePassword.username';
-    private const DEFAULT_PASSWORD_POST_FIELD = '__authentication.Neos.Flow.Security.Authentication.Token.UsernamePassword.password';
+    private const string DEFAULT_USERNAME_POST_FIELD = '__authentication.Neos.Flow.Security.Authentication.Token.UsernamePassword.username';
+    private const string DEFAULT_PASSWORD_POST_FIELD = '__authentication.Neos.Flow.Security.Authentication.Token.UsernamePassword.password';
 
     /**
      * The username/password credentials
      * @var array{username: string, password: string,}
-     * @Flow\Transient
      */
+    #[Flow\Transient]
     protected $credentials = ['username' => '', 'password' => ''];
 
     /**
@@ -95,7 +95,7 @@ class UsernamePassword extends AbstractToken implements UsernamePasswordTokenInt
      *
      * @return string The username credential
      */
-    public function __toString()
+    public function __toString(): string
     {
         return 'Username: "' . $this->credentials['username'] . '"';
     }

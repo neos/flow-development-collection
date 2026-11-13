@@ -43,7 +43,7 @@ abstract class AbstractTagBasedViewHelper extends AbstractViewHelper
      * @var TagBuilder
      * @api
      */
-    protected $tag = null;
+    protected $tag;
 
     /**
      * Name of the tag to be created by this view helper
@@ -66,7 +66,6 @@ abstract class AbstractTagBasedViewHelper extends AbstractViewHelper
     }
 
     /**
-     * @param TagBuilder $tag
      * @return void
      */
     public function injectTagBuilder(TagBuilder $tag)
@@ -100,8 +99,8 @@ abstract class AbstractTagBasedViewHelper extends AbstractViewHelper
             }
         }
 
-        if (isset(self::$tagAttributes[get_class($this)])) {
-            foreach (self::$tagAttributes[get_class($this)] as $attributeName) {
+        if (isset(self::$tagAttributes[static::class])) {
+            foreach (self::$tagAttributes[static::class] as $attributeName) {
                 if ($this->hasArgument($attributeName) && $this->arguments[$attributeName] !== '' && $this->arguments[$attributeName] !== false) {
                     if ($this->arguments[$attributeName] === true) {
                         $this->tag->addAttribute($attributeName, '');
@@ -127,7 +126,7 @@ abstract class AbstractTagBasedViewHelper extends AbstractViewHelper
     protected function registerTagAttribute($name, $type, $description, $required = false, $defaultValue = null)
     {
         $this->registerArgument($name, $type, $description, $required, $defaultValue);
-        self::$tagAttributes[get_class($this)][$name] = $name;
+        self::$tagAttributes[static::class][$name] = $name;
     }
 
     /**
@@ -164,7 +163,7 @@ abstract class AbstractTagBasedViewHelper extends AbstractViewHelper
     {
         $unassigned = [];
         foreach ($arguments as $argumentName => $argumentValue) {
-            if (strpos($argumentName, 'data-') === 0) {
+            if (str_starts_with($argumentName, 'data-')) {
                 $this->tag->addAttribute($argumentName, $argumentValue);
             } else {
                 $unassigned[$argumentName] = $argumentValue;

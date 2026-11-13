@@ -23,9 +23,8 @@ use Neos\Flow\Security\Exception\InvalidQueryRewritingConstraintException;
 
 /**
  * A filter to rewrite doctrine queries according to the security policy.
- *
- * @Flow\Proxy(false)
  */
+#[Flow\Proxy(false)]
 class EntityPrivilege extends AbstractPrivilege implements EntityPrivilegeInterface
 {
     /**
@@ -95,7 +94,7 @@ class EntityPrivilege extends AbstractPrivilege implements EntityPrivilegeInterf
         $evaluator = $this->objectManager->get(EntityPrivilegeExpressionEvaluator::class);
         $result = $evaluator->evaluate($this->getParsedMatcher(), $context);
         $this->entityType = $result['entityType'];
-        $this->conditionGenerator = $result['conditionGenerator'] !== null ? $result['conditionGenerator'] : new TrueConditionGenerator();
+        $this->conditionGenerator = $result['conditionGenerator'] ?? new TrueConditionGenerator();
         $this->isEvaluated = true;
     }
 
@@ -113,7 +112,6 @@ class EntityPrivilege extends AbstractPrivilege implements EntityPrivilegeInterf
      * in SQL and not by the voting process, this method will always
      * return false.
      *
-     * @param PrivilegeSubjectInterface $subject
      * @return boolean
      */
     public function matchesSubject(PrivilegeSubjectInterface $subject)

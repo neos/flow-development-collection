@@ -47,21 +47,21 @@ use Neos\Flow\Security\Policy\PolicyService;
 class FileBasedSimpleKeyProvider extends AbstractProvider
 {
     /**
-     * @Flow\Inject
      * @var HashService
      */
+    #[Flow\Inject]
     protected $hashService;
 
     /**
-     * @Flow\Inject
      * @var FileBasedSimpleKeyService
      */
+    #[Flow\Inject]
     protected $fileBasedSimpleKeyService;
 
     /**
-     * @Flow\Inject
      * @var PolicyService
      */
+    #[Flow\Inject]
     protected $policyService;
 
     /**
@@ -101,8 +101,6 @@ class FileBasedSimpleKeyProvider extends AbstractProvider
     }
 
     /**
-     * @param PasswordTokenInterface $authenticationToken
-     * @return void
      * @throws \Neos\Flow\Security\Exception
      */
     protected function validateCredentials(PasswordTokenInterface $authenticationToken): void

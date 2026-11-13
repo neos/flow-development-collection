@@ -38,8 +38,8 @@ abstract class AbstractToken implements TokenInterface
     /**
      * The credentials submitted by the client
      * @var array<mixed>
-     * @Flow\Transient
      */
+    #[Flow\Transient]
     protected $credentials = [];
 
     /**
@@ -56,7 +56,7 @@ abstract class AbstractToken implements TokenInterface
      * The authentication entry point
      * @var EntryPointInterface
      */
-    protected $entryPoint = null;
+    protected $entryPoint;
 
     /**
      * Token options
@@ -147,7 +147,7 @@ abstract class AbstractToken implements TokenInterface
     {
         foreach ($requestPatterns as $requestPattern) {
             if (!$requestPattern instanceof RequestPatternInterface) {
-                throw new \InvalidArgumentException(sprintf('Invalid request pattern passed to token of type "%s"', get_class($this)), 1327398366);
+                throw new \InvalidArgumentException(sprintf('Invalid request pattern passed to token of type "%s"', static::class), 1327398366);
             }
         }
         $this->requestPatterns = $requestPatterns;
@@ -225,8 +225,8 @@ abstract class AbstractToken implements TokenInterface
      *
      * @return string The class name
      */
-    public function __toString()
+    public function __toString(): string
     {
-        return get_class($this);
+        return static::class;
     }
 }

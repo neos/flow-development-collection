@@ -61,7 +61,6 @@ abstract class AbstractPrivilege implements PrivilegeInterface
     /**
      * This object is created very early so we can't rely on AOP for the property injection
      *
-     * @param ObjectManagerInterface $objectManager
      * @return void
      */
     public function injectObjectManager(ObjectManagerInterface $objectManager)
@@ -70,7 +69,6 @@ abstract class AbstractPrivilege implements PrivilegeInterface
     }
 
     /**
-     * @param PrivilegeTarget $privilegeTarget
      * @param string $matcher
      * @param string $permission One of the constants GRANT, DENY or ABSTAIN
      * @param PrivilegeParameterInterface[] $parameters
@@ -96,8 +94,6 @@ abstract class AbstractPrivilege implements PrivilegeInterface
 
     /**
      * Unique identifier of this privilege
-     *
-     * @return string
      */
     public function getCacheEntryIdentifier(): string
     {
@@ -188,8 +184,6 @@ abstract class AbstractPrivilege implements PrivilegeInterface
 
     /**
      * Returns the matcher string with replaced parameter markers. @see getMatcher()
-     *
-     * @return string
      */
     public function getParsedMatcher(): string
     {

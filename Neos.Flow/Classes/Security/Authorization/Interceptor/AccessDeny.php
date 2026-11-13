@@ -18,9 +18,8 @@ use Neos\Flow\Security\Exception\AccessDeniedException;
 
 /**
  * This security interceptor always denys access.
- *
- * @Flow\Scope("singleton")
  */
+#[Flow\Scope('singleton')]
 class AccessDeny implements InterceptorInterface
 {
     /**

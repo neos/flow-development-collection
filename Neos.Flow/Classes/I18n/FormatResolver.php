@@ -35,9 +35,9 @@ use Neos\Flow\Reflection\ReflectionService;
  * {0,number,decimal}
  * {1,datetime,time,full}
  *
- * @Flow\Scope("singleton")
  * @api
  */
+#[Flow\Scope('singleton')]
 class FormatResolver
 {
     /**
@@ -51,9 +51,9 @@ class FormatResolver
     protected $localizationService;
 
     /**
-     * @Flow\Inject
      * @var ReflectionService
      */
+    #[Flow\Inject]
     protected $reflectionService;
 
     /**
@@ -64,7 +64,6 @@ class FormatResolver
     protected $formatters;
 
     /**
-     * @param ObjectManagerInterface $objectManager
      * @return void
      */
     public function injectObjectManager(ObjectManagerInterface $objectManager)
@@ -73,7 +72,6 @@ class FormatResolver
     }
 
     /**
-     * @param I18n\Service $localizationService
      * @return void
      */
     public function injectLocalizationService(I18n\Service $localizationService)
@@ -101,9 +99,7 @@ class FormatResolver
      */
     public function resolvePlaceholders($textWithPlaceholders, array $arguments, ?Locale $locale = null)
     {
-        if ($locale === null) {
-            $locale = $this->localizationService->getConfiguration()->getDefaultLocale();
-        }
+        $locale ??= $this->localizationService->getConfiguration()->getDefaultLocale();
 
         $lastPlaceHolderAt = 0;
         while ($lastPlaceHolderAt < strlen($textWithPlaceholders) && ($startOfPlaceholder = strpos($textWithPlaceholders, '{', $lastPlaceHolderAt)) !== false) {
@@ -182,7 +178,7 @@ class FormatResolver
             $foundFormatter = $this->objectManager->get($possibleClassName);
         }
         if (!$foundFormatter instanceof FormatterInterface) {
-            throw new \Exception('No valid formatter found, got ' . get_class($foundFormatter), 1744412948);
+            throw new \Exception('No valid formatter found, got ' . $foundFormatter::class, 1744412948);
         }
 
         $this->formatters[$formatterType] = $foundFormatter;

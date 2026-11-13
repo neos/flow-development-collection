@@ -33,33 +33,32 @@ use Symfony\Component\Yaml\Yaml;
  * Settings/Neos/Flow.persistence.schema.yaml will match the same paths
  * like Settings.Neos.Flow.persistence.schema.yaml or
  * Settings/Neos.Flow/persistence.schema.yaml
- *
- * @Flow\Scope("singleton")
  */
+#[Flow\Scope('singleton')]
 class ConfigurationSchemaValidator
 {
     /**
-     * @Flow\Inject
      * @var \Neos\Flow\Configuration\ConfigurationManager
      */
+    #[Flow\Inject]
     protected $configurationManager;
 
     /**
-     * @Flow\Inject
      * @var \Neos\Flow\Package\PackageManager
      */
+    #[Flow\Inject]
     protected $packageManager;
 
     /**
-     * @Flow\Inject
      * @var \Neos\Utility\SchemaValidator
      */
+    #[Flow\Inject]
     protected $schemaValidator;
 
     /**
-     * @Flow\Inject
      * @var Translator
      */
+    #[Flow\Inject]
     protected $translator;
 
     /**
@@ -93,7 +92,6 @@ class ConfigurationSchemaValidator
      * @param string $configurationType the configuration typr to validate
      * @param string|null $path configuration path to validate, or NULL.
      * @param array<int,string> $loadedSchemaFiles will be filled with a list of loaded schema files
-     * @return \Neos\Error\Messages\Result
      * @throws Exception\SchemaValidationException
      */
     protected function validateSingleType(string $configurationType, ?string $path = null, array&$loadedSchemaFiles = []): Result
@@ -120,9 +118,9 @@ class ConfigurationSchemaValidator
                     $schemaNameParts = explode('.', str_replace('/', '.', $schemaName), 2);
 
                     $schemaType = $schemaNameParts[0];
-                    $schemaPath = isset($schemaNameParts[1]) ? $schemaNameParts[1] : null;
+                    $schemaPath = $schemaNameParts[1] ?? null;
 
-                    if ($schemaType === $configurationType && ($path === null || (is_string($schemaPath) && strpos($schemaPath, $path) === 0))) {
+                    if ($schemaType === $configurationType && ($path === null || (is_string($schemaPath) && str_starts_with($schemaPath, $path)))) {
                         $schemaFileInfos[] = [
                             'file' => $schemaFile,
                             'name' => $schemaName,

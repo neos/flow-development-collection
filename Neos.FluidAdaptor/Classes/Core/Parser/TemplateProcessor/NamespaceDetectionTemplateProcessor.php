@@ -71,7 +71,6 @@ class NamespaceDetectionTemplateProcessor extends FluidNamespaceDetectionTemplat
      * Encodes areas enclosed in CDATA to prevent further parsing by the Fluid engine.
      * CDATA sections will appear as they are in the final rendered result.
      *
-     * @param string $templateSource
      * @return mixed
      */
     public function protectCDataSectionsFromParser(string $templateSource)
@@ -121,9 +120,6 @@ class NamespaceDetectionTemplateProcessor extends FluidNamespaceDetectionTemplat
     /**
      * Throw an UnknownNamespaceException for any unknown and not ignored
      * namespace inside the template string.
-     *
-     * @param string $templateSource
-     * @return void
      */
     public function throwExceptionsForUnhandledNamespaces(string $templateSource): void
     {

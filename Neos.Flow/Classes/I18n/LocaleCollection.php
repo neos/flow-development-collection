@@ -20,9 +20,8 @@ use Neos\Flow\Annotations as Flow;
  *
  * This class maintans a hierarchical relation between locales. For
  * example, a locale "en_GB" will be a child of a locale "en".
- *
- * @Flow\Scope("singleton")
  */
+#[Flow\Scope('singleton')]
 class LocaleCollection
 {
     /**

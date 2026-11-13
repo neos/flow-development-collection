@@ -31,7 +31,6 @@ abstract class AbstractFormViewHelper extends AbstractTagBasedViewHelper
     /**
      * Injects the Flow Persistence Manager
      *
-     * @param PersistenceManagerInterface $persistenceManager
      * @return void
      */
     public function injectPersistenceManager(PersistenceManagerInterface $persistenceManager)
@@ -75,12 +74,13 @@ abstract class AbstractFormViewHelper extends AbstractTagBasedViewHelper
      */
     protected function renderHiddenIdentityField($object, $name)
     {
+        /** @phpstan-ignore function.alreadyNarrowedType (annotations can be wrong) */
         if (!is_object($object) || $this->persistenceManager->isNewObject($object) || $name === null) {
             return '';
         }
         $identifier = $this->persistenceManager->getIdentifierByObject($object);
         if ($identifier === null) {
-            return chr(10) . '<!-- Object of type ' . get_class($object) . ' is without identity -->' . chr(10);
+            return chr(10) . '<!-- Object of type ' . $object::class . ' is without identity -->' . chr(10);
         }
         $name = $this->prefixFieldName($name) . '[__identity]';
         $this->registerFieldNameForFormTokenGeneration($name);

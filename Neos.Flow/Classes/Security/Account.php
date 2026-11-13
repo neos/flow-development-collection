@@ -24,30 +24,30 @@ use Neos\Flow\Utility\Now;
 /**
  * An account model
  *
- * @Flow\Entity
  * @api
  */
+#[Flow\Entity]
 class Account
 {
     /**
      * @var string
-     * @Flow\Identity
-     * @Flow\Validate(type="NotEmpty")
-     * @Flow\Validate(type="StringLength", options={ "minimum"=1, "maximum"=255 })
      */
+    #[Flow\Identity]
+    #[Flow\Validate(type: 'NotEmpty')]
+    #[Flow\Validate(type: 'StringLength', options: ['minimum' => 1, 'maximum' => 255])]
     protected $accountIdentifier;
 
     /**
      * @var string
-     * @Flow\Identity
-     * @Flow\Validate(type="NotEmpty")
      */
+    #[Flow\Identity]
+    #[Flow\Validate(type: 'NotEmpty')]
     protected $authenticationProviderName;
 
     /**
      * @var string
-     * @ORM\Column(nullable=true)
      */
+    #[ORM\Column(nullable: true)]
     protected $credentialsSource;
 
     /**
@@ -57,50 +57,50 @@ class Account
 
     /**
      * @var \DateTime|null
-     * @ORM\Column(nullable=true)
      */
+    #[ORM\Column(nullable: true)]
     protected $expirationDate;
 
     /**
      * @var \DateTime
-     * @ORM\Column(nullable=true)
      */
+    #[ORM\Column(nullable: true)]
     protected $lastSuccessfulAuthenticationDate;
 
     /**
      * @var integer
-     * @ORM\Column(nullable=true)
      */
+    #[ORM\Column(nullable: true)]
     protected $failedAuthenticationCount;
 
     /**
      * @var array<string>
-     * @ORM\Column(type="simple_array", nullable=true)
      */
+    #[ORM\Column(type: 'simple_array', nullable: true)]
     protected $roleIdentifiers = [];
 
     /**
-     * @Flow\Transient
      * @var array<Role>
      */
+    #[Flow\Transient]
     protected $roles;
 
     /**
-     * @Flow\Inject
      * @var PolicyService
      */
+    #[Flow\Inject]
     protected $policyService;
 
     /**
-     * @Flow\Inject
      * @var ObjectManagerInterface
      */
+    #[Flow\Inject]
     protected $objectManager;
 
     /**
-     * @Flow\Inject(lazy=false)
      * @var Now
      */
+    #[Flow\Inject(lazy: false)]
     protected $now;
 
     /**
@@ -233,7 +233,6 @@ class Account
     /**
      * Return if the account has a certain role
      *
-     * @param Role $role
      * @return boolean
      * @api
      */
@@ -246,7 +245,6 @@ class Account
     /**
      * Adds a role to this account
      *
-     * @param Role $role
      * @return void
      * @throws \InvalidArgumentException
      * @api
@@ -267,7 +265,6 @@ class Account
     /**
      * Removes a role from this account
      *
-     * @param Role $role
      * @return void
      * @api
      */
@@ -308,7 +305,6 @@ class Account
     /**
      * Sets the date on which this account will become inactive
      *
-     * @param ?\DateTime $expirationDate
      * @return void
      * @api
      */

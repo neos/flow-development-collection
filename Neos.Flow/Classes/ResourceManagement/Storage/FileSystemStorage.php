@@ -39,21 +39,21 @@ class FileSystemStorage implements StorageInterface
     protected $path;
 
     /**
-     * @Flow\Inject
      * @var Environment
      */
+    #[Flow\Inject]
     protected $environment;
 
     /**
-     * @Flow\Inject
      * @var ResourceManager
      */
+    #[Flow\Inject]
     protected $resourceManager;
 
     /**
-     * @Flow\Inject
      * @var ResourceRepository
      */
+    #[Flow\Inject]
     protected $resourceRepository;
 
     /**
@@ -143,7 +143,6 @@ class FileSystemStorage implements StorageInterface
     /**
      * Retrieve all Objects stored in this storage, filtered by the given collection name
      *
-     * @param CollectionInterface $collection
      * @return \Generator<StorageObject>
      */
     public function getObjectsByCollection(CollectionInterface $collection)
@@ -155,9 +154,7 @@ class FileSystemStorage implements StorageInterface
             $object->setFilename($resource->getFilename());
             $object->setSha1($resource->getSha1());
             $object->setFileSize($resource->getFileSize());
-            $object->setStream(function () use ($resource) {
-                return $this->getStreamByResource($resource);
-            });
+            $object->setStream(fn () => $this->getStreamByResource($resource));
             yield $object;
         }
     }

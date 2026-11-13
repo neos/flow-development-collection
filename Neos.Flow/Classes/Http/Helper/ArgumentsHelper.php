@@ -35,9 +35,8 @@ abstract class ArgumentsHelper
     public static function buildUnifiedArguments(array $getArguments, array $postArguments, array $untangledFiles): array
     {
         $arguments = Arrays::arrayMergeRecursiveOverrule($getArguments, $postArguments);
-        $arguments = Arrays::arrayMergeRecursiveOverrule($arguments, $untangledFiles);
 
-        return $arguments;
+        return Arrays::arrayMergeRecursiveOverrule($arguments, $untangledFiles);
     }
 
     /**

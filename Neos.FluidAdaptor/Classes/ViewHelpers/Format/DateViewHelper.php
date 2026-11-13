@@ -97,9 +97,9 @@ class DateViewHelper extends AbstractLocaleAwareViewHelper
     protected $escapeChildren = false;
 
     /**
-     * @Flow\Inject
      * @var DatetimeFormatter
      */
+    #[Flow\Inject]
     protected $datetimeFormatter;
 
     /**
@@ -110,11 +110,11 @@ class DateViewHelper extends AbstractLocaleAwareViewHelper
      */
     public function initializeArguments()
     {
-        $this->registerArgument('date', 'mixed', 'either a \DateTime object or a string that is accepted by \DateTime constructor', false, null);
+        $this->registerArgument('date', 'mixed', 'either a \DateTime object or a string that is accepted by \DateTime constructor', false);
         $this->registerArgument('format', 'string', 'Format String which is taken to format the Date/Time if none of the locale options are set.', false, 'Y-m-d');
-        $this->registerArgument('localeFormatType', 'string', 'Whether to format (according to locale set in $forceLocale) date, time or datetime. Must be one of Neos\Flow\I18n\Cldr\Reader\DatesReader::FORMAT_TYPE_*\'s constants.', false, null);
-        $this->registerArgument('localeFormatLength', 'string', 'Format length if locale set in $forceLocale. Must be one of Neos\Flow\I18n\Cldr\Reader\DatesReader::FORMAT_LENGTH_*\'s constants.', false, null);
-        $this->registerArgument('cldrFormat', 'string', 'Format string in CLDR format (see http://cldr.unicode.org/translation/date-time)', false, null);
+        $this->registerArgument('localeFormatType', 'string', 'Whether to format (according to locale set in $forceLocale) date, time or datetime. Must be one of Neos\Flow\I18n\Cldr\Reader\DatesReader::FORMAT_TYPE_*\'s constants.', false);
+        $this->registerArgument('localeFormatLength', 'string', 'Format length if locale set in $forceLocale. Must be one of Neos\Flow\I18n\Cldr\Reader\DatesReader::FORMAT_LENGTH_*\'s constants.', false);
+        $this->registerArgument('cldrFormat', 'string', 'Format string in CLDR format (see http://cldr.unicode.org/translation/date-time)', false);
     }
 
     /**

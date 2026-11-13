@@ -23,13 +23,10 @@ use Neos\Utility\ObjectAccess;
  * for safe access without warnings (on missing properties).
  *
  * @phpstan-consistent-constructor
- * @Flow\Proxy(false)
  */
+#[Flow\Proxy(false)]
 class Context
 {
-    /**
-     * @param mixed $value
-     */
     public function __construct(
         protected mixed $value = null,
         private ?EelInvocationTracerInterface $tracer = null
@@ -44,7 +41,7 @@ class Context
      *
      * If a property or key did not exist this method will return NULL.
      *
-     * @param string|integer|Context $path The path as string or Context value, will be unwrapped for convenience
+     * @param string|integer|Context|null $path The path as string or Context value, will be unwrapped for convenience
      * @return mixed The value
      * @throws EvaluationException
      */
@@ -59,10 +56,10 @@ class Context
             if (is_array($this->value)) {
                 return array_key_exists($path, $this->value) ? $this->value[$path] : null;
             } elseif (is_object($this->value)) {
-                $this->tracer?->recordPropertyAccess($this->value, $path);
+                $this->tracer?->recordPropertyAccess($this->value, (string)$path);
                 try {
                     return ObjectAccess::getProperty($this->value, $path);
-                } catch (PropertyNotAccessibleException $exception) {
+                } catch (PropertyNotAccessibleException) {
                     return null;
                 }
             }
@@ -74,7 +71,7 @@ class Context
     /**
      * Get a value by path and wrap it into another context
      *
-     * @param string $path
+     * @param ?string $path
      * @return Context The wrapped value
      */
     public function getAndWrap($path = null)
@@ -86,7 +83,7 @@ class Context
      * Call a method on this context
      *
      * @param string $method
-     * @param array $arguments Arguments to the method, if of type Context they will be unwrapped
+     * @param array<mixed> $arguments Arguments to the method, if of type Context they will be unwrapped
      * @return mixed
      * @throws \Exception
      */
@@ -128,7 +125,7 @@ class Context
      * Call a method and wrap the result
      *
      * @param string $method
-     * @param array $arguments
+     * @param array<mixed> $arguments
      * @return mixed
      */
     public function callAndWrap($method, array $arguments = [])

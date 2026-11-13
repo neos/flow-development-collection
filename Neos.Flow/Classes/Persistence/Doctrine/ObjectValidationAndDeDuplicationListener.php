@@ -28,27 +28,27 @@ use Neos\Utility\TypeHandling;
  *
  * Used to de-duplicate value objects and validate new and updated objects during flush.
  *
- * @Flow\Scope("singleton")
  * @api
  */
+#[Flow\Scope('singleton')]
 class ObjectValidationAndDeDuplicationListener
 {
     /**
-     * @Flow\Inject
      * @var ValidatorResolver
      */
+    #[Flow\Inject]
     protected $validatorResolver;
 
     /**
-     * @Flow\Inject
      * @var ReflectionService
      */
+    #[Flow\Inject]
     protected $reflectionService;
 
     /**
-     * @Flow\Inject
      * @var PersistenceManager
      */
+    #[Flow\Inject]
     protected $persistenceManager;
 
     /**
@@ -62,7 +62,6 @@ class ObjectValidationAndDeDuplicationListener
      * This removes all existing value objects in doctrines identity map. This is needed as doctrine handles their
      * identity based on the object and not based on the
      *
-     * @param PrePersistEventArgs $eventArgs
      * @return void
      */
     public function prePersist(PrePersistEventArgs $eventArgs)
@@ -71,7 +70,7 @@ class ObjectValidationAndDeDuplicationListener
         $unitOfWork = $entityManager->getUnitOfWork();
         $objectToPersist = $eventArgs->getObject();
 
-        $classMetadata = $entityManager->getClassMetadata(get_class($objectToPersist));
+        $classMetadata = $entityManager->getClassMetadata($objectToPersist::class);
         $className = $classMetadata->rootEntityName;
 
         $classSchema = $this->reflectionService->getClassSchema($className);
@@ -89,7 +88,6 @@ class ObjectValidationAndDeDuplicationListener
     /**
      * An onFlush event listener used to act upon persistence.
      *
-     * @param OnFlushEventArgs $eventArgs
      * @return void
      * @throws ObjectValidationFailedException
      */
@@ -149,7 +147,7 @@ class ObjectValidationAndDeDuplicationListener
      */
     private function validateObject($object, \SplObjectStorage $validatedInstancesContainer)
     {
-        $className = $this->entityManager->getClassMetadata(get_class($object))->getName();
+        $className = $this->entityManager->getClassMetadata($object::class)->getName();
         $validator = $this->validatorResolver->getBaseValidatorConjunction($className, ['Persistence', 'Default']);
 
         $validator->setValidatedInstancesContainer($validatedInstancesContainer);
@@ -165,7 +163,7 @@ class ObjectValidationAndDeDuplicationListener
                     $errorMessages .= $error . PHP_EOL;
                 }
             }
-            throw new ObjectValidationFailedException('An instance of "' . get_class($object) . '" failed to pass validation with ' . $errorCount . ' error(s): ' . PHP_EOL . $errorMessages, 1322585164);
+            throw new ObjectValidationFailedException('An instance of "' . $object::class . '" failed to pass validation with ' . $errorCount . ' error(s): ' . PHP_EOL . $errorMessages, 1322585164);
         }
     }
 }

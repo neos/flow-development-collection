@@ -40,9 +40,9 @@ use Psr\SimpleCache\CacheInterface;
  *      backendOptions?: array<mixed>,
  *      persistent?: bool,
  * }
- * @Flow\Scope("singleton")
  * @api
  */
+#[Flow\Scope('singleton')]
 class CacheManager
 {
     /**
@@ -100,7 +100,6 @@ class CacheManager
     /**
      * Injects the (system) logger based on PSR-3.
      *
-     * @param LoggerInterface $logger
      * @return void
      */
     public function injectLogger(LoggerInterface $logger)
@@ -108,28 +107,16 @@ class CacheManager
         $this->logger = $logger;
     }
 
-    /**
-     * @param CacheFactoryInterface $cacheFactory
-     * @return void
-     */
     public function injectCacheFactory(CacheFactoryInterface $cacheFactory): void
     {
         $this->cacheFactory = $cacheFactory;
     }
 
-    /**
-     * @param ConfigurationManager $configurationManager
-     * @return void
-     */
     public function injectConfigurationManager(ConfigurationManager $configurationManager): void
     {
         $this->configurationManager = $configurationManager;
     }
 
-    /**
-     * @param Environment $environment
-     * @return void
-     */
     public function injectEnvironment(Environment $environment): void
     {
         $this->environment = $environment;
@@ -150,12 +137,12 @@ class CacheManager
      *
      * @todo enforce via extractor
      * @param array<string,CacheConfiguration> $cacheConfigurations The cache configurations to set
-     * @return void
      * @throws \InvalidArgumentException
      */
     public function setCacheConfigurations(array $cacheConfigurations): void
     {
         foreach ($cacheConfigurations as $identifier => $configuration) {
+            /** @phpstan-ignore function.alreadyNarrowedType (Annotations can be wrong) */
             if (!is_array($configuration)) {
                 throw new \InvalidArgumentException('The cache configuration for cache "' . $identifier . '" was not an array as expected.', 1231259656);
             }
@@ -167,8 +154,6 @@ class CacheManager
      * Registers a cache so it can be retrieved at a later point.
      *
      * @param FrontendInterface $cache The cache frontend to be registered
-     * @param bool $persistent
-     * @return void
      * @throws DuplicateIdentifierException if a cache with the given identifier has already been registered.
      * @api
      */
@@ -179,7 +164,7 @@ class CacheManager
             throw new DuplicateIdentifierException('A cache with identifier "' . $identifier . '" has already been registered.', 1203698223);
         }
         $this->caches[$identifier] = $cache;
-        if ($persistent === true) {
+        if ($persistent) {
             $this->persistentCaches[$identifier] = $cache;
         }
     }
@@ -206,9 +191,6 @@ class CacheManager
 
     /**
      * Return a SimpleCache frontend for the cache specified by $identifier
-     *
-     * @param string $identifier
-     * @return CacheInterface
      */
     public function getSimpleCache(string $identifier): CacheInterface
     {
@@ -225,8 +207,6 @@ class CacheManager
     /**
      * Return a SimpleCache frontend for the cache specified by $identifier
      *
-     * @param string $identifier
-     * @return CacheItemPoolInterface
      * @throws NoSuchCacheException
      */
     public function getCacheItemPool(string $identifier): CacheItemPoolInterface
@@ -268,7 +248,6 @@ class CacheManager
      * Flushes all registered caches
      *
      * @param boolean $flushPersistentCaches If set to true, even those caches which are flagged as "persistent" will be flushed
-     * @return void
      * @api
      */
     public function flushCaches(bool $flushPersistentCaches = false): void
@@ -292,7 +271,6 @@ class CacheManager
      *
      * @param string $tag Tag to search for
      * @param boolean $flushPersistentCaches If set to true, even those caches which are flagged as "persistent" will be flushed
-     * @return void
      * @api
      */
     public function flushCachesByTag(string $tag, bool $flushPersistentCaches = false): void
@@ -330,7 +308,6 @@ class CacheManager
      *
      * @param string $fileMonitorIdentifier Identifier of the File Monitor
      * @param array<string,mixed> $changedFiles A list of full paths to changed files
-     * @return void
      */
     public function flushSystemCachesByChangedFiles(string $fileMonitorIdentifier, array $changedFiles): void
     {
@@ -351,7 +328,6 @@ class CacheManager
      * Flushes entries tagged with class names if their class source files have changed.
      *
      * @param array<string,mixed> $changedFiles A list of full paths to changed files
-     * @return void
      * @see flushSystemCachesByChangedFiles()
      */
     protected function flushClassCachesByChangedFiles(array $changedFiles): void
@@ -365,7 +341,7 @@ class CacheManager
                 continue;
             }
             $fileContents = file_get_contents($pathAndFilename) ?: '';
-            $className = (new PhpAnalyzer($fileContents))->extractFullyQualifiedClassName();
+            $className = new PhpAnalyzer($fileContents)->extractFullyQualifiedClassName();
             if ($className === null) {
                 continue;
             }
@@ -373,7 +349,7 @@ class CacheManager
             $modifiedClassNamesWithUnderscores[$classNameWithUnderscores] = true;
 
             // If an aspect was modified, the whole code cache needs to be flushed, so keep track of them:
-            if (substr($classNameWithUnderscores, -6, 6) === 'Aspect') {
+            if (str_ends_with($classNameWithUnderscores, 'Aspect')) {
                 $modifiedAspectClassNamesWithUnderscores[$classNameWithUnderscores] = true;
             }
             // As long as no modified aspect was found, we are optimistic that only part of the cache needs to be flushed:
@@ -401,12 +377,12 @@ class CacheManager
             $this->logger->info('Aspect classes have been modified, flushing the whole proxy classes cache.', LogEnvironment::fromMethodName(__METHOD__));
             $objectClassesCache->flush();
         }
-        if ($flushDoctrineProxyCache === true) {
+        if ($flushDoctrineProxyCache) {
             $this->logger->info('Domain model changes have been detected, triggering Doctrine 2 proxy rebuilding.', LogEnvironment::fromMethodName(__METHOD__));
             $this->getCache('Flow_Persistence_Doctrine')->flush();
             $objectConfigurationCache->remove('doctrineProxyCodeUpToDate');
         }
-        if ($flushPolicyCache === true) {
+        if ($flushPolicyCache) {
             $this->logger->info('Controller changes have been detected, trigger AOP rebuild.', LogEnvironment::fromMethodName(__METHOD__));
             $this->getCache('Flow_Security_Authorization_Privilege_Method')->flush();
             $objectConfigurationCache->remove('allAspectClassesUpToDate');
@@ -418,7 +394,6 @@ class CacheManager
      * Flushes caches as needed if settings, routes or policies have changed
      *
      * @param array<string,mixed> $changedFiles A list of full paths to changed files
-     * @return void
      * @see flushSystemCachesByChangedFiles()
      */
     protected function flushConfigurationCachesByChangedFiles(array $changedFiles): void
@@ -468,7 +443,6 @@ class CacheManager
      * Flushes I18n caches if translation files have changed
      *
      * @param array<string, mixed> $changedFiles A list of full paths to changed files
-     * @return void
      * @see flushSystemCachesByChangedFiles()
      */
     protected function flushTranslationCachesByChangedFiles(array $changedFiles): void
@@ -484,8 +458,6 @@ class CacheManager
 
     /**
      * Instantiates all registered caches.
-     *
-     * @return void
      */
     protected function createAllCaches(): void
     {
@@ -498,9 +470,6 @@ class CacheManager
 
     /**
      * Instantiates the cache for $identifier.
-     *
-     * @param string $identifier
-     * @return void
      */
     protected function createCache(string $identifier): void
     {

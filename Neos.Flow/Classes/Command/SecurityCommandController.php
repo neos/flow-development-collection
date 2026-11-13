@@ -31,33 +31,32 @@ use Neos\Utility\Arrays;
 
 /**
  * Command controller for tasks related to security
- *
- * @Flow\Scope("singleton")
  */
+#[Flow\Scope('singleton')]
 class SecurityCommandController extends CommandController
 {
     /**
-     * @Flow\Inject
      * @var ObjectManagerInterface
      */
+    #[Flow\Inject]
     protected $objectManager;
 
     /**
-     * @Flow\Inject
      * @var ReflectionService
      */
+    #[Flow\Inject]
     protected $reflectionService;
 
     /**
-     * @Flow\Inject
      * @var RsaWalletServicePhp
      */
+    #[Flow\Inject]
     protected $rsaWalletService;
 
     /**
-     * @Flow\Inject
      * @var PolicyService
      */
+    #[Flow\Inject]
     protected $policyService;
 
     /**
@@ -68,7 +67,6 @@ class SecurityCommandController extends CommandController
     /**
      * Injects the Cache Manager because we cannot inject an automatically factored cache during compile time.
      *
-     * @param CacheManager $cacheManager
      * @return void
      */
     public function injectCacheManager(CacheManager $cacheManager)
@@ -174,7 +172,7 @@ class SecurityCommandController extends CommandController
     {
         $systemRoleIdentifiers = ['Neos.Flow:Everybody', 'Neos.Flow:Anonymous', 'Neos.Flow:AuthenticatedUser'];
 
-        if (strpos($privilegeType, '\\') === false) {
+        if (!str_contains($privilegeType, '\\')) {
             $privilegeType = sprintf('\Neos\Flow\Security\Authorization\Privilege\%s\%sPrivilegeInterface', ucfirst($privilegeType), ucfirst($privilegeType));
         }
         if (!class_exists($privilegeType) && !interface_exists($privilegeType)) {
@@ -199,7 +197,7 @@ class SecurityCommandController extends CommandController
                         $requestedRoles[$currentParentRole->getIdentifier()] = $currentParentRole;
                     }
                 }
-            } catch (NoSuchRoleException $exception) {
+            } catch (NoSuchRoleException) {
                 $this->outputLine('The role %s was not defined.', [$roleIdentifier]);
                 $this->quit(1);
             }
@@ -298,7 +296,7 @@ class SecurityCommandController extends CommandController
             }
         }
 
-        if ($allActionsAreProtected === true) {
+        if ($allActionsAreProtected) {
             $this->outputLine('All public controller actions are covered by your security policy. Good job!');
         }
     }
@@ -322,7 +320,7 @@ class SecurityCommandController extends CommandController
         }
         $privilegeParameters = [];
         foreach ($this->request->getExceedingArguments() as $argument) {
-            list($argumentName, $argumentValue) = explode(':', $argument, 2);
+            [$argumentName, $argumentValue] = explode(':', $argument, 2);
             $privilegeParameters[$argumentName] = $argumentValue;
         }
         $privilege = $privilegeTargetInstance->createPrivilege(PrivilegeInterface::GRANT, $privilegeParameters);
@@ -336,7 +334,7 @@ class SecurityCommandController extends CommandController
             try {
                 $reflectionClass = new \ReflectionClass($className);
                 /** @phpstan-ignore catch.neverThrown */
-            } catch (\ReflectionException $exception) {
+            } catch (\ReflectionException) {
                 continue;
             }
             foreach ($reflectionClass->getMethods() as $reflectionMethod) {

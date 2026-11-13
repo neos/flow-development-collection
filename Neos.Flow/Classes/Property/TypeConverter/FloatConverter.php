@@ -89,20 +89,20 @@ use Neos\Flow\Property\PropertyMappingConfigurationInterface;
  *  );
  *
  * @api
- * @Flow\Scope("singleton")
  */
+#[Flow\Scope('singleton')]
 class FloatConverter extends AbstractTypeConverter
 {
     /**
-     * @Flow\Inject
      * @var \Neos\Flow\I18n\Service
      */
+    #[Flow\Inject]
     protected $localizationService;
 
     /**
-     * @Flow\Inject
      * @var \Neos\Flow\I18n\Parser\NumberParser
      */
+    #[Flow\Inject]
     protected $numberParser;
 
     /**
@@ -126,7 +126,6 @@ class FloatConverter extends AbstractTypeConverter
      * @param mixed $source
      * @param string $targetType
      * @param array<string,mixed> $convertedChildProperties
-     * @param PropertyMappingConfigurationInterface|null $configuration
      * @return float|Error|null
      * @throws InvalidPropertyMappingConfigurationException
      * @api
@@ -152,7 +151,6 @@ class FloatConverter extends AbstractTypeConverter
      * Tries to parse the input using the NumberParser.
      *
      * @param string $source
-     * @param PropertyMappingConfigurationInterface $configuration
      * @return float|int|string|\Neos\Flow\Validation\Error
      * @throws \Neos\Flow\Property\Exception\InvalidPropertyMappingConfigurationException
      */
@@ -215,7 +213,6 @@ class FloatConverter extends AbstractTypeConverter
     /**
      * Helper method to collect configuration for this class.
      *
-     * @param PropertyMappingConfigurationInterface $configuration
      * @param array<string> $configurationKeys
      * @return array<string,mixed>
      */

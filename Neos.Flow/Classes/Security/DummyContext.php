@@ -21,17 +21,16 @@ use Neos\Flow\Security\Policy\Role;
  * This is dummy implementation of a security context, which holds
  * security information like roles oder details of authenticated users.
  * These information can be set manually on the context as needed.
- *
- * @Flow\Scope("prototype")
  */
+#[Flow\Scope('prototype')]
 class DummyContext extends Context
 {
     /**
      * true if the context is initialized in the current request, false or NULL otherwise.
      *
      * @var boolean
-     * @Flow\Transient
      */
+    #[Flow\Transient]
     protected $initialized = false;
 
     /**
@@ -43,18 +42,18 @@ class DummyContext extends Context
     /**
      * @var string|null
      */
-    protected $csrfProtectionToken = null;
+    protected $csrfProtectionToken;
 
     /**
      * @var ActionRequest|null
      */
-    protected $interceptedRequest = null;
+    protected $interceptedRequest;
 
     /**
-     * @Flow\Transient
      * @var Role[]|null
      */
-    protected $roles = null;
+    #[Flow\Transient]
+    protected $roles;
 
     /**
      * @param boolean $initialized
@@ -221,8 +220,8 @@ class DummyContext extends Context
      *
      * @param ActionRequest $interceptedRequest
      * @return void
-     * @Flow\Session(autoStart=true)
      */
+    #[Flow\Session(autoStart: true)]
     public function setInterceptedRequest(?ActionRequest $interceptedRequest = null)
     {
         $this->interceptedRequest = $interceptedRequest;

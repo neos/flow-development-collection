@@ -12,6 +12,7 @@ namespace Neos\Flow\Persistence\Aspect;
  * source code.
  */
 
+use Doctrine\ORM\Mapping as ORM;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Aop\JoinPointInterface;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
@@ -21,11 +22,10 @@ use Neos\Utility\ObjectAccess;
 
 /**
  * Adds the aspect of persistence magic to relevant objects
- *
- * @Flow\Scope("singleton")
- * @Flow\Aspect
- * @Flow\Introduce("Neos\Flow\Persistence\Aspect\PersistenceMagicAspect->isEntityOrValueObject", interfaceName="Neos\Flow\Persistence\Aspect\PersistenceMagicInterface")
  */
+#[Flow\Introduce("Neos\Flow\Persistence\Aspect\PersistenceMagicAspect->isEntityOrValueObject", \Neos\Flow\Persistence\Aspect\PersistenceMagicInterface::class)]
+#[Flow\Scope('singleton')]
+#[Flow\Aspect]
 class PersistenceMagicAspect
 {
     /**
@@ -36,44 +36,38 @@ class PersistenceMagicAspect
     protected $useIgBinary;
 
     /**
-     * @Flow\Inject
      * @var PersistenceManagerInterface
      */
+    #[Flow\Inject]
     protected $persistenceManager;
 
     /**
-     * @Flow\Inject
      * @var ReflectionService
      */
+    #[Flow\Inject]
     protected $reflectionService;
 
-    /**
-     * @Flow\Pointcut("classAnnotatedWith(Neos\Flow\Annotations\Entity) || classAnnotatedWith(Doctrine\ORM\Mapping\Entity)")
-     */
+    #[Flow\Pointcut('classAnnotatedWith(Neos\Flow\Annotations\Entity) || classAnnotatedWith(Doctrine\ORM\Mapping\Entity)')]
     public function isEntity(): void
     {
     }
 
-    /**
-     * @Flow\Pointcut("classAnnotatedWith(Neos\Flow\Annotations\ValueObject) && !filter(Neos\Flow\Persistence\Aspect\EmbeddedValueObjectPointcutFilter)")
-     */
+    #[Flow\Pointcut('classAnnotatedWith(Neos\Flow\Annotations\ValueObject) && !filter(Neos\Flow\Persistence\Aspect\EmbeddedValueObjectPointcutFilter)')]
     public function isNonEmbeddedValueObject(): void
     {
     }
 
-    /**
-     * @Flow\Pointcut("Neos\Flow\Persistence\Aspect\PersistenceMagicAspect->isEntity || Neos\Flow\Persistence\Aspect\PersistenceMagicAspect->isNonEmbeddedValueObject")
-     */
+    #[Flow\Pointcut('Neos\Flow\Persistence\Aspect\PersistenceMagicAspect->isEntity || Neos\Flow\Persistence\Aspect\PersistenceMagicAspect->isNonEmbeddedValueObject')]
     public function isEntityOrValueObject(): void
     {
     }
 
     /**
      * @var string
-     * @Doctrine\ORM\Mapping\Id
-     * @Doctrine\ORM\Mapping\Column(length=40)
-     * @Flow\Introduce("Neos\Flow\Persistence\Aspect\PersistenceMagicAspect->isEntityOrValueObject && filter(Neos\Flow\Persistence\Doctrine\Mapping\Driver\FlowAnnotationDriver)")
      */
+    #[ORM\Id]
+    #[ORM\Column(length: 40)]
+    #[Flow\Introduce('Neos\Flow\Persistence\Aspect\PersistenceMagicAspect->isEntityOrValueObject && filter(Neos\Flow\Persistence\Doctrine\Mapping\Driver\FlowAnnotationDriver)')]
     protected $Persistence_Object_Identifier;
 
     /**
@@ -91,8 +85,8 @@ class PersistenceMagicAspect
      *
      * @param JoinPointInterface $joinPoint The current join point
      * @return void
-     * @Flow\Before("Neos\Flow\Persistence\Aspect\PersistenceMagicAspect->isEntity && method(.*->(__construct|__clone)()) && filter(Neos\Flow\Persistence\Doctrine\Mapping\Driver\FlowAnnotationDriver)")
      */
+    #[Flow\Before('Neos\Flow\Persistence\Aspect\PersistenceMagicAspect->isEntity && method(.*->(__construct|__clone)()) && filter(Neos\Flow\Persistence\Doctrine\Mapping\Driver\FlowAnnotationDriver)')]
     public function generateUuid(JoinPointInterface $joinPoint)
     {
         /** @var PersistenceMagicInterface $proxy */
@@ -106,12 +100,12 @@ class PersistenceMagicAspect
      *
      * @param JoinPointInterface $joinPoint The current join point
      * @return void
-     * @Flow\After("Neos\Flow\Persistence\Aspect\PersistenceMagicAspect->isNonEmbeddedValueObject && method(.*->__construct()) && filter(Neos\Flow\Persistence\Doctrine\Mapping\Driver\FlowAnnotationDriver)")
      */
+    #[Flow\After('Neos\Flow\Persistence\Aspect\PersistenceMagicAspect->isNonEmbeddedValueObject && method(.*->__construct()) && filter(Neos\Flow\Persistence\Doctrine\Mapping\Driver\FlowAnnotationDriver)')]
     public function generateValueHash(JoinPointInterface $joinPoint)
     {
         $proxy = $joinPoint->getProxy();
-        $proxyClassName = get_class($proxy);
+        $proxyClassName = $proxy::class;
         $hashSourceParts = [];
 
         $classSchema = $this->reflectionService->getClassSchema($proxyClassName);
@@ -128,7 +122,7 @@ class PersistenceMagicAspect
 
             $propertyValue = ObjectAccess::getProperty($proxy, $property, true);
 
-            if (is_object($propertyValue) === true) {
+            if (is_object($propertyValue)) {
                 // The persistence manager will return NULL if the given object is unknown to persistence
                 $propertyValue = ($this->persistenceManager->getIdentifierByObject($propertyValue)) ?: $propertyValue;
             }

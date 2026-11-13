@@ -17,10 +17,10 @@ use Neos\Flow\Annotations as Flow;
 /**
  * A Proxy Class Builder which integrates Dependency Injection.
  *
- * @Flow\Proxy(false)
  * @deprecated since Flow 9.2, not used in the Framework anymore. Flow now uses PHP 8.4 lazy objects
  * @template T of object
  */
+#[Flow\Proxy(false)]
 final class DependencyProxy
 {
     /**
@@ -71,7 +71,6 @@ final class DependencyProxy
      * be injected into once this proxy is activated.
      *
      * @param mixed &$propertyVariable The variable to replace
-     * @return void
      */
     public function _addPropertyVariable(&$propertyVariable): void
     {
@@ -84,7 +83,6 @@ final class DependencyProxy
      *
      * @param string $methodName Name of the method to be called
      * @param array<mixed> $arguments An array of arguments to be passed to the method
-     * @return mixed
      */
     public function __call(string $methodName, array $arguments): mixed
     {

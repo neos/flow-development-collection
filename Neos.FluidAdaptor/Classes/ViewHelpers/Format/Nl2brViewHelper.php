@@ -54,7 +54,7 @@ class Nl2brViewHelper extends AbstractViewHelper
      */
     public function initializeArguments()
     {
-        $this->registerArgument('value', 'string', 'string to format', false, null);
+        $this->registerArgument('value', 'string', 'string to format', false);
     }
 
     /**
@@ -67,9 +67,7 @@ class Nl2brViewHelper extends AbstractViewHelper
     {
         $value = $this->arguments['value'];
 
-        if ($value === null) {
-            $value = $this->renderChildren();
-        }
+        $value ??= $this->renderChildren();
 
         return nl2br($value);
     }
@@ -80,8 +78,6 @@ class Nl2brViewHelper extends AbstractViewHelper
      * @param string $argumentsName
      * @param string $closureName
      * @param string $initializationPhpCode
-     * @param ViewHelperNode $node
-     * @param TemplateCompiler $compiler
      * @return string
      */
     public function compile($argumentsName, $closureName, &$initializationPhpCode, ViewHelperNode $node, TemplateCompiler $compiler)

@@ -15,7 +15,6 @@ interface ThrowableStorageInterface
      * Note that throwable storages must work without proxy so all dependencies need to be resolved manually or via options.
      *
      * @param array<mixed> $options
-     * @return ThrowableStorageInterface
      */
     public static function createWithOptions(array $options): ThrowableStorageInterface;
 
@@ -36,7 +35,6 @@ interface ThrowableStorageInterface
      * Set a closure that returns information about the current request to be stored with the exception.
      * Note this is not yet public API and bound to change.
      *
-     * @param \Closure $requestInformationRenderer
      * @return self
      */
     public function setRequestInformationRenderer(\Closure $requestInformationRenderer);
@@ -45,7 +43,6 @@ interface ThrowableStorageInterface
      * Set a closure that takes a backtrace array and returns a representation useful for this storage.
      * Note this is not yet public API and bound to change.
      *
-     * @param \Closure $backtraceRenderer
      * @return self
      */
     public function setBacktraceRenderer(\Closure $backtraceRenderer);

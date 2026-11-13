@@ -35,7 +35,6 @@ interface AuthenticationManagerInterface
      * Tries to authenticate the tokens in the security context, if needed.
      * (Have a look at the Authentication\TokenManager for an implementation example)
      *
-     * @return void
      * @throws AuthenticationRequiredException
      * @throws NoTokensAuthenticatedException
      */
@@ -43,15 +42,11 @@ interface AuthenticationManagerInterface
 
     /**
      * Checks if at least one token is authenticated
-     *
-     * @return bool
      */
     public function isAuthenticated(): bool;
 
     /**
      * Logs all active authentication tokens out
-     *
-     * @return void
      */
     public function logout(): void;
 }

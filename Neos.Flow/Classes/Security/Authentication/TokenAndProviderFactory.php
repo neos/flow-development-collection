@@ -20,9 +20,8 @@ use Neos\Flow\Security\RequestPatternResolver;
 
 /**
  * Default factory for providers and tokens.
- *
- * @Flow\Scope("singleton")
  */
+#[Flow\Scope('singleton')]
 class TokenAndProviderFactory implements TokenAndProviderFactoryInterface
 {
     /**
@@ -61,9 +60,9 @@ class TokenAndProviderFactory implements TokenAndProviderFactoryInterface
     protected $requestPatternResolver;
 
     /**
-     * @Flow\Inject
      * @var ObjectManagerInterface
      */
+    #[Flow\Inject]
     protected $objectManager;
 
     /**
@@ -173,7 +172,7 @@ class TokenAndProviderFactory implements TokenAndProviderFactoryInterface
                 }
                 $tokenInstance = $this->objectManager->get($tokenClassName, $providerConfiguration['tokenOptions'] ?? []);
                 if (!$tokenInstance instanceof TokenInterface) {
-                    throw new Exception\InvalidAuthenticationProviderException(sprintf('The specified token is not an instance of %s but a %s. Please adjust the "token" configuration of the "%s" authentication provider', TokenInterface::class, get_class($tokenInstance), $providerName), 1585921152);
+                    throw new Exception\InvalidAuthenticationProviderException(sprintf('The specified token is not an instance of %s but a %s. Please adjust the "token" configuration of the "%s" authentication provider', TokenInterface::class, $tokenInstance::class, $providerName), 1585921152);
                 }
                 $tokenInstance->setAuthenticationProviderName($providerName);
                 $this->tokens[] = $tokenInstance;
@@ -182,14 +181,14 @@ class TokenAndProviderFactory implements TokenAndProviderFactoryInterface
 
             if (isset($providerConfiguration['requestPatterns']) && is_array($providerConfiguration['requestPatterns'])) {
                 $requestPatterns = [];
-                foreach ($providerConfiguration['requestPatterns'] as $patternName => $patternConfiguration) {
+                foreach ($providerConfiguration['requestPatterns'] as $patternConfiguration) {
                     // skip request patterns that are set to NULL (i.e. `somePattern: ~` in a YAML file)
                     if ($patternConfiguration === null) {
                         continue;
                     }
 
                     $patternType = $patternConfiguration['pattern'];
-                    $patternOptions = isset($patternConfiguration['patternOptions']) ? $patternConfiguration['patternOptions'] : [];
+                    $patternOptions = $patternConfiguration['patternOptions'] ?? [];
                     $patternClassName = $this->requestPatternResolver->resolveRequestPatternClass($patternType);
                     $requestPattern = new $patternClassName($patternOptions);
                     if (!$requestPattern instanceof RequestPatternInterface) {

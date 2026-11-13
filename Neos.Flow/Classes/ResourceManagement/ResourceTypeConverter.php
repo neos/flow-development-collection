@@ -41,7 +41,6 @@ use Psr\Log\LoggerInterface;
  * 2. Strings / arbitrary Arrays
  *
  *    If the source
-
  *    - is an array and contains the key '__identity'
  *
  *    the converter will find an existing resource with the given identity or continue and assign the given identity if
@@ -57,9 +56,8 @@ use Psr\Log\LoggerInterface;
  *    and a PersistentResource representing this content is created and returned.
  *
  *    The imported PersistentResource will be given a 'filename' if set in the source array in both cases (import from file or data).
- *
- * @Flow\Scope("singleton")
  */
+#[Flow\Scope('singleton')]
 class ResourceTypeConverter extends AbstractTypeConverter
 {
     /**
@@ -96,27 +94,27 @@ class ResourceTypeConverter extends AbstractTypeConverter
     protected $priority = 1;
 
     /**
-     * @Flow\Inject
      * @var ResourceManager
      */
+    #[Flow\Inject]
     protected $resourceManager;
 
     /**
-     * @Flow\Inject
      * @var ResourceRepository
      */
+    #[Flow\Inject]
     protected $resourceRepository;
 
     /**
-     * @Flow\Inject
      * @var PersistenceManagerInterface
      */
+    #[Flow\Inject]
     protected $persistenceManager;
 
     /**
-     * @Flow\Inject(name="Neos.Flow:SystemLogger")
      * @var LoggerInterface
      */
+    #[Flow\Inject(name: 'Neos.Flow:SystemLogger')]
     protected $logger;
 
     /**
@@ -127,7 +125,6 @@ class ResourceTypeConverter extends AbstractTypeConverter
     /**
      * Injects the (system) logger based on PSR-3.
      *
-     * @param LoggerInterface $logger
      * @return void
      */
     public function injectLogger(LoggerInterface $logger)
@@ -148,7 +145,6 @@ class ResourceTypeConverter extends AbstractTypeConverter
      * @param array<string,mixed>|string|UploadedFileInterface $source The upload info (expected keys: error, name, tmp_name), the hash or an UploadedFile
      * @param string $targetType
      * @param array<mixed> $convertedChildProperties
-     * @param PropertyMappingConfigurationInterface|null $configuration
      * @return PersistentResource|null|FlowError if the input format is not supported or could not be converted for other reasons
      * @throws Exception
      * @throws Exception\InvalidResourceDataException
@@ -179,7 +175,6 @@ class ResourceTypeConverter extends AbstractTypeConverter
 
     /**
      * @param array<string,mixed> $source
-     * @param PropertyMappingConfigurationInterface|null $configuration
      * @return PersistentResource|null|FlowError
      */
     protected function handleFileUploads(array $source, ?PropertyMappingConfigurationInterface $configuration = null)
@@ -221,7 +216,6 @@ class ResourceTypeConverter extends AbstractTypeConverter
 
     /**
      * @param array<string,mixed> $source
-     * @param PropertyMappingConfigurationInterface|null $configuration
      * @return PersistentResource|FlowError
      * @throws Exception
      * @throws Exception\InvalidResourceDataException
@@ -258,7 +252,7 @@ class ResourceTypeConverter extends AbstractTypeConverter
                 $resource = $this->resourceManager->importResourceFromContent(base64_decode($source['data']), $source['filename'], $collectionName, $givenResourceIdentity);
             } elseif ($hash !== null) {
                 // We proactively block file extensions before importing.
-                if (is_array($source) && isset($source['filename'])) {
+                if (isset($source['filename'])) {
                     $this->resourceManager->throwIfFileExtensionIsBlocked((string)$source['filename']);
                 }
                 $resource = $this->resourceManager->importResource($configuration?->getConfigurationValue(ResourceTypeConverter::class, self::CONFIGURATION_RESOURCE_LOAD_PATH) . '/' . $hash, $collectionName, $givenResourceIdentity);
@@ -267,7 +261,7 @@ class ResourceTypeConverter extends AbstractTypeConverter
                     $resource->setFilename($filename);
                 }
             }
-            if ($hash !== null && $resource?->getSha1() !== $hash) {
+            if ($hash !== null && $resource->getSha1() !== $hash) {
                 throw new Exception\InvalidResourceDataException('The source SHA1 did not match the SHA1 of the imported resource.', 1482248149);
             }
         }
@@ -280,8 +274,6 @@ class ResourceTypeConverter extends AbstractTypeConverter
     }
 
     /**
-     * @param UploadedFileInterface $source
-     * @param PropertyMappingConfigurationInterface|null $configuration
      * @return PersistentResource|null|FlowError
      */
     protected function handleUploadedFile(UploadedFileInterface $source, ?PropertyMappingConfigurationInterface $configuration = null)
@@ -340,7 +332,6 @@ class ResourceTypeConverter extends AbstractTypeConverter
      * and __collectionName is in the $source this will finally be the value.
      *
      * @param array<string,mixed>|UploadedFileInterface $source
-     * @param PropertyMappingConfigurationInterface|null $configuration
      * @return string
      * @throws InvalidPropertyMappingConfigurationException
      */

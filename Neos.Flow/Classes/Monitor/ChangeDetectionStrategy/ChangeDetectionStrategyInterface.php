@@ -38,7 +38,6 @@ interface ChangeDetectionStrategyInterface
     /**
      * Creates a link to the file monitor using the strategy
      *
-     * @param \Neos\Flow\Monitor\FileMonitor $fileMonitor
      * @return mixed
      */
     public function setFileMonitor(FileMonitor $fileMonitor);

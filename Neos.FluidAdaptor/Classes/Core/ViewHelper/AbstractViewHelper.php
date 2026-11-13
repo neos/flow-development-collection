@@ -60,14 +60,12 @@ abstract class AbstractViewHelper extends FluidAbstractViewHelper
         $this->renderingContext = $renderingContext;
         $this->templateVariableContainer = $renderingContext->getVariableProvider();
         $this->viewHelperVariableContainer = $renderingContext->getViewHelperVariableContainer();
+        /** @phpstan-ignore instanceof.alwaysTrue (annotations can be wrong) */
         if ($renderingContext instanceof FlowAwareRenderingContextInterface) {
             $this->controllerContext = $renderingContext->getControllerContext();
         }
     }
 
-    /**
-     * @param ObjectManagerInterface $objectManager
-     */
     public function injectObjectManager(ObjectManagerInterface $objectManager): void
     {
         $this->objectManager = $objectManager;
@@ -75,18 +73,12 @@ abstract class AbstractViewHelper extends FluidAbstractViewHelper
 
     /**
      * Injects the (system) logger based on PSR-3.
-     *
-     * @param LoggerInterface $logger
-     * @return void
      */
     public function injectLogger(LoggerInterface $logger): void
     {
         $this->logger = $logger;
     }
 
-    /**
-     * @return boolean
-     */
     public function isEscapingInterceptorEnabled(): bool
     {
         return $this->isChildrenEscapingEnabled();

@@ -44,8 +44,6 @@ class PolicyLoader implements LoaderInterface
 
     /**
      * Set an absolute file path to store configuration caches in. If null no cache will be active.
-     *
-     * @param string $temporaryDirectoryPath
      */
     public function setTemporaryDirectoryPath(string $temporaryDirectoryPath): void
     {

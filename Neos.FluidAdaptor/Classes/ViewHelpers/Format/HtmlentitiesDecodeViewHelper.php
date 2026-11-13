@@ -60,7 +60,7 @@ class HtmlentitiesDecodeViewHelper extends AbstractViewHelper
      */
     public function initializeArguments()
     {
-        $this->registerArgument('value', 'string', 'string to format', false, null);
+        $this->registerArgument('value', 'string', 'string to format', false);
         $this->registerArgument('keepQuotes', 'boolean', 'if true, single and double quotes won\'t be replaced (sets ENT_NOQUOTES flag)', false, false);
         $this->registerArgument('encoding', 'string', 'the encoding format', false, 'UTF-8');
     }
@@ -81,16 +81,12 @@ class HtmlentitiesDecodeViewHelper extends AbstractViewHelper
      * Applies html_entity_decode() on the specified value.
      *
      * @param array<string,mixed> $arguments
-     * @param \Closure $renderChildrenClosure
-     * @param RenderingContextInterface $renderingContext
      * @return string|mixed
      */
     public static function renderStatic(array $arguments, \Closure $renderChildrenClosure, RenderingContextInterface $renderingContext)
     {
         $value = $arguments['value'];
-        if ($value === null) {
-            $value = $renderChildrenClosure();
-        }
+        $value ??= $renderChildrenClosure();
         if (is_object($value) && method_exists($value, '__toString')) {
             $value = $value->__toString();
         } elseif (!is_string($value)) {

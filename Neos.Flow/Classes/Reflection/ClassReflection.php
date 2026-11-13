@@ -18,8 +18,8 @@ use Neos\Flow\Annotations as Flow;
  * Extended version of the ReflectionClass
  *
  * @extends \ReflectionClass<object>
- * @Flow\Proxy(false)
  */
+#[Flow\Proxy(false)]
 class ClassReflection extends \ReflectionClass
 {
     /**
@@ -203,7 +203,6 @@ class ClassReflection extends \ReflectionClass
      * newInstanceWithoutConstructor()
      *
      * @see https://github.com/doctrine/doctrine2/commit/530c01b5e3ed7345cde564bd511794ac72f49b65
-     * @return object
      */
     public function newInstanceWithoutConstructor(): object
     {

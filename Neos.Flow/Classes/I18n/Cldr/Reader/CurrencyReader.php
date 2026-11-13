@@ -20,9 +20,8 @@ use Neos\Flow\I18n\Cldr\CldrRepository;
 
 /**
  * A reader for data placed in "currencyData" tag in CLDR.
- *
- * @Flow\Scope("singleton")
  */
+#[Flow\Scope('singleton')]
 class CurrencyReader
 {
     /**
@@ -43,7 +42,6 @@ class CurrencyReader
     protected $fractions;
 
     /**
-     * @param CldrRepository $repository
      * @return void
      */
     public function injectCldrRepository(CldrRepository $repository)
@@ -54,7 +52,6 @@ class CurrencyReader
     /**
      * Injects the Flow_I18n_Cldr_Reader_CurrencyReader cache
      *
-     * @param VariableFrontend $cache
      * @return void
      */
     public function injectCache(VariableFrontend $cache)
@@ -81,7 +78,6 @@ class CurrencyReader
     /**
      * Returns an array with keys "digits" and "rounding", each an integer.
      *
-     * @param string $currencyCode
      * @return array{digits: int, rounding: int}
      */
     public function getFraction(string $currencyCode): array
@@ -97,7 +93,6 @@ class CurrencyReader
      * Generates an internal representation of currency fractions which can be found
      * in supplementalData.xml CLDR file.
      *
-     * @return void
      * @see CurrencyReader::$fractions
      */
     protected function generateFractions(): void

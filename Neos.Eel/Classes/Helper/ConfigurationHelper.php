@@ -22,9 +22,9 @@ use Neos\Flow\Configuration\ConfigurationManager;
 class ConfigurationHelper implements ProtectedContextAwareInterface
 {
     /**
-     * @Flow\Inject
      * @var ConfigurationManager
      */
+    #[Flow\Inject]
     protected $configurationManager;
 
     /**

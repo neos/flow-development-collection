@@ -45,7 +45,6 @@ class ModificationTimeStrategy implements ChangeDetectionStrategyInterface, Stra
     /**
      * Injects the Flow_Monitor cache
      *
-     * @param \Neos\Cache\Frontend\StringFrontend $cache
      * @return void
      */
     public function injectCache(StringFrontend $cache)
@@ -56,7 +55,6 @@ class ModificationTimeStrategy implements ChangeDetectionStrategyInterface, Stra
     /**
      * Initializes this strategy
      *
-     * @param FileMonitor $fileMonitor
      * @return void
      */
     public function setFileMonitor(FileMonitor $fileMonitor)

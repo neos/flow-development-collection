@@ -95,9 +95,9 @@ use Neos\FluidAdaptor\Core\ViewHelper\Exception\InvalidVariableException;
 class CurrencyViewHelper extends AbstractLocaleAwareViewHelper
 {
     /**
-     * @Flow\Inject
      * @var NumberFormatter
      */
+    #[Flow\Inject]
     protected $numberFormatter;
 
     /**
@@ -114,7 +114,7 @@ class CurrencyViewHelper extends AbstractLocaleAwareViewHelper
         $this->registerArgument('prependCurrency', 'boolean', '(optional) Indicates if currency symbol should be placed before or after the numeric value.', false, false);
         $this->registerArgument('separateCurrency', 'boolean', '(optional) Indicates if a space character should be placed between the number and the currency sign.', false, true);
         $this->registerArgument('decimals', 'integer', '(optional) The number of decimal places.', false, 2);
-        $this->registerArgument('currencyCode', 'string', '(optional) The ISO 4217 currency code of the currency to format. Used to set decimal places and rounding.', false, null);
+        $this->registerArgument('currencyCode', 'string', '(optional) The ISO 4217 currency code of the currency to format. Used to set decimal places and rounding.', false);
     }
 
     /**
@@ -149,9 +149,7 @@ class CurrencyViewHelper extends AbstractLocaleAwareViewHelper
             return $output;
         }
         if ($this->arguments['prependCurrency'] === true) {
-            $output = $currencySign . ($separateCurrency === true ? ' ' : '') . $output;
-
-            return $output;
+            return $currencySign . ($separateCurrency === true ? ' ' : '') . $output;
         }
         $output .= ($separateCurrency === true ? ' ' : '') . $currencySign;
 

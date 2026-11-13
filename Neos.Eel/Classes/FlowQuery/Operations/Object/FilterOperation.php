@@ -79,16 +79,16 @@ class FilterOperation extends AbstractOperation
     protected static $shortName = 'filter';
 
     /**
-     * @Flow\Inject
      * @var PersistenceManagerInterface
      */
+    #[Flow\Inject]
     protected $persistenceManager;
 
     /**
      * {@inheritdoc}
      *
      * @param FlowQuery $flowQuery the FlowQuery object
-     * @param array $arguments the filter expression to use (in index 0)
+     * @param array<mixed> $arguments the filter expression to use (in index 0)
      * @return void
      * @throws FizzleException
      */
@@ -121,7 +121,7 @@ class FilterOperation extends AbstractOperation
      * Filter Group is something like "[foo], [bar]"
      *
      * @param object $element
-     * @param array $parsedFilter
+     * @param array<string,mixed> $parsedFilter
      * @return boolean true if $element matches filter group, false otherwise
      */
     protected function matchesFilterGroup($element, array $parsedFilter)
@@ -139,7 +139,7 @@ class FilterOperation extends AbstractOperation
      * Match a single filter, i.e. [foo]. It matches only if all filter parts match.
      *
      * @param object $element
-     * @param string $filter
+     * @param array<string,mixed> $filter
      * @return boolean true if $element matches filter, false otherwise
      */
     protected function matchesFilter($element, $filter)
@@ -178,7 +178,7 @@ class FilterOperation extends AbstractOperation
      * Match a single attribute filter
      *
      * @param mixed $element
-     * @param array $attributeFilter
+     * @param array<mixed> $attributeFilter
      * @return boolean
      */
     protected function matchesAttributeFilter($element, array $attributeFilter)
@@ -225,7 +225,6 @@ class FilterOperation extends AbstractOperation
      * Evaluate an operator
      *
      * @param mixed $value
-     * @param string $operator
      * @param mixed $operand
      * @return boolean
      */
@@ -275,7 +274,7 @@ class FilterOperation extends AbstractOperation
                     }
                     return false;
                 } else {
-                    return strpos((string)$value, (string)$operand) === 0;
+                    return str_starts_with((string)$value, (string)$operand);
                 }
                 // no break
             case '^=~':
@@ -290,24 +289,14 @@ class FilterOperation extends AbstractOperation
                 // no break
             case '*=':
                 if (is_array($value)) {
-                    foreach ($value as $item) {
-                        if ($this->evaluateOperator($item, '=', $operand)) {
-                            return true;
-                        }
-                    }
-                    return false;
+                    return array_any($value, fn ($item) => $this->evaluateOperator($item, '=', $operand));
                 } else {
-                    return strpos((string)$value, (string)$operand) !== false;
+                    return str_contains((string)$value, (string)$operand);
                 }
                 // no break
             case '*=~':
                 if (is_array($value)) {
-                    foreach ($value as $item) {
-                        if ($this->evaluateOperator($item, '=~', $operand)) {
-                            return true;
-                        }
-                    }
-                    return false;
+                    return array_any($value, fn ($item) => $this->evaluateOperator($item, '=~', $operand));
                 } else {
                     return stripos((string)$value, (string)$operand) !== false;
                 }

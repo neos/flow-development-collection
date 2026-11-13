@@ -182,7 +182,7 @@ class ClassSchema
      */
     public function isMultiValuedProperty($propertyName)
     {
-        return ($this->properties[$propertyName]['type'] === 'array' || $this->properties[$propertyName]['type'] === 'SplObjectStorage' || $this->properties[$propertyName]['type'] === 'Doctrine\Common\Collections\Collection' || $this->properties[$propertyName]['type'] === 'Doctrine\Common\Collections\ArrayCollection');
+        return ($this->properties[$propertyName]['type'] === 'array' || $this->properties[$propertyName]['type'] === 'SplObjectStorage' || $this->properties[$propertyName]['type'] === \Doctrine\Common\Collections\Collection::class || $this->properties[$propertyName]['type'] === \Doctrine\Common\Collections\ArrayCollection::class);
     }
 
     /**
@@ -309,7 +309,7 @@ class ClassSchema
         if (!array_key_exists($propertyName, $this->properties)) {
             throw new \InvalidArgumentException('Property "' . $propertyName . '" must be added to the class schema before it can be marked as identity property.', 1233775407);
         }
-        if ($this->properties[$propertyName]['lazy'] === true) {
+        if ($this->properties[$propertyName]['lazy']) {
             throw new \InvalidArgumentException('Property "' . $propertyName . '" must not be marked for lazy loading to be marked as identity property.', 1239896904);
         }
 

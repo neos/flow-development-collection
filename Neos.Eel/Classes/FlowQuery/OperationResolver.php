@@ -18,28 +18,27 @@ use Neos\Flow\Reflection\ReflectionService;
 
 /**
  * FlowQuery Operation Resolver
- *
- * @Flow\Scope("singleton")
  */
+#[Flow\Scope('singleton')]
 class OperationResolver implements OperationResolverInterface
 {
     /**
      * @var ObjectManagerInterface
-     * @Flow\Inject
      */
+    #[Flow\Inject]
     protected $objectManager;
 
     /**
      * @var ReflectionService
-     * @Flow\Inject
      */
+    #[Flow\Inject]
     protected $reflectionService;
 
     /**
      * 2-dimensional array of registered operations:
      * shortOperationName => priority => operation class name
      *
-     * @var array
+     * @var array<string,array<int,string>>
      */
     protected $operations = [];
 
@@ -47,14 +46,14 @@ class OperationResolver implements OperationResolverInterface
      * associative array of registered final operations:
      * shortOperationName => shortOperationName
      *
-     * @var array
+     * @var array<string,string>
      */
     protected $finalOperationNames = [];
 
     /**
      * Initializer, building up $this->operations and $this->finalOperationNames
      */
-    public function initializeObject()
+    public function initializeObject(): void
     {
         $operationsAndFinalOperationNames = static::buildOperationsAndFinalOperationNames($this->objectManager);
         $this->operations = $operationsAndFinalOperationNames[0];
@@ -63,10 +62,10 @@ class OperationResolver implements OperationResolverInterface
 
     /**
      * @param ObjectManagerInterface $objectManager
-     * @return array Array of sorted operations and array of final operation names
+     * @return array{0: array<mixed>, 1: array<mixed>} Array of sorted operations and array of final operation names
      * @throws FlowQueryException
-     * @Flow\CompileStatic
      */
+    #[Flow\CompileStatic]
     public static function buildOperationsAndFinalOperationNames($objectManager)
     {
         $operations = [];
@@ -79,9 +78,7 @@ class OperationResolver implements OperationResolverInterface
             $operationPriority = $operationClassName::getPriority();
             $isFinalOperation = $operationClassName::isFinal();
 
-            if (!isset($operations[$shortOperationName])) {
-                $operations[$shortOperationName] = [];
-            }
+            $operations[$shortOperationName] ??= [];
 
             if (isset($operations[$shortOperationName][$operationPriority])) {
                 throw new FlowQueryException(sprintf('Operation with name "%s" and priority %s is already defined in class %s, and the class %s has the same priority and name.', $shortOperationName, $operationPriority, $operations[$shortOperationName][$operationPriority], $operationClassName), 1332491678);

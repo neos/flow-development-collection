@@ -16,9 +16,8 @@ use Neos\Flow\Annotations as Flow;
 
 /**
  * Extended version of the ReflectionParameter
- *
- * @Flow\Proxy(false)
  */
+#[Flow\Proxy(false)]
 class ParameterReflection extends \ReflectionParameter
 {
     /**
@@ -46,7 +45,7 @@ class ParameterReflection extends \ReflectionParameter
     {
         try {
             $class = parent::getType();
-        } catch (\Exception $exception) {
+        } catch (\Exception) {
             return null;
         }
 

@@ -216,7 +216,7 @@ final class PositionalArraySorter
             }
             unset($arrayKeysWithPosition[$key]);
         }
-        foreach ($this->beforeKeys as $key => &$keysByPriority) {
+        foreach ($this->beforeKeys as &$keysByPriority) {
             ksort($keysByPriority, SORT_NUMERIC);
         }
     }
@@ -246,7 +246,7 @@ final class PositionalArraySorter
             }
             unset($arrayKeysWithPosition[$key]);
         }
-        foreach ($this->afterKeys as $key => &$keysByPriority) {
+        foreach ($this->afterKeys as &$keysByPriority) {
             krsort($keysByPriority, SORT_NUMERIC);
         }
     }

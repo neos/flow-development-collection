@@ -18,10 +18,9 @@ use Neos\Utility\Files;
 
 /**
  * Class Loader implementation for test classes.
- *
- * @Flow\Proxy(false)
- * @Flow\Scope("singleton")
  */
+#[Flow\Proxy(false)]
+#[Flow\Scope('singleton')]
 class ClassLoader
 {
     /**
@@ -108,7 +107,6 @@ class ClassLoader
      * a package and specifically registered classes.
      *
      * @param string $className Name of the class/interface to load
-     * @return boolean
      */
     public function loadClass(string $className): bool
     {
@@ -164,8 +162,6 @@ class ClassLoader
      *
      * @param array<mixed> $possiblePaths
      * @param array<string> $namespaceParts
-     * @param integer $packageNamespacePartCount
-     * @return boolean
      */
     protected function loadClassFromPossiblePaths(array $possiblePaths, array $namespaceParts, int $packageNamespacePartCount): bool
     {
@@ -197,7 +193,7 @@ class ClassLoader
      */
     public function setPackages(array $activePackages)
     {
-        foreach ($activePackages as $packageKey => $package) {
+        foreach ($activePackages as $package) {
             foreach ($package->getFlattenedAutoloadConfiguration() as $configuration) {
                 $this->createNamespaceMapEntry($configuration['namespace'], $configuration['classPath'], $configuration['mappingType']);
             }
@@ -225,14 +221,10 @@ class ClassLoader
 
         $currentArray = & $this->packageNamespaces;
         foreach (explode('\\', rtrim($namespace, '\\')) as $namespacePart) {
-            if (!isset($currentArray[$namespacePart])) {
-                $currentArray[$namespacePart] = [];
-            }
+            $currentArray[$namespacePart] ??= [];
             $currentArray = & $currentArray[$namespacePart];
         }
-        if (!isset($currentArray['_pathData'])) {
-            $currentArray['_pathData'] = [];
-        }
+        $currentArray['_pathData'] ??= [];
 
         $currentArray['_pathData'][$entryIdentifier] = [
             'mappingType' => $mappingType,
@@ -249,12 +241,10 @@ class ClassLoader
     public function createFallbackPathEntry(string $path)
     {
         $entryIdentifier = md5($path);
-        if (!isset($this->fallbackClassPaths[$entryIdentifier])) {
-            $this->fallbackClassPaths[$entryIdentifier] = [
-                'path' => $path,
-                'mappingType' => self::MAPPING_TYPE_PSR4
-            ];
-        }
+        $this->fallbackClassPaths[$entryIdentifier] ??= [
+            'path' => $path,
+            'mappingType' => self::MAPPING_TYPE_PSR4
+        ];
     }
 
     /**
@@ -294,7 +284,6 @@ class ClassLoader
      *
      * @param array<string> $classNameParts Parts of the FQ classname.
      * @param string $classPath Already detected class path to a possible package.
-     * @return string
      */
     protected function buildClassPathWithPsr0(array $classNameParts, string $classPath): string
     {
@@ -309,7 +298,6 @@ class ClassLoader
      * @param array<string> $classNameParts Parts of the FQ classname.
      * @param string $classPath Already detected class path to a possible package.
      * @param integer $packageNamespacePartCount Amount of parts of the className that is also part of the package namespace.
-     * @return string
      */
     protected function buildClassPathWithPsr4(array $classNameParts, string $classPath, int $packageNamespacePartCount): string
     {
@@ -322,7 +310,6 @@ class ClassLoader
      * Sets the flag which enables or disables autoloading support for functional
      * test files.
      *
-     * @param boolean $flag
      * @return void
      */
     public function setConsiderTestsNamespace(bool $flag)
@@ -332,9 +319,6 @@ class ClassLoader
 
     /**
      * Is the given mapping type predictable in terms of path to class name
-     *
-     * @param string $mappingType
-     * @return boolean
      */
     public static function isAutoloadTypeWithPredictableClassPath(string $mappingType): bool
     {

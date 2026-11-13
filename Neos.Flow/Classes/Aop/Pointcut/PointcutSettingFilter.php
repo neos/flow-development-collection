@@ -21,9 +21,8 @@ use Neos\Flow\Configuration\ConfigurationManager;
  * A settings filter which fires on configuration setting set to true or equal to the given condition.
  *
  * Example: setting(FooPackage.configuration.option = 'AOP is cool')
- *
- * @Flow\Proxy(false)
  */
+#[Flow\Proxy(false)]
 class PointcutSettingFilter implements PointcutFilterInterface
 {
     public const PATTERN_SPLITBYEQUALSIGN = '/\s*( *= *)\s*/';
@@ -69,9 +68,6 @@ class PointcutSettingFilter implements PointcutFilterInterface
 
     /**
      * Injects the configuration manager
-     *
-     * @param ConfigurationManager $configurationManager
-     * @return void
      */
     public function injectConfigurationManager(ConfigurationManager $configurationManager): void
     {
@@ -122,7 +118,6 @@ class PointcutSettingFilter implements PointcutFilterInterface
      * and $this->condition accordingly
      *
      * @param string $settingComparisonExpression The configuration expression (path + optional condition)
-     * @return void
      * @throws InvalidPointcutExpressionException
      */
     protected function parseConfigurationOptionPath(string $settingComparisonExpression): void
@@ -158,9 +153,6 @@ class PointcutSettingFilter implements PointcutFilterInterface
 
     /**
      * This method is used to optimize the matching process.
-     *
-     * @param ClassNameIndex $classNameIndex
-     * @return ClassNameIndex
      */
     public function reduceTargetClassNames(ClassNameIndex $classNameIndex): ClassNameIndex
     {

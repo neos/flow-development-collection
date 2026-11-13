@@ -26,12 +26,12 @@ use Neos\Cache\Frontend\FrontendInterface;
 class TransientMemoryBackend extends IndependentAbstractBackend implements TaggableBackendInterface
 {
     /**
-     * @var array
+     * @var array<string,string>
      */
     protected $entries = [];
 
     /**
-     * @var array
+     * @var array<string,array<string,true>>
      */
     protected $tagsAndEntries = [];
 
@@ -40,9 +40,8 @@ class TransientMemoryBackend extends IndependentAbstractBackend implements Tagga
      *
      * @param string $entryIdentifier An identifier for this specific cache entry
      * @param string $data The data to be stored
-     * @param array $tags Tags to associate with this cache entry
-     * @param integer $lifetime Lifetime of this cache entry in seconds. If NULL is specified, the default lifetime is used. "0" means unlimited lifetime.
-     * @return void
+     * @param array<string> $tags Tags to associate with this cache entry
+     * @param ?integer $lifetime Lifetime of this cache entry in seconds. If NULL is specified, the default lifetime is used. "0" means unlimited lifetime.
      * @throws Exception if no cache frontend has been set.
      * @api
      */
@@ -51,7 +50,6 @@ class TransientMemoryBackend extends IndependentAbstractBackend implements Tagga
         if (!$this->cache instanceof FrontendInterface) {
             throw new Exception('No cache frontend has been set yet via setCache().', 1238244992);
         }
-
 
         $this->entries[$entryIdentifier] = $data;
         foreach ($tags as $tag) {
@@ -116,9 +114,7 @@ class TransientMemoryBackend extends IndependentAbstractBackend implements Tagga
     {
         if (isset($this->tagsAndEntries[$tag])) {
             return array_map(
-                static function ($value) {
-                    return (string)$value;
-                },
+                static fn ($value) => (string)$value,
                 array_keys($this->tagsAndEntries[$tag])
             );
         }
@@ -128,7 +124,6 @@ class TransientMemoryBackend extends IndependentAbstractBackend implements Tagga
     /**
      * Removes all cache entries of this cache.
      *
-     * @return void
      * @api
      */
     public function flush(): void
@@ -170,7 +165,6 @@ class TransientMemoryBackend extends IndependentAbstractBackend implements Tagga
     /**
      * Does nothing
      *
-     * @return void
      * @api
      */
     public function collectGarbage(): void

@@ -16,15 +16,14 @@ use Neos\Flow\Annotations as Flow;
 
 /**
  * Injection property as used in a Object Configuration
- *
- * @Flow\Proxy(false)
  */
+#[Flow\Proxy(false)]
 final readonly class ConfigurationProperty
 {
-    public const PROPERTY_TYPES_STRAIGHTVALUE = 0;
-    public const PROPERTY_TYPES_OBJECT = 1;
-    public const PROPERTY_TYPES_CONFIGURATION = 2;
-    public const PROPERTY_TYPES_CACHE = 3;
+    public const int PROPERTY_TYPES_STRAIGHTVALUE = 0;
+    public const int PROPERTY_TYPES_OBJECT = 1;
+    public const int PROPERTY_TYPES_CONFIGURATION = 2;
+    public const int PROPERTY_TYPES_CACHE = 3;
 
     /**
      * Constructor - sets the name, type and value of the property
@@ -34,7 +33,6 @@ final readonly class ConfigurationProperty
      * @param integer $type Type of the property - one of the PROPERTY_TYPE_* constants
      * @param Configuration|null $objectConfiguration If $type is OBJECT, a custom object configuration may be specified
      * @param boolean $lazyLoading Should this property be lazy loaded
-     * @param int $autowiring
      */
     public function __construct(
         private string $name,
@@ -98,8 +96,6 @@ final readonly class ConfigurationProperty
 
     /**
      * If this property can be lazy loaded if the dependency injection mechanism offers that.
-     *
-     * @return boolean
      */
     public function isLazyLoading(): bool
     {

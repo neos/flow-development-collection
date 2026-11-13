@@ -28,9 +28,9 @@ use Psr\Log\LoggerInterface;
 /**
  * The ResourceManager
  *
- * @Flow\Scope("singleton")
  * @api
  */
+#[Flow\Scope('singleton')]
 class ResourceManager
 {
     /**
@@ -42,27 +42,27 @@ class ResourceManager
     public const PUBLIC_RESSOURCE_REGEXP = '#^resource://(?<packageKey>[^/]+)/Public/(?<relativePathAndFilename>.*)#';
 
     /**
-     * @Flow\Inject
      * @var ObjectManagerInterface
      */
+    #[Flow\Inject]
     protected $objectManager;
 
     /**
-     * @Flow\Inject(name="Neos.Flow:SystemLogger")
      * @var LoggerInterface
      */
+    #[Flow\Inject(name: 'Neos.Flow:SystemLogger')]
     protected $logger;
 
     /**
-     * @Flow\Inject
      * @var ResourceRepository
      */
+    #[Flow\Inject]
     protected $resourceRepository;
 
     /**
-     * @Flow\Inject
      * @var PersistenceManagerInterface
      */
+    #[Flow\Inject]
     protected $persistenceManager;
 
     /**
@@ -71,9 +71,9 @@ class ResourceManager
     protected $settings;
 
     /**
-     * @Flow\Inject
      * @var Environment
      */
+    #[Flow\Inject]
     protected $environment;
 
     /**
@@ -110,7 +110,6 @@ class ResourceManager
     /**
      * Injects the (system) logger based on PSR-3.
      *
-     * @param LoggerInterface $logger
      * @return void
      */
     public function injectLogger(LoggerInterface $logger)
@@ -181,7 +180,7 @@ class ResourceManager
         }
         /** @var PersistentResource $resource */
         $this->resourceRepository->add($resource);
-        $this->logger->debug(sprintf('Successfully imported file into the resource collection "%s" (storage: %s, a %s. SHA1: %s)', $collectionName, $collection->getStorage()->getName(), get_class($collection), $resource->getSha1()));
+        $this->logger->debug(sprintf('Successfully imported file into the resource collection "%s" (storage: %s, a %s. SHA1: %s)', $collectionName, $collection->getStorage()->getName(), $collection::class, $resource->getSha1()));
         return $resource;
     }
 
@@ -205,6 +204,7 @@ class ResourceManager
      */
     public function importResourceFromContent($content, $filename, $collectionName = ResourceManager::DEFAULT_PERSISTENT_COLLECTION_NAME, $forcedPersistenceObjectIdentifier = null)
     {
+        /** @phpstan-ignore function.alreadyNarrowedType (annotations can be wrong) */
         if (!is_string($content)) {
             throw new Exception(sprintf('Tried to import content into the resource collection "%s" but the given content was a %s instead of a string.', $collectionName, gettype($content)), 1380878115);
         }
@@ -230,7 +230,7 @@ class ResourceManager
 
         /** @var PersistentResource $resource */
         $this->resourceRepository->add($resource);
-        $this->logger->debug(sprintf('Successfully imported content into the resource collection "%s" (storage: %s, a %s. SHA1: %s)', $collectionName, $collection->getStorage()->getName(), get_class($collection->getStorage()), $resource->getSha1()));
+        $this->logger->debug(sprintf('Successfully imported content into the resource collection "%s" (storage: %s, a %s. SHA1: %s)', $collectionName, $collection->getStorage()->getName(), $collection->getStorage()::class, $resource->getSha1()));
 
         return $resource;
     }
@@ -266,7 +266,7 @@ class ResourceManager
         }
 
         $this->resourceRepository->add($resource);
-        $this->logger->debug(sprintf('Successfully imported the uploaded file "%s" into the resource collection "%s" (storage: "%s", a %s. SHA1: %s)', $resource->getFilename(), $collectionName, $this->collections[$collectionName]->getStorage()->getName(), get_class($this->collections[$collectionName]->getStorage()), $resource->getSha1()));
+        $this->logger->debug(sprintf('Successfully imported the uploaded file "%s" into the resource collection "%s" (storage: "%s", a %s. SHA1: %s)', $resource->getFilename(), $collectionName, $this->collections[$collectionName]->getStorage()->getName(), $this->collections[$collectionName]->getStorage()::class, $resource->getSha1()));
 
         return $resource;
     }
@@ -451,7 +451,7 @@ class ResourceManager
     public function getPublicPackageResourceUriByPath($path)
     {
         $this->initialize();
-        list($packageKey, $relativePathAndFilename) = $this->getPackageAndPathByPublicPath($path);
+        [$packageKey, $relativePathAndFilename] = $this->getPackageAndPathByPublicPath($path);
         return $this->getPublicPackageResourceUri($packageKey, $relativePathAndFilename);
     }
 
@@ -484,7 +484,7 @@ class ResourceManager
     {
         $this->initialize();
 
-        return isset($this->storages[$storageName]) ? $this->storages[$storageName] : null;
+        return $this->storages[$storageName] ?? null;
     }
 
     /**
@@ -498,7 +498,7 @@ class ResourceManager
     {
         $this->initialize();
 
-        return isset($this->collections[$collectionName]) ? $this->collections[$collectionName] : null;
+        return $this->collections[$collectionName] ?? null;
     }
 
     /**
@@ -516,7 +516,6 @@ class ResourceManager
     /**
      * Returns an array of Collection instances which use the given storage
      *
-     * @param StorageInterface $storage
      * @return array<CollectionInterface>
      */
     public function getCollectionsByStorage(StorageInterface $storage)
@@ -617,8 +616,8 @@ class ResourceManager
                 throw new Exception(sprintf('The configuration for the resource collection "%s" defined in your settings has not defined a valid "target" option. Please check the configuration syntax and make sure that the specified class "%s" really exists.', $collectionName, $collectionDefinition['target']), 1361468924);
             }
 
-            $pathPatterns = (isset($collectionDefinition['pathPatterns'])) ? $collectionDefinition['pathPatterns'] : [];
-            $filenames = (isset($collectionDefinition['filenames'])) ? $collectionDefinition['filenames'] : [];
+            $pathPatterns = $collectionDefinition['pathPatterns'] ?? [];
+            $filenames = $collectionDefinition['filenames'] ?? [];
 
             $this->collections[$collectionName] = new Collection($collectionName, $this->storages[$collectionDefinition['storage']], $this->targets[$collectionDefinition['target']], $pathPatterns);
         }
@@ -647,7 +646,7 @@ class ResourceManager
 
         $this->throwIfFileExtensionIsBlocked($pathInfo['basename']);
 
-        if ($openBasedirEnabled === true) {
+        if ($openBasedirEnabled) {
             // Move uploaded file to a readable folder before trying to read sha1 value of file
             $newTemporaryTargetPathAndFilename = $this->environment->getPathToTemporaryDirectory() . 'ResourceUpload.' . Algorithms::generateRandomString(13) . '.tmp';
             if (move_uploaded_file($temporaryTargetPathAndFilename, $newTemporaryTargetPathAndFilename) === false) {
@@ -674,8 +673,6 @@ class ResourceManager
      * Code that imports a stream and sets a filename from outside afterwards (e.g. the client filename of an
      * upload) must call this before importing, otherwise the content is stored before the name is checked.
      *
-     * @param string $filename
-     * @return void
      * @throws Exception
      * @internal
      */

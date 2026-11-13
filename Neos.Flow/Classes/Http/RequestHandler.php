@@ -21,9 +21,8 @@ use Psr\Http\Message\ServerRequestInterface;
 
 /**
  * A request handler which can handle HTTP requests.
- *
- * @Flow\Scope("singleton")
  */
+#[Flow\Scope('singleton')]
 class RequestHandler implements HttpRequestHandlerInterface
 {
     /**
@@ -53,9 +52,6 @@ class RequestHandler implements HttpRequestHandlerInterface
      */
     public $exit;
 
-    /**
-     * @param Bootstrap $bootstrap
-     */
     public function __construct(Bootstrap $bootstrap)
     {
         $this->bootstrap = $bootstrap;
@@ -104,7 +100,6 @@ class RequestHandler implements HttpRequestHandlerInterface
         $this->middlewaresChain->onStep(function (ServerRequestInterface $request) {
             $this->httpRequest = $request;
         });
-        assert($this->httpRequest instanceof ServerRequestInterface);
         $this->httpResponse = $this->middlewaresChain->handle($this->httpRequest);
 
         $this->sendResponse($this->httpResponse);
@@ -149,7 +144,6 @@ class RequestHandler implements HttpRequestHandlerInterface
 
     /**
      * Send the HttpResponse of the component context to the browser and flush all output buffers.
-     * @param ResponseInterface $response
      * @return void
      */
     protected function sendResponse(ResponseInterface $response)

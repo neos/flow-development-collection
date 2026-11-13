@@ -20,15 +20,14 @@ use Neos\Flow\SignalSlot\Dispatcher;
 
 /**
  * Signal command controller for the Neos.Flow package
- *
- * @Flow\Scope("singleton")
  */
+#[Flow\Scope('singleton')]
 class SignalCommandController extends CommandController
 {
     /**
-     * @Flow\Inject
      * @var Dispatcher
      */
+    #[Flow\Inject]
     protected $dispatcher;
 
     /**
@@ -36,7 +35,6 @@ class SignalCommandController extends CommandController
      *
      * @param string $className if specified, only signals matching the given fully qualified class name will be shown. Note: escape namespace separators or wrap the value in quotes, e.g. "--class-name Neos\\Flow\\Core\\Bootstrap".
      * @param string $methodName if specified, only signals matching the given method name will be shown. This is only useful in conjunction with the "--class-name" option.
-     * @return void
      */
     public function listConnectedCommand(?string $className = null, ?string $methodName = null): void
     {

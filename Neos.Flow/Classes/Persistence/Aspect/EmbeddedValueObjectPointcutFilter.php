@@ -16,9 +16,8 @@ use Neos\Flow\Annotations as Flow;
 
 /**
  * Pointcut filter matching embeddable value objects
- *
- * @Flow\Scope("singleton")
  */
+#[Flow\Scope('singleton')]
 class EmbeddedValueObjectPointcutFilter implements \Neos\Flow\Aop\Pointcut\PointcutFilterInterface
 {
     /**
@@ -75,7 +74,6 @@ class EmbeddedValueObjectPointcutFilter implements \Neos\Flow\Aop\Pointcut\Point
     /**
      * This method is used to optimize the matching process.
      *
-     * @param \Neos\Flow\Aop\Builder\ClassNameIndex $classNameIndex
      * @return \Neos\Flow\Aop\Builder\ClassNameIndex
      */
     public function reduceTargetClassNames(\Neos\Flow\Aop\Builder\ClassNameIndex $classNameIndex)

@@ -23,8 +23,8 @@ use Neos\Utility\MediaTypes;
  * based media types as well as urlencoded content.
  *
  * @api
- * @Flow\Scope("singleton")
  */
+#[Flow\Scope('singleton')]
 class MediaTypeConverter extends AbstractTypeConverter implements MediaTypeConverterInterface
 {
     /**
@@ -50,7 +50,6 @@ class MediaTypeConverter extends AbstractTypeConverter implements MediaTypeConve
      * @param string $source the raw request body
      * @param string $targetType must be "array"
      * @param array<string,mixed> $convertedChildProperties
-     * @param PropertyMappingConfigurationInterface|null $configuration
      * @return array<mixed>|string|integer Note that this TypeConverter may return a non-array in case of JSON media type, even though he declares to only convert to array
      * @api
      */
@@ -60,9 +59,7 @@ class MediaTypeConverter extends AbstractTypeConverter implements MediaTypeConve
         if ($configuration !== null) {
             $mediaType = $configuration->getConfigurationValue(MediaTypeConverterInterface::class, MediaTypeConverterInterface::CONFIGURATION_MEDIA_TYPE);
         }
-        if ($mediaType === null) {
-            $mediaType = MediaTypeConverterInterface::DEFAULT_MEDIA_TYPE;
-        }
+        $mediaType ??= MediaTypeConverterInterface::DEFAULT_MEDIA_TYPE;
         return $this->convertMediaType($source, $mediaType);
     }
 
@@ -95,7 +92,7 @@ class MediaTypeConverter extends AbstractTypeConverter implements MediaTypeConve
             case 'xml':
                 try {
                     $xmlElement = new \SimpleXMLElement(urldecode($requestBody), LIBXML_NOERROR);
-                } catch (\Exception $exception) {
+                } catch (\Exception) {
                     return [];
                 }
                 $result = Arrays::convertObjectToArray($xmlElement);

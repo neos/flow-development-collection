@@ -20,15 +20,14 @@ use Neos\FluidAdaptor\Service;
 
 /**
  * Command controller for Fluid documentation rendering
- *
- * @Flow\Scope("singleton")
  */
+#[Flow\Scope('singleton')]
 class DocumentationCommandController extends CommandController
 {
     /**
-     * @Flow\Inject
      * @var \Neos\FluidAdaptor\Service\XsdGenerator
      */
+    #[Flow\Inject]
     protected $xsdGenerator;
 
     /**
@@ -44,7 +43,6 @@ class DocumentationCommandController extends CommandController
      * @param string $xsdNamespace Unique target namespace used in the XSD schema (for example "http://yourdomain.org/ns/viewhelpers"). Defaults to "https://neos.io/ns/<php namespace>".
      * @param string $targetFile File path and name of the generated XSD schema. If not specified the schema will be output to standard output.
      * @param string $xsdDomain Domain used in the XSD schema (for example "http://yourdomain.org"). Defaults to "https://neos.io".
-     * @return void
      */
     public function generateXsdCommand(string $phpNamespace, ?string $xsdNamespace = null, ?string $targetFile = null, string $xsdDomain = ''): void
     {
@@ -53,9 +51,7 @@ class DocumentationCommandController extends CommandController
         if (empty($xsdDomain) || !isset($parsedDomain['host'], $parsedDomain['scheme'])) {
             $xsdDomain = 'https://neos.io';
         }
-        if ($xsdNamespace === null) {
-            $xsdNamespace = sprintf('%s/ns/%s', $xsdDomain, str_replace('\\', '/', $phpNamespace));
-        }
+        $xsdNamespace ??= sprintf('%s/ns/%s', $xsdDomain, str_replace('\\', '/', $phpNamespace));
         $xsdSchema = '';
         try {
             $xsdSchema = $this->xsdGenerator->generateXsd($phpNamespace, $xsdNamespace);

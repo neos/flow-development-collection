@@ -63,7 +63,7 @@ class PaddingViewHelper extends AbstractViewHelper
         $this->registerArgument('padLength', 'integer', 'Length of the resulting string. If the value of pad_length is negative or less than the length of the input string, no padding takes place.', true);
         $this->registerArgument('padString', 'string', 'The padding string', false, ' ');
         $this->registerArgument('padType', 'string', 'Append the padding at this site (Possible values: right,left,both. Default: right)', false, 'right');
-        $this->registerArgument('value', 'string', 'string to format', false, null);
+        $this->registerArgument('value', 'string', 'string to format', false);
     }
 
     /**
@@ -81,16 +81,12 @@ class PaddingViewHelper extends AbstractViewHelper
      * Applies str_pad() on the specified value.
      *
      * @param array<string,mixed> $arguments
-     * @param \Closure $renderChildrenClosure
-     * @param RenderingContextInterface $renderingContext
      * @return string
      */
     public static function renderStatic(array $arguments, \Closure $renderChildrenClosure, RenderingContextInterface $renderingContext)
     {
         $value = $arguments['value'];
-        if ($value === null) {
-            $value = $renderChildrenClosure();
-        }
+        $value ??= $renderChildrenClosure();
         $padTypes = [
             'left' => STR_PAD_LEFT,
             'right' => STR_PAD_RIGHT,

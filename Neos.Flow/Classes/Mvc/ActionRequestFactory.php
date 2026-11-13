@@ -12,9 +12,7 @@ use Psr\Http\Message\ServerRequestInterface;
 class ActionRequestFactory
 {
     /**
-     * @param ServerRequestInterface $httpRequest
      * @param array<mixed> $additionalArguments
-     * @return ActionRequest
      * @throws Exception\InvalidActionNameException
      * @throws Exception\InvalidArgumentNameException
      * @throws Exception\InvalidArgumentTypeException
@@ -27,13 +25,11 @@ class ActionRequestFactory
         $actionRequest = $this->prepareActionRequest($httpRequest);
 
         $actionRequest->setArguments($arguments);
-        $actionRequest = $this->setDefaultControllerAndActionNameIfNoneSpecified($actionRequest);
 
-        return $actionRequest;
+        return $this->setDefaultControllerAndActionNameIfNoneSpecified($actionRequest);
     }
 
     /**
-     * @param ServerRequestInterface $httpRequest
      * @return array<mixed>
      */
     protected function mergeHttpRequestArguments(ServerRequestInterface $httpRequest): array
@@ -45,9 +41,8 @@ class ActionRequestFactory
         }
 
         $uploadedFiles = UploadedFilesHelper::upcastUploadedFiles($httpRequest->getUploadedFiles(), $arguments);
-        $arguments = Arrays::arrayMergeRecursiveOverrule($arguments, $uploadedFiles);
 
-        return $arguments;
+        return Arrays::arrayMergeRecursiveOverrule($arguments, $uploadedFiles);
     }
 
     /**
@@ -64,10 +59,6 @@ class ActionRequestFactory
         return $arguments;
     }
 
-    /**
-     * @param ServerRequestInterface $httpRequest
-     * @return ActionRequest
-     */
     protected function prepareActionRequest(ServerRequestInterface $httpRequest): ActionRequest
     {
         return ActionRequest::fromHttpRequest($httpRequest);
@@ -76,8 +67,6 @@ class ActionRequestFactory
     /**
      * Set the default controller and action names if none has been specified.
      *
-     * @param ActionRequest $actionRequest
-     * @return ActionRequest
      * @throws Exception\InvalidActionNameException
      * @throws Exception\InvalidControllerNameException
      */

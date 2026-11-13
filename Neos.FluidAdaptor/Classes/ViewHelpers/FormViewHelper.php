@@ -69,27 +69,27 @@ class FormViewHelper extends AbstractFormViewHelper
     protected $tagName = 'form';
 
     /**
-     * @Flow\Inject
      * @var HashService
      */
+    #[Flow\Inject]
     protected $hashService;
 
     /**
-     * @Flow\Inject
      * @var Context
      */
+    #[Flow\Inject]
     protected $securityContext;
 
     /**
-     * @Flow\Inject
      * @var MvcPropertyMappingConfigurationService
      */
+    #[Flow\Inject]
     protected $mvcPropertyMappingConfigurationService;
 
     /**
-     * @Flow\Inject
      * @var AuthenticationManagerInterface
      */
+    #[Flow\Inject]
     protected $authenticationManager;
 
     /**
@@ -109,19 +109,19 @@ class FormViewHelper extends AbstractFormViewHelper
         $this->registerTagAttribute('name', 'string', 'Name of form');
         $this->registerTagAttribute('onreset', 'string', 'JavaScript: On reset of the form');
         $this->registerTagAttribute('onsubmit', 'string', 'JavaScript: On submit of the form');
-        $this->registerArgument('action', 'string', 'Target action', false, null);
+        $this->registerArgument('action', 'string', 'Target action', false);
         $this->registerArgument('arguments', 'array', 'Arguments', false, []);
-        $this->registerArgument('controller', 'string', 'Target controller. If NULL current controllerName is used', false, null);
-        $this->registerArgument('package', 'string', 'Target package. if NULL current package is used', false, null);
-        $this->registerArgument('subpackage', 'string', 'Target subpackage. if NULL current subpackage is used', false, null);
-        $this->registerArgument('object', 'mixed', 'object to use for the form. Use in conjunction with the "property" attribute on the sub tags', false, null);
+        $this->registerArgument('controller', 'string', 'Target controller. If NULL current controllerName is used', false);
+        $this->registerArgument('package', 'string', 'Target package. if NULL current package is used', false);
+        $this->registerArgument('subpackage', 'string', 'Target subpackage. if NULL current subpackage is used', false);
+        $this->registerArgument('object', 'mixed', 'object to use for the form. Use in conjunction with the "property" attribute on the sub tags', false);
         $this->registerArgument('section', 'string', 'The anchor to be added to the URI', false, '');
         $this->registerArgument('format', 'string', 'The requested format, e.g. ".html"', false, '');
         $this->registerArgument('additionalParams', 'array', 'additional query parameters that won\'t be prefixed like $arguments (overrule $arguments)', false, []);
         $this->registerArgument('absolute', 'boolean', 'If set, an absolute action URI is rendered (only active if $actionUri is not set)', false, false);
-        $this->registerArgument('fieldNamePrefix', 'string', 'Prefix that will be added to all field names within this form', false, null);
-        $this->registerArgument('actionUri', 'string', 'can be used to overwrite the "action" attribute of the form tag', false, null);
-        $this->registerArgument('objectName', 'string', 'name of the object that is bound to this form. If this argument is not specified, the name attribute of this form is used to determine the FormObjectName', false, null);
+        $this->registerArgument('fieldNamePrefix', 'string', 'Prefix that will be added to all field names within this form', false);
+        $this->registerArgument('actionUri', 'string', 'can be used to overwrite the "action" attribute of the form tag', false);
+        $this->registerArgument('objectName', 'string', 'name of the object that is bound to this form. If this argument is not specified, the name attribute of this form is used to determine the FormObjectName', false);
         $this->registerArgument('useParentRequest', 'boolean', 'If set, the parent Request will be used instead ob the current one', false, false);
         // @deprecated with Flow 9:
         $this->registerArgument('addQueryString', 'boolean', 'Deprecated with Flow 9. If set, the current query parameters will be kept in the URI', false, false);
@@ -216,9 +216,6 @@ class FormViewHelper extends AbstractFormViewHelper
                     throw new ViewHelper\Exception('You can\'t use the parent Request, you are already in the MainRequest.', 1361354942);
                 }
                 $parentRequest = $request->getParentRequest();
-                if (!$parentRequest instanceof ActionRequest) {
-                    throw new ViewHelper\Exception('The parent requests was unexpectedly empty, probably the current request is broken.', 1565947917);
-                }
 
                 $uriBuilder = clone $uriBuilder;
                 $uriBuilder->setRequest($parentRequest);
@@ -260,8 +257,8 @@ class FormViewHelper extends AbstractFormViewHelper
         if (is_string($query)) {
             $queryParts = explode('&', $query);
             foreach ($queryParts as $queryPart) {
-                if (strpos($queryPart, '=') !== false) {
-                    list($parameterName, $parameterValue) = explode('=', $queryPart, 2);
+                if (str_contains($queryPart, '=')) {
+                    [$parameterName, $parameterValue] = explode('=', $queryPart, 2);
                     $result .= chr(10) . '<input type="hidden" name="' . htmlspecialchars(urldecode($parameterName)) . '" value="' . htmlspecialchars(urldecode($parameterValue)) . '" />';
                 }
             }
@@ -314,7 +311,6 @@ class FormViewHelper extends AbstractFormViewHelper
                 $referrerValue = $referrerValue ? htmlspecialchars($referrerValue) : '';
                 $result .= '<input type="hidden" name="' . $argumentNamespace . '[__referrer][' . $referrerKey . ']" value="' . $referrerValue . '" />' . chr(10);
             }
-            /** @var ActionRequest $request */
             $request = $request->getParentRequest();
         }
 

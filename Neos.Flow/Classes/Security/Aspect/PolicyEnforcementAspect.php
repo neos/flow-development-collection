@@ -19,10 +19,9 @@ use Neos\Flow\Security\Context;
 
 /**
  * The central security aspect, that invokes the security interceptors.
- *
- * @Flow\Scope("singleton")
- * @Flow\Aspect
  */
+#[Flow\Scope('singleton')]
+#[Flow\Aspect]
 class PolicyEnforcementAspect
 {
     /**
@@ -39,7 +38,6 @@ class PolicyEnforcementAspect
 
     /**
      * @param PolicyEnforcement $policyEnforcementInterceptor The policy enforcement interceptor
-     * @param Context $securityContext
      */
     public function __construct(PolicyEnforcement $policyEnforcementInterceptor, Context $securityContext)
     {
@@ -52,10 +50,10 @@ class PolicyEnforcementAspect
      * Note: If we have some kind of "run as" functionality in the future, we would have to manipulate the security context
      * before calling the policy enforcement interceptor
      *
-     * @Flow\Around("filter(Neos\Flow\Security\Authorization\Privilege\Method\MethodPrivilegePointcutFilter)")
      * @param JoinPointInterface $joinPoint The current joinpoint
      * @return mixed The result of the target method if it has not been intercepted
      */
+    #[Flow\Around('filter(Neos\Flow\Security\Authorization\Privilege\Method\MethodPrivilegePointcutFilter)')]
     public function enforcePolicy(JoinPointInterface $joinPoint)
     {
         if ($this->securityContext->areAuthorizationChecksDisabled() !== true) {

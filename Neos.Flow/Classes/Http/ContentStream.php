@@ -36,9 +36,9 @@ class ContentStream implements StreamInterface
     protected $stream;
 
     /**
-     * @Flow\Inject(name="Neos.Flow:SystemLogger")
      * @var LoggerInterface
      */
+    #[Flow\Inject(name: 'Neos.Flow:SystemLogger')]
     protected $logger;
 
     /**
@@ -53,9 +53,6 @@ class ContentStream implements StreamInterface
 
     /**
      * Creates an instance representing the given $contents string
-     *
-     * @param string $contents
-     * @return self
      */
     public static function fromContents(string $contents): self
     {
@@ -413,9 +410,8 @@ class ContentStream implements StreamInterface
      * string casting operations.
      *
      * @see http://php.net/manual/en/language.oop5.magic.php#object.tostring
-     * @return string
      */
-    public function __toString()
+    public function __toString(): string
     {
         if (!$this->isReadable()) {
             return '';

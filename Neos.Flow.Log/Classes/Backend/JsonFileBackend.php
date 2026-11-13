@@ -28,7 +28,6 @@ class JsonFileBackend extends FileBackend
      * @param string $packageKey Key of the package triggering the log (determined automatically if not specified)
      * @param string $className Name of the class triggering the log (determined automatically if not specified)
      * @param string $methodName Name of the method triggering the log (determined automatically if not specified)
-     * @return void
      */
     public function append(string $message, int $severity = LOG_INFO, $additionalData = null, ?string $packageKey = null, ?string $className = null, ?string $methodName = null): void
     {
@@ -43,7 +42,7 @@ class JsonFileBackend extends FileBackend
             $processId = 0;
         }
 
-        $remoteIp = ($this->logIpAddress === true) ? (isset($_SERVER['REMOTE_ADDR']) ? $_SERVER['REMOTE_ADDR'] : '') : '';
+        $remoteIp = ($this->logIpAddress === true) ? ($_SERVER['REMOTE_ADDR'] ?? '') : '';
         $severityLabel = (isset($this->severityLabels[$severity])) ? strtolower(trim($this->severityLabels[$severity])) : 'unknown';
 
         $logEntryData = [

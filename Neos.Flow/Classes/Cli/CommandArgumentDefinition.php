@@ -47,9 +47,6 @@ class CommandArgumentDefinition
         $this->description = $description;
     }
 
-    /**
-     * @return string
-     */
     public function getName(): string
     {
         return $this->name;
@@ -57,8 +54,6 @@ class CommandArgumentDefinition
 
     /**
      * Returns the lowercased name with dashes as word separator
-     *
-     * @return string
      */
     public function getDashedName(): string
     {
@@ -67,17 +62,11 @@ class CommandArgumentDefinition
         return '--' . strtolower(substr($dashedName, 0, -1));
     }
 
-    /**
-     * @return string
-     */
     public function getDescription(): string
     {
         return $this->description;
     }
 
-    /**
-     * @return bool
-     */
     public function isRequired(): bool
     {
         return $this->required;

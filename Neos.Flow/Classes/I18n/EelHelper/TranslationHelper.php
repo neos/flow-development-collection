@@ -140,7 +140,7 @@ class TranslationHelper implements ProtectedContextAwareInterface
     {
         $shortHandStringParts = explode(':', $shortHandString);
         if (count($shortHandStringParts) === 3) {
-            list($package, $source, $id) = $shortHandStringParts;
+            [$package, $source, $id] = $shortHandStringParts;
             return $this->createTranslationParameterToken($id)
                 ->package($package)
                 ->source(str_replace('.', '/', $source))

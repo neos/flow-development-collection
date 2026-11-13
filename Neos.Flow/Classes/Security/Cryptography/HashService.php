@@ -22,16 +22,15 @@ use Neos\Flow\Utility;
 
 /**
  * A hash service which should be used to generate and validate hashes.
- *
- * @Flow\Scope("singleton")
  */
+#[Flow\Scope('singleton')]
 class HashService
 {
     /**
      * A private, unique key used for encryption tasks
      * @var string|false|null
      */
-    protected $encryptionKey = null;
+    protected $encryptionKey;
 
     /**
      * @var array<string,PasswordHashingStrategyInterface>
@@ -45,14 +44,14 @@ class HashService
 
     /**
      * @var ObjectManagerInterface
-     * @Flow\Inject
      */
+    #[Flow\Inject]
     protected $objectManager;
 
     /**
      * @var StringFrontend
-     * @Flow\Inject
      */
+    #[Flow\Inject]
     protected $cache;
 
     /**
@@ -78,6 +77,7 @@ class HashService
      */
     public function generateHmac($string)
     {
+        /** @phpstan-ignore function.alreadyNarrowedType (annotations can be wrong) */
         if (!is_string($string)) {
             throw new InvalidArgumentForHashGenerationException('A hash can only be generated for a string, but "' . gettype($string) . '" was given.', 1255069587);
         }
@@ -126,6 +126,7 @@ class HashService
      */
     public function validateAndStripHmac($string)
     {
+        /** @phpstan-ignore function.alreadyNarrowedType (annotations can be wrong) */
         if (!is_string($string)) {
             throw new InvalidArgumentForHashGenerationException('A hash can only be validated for a string, but "' . gettype($string) . '" was given.', 1320829762);
         }
@@ -148,7 +149,7 @@ class HashService
      */
     public function hashPassword($password, $strategyIdentifier = 'default')
     {
-        list($passwordHashingStrategy, $strategyIdentifier) = $this->getPasswordHashingStrategyAndIdentifier($strategyIdentifier);
+        [$passwordHashingStrategy, $strategyIdentifier] = $this->getPasswordHashingStrategyAndIdentifier($strategyIdentifier);
         $hashedPasswordAndSalt = $passwordHashingStrategy->hashPassword($password, $this->getEncryptionKey());
         return $strategyIdentifier . '=>' . $hashedPasswordAndSalt;
     }
@@ -164,11 +165,11 @@ class HashService
     public function validatePassword($password, $hashedPasswordAndSalt)
     {
         $strategyIdentifier = 'default';
-        if (strpos($hashedPasswordAndSalt, '=>') !== false) {
-            list($strategyIdentifier, $hashedPasswordAndSalt) = explode('=>', $hashedPasswordAndSalt, 2);
+        if (str_contains($hashedPasswordAndSalt, '=>')) {
+            [$strategyIdentifier, $hashedPasswordAndSalt] = explode('=>', $hashedPasswordAndSalt, 2);
         }
 
-        list($passwordHashingStrategy) = $this->getPasswordHashingStrategyAndIdentifier($strategyIdentifier);
+        [$passwordHashingStrategy] = $this->getPasswordHashingStrategyAndIdentifier($strategyIdentifier);
         return $passwordHashingStrategy->validatePassword($password, $hashedPasswordAndSalt, $this->getEncryptionKey());
     }
 
@@ -215,9 +216,7 @@ class HashService
      */
     protected function getEncryptionKey()
     {
-        if ($this->encryptionKey === null) {
-            $this->encryptionKey = $this->cache->get('encryptionKey');
-        }
+        $this->encryptionKey ??= $this->cache->get('encryptionKey');
         if ($this->encryptionKey === false && file_exists(FLOW_PATH_DATA . 'Persistent/EncryptionKey')) {
             $this->encryptionKey = file_get_contents(FLOW_PATH_DATA . 'Persistent/EncryptionKey');
         }

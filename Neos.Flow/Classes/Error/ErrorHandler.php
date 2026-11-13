@@ -17,9 +17,8 @@ use Neos\Flow\Error as FlowError;
 
 /**
  * Global error handler for Flow
- *
- * @Flow\Scope("singleton")
  */
+#[Flow\Scope('singleton')]
 class ErrorHandler
 {
     /**

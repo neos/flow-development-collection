@@ -19,9 +19,8 @@ use Neos\Utility\TypeHandling;
 
 /**
  * Extends the default doctrine JsonArrayType to work with entities.
- *
- * @Flow\Proxy(false)
  */
+#[Flow\Proxy(false)]
 class JsonArrayType extends DoctrineJsonType
 {
     public const FLOW_JSON_ARRAY = 'flow_json_array';
@@ -218,7 +217,7 @@ class JsonArrayType extends DoctrineJsonType
                     '__identifier' => $persistenceManager->getIdentifierByObject($value)
                 ];
             } elseif ($value instanceof \JsonSerializable
-                && DenormalizingObjectConverter::isDenormalizable(get_class($value))
+                && DenormalizingObjectConverter::isDenormalizable($value::class)
             ) {
                 $value = self::serializeValueObject($value);
             }
@@ -234,7 +233,7 @@ class JsonArrayType extends DoctrineJsonType
     {
         if ($json = json_encode($valueObject, JSON_THROW_ON_ERROR)) {
             return [
-                '__value_object_type' => get_class($valueObject),
+                '__value_object_type' => $valueObject::class,
                 '__value_object_value' =>
                     json_decode($json, true, 512, JSON_THROW_ON_ERROR)
             ];

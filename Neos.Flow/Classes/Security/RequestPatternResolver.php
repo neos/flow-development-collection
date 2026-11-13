@@ -17,9 +17,8 @@ use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 
 /**
  * The request pattern resolver. It resolves the class name of a request pattern based on names.
- *
- * @Flow\Scope("singleton")
  */
+#[Flow\Scope('singleton')]
 class RequestPatternResolver
 {
     /**

@@ -48,7 +48,7 @@ class SessionMetaDataStore
     public function initializeObject(): void
     {
         if (!$this->cache->getBackend() instanceof IterableBackendInterface) {
-            throw new InvalidBackendException(sprintf('The session storage cache must provide a backend implementing the IterableBackendInterface, but the given backend "%s" does not implement it.', get_class($this->cache->getBackend())), 1370964558);
+            throw new InvalidBackendException(sprintf('The session storage cache must provide a backend implementing the IterableBackendInterface, but the given backend "%s" does not implement it.', $this->cache->getBackend()::class), 1370964558);
         }
     }
 
@@ -100,7 +100,6 @@ class SessionMetaDataStore
     }
 
     /**
-     * @param string $tag
      * @return \Generator<string, SessionMetaData> Session metadata indexed by sessionIdentifier
      * @throws NotSupportedByBackendException
      */
@@ -168,9 +167,7 @@ class SessionMetaDataStore
      */
     public function store(SessionMetaData $sessionMetaData): void
     {
-        $tagsForCacheEntry = array_map(function ($tag) {
-            return self::TAG_PREFIX . $tag;
-        }, $sessionMetaData->tags);
+        $tagsForCacheEntry = array_map(fn ($tag) => self::TAG_PREFIX . $tag, $sessionMetaData->tags);
         $tagsForCacheEntry[] = $sessionMetaData->sessionIdentifier->value;
 
         // check whether the same data with an age < updateMetadataThreshold was just read to avoid pointless write operations

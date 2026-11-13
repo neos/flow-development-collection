@@ -60,9 +60,9 @@ use Neos\FluidAdaptor\Core\ViewHelper\Exception as ViewHelperException;
 class NumberViewHelper extends AbstractLocaleAwareViewHelper
 {
     /**
-     * @Flow\Inject
      * @var NumberFormatter
      */
+    #[Flow\Inject]
     protected $numberFormatter;
 
     /**

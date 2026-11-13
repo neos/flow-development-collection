@@ -18,9 +18,8 @@ use Neos\Flow\Security\Exception\NoAuthenticationTokenFoundException;
 
 /**
  * The authentication token resolver. It resolves the class name of a authentication token based on names.
- *
- * @Flow\Scope("singleton")
  */
+#[Flow\Scope('singleton')]
 class AuthenticationTokenResolver
 {
     /**

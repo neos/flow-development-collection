@@ -19,9 +19,8 @@ use Psr\Http\Message\ServerRequestInterface;
 
 /**
  * Simple DTO wrapping the values required for a Router::route() call
- *
- * @Flow\Proxy(false)
  */
+#[Flow\Proxy(false)]
 final class RouteContext implements CacheAwareInterface
 {
     /**
@@ -53,25 +52,16 @@ final class RouteContext implements CacheAwareInterface
         $this->parameters = $parameters;
     }
 
-    /**
-     * @return ServerRequestInterface
-     */
     public function getHttpRequest(): ServerRequestInterface
     {
         return $this->httpRequest;
     }
 
-    /**
-     * @return RouteParameters
-     */
     public function getParameters(): RouteParameters
     {
         return $this->parameters;
     }
 
-    /**
-     * @return string
-     */
     public function getCacheEntryIdentifier(): string
     {
         if ($this->cacheEntryIdentifier === null) {

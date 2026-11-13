@@ -39,8 +39,8 @@ use Neos\Utility\TypeHandling;
  *   and set the sub-properties. We only do this if the configuration option "CONFIGURATION_MODIFICATION_ALLOWED" is true.
  *
  * @api
- * @Flow\Scope("singleton")
  */
+#[Flow\Scope('singleton')]
 class PersistentObjectConverter extends ObjectConverter
 {
     /**
@@ -74,9 +74,9 @@ class PersistentObjectConverter extends ObjectConverter
     protected $priority = 1;
 
     /**
-     * @Flow\Inject
      * @var PersistenceManagerInterface
      */
+    #[Flow\Inject]
     protected $persistenceManager;
 
     /**
@@ -117,7 +117,6 @@ class PersistentObjectConverter extends ObjectConverter
      *
      * @param class-string $targetType
      * @param string $propertyName
-     * @param PropertyMappingConfigurationInterface $configuration
      * @return string
      * @throws InvalidTargetException
      */
@@ -232,7 +231,6 @@ class PersistentObjectConverter extends ObjectConverter
      * @param array<mixed> $source
      * @param class-string $targetType
      * @param array<string,mixed> &$convertedChildProperties
-     * @param PropertyMappingConfigurationInterface|null $configuration
      * @return object|TargetNotFoundError
      * @throws InvalidPropertyMappingConfigurationException
      */

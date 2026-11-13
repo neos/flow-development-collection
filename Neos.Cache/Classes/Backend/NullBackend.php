@@ -28,7 +28,6 @@ class NullBackend extends AbstractCacheBackend implements PhpCapableBackendInter
     /**
      * Successfully ignore every configured property
      *
-     * @param string $propertyName
      * @param mixed $propertyValue
      * @return boolean TRUE
      */
@@ -42,9 +41,8 @@ class NullBackend extends AbstractCacheBackend implements PhpCapableBackendInter
      *
      * @param string $entryIdentifier ignored
      * @param string $data ignored
-     * @param array $tags ignored
-     * @param integer $lifetime ignored
-     * @return void
+     * @param array<string> $tags ignored
+     * @param ?integer $lifetime ignored
      * @api
      */
     public function set(string $entryIdentifier, string $data, array $tags = [], ?int $lifetime = null): void
@@ -102,7 +100,6 @@ class NullBackend extends AbstractCacheBackend implements PhpCapableBackendInter
     /**
      * Does nothing
      *
-     * @return void
      * @api
      */
     public function flush(): void
@@ -113,7 +110,6 @@ class NullBackend extends AbstractCacheBackend implements PhpCapableBackendInter
      * Does nothing
      *
      * @param string $tag ignored
-     * @return integer
      * @api
      */
     public function flushByTag(string $tag): int
@@ -125,7 +121,6 @@ class NullBackend extends AbstractCacheBackend implements PhpCapableBackendInter
      * Does nothing
      *
      * @param array<string> $tags ignored
-     * @return integer
      * @api
      */
     public function flushByTags(array $tags): int
@@ -136,7 +131,6 @@ class NullBackend extends AbstractCacheBackend implements PhpCapableBackendInter
     /**
      * Does nothing
      *
-     * @return void
      * @api
      */
     public function collectGarbage(): void
