@@ -32,7 +32,7 @@ interface PsrLoggerFactoryInterface
      * some static properties for you.
      *
      * @param array<mixed> $configuration
-     * @return static
+     * @return self
      * @api
      */
     public static function create(array $configuration);

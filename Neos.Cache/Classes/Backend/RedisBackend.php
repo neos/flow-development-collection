@@ -548,9 +548,9 @@ class RedisBackend extends IndependentAbstractBackend implements TaggableBackend
     private function getRedisClient(): \Redis
     {
         $redis = new \Redis();
+        $connected = false;
 
         try {
-            $connected = false;
             // keep the assignment above! the connect calls below leaves the variable undefined, if an error occurs.
             if (str_starts_with($this->hostname, '/')) {
                 // if the "hostname" starts with a slash, assume it's a socket and omit port.

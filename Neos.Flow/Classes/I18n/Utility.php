@@ -158,7 +158,7 @@ class Utility
      */
     public static function stringEndsWith($haystack, $needle)
     {
-        if (substr($haystack, - strlen($needle)) === $needle) {
+        if (!empty($needle) && substr($haystack, - strlen($needle)) === $needle) {
             return true;
         }
 

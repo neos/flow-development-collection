@@ -460,7 +460,7 @@ class Headers implements \Iterator
     }
 
     /**
-     * @return mixed
+     * @return null|mixed
      */
     public function key(): mixed
     {

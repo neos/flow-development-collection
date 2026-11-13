@@ -246,8 +246,9 @@ class KickstartCommandController extends CommandController
             if (strpos($fieldType, 'array') !== false) {
                 $fieldDefinitions[$fieldName]['typeHint'] = 'array';
             } elseif (strpos($fieldType, '\\') !== false) {
-                if (strpos($fieldType, '<') !== false) {
-                    $fieldDefinitions[$fieldName]['typeHint'] = substr($fieldType, 0, strpos($fieldType, '<'));
+                $ltPos = strpos($fieldType, '<');
+                if ($ltPos !== false) {
+                    $fieldDefinitions[$fieldName]['typeHint'] = substr($fieldType, 0, $ltPos);
                 } else {
                     $fieldDefinitions[$fieldName]['typeHint'] = $fieldType;
                 }

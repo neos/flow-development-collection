@@ -12,6 +12,7 @@ namespace Neos\Flow\Persistence\Aspect;
  * source code.
  */
 
+use Doctrine\ORM\Mapping as ORM;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Aop\JoinPointInterface;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
@@ -24,8 +25,8 @@ use Neos\Utility\ObjectAccess;
  *
  * @Flow\Scope("singleton")
  * @Flow\Aspect
- * @Flow\Introduce("Neos\Flow\Persistence\Aspect\PersistenceMagicAspect->isEntityOrValueObject", interfaceName="Neos\Flow\Persistence\Aspect\PersistenceMagicInterface")
  */
+#[Flow\Introduce("Neos\Flow\Persistence\Aspect\PersistenceMagicAspect->isEntityOrValueObject", "Neos\Flow\Persistence\Aspect\PersistenceMagicInterface")]
 class PersistenceMagicAspect
 {
     /**
@@ -70,8 +71,8 @@ class PersistenceMagicAspect
 
     /**
      * @var string
-     * @Doctrine\ORM\Mapping\Id
-     * @Doctrine\ORM\Mapping\Column(length=40)
+     * @ORM\Id
+     * @ORM\Column(length=40)
      * @Flow\Introduce("Neos\Flow\Persistence\Aspect\PersistenceMagicAspect->isEntityOrValueObject && filter(Neos\Flow\Persistence\Doctrine\Mapping\Driver\FlowAnnotationDriver)")
      */
     protected $Persistence_Object_Identifier;

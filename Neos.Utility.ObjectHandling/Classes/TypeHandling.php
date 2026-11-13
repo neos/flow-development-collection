@@ -171,10 +171,11 @@ abstract class TypeHandling
      */
     public static function truncateElementType(string $type): string
     {
-        if (strpos($type, '<') === false) {
+        $ltPos = strpos($type, '<');
+        if ($ltPos === false) {
             return $type;
         }
-        return substr($type, 0, strpos($type, '<'));
+        return substr($type, 0, $ltPos);
     }
 
     /**
