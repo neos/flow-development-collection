@@ -322,4 +322,155 @@ class RedisBackendTest extends BaseTestCase
         }
         self::assertEmpty($actualEntries, 'Entries should be empty');
     }
+
+    /**
+     * @test
+     */
+    public function newIterationIncludesEntriesSetAfterPreviousIteration(): void
+    {
+        $this->backend->set('first', 'firstData');
+        $this->backend->set('second', 'secondData');
+        \iterator_to_array($this->backend);
+
+        $this->backend->set('third', 'thirdData');
+
+        $data = \iterator_to_array($this->backend);
+        ksort($data);
+        self::assertSame(['first' => 'firstData', 'second' => 'secondData', 'third' => 'thirdData'], $data);
+    }
+
+    /**
+     * @test
+     */
+    public function newIterationExcludesEntriesRemovedAfterPreviousIteration(): void
+    {
+        $this->backend->set('first', 'firstData');
+        \iterator_to_array($this->backend);
+
+        $this->backend->remove('first');
+
+        self::assertEmpty(\iterator_to_array($this->backend));
+    }
+
+    /**
+     * @test
+     */
+    public function newIterationIsEmptyAfterFlush(): void
+    {
+        $this->backend->set('first', 'firstData');
+        \iterator_to_array($this->backend);
+
+        $this->backend->flush();
+
+        self::assertEmpty(\iterator_to_array($this->backend));
+    }
+
+    /**
+     * @test
+     */
+    public function newIterationExcludesEntriesFlushedByTag(): void
+    {
+        $this->backend->set('first', 'firstData', ['tag']);
+        \iterator_to_array($this->backend);
+
+        $this->backend->flushByTag('tag');
+
+        self::assertEmpty(\iterator_to_array($this->backend));
+    }
+
+    /**
+     * @test
+     */
+    public function iterationIsNotRestartedWhenAnEntryIsUpdatedWhileIterating(): void
+    {
+        foreach (['first', 'second', 'third', 'fourth'] as $entryIdentifier) {
+            $this->backend->set($entryIdentifier, $entryIdentifier . 'Data');
+        }
+
+        $visitedEntryIdentifiers = [];
+        foreach ($this->backend as $entryIdentifier => $data) {
+            // update while in the middle of the iteration – a restart would visit earlier entries again
+            if (count($visitedEntryIdentifiers) === 2) {
+                $this->backend->set($entryIdentifier, 'updatedData');
+            }
+            $visitedEntryIdentifiers[] = $entryIdentifier;
+        }
+
+        sort($visitedEntryIdentifiers);
+        self::assertSame(['first', 'fourth', 'second', 'third'], $visitedEntryIdentifiers);
+    }
+
+    /**
+     * @test
+     */
+    public function iterationIsNotRestartedWhenAnEntryIsRemovedWhileIterating(): void
+    {
+        foreach (['first', 'second', 'third', 'fourth'] as $entryIdentifier) {
+            $this->backend->set($entryIdentifier, $entryIdentifier . 'Data');
+        }
+
+        $visitedEntryIdentifiers = [];
+        foreach ($this->backend as $entryIdentifier => $data) {
+            // remove an entry that has been visited already
+            if (count($visitedEntryIdentifiers) === 2) {
+                $this->backend->remove($visitedEntryIdentifiers[0]);
+            }
+            $visitedEntryIdentifiers[] = $entryIdentifier;
+        }
+
+        sort($visitedEntryIdentifiers);
+        self::assertSame(['first', 'fourth', 'second', 'third'], $visitedEntryIdentifiers);
+    }
+
+    /**
+     * @test
+     */
+    public function iterationVisitsAllEntriesWhenTheCurrentEntryIsRemovedWhileIterating(): void
+    {
+        $entryIdentifiers = [];
+        for ($i = 1; $i <= 10; $i++) {
+            $entryIdentifiers[] = 'entry' . $i;
+            $this->backend->set('entry' . $i, 'data' . $i);
+        }
+
+        $visitedEntryIdentifiers = [];
+        foreach ($this->backend as $entryIdentifier => $data) {
+            // remove every entry right when it is visited, like SessionManager::collectGarbage() does
+            $this->backend->remove($entryIdentifier);
+            $visitedEntryIdentifiers[] = $entryIdentifier;
+        }
+
+        sort($visitedEntryIdentifiers);
+        sort($entryIdentifiers);
+        self::assertSame($entryIdentifiers, $visitedEntryIdentifiers);
+    }
+
+    /**
+     * @test
+     */
+    public function iterationSkipsEntriesRemovedBeforeTheyAreVisited(): void
+    {
+        $entryIdentifiers = [];
+        for ($i = 1; $i <= 10; $i++) {
+            $entryIdentifiers[] = 'entry' . $i;
+            $this->backend->set('entry' . $i, 'data' . $i);
+        }
+
+        $visitedEntryIdentifiers = [];
+        $removedEntryIdentifier = null;
+        foreach ($this->backend as $entryIdentifier => $data) {
+            // remove an entry that has not been visited yet – this must neither end the iteration nor yield it
+            if ($removedEntryIdentifier === null) {
+                $removedEntryIdentifier = current(array_diff($entryIdentifiers, [$entryIdentifier]));
+                $this->backend->remove($removedEntryIdentifier);
+            }
+            self::assertNotFalse($data);
+            $visitedEntryIdentifiers[] = $entryIdentifier;
+        }
+
+        $expectedEntryIdentifiers = array_values(array_diff($entryIdentifiers, [$removedEntryIdentifier]));
+        sort($visitedEntryIdentifiers);
+        sort($expectedEntryIdentifiers);
+        self::assertSame($expectedEntryIdentifiers, $visitedEntryIdentifiers);
+    }
 }

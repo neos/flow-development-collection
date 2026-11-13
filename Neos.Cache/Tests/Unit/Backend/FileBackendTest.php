@@ -769,6 +769,52 @@ class FileBackendTest extends BaseTestCase
     }
 
     /**
+     * @test
+     */
+    public function iteratingOverTheBackendYieldsTheDataOfTheEntries(): void
+    {
+        $mockEnvironmentConfiguration = $this->createEnvironmentConfigurationMock([
+            __DIR__ . '~Testing',
+            'vfs://Foo/',
+            255
+        ]);
+
+        $backend = new FileBackend($mockEnvironmentConfiguration, []);
+        $backend->setCache(new VariableFrontend('UnitTestCache', $backend));
+
+        // tags and lifetime are stored next to the data and must not show up in it
+        $backend->set('first', 'firstData', ['tag1', 'tag2'], 3600);
+        $backend->set('second', 'secondData');
+
+        $data = \iterator_to_array($backend);
+        ksort($data);
+        self::assertSame(['first' => 'firstData', 'second' => 'secondData'], $data);
+    }
+
+    /**
+     * @test
+     */
+    public function iteratingOverTheBackendSkipsExpiredEntries(): void
+    {
+        $mockEnvironmentConfiguration = $this->createEnvironmentConfigurationMock([
+            __DIR__ . '~Testing',
+            'vfs://Foo/',
+            255
+        ]);
+
+        $backend = new FileBackend($mockEnvironmentConfiguration, []);
+        $backend->setCache(new VariableFrontend('UnitTestCache', $backend));
+
+        $backend->set('first', 'firstData');
+        file_put_contents('vfs://Foo/Cache/Data/UnitTestCache/expired', (string)new FileBackendEntryDto('expiredData', [], time() - 5));
+        $backend->set('second', 'secondData');
+
+        $data = \iterator_to_array($backend);
+        ksort($data);
+        self::assertSame(['first' => 'firstData', 'second' => 'secondData'], $data);
+    }
+
+    /**
      * @param array $backendMockMethods
      * @param array $environmentConfiguration
      * @return FileBackend

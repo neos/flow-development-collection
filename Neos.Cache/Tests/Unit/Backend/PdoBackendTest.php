@@ -17,6 +17,7 @@ use Neos\Cache\Backend\PdoBackend;
 use Neos\Cache\EnvironmentConfiguration;
 use Neos\Cache\Exception;
 use Neos\Cache\Frontend\FrontendInterface;
+use Neos\Cache\Frontend\VariableFrontend;
 use Neos\Cache\Tests\BaseTestCase;
 use PHPUnit\Framework\MockObject\MockObject;
 
@@ -266,7 +267,7 @@ class PdoBackendTest extends BaseTestCase
     /**
      * @test
      */
-    public function iterationResetsWhenDataIsSet()
+    public function newIterationIncludesEntriesSetAfterPreviousIteration()
     {
         $backend = $this->setUpBackend();
 
@@ -286,7 +287,7 @@ class PdoBackendTest extends BaseTestCase
     /**
      * @test
      */
-    public function iterationResetsWhenDataFlushed()
+    public function newIterationIsEmptyAfterFlush()
     {
         $backend = $this->setUpBackend();
 
@@ -302,7 +303,7 @@ class PdoBackendTest extends BaseTestCase
     /**
      * @test
      */
-    public function iterationResetsWhenDataFlushedByTag()
+    public function newIterationExcludesEntriesFlushedByTag()
     {
         $backend = $this->setUpBackend();
 
@@ -318,7 +319,7 @@ class PdoBackendTest extends BaseTestCase
     /**
      * @test
      */
-    public function iterationResetsWhenDataGetsRemoved()
+    public function newIterationExcludesEntriesRemovedAfterPreviousIteration()
     {
         $backend = $this->setUpBackend();
 
@@ -329,6 +330,129 @@ class PdoBackendTest extends BaseTestCase
 
         $data = \iterator_to_array($backend);
         self::assertEmpty($data);
+    }
+
+    /**
+     * @test
+     */
+    public function iterationIsNotRestartedWhenAnEntryIsUpdatedWhileIterating()
+    {
+        $backend = $this->setUpBackend();
+
+        foreach (['first', 'second', 'third', 'fourth'] as $entryIdentifier) {
+            $backend->set($entryIdentifier, $entryIdentifier . 'Data');
+        }
+
+        $visitedEntryIdentifiers = [];
+        foreach ($backend as $entryIdentifier => $data) {
+            // update while in the middle of the iteration – a restart would visit earlier entries again
+            if (count($visitedEntryIdentifiers) === 2) {
+                $backend->set($entryIdentifier, 'updatedData');
+            }
+            $visitedEntryIdentifiers[] = $entryIdentifier;
+        }
+
+        sort($visitedEntryIdentifiers);
+        self::assertSame(['first', 'fourth', 'second', 'third'], $visitedEntryIdentifiers);
+    }
+
+    /**
+     * @test
+     */
+    public function iteratingOverTheBackendYieldsTheDataOfTheEntries(): void
+    {
+        $backend = $this->setUpBackend();
+
+        $backend->set('first', 'firstData');
+        $backend->set('second', 'secondData');
+
+        $data = \iterator_to_array($backend);
+        ksort($data);
+        self::assertSame(['first' => 'firstData', 'second' => 'secondData'], $data);
+    }
+
+    /**
+     * @test
+     */
+    public function iterationSkipsEntriesRemovedBeforeTheyAreVisited(): void
+    {
+        $backend = $this->setUpBackend();
+
+        $entryIdentifiers = ['first', 'second', 'third', 'fourth'];
+        foreach ($entryIdentifiers as $entryIdentifier) {
+            $backend->set($entryIdentifier, $entryIdentifier . 'Data');
+        }
+
+        $visitedEntries = [];
+        $removedEntryIdentifier = null;
+        foreach ($backend as $entryIdentifier => $data) {
+            // remove an entry that has not been visited yet – it must neither end the iteration nor be yielded
+            if ($removedEntryIdentifier === null) {
+                $removedEntryIdentifier = current(array_diff($entryIdentifiers, [$entryIdentifier]));
+                $backend->remove($removedEntryIdentifier);
+            }
+            $visitedEntries[$entryIdentifier] = $data;
+        }
+
+        $expectedEntries = [];
+        foreach (array_diff($entryIdentifiers, [$removedEntryIdentifier]) as $entryIdentifier) {
+            $expectedEntries[$entryIdentifier] = $entryIdentifier . 'Data';
+        }
+        ksort($expectedEntries);
+        ksort($visitedEntries);
+        self::assertSame($expectedEntries, $visitedEntries);
+    }
+
+    /**
+     * @test
+     */
+    public function iteratingTheFrontendSkipsEntriesRemovedBeforeTheyAreVisited(): void
+    {
+        $backend = $this->setUpBackend();
+        $cache = new VariableFrontend('UnitTestCache', $backend);
+
+        foreach (['first', 'second', 'third', 'fourth'] as $entryIdentifier) {
+            $cache->set($entryIdentifier, $entryIdentifier . 'Data');
+        }
+
+        $visitedEntries = [];
+        $removedEntryIdentifier = null;
+        foreach ($cache->getIterator() as $entryIdentifier => $data) {
+            // the backend fetched all entries on rewind, so it still knows the removed one
+            if ($removedEntryIdentifier === null) {
+                $removedEntryIdentifier = current(array_diff(['first', 'second', 'third', 'fourth'], [$entryIdentifier]));
+                $cache->remove($removedEntryIdentifier);
+            }
+            $visitedEntries[$entryIdentifier] = $data;
+        }
+
+        self::assertArrayNotHasKey($removedEntryIdentifier, $visitedEntries);
+        self::assertCount(3, $visitedEntries);
+        self::assertNotContains(false, $visitedEntries);
+    }
+
+    /**
+     * @test
+     */
+    public function iterationIsNotRestartedWhenAnEntryIsRemovedWhileIterating()
+    {
+        $backend = $this->setUpBackend();
+
+        foreach (['first', 'second', 'third', 'fourth'] as $entryIdentifier) {
+            $backend->set($entryIdentifier, $entryIdentifier . 'Data');
+        }
+
+        $visitedEntryIdentifiers = [];
+        foreach ($backend as $entryIdentifier => $data) {
+            // remove an entry that has been visited already, like SessionManager::collectGarbage() does
+            if (count($visitedEntryIdentifiers) === 2) {
+                $backend->remove($visitedEntryIdentifiers[0]);
+            }
+            $visitedEntryIdentifiers[] = $entryIdentifier;
+        }
+
+        sort($visitedEntryIdentifiers);
+        self::assertSame(['first', 'fourth', 'second', 'third'], $visitedEntryIdentifiers);
     }
 
     /**
