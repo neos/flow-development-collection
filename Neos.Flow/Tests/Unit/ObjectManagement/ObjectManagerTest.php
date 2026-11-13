@@ -99,6 +99,34 @@ final class ObjectManagerTest extends UnitTestCase
     }
 
     #[Test]
+    public function autowireArgumentsKeepsExplicitlyPassedNullArguments(): void
+    {
+        $objectManager = $this->getAccessibleMock(ObjectManager::class, ['getConfiguredArgument'], [], '', false);
+        $objectManager->expects(self::never())->method('getConfiguredArgument');
+
+        $configuration = [
+            1 => ['t' => ConfigurationArgument::ARGUMENT_TYPES_OBJECT, 'v' => 'Some\\Dependency'],
+            'other' => ['t' => ConfigurationArgument::ARGUMENT_TYPES_OBJECT, 'v' => 'Some\\OtherDependency'],
+        ];
+
+        self::assertSame([0 => null, 'other' => null], $objectManager->_call('autowireArguments', $configuration, [0 => null, 'other' => null]));
+    }
+
+    #[Test]
+    public function autowireArgumentsFillsInMissingArguments(): void
+    {
+        $objectManager = $this->getAccessibleMock(ObjectManager::class, ['getConfiguredArgument'], [], '', false);
+        $objectManager->method('getConfiguredArgument')->willReturn('autowired');
+
+        $configuration = [
+            1 => ['t' => ConfigurationArgument::ARGUMENT_TYPES_OBJECT, 'v' => 'Some\\Dependency'],
+            2 => ['t' => ConfigurationArgument::ARGUMENT_TYPES_OBJECT, 'v' => 'Some\\OtherDependency'],
+        ];
+
+        self::assertSame([0 => 'given', 1 => 'autowired'], $objectManager->_call('autowireArguments', $configuration, [0 => 'given']));
+    }
+
+    #[Test]
     public function objectNamesWithLeadingBackslashAreNormalized(): void
     {
         $logger = $this->createStub(LoggerInterface::class);
