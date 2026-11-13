@@ -36,4 +36,21 @@ class ProxySerializationTest extends FunctionalTestCase
         self::assertInstanceOf(Fixtures\ClassWithEntityProperty::class, $unserialized);
         self::assertEquals('some value', $unserialized->someValue);
     }
+
+    #[Test]
+    public function classWithForcedSerializationCodeSerializesPersistedEntitiesInArraysAsReferences(): void
+    {
+        $entity = new Fixtures\SimpleEntity('Persisted Entity');
+        $this->persistenceManager->add($entity);
+        $this->persistenceManager->persistAll();
+        $identifier = $this->persistenceManager->getIdentifierByObject($entity);
+
+        $object = new Fixtures\ClassWithEntitiesInArray(['entity' => $entity, 'name' => 'some value']);
+        $unserialized = unserialize(serialize($object));
+
+        self::assertInstanceOf(Fixtures\ClassWithEntitiesInArray::class, $unserialized);
+        self::assertSame('some value', $unserialized->values['name']);
+        self::assertInstanceOf(Fixtures\SimpleEntity::class, $unserialized->values['entity']);
+        self::assertSame($identifier, $this->persistenceManager->getIdentifierByObject($unserialized->values['entity']));
+    }
 }
