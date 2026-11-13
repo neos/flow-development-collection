@@ -129,7 +129,7 @@ class UploadedFile implements UploadedFileInterface
      * @throws RuntimeException if the upload was not successful.
      * @api PSR-7
      */
-    public function getStream()
+    public function getStream(): StreamInterface
     {
         $this->throwExceptionIfNotAccessible();
 
@@ -182,7 +182,7 @@ class UploadedFile implements UploadedFileInterface
      *     the second or subsequent call to the method.
      * @api PSR-7
      */
-    public function moveTo(string $targetPath)
+    public function moveTo($targetPath): void
     {
         $this->throwExceptionIfNotAccessible();
 
@@ -214,7 +214,7 @@ class UploadedFile implements UploadedFileInterface
      * @return int|null The file size in bytes or null if unknown.
      * @api PSR-7
      */
-    public function getSize()
+    public function getSize(): ?int
     {
         return $this->size;
     }
@@ -234,7 +234,7 @@ class UploadedFile implements UploadedFileInterface
      * @return int One of PHP's UPLOAD_ERR_XXX constants.
      * @api PSR-7
      */
-    public function getError()
+    public function getError(): int
     {
         return $this->error;
     }
@@ -253,7 +253,7 @@ class UploadedFile implements UploadedFileInterface
      *     was provided.
      * @api PSR-7
      */
-    public function getClientFilename()
+    public function getClientFilename(): ?string
     {
         return $this->clientFilename;
     }
@@ -270,7 +270,7 @@ class UploadedFile implements UploadedFileInterface
      *
      * @api PSR-7
      */
-    public function getClientMediaType()
+    public function getClientMediaType(): ?string
     {
         return $this->clientMediaType;
     }

@@ -114,7 +114,7 @@ final class TrustedProxiesMiddlewareTest extends UnitTestCase
     {
         $server = array_merge($_SERVER, [
             'HTTP_HOST' => 'dev.blog.rob',
-            'HTTP_X_FORWARDED_PORT' => 2727,
+            'HTTP_X_FORWARDED_PORT' => '2727',
             'SERVER_NAME' => 'dev.blog.rob',
             'SERVER_ADDR' => '127.0.0.1',
             'SERVER_PORT' => '80',
@@ -138,7 +138,7 @@ final class TrustedProxiesMiddlewareTest extends UnitTestCase
         $server = array_merge($_SERVER, [
             'HTTP_HOST' => '[2a00:f48:1008::212:183:10]',
             'HTTP_X_FORWARDED_HOST' => '[2a00:f48:1008::212:183:10]',
-            'HTTP_X_FORWARDED_PORT' => 2727,
+            'HTTP_X_FORWARDED_PORT' => '2727',
             'SERVER_NAME' => 'dev.blog.rob',
             'SERVER_ADDR' => '127.0.0.1',
             'SERVER_PORT' => '80',
@@ -425,7 +425,7 @@ final class TrustedProxiesMiddlewareTest extends UnitTestCase
     #[Test]
     public function portFromHostHeaderIsOverriddenByPortHeader()
     {
-        $request = $this->serverRequestFactory->createServerRequest('GET', new Uri('http://acme.com'), ['HTTP_X_FORWARDED_PORT' => 8080, 'HTTP_X_FORWARDED_HOST' => 'neos.io:443']);
+        $request = $this->serverRequestFactory->createServerRequest('GET', new Uri('http://acme.com'), ['HTTP_X_FORWARDED_PORT' => '8080', 'HTTP_X_FORWARDED_HOST' => 'neos.io:443']);
         $trustedRequest = $this->callWithRequest($request);
         self::assertEquals(8080, $trustedRequest->getUri()->getPort());
     }
@@ -469,7 +469,7 @@ final class TrustedProxiesMiddlewareTest extends UnitTestCase
         // forwarded port overrules requested port
         yield [
             'forwardedProtocol' => null,
-            'forwardedPort' => 80,
+            'forwardedPort' => '80',
             'requestUri' => 'http://acme.com',
             'expectedUri' => 'http://acme.com',
         ];
@@ -481,7 +481,7 @@ final class TrustedProxiesMiddlewareTest extends UnitTestCase
         ];
         yield [
             'forwardedProtocol' => null,
-            'forwardedPort' => 8080,
+            'forwardedPort' => '8080',
             'requestUri' => 'http://acme.com:8000',
             'expectedUri' => 'http://acme.com:8080',
         ];
@@ -494,37 +494,37 @@ final class TrustedProxiesMiddlewareTest extends UnitTestCase
         // forwarded protocol & port
         yield [
             'forwardedProtocol' => 'http',
-            'forwardedPort' => 80,
+            'forwardedPort' => '80',
             'requestUri' => 'http://acme.com',
             'expectedUri' => 'http://acme.com',
         ];
         yield [
             'forwardedProtocol' => 'http',
-            'forwardedPort' => 8080,
+            'forwardedPort' => '8080',
             'requestUri' => 'http://acme.com',
             'expectedUri' => 'http://acme.com:8080',
         ];
         yield [
             'forwardedProtocol' => 'http',
-            'forwardedPort' => 443,
+            'forwardedPort' => '443',
             'requestUri' => 'https://acme.com',
             'expectedUri' => 'http://acme.com:443',
         ];
         yield [
             'forwardedProtocol' => 'https',
-            'forwardedPort' => 443,
+            'forwardedPort' => '443',
             'requestUri' => 'http://acme.com',
             'expectedUri' => 'https://acme.com',
         ];
         yield [
             'forwardedProtocol' => 'https',
-            'forwardedPort' => 443,
+            'forwardedPort' => '443',
             'requestUri' => 'https://acme.com',
             'expectedUri' => 'https://acme.com',
         ];
         yield [
             'forwardedProtocol' => 'https',
-            'forwardedPort' => 80,
+            'forwardedPort' => '80',
             'requestUri' => 'https://acme.com',
             'expectedUri' => 'https://acme.com:80',
         ];
@@ -536,7 +536,7 @@ final class TrustedProxiesMiddlewareTest extends UnitTestCase
         ];
         yield [
             'forwardedProtocol' => 'http',
-            'forwardedPort' => 80,
+            'forwardedPort' => '80',
             'requestUri' => 'http://[2a00:f48:1008::212:183:10]',
             'expectedUri' => 'http://[2a00:f48:1008::212:183:10]',
         ];

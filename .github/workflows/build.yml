@@ -48,7 +48,7 @@ jobs:
     permissions:
       contents: read # to fetch code (actions/checkout)
     if: "!contains(github.event.head_commit.message, '[skip ci]')"
-    name: "Unit tests (PHP ${{ matrix.php-versions }}, deps: ${{ matrix.dependencies || 'highest' }})"
+    name: "Unit tests (PHP ${{ matrix.php-versions }}, deps: ${{ matrix.dependencies || 'highest' }}, guzzle: ${{ matrix.guzzle-version || '^8.2' }}, psr/http-message: ${{ matrix.http-message-version || '^2.0' }})"
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -79,6 +79,8 @@ jobs:
             static-analysis: 'no'
             experimental: false
             dependencies: 'lowest'
+            guzzle-version: '^7.0'
+            http-message-version: '^1.0'
     services:
       redis:
         image: redis:alpine
@@ -104,6 +106,8 @@ jobs:
           dependencies: ${{ matrix.dependencies || 'highest' }}
           collection-path: ${{ env.FLOW_FOLDER }}
           distribution-path: ${{ env.FLOW_DIST_FOLDER }}
+          guzzle-version: ${{ matrix.guzzle-version || '^8.2' }}
+          http-message-version: ${{ matrix.http-message-version || '^2.0' }}
 
       - name: Run unit tests
         run: composer test-unit
@@ -112,7 +116,7 @@ jobs:
     permissions:
       contents: read # to fetch code (actions/checkout)
     if: "!contains(github.event.head_commit.message, '[skip ci]')"
-    name: "Functional tests (PHP ${{ matrix.php }}, ${{ matrix.db.image }}, deps: ${{ matrix.dependencies || 'highest' }})"
+    name: "Functional tests (PHP ${{ matrix.php }}, ${{ matrix.db.image }}, deps: ${{ matrix.dependencies || 'highest' }}, guzzle: ${{ matrix.guzzle-version || '^8.2' }}, psr/http-message: ${{ matrix.http-message-version || '^2.0' }})"
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -123,8 +127,8 @@ jobs:
           - { engine: pgsql, image: 'postgres:14-alpine', port: 5432, options: '--health-cmd=pg_isready --health-interval=10s --health-timeout=5s --health-retries=3' }
         include:
           # Build for minimum dependencies (both base engines).
-          - { php: '8.4', dependencies: 'lowest', db: { engine: mysql, image: 'mariadb:10.6', port: 3306, options: '--health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3' } }
-          - { php: '8.4', dependencies: 'lowest', db: { engine: pgsql, image: 'postgres:14-alpine', port: 5432, options: '--health-cmd=pg_isready --health-interval=10s --health-timeout=5s --health-retries=3' } }
+          - { php: '8.4', dependencies: 'lowest', guzzle-version: '^7.0', http-message-version: '^1.0', db: { engine: mysql, image: 'mariadb:10.6', port: 3306, options: '--health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3' } }
+          - { php: '8.4', dependencies: 'lowest', guzzle-version: '^7.0', http-message-version: '^1.0', db: { engine: pgsql, image: 'postgres:14-alpine', port: 5432, options: '--health-cmd=pg_isready --health-interval=10s --health-timeout=5s --health-retries=3' } }
           # MySQL engines.
           - { php: '8.4', db: { engine: mysql, image: 'mysql:8.0', port: 3306, options: '--health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3' } }
           - { php: '8.4', db: { engine: mysql, image: 'mysql:8.4', port: 3306, options: '--health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3' } }
@@ -169,6 +173,8 @@ jobs:
           dependencies: ${{ matrix.dependencies || 'highest' }}
           collection-path: ${{ env.FLOW_FOLDER }}
           distribution-path: ${{ env.FLOW_DIST_FOLDER }}
+          guzzle-version: ${{ matrix.guzzle-version || '^8.2' }}
+          http-message-version: ${{ matrix.http-message-version || '^2.0' }}
 
       - uses: ./.github/actions/configure-flow
         with:

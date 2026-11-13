@@ -173,15 +173,30 @@ abstract class RequestInformationHelper
         foreach ($server as $name => $value) {
             if (strpos($name, 'HTTP_') === 0) {
                 $name = str_replace(' ', '-', ucwords(strtolower(str_replace('_', ' ', substr($name, 5)))));
-                $headerFields[$name] = $value;
+                $headerFields[$name] = self::normalizeHeaderValue($value);
             } elseif ($name == 'REDIRECT_REMOTE_AUTHORIZATION' && !isset($headerFields['Authorization'])) {
-                $headerFields['Authorization'] = $value;
+                $headerFields['Authorization'] = self::normalizeHeaderValue($value);
             } elseif (in_array($name, ['CONTENT_TYPE', 'CONTENT_LENGTH'])) {
                 $name = str_replace(' ', '-', ucwords(strtolower(str_replace('_', ' ', $name))));
-                $headerFields[$name] = $value;
+                $headerFields[$name] = self::normalizeHeaderValue($value);
             }
         }
 
         return $headerFields;
+    }
+
+    /**
+     * Casts scalar and null values to string, like guzzlehttp/psr7 2 did implicitly.
+     * guzzlehttp/psr7 3 (psr/http-message 2) rejects non-string header values.
+     *
+     * @param mixed $value
+     * @return mixed
+     */
+    private static function normalizeHeaderValue($value)
+    {
+        if (is_scalar($value) || $value === null) {
+            return (string)$value;
+        }
+        return $value;
     }
 }

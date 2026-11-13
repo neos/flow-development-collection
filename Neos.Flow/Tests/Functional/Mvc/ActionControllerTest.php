@@ -140,7 +140,7 @@ final class ActionControllerTest extends FunctionalTestCase
         $request = $request
             ->withBody(ContentStream::fromContents('putArgument=first value'))
             ->withHeader('Content-Type', 'application/x-www-form-urlencoded')
-            ->withHeader('Content-Length', 54);
+            ->withHeader('Content-Length', '54');
 
         $response = $this->browser->sendRequest($request);
         self::assertEquals('putAction-first value-getValue', $response->getBody()->getContents());
@@ -204,7 +204,7 @@ final class ActionControllerTest extends FunctionalTestCase
     {
         $request = $this->serverRequestFactory->createServerRequest('PUT', new Uri('http://localhost/test/mvc/actioncontrollertesta/put?getArgument=getValue'))
             ->withHeader('Content-Type', 'application/json')
-            ->withHeader('Content-Length', 29)
+            ->withHeader('Content-Length', '29')
             ->withBody(ContentStream::fromContents('{"putArgument":"first value"}'));
 
         $response = $this->browser->sendRequest($request);

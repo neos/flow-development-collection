@@ -39,7 +39,7 @@ final class ResponseInformationHelperTest extends UnitTestCase
         $content = 'Pat grabbed her hat';
 
         $request = ServerRequest::fromGlobals();
-        $response = new Response(200, ['Transfer-Encoding' => 'chunked', 'Content-Length' => strlen($content)], $content);
+        $response = new Response(200, ['Transfer-Encoding' => 'chunked', 'Content-Length' => (string)strlen($content)], $content);
 
         $compliantResponse = ResponseInformationHelper::makeStandardsCompliant($response, $request);
         $this->assertFalse($compliantResponse->hasHeader('Content-Length'));
@@ -76,7 +76,7 @@ final class ResponseInformationHelperTest extends UnitTestCase
     public function makeStandardsCompliantEnsuresEmptyBodyForHeadRequests()
     {
         $request = ServerRequest::fromGlobals()->withMethod('HEAD');
-        $response = new Response(200, ['X-FOO' => 'bar', 'Content-Length' => 5], '12345');
+        $response = new Response(200, ['X-FOO' => 'bar', 'Content-Length' => '5'], '12345');
         $compliantResponse = ResponseInformationHelper::makeStandardsCompliant($response, $request);
         self::assertEmpty((string)$compliantResponse->getBody());
         self::assertSame($response->getHeaders(), $compliantResponse->getHeaders());

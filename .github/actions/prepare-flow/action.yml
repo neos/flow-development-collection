@@ -10,6 +10,12 @@ inputs:
   composer-arguments:
     description: 'Extra composer arguments (e.g. --ignore-platform-reqs)'
     default: ''
+  guzzle-version:
+    description: 'Constraint for guzzlehttp/guzzle, required in the distribution to test a specific HTTP stack'
+    default: '^8.2'
+  http-message-version:
+    description: 'Constraint for psr/http-message, required in the distribution to test a specific HTTP stack'
+    default: '^2.0'
   collection-path:
     description: 'Directory the Flow development collection is checked out into'
     default: 'flow-development-collection'
@@ -58,6 +64,7 @@ runs:
         git -C ../${{ inputs.collection-path }} checkout -b build
         composer config repositories.flow '{ "type": "path", "url": "../${{ inputs.collection-path }}", "options": { "symlink": false } }'
         composer require --no-update neos/flow-development-collection:"dev-build as ${{ steps.flow.outputs.branch-alias }}"
+        composer require --no-update "guzzlehttp/guzzle:${{ inputs.guzzle-version }}" "psr/http-message:${{ inputs.http-message-version }}"
 
     - name: Cache Composer packages
       uses: actions/cache@v5
