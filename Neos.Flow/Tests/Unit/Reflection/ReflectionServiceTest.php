@@ -13,6 +13,7 @@ namespace Neos\Flow\Tests\Unit\Reflection;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+use Neos\Cache\Frontend\VariableFrontend;
 use Neos\Flow\Reflection\Exception\ClassLoadingForReflectionFailedException;
 use Neos\Flow\Reflection\ReflectionService;
 use Neos\Flow\Tests\Unit\Reflection\Fixture\AliasedClass;
@@ -71,6 +72,28 @@ final class ReflectionServiceTest extends UnitTestCase
         $this->reflectionService->_call('reflectClass', ClassWithAliasDependency::class);
         $parameters = $this->reflectionService->getMethodParameters(ClassWithAliasDependency::class, 'injectDependency');
         $this->assertEquals(AliasedClass::class, array_pop($parameters)['class']);
+    }
+
+    #[Test]
+    public function classesMissingInTheRuntimeCacheAreReflectedWithoutDeprecations()
+    {
+        $mockRuntimeCache = $this->createMock(VariableFrontend::class);
+        $mockRuntimeCache->method('get')->willReturn(false);
+        $this->inject($this->reflectionService, 'reflectionDataRuntimeCache', $mockRuntimeCache);
+
+        $deprecations = [];
+        set_error_handler(static function (int $errorNumber, string $errorMessage) use (&$deprecations): bool {
+            $deprecations[] = $errorMessage;
+            return true;
+        }, E_DEPRECATED);
+        try {
+            $parameters = $this->reflectionService->getMethodParameters(ClassWithAliasDependency::class, 'injectDependency');
+        } finally {
+            restore_error_handler();
+        }
+
+        self::assertSame([], $deprecations);
+        self::assertEquals(AliasedClass::class, array_pop($parameters)['class']);
     }
 
     #[Test]
