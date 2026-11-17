@@ -530,6 +530,15 @@ system. It is recommended to build this from the git repository. Currently redis
 
 .. warning::
 
+	Redis must never evict the tag sets of a cache, or flushing by tag misses entries and
+	their outdated content is served until it expires. Use a ``volatile-*`` eviction policy
+	(``maxmemory-policy``) such as ``volatile-lru``, which only evicts keys with an expiry
+	time, and avoid the ``allkeys-*`` policies. Tag sets never expire, so only cache entries
+	are evicted. Give caches that can outgrow the memory limit a finite ``defaultLifetime``,
+	as Redis rejects writes once it is full and has no key with an expiry time left to evict.
+
+.. warning::
+
 	The redis implementation is pretty young and should be considered as experimental. The
 	redis project itself has a very high development speed and it might happen that the
 	Flow implementation changes to adapt to new versions.
