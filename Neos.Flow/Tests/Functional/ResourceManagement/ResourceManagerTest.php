@@ -142,6 +142,47 @@ final class ResourceManagerTest extends FunctionalTestCase
         self::assertStringEqualsFile($this->storagePathAndFilename('allowed'), 'allowed');
     }
 
+    #[Test]
+    public function removingNewDuplicateResourceViaRepositoryKeepsDataOfPersistedResource()
+    {
+        $existingResource = $this->resourceManager->importResourceFromContent('fixture', 'fixture.txt');
+        $this->persistenceManager->persistAll();
+        $this->persistenceManager->clearState();
+
+        $duplicateResource = $this->resourceManager->importResourceFromContent('fixture', 'fixture.txt');
+        $this->resourceRepository->remove($duplicateResource);
+        $this->persistenceManager->persistAll();
+        $this->persistenceManager->clearState();
+
+        self::assertStringEqualsFile($this->storagePathAndFilename('fixture'), 'fixture');
+        self::assertNotNull($this->resourceRepository->findOneBySha1($existingResource->getSha1()));
+    }
+
+    #[Test]
+    public function removingNewResourceViaRepositoryRemovesDataIfNotUsedByOtherResources()
+    {
+        $resource = $this->resourceManager->importResourceFromContent('fixture', 'fixture.txt');
+        $this->resourceRepository->remove($resource);
+        $this->persistenceManager->persistAll();
+
+        self::assertFileDoesNotExist($this->storagePathAndFilename('fixture'));
+    }
+
+    #[Test]
+    public function removingAllNewResourcesWithSameContentViaRepositoryRemovesData()
+    {
+        $firstResource = $this->resourceManager->importResourceFromContent('fixture', 'fixture.txt');
+        $secondResource = $this->resourceManager->importResourceFromContent('fixture', 'other-fixture.txt');
+
+        $this->resourceRepository->remove($firstResource);
+        self::assertStringEqualsFile($this->storagePathAndFilename('fixture'), 'fixture');
+
+        $this->resourceRepository->remove($secondResource);
+        $this->persistenceManager->persistAll();
+
+        self::assertFileDoesNotExist($this->storagePathAndFilename('fixture'));
+    }
+
     private function storagePathAndFilename(string $content): string
     {
         $sha1 = sha1($content);
