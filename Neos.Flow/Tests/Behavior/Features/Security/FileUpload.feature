@@ -128,3 +128,16 @@ Feature: Arbitrary file upload protection
     Then I expect this resource not to be persisted
     Then I expect this resource not to be stored
     Then I expect this resource not to be published
+
+  @Isolated @fixtures
+  Scenario: arbitrary exceptions do not remove storage data and publication of an already persisted resource with the same content
+    Given I am not authenticated
+    And I upload fixture resource "bat.jpg" using action "unrestrictedUpload" of controller "ResourceUpload" with additional parameter
+    Then I expect this resource to be persisted
+    Then I expect this resource to be stored
+    Then I expect this resource to be published
+
+    Then I upload fixture resource "bat.jpg" using action "arbitraryFailingUpload" of controller "ResourceUpload" with additional parameter
+    Then I expect this resource to be persisted
+    Then I expect this resource to be stored
+    Then I expect this resource to be published
