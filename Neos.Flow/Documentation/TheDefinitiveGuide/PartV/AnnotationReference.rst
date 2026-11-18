@@ -3,7 +3,7 @@
 Flow Annotation Reference
 =========================
 
-This reference was automatically generated from code on 2026-10-05
+This reference was automatically generated from code on 2026-11-18
 
 
 .. _`Flow Annotation Reference: After`:
