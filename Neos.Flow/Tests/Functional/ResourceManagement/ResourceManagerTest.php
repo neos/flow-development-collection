@@ -33,6 +33,11 @@ final class ResourceManagerTest extends FunctionalTestCase
     protected $resourceManager;
 
     /**
+     * @var ResourceRepository
+     */
+    protected $resourceRepository;
+
+    /**
      * @var boolean
      */
     protected static $testablePersistenceEnabled = true;
@@ -47,7 +52,7 @@ final class ResourceManagerTest extends FunctionalTestCase
             $this->markTestSkipped('Doctrine persistence is not enabled');
         }
         $this->resourceManager = $this->objectManager->get(ResourceManager::class);
-        $resourceRepository = $this->objectManager->get(ResourceRepository::class);
+        $this->resourceRepository = $this->objectManager->get(ResourceRepository::class);
     }
 
     #[Test]
@@ -142,9 +147,7 @@ final class ResourceManagerTest extends FunctionalTestCase
         self::assertStringEqualsFile($this->storagePathAndFilename('allowed'), 'allowed');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function removingNewDuplicateResourceViaRepositoryKeepsDataOfPersistedResource()
     {
         $existingResource = $this->resourceManager->importResourceFromContent('fixture', 'fixture.txt');
@@ -160,9 +163,7 @@ final class ResourceManagerTest extends FunctionalTestCase
         self::assertNotNull($this->resourceRepository->findOneBySha1($existingResource->getSha1()));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function removingNewResourceViaRepositoryRemovesDataIfNotUsedByOtherResources()
     {
         $resource = $this->resourceManager->importResourceFromContent('fixture', 'fixture.txt');
@@ -172,9 +173,7 @@ final class ResourceManagerTest extends FunctionalTestCase
         self::assertFileDoesNotExist($this->storagePathAndFilename('fixture'));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function removingAllNewResourcesWithSameContentViaRepositoryRemovesData()
     {
         $firstResource = $this->resourceManager->importResourceFromContent('fixture', 'fixture.txt');
