@@ -1,0 +1,17 @@
+`8.3.23 (2026-11-19) <https://github.com/neos/flow-development-collection/releases/tag/8.3.23>`_
+================================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`BUGFIX: Detach added resources after removal to keep internal calculation of existing resources intact <https://github.com/neos/flow-development-collection/pull/3664>`_
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+The internal calculation of number of existing resources, takes the newly added resources into account. If we detach the resource from that list before removal, it will only find already persisted usages and might come to a wrong conclusion to remove the resource from the storage.
+
+Fixes https://github.com/neos/flow-development-collection/issues/3663
+
+* Packages: ``Flow``
+
+`Detailed log <https://github.com/neos/flow-development-collection/compare/8.3.22...8.3.23>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
