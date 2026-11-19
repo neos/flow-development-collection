@@ -2040,9 +2040,9 @@ class ReflectionService
             return;
         }
 
-        $this->classReflectionData[$className] = $this->reflectionDataRuntimeCache->get($this->produceCacheIdentifierFromClassName($className));
-
-        if ($this->isClassReflected($className)) {
+        $reflectionData = $this->reflectionDataRuntimeCache->get($this->produceCacheIdentifierFromClassName($className));
+        if (is_array($reflectionData)) {
+            $this->classReflectionData[$className] = $reflectionData;
             return;
         }
 
