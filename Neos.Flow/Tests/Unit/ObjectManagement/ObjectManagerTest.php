@@ -130,4 +130,29 @@ final class ObjectManagerTest extends UnitTestCase
         $objectManager->forgetInstance($fullyQualifiedName);
         self::assertFalse($objectManager->hasInstance(BasicClass::class));
     }
+
+    #[Test]
+    public function autowiringKeepsAnExplicitlyPassedNullArgument(): void
+    {
+        $objectManager = new class ($this->createStub(ApplicationContext::class), $this->createStub(LoggerInterface::class)) extends ObjectManager {
+            /**
+             * @param array<int|string,mixed> $configuration
+             * @param array<int|string,mixed> $existingArguments
+             * @return array<int|string,mixed>
+             */
+            public function autowire(array $configuration, array $existingArguments): array
+            {
+                return $this->autowireArguments($configuration, $existingArguments);
+            }
+
+            protected function getConfiguredArgument(int $argumentType, mixed $argumentValue): mixed
+            {
+                return 'autowired';
+            }
+        };
+        $argument = ['t' => ConfigurationArgument::ARGUMENT_TYPES_OBJECT, 'v' => BasicClass::class];
+
+        self::assertSame([0 => null, 1 => 'autowired'], $objectManager->autowire([1 => $argument, 2 => $argument], [0 => null]));
+        self::assertSame(['first' => null, 'second' => 'autowired'], $objectManager->autowire(['first' => $argument, 'second' => $argument], ['first' => null]));
+    }
 }
