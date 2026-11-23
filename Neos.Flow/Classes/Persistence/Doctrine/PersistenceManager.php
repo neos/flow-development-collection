@@ -12,6 +12,7 @@ namespace Neos\Flow\Persistence\Doctrine;
  */
 
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\Mapping\Entity;
 use Doctrine\ORM\ORMException;
 use Doctrine\ORM\Tools\SchemaTool;
 use Doctrine\ORM\Tools\ToolsException;
@@ -30,6 +31,7 @@ use Neos\Flow\Reflection\ReflectionService;
 use Neos\Flow\Validation\ValidatorResolver;
 use Neos\Utility\Exception\PropertyNotAccessibleException;
 use Neos\Utility\ObjectAccess;
+use Neos\Utility\TypeHandling;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -152,6 +154,22 @@ class PersistenceManager extends AbstractPersistenceManager
     public function isNewObject($object): bool
     {
         if (!$object instanceof PersistenceMagicInterface) {
+            return true;
+        }
+        // This filters for classes, which have inherited the PersistenceMagicInterface, but did not get annotated
+        // Such objects are by definition no persistable objects, so we should not let ask doctrine anything about them.
+        // Should probably get removed as soon as Accounts are usable without the base class carrying the entity
+        // annotation.
+
+        $annotations = \array_filter(
+            $this->reflectionService->getClassAnnotations(TypeHandling::getTypeForValue($object)),
+            static function ($annotation) {
+                return ($annotation instanceof Entity)
+                    || ($annotation instanceof Flow\Entity)
+                    || ($annotation instanceof Flow\ValueObject);
+            }
+        );
+        if (\count($annotations) === 0) {
             return true;
         }
 
