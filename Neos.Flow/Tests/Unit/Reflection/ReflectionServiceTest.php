@@ -81,6 +81,18 @@ class ReflectionServiceTest extends UnitTestCase
     }
 
     /**
+     * Note that this test is only meaningful when run on PHP < 8.3, where the #[\Override] attribute class does not
+     * exist. On PHP >= 8.3 it merely asserts that the attribute is still instantiated as usual.
+     *
+     * @test
+     */
+    public function getMethodAnnotationsIgnoresBuiltInAttributesNotAvailableInCurrentPhpVersion()
+    {
+        $annotations = $this->reflectionService->getMethodAnnotations(Fixture\ClassWithOverrideAttribute::class, 'jsonSerialize');
+        self::assertCount(class_exists('Override') ? 1 : 0, $annotations);
+    }
+
+    /**
      * @test
      */
     public function isTagIgnoredReturnsTrueForIgnoredTags()

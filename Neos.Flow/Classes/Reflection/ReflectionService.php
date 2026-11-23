@@ -776,12 +776,17 @@ class ReflectionService
 
     /**
      * Tells if a specific PHP attribute is to be ignored for reflection
+     *
+     * @see https://www.php.net/manual/en/class.returntypewillchange.php (PHP 8.1)
+     * @see https://www.php.net/manual/en/class.allowdynamicproperties.php (PHP 8.2)
+     * @see https://www.php.net/manual/en/class.override.php (PHP 8.3)
+     * @see https://www.php.net/manual/en/class.deprecated.php (PHP 8.4)
+     * @see https://www.php.net/manual/en/class.nodiscard.php (PHP 8.5)
      */
     public function isAttributeIgnored(string $attributeName): bool
     {
-        // Ignore attributes that only exist in specific versions of PHP (8.1)
-        // can be removed with Flow 9
-        if (in_array($attributeName, ['ReturnTypeWillChange']) && !class_exists($attributeName)) {
+        // Ignore built-in attributes that only exist since specific versions of PHP
+        if (in_array($attributeName, ['ReturnTypeWillChange', 'AllowDynamicProperties', 'Override', 'Deprecated', 'NoDiscard'], true) && !class_exists($attributeName)) {
             return true;
         }
         return false;
