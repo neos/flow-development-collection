@@ -322,4 +322,87 @@ class RedisBackendTest extends BaseTestCase
         }
         self::assertEmpty($actualEntries, 'Entries should be empty');
     }
+
+    /**
+     * Removing entries while iterating (like the session garbage collection does) must neither
+     * restart the iteration nor skip or repeat entries.
+     *
+     * @test
+     */
+    public function removingEntriesWhileIteratingVisitsEveryEntryExactlyOnce()
+    {
+        for ($i = 0; $i < 100; $i++) {
+            $this->backend->set('entry_' . $i, 'foo');
+        }
+
+        $visitedEntries = [];
+        foreach ($this->backend as $key => $value) {
+            $visitedEntries[] = $key;
+            if ((int)substr($key, strlen('entry_')) % 2 === 0) {
+                $this->backend->remove($key);
+            }
+        }
+
+        self::assertCount(100, $visitedEntries);
+        self::assertCount(100, array_unique($visitedEntries));
+        for ($i = 0; $i < 100; $i++) {
+            self::assertSame($i % 2 !== 0, $this->backend->has('entry_' . $i));
+        }
+    }
+
+    /**
+     * Entries removed by someone else after the iteration started are skipped, the iteration continues.
+     *
+     * @test
+     */
+    public function entriesRemovedByAnotherProcessDuringIterationAreSkipped()
+    {
+        for ($i = 0; $i < 100; $i++) {
+            $this->backend->set('entry_' . $i, 'foo');
+        }
+        $otherBackend = new RedisBackend(
+            new EnvironmentConfiguration('Redis a wonderful color Testing', '/some/path', PHP_MAXPATHLEN),
+            ['hostname' => '127.0.0.1', 'database' => 0]
+        );
+        $otherBackend->setCache($this->cache);
+
+        $visitedEntries = [];
+        $removedByOther = [];
+        foreach ($this->backend as $key => $value) {
+            if ($visitedEntries === []) {
+                for ($i = 0; $i < 100 && count($removedByOther) < 10; $i++) {
+                    if ('entry_' . $i !== $key) {
+                        $otherBackend->remove('entry_' . $i);
+                        $removedByOther[] = 'entry_' . $i;
+                    }
+                }
+            }
+            $visitedEntries[] = $key;
+        }
+
+        self::assertCount(90, $visitedEntries);
+        self::assertSame([], array_intersect($visitedEntries, $removedByOther));
+    }
+
+    /**
+     * @test
+     */
+    public function newIterationContainsEntriesAddedAfterThePreviousIteration()
+    {
+        $this->backend->set('entry_1', 'foo');
+        $this->backend->set('entry_2', 'foo');
+        foreach ($this->backend as $key => $value) {
+            // first iteration
+        }
+
+        $this->backend->remove('entry_1');
+        $this->backend->set('entry_3', 'foo');
+
+        $actualEntries = [];
+        foreach ($this->backend as $key => $value) {
+            $actualEntries[] = $key;
+        }
+        sort($actualEntries);
+        self::assertSame(['entry_2', 'entry_3'], $actualEntries);
+    }
 }
