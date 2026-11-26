@@ -30,9 +30,9 @@ interface TargetInterface
      * Publishes the whole collection to this target
      *
      * @param CollectionInterface $collection The collection to publish
-     * @return void
+     * @return \Generator<ResourcePublishResult> The publisher generator with the current publish result as value containing iteration information and metadata.
      */
-    public function publishCollection(CollectionInterface $collection);
+    public function publishCollection(CollectionInterface $collection): \Generator;
 
     /**
      * Publishes the given persistent resource from the given storage
@@ -68,11 +68,4 @@ interface TargetInterface
      * @throws Exception
      */
     public function getPublicPersistentResourceUri(PersistentResource $resource);
-
-    /**
-     * Registers a callback, which must be invoked by the implementation after each resource publishing
-     *
-     * @param \Closure(int $iteration): void $callback
-     */
-    public function onPublish(\Closure $callback): void;
 }
