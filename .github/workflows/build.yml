@@ -24,7 +24,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        php: ['8.4', '8.5']
+        php: ['8.4', '8.5', '8.6']
     defaults:
       run:
         working-directory: ${{ env.FLOW_DIST_FOLDER }}
@@ -53,7 +53,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        php-versions: ['8.4', '8.5']
+        php-versions: ['8.4', '8.5', '8.6']
         # see https://mariadb.com/kb/en/mariadb-server-release-dates/
         # this should be a current release, e.g. the LTS version
         mariadb-versions: ['10.6']
@@ -117,7 +117,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        php: ['8.4', '8.5']
+        php: ['8.4', '8.5', '8.6']
         db:
           - { engine: mysql, image: 'mariadb:10.6', port: 3306, options: '--health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3' }
           - { engine: pgsql, image: 'postgres:14-alpine', port: 5432, options: '--health-cmd=pg_isready --health-interval=10s --health-timeout=5s --health-retries=3' }
@@ -129,8 +129,8 @@ jobs:
           - { php: '8.4', db: { engine: mysql, image: 'mysql:8.0', port: 3306, options: '--health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3' } }
           - { php: '8.4', db: { engine: mysql, image: 'mysql:8.4', port: 3306, options: '--health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3' } }
           # Bleeding-edge engines.
-          - { php: '8.5', db: { engine: mysql, image: 'mariadb:12.2', port: 3306, options: '--health-cmd="healthcheck.sh --connect --innodb_initialized" --health-interval=10s --health-timeout=5s --health-retries=3' } }
-          - { php: '8.5', db: { engine: pgsql, image: 'postgres:18-alpine', port: 5432, options: '--health-cmd=pg_isready --health-interval=10s --health-timeout=5s --health-retries=3' } }
+          - { php: '8.6', db: { engine: mysql, image: 'mariadb:12.2', port: 3306, options: '--health-cmd="healthcheck.sh --connect --innodb_initialized" --health-interval=10s --health-timeout=5s --health-retries=3' } }
+          - { php: '8.6', db: { engine: pgsql, image: 'postgres:18-alpine', port: 5432, options: '--health-cmd=pg_isready --health-interval=10s --health-timeout=5s --health-retries=3' } }
     services:
       database:
         image: ${{ matrix.db.image }}
@@ -192,7 +192,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        php: ['8.4', '8.5']
+        php: ['8.4', '8.5', '8.6']
         db:
           - { engine: mysql, image: 'mariadb:10.6', port: 3306, options: '--health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3' }
           - { engine: pgsql, image: 'postgres:14-alpine', port: 5432, options: '--health-cmd=pg_isready --health-interval=10s --health-timeout=5s --health-retries=3' }
@@ -201,8 +201,8 @@ jobs:
           - { php: '8.4', db: { engine: mysql, image: 'mysql:8.0', port: 3306, options: '--health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3' } }
           - { php: '8.4', db: { engine: mysql, image: 'mysql:8.4', port: 3306, options: '--health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3' } }
           # Bleeding-edge engines.
-          - { php: '8.5', db: { engine: mysql, image: 'mariadb:12.2', port: 3306, options: '--health-cmd="healthcheck.sh --connect --innodb_initialized" --health-interval=10s --health-timeout=5s --health-retries=3' } }
-          - { php: '8.5', db: { engine: pgsql, image: 'postgres:18-alpine', port: 5432, options: '--health-cmd=pg_isready --health-interval=10s --health-timeout=5s --health-retries=3' } }
+          - { php: '8.6', db: { engine: mysql, image: 'mariadb:12.2', port: 3306, options: '--health-cmd="healthcheck.sh --connect --innodb_initialized" --health-interval=10s --health-timeout=5s --health-retries=3' } }
+          - { php: '8.6', db: { engine: pgsql, image: 'postgres:18-alpine', port: 5432, options: '--health-cmd=pg_isready --health-interval=10s --health-timeout=5s --health-retries=3' } }
     services:
       database:
         image: ${{ matrix.db.image }}

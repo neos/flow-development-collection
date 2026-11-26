@@ -17,6 +17,7 @@ use Neos\Flow\ResourceManagement\ResourceMetaDataInterface;
 use Neos\Flow\Validation\Validator\FileSizeValidator;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
+use Psr\Http\Message\StreamInterface;
 use Psr\Http\Message\UploadedFileInterface;
 
 /**
@@ -88,29 +89,33 @@ final class FileSizeValidatorTest extends AbstractValidatorTestcase
             {
             }
 
-            public function getStream()
+            public function getStream(): StreamInterface
+            {
+                throw new \BadMethodCallException('Not implemented', 1795083308);
+            }
+
+            public function moveTo(string $targetPath): void
             {
             }
 
-            public function moveTo(string $targetPath)
-            {
-            }
-
-            public function getSize()
+            public function getSize(): ?int
             {
                 return $this->filesize;
             }
 
-            public function getError()
+            public function getError(): int
             {
+                return UPLOAD_ERR_OK;
             }
 
-            public function getClientFilename()
+            public function getClientFilename(): ?string
             {
+                return null;
             }
 
-            public function getClientMediaType()
+            public function getClientMediaType(): ?string
             {
+                return null;
             }
         };
     }
