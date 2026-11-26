@@ -150,7 +150,7 @@
     },
     "require-dev": {
         "mikey179/vfsstream": "^1.6.12",
-        "phpunit/phpunit": "~11.5"
+        "phpunit/phpunit": "~13.4"
     },
     "provide": {
         "psr/cache-implementation": "2.0.0 || 3.0.0",
