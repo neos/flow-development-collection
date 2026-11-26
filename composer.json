@@ -29,7 +29,7 @@
         ]
     },
     "require": {
-        "behat/behat": "^3.10",
+        "behat/behat": "^4.1",
         "php": "^8.4",
         "psr/simple-cache": "^2.0 || ^3.0",
         "psr/cache": "^2.0 || ^3.0",
