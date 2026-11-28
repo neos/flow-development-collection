@@ -217,9 +217,6 @@ class RedisBackend extends IndependentAbstractBackend implements TaggableBackend
             $result = $this->redis->exec();
         } while ($result === false);
 
-        // Reset iterator because it will be out of sync after a removal
-        $this->entryIterator = null;
-
         return true;
     }
 
@@ -249,7 +246,6 @@ class RedisBackend extends IndependentAbstractBackend implements TaggableBackend
         $this->redis->eval($script, [$this->getPrefixedIdentifier('')], 0);
 
         $this->frozen = null;
-        $this->entryIterator = null;
     }
 
     /**
@@ -374,6 +370,7 @@ class RedisBackend extends IndependentAbstractBackend implements TaggableBackend
     public function next(): void
     {
         $this->getEntryIterator()->next();
+        $this->skipVanishedEntries();
     }
 
     /**
@@ -381,13 +378,7 @@ class RedisBackend extends IndependentAbstractBackend implements TaggableBackend
      */
     public function key(): string|bool
     {
-        $entryIdentifier = $this->getEntryIterator()->current();
-
-        if (!$entryIdentifier || !$this->has($entryIdentifier)) {
-            return false;
-        }
-
-        return $entryIdentifier;
+        return $this->getEntryIterator()->current() ?? false;
     }
 
     /**
@@ -395,15 +386,37 @@ class RedisBackend extends IndependentAbstractBackend implements TaggableBackend
      */
     public function valid(): bool
     {
-        return $this->key() !== false;
+        return $this->getEntryIterator()->valid();
     }
 
     /**
-     * {@inheritdoc}
+     * Rewinds the cache entry iterator to the first element
+     *
+     * The entry identifiers are fetched anew on every rewind, so this always yields an up-to-date view. That is why
+     * writing methods like set() and remove() must not reset the iterator: doing so would make a running iteration
+     * start over from the first entry whenever an entry is changed.
+     *
+     * @api
      */
     public function rewind(): void
     {
+        $this->entryIterator = null;
         $this->getEntryIterator()->rewind();
+        $this->skipVanishedEntries();
+    }
+
+    /**
+     * Advances the entry iterator past entries that no longer exist
+     *
+     * Entries may vanish while iterating, because they were removed (by this or another process) or expired. They
+     * are skipped, so they neither end the iteration early nor show up with empty data.
+     */
+    private function skipVanishedEntries(): void
+    {
+        $entryIterator = $this->getEntryIterator();
+        while ($entryIterator->valid() && !$this->has($entryIterator->current())) {
+            $entryIterator->next();
+        }
     }
 
     /**
