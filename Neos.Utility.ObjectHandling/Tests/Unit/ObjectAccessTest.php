@@ -120,14 +120,14 @@ final class ObjectAccessTest extends TestCase
     #[Test]
     public function getPropertyThrowsExceptionIfThePropertyNameIsNotAString()
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(\TypeError::class);
         ObjectAccess::getProperty($this->dummyObject, new \ArrayObject());
     }
 
     #[Test]
     public function setPropertyThrowsExceptionIfThePropertyNameIsNotAString()
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(\TypeError::class);
         ObjectAccess::setProperty($this->dummyObject, new \ArrayObject(), 42);
     }
 
@@ -470,7 +470,7 @@ final class ObjectAccessTest extends TestCase
     public function setPropertyUsingDirectAccessWorksOnPrivatePropertyOfProxyParent()
     {
         $proxyObject = new ProxiedClassWithPrivateProperty();
- 
+
         ObjectAccess::setProperty($proxyObject, 'property', 'changed', true);
         self::assertEquals('changed', $proxyObject->getProperty());
     }
