@@ -145,4 +145,46 @@ class ContextTest extends \Neos\Flow\Tests\UnitTestCase
         $getValue = $context->get($path);
         self::assertSame($getValue, $expectedGetValue);
     }
+
+    public function contextUnionProvider(): iterable
+    {
+        yield 'two simple arrays' => [
+            'firstContext' => ['fooo'],
+            'secondContext' => ['bar'],
+            'union' => ['bar']
+        ];
+
+        yield 'two nested arrays' => [
+            'firstContext' => ['fooo' => ['1']],
+            'secondContext' => ['fooo' => ['2']],
+            'union' => ['fooo' => ['2']]
+        ];
+
+        yield 'two complex nested arrays' => [
+            'firstContext' => ['fooo' => ['a' => 1]],
+            'secondContext' => ['fooo' => ['b' => 1]],
+            'union' => ['fooo' => ['a' => 1, 'b' => 1]]
+        ];
+    }
+
+    /**
+     * @dataProvider contextUnionProvider
+     * @test
+     */
+    public function contextUnion(array $firstContext, array $secondContext, array $union)
+    {
+        $unionContext = (new Context($firstContext))->union(new Context($secondContext));
+        self::assertInstanceOf(Context::class, $unionContext);
+        self::assertEquals(
+            $union,
+            $unionContext->unwrap()
+        );
+    }
+
+    /** @test */
+    public function contextNoUnionForPrimitives()
+    {
+        $this->expectExceptionMessage("Can only union context with arrays.");
+        (new Context(1))->union(new Context("fünfzehn"));
+    }
 }
