@@ -26,11 +26,23 @@ use Neos\Utility\PdoHelper;
 /**
  * A PDO database cache backend
  *
+ * Available backend options:
+ *  - dataSourceName: The PDO data source name
+ *  - username:       The username for the database connection
+ *  - password:       The password for the database connection
+ *  - driverOptions:  PDO driver options
+ *  - cacheTableName: Name of the table holding cache entries
+ *  - tagsTableName:  Name of the table holding cache tags
+ *  - batchSize:      Maximum number of parameters per query for batch operations
+ *  - retryOnError:   Whether to retry reading if the database is not available (yet)
+ *  - maximumRetries: How often to retry reading before giving up
+ *
  * @api
  */
 class PdoBackend extends IndependentAbstractBackend implements TaggableBackendInterface, IterableBackendInterface, PhpCapableBackendInterface, WithSetupInterface, WithStatusInterface
 {
     use RequireOnceFromValueTrait;
+    use RetryTrait;
 
     /**
      * @var string
@@ -235,17 +247,20 @@ class PdoBackend extends IndependentAbstractBackend implements TaggableBackendIn
      */
     public function get(string $entryIdentifier)
     {
-        $this->connect();
+        return $this->withRetries(function () use ($entryIdentifier) {
+            $this->connect();
 
-        $statementHandle = $this->databaseHandle->prepare('SELECT "content" FROM "' . $this->cacheTableName . '" WHERE "identifier"=? AND "context"=? AND "cache"=?' . $this->getNotExpiredStatement());
-        $statementHandle->execute([$entryIdentifier, $this->context(), $this->cacheIdentifier]);
-        $statementHandle->bindColumn(1, $content, \PDO::PARAM_LOB);
-        $statementHandle->fetch(\PDO::FETCH_BOUND);
+            $content = null;
+            $statementHandle = $this->databaseHandle->prepare('SELECT "content" FROM "' . $this->cacheTableName . '" WHERE "identifier"=? AND "context"=? AND "cache"=?' . $this->getNotExpiredStatement());
+            $statementHandle->execute([$entryIdentifier, $this->context(), $this->cacheIdentifier]);
+            $statementHandle->bindColumn(1, $content, \PDO::PARAM_LOB);
+            $statementHandle->fetch(\PDO::FETCH_BOUND);
 
-        if ($content === null) {
-            return false;
-        }
-        return is_resource($content) ? stream_get_contents($content) : $content;
+            if ($content === null) {
+                return false;
+            }
+            return is_resource($content) ? stream_get_contents($content) : $content;
+        });
     }
 
     /**
@@ -258,11 +273,13 @@ class PdoBackend extends IndependentAbstractBackend implements TaggableBackendIn
      */
     public function has(string $entryIdentifier): bool
     {
-        $this->connect();
+        return $this->withRetries(function () use ($entryIdentifier) {
+            $this->connect();
 
-        $statementHandle = $this->databaseHandle->prepare('SELECT COUNT("identifier") FROM "' . $this->cacheTableName . '" WHERE "identifier"=? AND "context"=? AND "cache"=?' . $this->getNotExpiredStatement());
-        $statementHandle->execute([$entryIdentifier, $this->context(), $this->cacheIdentifier]);
-        return ($statementHandle->fetchColumn() > 0);
+            $statementHandle = $this->databaseHandle->prepare('SELECT COUNT("identifier") FROM "' . $this->cacheTableName . '" WHERE "identifier"=? AND "context"=? AND "cache"=?' . $this->getNotExpiredStatement());
+            $statementHandle->execute([$entryIdentifier, $this->context(), $this->cacheIdentifier]);
+            return ($statementHandle->fetchColumn() > 0);
+        });
     }
 
     /**
@@ -483,6 +500,38 @@ class PdoBackend extends IndependentAbstractBackend implements TaggableBackendIn
             throw $exception;
         }
         $this->cacheEntriesIterator = null;
+    }
+
+    /**
+     * Retry if connecting failed or the connection was lost, but not on other errors (like a missing table)
+     */
+    protected function isRetryableError(\Throwable $throwable): bool
+    {
+        if ($throwable instanceof Exception && $throwable->getCode() === 1334736164) {
+            return true;
+        }
+        if (!$throwable instanceof \PDOException) {
+            return false;
+        }
+        $sqlState = (string)($throwable->errorInfo[0] ?? $throwable->getCode());
+        $driverErrorCode = (int)($throwable->errorInfo[1] ?? 0);
+        return
+            // SQLSTATE class 08: connection exception
+            str_starts_with($sqlState, '08')
+            // PostgreSQL: server shutting down or starting up
+            || in_array($sqlState, ['57P01', '57P02', '57P03'], true)
+            // MySQL: can't connect, server has gone away, lost connection
+            || in_array($driverErrorCode, [2002, 2006, 2013], true);
+    }
+
+    /**
+     * Drop the connection, so the next attempt reconnects in case the connection was lost
+     */
+    protected function prepareRetry(\Throwable $throwable): void
+    {
+        if ($this->databaseHandle !== null && !$this->databaseHandle->inTransaction()) {
+            $this->databaseHandle = null;
+        }
     }
 
     /**

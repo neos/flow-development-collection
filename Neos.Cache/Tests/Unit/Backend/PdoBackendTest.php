@@ -303,6 +303,94 @@ final class PdoBackendTest extends BaseTestCase
      *
      * @return PdoBackend
      */
+    #[Test]
+    public function getRetriesIfConnectingFails(): void
+    {
+        $backend = $this->setUpBackendFailingToConnect(2, ['maximumRetries' => 3]);
+
+        self::assertFalse($backend->get('foo'));
+        self::assertSame([1, 2], $backend->retryDelays);
+    }
+
+    #[Test]
+    public function hasThrowsLastExceptionIfMaximumRetriesAreExceeded(): void
+    {
+        $backend = $this->setUpBackendFailingToConnect(10, ['maximumRetries' => 2]);
+
+        $this->expectException(Exception::class);
+        try {
+            $backend->has('foo');
+        } finally {
+            self::assertSame([1, 2], $backend->retryDelays);
+        }
+    }
+
+    #[Test]
+    public function getDoesNotRetryIfRetryOnErrorIsDisabled(): void
+    {
+        $backend = $this->setUpBackendFailingToConnect(1, ['retryOnError' => false]);
+
+        $this->expectException(Exception::class);
+        try {
+            $backend->get('foo');
+        } finally {
+            self::assertSame([], $backend->retryDelays);
+        }
+    }
+
+    #[Test]
+    public function getDoesNotRetryOnErrorsUnrelatedToTheConnection(): void
+    {
+        $backend = $this->setUpBackendFailingToConnect(0);
+        // connect, which creates the tables for sqlite, then switch to a table that does not exist
+        $backend->has('foo');
+        $backend->setTableName('missing_table');
+
+        $this->expectException(\PDOException::class);
+        try {
+            $backend->get('foo');
+        } finally {
+            self::assertSame([], $backend->retryDelays);
+        }
+    }
+
+    /**
+     * A backend that fails to connect the given number of times and records retry delays instead of sleeping
+     */
+    protected function setUpBackendFailingToConnect(int $failingConnects, array $options = []): PdoBackend
+    {
+        $mockCache = $this->createMock(FrontendInterface::class);
+        $mockCache->method('getIdentifier')->willReturn(('TestCache'));
+
+        $backend = new class (new EnvironmentConfiguration('SomeApplication Testing', '/some/path', PHP_MAXPATHLEN), array_merge(['dataSourceName' => 'sqlite::memory:'], $options)) extends PdoBackend {
+            public int $failingConnects = 0;
+            public array $retryDelays = [];
+
+            protected function connect()
+            {
+                if ($this->failingConnects > 0) {
+                    $this->failingConnects--;
+                    throw new Exception('Could not connect', 1334736164, new \PDOException('Connection refused'));
+                }
+                parent::connect();
+            }
+
+            public function setTableName(string $tableName): void
+            {
+                $this->cacheTableName = $tableName;
+            }
+
+            protected function waitBeforeRetry(int $retry): void
+            {
+                $this->retryDelays[] = $retry;
+            }
+        };
+        $backend->failingConnects = $failingConnects;
+        $backend->setCache($mockCache);
+
+        return $backend;
+    }
+
     protected function setUpBackend()
     {
         /** @var FrontendInterface|MockObject $mockCache */
