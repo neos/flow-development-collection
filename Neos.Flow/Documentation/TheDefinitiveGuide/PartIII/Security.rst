@@ -1105,6 +1105,44 @@ By defining privilege targets, all matched subjects (methods, entities, etc.) wi
 permissions to allow access to them for certain roles. The use of a DENY permission should be the ultimate last
 resort for edge cases. Be careful, there is no way to override a DENY permission, if you use it anyways!
 
+Using policy attributes / annotations
+-------------------------------------
+
+The ``Flow\Policy`` Attribute allows to specify method privileges directly by annotating the php code of the affected method.
+
+.. note::
+
+  While this is a very convenient way to add policies in project code it should not be used in libraries/packages
+  that expect to be configured for the outside. In such cases the policy.yaml is still preferred as it is easier
+  to overwrite.
+
+.. code-block:: php
+
+  use Neos\Flow\Mvc\Controller\ActionController;
+  use Neos\Flow\Annotations as Flow;
+  use Neos\Flow\Security\Authorization\Privilege\PrivilegeInterface;
+
+  class ExampleController extends ActionController
+  {
+      /**
+       * By assigning a policy with a role argument access to the method is granted to the specified role
+       */
+      #[Flow\Policy(role: 'Neos.Flow:Everybody')]
+      public function everybodyAction(): void
+      {
+      }
+
+      /**
+       * By specifying the permission in addition and the DENY and ABSTAIN can be configured aswell
+       * Flow\Policy attributes can be assigned multiple times if multiple roles are to be configured
+       */
+      #[Flow\Policy(role: 'Neos.Flow:Administrator', permission: PrivilegeInterface::GRANT)]
+      #[Flow\Policy(role: 'Neos.Flow:Anonymous', permission: PrivilegeInterface::DENY)]
+      public function adminButNotAnonymousAction(): void
+      {
+      }
+  }
+
 Using privilege parameters
 --------------------------
 
