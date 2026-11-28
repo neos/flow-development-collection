@@ -139,15 +139,16 @@ abstract class ResponseInformationHelper
     /**
      * Prepare array of header lines for this response
      *
+     * The lines are in the order to pass them to header(), with the status line last: PHP changes the status for some
+     * headers – to a 401 for a "WWW-Authenticate" header, and to a 302 for a "Location" header (unless it's a 201 or
+     * 3xx) – and the status line sent afterwards restores it.
+     *
      * @param ResponseInterface $response
      * @return array
      */
     public static function prepareHeaders(ResponseInterface $response): array
     {
         $preparedHeaders = [];
-        $statusHeader = rtrim(self::generateStatusLine($response), "\r\n");
-
-        $preparedHeaders[] = $statusHeader;
         foreach ($response->getHeaders() as $name => $values) {
             if (strtolower($name) === 'set-cookie') {
                 foreach ($values as $value) {
@@ -157,6 +158,7 @@ abstract class ResponseInformationHelper
                 $preparedHeaders[] = $name . ': ' . implode(', ', $values);
             }
         }
+        $preparedHeaders[] = rtrim(self::generateStatusLine($response), "\r\n");
 
         return $preparedHeaders;
     }
