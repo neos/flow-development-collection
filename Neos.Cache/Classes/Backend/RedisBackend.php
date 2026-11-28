@@ -19,6 +19,7 @@ use Neos\Cache\Exception as CacheException;
 use Neos\Error\Messages\Error;
 use Neos\Error\Messages\Notice;
 use Neos\Error\Messages\Result;
+use Neos\Error\Messages\Warning;
 
 /**
  * A caching backend which stores cache entries in Redis using the phpredis PHP extension.
@@ -47,6 +48,10 @@ use Neos\Error\Messages\Result;
  * so one single database can be used for different caches.
  *
  * Cache entry data is stored in a simple key. Tags are stored in Sets.
+ *
+ * Tag sets never expire. Use a "volatile-*" eviction policy, so Redis only evicts cache entries and never
+ * the tag sets needed to flush them. Give caches that can outgrow the memory limit a finite default lifetime,
+ * as Redis rejects writes once it is full and has no key with an expiry time left to evict.
  *
  * @api
  */
@@ -124,12 +129,9 @@ class RedisBackend extends IndependentAbstractBackend implements TaggableBackend
             $setOptions['ex'] = $lifetime;
         }
 
-        $redisTags = array_reduce($tags, function ($redisTags, $tag) use ($lifetime, $entryIdentifier) {
-            $expire = $this->calculateExpires($this->getPrefixedIdentifier('tag:' . $tag), $lifetime);
-            $redisTags[] = ['key' => $this->getPrefixedIdentifier('tag:' . $tag), 'value' => $entryIdentifier, 'expire' => $expire];
-
-            $expire = $this->calculateExpires($this->getPrefixedIdentifier('tags:' . $entryIdentifier), $lifetime);
-            $redisTags[] = ['key' => $this->getPrefixedIdentifier('tags:' . $entryIdentifier), 'value' => $tag, 'expire' => $expire];
+        $redisTags = array_reduce($tags, function ($redisTags, $tag) use ($entryIdentifier) {
+            $redisTags[] = ['key' => $this->getPrefixedIdentifier('tag:' . $tag), 'value' => $entryIdentifier];
+            $redisTags[] = ['key' => $this->getPrefixedIdentifier('tags:' . $entryIdentifier), 'value' => $tag];
             return $redisTags;
         }, []);
 
@@ -140,25 +142,10 @@ class RedisBackend extends IndependentAbstractBackend implements TaggableBackend
         }
         foreach ($redisTags as $tag) {
             $this->redis->sAdd($tag['key'], $tag['value']);
-            if ($tag['expire'] > 0) {
-                $this->redis->expire($tag['key'], $tag['expire']);
-            } else {
-                $this->redis->persist($tag['key']);
-            }
+            // Tag sets never expire, so a "volatile-*" eviction policy can never evict them
+            $this->redis->persist($tag['key']);
         }
         $this->redis->exec();
-    }
-
-    /**
-     * Calculate the max lifetime for a tag
-     */
-    private function calculateExpires(string $tag, int $lifetime): int
-    {
-        $ttl = (int)$this->redis->ttl($tag);
-        if ($ttl < 0 || $lifetime === self::UNLIMITED_LIFETIME) {
-            return -1;
-        }
-        return max($ttl, $lifetime);
     }
 
     /**
@@ -587,6 +574,15 @@ class RedisBackend extends IndependentAbstractBackend implements TaggableBackend
         }
         if (isset($serverInfo['uptime_in_seconds'])) {
             $result->addNotice(new Notice((string)$serverInfo['uptime_in_seconds'], null, [], 'Uptime (seconds)'));
+        }
+        $memoryInfo = (array)$this->redis->info('MEMORY');
+        if (isset($memoryInfo['maxmemory_policy'])) {
+            $evictionPolicy = (string)$memoryInfo['maxmemory_policy'];
+            if (str_starts_with($evictionPolicy, 'allkeys-')) {
+                $result->addWarning(new Warning(sprintf('The eviction policy "%s" can evict tag sets, so flushing by tag misses entries. Use a "volatile-*" policy instead.', $evictionPolicy), 1793184252, [], 'Eviction policy'));
+            } else {
+                $result->addNotice(new Notice($evictionPolicy, null, [], 'Eviction policy'));
+            }
         }
         return $result;
     }
